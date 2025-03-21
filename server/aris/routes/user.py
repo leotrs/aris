@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from .. import crud, get_db
+from ..models import Document, User
 
 router = APIRouter()
 
@@ -42,3 +43,8 @@ def soft_delete_user(user_id: int, db: Session = Depends(get_db)):
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return {"message": f"User {user_id} soft deleted"}
+
+
+@router.get("/users/{user_id}/documents")
+def get_user_documents(user_id: int, db: Session = Depends(get_db)):
+    return crud.get_user_documents(user_id, db)

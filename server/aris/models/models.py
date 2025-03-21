@@ -37,7 +37,7 @@ class Document(Base):
     status = Column(Enum(DocumentStatus), nullable=False, default=DocumentStatus.DRAFT)
     last_edited_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
     doi = Column(String, unique=True, nullable=True)
-    content = Column(Text, nullable=True)
+    source = Column(Text, nullable=True)
     deleted_at = Column(DateTime, nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
