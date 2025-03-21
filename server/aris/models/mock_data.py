@@ -21,24 +21,50 @@ MOCK_USERS = [
 
 MOCK_DOCUMENTS = [
     Document(
-        title="Sample Document 1",
+        title="Just a title",
         abstract="This is the abstract of sample document 1.",
         keywords="sample, research, test",
         status=DocumentStatus.DRAFT,
         owner_id=1,
+        source="""\
+        :manuscript:
+          :title: Just a title
+        ::""",
     ),
     Document(
-        title="Sample Document 2",
+        title="Title and a paragraph",
         abstract="This is the abstract of sample document 2.",
         keywords="example, science, test",
         status=DocumentStatus.UNDER_REVIEW,
         owner_id=2,
+        source="""\
+        :manuscript:
+          :title: My Title
+
+        Lorem ipsum.
+
+        ::
+        """,
     ),
     Document(
-        title="Sample Document 3",
+        title="Title, Section, and ParagraphSample Document 3",
         abstract="This is the abstract of sample document 3.",
         keywords="research, test, study",
         status=DocumentStatus.PUBLISHED,
         owner_id=3,
+        source="""\
+        :manuscript:
+
+        Lorem ipsum.
+
+        :section:
+          :title: section title
+
+        Lorem ipsum.
+
+        ::
+
+        ::
+        """,
     ),
 ]

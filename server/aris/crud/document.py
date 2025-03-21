@@ -17,6 +17,19 @@ def get_document(document_id: int, db: Session):
     )
 
 
+def get_document_html(document_id: int, db: Session):
+    result = (
+        db.query(Document.source)
+        .filter(Document.id == document_id, Document.deleted_at.is_(None))
+        .first()
+    )
+    if result:
+        src = result[0]
+    else:
+        src = None
+    return src
+
+
 def create_document(
     title: str,
     abstract: str,
