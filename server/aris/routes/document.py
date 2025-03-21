@@ -19,6 +19,14 @@ def get_document(document_id: int, db: Session = Depends(get_db)):
     return doc
 
 
+@router.get("/documents/{document_id}/html")
+def get_document_html(document_id: int, db: Session = Depends(get_db)):
+    doc = crud.get_document_html(document_id, db)
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return doc
+
+
 @router.post("/documents")
 def create_document(
     title: str,
