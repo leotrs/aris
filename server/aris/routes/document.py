@@ -13,7 +13,7 @@ def get_documents(db: Session = Depends(get_db)):
 
 @router.get("/documents/{document_id}")
 def get_document(document_id: int, db: Session = Depends(get_db)):
-    doc = crud.get_user(document_id, db)
+    doc = crud.get_document(document_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     return doc

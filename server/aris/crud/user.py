@@ -2,7 +2,7 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from ..models import User
+from ..models import Document, User
 
 
 def get_users(db: Session):
@@ -39,3 +39,20 @@ def soft_delete_user(user_id: int, db: Session):
     user.deleted_at = datetime.utcnow()
     db.commit()
     return user
+
+
+def get_user_documents(user_id: int, db: Session):
+    user = get_user(user_id, db)
+    if not user:
+        raise ValueError(f"User {user_id} not found")
+
+    documents = (
+        db.query(Document.id, Document.title, Document.status, Document.last_edited_at)
+        .filter(Document.owner_id == user_id, Document.deleted_at.is_(None))
+        .all()
+    )
+
+    return [
+        {"id": d[0], "title": d[1], "status": d[2], "last_edited_at": d[3]}
+        for d in documents
+    ]
