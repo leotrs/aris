@@ -1,5 +1,8 @@
+import datetime
+
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
 from .. import crud, get_db
@@ -28,14 +31,30 @@ def get_document_html(document_id: int, db: Session = Depends(get_db)):
     return doc
 
 
+class DocumentCreate(BaseModel):
+    title: str
+    abstract: str
+    owner_id: int
+    source: str
+
+    def validate_source(self):
+        if not self.source or not self.source.strip().startswith(":manuscript:"):
+            raise ValueError("Malformed RSM source.")
+        return self
+
+
 @router.post("/documents")
 def create_document(
-    title: str,
-    abstract: str,
-    owner_id: int,
+    doc: DocumentCreate,
     db: Session = Depends(get_db),
 ):
-    return crud.create_document(title, abstract, owner_id, db)
+    try:
+        doc.validate_source()
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+
+    result = crud.create_document(doc.source, doc.owner_id, doc.title, doc.abstract, db)
+    return {"message": "Manuscript created", "id": result.id}
 
 
 @router.put("/documents/{document_id}")
