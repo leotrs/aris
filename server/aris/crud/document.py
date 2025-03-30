@@ -33,15 +33,17 @@ def get_document_html(document_id: int, db: Session):
 
 
 def create_document(
-    title: str,
-    abstract: str,
+    source: str,
     owner_id: int,
-    db: Session,
+    title: str = "",
+    abstract: str = "",
+    db: Session = None,
 ):
     doc = Document(
         title=title,
         abstract=abstract,
         owner_id=owner_id,
+        source=source,
         status=DocumentStatus.DRAFT,
     )
     db.add(doc)
