@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException
+from fastapi.responses import HTMLResponse
 from sqlalchemy.orm import Session
 
 from .. import crud, get_db
@@ -19,7 +20,7 @@ def get_document(document_id: int, db: Session = Depends(get_db)):
     return doc
 
 
-@router.get("/documents/{document_id}/html")
+@router.get("/documents/{document_id}/html", response_class=HTMLResponse)
 def get_document_html(document_id: int, db: Session = Depends(get_db)):
     doc = crud.get_document_html(document_id, db)
     if not doc:

@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import rsm
 from sqlalchemy.orm import Session
 
 from ..models import Document, DocumentStatus
@@ -26,8 +27,9 @@ def get_document_html(document_id: int, db: Session):
     if result:
         src = result[0]
     else:
-        src = None
-    return src
+        return src
+
+    return rsm.render(src, handrails=True)
 
 
 def create_document(
