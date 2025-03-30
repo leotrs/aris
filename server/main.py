@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
 from aris.routes import document_router, user_router
 
@@ -18,3 +19,10 @@ app.add_middleware(
 
 app.include_router(user_router)
 app.include_router(document_router)
+app.mount(
+    "/static",
+    StaticFiles(
+        directory=".venv/lib/python3.13/site-packages/rsm/static",
+    ),
+    name="static",
+)
