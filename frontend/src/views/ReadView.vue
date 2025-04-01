@@ -28,7 +28,7 @@
      await import("http://localhost:8000/static/jquery-3.6.0.js");
      await import("http://localhost:8000/static/tooltipster.bundle.js");
      const { onload } = await import("http://localhost:8000/static/onload.js");
-     const lsp_ws = onload(manuscriptRef.value);
+     const lsp_ws = onload();
 
      /* Get the title and other info */
      const response = await fetch(`${baseURL}`);
@@ -114,10 +114,30 @@
      top: 64px;
      border-radius: 16px;
      background-color: var(--surface-page);
-
+     border-bottom-right-radius: 16px;
+     border-top-right-radius: 16px;
      /* no scrollbar in any browser */
      overflow-y: auto;
 
+     /* These are standard CSS that are not yet supported - switch to them in the future */
+     /* scrollbar-color: var(--light);
+        scrollbar-width: 16px; */
+
+     &::-webkit-scrollbar {
+         width: 16px;
+         background: transparent;
+     };
+     &::-webkit-scrollbar-track {
+         border-bottom-right-radius: 16px;
+         border-top-right-radius: 16px
+     };
+     &::-webkit-scrollbar-thumb {
+         background: var(--gray-200);
+         border-radius: 8px;
+         height: 32px;
+         width: 16px;
+     };
+     &::-webkit-scrollbar-thumb:hover { background: var(--surface-hint) };
  }
 
  .left-column, .right-column {
