@@ -10,8 +10,6 @@
  })
 
  const documents = ref([]);
- const activeIndex = ref(null);
-
  onMounted( async () => {
      const url = "http://localhost:8000/documents"
      try {
@@ -25,7 +23,23 @@
      }
  });
 
+ const tags = ref([]);
+ onMounted( async () => {
+     const url = "http://localhost:8000/tags/1"
+     try {
+         const response = await fetch(url);
+         if (!response.ok) {
+             throw new Error('Failed to fetch tags');
+         }
+         tags.value = await response.json();
+         tags.value = tags.value.map((obj) => obj.name);
+     } catch (error) {
+         console.error(error);
+     }
+ });
+
  const emit = defineEmits(["set-selected"]);
+ const activeIndex = ref(null);
  let clickTimeout = ref(null);
  const selectForPreview = (doc, idx) => {
      activeIndex.value = idx;
@@ -104,6 +118,10 @@
       <span v-if="mode == 'list'" class="spacer"></span>
     </div>
 
+    <div class="tags">
+      <Tag v-for="tag_name in tags" :name="tag_name" />
+    </div>
+
     <div class="docs-group" :class="mode">
       <DocumentsPaneItem
           v-for="(doc, idx) in documents"
@@ -177,6 +195,11 @@
      columns: auto 250px;
      column-gap: 16px;
      & > .cards { break-inside: avoid };
+ }
+
+ .tags {
+     display: flex;
+     gap: 8px;
  }
 
  .spacer{
