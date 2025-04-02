@@ -1,5 +1,6 @@
 <script setup>
  import { ref, computed } from 'vue';
+ import { IconSortAscendingLetters, IconSortDescendingLetters } from '@tabler/icons-vue';
 
  const props = defineProps({
      name: { type: String, required: true },
@@ -20,17 +21,27 @@
 
 
 <template>
-  <span
-      class="header"
-      :class="{ sortable: !disableSorting }"
-      @click="nextState" >{{ name }}</span>
+  <div class="col-header" :class="{ sortable: !disableSorting }" @click="nextState">
+    <span>{{ name }}</span>
+    <span v-if="state == 'desc'"><IconSortDescendingLetters /></span>
+    <span v-if="state == 'asc'"><IconSortAscendingLetters /></span>
+  </div>
 </template>
 
 
 <style scoped>
- .header {
+ .col-header {
+     display: flex;
+     flex-wrap: wrap;
+     align-content: center;
+     height: 40px;
      color: var(--almost-black);
+     background-color: var(--surface-information);
 
      &.sortable:hover { cursor: pointer };
+ }
+ .col-header:hover {
+     background-color: var(--gray-50);
+     align-items: center;
  }
 </style>

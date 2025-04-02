@@ -11,7 +11,7 @@
   <div class="tb-wrapper">
 
     <div class="left-column">
-      <div class="title">{{ title }}.</div>
+      <div class="title">{{ title }}</div>
     </div>
 
     <div class="middle-column">
