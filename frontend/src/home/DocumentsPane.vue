@@ -2,6 +2,11 @@
  import { ref, computed, onMounted, defineProps, defineEmits } from 'vue';
  import { useRouter } from 'vue-router';
  import DocumentsPaneItem from './DocumentsPaneItem.vue';
+ import ColumnHeader from './DocumentsPaneColumnHeader.vue';
+
+ const props = defineProps({
+     mode: { type: String, default: 'list' }
+ })
 
  const documents = ref([]);
  const active = ref([]);
@@ -34,10 +39,29 @@
      router.push(`/${doc.id}/read`);
  };
 
- const props = defineProps({
-     mode: { type: String, default: 'list' }
- })
-
+ const columnNames = {
+     'Title': 'title',
+     'Progress': '',
+     'Tags': '',
+     'Last Edited': 'last_edited_at',
+     'Owner': 'owner_id'
+ };
+ const disableSorting = {
+     'Title': false,
+     'Progress': true,
+     'Tags': true,
+     'Last Edited': false,
+     'Owner': true
+ }
+ const handleColumnHeaderEvent = (columnName, mode) => {
+     const col = columnNames[columnName];
+     console.log(columnName, mode);
+     if (mode == 'asc') {
+         documents.value.sort((a, b) => a[col].localeCompare(b[col]));
+     } else if (mode == 'desc') {
+         documents.value.sort((a, b) => b[col].localeCompare(a[col]));
+     }
+ }
 </script>
 
 
@@ -46,11 +70,13 @@
 
     <template v-if="mode == 'list'">
       <div class="pane-header text-label">
-        <span>Title</span>
-        <span>Progress</span>
-        <span>Tags</span>
-        <span>Last edited</span>
-        <span>Owner</span>
+        <ColumnHeader
+            v-for="name in Object.keys(columnNames)"
+            :name="name"
+            @none="handleColumnHeaderEvent(name, 'none')"
+            @asc="handleColumnHeaderEvent(name, 'asc')"
+            @desc="handleColumnHeaderEvent(name, 'desc')"
+            :disable-sorting="disableSorting[name]" />
         <span></span>
         <span></span>
       </div>
@@ -82,7 +108,7 @@
  }
 
  .documents.list .pane-header {
-     color: var(--almost-black);
+
      display: contents;
      grid-column: 1 / 7;
 
