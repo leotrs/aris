@@ -1,41 +1,41 @@
 <script setup>
- import { ref, defineProps, defineEmits, onMounted, onUpdated, onUnmounted, useTemplateRef } from 'vue';
+ import { ref, defineProps, defineEmits, defineModel, onMounted, onUpdated, onUnmounted, useTemplateRef } from 'vue';
  import { useRouter } from 'vue-router';
  import SidebarItem from './HomeSidebarItem.vue';
  import Separator from './Separator.vue';
  import ButtonToggle from './ButtonToggle.vue';
 
  const emit = defineEmits([
-     'showFileUploadModal',
      'showMinimap',
      'hideMinimap'
  ]);
- const collapsed = ref(false);
- const toggleCollapsed = () => {
-     console.log("toggling");
-     collapsed.value = !collapsed.value;
- }
+ const showMinimap = defineModel("showMinimap");
+ const showSettings = defineModel("showSettings");
+
  const router = useRouter();
  const goHome = () => { router.push(`/`); }
 </script>
 
 
 <template>
-  <div class="sb-wrapper" ref="sidebar-ref" :class="collapsed ? 'collapsed' : null">
+  <div class="sb-wrapper" ref="sidebar-ref">
     <div id="logo" @click="goHome">
       <img src="../assets/logo-32px.svg" />
     </div>
     <div class="sb-menu">
       <ButtonToggle
           icon="MapPin"
-          @on="$emit('showMinimap')"
-          @off="$emit('hideMinimap')" />
+          @on="showMinimap = true"
+          @off="showMinimap = false" />
       <ButtonToggle icon="Search" />
       <ButtonToggle icon="Quote" />
       <ButtonToggle icon="Variable" />
       <ButtonToggle icon="Blocks" />
       <ButtonToggle icon="Message" />
-      <ButtonToggle icon="FileSettings" />
+      <ButtonToggle
+          icon="FileSettings"
+          @on="showSettings = true"
+          @off="showSettings = false" />
     </div>
   </div>
 </template>

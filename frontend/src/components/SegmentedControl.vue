@@ -8,7 +8,7 @@
 
  const props = defineProps({
      icons: Array,
-     defaultActive: { type: Number, default: 0}
+     defaultActive: { type: Number, default: 0 }
  });
 
  const setActive = (n) => { active.value = n };
@@ -27,7 +27,7 @@
     <span
         v-for="(icon, idx) in icons"
         :key="idx" class="sc-item"
-        :class="{'active': idx == active}"
+        :class="['sc-btn', {'active': idx == active}]"
         @click="click(idx)" >
       <component :is="Icons['Icon' + icon]" class="sc-icon" />
     </span>

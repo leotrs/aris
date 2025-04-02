@@ -3,6 +3,7 @@
  import { useRoute } from 'vue-router';
  import Sidebar from '../components/ReadSidebar.vue';
  import Topbar from '../components/ReadTopbar.vue';
+ import ReadOverlaySettings from '../components/ReadOverlaySettings.vue'
 
  const route = useRoute();
  const htmlContent = ref('');
@@ -20,7 +21,7 @@
  const docTitle = ref("");
  const manuscriptRef = ref(null);
  const minimapRef = ref(null);
- const leftColumn = ref(null);
+ const leftColumnFixed = ref(null);
  onMounted(async () => {
      if (!manuscriptRef.value) return;
 
@@ -36,13 +37,13 @@
      docTitle.value = await response.json().title;
 
      /* Relocate the minimap */
-     if (leftColumn.value) {
+     if (leftColumnFixed.value) {
          const minimap = manuscriptRef.value.querySelector(".float-minimap-wrapper .minimap");
          if (minimap) {
              console.log('relocating');
              minimapRef.value = minimap;
              minimap.remove();
-             leftColumn.value.append(minimap);
+             leftColumnFixed.value.append(minimap);
              minimap.style.visibility = "hidden";
          }
      }
@@ -55,6 +56,10 @@
      if (newValue) minimapRef.value.style.visibility = "visible";
      if (!newValue) minimapRef.value.style.visibility = "hidden";
  })
+
+ const showSettings = ref(false);
+
+ const backgroundColor = ref("var(--surface-page)");
 </script>
 
 
@@ -62,8 +67,9 @@
   <div class="read-view">
 
     <Sidebar
-        @showMinimap="showMinimap = true"
-        @hideMinimap="showMinimap = false" />
+        v-model:show-minimap="showMinimap"
+        v-model:show-settings="showSettings"
+    />
 
     <div class="outer-wrapper">
 
@@ -76,6 +82,12 @@
 
       <div class="inner-wrapper">
         <div class="left-column" ref="leftColumn"></div>
+        <div class="left-column fixed" ref="leftColumnFixed">
+          <ReadOverlaySettings
+              v-show="showSettings"
+              @set-background="(c) => {console.log(c); backgroundColor = c}"
+          />
+        </div>
         <div class="middle-column">
           <div ref="manuscriptRef" v-html="htmlContent"></div>
           <div class="middle-footer">
@@ -83,6 +95,7 @@
           </div>
         </div>
         <div class="right-column">right</div>
+        <div class="right-column fixed">right fixed</div>
       </div>
 
     </div>
@@ -113,7 +126,7 @@
      position: relative;
      top: 64px;
      border-radius: 16px;
-     background-color: var(--surface-page);
+     background-color: v-bind("backgroundColor");
      border-bottom-right-radius: 16px;
      border-top-right-radius: 16px;
      /* no scrollbar in any browser */
@@ -146,17 +159,38 @@
      background-color: var(--surface-page);
      padding-inline: 16px;
      padding-block: 16px;
+     background-color: v-bind("backgroundColor");
+     height: 100%;
  }
 
  .left-column {
      border-top-left-radius: 16px;
+     position: relative;
+ }
+
+ .right-column {
+     border-top-right-radius: 16px;
+ }
+
+ .left-column.fixed, .right-column.fixed {
+     position: fixed;
+     height: calc(100% - 64px);
+     background-color: transparent;
+     top: 64px;
+     overflow-y: auto;
+ }
+
+ .left-column.fixed {
+     left: 64px;
 
      & > :deep(.minimap) {
-         position: fixed;
+         position: absolute;
          width: 48px;
          top: calc(64px + 40px);
-         left: 192px;
          height: calc(100% - 152px);
+         left: 0;
+         right: 0;
+         margin: 0 auto;
      }
 
      & > :deep(.minimap > svg) {
@@ -164,8 +198,8 @@
      }
  }
 
- .right-column {
-     border-top-right-radius: 16px;
+ .right-column.fixed {
+     right: 0;
  }
 
  .middle-column {
@@ -174,6 +208,7 @@
      z-index: 1;
      overflow-x: visible;
      height: fit-content;
+     background-color: v-bind("backgroundColor");
  }
 
  #footer-logo {
@@ -190,6 +225,9 @@
 <style>
  /* Overwrite RSM's CSS but be CAREFUL!!! */
  .manuscriptwrapper {
+     /* The background color comes from the user's choice within the settings overlay */
+     background-color: transparent !important;
+
      /* Overwrite size and whitespace */
      margin: 0 !important;
      max-width: unset !important;
