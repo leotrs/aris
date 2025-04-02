@@ -88,24 +88,21 @@
 <template>
   <div class="documents" :class="mode">
 
-    <template v-if="mode == 'list'">
-      <div class="pane-header text-label">
+    <div class="pane-header text-label">
+      <span v-if="mode == 'cards'">Sort by:</span>
+      <template v-for="name in Object.keys(columnNames)">
         <ColumnHeader
-            v-for="name in Object.keys(columnNames)"
+            v-if="mode == 'list' || (mode == 'cards' && !disableSorting[name])"
             :name="name"
             @none="handleColumnHeaderEvent(name, 'none')"
             @asc="handleColumnHeaderEvent(name, 'asc')"
             @desc="handleColumnHeaderEvent(name, 'desc')"
             :disable-sorting="disableSorting[name]" />
-        <span></span>
-        <span></span>
-      </div>
-    </template>
-    <template v-else-if="mode == 'cards'">
-      <div class="pane-header text-label">
-        <span>Sort by:</span>
-      </div>
-    </template>
+      </template>
+      <!-- to complete the grid -->
+      <span v-if="mode == 'list'" class="spacer"></span>
+      <span v-if="mode == 'list'" class="spacer"></span>
+    </div>
 
     <div class="docs-group" :class="mode">
       <DocumentsPaneItem
@@ -121,26 +118,21 @@
 
 
 <style scoped>
- .documents.list {
-     width: 100%;
-     display: grid;
+ .documents {
      margin-top: 8px;
-     grid-template-columns: 2fr 1.5fr 1fr 100px 50px 16px 8px;
      overflow-y: auto;
+     width: 100%;
+ }
+
+ .documents.list {
+     display: grid;
+     grid-template-columns: 2fr 1.5fr 1fr 100px 50px 16px 8px;
  }
 
  .documents.list .pane-header {
-
+     background-color: var(--surface-information);
      display: contents;
      grid-column: 1 / 7;
-
-     & > * {
-         color: var(--almost-black);
-         background-color: var(--surface-information);
-         height: 40px;
-         align-content: center;
-         margin-bottom: 8px;
-     }
 
      & > *:first-child {
          padding-left: 16px;
@@ -167,7 +159,18 @@
  }
 
  .documents.cards {
-     overflow-y: auto;
+ }
+
+ .documents.cards .pane-header {
+     display: flex;
+     align-items: center;
+     gap: 16px;
+     padding-inline: 16px;
+     margin-bottom: 16px;
+     & > .col-header {
+         width: fit-content;
+         padding-inline: 8px;
+     };
  }
 
  .docs-group.cards {
@@ -176,10 +179,7 @@
      & > .cards { break-inside: avoid };
  }
 
- .documents.cards .pane-header {
-     height: 40px;
-     padding-inline: 16px;
-     align-content: center;
-     margin-bottom: 16px;
+ .spacer{
+     background-color: var(--surface-information);
  }
 </style>
