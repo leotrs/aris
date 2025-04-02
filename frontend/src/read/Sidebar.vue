@@ -1,9 +1,6 @@
 <script setup>
  import { ref, defineProps, defineEmits, defineModel, onMounted, onUpdated, onUnmounted, useTemplateRef } from 'vue';
  import { useRouter } from 'vue-router';
- import SidebarItem from './HomeSidebarItem.vue';
- import Separator from './Separator.vue';
- import ButtonToggle from './ButtonToggle.vue';
 
  const emit = defineEmits([
      'showMinimap',

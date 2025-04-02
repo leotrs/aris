@@ -1,8 +1,7 @@
 <script setup>
  import { ref, defineProps, defineEmits, onMounted, onUnmounted, onUpdated, useTemplateRef } from 'vue';
- import SidebarItem from './HomeSidebarItem.vue';
- import Separator from './Separator.vue';
- import Button from './Button.vue';
+ import SidebarItem from './SidebarItem.vue';
+ import Separator from '@/common/Separator.vue';
 
  const emit = defineEmits(['showFileUploadModal']);
  const forceCollapsed = ref(false);
@@ -110,10 +109,18 @@
 
  .cta {
      display: flex;
+
      align-items: center;
      padding-inline: 8px;
      flex-grow: 1;
+     margin-bottom: 16px;
+
+     & > button {
+         justify-content: center;
+         width: 100%;
+     }
  }
+
  .sb-wrapper:not(.collapsed) .cta > button { padding-left: 6px; }
 
 

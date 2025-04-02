@@ -1,8 +1,5 @@
 <script setup>
  import { ref, defineProps, defineEmits } from 'vue';
- import ContextMenu from './ContextMenu.vue';
- import Avatar from './Avatar.vue';
- import FileTitle from './FileTitle.vue';
  import RelativeTime from '@yaireo/relative-Time';
 
  const props = defineProps({

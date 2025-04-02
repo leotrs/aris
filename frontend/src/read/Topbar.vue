@@ -1,8 +1,5 @@
 <script setup>
  import { defineProps } from 'vue';
- import Button from './Button.vue';
- import Searchbar from './Searchbar.vue';
- import Avatar from './Avatar.vue';
 
  const props = defineProps({
      title: { type: String }

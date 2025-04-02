@@ -1,7 +1,6 @@
 <script setup>
  import { ref, computed, onMounted, defineProps, defineEmits } from 'vue';
  import { useRouter } from 'vue-router';
- import ContextMenu from './ContextMenu.vue';
  import DocumentsPaneItem from './DocumentsPaneItem.vue';
 
  const documents = ref([]);
