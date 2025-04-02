@@ -25,11 +25,12 @@
             @set-selected="setSelectedForPreview"
             :mode="currentMode" />
       </div>
-      <div id="preview" v-if="selectedForPreview" class="pane">
-        <PreviewPane
-            :doc="selectedForPreview"
-            @set-selected="setSelectedForPreview" />
-      </div>
+      <PreviewPane
+          id="preview"
+          v-if="selectedForPreview"
+          class="pane"
+          :doc="selectedForPreview"
+          @set-selected="setSelectedForPreview" />
     </div>
     <div class="modal" v-show="showModal">
       <UploadFileModal @close="showModal = false" />

@@ -1,8 +1,15 @@
 <script setup>
- import { ref, defineEmits } from 'vue';
+ import { ref, onMounted } from 'vue';
  import { IconUpload, IconX } from '@tabler/icons-vue';
+ import useClosable from '@/composables/useClosable.js';
 
- defineEmits(["close"]);
+ const emit = defineEmits(["close"]);
+ const close = () => { emit('close') };
+ const selfRef = ref(null);
+ onMounted(() => {
+     if (!selfRef) return;
+     useClosable(close, selfRef, true, true);
+ })
 
  const fileUpload = ref(null);
  const triggerFileUpload = () => { fileUpload.value?.click() };
@@ -37,10 +44,10 @@
 
 
 <template>
-  <div class="md-wrapper">
+  <div class="md-wrapper" ref="selfRef">
     <div class="md-header">
       <span class="text-h3">Upload New File</span>
-      <ButtonClose @close="$emit('close')" />
+      <ButtonClose @close="close" />
     </div>
     <div class="md-content">
       <span>Select a .rsm file from your computer:</span>
@@ -57,7 +64,7 @@
       </label>
     </div>
     <div class="md-footer">
-      <Button kind="tertiary" text="cancel" class="btn-md" @click="$emit('close')" />
+      <Button kind="tertiary" text="cancel" class="btn-md" @click="close" />
       <Button kind="primary" text="upload" class="btn-md" @click="upload" />
     </div>
   </div>

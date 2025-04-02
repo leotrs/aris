@@ -1,8 +1,9 @@
 <script setup>
- import { defineEmits } from 'vue';
+ import { ref, onMounted } from 'vue';
  import { IconFileSettings } from '@tabler/icons-vue';
+ import useClosable from '@/composables/useClosable.js';
 
- const emit = defineEmits(['set-background']);
+ const emit = defineEmits(['set-background', 'close']);
  const colors = {
      page: "var(--surface-page)",
      gray: "var(--gray-50)",
@@ -10,11 +11,18 @@
      green: "var(--green-50)",
      blue: "var(--blue-50)"
  }
+
+ const selfRef = ref(null);
+ const close = () => { emit('close') };
+ onMounted(() => {
+     if (!selfRef) return;
+     useClosable(close, selfRef, true, false);
+ })
 </script>
 
 
 <template>
-  <div class="overlay settings">
+  <div class="overlay settings" ref="selfRef">
 
     <div class="ol-header">
       <div class="left">
@@ -22,7 +30,7 @@
         <span class="text-h5">Settings</span>
       </div>
       <div class="right">
-        <ButtonClose />
+        <ButtonClose @close="close" />
       </div>
     </div>
 
@@ -100,7 +108,7 @@
     </div>
 
     <div class="ol-footer">
-      <Button kind="secondary" text="Cancel" />
+      <Button kind="secondary" text="Cancel" @click="close" />
       <Button kind="primary" text="Save" />
     </div>
 
