@@ -103,7 +103,7 @@
  }
 
  .sb-menu > *, .cta > * {
-     margin-bottom: 8px;
+     margin-block: 8px;
      gap: 6px;
  }
 
