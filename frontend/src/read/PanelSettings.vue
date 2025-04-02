@@ -1,9 +1,5 @@
 <script setup>
  import { defineEmits } from 'vue';
- import Button from '../components/Button.vue';
- import ButtonClose from '../components/ButtonClose.vue';
- import SegmentedControl from '../components/SegmentedControl.vue';
- import Slider from '../components/Slider.vue';
  import { IconFileSettings } from '@tabler/icons-vue';
 
  const emit = defineEmits(['set-background']);

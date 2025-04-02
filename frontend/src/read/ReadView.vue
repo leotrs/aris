@@ -1,9 +1,9 @@
 <script setup>
  import { ref, watch, onMounted } from 'vue';
  import { useRoute } from 'vue-router';
- import Sidebar from '../components/ReadSidebar.vue';
- import Topbar from '../components/ReadTopbar.vue';
- import ReadOverlaySettings from '../components/ReadOverlaySettings.vue'
+ import Sidebar from './Sidebar.vue';
+ import Topbar from './Topbar.vue';
+ import ReadOverlaySettings from './PanelSettings.vue'
 
  const route = useRoute();
  const htmlContent = ref('');

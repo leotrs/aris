@@ -1,10 +1,10 @@
 <script setup>
  import { ref } from 'vue';
- import Sidebar from '../components/HomeSidebar.vue';
- import Topbar from '../components/HomeTopbar.vue';
- import DocumentsPane from '../components/DocumentsPane.vue';
- import PreviewPane from '../components/PreviewPane.vue';
- import UploadFileModal from '../components/UploadFileModal.vue';
+ import Sidebar from './Sidebar.vue';
+ import Topbar from './Topbar.vue';
+ import DocumentsPane from './DocumentsPane.vue';
+ import PreviewPane from './PreviewPane.vue';
+ import UploadFileModal from './UploadFileModal.vue';
 
  const showModal = ref(false);
  const selectedForPreview = ref(null);

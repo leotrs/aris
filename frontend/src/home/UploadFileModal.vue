@@ -1,8 +1,6 @@
 <script setup>
  import { ref, defineEmits } from 'vue';
  import { IconUpload, IconX } from '@tabler/icons-vue';
- import Button from './Button.vue';
- import ButtonClose from './ButtonClose.vue';
 
  defineEmits(["close"]);
 
@@ -45,7 +43,7 @@
       <ButtonClose @close="$emit('close')" />
     </div>
     <div class="md-content">
-      <span class="text-caption">Select a .rsm file from your computer:</span>
+      <span>Select a .rsm file from your computer:</span>
       <input type="file" id="file-upload" ref="fileUpload" hidden>
       <label for="file-upload">
         <Button
@@ -55,7 +53,7 @@
             icon="Upload"
             class="btn-md"
             @click="triggerFileUpload" />
-        <span class="file-upload-echo">No file chosen.</span>
+        <span class="file-upload-echo text-caption">No file chosen.</span>
       </label>
     </div>
     <div class="md-footer">

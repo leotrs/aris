@@ -3,4 +3,12 @@ import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router.js';
 
-createApp(App).use(router).mount('#app')
+const app = createApp(App).use(router);
+
+const modules = import.meta.glob('./common/*.vue', { eager: true });
+for (const path in modules) {
+    const component = modules[path].default;
+    app.component(component.__name, component);
+}
+
+app.mount('#app');

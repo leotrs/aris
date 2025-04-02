@@ -1,9 +1,5 @@
 <script setup>
  import { defineEmits } from 'vue';
- import Avatar from './Avatar.vue';
- import Button from './Button.vue';
- import Searchbar from './Searchbar.vue';
- import SegmentedControl from './SegmentedControl.vue';
 
  const segmentedControlIcons = ["LayoutList", "LayoutCards"];
  const emits = defineEmits(["list", 'cards']);
@@ -18,7 +14,7 @@
           @change="(idx) => idx == 0 ? $emit('list') : $emit('cards')" />
     </div>
     <div class="tb-search">
-      <Searchbar />
+      <SearchBar />
     </div>
     <div class="tb-cta">
       <Button kind="tertiary"  icon="Settings" />

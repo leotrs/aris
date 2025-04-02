@@ -2,8 +2,6 @@
  import { defineProps, defineEmits } from 'vue';
  import { useRouter } from 'vue-router';
  import { IconBook, IconFileCheck, IconVersions, IconX } from '@tabler/icons-vue';
- import Button from './Button.vue';
- import ButtonClose from './ButtonClose.vue';
 
  const props = defineProps({
      doc: Object
