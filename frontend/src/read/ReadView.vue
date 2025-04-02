@@ -35,7 +35,8 @@
      /* Get the title and other info */
      const response = await fetch(`${baseURL}`);
      if (!response.ok) { throw new Error('Failed to fetch HTML') }
-     docTitle.value = await response.json().title;
+     const json = await response.json();
+     docTitle.value = json.title;
 
      /* Relocate the minimap */
      if (leftColumnFixed.value) {
