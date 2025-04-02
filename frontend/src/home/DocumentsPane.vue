@@ -1,6 +1,7 @@
 <script setup>
  import { ref, computed, onMounted, defineProps, defineEmits } from 'vue';
  import { useRouter } from 'vue-router';
+ import { onKeyUp } from '@vueuse/core';
  import DocumentsPaneItem from './DocumentsPaneItem.vue';
  import ColumnHeader from './DocumentsPaneColumnHeader.vue';
 
@@ -9,7 +10,7 @@
  })
 
  const documents = ref([]);
- const active = ref([]);
+ const activeIndex = ref(null);
 
  onMounted( async () => {
      const url = "http://localhost:8000/documents"
@@ -19,7 +20,6 @@
              throw new Error('Failed to fetch documents');
          }
          documents.value = await response.json();
-         active.value = Array(documents.value.length).fill(false);
      } catch (error) {
          console.error(error);
      }
@@ -28,8 +28,7 @@
  const emit = defineEmits(["set-selected"]);
  let clickTimeout = ref(null);
  const selectForPreview = (doc, idx) => {
-     active.value.fill(false);
-     active.value[idx] = true;
+     activeIndex.value = idx;
      clickTimeout.value = setTimeout(() => { emit("set-selected", doc) }, 200);
  };
 
@@ -55,13 +54,34 @@
  }
  const handleColumnHeaderEvent = (columnName, mode) => {
      const col = columnNames[columnName];
-     console.log(columnName, mode);
      if (mode == 'asc') {
          documents.value.sort((a, b) => a[col].localeCompare(b[col]));
      } else if (mode == 'desc') {
          documents.value.sort((a, b) => b[col].localeCompare(a[col]));
      }
  }
+
+ onKeyUp (['j', 'J', 'ArrowDown'], (e) => {
+     e.preventDefault();
+     if (activeIndex.value === null) {
+         activeIndex.value = 0;
+     } else {
+         activeIndex.value = (activeIndex.value + 1) % documents.value.length;
+     }
+ });
+ onKeyUp (['k', 'K', 'ArrowUp'], (e) => {
+     e.preventDefault();
+     if (activeIndex.value === null) {
+         activeIndex.value = 0;
+     } else {
+         activeIndex.value = (activeIndex.value + documents.value.length - 1) % documents.value.length;
+     }
+ });
+ onKeyUp ('Escape', (e) => {
+     e.preventDefault();
+     activeIndex.value = null;
+ });
+
 </script>
 
 
@@ -90,7 +110,7 @@
     <div class="docs-group" :class="mode">
       <DocumentsPaneItem
           v-for="(doc, idx) in documents"
-          :class="{ active: active ? active[idx] : false }"
+          :class="{ active: activeIndex == idx }"
           :doc="doc"
           :mode="mode"
           @click="selectForPreview(doc, idx)"
