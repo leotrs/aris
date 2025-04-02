@@ -91,6 +91,7 @@
          background-color: var(--surface-information);
          height: 40px;
          align-content: center;
+         margin-bottom: 8px;
      }
 
      & > *:first-child {
@@ -107,24 +108,6 @@
 
  }
 
- .item.list.active > * {
-     background-color: var(--surface-page);
-     border-top: var(--border-med) solid var(--border-action);
-     border-bottom: var(--border-med) solid var(--border-action);
- }
-
- .item.list.active > *:first-child {
-     border-top-left-radius: 8px;
-     border-bottom-left-radius: 8px;
-     border-left: var(--border-med) solid var(--border-action);
- }
-
- .item.list.active > *:last-child {
-     border-top-right-radius: 8px;
-     border-bottom-right-radius: 8px;
-     border-right: var(--border-med) solid var(--border-action);
- }
-
  .docs-group.list {
      display: contents;
 
@@ -134,7 +117,6 @@
          & > *:first-child { padding-left: 16px }
      }
  }
-
 
  .documents.cards {
 
