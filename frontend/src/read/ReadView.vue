@@ -1,6 +1,7 @@
 <script setup>
  import { ref, watch, onMounted } from 'vue';
  import { useRoute } from 'vue-router';
+ import { onKeyUp } from '@vueuse/core';
  import Sidebar from './Sidebar.vue';
  import Topbar from './Topbar.vue';
  import ReadOverlaySettings from './PanelSettings.vue'
@@ -60,6 +61,15 @@
  const showSettings = ref(false);
 
  const backgroundColor = ref("var(--surface-page)");
+
+ onKeyUp (['m', 'M'], (e) => {
+     e.preventDefault();
+     showMinimap.value = !showMinimap.value;
+ });
+ onKeyUp (['s', 'S'], (e) => {
+     e.preventDefault();
+     showSettings.value = !showSettings.value;
+ });
 </script>
 
 
