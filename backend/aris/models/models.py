@@ -2,7 +2,7 @@ import enum
 from datetime import datetime
 
 from sqlalchemy import (Column, DateTime, Enum, ForeignKey, Integer, String,
-                        Text, create_engine)
+                        Table, Text, UniqueConstraint, create_engine)
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
@@ -25,6 +25,22 @@ class User(Base):
     deleted_at = Column(DateTime, nullable=True)
 
     documents = relationship("Document", backref="owner")
+    tags = relationship("Tag", back_populates="owner", cascade="all, delete-orphan")
+
+
+document_tags = Table(
+    "document_tags",
+    Base.metadata,
+    Column(
+        "document_id",
+        Integer,
+        ForeignKey("documents.id", ondelete="CASCADE"),
+        primary_key=True,
+    ),
+    Column(
+        "tag_id", Integer, ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True
+    ),
+)
 
 
 class Document(Base):
@@ -41,4 +57,17 @@ class Document(Base):
     deleted_at = Column(DateTime, nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
-    # authors = relationship('Author', backref='document')
+    tags = relationship("Tag", secondary=document_tags, back_populates="documents")
+
+
+class Tag(Base):
+    __tablename__ = "tags"
+
+    id = Column(Integer, primary_key=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    name = Column(String, nullable=False, unique=False)
+
+    documents = relationship("Document", secondary=document_tags, back_populates="tags")
+    owner = relationship("User", back_populates="tags")
