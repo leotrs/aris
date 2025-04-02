@@ -6,16 +6,34 @@ from sqlalchemy.orm import Session
 from ..models import Document, DocumentStatus
 
 
+def _extract_title(doc: Document) -> str:
+    if doc is None:
+        return ""
+    if doc.title:
+        return doc.title
+    app = rsm.app.ParserApp(plain=doc.source)
+    app.run()
+    return app.transformer.tree.title
+
+
 def get_documents(db: Session):
-    return db.query(Document).filter(Document.deleted_at.is_(None)).all()
+    docs = db.query(Document).filter(Document.deleted_at.is_(None)).all()
+    for doc in docs:
+        if not doc:
+            continue
+        doc.title = _extract_title(doc)
+    return docs
 
 
 def get_document(document_id: int, db: Session):
-    return (
+    doc = (
         db.query(Document)
         .filter(Document.id == document_id, Document.deleted_at.is_(None))
         .first()
     )
+    if doc:
+        doc.title = _extract_title(doc)
+    return doc
 
 
 def get_document_html(document_id: int, db: Session):
