@@ -44,15 +44,15 @@
       <Button
           kind="secondary"
           icon="CirclePlus"
-          :text="!collapsed ? 'New Document' : ''"
+          :text="!collapsed ? 'New File' : ''"
           @click="$emit('showFileUploadModal')" />
     </div>
     <div class="sb-menu">
-      <SidebarItem :collapsed="collapsed" text="Home" active />
+      <!-- <SidebarItem :collapsed="collapsed" text="Home" active /> -->
+      <SidebarItem :collapsed="collapsed" text="All Files" active />
       <SidebarItem :collapsed="collapsed" text="Write" />
       <SidebarItem :collapsed="collapsed" text="Read" />
       <SidebarItem :collapsed="collapsed" text="Review" />
-      <SidebarItem :collapsed="collapsed" text="All Files" />
       <Separator />
       <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />
     </div>
