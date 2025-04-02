@@ -124,6 +124,7 @@
  .documents.list {
      width: 100%;
      display: grid;
+     margin-top: 8px;
      grid-template-columns: 2fr 1.5fr 1fr 100px 50px 16px 8px;
  }
 
