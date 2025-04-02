@@ -4,15 +4,15 @@
 
  const props = defineProps({
      icon: String,
-     text: String,
+     text: String
  });
+ const active = defineModel();
  const emit = defineEmits(['on', 'off']);
 
- const active = ref(false);
  watch(active, (newValue, oldValue) => {
      if (newValue) emit('on');
      if (!newValue) emit('off');
- })
+ });
 </script>
 
 

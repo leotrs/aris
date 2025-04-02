@@ -6,7 +6,10 @@
 
 
 <template>
-  <button class="tertiary btn-close" @click="$emit('close')">
+  <button
+      class="tertiary btn-close"
+      ref="buttonClose"
+      @click="$emit('close')" >
     <IconX class="btn-icon" />
   </button>
 </template>

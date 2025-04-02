@@ -85,6 +85,7 @@
         <div class="left-column fixed" ref="leftColumnFixed">
           <ReadOverlaySettings
               v-show="showSettings"
+              @close="showSettings = false"
               @set-background="(c) => {console.log(c); backgroundColor = c}"
           />
         </div>

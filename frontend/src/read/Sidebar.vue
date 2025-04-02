@@ -29,10 +29,7 @@
       <ButtonToggle icon="Variable" />
       <ButtonToggle icon="Blocks" />
       <ButtonToggle icon="Message" />
-      <ButtonToggle
-          icon="FileSettings"
-          @on="showSettings = true"
-          @off="showSettings = false" />
+      <ButtonToggle icon="FileSettings" v-model="showSettings" />
     </div>
   </div>
 </template>
