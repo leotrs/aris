@@ -1,4 +1,4 @@
-from .models import Document, DocumentStatus, User
+from .models import Document, DocumentStatus, Tag, User
 
 MOCK_USERS = [
     User(
@@ -67,4 +67,17 @@ MOCK_DOCUMENTS = [
         ::
         """,
     ),
+]
+
+
+MOCK_TAGS = [
+    Tag(name="Research", user_id=1),
+    Tag(name="Data Analysis", user_id=1),
+    Tag(name="Machine Learning", user_id=2),
+    Tag(name="Deep Learning", user_id=2),
+    Tag(name="Network Science", user_id=2),
+    Tag(name="Data Science", user_id=3),
+    Tag(name="AI Ethics", user_id=3),
+    Tag(name="Databases", user_id=3),
+    Tag(name="Chem. Eng.", user_id=3),
 ]
