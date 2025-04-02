@@ -13,3 +13,7 @@ dependencies = [
     "ujson>=5.10.0",
     "uvicorn>=0.34.0",
 ]
+
+
+[tool.setuptools]
+package-dir = {"" = "."}
