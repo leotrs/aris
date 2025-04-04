@@ -24,7 +24,10 @@
     <FileTitle :doc="doc" v-model="fileTitleActive" />
     <template v-if="mode == 'cards'"><ContextMenu @rename="rename"/></template>
     <div class="minimap">minimap</div>
-    <div class="tags">tags</div>
+    <div class="tags">
+      {{ doc.tags }}
+      <Tag v-for="tag_name in doc.tags" :name="tag_name" />
+    </div>
     <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
     <div class="grid-wrapper-1"><Avatar name="LT" /></div>
     <div class="grid-wrapper-2"><template v-if="mode == 'list'"><ContextMenu @rename="rename"/></template></div>

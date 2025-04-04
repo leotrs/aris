@@ -5,11 +5,10 @@
 
  const emit = defineEmits(['set-background', 'close']);
  const colors = {
-     page: "var(--surface-page)",
-     gray: "var(--gray-50)",
-     sepia: "var(--orange-50)",
+     white: "var(--surface-page)",
+     gray: "var(--gray-75)",
+     sepia: "#F4E8D5",
      green: "var(--green-50)",
-     blue: "var(--blue-50)"
  }
 
  const selfRef = ref(null);

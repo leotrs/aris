@@ -11,7 +11,7 @@
 
  const documents = ref([]);
  onMounted( async () => {
-     const url = "http://localhost:8000/documents"
+     const url = "http://localhost:8000/users/1/documents"
      try {
          const response = await fetch(url);
          if (!response.ok) {
@@ -118,7 +118,7 @@
       <span v-if="mode == 'list'" class="spacer"></span>
     </div>
 
-    <div class="tags">
+    <div v-if="mode == 'cards'" class="tags">
       <Tag v-for="tag_name in tags" :name="tag_name" />
     </div>
 
