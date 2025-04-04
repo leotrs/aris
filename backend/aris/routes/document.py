@@ -18,9 +18,17 @@ def get_documents(db: Session = Depends(get_db)):
 @router.get("/documents/{document_id}")
 def get_document(document_id: int, db: Session = Depends(get_db)):
     doc = crud.get_document(document_id, db)
+    tags = crud.get_document_tags(document_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
-    return doc
+    return {
+        "title": doc.title,
+        "abstract": doc.abstract,
+        "last_edited_at": doc.last_edited_at,
+        "source": doc.source,
+        "owner_id": doc.owner_id,
+        "tags": [dir(tags), dir(tags[0])],
+    }
 
 
 @router.get("/documents/{document_id}/html", response_class=HTMLResponse)

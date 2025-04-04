@@ -1,7 +1,7 @@
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from ..models import Document, Tag, User
+from ..models import Document, Tag, User, document_tags
 
 
 def create_tag(user_id: int, name: str, db: Session):
@@ -64,3 +64,13 @@ def delete_tag(tag_id: int, user_id: int, db: Session):
     except SQLAlchemyError as e:
         db.rollback()
         return None
+
+
+def get_document_tags(document_id: int, db: Session):
+    tags = (
+        db.query(Tag)
+        .join(document_tags, document_tags.c.tag_id == Tag.id)
+        .filter(document_tags.c.document_id == document_id)
+        .all()
+    )
+    return tags
