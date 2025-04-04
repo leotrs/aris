@@ -74,8 +74,6 @@
 <style scoped>
  .item {
      color: var(--extra-dark);
-     & > .minimap { height: 40px };
-     & > .tags { height: 40px };
  }
 
  .item.list {
@@ -122,5 +120,21 @@
 
  .tags {
      position: relative;
+     display: flex;
+     align-items: center;
+     overflow-x: auto;
+     overflow-y: clip;
+
+     &::-webkit-scrollbar {
+         height: 8px;
+         background-color: transparent;
+     }
+     &::-webkit-scrollbar-thumb {
+         background-color: var(--gray-300);
+         border-radius: 4px;
+     }
+     &::-webkit-scrollbar-thumb:hover {
+         background: var(--surface-hint);
+     }
  }
 </style>

@@ -29,13 +29,17 @@
 
 
 <style scoped>
+ .pill {
+     margin-right: 4px;
+ }
+
  .menu {
      display: flex;
      flex-direction: column;
      gap: 8px;
      position: absolute;
      top: 0;
-     left: 0;
+     right: 0;
      transform: translateY(40px);
      z-index: 999;
      background-color: var(--surface-primary);
