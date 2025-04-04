@@ -27,7 +27,7 @@ def get_document(document_id: int, db: Session = Depends(get_db)):
         "last_edited_at": doc.last_edited_at,
         "source": doc.source,
         "owner_id": doc.owner_id,
-        "tags": [dir(tags), dir(tags[0])],
+        "tags": [{"name": t.name, "id": t.id} for t in tags],
     }
 
 

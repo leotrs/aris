@@ -1,5 +1,5 @@
 <script setup>
- import { ref, computed, onMounted, defineProps, defineEmits } from 'vue';
+ import { ref, computed, inject, onMounted } from 'vue';
  import { useRouter } from 'vue-router';
  import { onKeyUp } from '@vueuse/core';
  import DocumentsPaneItem from './DocumentsPaneItem.vue';
@@ -8,35 +8,9 @@
  const props = defineProps({
      mode: { type: String, default: 'list' }
  })
-
- const documents = ref([]);
- onMounted( async () => {
-     const url = "http://localhost:8000/users/1/documents"
-     try {
-         const response = await fetch(url);
-         if (!response.ok) {
-             throw new Error('Failed to fetch documents');
-         }
-         documents.value = await response.json();
-     } catch (error) {
-         console.error(error);
-     }
- });
-
- const tags = ref([]);
- onMounted( async () => {
-     const url = "http://localhost:8000/tags/1"
-     try {
-         const response = await fetch(url);
-         if (!response.ok) {
-             throw new Error('Failed to fetch tags');
-         }
-         tags.value = await response.json();
-         tags.value = tags.value.map((obj) => obj.name);
-     } catch (error) {
-         console.error(error);
-     }
- });
+ const userID = inject('userID');
+ const { userDocs, updateUserDocs } = inject('userDocs');
+ const { userTags, updateUserTags } = inject('userTags');
 
  const emit = defineEmits(["set-selected"]);
  const activeIndex = ref(null);
@@ -69,9 +43,9 @@
  const handleColumnHeaderEvent = (columnName, mode) => {
      const col = columnNames[columnName];
      if (mode == 'asc') {
-         documents.value.sort((a, b) => a[col].localeCompare(b[col]));
+         userDocs.value.sort((a, b) => a[col].localeCompare(b[col]));
      } else if (mode == 'desc') {
-         documents.value.sort((a, b) => b[col].localeCompare(a[col]));
+         userDocs.value.sort((a, b) => b[col].localeCompare(a[col]));
      }
  }
 
@@ -80,7 +54,7 @@
      if (activeIndex.value === null) {
          activeIndex.value = 0;
      } else {
-         activeIndex.value = (activeIndex.value + 1) % documents.value.length;
+         activeIndex.value = (activeIndex.value + 1) % userDocs.value.length;
      }
  });
  onKeyUp (['k', 'K', 'ArrowUp'], (e) => {
@@ -88,14 +62,13 @@
      if (activeIndex.value === null) {
          activeIndex.value = 0;
      } else {
-         activeIndex.value = (activeIndex.value + documents.value.length - 1) % documents.value.length;
+         activeIndex.value = (activeIndex.value + userDocs.value.length - 1) % userDocs.value.length;
      }
  });
  onKeyUp ('Escape', (e) => {
      e.preventDefault();
      activeIndex.value = null;
  });
-
 </script>
 
 
@@ -119,12 +92,12 @@
     </div>
 
     <div v-if="mode == 'cards'" class="tags">
-      <Tag v-for="tag_name in tags" :name="tag_name" />
+      <Tag v-for="tag_name in userTags" :name="tag_name" />
     </div>
 
     <div class="docs-group" :class="mode">
       <DocumentsPaneItem
-          v-for="(doc, idx) in documents"
+          v-for="(doc, idx) in userDocs"
           :class="{ active: activeIndex == idx }"
           :doc="doc"
           :mode="mode"

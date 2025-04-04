@@ -1,5 +1,7 @@
+from aris.models import Document, Tag, document_tags
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
+from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from .. import crud, get_db
@@ -9,6 +11,7 @@ router = APIRouter()
 
 
 class TagCreateOrUpdate(BaseModel):
+    tag_id: int
     user_id: int
     name: str
 
@@ -61,3 +64,27 @@ async def delete_tag(tag_id: int, user_id: int, db: Session = Depends(get_db)):
     if deleted_tag is None:
         raise HTTPException(status_code=400, detail="Error updating tag: " + str(e))
     return deleted_tag
+
+
+@router.post("/users/{user_id}/documents/{document_id}/tags/{tag_id}")
+def add_tag_to_document(
+    user_id: int, document_id: int, tag_id: int, db: Session = Depends(get_db)
+):
+    """Assign a tag to a document."""
+    try:
+        crud.add_tag_to_document(user_id, document_id, tag_id, db)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail="Error adding tag: " + str(e))
+    return {"message": "Tag added successfully"}
+
+
+@router.delete("/users/{user_id}/documents/{document_id}/tags/{tag_id}")
+def remove_tag_from_document(
+    user_id: int, document_id: int, tag_id: int, db: Session = Depends(get_db)
+):
+    """Remove a tag from a document."""
+    try:
+        crud.remove_tag_from_document(user_id, document_id, tag_id, db)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail="Error removing tag: " + str(e))
+    return {"message": "Tag removed successfully"}
