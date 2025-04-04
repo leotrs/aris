@@ -31,8 +31,10 @@
  });
 
  const userDocs = ref([]);
- const updateUserDocs = (docID) => { console.log('NOT IMPLEMENTED') };
- provide('userDocs', { userDocs, updateUserDocs })
+ const updateDoc = (docID) => {
+     console.log('NOT IMPLEMENTED')
+ };
+ provide('userDocs', { userDocs, updateDoc })
  onMounted( async () => {
      const url = `http://localhost:8000/users/${userID}/documents`
      try {

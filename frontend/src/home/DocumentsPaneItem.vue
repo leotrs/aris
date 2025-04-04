@@ -17,6 +17,8 @@
 
  const editTagsActive = ref(false);
  const editTags = () => { editTagsActive.value = true };
+
+ const { _, updateDoc } = inject('userDocs');
  const tagOn = async (tagID) => {
      const url = `http://localhost:8000/users/${userID}/documents/${props.doc.id}/tags/${tagID}`
      try {
@@ -24,6 +26,7 @@
          if (!response.ok) {
              throw new Error('Failed to add tag');
          }
+         updateDoc(props.doc.id);
      } catch (error) {
          console.error(error);
      }
@@ -35,6 +38,7 @@
          if (!response.ok) {
              throw new Error('Failed to remove tags');
          }
+         updateDoc(props.doc.id);
      } catch (error) {
          console.error(error);
      }
