@@ -65,7 +65,17 @@
     </div>
     <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
     <div class="grid-wrapper-1"><Avatar name="LT" /></div>
-    <div class="grid-wrapper-2"><template v-if="mode == 'list'"><ContextMenu @rename="rename" @edit-tags="editTags" /></template></div>
+    <div class="grid-wrapper-2">
+      <template v-if="mode == 'list'">
+        <ContextMenu @rename="rename" @edit-tags="editTags">
+          <ContextMenuItem icon="Edit" @click="rename" caption="Rename" />
+          <ContextMenuItem icon="Copy" caption="Duplicate" />
+          <ContextMenuItem icon="Tags" @click="editTags" caption="Edit tags" />
+          <ContextMenuItem icon="Download" caption="Download" />
+          <ContextMenuItem icon="TrashX" caption="Delete" class="danger" />
+        </ContextMenu>
+      </template>
+    </div>
     <span></span>
   </div>
 </template>
@@ -135,5 +145,9 @@
      &::-webkit-scrollbar-thumb:hover {
          background: var(--surface-hint);
      }
+ }
+
+ :deep(.dots > .menu) {
+     transform: translateX(-16px) translateY(-8px);
  }
 </style>

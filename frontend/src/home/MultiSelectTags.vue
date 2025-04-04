@@ -14,17 +14,17 @@
 
 
 <template>
-  <Tag v-for="tag in tags" :name="tag.name" />
-  <span><IconCirclePlus @click.stop="toggleMenu" /></span>
-  <div class="menu" v-if="active">
-    <Tag
+  <Tag v-for="tag in tags" :name="tag.name" :active="true" />
+  <ContextMenu icon="CirclePlus">
+    <TagControl
         v-for="tag in userTags"
+        class="item"
         :name="tag.name"
-        :default-state="tags.map((t) => t.id).includes(tag.tag_id)"
+        :initial-state="tags.map((t) => t.id).includes(tag.tag_id)"
         @on="$emit('on', tag.tag_id)"
         @off="$emit('off', tag.tag_id)" />
-    <span class="new-tag">new tag...</span>
-  </div>
+    <span class="item new-tag">new tag...</span>
+  </ContextMenu>
 </template>
 
 
@@ -33,19 +33,11 @@
      margin-right: 4px;
  }
 
- .menu {
+ .menu > .item {
      display: flex;
-     flex-direction: column;
-     gap: 8px;
-     position: absolute;
-     top: 0;
-     right: 0;
-     transform: translateY(40px);
-     z-index: 999;
-     background-color: var(--surface-primary);
-     border-radius: 16px;
-     box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%), 0px 2px 6px rgba(0, 0, 0, 15%);
-     padding-block: 8px;
+     align-items: center;
+     justify-content: space-between;
      padding-inline: 8px;
+     gap: 8px;
  }
 </style>

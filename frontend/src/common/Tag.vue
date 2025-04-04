@@ -3,23 +3,13 @@
 
  const props = defineProps({
      name: { type: String, required: true },
-     defaultState: { type: Boolean, default: false }
+     active: { type: Boolean, required: true }
  });
- const state = ref(props.defaultState);
-
- const emit = defineEmits(['on', 'off']);
- const toggle = () => {
-     state.value = !state.value;
-     emit(state.value ? 'on' : 'off');
- }
 </script>
 
 
 <template>
-  <span
-      class="pill"
-      :class=" state ? 'on' : 'off'"
-      @click.prevent="toggle" >
+  <span class="pill" :class=" active ? 'on' : 'off'">
     {{ name }}
   </span>
 </template>
@@ -31,10 +21,6 @@
      padding-inline: 8px;
      padding-block: 4px;
      text-wrap: nowrap;
-
-     &:hover {
-         background-color: var(--surface-hover);
-     }
  }
 
  .pill.on {
