@@ -1,3 +1,4 @@
+from sqlalchemy import delete, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
@@ -24,7 +25,7 @@ def create_tag(user_id: int, name: str, db: Session):
 def get_user_tags(user_id: int, db: Session):
     """Get all tags for a user."""
     tags = db.query(Tag).filter(Tag.user_id == user_id).all()
-    return tags or []
+    return [{"tag_id": t.id, "name": t.name, "user_id": t.user_id} for t in tags]
 
 
 def update_tag(tag_id: int, user_id: int, new_name: str, db: Session):
@@ -74,3 +75,42 @@ def get_document_tags(document_id: int, db: Session):
         .all()
     )
     return tags
+
+
+def add_tag_to_document(user_id: int, document_id: int, tag_id: str, db: Session):
+    with db.begin():
+        document = db.get(Document, document_id)
+        if not document or document.owner_id != user_id:
+            raise ValueError("Unauthorized or document not found")
+        tag = db.get(Tag, tag_id)
+        if not tag or tag.user_id != user_id:
+            raise ValueError("Unauthorized or tag not found")
+
+        exists_stmt = select(document_tags).where(
+            (document_tags.c.document_id == document_id)
+            & (document_tags.c.tag_id == tag_id)
+        )
+        if db.execute(exists_stmt).first():
+            raise ValueError("Tag already assigned")
+
+        db.execute(
+            document_tags.insert().values(document_id=document_id, tag_id=tag_id)
+        )
+
+
+def remove_tag_from_document(user_id: int, document_id: int, tag_id: str, db: Session):
+    with db.begin():
+        document = db.get(Document, document_id)
+        if not document or document.owner_id != user_id:
+            raise ValueError("Unauthorized or document not found")
+        tag = db.get(Tag, tag_id)
+        if not tag or tag.user_id != user_id:
+            raise ValueError("Unauthorized or tag not found")
+
+        delete_stmt = delete(document_tags).where(
+            (document_tags.c.document_id == document_id)
+            & (document_tags.c.tag_id == tag_id)
+        )
+        result = db.execute(delete_stmt)
+        if result.rowcount == 0:
+            raise ValueError("Tag not assigned to this document")

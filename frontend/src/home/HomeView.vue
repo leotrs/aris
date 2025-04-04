@@ -1,5 +1,5 @@
 <script setup>
- import { ref } from 'vue';
+ import { ref, provide, onMounted } from 'vue';
  import Sidebar from './Sidebar.vue';
  import Topbar from './Topbar.vue';
  import DocumentsPane from './DocumentsPane.vue';
@@ -10,6 +10,41 @@
  const selectedForPreview = ref(null);
  const setSelectedForPreview = (doc) => { selectedForPreview.value = doc };
  const currentMode = ref("list");
+
+ const userID = 1;
+ provide('userID', userID);
+
+ const userTags = ref([]);
+ const updateUserTags = () => { console.log('NOT IMPLEMENTED') };
+ provide('userTags', { userTags, updateUserTags });
+ onMounted( async () => {
+     const url = `http://localhost:8000/tags/${userID}`;
+     try {
+         const response = await fetch(url);
+         if (!response.ok) {
+             throw new Error('Failed to fetch tags');
+         }
+         userTags.value = await response.json();
+     } catch (error) {
+         console.error(error);
+     }
+ });
+
+ const userDocs = ref([]);
+ const updateUserDocs = (docID) => { console.log('NOT IMPLEMENTED') };
+ provide('userDocs', { userDocs, updateUserDocs })
+ onMounted( async () => {
+     const url = `http://localhost:8000/users/${userID}/documents`
+     try {
+         const response = await fetch(url);
+         if (!response.ok) {
+             throw new Error('Failed to fetch documents');
+         }
+         userDocs.value = await response.json();
+     } catch (error) {
+         console.error(error);
+     }
+ });
 </script>
 
 

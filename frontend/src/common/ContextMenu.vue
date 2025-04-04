@@ -1,9 +1,9 @@
 <script setup>
  import { ref, defineEmits } from 'vue';
- import { IconDotsVertical, IconEdit, IconCopy, IconVersions, IconDownload, IconShare3, IconTrashX } from '@tabler/icons-vue';
+ import { IconDotsVertical, IconEdit, IconTags, IconCopy, IconVersions, IconDownload, IconShare3, IconTrashX } from '@tabler/icons-vue';
  import Separator from './Separator.vue';
 
- const emit = defineEmits(["rename"]);
+ const emit = defineEmits(["rename", "edit-tags"]);
  const show = ref(false);
  const toggleMenu = () => { show.value = !show.value };
 </script>
@@ -14,6 +14,7 @@
     <div v-if="show" class="menu">
       <div class="item text-caption" @click="$emit('rename')"><IconEdit />Rename</div>
       <div class="item text-caption"><IconCopy />Duplicate</div>
+      <div class="item text-caption" @click="$emit('edit-tags')"><IconTags />Edit tags</div>
       <!-- <div class="item text-caption"><IconVersions />Revisions</div> -->
       <div class="item text-caption"><IconDownload />Download</div>
       <!-- <div class="item text-caption"><IconShare3 />Share</div> -->
@@ -53,8 +54,7 @@
      background-color: var(--surface-primary);
      padding-block: 8px;
      border-radius: 16px;
-     box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
-     box-shadow: 0px 2px 6px rgba(0, 0, 0, 15%);
+     box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%), 0px 2px 6px rgba(0, 0, 0, 15%);
      & > *:not(:last-child) { margin-bottom: 8px };
 
      & .item {
