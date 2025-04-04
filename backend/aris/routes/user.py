@@ -47,4 +47,4 @@ def soft_delete_user(user_id: int, db: Session = Depends(get_db)):
 
 @router.get("/users/{user_id}/documents")
 def get_user_documents(user_id: int, db: Session = Depends(get_db)):
-    return crud.get_user_documents(user_id, db)
+    return crud.get_user_documents(user_id, True, db)
