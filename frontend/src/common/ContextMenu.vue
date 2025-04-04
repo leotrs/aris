@@ -10,7 +10,7 @@
 </script>
 
 <template>
-  <div class="dots" @click.stop="toggleMenu" @dblclick.stop>
+  <div :class="icon == 'Dots' ? 'dots' : 'icon'" @click.stop="toggleMenu" @dblclick.stop>
 
     <IconDotsVertical v-if="icon == 'Dots'" width="4" height="18" viewBox="10 3 4 18.25" />
     <component v-else :is="Icons['Icon' + props.icon]" />
