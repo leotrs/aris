@@ -1,22 +1,16 @@
 <script setup>
- import { ref } from 'vue';
- import { IconDotsVertical, IconEdit, IconTags, IconCopy, IconVersions, IconDownload, IconShare3, IconTrashX } from '@tabler/icons-vue';
  import * as Icons from '@tabler/icons-vue';
- import Separator from './Separator.vue';
 
- const props = defineProps({ icon: { type: String, default: 'Dots' }});
- const show = ref(false);
- const toggleMenu = () => { show.value = !show.value };
+ const props = defineProps({
+     icon: String,
+     caption: String
+ })
 </script>
 
 <template>
-  <div class="dots" @click.stop="toggleMenu" @dblclick.stop>
-
-    <IconDotsVertical v-if="icon == 'Dots'" width="4" height="18" viewBox="10 3 4 18.25" />
-    <component v-else :is="Icons['Icon' + props.icon]" />
-
-    <div v-if="show" class="menu"><slot /></div>
-
+  <div class="item">
+    <component :is="Icons['Icon' + props.icon]" class="cmi-icon" />
+    <span class="cmi-caption">{{ caption }}</span>
   </div>
 </template>
 
@@ -46,7 +40,7 @@
      position: absolute;
      right: 0;
      top: 0;
-     z-index: 999;
+     transform: translateX(-16px) translateY(-8px);
      background-color: var(--surface-primary);
      padding-block: 8px;
      border-radius: 16px;
