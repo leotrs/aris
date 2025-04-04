@@ -31,12 +31,21 @@
  });
 
  const userDocs = ref([]);
- const updateDoc = (docID) => {
-     console.log('NOT IMPLEMENTED')
+ const reloadDoc = async (docID) => {
+     const url = `http://localhost:8000/users/${userID}/documents`;
+     try {
+         const response = await fetch(url);
+         if (!response.ok) {
+             throw new Error(`Failed to fetch document $(docID)`);
+         }
+         userDocs.value = await response.json();
+     } catch (error) {
+         console.error(error);
+     }
  };
- provide('userDocs', { userDocs, updateDoc })
+ provide('userDocs', { userDocs, reloadDoc })
  onMounted( async () => {
-     const url = `http://localhost:8000/users/${userID}/documents`
+     const url = `http://localhost:8000/users/${userID}/documents`;
      try {
          const response = await fetch(url);
          if (!response.ok) {
