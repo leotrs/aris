@@ -1,5 +1,6 @@
 from datetime import datetime
 
+import rsm
 from sqlalchemy.orm import Session
 
 from ..models import Document, DocumentStatus, Tag, document_tags

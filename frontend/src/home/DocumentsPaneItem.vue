@@ -74,6 +74,7 @@
 <style scoped>
  .item {
      color: var(--extra-dark);
+     overflow-y: visible;
  }
 
  .item.list {
@@ -122,8 +123,6 @@
      position: relative;
      display: flex;
      align-items: center;
-     overflow-x: auto;
-     overflow-y: clip;
 
      &::-webkit-scrollbar {
          height: 8px;

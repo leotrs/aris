@@ -15,7 +15,7 @@
 
 <template>
   <Tag v-for="tag in tags" :name="tag.name" />
-  <span><IconCirclePlus @click.prevent="toggleMenu" /></span>
+  <span><IconCirclePlus @click.stop="toggleMenu" /></span>
   <div class="menu" v-if="active">
     <Tag
         v-for="tag in userTags"
