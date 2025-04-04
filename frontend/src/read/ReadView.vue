@@ -151,18 +151,18 @@
      &::-webkit-scrollbar {
          width: 16px;
          background: transparent;
-     };
+     }
      &::-webkit-scrollbar-track {
          border-bottom-right-radius: 16px;
          border-top-right-radius: 16px
-     };
+     }
      &::-webkit-scrollbar-thumb {
          background: var(--gray-200);
          border-radius: 8px;
          height: 32px;
          width: 16px;
-     };
-     &::-webkit-scrollbar-thumb:hover { background: var(--surface-hint) };
+     }
+     &::-webkit-scrollbar-thumb:hover { background: var(--surface-hint) }
  }
 
  .left-column, .right-column {

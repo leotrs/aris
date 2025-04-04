@@ -28,11 +28,16 @@
         type="text"
         @keyup.enter="submit"
         @click.stop
-        @dblclick.stop
-    /></span>
-    <span v-else>{{ doc.title }}</span>
+        @dblclick.stop />
+  </span>
+  <span v-else class="file-title">{{ doc.title }}</span>
 </template>
 
 
 <style scoped>
+ .file-title {
+     text-overflow: ellipsis;
+     white-space: nowrap;
+     overflow: hidden
+ }
 </style>

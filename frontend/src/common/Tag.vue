@@ -27,18 +27,23 @@
 
 <style scoped>
  .pill {
-     border-radius: 8px;
+     border-radius: 16px;
      padding-inline: 8px;
      padding-block: 4px;
+     text-wrap: nowrap;
+
+     &:hover {
+         background-color: var(--surface-hover);
+     }
  }
 
  .pill.on {
-     background-color: var(--secondary-100);
+     background-color: var(--secondary-800);
      color: var(--extra-light);
  }
 
  .pill.off {
-     border-color: var(--border-thin) solid var(--secondary-100);
+     border: var(--border-thin) solid var(--secondary-100);
      color: var(--extra-dark);
  }
 </style>
