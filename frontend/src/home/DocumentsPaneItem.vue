@@ -98,7 +98,6 @@
      }
      & .grid-wrapper-2 { padding-right: 0px };
      & .dots { padding-right: 0px };
-     &:first-child > * { border-top: var(--border-extrathin) solid var(--border-primary) };
      & > *:last-child { padding-right: 0px };
      &.active > * { background-color: var(--secondary-50) };
  }

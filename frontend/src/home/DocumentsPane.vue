@@ -91,10 +91,6 @@
       <span v-if="mode == 'list'" class="spacer"></span>
     </div>
 
-    <div v-if="mode == 'cards'" class="tags">
-      <Tag v-for="tag_name in userTags" :name="tag_name" />
-    </div>
-
     <div class="docs-group" :class="mode">
       <DocumentsPaneItem
           v-for="(doc, idx) in userDocs"
@@ -115,14 +111,13 @@
      width: 100%;
  }
 
- .documents.list {
-     display: grid;
+ .documents.list > :is(.pane-header, .docs-group)  {
+     display: grid !important;
      grid-template-columns: 2fr 1.5fr 1fr 100px 50px 16px 8px;
  }
 
  .documents.list .pane-header {
      background-color: var(--surface-information);
-     display: contents;
      grid-column: 1 / 7;
 
      & > *:first-child {
@@ -140,7 +135,8 @@
  }
 
  .docs-group.list {
-     display: contents;
+     overflow-y: auto;
+     height: calc(100% - 40px);
 
      & > .item {
          display: contents;
@@ -165,6 +161,7 @@
  }
 
  .docs-group.cards {
+     overflow-y: auto;
      columns: auto 250px;
      column-gap: 16px;
      & > .cards { break-inside: avoid };

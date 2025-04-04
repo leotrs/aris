@@ -40,4 +40,9 @@
      padding-inline: 8px;
      gap: 8px;
  }
+
+ :deep(.icon > svg) {
+     color: var(--light);
+ }
+
 </style>
