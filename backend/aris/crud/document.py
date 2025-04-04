@@ -1,19 +1,9 @@
 from datetime import datetime
 
-import rsm
 from sqlalchemy.orm import Session
 
-from ..models import Document, DocumentStatus
-
-
-def _extract_title(doc: Document) -> str:
-    if doc is None:
-        return ""
-    if doc.title:
-        return doc.title
-    app = rsm.app.ParserApp(plain=doc.source)
-    app.run()
-    return app.transformer.tree.title
+from ..models import Document, DocumentStatus, Tag, document_tags
+from .utils import extract_title
 
 
 def get_documents(db: Session):
@@ -21,7 +11,7 @@ def get_documents(db: Session):
     for doc in docs:
         if not doc:
             continue
-        doc.title = _extract_title(doc)
+        doc.title = extract_title(doc)
     return docs
 
 
@@ -32,7 +22,7 @@ def get_document(document_id: int, db: Session):
         .first()
     )
     if doc:
-        doc.title = _extract_title(doc)
+        doc.title = extract_title(doc)
     return doc
 
 
