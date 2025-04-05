@@ -60,6 +60,18 @@
          console.error(error);
      }
  };
+ const deleteTag = async (tag) => {
+     const url = `http://localhost:8000/users/${userID}/tags/${tag.id}`;
+     try {
+         const response = await fetch(url, { method: 'delete' });
+         if (!response.ok) {
+             throw new Error('Failed to delete tag');
+         }
+         reloadDoc(props.doc.id);
+     } catch (error) {
+         console.error(error);
+     }
+ }
 </script>
 
 <template>
@@ -79,7 +91,8 @@
           v-model="editTagsActive"
           @on="tagOn"
           @off="tagOff"
-          @set-color="setTagColor" />
+          @set-color="setTagColor"
+          @delete="deleteTag" />
     </div>
     <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
     <div class="grid-wrapper-1"><Avatar name="LT" /></div>

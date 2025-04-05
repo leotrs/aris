@@ -23,7 +23,8 @@
         :initial-state="tags.map((t) => t.id).includes(tag.id)"
         @on="$emit('on', tag.id)"
         @off="$emit('off', tag.id)"
-        @set-color="(c) => $emit('set-color', c, tag)" />
+        @set-color="(c) => $emit('set-color', c, tag)"
+        @delete="(t) => $emit('delete', t)" />
     <span class="item new-tag">new tag...</span>
   </ContextMenu>
 </template>

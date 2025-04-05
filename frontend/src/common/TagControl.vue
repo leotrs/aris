@@ -7,7 +7,7 @@
  });
  const state = ref(props.initialState);
 
- const emit = defineEmits(['on', 'off', 'set-color']);
+ const emit = defineEmits(['on', 'off', 'set-color', 'delete']);
  const toggle = () => {
      state.value = !state.value;
      emit(state.value ? 'on' : 'off');
@@ -26,7 +26,7 @@
         <span class="color orange" @click="$emit('set-color', 'orange')"></span>
       </div>
       <ContextMenuItem icon="Edit" caption="Rename" />
-      <ContextMenuItem icon="TrashX" caption="Delete" class="danger" />
+      <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="$emit('delete', tag)" />
     </ContextMenu>
   </div>
 </template>
