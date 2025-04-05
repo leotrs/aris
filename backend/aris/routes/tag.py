@@ -53,13 +53,13 @@ async def update_tag(tag: TagCreateOrUpdate, db: Session = Depends(get_db)):
     return updated_tag
 
 
-@router.delete("/tags/{_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/users/{user_id}/tags/{_id}/", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_tag(_id: int, user_id: int, db: Session = Depends(get_db)):
     """Delete a tag for a user."""
-    if _id not in (t.id for t in crud.get_user_tags(user_id, db)):
+    if _id not in (t["id"] for t in crud.get_user_tags(user_id, db)):
         raise HTTPException(status_code=404, detail="Tag not found")
 
-    deleted_tag = crud.soft_delete_tag(_id, user_id)
+    deleted_tag = crud.soft_delete_tag(_id, user_id, db)
     if deleted_tag is None:
         raise HTTPException(status_code=400, detail="Error updating tag: " + str(e))
     return deleted_tag

@@ -69,6 +69,7 @@ class Tag(Base):
     )
     name = Column(String, nullable=False, unique=False)
     color = Column(String, nullable=False)
+    deleted_at = Column(DateTime, nullable=True)
 
     documents = relationship("Document", secondary=document_tags, back_populates="tags")
     owner = relationship("User", back_populates="tags")

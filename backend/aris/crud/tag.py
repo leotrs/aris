@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy import delete, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
@@ -24,7 +26,14 @@ def create_tag(user_id: int, name: str, color: str, db: Session):
 
 def get_user_tags(user_id: int, db: Session):
     """Get all tags for a user."""
-    tags = db.query(Tag).filter(Tag.user_id == user_id).all()
+    tags = (
+        db.query(Tag)
+        .filter(
+            Tag.user_id == user_id,
+            Tag.deleted_at.is_(None),
+        )
+        .all()
+    )
     return [
         {"id": t.id, "user_id": t.user_id, "name": t.name, "color": t.color}
         for t in tags
@@ -33,7 +42,15 @@ def get_user_tags(user_id: int, db: Session):
 
 def update_tag(_id: int, user_id: int, new_name: str, new_color: str, db: Session):
     """Update the name of a tag."""
-    tag_to_update = db.query(Tag).filter(Tag.id == _id, Tag.user_id == user_id).first()
+    tag_to_update = (
+        db.query(Tag)
+        .filter(
+            Tag.id == _id,
+            Tag.user_id == user_id,
+            Tag.deleted_at.is_(None),
+        )
+        .first()
+    )
     if not tag_to_update:
         raise ValueError("Tag not found")
 
@@ -44,30 +61,35 @@ def update_tag(_id: int, user_id: int, new_name: str, new_color: str, db: Sessio
     return tag_to_update
 
 
-def delete_tag(_id: int, user_id: int, db: Session):
+def soft_delete_tag(_id: int, user_id: int, db: Session):
     """Delete a tag for a user."""
-    db.begin()
-
-    try:
-        tag_to_delete = (
-            db.query(Tag).filter(Tag.id == _id, Tag.user_id == user_id).first()
+    tag_to_delete = (
+        db.query(Tag)
+        .filter(
+            Tag.id == _id,
+            Tag.user_id == user_id,
+            Tag.deleted_at.is_(None),
         )
-        if not tag_to_delete:
-            raise ValueError("Tag not found")
+        .first()
+    )
+    if not tag_to_delete:
+        raise ValueError("Tag not found")
 
-        db.delete(tag_to_delete)
-        db.commit()
-        return {"message": "Tag deleted successfully"}
-    except SQLAlchemyError as e:
-        db.rollback()
-        return None
+    tag_to_delete.deleted_at = datetime.utcnow()
+    db.commit()
+    return {"message": "Tag deleted successfully"}
 
 
 def get_document_tags(document_id: int, db: Session):
     tags = (
         db.query(Tag)
         .join(document_tags, document_tags.c.tag_id == Tag.id)
-        .filter(document_tags.c.document_id == document_id)
+        .join(Document, Document.id == document_tags.c.document_id)
+        .filter(
+            document_tags.c.document_id == document_id,
+            Tag.deleted_at.is_(None),
+            Document.deleted_at.is_(None),
+        )
         .all()
     )
     return tags
