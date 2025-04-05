@@ -25,6 +25,7 @@
       <component :is="Icons['Icon' + props.icon]" class="btn-icon" />
     </template>
     <span class="btn-text" v-if="text">{{ text }}</span>
+    <slot />
   </button>
 </template>
 

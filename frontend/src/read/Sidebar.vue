@@ -24,12 +24,24 @@
           icon="MapPin"
           @on="showMinimap = true"
           @off="showMinimap = false" />
-      <ButtonToggle icon="Search" />
-      <ButtonToggle icon="Quote" />
-      <ButtonToggle icon="Variable" />
-      <ButtonToggle icon="Blocks" />
-      <ButtonToggle icon="Message" />
-      <ButtonToggle icon="FileSettings" v-model="showSettings" />
+      <ButtonToggle icon="Search">
+        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+      </ButtonToggle>
+      <ButtonToggle icon="Quote">
+        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+      </ButtonToggle>
+      <ButtonToggle icon="Variable">
+        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+      </ButtonToggle>
+      <ButtonToggle icon="Blocks">
+        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+      </ButtonToggle>
+      <ButtonToggle icon="Message">
+        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+      </ButtonToggle>
+      <ButtonToggle icon="FileSettings" v-model="showSettings">
+        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+      </ButtonToggle>
     </div>
   </div>
 </template>
@@ -53,6 +65,22 @@
      -ms-overflow-style: none;  /* Edge */
      &::-webkit-scrollbar { /* Chrome */
          display: none;
+     }
+ }
+
+ .btn-toggle {
+     position: relative;
+ }
+
+ .sc-wrapper {
+     position: fixed;
+     left: calc(64px + 4px);
+     top: calc(64px + 16px + 56px + 8px);
+     z-index: 999;
+
+     :deep(& > .sc-item) {
+         padding-block: 0px !important;
+         padding-inline: 0px !important;
      }
  }
 

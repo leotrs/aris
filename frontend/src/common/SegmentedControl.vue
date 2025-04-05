@@ -2,14 +2,12 @@
  import * as Icons from '@tabler/icons-vue';
  import { defineProps, defineEmits, ref, onMounted } from 'vue';
 
- const active = ref(0);
-
- const emits = defineEmits(["change"]);
-
  const props = defineProps({
      icons: Array,
      defaultActive: { type: Number, default: 0 }
  });
+ const emits = defineEmits(["change"]);
+ const active = ref(0);
 
  const setActive = (n) => { active.value = n };
  onMounted(() => { setActive(props.defaultActive) });
@@ -18,7 +16,6 @@
      setActive(idx);
      emits("change", idx);
  }
-
 </script>
 
 
@@ -41,11 +38,13 @@
      display: flex;
      gap: 4px;
 
+     & .sc-item {
+         border-radius: 4px;
+     }
      & .sc-item:first-child {
          border-top-left-radius: 16px;
          border-bottom-left-radius: 16px;
      }
-
      & .sc-item:last-child {
          border-top-right-radius: 16px;
          border-bottom-right-radius: 16px;
