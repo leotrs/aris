@@ -20,7 +20,7 @@
 
  const { _, reloadDoc } = inject('userDocs');
  const tagOn = async (tagID) => {
-     const url = `http://localhost:8000/users/${userID}/documents/${props.doc.id}/tags/${tagID}`
+     const url = `http://localhost:8000/users/${userID}/documents/${props.doc.id}/tags/${tagID}`;
      try {
          const response = await fetch(url, { method: 'post' });
          if (!response.ok) {
@@ -32,11 +32,28 @@
      }
  };
  const tagOff = async (tagID) => {
-     const url = `http://localhost:8000/users/${userID}/documents/${props.doc.id}/tags/${tagID}`
+     const url = `http://localhost:8000/users/${userID}/documents/${props.doc.id}/tags/${tagID}`;
      try {
          const response = await fetch(url, { method: 'delete' });
          if (!response.ok) {
              throw new Error('Failed to remove tags');
+         }
+         reloadDoc(props.doc.id);
+     } catch (error) {
+         console.error(error);
+     }
+ };
+ const setTagColor = async (newColor, tag) => {
+     const url = `http://localhost:8000/tags/${tag.id}`;
+     tag.color = newColor;
+     try {
+         const response = await fetch(url, {
+             method: 'put',
+             headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify(tag)
+         });
+         if (!response.ok) {
+             throw new Error('Failed to update tag');
          }
          reloadDoc(props.doc.id);
      } catch (error) {
@@ -61,7 +78,8 @@
           :tags="doc.tags"
           v-model="editTagsActive"
           @on="tagOn"
-          @off="tagOff" />
+          @off="tagOff"
+          @set-color="setTagColor" />
     </div>
     <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
     <div class="grid-wrapper-1"><Avatar name="LT" /></div>

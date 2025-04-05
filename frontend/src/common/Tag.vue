@@ -23,20 +23,43 @@
      padding-inline: 8px;
      padding-block: 4px;
      text-wrap: nowrap;
-
-     &.red { background-color: var(--red-500) }
-     &.purple { background-color: var(--purple-500) }
-     &.green { background-color: var(--green-500) }
-     &.orange { background-color: var(--orange-500) }
  }
 
  .pill.on {
-     background-color: var(--secondary-800);
-     color: var(--extra-light);
+     &.red {
+         background-color: var(--red-500);
+         color: var(--red-50);
+     }
+     &.purple {
+         background-color: var(--purple-500);
+         color: var(--purple-50);
+     }
+     &.green {
+         background-color: var(--green-500);
+         color: var(--green-50);
+     }
+     &.orange {
+         background-color: var(--orange-500);
+         color: var(--orange-50);
+     }
  }
 
  .pill.off {
-     border: var(--border-thin) solid var(--secondary-100);
-     color: var(--extra-dark);
+     &.red {
+         border: var(--border-thin) solid var(--red-500);
+         color: var(--red-500);
+     }
+     &.purple {
+         border: var(--border-thin) solid var(--purple-500);
+         color: var(--purple-500);
+     }
+     &.green {
+         border: var(--border-thin) solid var(--green-500);
+         color: var(--green-500);
+     }
+     &.orange {
+         border: var(--border-thin) solid var(--orange-500);
+         color: var(--orange-500);
+     }
  }
 </style>

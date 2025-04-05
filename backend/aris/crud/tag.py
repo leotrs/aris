@@ -33,23 +33,15 @@ def get_user_tags(user_id: int, db: Session):
 
 def update_tag(_id: int, user_id: int, new_name: str, new_color: str, db: Session):
     """Update the name of a tag."""
-    db.begin()
+    tag_to_update = db.query(Tag).filter(Tag.id == _id, Tag.user_id == user_id).first()
+    if not tag_to_update:
+        raise ValueError("Tag not found")
 
-    try:
-        tag_to_update = (
-            db.query(Tag).filter(Tag.id == _id, Tag.user_id == user_id).first()
-        )
-        if not tag_to_update:
-            raise ValueError("Tag not found")
-
-        tag_to_update.name = new_name or tag_to_update.name
-        tag_to_update.color = new_color or tag_to_update.color
-        db.commit()
-        db.refresh(tag_to_update)
-        return tag_to_update
-    except SQLAlchemyError:
-        db.rollback()
-        return None
+    tag_to_update.name = new_name or tag_to_update.name
+    tag_to_update.color = new_color or tag_to_update.color
+    db.commit()
+    db.refresh(tag_to_update)
+    return tag_to_update
 
 
 def delete_tag(_id: int, user_id: int, db: Session):
