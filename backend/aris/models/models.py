@@ -68,6 +68,7 @@ class Tag(Base):
         Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
     )
     name = Column(String, nullable=False, unique=False)
+    color = Column(String, nullable=False)
 
     documents = relationship("Document", secondary=document_tags, back_populates="tags")
     owner = relationship("User", back_populates="tags")

@@ -2,7 +2,7 @@
  import { ref } from 'vue';
 
  const props = defineProps({
-     name: { type: String, required: true },
+     tag: { type: Object, required: true },
      initialState: { type: Boolean, default: false }
  });
  const state = ref(props.initialState);
@@ -17,7 +17,7 @@
 
 <template>
   <div class="tag-control">
-    <Tag @click.prevent="toggle" :name="name" :active="state" />
+    <Tag @click.prevent="toggle" :tag="tag" :active="state" />
     <ContextMenu>
       <div class="colors">
         <span class="color red" :style="{ 'background-color': 'var(--red-500)' }"></span>
