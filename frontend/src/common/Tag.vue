@@ -2,15 +2,17 @@
  import { ref } from 'vue';
 
  const props = defineProps({
-     name: { type: String, required: true },
+     tag: { type: Object, required: true },
      active: { type: Boolean, required: true }
  });
 </script>
 
 
 <template>
-  <span class="pill" :class=" active ? 'on' : 'off'">
-    {{ name }}
+  <span
+      class="pill"
+      :class="[active ? 'on' : 'off', tag.color]">
+    {{ tag.name }}
   </span>
 </template>
 
@@ -21,6 +23,11 @@
      padding-inline: 8px;
      padding-block: 4px;
      text-wrap: nowrap;
+
+     &.red { background-color: var(--red-500) }
+     &.purple { background-color: var(--purple-500) }
+     &.green { background-color: var(--green-500) }
+     &.orange { background-color: var(--orange-500) }
  }
 
  .pill.on {

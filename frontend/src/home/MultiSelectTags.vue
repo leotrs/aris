@@ -14,15 +14,15 @@
 
 
 <template>
-  <Tag v-for="tag in tags" :name="tag.name" :active="true" />
+  <Tag v-for="tag in tags" :tag="tag" :active="true" />
   <ContextMenu icon="CirclePlus">
     <TagControl
         v-for="tag in userTags"
         class="item"
-        :name="tag.name"
-        :initial-state="tags.map((t) => t.id).includes(tag.tag_id)"
-        @on="$emit('on', tag.tag_id)"
-        @off="$emit('off', tag.tag_id)" />
+        :tag="tag"
+        :initial-state="tags.map((t) => t.id).includes(tag.id)"
+        @on="$emit('on', tag.id)"
+        @off="$emit('off', tag.id)" />
     <span class="item new-tag">new tag...</span>
   </ContextMenu>
 </template>
