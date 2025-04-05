@@ -7,7 +7,7 @@
  });
  const state = ref(props.initialState);
 
- const emit = defineEmits(['on', 'off']);
+ const emit = defineEmits(['on', 'off', 'set-color']);
  const toggle = () => {
      state.value = !state.value;
      emit(state.value ? 'on' : 'off');
@@ -20,10 +20,10 @@
     <Tag @click.prevent="toggle" :tag="tag" :active="state" />
     <ContextMenu>
       <div class="colors">
-        <span class="color red" :style="{ 'background-color': 'var(--red-500)' }"></span>
-        <span class="color green" :style="{ 'background-color': 'var(--green-500)' }"></span>
-        <span class="color purple" :style="{ 'background-color': 'var(--purple-500)' }"></span>
-        <span class="color orange" :style="{ 'background-color': 'var(--orange-500)' }"></span>
+        <span class="color red" @click="$emit('set-color', 'red')"></span>
+        <span class="color green" @click="$emit('set-color', 'green')"></span>
+        <span class="color purple" @click="$emit('set-color', 'purple')"></span>
+        <span class="color orange" @click="$emit('set-color', 'orange')"></span>
       </div>
       <ContextMenuItem icon="Edit" caption="Rename" />
       <ContextMenuItem icon="TrashX" caption="Delete" class="danger" />
@@ -51,5 +51,11 @@
      height: 32px;
      width: 16px;
      border-radius: 8px;
+
+     &.red { background-color: var(--red-500) }
+     &.green { background-color: var(--green-500) }
+     &.purple { background-color: var(--purple-500) }
+     &.orange { background-color: var(--orange-500) }
+
  }
 </style>

@@ -44,15 +44,12 @@ async def get_user_tags(user_id: int, db: Session = Depends(get_db)):
 @router.put("/tags/{_id}/", response_model=TagCreateOrUpdate)
 async def update_tag(tag: TagCreateOrUpdate, db: Session = Depends(get_db)):
     """Update the name of a tag."""
-    if tag.id not in (t.id for t in crud.get_user_tags(tag.user_id, db)):
+    if tag.id not in (t["id"] for t in crud.get_user_tags(tag.user_id, db)):
         raise HTTPException(status_code=404, detail="Tag not found")
-
     try:
-        updated_tag = crud.update_tag(tag.id, tag.user_id, tag.name, tag.color)
+        updated_tag = crud.update_tag(tag.id, tag.user_id, tag.name, tag.color, db)
     except ValueError as e:
         raise HTTPException(status_code=400, detail="Error updating tag " + str(e))
-    if updated_tag is None:
-        raise HTTPException(status_code=400, detail="Error updating tag")
     return updated_tag
 
 
