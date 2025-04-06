@@ -11,7 +11,7 @@
  const toggle = () => { state.value = !state.value }
 
  const setColor = (color) => {
-     const newTag = JSON.parse(JSON.stringify(props.tag));    /* deep copy */
+     const newTag = JSON.parse(JSON.stringify(props.tag));
      newTag.color = color;
      updateUserTag(props.tag, newTag);
  }
@@ -20,7 +20,7 @@
 
  const renaming = ref(false);
  const renameTag = (newName) => {
-     const newTag = JSON.parse(JSON.stringify(props.tag));    /* deep copy */
+     const newTag = JSON.parse(JSON.stringify(props.tag));
      newTag.name = newName;
      updateUserTag(props.tag, newTag);
  }

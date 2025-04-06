@@ -29,8 +29,8 @@
 
  const userTags = ref([]);
  const updateUserTag = async (oldTag, newTag) => {
-     if (newTag) {
-         const url = `http://localhost:8000/users/${userID}/tags/${oldTag.tagID}`;
+     if (oldTag) {
+         const url = `http://localhost:8000/users/${userID}/tags/${oldTag.id}`;
          try {
              if (newTag == null) { await axios.delete(url) }
              else { await axios.put(url, newTag) }
