@@ -8,9 +8,7 @@
  const state = ref(props.initialState);
  const { userTags, updateUserTag } = inject('userTags');
 
- const toggle = () => {
-     state.value = !state.value;
- }
+ const toggle = () => { state.value = !state.value }
 
  const setColor = (color) => {
      const newTag = JSON.parse(JSON.stringify(props.tag));    /* deep copy */
