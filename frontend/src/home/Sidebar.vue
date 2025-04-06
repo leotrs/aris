@@ -1,5 +1,5 @@
 <script setup>
- import { ref, defineProps, defineEmits, onMounted, onUnmounted, onUpdated, useTemplateRef } from 'vue';
+ import { ref, onMounted, onUnmounted, onUpdated, useTemplateRef } from 'vue';
  import SidebarItem from './SidebarItem.vue';
  import Separator from '@/common/Separator.vue';
 

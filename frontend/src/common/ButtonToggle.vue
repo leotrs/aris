@@ -1,5 +1,5 @@
 <script setup>
- import { ref, watch, defineEmits } from 'vue';
+ import { ref, watch } from 'vue';
  import * as Icons from '@tabler/icons-vue';
 
  const props = defineProps({

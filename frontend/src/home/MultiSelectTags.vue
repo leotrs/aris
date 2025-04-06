@@ -36,8 +36,13 @@
      gap: 8px;
  }
 
- :deep(.icon > svg) {
+ .cm-wrapper > :deep(.cm-btn) {
      color: var(--light);
  }
 
+ .cm-wrapper > :deep(.menu) {
+     right: unset;
+     left: 0;
+     transform: translateX(32px) translateY(-8px);
+ }
 </style>

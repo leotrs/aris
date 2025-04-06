@@ -1,6 +1,6 @@
 <script setup>
  import * as Icons from '@tabler/icons-vue';
- import { defineProps, defineEmits, ref, onMounted } from 'vue';
+ import { ref, onMounted } from 'vue';
 
  const props = defineProps({
      icons: Array,

@@ -1,6 +1,4 @@
 <script setup>
- import { defineEmits } from 'vue';
-
  const segmentedControlIcons = ["LayoutList", "LayoutCards"];
  const emits = defineEmits(["list", 'cards']);
 </script>

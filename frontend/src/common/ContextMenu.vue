@@ -25,14 +25,22 @@
 
 
 <style scoped>
- .dots {
+ .cm-wrapper {
      position: relative;
      display: flex;
+     justify-content: center;
+     align-items: center;
+ }
+
+ .dots {
+     display: flex;
+     justify-content: center;
+     align-items: center;
      color: var(--extra-dark);
      stroke-width: 2px;
      border-radius: 8px;
-     padding-inline: 6px;
-     padding-block: 7px;
+     width: 16px;
+     height: 32px;
 
      & > svg {
          width: 4px;
@@ -81,5 +89,4 @@
      &:hover { background-color: var(--surface-error) };
      & .tabler-icon { color: var(--icon-error) };
  }
-
 </style>

@@ -1,5 +1,5 @@
 <script setup>
- import { ref } from 'vue';
+ import { ref, inject } from 'vue';
 
  const props = defineProps({
      tag: { type: Object, required: true },
