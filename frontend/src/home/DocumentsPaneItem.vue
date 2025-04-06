@@ -27,7 +27,7 @@
       <ContextMenu @rename="rename" />
     </template>
     <div class="minimap">minimap</div>
-    <div class="tags"><MultiSelectTags :tags="doc.tags" /></div>
+    <div class="tags"><MultiSelectTags :tags="doc.tags" :docID="doc.id" /></div>
     <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
     <div class="grid-wrapper-1"><Avatar name="LT" /></div>
     <div class="grid-wrapper-2">

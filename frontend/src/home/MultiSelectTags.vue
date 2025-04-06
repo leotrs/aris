@@ -1,11 +1,23 @@
 <script setup>
- import { ref, inject } from 'vue';
+ import { ref, reactive, inject, computed, watch, watchEffect } from 'vue';
  import { IconCirclePlus } from '@tabler/icons-vue';
 
  const props = defineProps({
-     tags: { type: Array, required: true }
+     tags: { type: Array, required: true },
+     docID: { type: Number, required: true }
  })
  const { userTags, _, createTag } = inject("userTags");
+
+
+ const tagsIDs = computed(() => props.tags.map((t) => t.id));
+ const currentAssignment = computed(() => userTags.value.map((t) => tagsIDs.value.includes(t.id)));
+ const tagIsAssigned = ref([]);
+ watchEffect(() => {
+     if (tagIsAssigned.value.length === 0) { tagIsAssigned.value = [...currentAssignment.value] }
+ });
+ watch(tagIsAssigned, () => {
+     console.log(tagIsAssigned.value, currentAssignment.value);
+ })
 
  const newTagPlaceholder = {
      id: null,
@@ -20,11 +32,12 @@
   <Tag v-for="tag in tags" :tag="tag" :active="true" />
   <ContextMenu icon="CirclePlus">
     <TagControl
-        v-for="tag in userTags"
+        v-for="(tag, idx) in userTags"
         class="item"
         :tag="tag"
         :key="tag"
-        :initial-state="tags.map((t) => t.id).includes(tag.id)" />
+        :docID="docID"
+        v-model="tagIsAssigned[idx]" />
     <Tag
         :tag="newTagPlaceholder"
         :active="false"

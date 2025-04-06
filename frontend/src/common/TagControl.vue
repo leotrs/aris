@@ -3,12 +3,19 @@
 
  const props = defineProps({
      tag: { type: Object, required: true },
-     initialState: { type: Boolean, default: false }
+     docID: { type: Number, required: true }
  });
- const state = ref(props.initialState);
- const { userTags, updateUserTag } = inject('userTags');
+ const state = defineModel();
+ const { userTags, updateUserTag, addOrRemoveTag } = inject('userTags');
 
- const toggle = () => { state.value = !state.value }
+ const toggle = () => {
+     if (!state.value) {
+         addOrRemoveTag(props.tag.id, props.docID, 'add');
+     } else {
+         addOrRemoveTag(props.tag.id, props.docID, 'remove');
+     }
+     state.value = !state.value;
+ };
 
  const setColor = (color) => {
      const newTag = JSON.parse(JSON.stringify(props.tag));
@@ -29,7 +36,13 @@
 
 <template>
   <div class="tag-control">
-    <Tag @click.prevent="toggle" :tag="tag" :active="state" v-model="renaming" @rename="renameTag" />
+    <Tag
+        :tag="tag"
+        :active="state"
+        v-model="renaming"
+        @rename="renameTag"
+        @click.stop="toggle"
+        @dblclick.stop />
     <ContextMenu>
       <div class="colors">
         <span class="color red" @click="setColor('red')"></span>
