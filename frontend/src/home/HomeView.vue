@@ -41,14 +41,25 @@
      }
 
      try {
-         const response = await axios.get(`http://localhost:8000/tags/${userID}`);
+         const response = await axios.get(`http://localhost:8000/users/${userID}/tags`);
          userTags.value = response.data;
      } catch (error) {
          console.error('Failed to fetch tags:', error);
      }
 
  };
- provide('userTags', { userTags, updateUserTag });
+ const createTag = async (name, color=null) => {
+     try {
+         const response = await axios.post(
+             `http://localhost:8000/users/${userID}/tags`,
+             { name: name, color: color || ''}
+         );
+         reloadDocs();
+     } catch (error) {
+         console.error('Error creating tag:', error);
+     }
+ }
+ provide('userTags', { userTags, updateUserTag, createTag });
  onMounted(async () => { updateUserTag() });
 </script>
 

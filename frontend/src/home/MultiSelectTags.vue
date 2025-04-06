@@ -1,11 +1,18 @@
 <script setup>
+ import { ref, inject } from 'vue';
  import { IconCirclePlus } from '@tabler/icons-vue';
- import { inject } from 'vue';
 
  const props = defineProps({
      tags: { type: Array, required: true }
  })
- const { userTags, _ } = inject("userTags");
+ const { userTags, _, createTag } = inject("userTags");
+
+ const newTagPlaceholder = {
+     id: null,
+     name: 'new tag...',
+     color: 'new-tag-color'
+ }
+ const renaming = ref(false);
 </script>
 
 
@@ -18,7 +25,13 @@
         :tag="tag"
         :key="tag"
         :initial-state="tags.map((t) => t.id).includes(tag.id)" />
-    <span class="item new-tag">new tag...</span>
+    <Tag
+        :tag="newTagPlaceholder"
+        :active="false"
+        @rename="(name) => createTag(name)"
+        v-model="renaming"
+        @click.stop="renaming=true"
+        @dblclick.stop />
   </ContextMenu>
 </template>
 
@@ -26,6 +39,10 @@
 <style scoped>
  .pill {
      margin-right: 4px;
+     border-radius: 16px;
+     padding-inline: 8px;
+     padding-block: 4px;
+     text-wrap: nowrap;
  }
 
  .menu > .item {
@@ -44,5 +61,11 @@
      right: unset;
      left: 0;
      transform: translateX(32px) translateY(-8px);
+ }
+
+ .new-tag {
+     &:hover {
+         background-color: var(--surface-hint);
+     }
  }
 </style>
