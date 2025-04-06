@@ -1,18 +1,36 @@
 <script setup>
- import { ref } from 'vue';
+ import { ref, watch, nextTick } from 'vue';
 
  const props = defineProps({
      tag: { type: Object, required: true },
      active: { type: Boolean, required: true }
  });
+ const renaming = defineModel({ default: false });
+ const emit = defineEmits(['rename']);
+
+ const textInput = ref(null);
+ watch(renaming, async (newValue, oldValue) => {
+     if (newValue && !oldValue) {
+         await nextTick();      // wait for DOM to update
+         textInput.value.value = props.tag.name;
+         textInput.value.focus();
+     }
+ })
+ const submit = () => { emit('rename', textInput.value.value); renaming.value = false; }
 </script>
 
 
 <template>
-  <span
-      class="pill"
-      :class="[active ? 'on' : 'off', tag.color]">
-    {{ tag.name }}
+  <span class="pill" :class="[active ? 'on' : 'off', tag.color]">
+    <span v-if="renaming">
+      <input
+          ref="textInput"
+          type="text"
+          @keyup.enter="submit"
+          @click.stop
+          @dblclick.stop />
+    </span>
+    <span v-else>{{ tag.name }}</span>
   </span>
 </template>
 

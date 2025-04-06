@@ -10,10 +10,13 @@
 </script>
 
 <template>
-  <div :class="icon == 'Dots' ? 'dots' : 'icon'" @click.stop="toggleMenu" @dblclick.stop>
+  <div
+      class="cm-wrapper"
+      :class="{ 'dots': icon == 'Dots' }"
+      @click.stop="toggleMenu" @dblclick.stop >
 
-    <IconDotsVertical v-if="icon == 'Dots'" width="4" height="18" viewBox="10 3 4 18.25" />
-    <component v-else :is="Icons['Icon' + props.icon]" />
+    <IconDotsVertical class="cm-btn dots" v-if="icon == 'Dots'" width="4" height="18" viewBox="10 3 4 18.25" />
+    <component class="cm-btn" v-else :is="Icons['Icon' + props.icon]" />
 
     <div v-if="show" class="menu"><slot /></div>
 

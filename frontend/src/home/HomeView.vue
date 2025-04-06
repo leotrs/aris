@@ -1,5 +1,6 @@
 <script setup>
  import { ref, provide, onMounted } from 'vue';
+ import axios from 'axios';
  import Sidebar from './Sidebar.vue';
  import Topbar from './Topbar.vue';
  import DocumentsPane from './DocumentsPane.vue';
@@ -14,48 +15,41 @@
  const userID = 1;
  provide('userID', userID);
 
- const userTags = ref([]);
- const updateUserTags = () => { console.log('NOT IMPLEMENTED') };
- provide('userTags', { userTags, updateUserTags });
- onMounted( async () => {
-     const url = `http://localhost:8000/tags/${userID}`;
-     try {
-         const response = await fetch(url);
-         if (!response.ok) {
-             throw new Error('Failed to fetch tags');
-         }
-         userTags.value = await response.json();
-     } catch (error) {
-         console.error(error);
-     }
- });
-
  const userDocs = ref([]);
- const reloadDoc = async (docID) => {
-     const url = `http://localhost:8000/users/${userID}/documents`;
+ const reloadDocs = async (docID) => {
      try {
-         const response = await fetch(url);
-         if (!response.ok) {
-             throw new Error(`Failed to fetch document $(docID)`);
-         }
-         userDocs.value = await response.json();
+         const response = await axios.get(`http://localhost:8000/users/${userID}/documents`);
+         userDocs.value = response.data;
      } catch (error) {
-         console.error(error);
+         console.error(`Failed to fetch document`, error);
      }
  };
- provide('userDocs', { userDocs, reloadDoc })
- onMounted( async () => {
-     const url = `http://localhost:8000/users/${userID}/documents`;
-     try {
-         const response = await fetch(url);
-         if (!response.ok) {
-             throw new Error('Failed to fetch documents');
+ provide('userDocs', { userDocs, reloadDocs });
+ onMounted(async () => { reloadDocs() });
+
+ const userTags = ref([]);
+ const updateUserTag = async (oldTag, newTag) => {
+     if (newTag) {
+         const url = `http://localhost:8000/users/${userID}/tags/${oldTag.tagID}`;
+         try {
+             if (newTag == null) { await axios.delete(url) }
+             else { await axios.put(url, newTag) }
+             reloadDocs();
+         } catch (error) {
+             console.error('Error updating tag:', error);
          }
-         userDocs.value = await response.json();
-     } catch (error) {
-         console.error(error);
      }
- });
+
+     try {
+         const response = await axios.get(`http://localhost:8000/tags/${userID}`);
+         userTags.value = response.data;
+     } catch (error) {
+         console.error('Failed to fetch tags:', error);
+     }
+
+ };
+ provide('userTags', { userTags, updateUserTag });
+ onMounted(async () => { updateUserTag() });
 </script>
 
 

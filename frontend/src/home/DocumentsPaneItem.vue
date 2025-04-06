@@ -14,64 +14,6 @@
 
  const fileTitleActive = ref(false);
  const rename = () => { fileTitleActive.value = true };
-
- const editTagsActive = ref(false);
- const editTags = () => { editTagsActive.value = true };
-
- const { _, reloadDoc } = inject('userDocs');
- const tagOn = async (tagID) => {
-     const url = `http://localhost:8000/users/${userID}/documents/${props.doc.id}/tags/${tagID}`;
-     try {
-         const response = await fetch(url, { method: 'post' });
-         if (!response.ok) {
-             throw new Error('Failed to add tag');
-         }
-         reloadDoc(props.doc.id);
-     } catch (error) {
-         console.error(error);
-     }
- };
- const tagOff = async (tagID) => {
-     const url = `http://localhost:8000/users/${userID}/documents/${props.doc.id}/tags/${tagID}`;
-     try {
-         const response = await fetch(url, { method: 'delete' });
-         if (!response.ok) {
-             throw new Error('Failed to remove tags');
-         }
-         reloadDoc(props.doc.id);
-     } catch (error) {
-         console.error(error);
-     }
- };
- const setTagColor = async (newColor, tag) => {
-     const url = `http://localhost:8000/tags/${tag.id}`;
-     tag.color = newColor;
-     try {
-         const response = await fetch(url, {
-             method: 'put',
-             headers: { 'Content-Type': 'application/json' },
-             body: JSON.stringify(tag)
-         });
-         if (!response.ok) {
-             throw new Error('Failed to update tag');
-         }
-         reloadDoc(props.doc.id);
-     } catch (error) {
-         console.error(error);
-     }
- };
- const deleteTag = async (tag) => {
-     const url = `http://localhost:8000/users/${userID}/tags/${tag.id}`;
-     try {
-         const response = await fetch(url, { method: 'delete' });
-         if (!response.ok) {
-             throw new Error('Failed to delete tag');
-         }
-         reloadDoc(props.doc.id);
-     } catch (error) {
-         console.error(error);
-     }
- }
 </script>
 
 <template>
@@ -82,26 +24,17 @@
       @dblclick="emits('dblclick')" >
     <FileTitle :doc="doc" v-model="fileTitleActive" />
     <template v-if="mode == 'cards'">
-      <ContextMenu @rename="rename" @edit-tags="editTags" />
+      <ContextMenu @rename="rename" />
     </template>
     <div class="minimap">minimap</div>
-    <div class="tags">
-      <MultiSelectTags
-          :tags="doc.tags"
-          v-model="editTagsActive"
-          @on="tagOn"
-          @off="tagOff"
-          @set-color="setTagColor"
-          @delete="deleteTag" />
-    </div>
+    <div class="tags"><MultiSelectTags :tags="doc.tags" /></div>
     <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
     <div class="grid-wrapper-1"><Avatar name="LT" /></div>
     <div class="grid-wrapper-2">
       <template v-if="mode == 'list'">
-        <ContextMenu @rename="rename" @edit-tags="editTags">
+        <ContextMenu @rename="rename">
           <ContextMenuItem icon="Edit" @click="rename" caption="Rename" />
           <ContextMenuItem icon="Copy" caption="Duplicate" />
-          <ContextMenuItem icon="Tags" @click="editTags" caption="Edit tags" />
           <ContextMenuItem icon="Download" caption="Download" />
           <ContextMenuItem icon="TrashX" caption="Delete" class="danger" />
         </ContextMenu>

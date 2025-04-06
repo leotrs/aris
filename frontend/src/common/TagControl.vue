@@ -6,27 +6,41 @@
      initialState: { type: Boolean, default: false }
  });
  const state = ref(props.initialState);
+ const { userTags, updateUserTag } = inject('userTags');
 
- const emit = defineEmits(['on', 'off', 'set-color', 'delete']);
  const toggle = () => {
      state.value = !state.value;
-     emit(state.value ? 'on' : 'off');
+ }
+
+ const setColor = (color) => {
+     const newTag = JSON.parse(JSON.stringify(props.tag));    /* deep copy */
+     newTag.color = color;
+     updateUserTag(props.tag, newTag);
+ }
+
+ const deleteTag = () => { updateUserTag(props.tag, null) }
+
+ const renaming = ref(false);
+ const renameTag = (newName) => {
+     const newTag = JSON.parse(JSON.stringify(props.tag));    /* deep copy */
+     newTag.name = newName;
+     updateUserTag(props.tag, newTag);
  }
 </script>
 
 
 <template>
   <div class="tag-control">
-    <Tag @click.prevent="toggle" :tag="tag" :active="state" />
+    <Tag @click.prevent="toggle" :tag="tag" :active="state" v-model="renaming" @rename="renameTag" />
     <ContextMenu>
       <div class="colors">
-        <span class="color red" @click="$emit('set-color', 'red')"></span>
-        <span class="color green" @click="$emit('set-color', 'green')"></span>
-        <span class="color purple" @click="$emit('set-color', 'purple')"></span>
-        <span class="color orange" @click="$emit('set-color', 'orange')"></span>
+        <span class="color red" @click="setColor('red')"></span>
+        <span class="color green" @click="setColor('green')"></span>
+        <span class="color purple" @click="setColor('purple')"></span>
+        <span class="color orange" @click="setColor('orange')"></span>
       </div>
-      <ContextMenuItem icon="Edit" caption="Rename" />
-      <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="$emit('delete', tag)" />
+      <ContextMenuItem icon="Edit" caption="Rename" @click="renaming = true" />
+      <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="deleteTag" />
     </ContextMenu>
   </div>
 </template>
