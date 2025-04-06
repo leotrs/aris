@@ -10,29 +10,36 @@ from ..models import Document, Tag, User
 router = APIRouter()
 
 
-class TagCreateOrUpdate(BaseModel):
+class TagRetrieveOrUpdate(BaseModel):
     id: int
     user_id: int
     name: str
     color: str
 
 
+class TagCreate(BaseModel):
+    name: str
+    color: str
+
+
 @router.post(
-    "/tags/", response_model=TagCreateOrUpdate, status_code=status.HTTP_201_CREATED
+    "/users/{user_id}/tags",
+    response_model=TagRetrieveOrUpdate,
+    status_code=status.HTTP_201_CREATED,
 )
-async def create_tag(tag: TagCreateOrUpdate, db: Session = Depends(get_db)):
+async def create_tag(user_id: int, tag: TagCreate, db: Session = Depends(get_db)):
     """Create a new tag for the user."""
-    user = crud.get_user(tag.user_id, db)
+    user = crud.get_user(user_id, db)
     if user is None:
         raise HTTPException(status_code=404, detail="User not found")
 
-    tag = crud.create_tag(tag.user_id, tag.name, tag.color, db)
+    tag = crud.create_tag(user_id, tag.name, tag.color, db)
     if tag is None:
         raise HTTPException(status_code=400, detail="Error creating tag")
     return tag
 
 
-@router.get("/tags/{user_id}/", response_model=list[TagCreateOrUpdate])
+@router.get("/users/{user_id}/tags", response_model=list[TagRetrieveOrUpdate])
 async def get_user_tags(user_id: int, db: Session = Depends(get_db)):
     """Get all tags for a user."""
     tags = crud.get_user_tags(user_id, db)
@@ -41,8 +48,8 @@ async def get_user_tags(user_id: int, db: Session = Depends(get_db)):
     return tags
 
 
-@router.put("/users/{user_id}/tags/{_id}/", response_model=TagCreateOrUpdate)
-async def update_tag(tag: TagCreateOrUpdate, db: Session = Depends(get_db)):
+@router.put("/users/{user_id}/tags/{_id}", response_model=TagRetrieveOrUpdate)
+async def update_tag(tag: TagRetrieveOrUpdate, db: Session = Depends(get_db)):
     """Update the name of a tag."""
     if tag.id not in (t["id"] for t in crud.get_user_tags(tag.user_id, db)):
         raise HTTPException(status_code=404, detail="Tag not found")
