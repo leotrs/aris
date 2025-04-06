@@ -10,19 +10,14 @@
 <template>
   <div class="cm-wrapper" :class="{ 'dots': icon == 'Dots' }" >
 
-    <template v-if="icon == 'Dots'">
-      <IconDotsVertical
-          class="cm-btn"
-          width="4" height="18"
-          viewBox="10 3 4 18.25"
-          @click.stop="show = !show" @dblclick.stop />
-    </template>
-    <template v-else>
-      <component
-          :is="Icons['Icon' + props.icon]"
-          class="cm-btn"
-          @click.stop="show = !show" @dblclick.stop />
-    </template>
+    <div class="cm-click-target" @click.stop="show = !show" @dblclick.stop>
+      <template v-if="icon == 'Dots'">
+        <IconDotsVertical class="cm-btn" width="4" height="18" viewBox="10 3 4 18.25" />
+      </template>
+      <template v-else>
+        <component :is="Icons['Icon' + props.icon]" class="cm-btn" />
+      </template>
+    </div>
 
     <div v-if="show" class="menu"><slot /></div>
 
@@ -33,30 +28,33 @@
 <style scoped>
  .cm-wrapper {
      position: relative;
+ }
+
+ .cm-click-target {
+     border-radius: 8px;
      display: flex;
      justify-content: center;
      align-items: center;
-     border-radius: 8px;
+
+     &.dots {
+         display: flex;
+         justify-content: center;
+         align-items: center;
+         color: var(--extra-dark);
+         stroke-width: 2px;
+         width: 16px;
+         height: 32px;
+
+         & > svg {
+             width: 4px;
+             height: 18px;
+             margin: 0;
+         }
+     }
+
      &:hover {
          background-color: var(--surface-hint);
          & > svg { color: var(--extra-dark); }
-     }
- }
-
- .dots {
-     display: flex;
-     justify-content: center;
-     align-items: center;
-     color: var(--extra-dark);
-     stroke-width: 2px;
-
-     width: 16px;
-     height: 32px;
-
-     & > svg {
-         width: 4px;
-         height: 18px;
-         margin: 0;
      }
  }
 
