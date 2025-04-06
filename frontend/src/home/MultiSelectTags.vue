@@ -45,22 +45,22 @@
      text-wrap: nowrap;
  }
 
- .menu > .item {
+ .cm-wrapper > :deep(.cm-btn) {
+     color: var(--light);
+ }
+
+ .cm-wrapper > :deep(.cm-menu) {
+     right: unset;
+     left: 0;
+     transform: translateX(32px) translateY(-8px);
+ }
+
+ .cm-wrapper > :deep(.cm-menu > .item) {
      display: flex;
      align-items: center;
      justify-content: space-between;
      padding-inline: 8px;
      gap: 8px;
- }
-
- .cm-wrapper > :deep(.cm-btn) {
-     color: var(--light);
- }
-
- .cm-wrapper > :deep(.menu) {
-     right: unset;
-     left: 0;
-     transform: translateX(32px) translateY(-8px);
  }
 
  .new-tag {
