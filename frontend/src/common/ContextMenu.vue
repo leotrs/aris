@@ -2,21 +2,27 @@
  import { ref } from 'vue';
  import { IconDotsVertical, IconEdit, IconTags, IconCopy, IconVersions, IconDownload, IconShare3, IconTrashX } from '@tabler/icons-vue';
  import * as Icons from '@tabler/icons-vue';
- import Separator from './Separator.vue';
 
  const props = defineProps({ icon: { type: String, default: 'Dots' }});
  const show = ref(false);
- const toggleMenu = () => { show.value = !show.value };
 </script>
 
 <template>
-  <div
-      class="cm-wrapper"
-      :class="{ 'dots': icon == 'Dots' }"
-      @click.stop="toggleMenu" @dblclick.stop >
+  <div class="cm-wrapper" :class="{ 'dots': icon == 'Dots' }" >
 
-    <IconDotsVertical class="cm-btn" v-if="icon == 'Dots'" width="4" height="18" viewBox="10 3 4 18.25" />
-    <component class="cm-btn" v-else :is="Icons['Icon' + props.icon]" />
+    <template v-if="icon == 'Dots'">
+      <IconDotsVertical
+          class="cm-btn"
+          width="4" height="18"
+          viewBox="10 3 4 18.25"
+          @click.stop="show = !show" @dblclick.stop />
+    </template>
+    <template v-else>
+      <component
+          :is="Icons['Icon' + props.icon]"
+          class="cm-btn"
+          @click.stop="show = !show" @dblclick.stop />
+    </template>
 
     <div v-if="show" class="menu"><slot /></div>
 
