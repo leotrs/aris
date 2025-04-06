@@ -1,5 +1,5 @@
 <script setup>
- import { defineProps, computed } from 'vue';
+ import { computed } from 'vue';
  import { IconHome, IconUserCircle, IconLifebuoy, IconBrandGit, IconPencil, IconBook, IconFileCheck, IconFiles, IconLayoutSidebarLeftCollapse, IconCirclePlus } from '@tabler/icons-vue';
 
  const props = defineProps({

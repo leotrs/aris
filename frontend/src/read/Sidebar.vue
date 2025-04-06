@@ -1,5 +1,5 @@
 <script setup>
- import { ref, defineProps, defineEmits, defineModel, onMounted, onUpdated, onUnmounted, useTemplateRef } from 'vue';
+ import { ref, onMounted, onUpdated, onUnmounted, useTemplateRef } from 'vue';
  import { useRouter } from 'vue-router';
 
  const emit = defineEmits([

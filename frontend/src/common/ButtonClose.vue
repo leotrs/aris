@@ -1,5 +1,4 @@
 <script setup>
- import { defineEmits } from 'vue';
  import { IconX } from '@tabler/icons-vue';
  defineEmits(["close"])
 </script>

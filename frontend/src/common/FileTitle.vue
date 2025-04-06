@@ -1,5 +1,5 @@
 <script setup>
- import { ref, watch, defineModel, defineProps, nextTick } from 'vue';
+ import { ref, watch, nextTick } from 'vue';
 
  const props = defineProps({
      doc: { type: Object, required: true }
