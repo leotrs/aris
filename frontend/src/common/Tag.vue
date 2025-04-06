@@ -3,7 +3,7 @@
 
  const props = defineProps({
      tag: { type: Object, required: true },
-     active: { type: Boolean, required: true }
+     active: { type: Boolean, required: true },
  });
  const renaming = defineModel({ default: false });
  const emit = defineEmits(['rename']);
@@ -21,7 +21,7 @@
 
 
 <template>
-  <span class="pill" :class="[active ? 'on' : 'off', tag.color]">
+  <span class="pill" :class="[active ? 'on' : 'off', tag.color]" >
     <span v-if="renaming">
       <input
           ref="textInput"
