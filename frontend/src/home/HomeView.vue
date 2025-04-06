@@ -59,7 +59,26 @@
          console.error('Error creating tag:', error);
      }
  }
- provide('userTags', { userTags, updateUserTag, createTag });
+ const addOrRemoveTag = async (tagID, docID, mode) => {
+     console.log(`${mode} ${tagID} ${docID}`);
+     const url = `http://localhost:8000/users/${userID}/documents/${docID}/tags/${tagID}`;
+     if (mode == 'add') {
+         try {
+             await axios.post(url);
+             reloadDocs();
+         } catch (error) {
+             console.error('Error updating tag:', error);
+         }
+     } else if (mode == 'remove') {
+         try {
+             await axios.delete(url);
+             reloadDocs();
+         } catch (error) {
+             console.error('Error updating tag:', error);
+         }
+     }
+ }
+ provide('userTags', { userTags, updateUserTag, createTag, addOrRemoveTag });
  onMounted(async () => { updateUserTag() });
 </script>
 
