@@ -6,12 +6,18 @@ from sqlalchemy.orm import Session
 
 from ..models import Document, Tag, User, document_tags
 
+COLORS = iter(["red", "purple", "green", "orange"])
+
 
 def create_tag(user_id: int, name: str, color: str, db: Session):
     """Create a new tag for the user."""
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
         raise ValueError("User not found")
+    if not name:
+        raise ValueError("Name not provided")
+    if not color:
+        color = next(COLORS)
 
     tag = Tag(name=name, user_id=user_id, color=color)
     db.add(tag)
