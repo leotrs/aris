@@ -15,7 +15,7 @@
       :class="{ 'dots': icon == 'Dots' }"
       @click.stop="toggleMenu" @dblclick.stop >
 
-    <IconDotsVertical class="cm-btn dots" v-if="icon == 'Dots'" width="4" height="18" viewBox="10 3 4 18.25" />
+    <IconDotsVertical class="cm-btn" v-if="icon == 'Dots'" width="4" height="18" viewBox="10 3 4 18.25" />
     <component class="cm-btn" v-else :is="Icons['Icon' + props.icon]" />
 
     <div v-if="show" class="menu"><slot /></div>
@@ -30,6 +30,11 @@
      display: flex;
      justify-content: center;
      align-items: center;
+     border-radius: 8px;
+     &:hover {
+         background-color: var(--surface-hint);
+         & > svg { color: var(--extra-dark); }
+     }
  }
 
  .dots {
@@ -38,7 +43,7 @@
      align-items: center;
      color: var(--extra-dark);
      stroke-width: 2px;
-     border-radius: 8px;
+
      width: 16px;
      height: 32px;
 
@@ -46,10 +51,6 @@
          width: 4px;
          height: 18px;
          margin: 0;
-     }
-
-     &:hover {
-         background-color: var(--surface-hint);
      }
  }
 
