@@ -60,7 +60,7 @@ async def update_tag(tag: TagRetrieveOrUpdate, db: Session = Depends(get_db)):
     return updated_tag
 
 
-@router.delete("/users/{user_id}/tags/{_id}/", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/users/{user_id}/tags/{_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_tag(_id: int, user_id: int, db: Session = Depends(get_db)):
     """Delete a tag for a user."""
     if _id not in (t["id"] for t in crud.get_user_tags(user_id, db)):
