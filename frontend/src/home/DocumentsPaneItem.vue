@@ -110,7 +110,7 @@
      }
  }
 
- :deep(.dots > .menu) {
+ :deep(.dots > .cm-menu) {
      transform: translateX(-16px) translateY(-8px);
  }
 </style>

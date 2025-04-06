@@ -8,90 +8,98 @@
 </script>
 
 <template>
-  <div class="cm-wrapper" :class="{ 'dots': icon == 'Dots' }" >
+  <div
+      class="cm-wrapper"
+      :class="{ 'dots': icon == 'Dots' }" >
 
-    <div class="cm-click-target" @click.stop="show = !show" @dblclick.stop>
+    <div
+        class="cm-click-target"
+        :class="{ 'dots': icon == 'Dots' }"
+        @click.stop="show = !show"
+        @dblclick.stop >
+
       <template v-if="icon == 'Dots'">
         <IconDotsVertical class="cm-btn" width="4" height="18" viewBox="10 3 4 18.25" />
       </template>
       <template v-else>
         <component :is="Icons['Icon' + props.icon]" class="cm-btn" />
       </template>
+
     </div>
 
-    <div v-if="show" class="menu"><slot /></div>
+    <div v-if="show" class="cm-menu"><slot /></div>
 
   </div>
 </template>
 
 
-<style scoped>
+<style>
  .cm-wrapper {
      position: relative;
- }
 
- .cm-click-target {
-     border-radius: 8px;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-
-     &.dots {
+     & .cm-click-target {
+         border-radius: 8px;
          display: flex;
          justify-content: center;
          align-items: center;
-         color: var(--extra-dark);
-         stroke-width: 2px;
-         width: 16px;
-         height: 32px;
 
-         & > svg {
-             width: 4px;
-             height: 18px;
-             margin: 0;
+         &.dots {
+             display: flex;
+             justify-content: center;
+             align-items: center;
+             color: var(--extra-dark);
+             stroke-width: 2px;
+             width: 16px;
+             height: 32px;
+
+             & > svg {
+                 width: 4px;
+                 height: 18px;
+                 margin: 0;
+             }
+         }
+
+         &:hover {
+             background-color: var(--surface-hint);
+             & > svg { color: var(--extra-dark) }
          }
      }
 
-     &:hover {
-         background-color: var(--surface-hint);
-         & > svg { color: var(--extra-dark); }
+     & .cm-menu {
+         position: absolute;
+         right: 0;
+         top: 0;
+         z-index: 999;
+         background-color: var(--surface-primary);
+         padding-block: 8px;
+         border-radius: 16px;
+         box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%), 0px 2px 6px rgba(0, 0, 0, 15%);
+         & > *:not(:last-child) { margin-bottom: 8px }
+
+         & > .item {
+             display: flex;
+             align-items: center;
+             padding-left: 10px;
+             padding-right: 16px;
+             padding-block: 0px;
+             gap: 10px;
+             &:hover {
+                 background-color: var(--surface-hover);
+                 font-weight: var(--weight-medium);
+             }
+             &:hover .tabler-icon { stroke-width: 2px }
+
+             &.danger {
+                 color: var(--text-error);
+                 &:hover { background-color: var(--surface-error) }
+                 & .tabler-icon { color: var(--icon-error) }
+             }
+         }
+
+         & > .item > .tabler-icon {
+             display: inline-block;
+             stroke-width: 1.2px;
+         }
      }
- }
-
- .menu {
-     position: absolute;
-     right: 0;
-     top: 0;
-     z-index: 999;
-     background-color: var(--surface-primary);
-     padding-block: 8px;
-     border-radius: 16px;
-     box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%), 0px 2px 6px rgba(0, 0, 0, 15%);
-     & > *:not(:last-child) { margin-bottom: 8px };
-
-     & .item {
-         display: flex;
-         align-items: center;
-         padding-left: 10px;
-         padding-right: 16px;
-         padding-block: 0px;
-         gap: 10px;
-         &:hover {
-             background-color: var(--surface-hover);
-             font-weight: var(--weight-medium);
-         };
-         &:hover .tabler-icon { stroke-width: 2px };
-     }
-
-     & .item .tabler-icon {
-         display: inline-block;
-         stroke-width: 1.2px;
-     }
- }
-
- .menu .item.danger {
-     color: var(--text-error);
-     &:hover { background-color: var(--surface-error) };
-     & .tabler-icon { color: var(--icon-error) };
  }
 </style>
