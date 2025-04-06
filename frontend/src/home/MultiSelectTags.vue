@@ -5,11 +5,7 @@
  const props = defineProps({
      tags: { type: Array, required: true }
  })
- const { userTags, updateUserTags } = inject("userTags");
- const emit = defineEmits(["on", 'off', 'set-color']);
-
- const active = defineModel();
- const toggleMenu = () => { active.value = !active.value };
+ const { userTags, _ } = inject("userTags");
 </script>
 
 
@@ -20,11 +16,8 @@
         v-for="tag in userTags"
         class="item"
         :tag="tag"
-        :initial-state="tags.map((t) => t.id).includes(tag.id)"
-        @on="$emit('on', tag.id)"
-        @off="$emit('off', tag.id)"
-        @set-color="(c) => $emit('set-color', c, tag)"
-        @delete="(t) => $emit('delete', t)" />
+        :key="tag"
+        :initial-state="tags.map((t) => t.id).includes(tag.id)" />
     <span class="item new-tag">new tag...</span>
   </ContextMenu>
 </template>

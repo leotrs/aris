@@ -9,8 +9,7 @@
      mode: { type: String, default: 'list' }
  })
  const userID = inject('userID');
- const { userDocs, updateUserDocs } = inject('userDocs');
- const { userTags, updateUserTags } = inject('userTags');
+ const { userDocs, _ } = inject('userDocs');
 
  const emit = defineEmits(["set-selected"]);
  const activeIndex = ref(null);

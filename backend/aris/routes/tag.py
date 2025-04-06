@@ -41,7 +41,7 @@ async def get_user_tags(user_id: int, db: Session = Depends(get_db)):
     return tags
 
 
-@router.put("/tags/{_id}/", response_model=TagCreateOrUpdate)
+@router.put("/users/{user_id}/tags/{_id}/", response_model=TagCreateOrUpdate)
 async def update_tag(tag: TagCreateOrUpdate, db: Session = Depends(get_db)):
     """Update the name of a tag."""
     if tag.id not in (t["id"] for t in crud.get_user_tags(tag.user_id, db)):
