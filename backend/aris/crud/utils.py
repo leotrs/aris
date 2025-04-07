@@ -1,4 +1,5 @@
 import asyncio
+import logging
 
 import rsm
 from bs4 import BeautifulSoup
@@ -18,12 +19,10 @@ async def extract_title(doc: Document) -> str:
 
 
 async def extract_section(doc: Document, section_name: str) -> str:
-    app = rsm.app.ProcessorApp(plain=doc.source)
+    app = rsm.app.ProcessorApp(plain=doc.source, handrails=True)
     await asyncio.to_thread(app.run)
     html = app.translator.body
 
     soup = BeautifulSoup(html, "lxml")
-    element = soup.find(
-        "html",  # {"id": "content"}
-    )
-    return str(element) if element else None
+    element = soup.find("div", class_=section_name)
+    return element if element else None
