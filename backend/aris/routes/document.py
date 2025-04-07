@@ -93,7 +93,10 @@ async def soft_delete_document(doc_id: int, db: Session = Depends(get_db)):
 async def get_document_section(
     doc_id: int, section_name: str, db: Session = Depends(get_db)
 ):
-    html = await crud.get_document_section(doc_id, section_name, db)
+    try:
+        html = await crud.get_document_section(doc_id, section_name, db)
+    except ValueError:
+        raise HTTPException(status_code=404, detail=f"Section {section_name} not found")
     if html is None:
-        raise HTTPException(status_code=404, detail="Section not found")
+        raise HTTPException(status_code=404, detail=f"Section {section_name} not found")
     return HTMLResponse(content=html)

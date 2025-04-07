@@ -4,20 +4,25 @@
  import { IconBook, IconFileCheck, IconVersions, IconX } from '@tabler/icons-vue';
  import useClosable from '@/composables/useClosable.js';
 
- const props = defineProps({
-     doc: Object
- });
-
+ const { doc } = defineProps({ doc: Object });
  const emit = defineEmits(["set-selected"]);
  const router = useRouter();
 
- const read = () => { router.push(`/${props.doc.id}/read`); }
+ const read = () => { router.push(`/${doc.id}/read`); }
  const close = () => { emit('set-selected', ""); }
 
  const selfRef = ref(null);
- onMounted(() => {
+ const abstract = ref("");
+ onMounted(async () => {
      if (!selfRef) return;
      useClosable(close, selfRef, true, false);
+     try {
+         const response = await axios.get(`http://localhost:8000/documents/${doc.id}/sections/abstract`);
+         abstract.value = response.data;
+     } catch (error) {
+         console.error('Failed to fetch abstract:', error);
+     }
+
  })
 </script>
 
@@ -41,7 +46,7 @@
         <div>LT</div>
       </div>
       <div class="pane-right">
-        <div class="text">{{ doc.abstract }}</div>
+        <div v-html="abstract"></div>
       </div>
     </div>
   </div>
