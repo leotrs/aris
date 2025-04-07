@@ -20,8 +20,7 @@
  onMounted(async () => {
      try {
          const response = await axios.get(`http://localhost:8000/documents/${props.doc.id}/sections/minimap`);
-         /* minimap.value = response.data; */
-         minimap.value = '';
+         minimap.value = response.data;
      } catch (error) {
          console.error('Failed to fetch minimap:', error);
      }
@@ -38,9 +37,7 @@
     <template v-if="mode == 'cards'">
       <ContextMenu @rename="rename" />
     </template>
-    <div class="minimap">
-      {{ minimap }}
-    </div>
+    <div class="minimap" v-html="minimap"></div>
     <div class="tags">
       <MultiSelectTags :tags="doc.tags" :docID="doc.id" />
     </div>
