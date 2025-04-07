@@ -63,7 +63,7 @@
 
          &:hover {
              background-color: var(--surface-hint);
-             & > svg { color: var(--extra-dark) }
+             & > svg.cm-btn { color: var(--extra-dark) }
          }
      }
 

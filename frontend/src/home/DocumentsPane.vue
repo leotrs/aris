@@ -25,26 +25,19 @@
      router.push(`/${doc.id}/read`);
  };
 
- const columnNames = {
-     'Title': 'title',
-     'Progress': '',
-     'Tags': '',
-     'Last Edited': 'last_edited_at',
-     'Owner': 'owner_id'
+ const columnInfo = {
+     'Title': { sortable: true, filterable: false, sortKey: 'title' },
+     'Progress': { sortable: false, filterable: false, sortKey: '' },
+     'Tags': { sortable: false, filterable: true, sortKey: '' },
+     'Last Edited': { sortable: true, filterable: false, sortKey: 'last_edited_at' },
+     'Owner': { sortable: false, filterable: false, sortKey: 'owner_id' }
  };
- const disableSorting = {
-     'Title': false,
-     'Progress': true,
-     'Tags': true,
-     'Last Edited': false,
-     'Owner': true
- }
  const handleColumnHeaderEvent = (columnName, mode) => {
-     const col = columnNames[columnName];
+     const sortKey = columnInfo[columnName]['sortKey'];
      if (mode == 'asc') {
-         userDocs.value.sort((a, b) => a[col].localeCompare(b[col]));
+         userDocs.value.sort((a, b) => a[sortKey].localeCompare(b[sortKey]));
      } else if (mode == 'desc') {
-         userDocs.value.sort((a, b) => b[col].localeCompare(a[col]));
+         userDocs.value.sort((a, b) => b[sortKey].localeCompare(a[sortKey]));
      }
  }
 
@@ -76,14 +69,15 @@
 
     <div class="pane-header text-label">
       <span v-if="mode == 'cards'">Sort by:</span>
-      <template v-for="name in Object.keys(columnNames)">
+      <template v-for="name in Object.keys(columnInfo)">
         <ColumnHeader
-            v-if="mode == 'list' || (mode == 'cards' && !disableSorting[name])"
+            v-if="mode == 'list' || (mode == 'cards' && !columnInfo[name]['sortable'])"
             :name="name"
             @none="handleColumnHeaderEvent(name, 'none')"
             @asc="handleColumnHeaderEvent(name, 'asc')"
             @desc="handleColumnHeaderEvent(name, 'desc')"
-            :disable-sorting="disableSorting[name]" />
+            :sortable="columnInfo[name]['sortable']"
+            :filterable="columnInfo[name]['filterable']" />
       </template>
       <!-- to complete the grid -->
       <span v-if="mode == 'list'" class="spacer"></span>

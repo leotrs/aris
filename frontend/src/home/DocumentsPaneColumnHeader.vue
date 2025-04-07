@@ -4,7 +4,8 @@
 
  const props = defineProps({
      name: { type: String, required: true },
-     disableSorting: { type: Boolean, default: false }
+     sortable: { type: Boolean, default: true },
+     filterable: { type: Boolean, default: true }
  })
 
  const allStates = ["none", "desc", "asc"];
@@ -12,7 +13,7 @@
  const currentIndex = ref(0);
  const state = computed(() => allStates[currentIndex.value]);
  const nextState = () => {
-     if (!props.disableSorting) {
+     if (props.sortable) {
          currentIndex.value = (currentIndex.value + 1) % allStates.length;
          emit(state.value);
      }
@@ -21,7 +22,7 @@
 
 
 <template>
-  <div class="col-header" :class="{ sortable: !disableSorting }" @click="nextState">
+  <div class="col-header" :class="{ sortable: sortable }" @click="nextState">
     <span>{{ name }}</span>
     <span v-if="state == 'desc'"><IconSortDescendingLetters /></span>
     <span v-if="state == 'asc'"><IconSortAscendingLetters /></span>

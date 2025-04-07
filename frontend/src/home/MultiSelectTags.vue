@@ -60,7 +60,7 @@
      text-wrap: nowrap;
  }
 
- .cm-wrapper > :deep(.cm-btn) {
+ .cm-wrapper > :deep(.cm-click-target > .cm-btn) {
      color: var(--light);
  }
 
