@@ -13,18 +13,19 @@
  const close = () => { emit('set-selected', ""); }
 
  const selfRef = ref(null);
- const abstract = ref("<div>no abstract...</div>");
- watch(() => doc, async () => {
+ const abstract = ref("<div>loading abstract...</div>");
+ const loadAbstract = async () => {
      if (!selfRef) return;
      useClosable(close, selfRef, true, false);
      try {
          const response = await axios.get(`http://localhost:8000/documents/${doc.id}/sections/abstract`);
          abstract.value = response.data;
      } catch (error) {
-         console.error('Failed to fetch abstract:', error);
+         abstract.value = "<div>no abstract!</div>";
      }
-
- })
+ }
+ loadAbstract();
+ watch(() => doc, async () => { await loadAbstract() });
 </script>
 
 
@@ -46,13 +47,7 @@
         <div><Avatar name="LT" /><span>{{ doc.last_edited_at }}</span></div>
       </div>
       <div class="pane-right">
-
-        <div class="css-links">
-          <link rel="stylesheet" type="text/css" href="http://localhost:8000/static/rsm.css" />
-          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.css">
-        </div>
-
-        <div class="manuscriptwrapper" v-html="abstract"></div>
+        <ManuscriptWrapper :html="abstract" />
       </div>
     </div>
   </div>
