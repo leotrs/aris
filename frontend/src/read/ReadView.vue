@@ -26,12 +26,6 @@
  onMounted(async () => {
      if (!manuscriptRef.value) return;
 
-     /* Run the RSM scripts */
-     await import("http://localhost:8000/static/jquery-3.6.0.js");
-     await import("http://localhost:8000/static/tooltipster.bundle.js");
-     const { onload } = await import("http://localhost:8000/static/onload.js");
-     const lsp_ws = onload();
-
      /* Get the title and other info */
      const response = await fetch(`${baseURL}`);
      if (!response.ok) { throw new Error('Failed to fetch HTML') }
@@ -92,6 +86,7 @@
       <Topbar :title="docTitle" />
 
       <div class="inner-wrapper">
+
         <div class="left-column" ref="leftColumn"></div>
         <div class="left-column fixed" ref="leftColumnFixed">
           <ReadOverlaySettings
@@ -100,14 +95,17 @@
               @set-background="(c) => {console.log(c); backgroundColor = c}"
           />
         </div>
+
         <div class="middle-column">
-          <div ref="manuscriptRef" v-html="htmlContent"></div>
+          <ManuscriptWrapper :html="htmlContent" />
           <div class="middle-footer">
             <div id="footer-logo"><img src="../assets/logo-32px.svg" /></div>
           </div>
         </div>
+
         <div class="right-column">right</div>
         <div class="right-column fixed">right fixed</div>
+
       </div>
 
     </div>
@@ -228,29 +226,5 @@
      justify-content: center;
      padding-top: 48px;
      padding-bottom: 96px;
- }
-
-
-</style>
-
-
-<style>
- /* Overwrite RSM's CSS but be CAREFUL!!! */
- .manuscriptwrapper {
-     /* The background color comes from the user's choice within the settings overlay */
-     background-color: transparent !important;
-
-     /* Overwrite size and whitespace */
-     margin: 0 !important;
-     max-width: unset !important;
-     padding-top: 40px !important;
-     padding-bottom: 48px !important;
-     padding-inline: 0px !important;
-     border-radius: 0px !important;
-     & section.level-1 { margin-block: 0px !important };
-
-     /* Patches - for some reason the RSM CSS is broken? */
-     & .hr .hr-border-zone .hr-border-dots .icon.dots { padding-bottom: 0 !important };
-     & .hr .hr-collapse-zone .hr-collapse .icon.collapse { padding-bottom: 0 !important };
  }
 </style>
