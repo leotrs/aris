@@ -5,7 +5,7 @@ import rsm
 from sqlalchemy.orm import Session
 
 from ..models import Document, DocumentStatus, Tag, document_tags
-from .utils import extract_title
+from .utils import extract_section, extract_title
 
 
 async def get_documents(db: Session):
@@ -16,18 +16,18 @@ async def get_documents(db: Session):
     return docs
 
 
-def get_document(document_id: int, db: Session):
+async def get_document(document_id: int, db: Session):
     doc = (
         db.query(Document)
         .filter(Document.id == document_id, Document.deleted_at.is_(None))
         .first()
     )
     if doc:
-        doc.title = extract_title(doc)
+        doc.title = await extract_title(doc)
     return doc
 
 
-def get_document_html(document_id: int, db: Session):
+async def get_document_html(document_id: int, db: Session):
     result = (
         db.query(Document.source)
         .filter(Document.id == document_id, Document.deleted_at.is_(None))
@@ -41,7 +41,7 @@ def get_document_html(document_id: int, db: Session):
     return rsm.render(src, handrails=True)
 
 
-def create_document(
+async def create_document(
     source: str,
     owner_id: int,
     title: str = "",
@@ -61,7 +61,7 @@ def create_document(
     return doc
 
 
-def update_document(
+async def update_document(
     document_id: int,
     title: str,
     abstract: str,
@@ -79,10 +79,20 @@ def update_document(
     return doc
 
 
-def soft_delete_document(document_id: int, db: Session):
+async def soft_delete_document(document_id: int, db: Session):
     doc = get_document(document_id, db)
     if not doc:
         return None
     doc.deleted_at = datetime.utcnow()
     db.commit()
     return {"message": f"Document {document_id} soft deleted"}
+
+
+async def get_document_section(doc_id: int, section_name: str, db: Session):
+    doc = db.query(Document).filter(Document.id == doc_id).first()
+    if not doc:
+        raise ValueError("Document not found")
+    html = await extract_section(doc, section_name)
+    if html is None:
+        raise ValueError("Section not found in document")
+    return html
