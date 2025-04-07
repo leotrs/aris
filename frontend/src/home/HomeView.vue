@@ -6,6 +6,7 @@
  import DocumentsPane from './DocumentsPane.vue';
  import PreviewPane from './PreviewPane.vue';
  import UploadFileModal from './UploadFileModal.vue';
+ import Separator from '../common/Separator.vue';
 
  const showModal = ref(false);
  const selectedForPreview = ref(null);
@@ -85,7 +86,8 @@
 <template>
   <div class="view-wrapper">
     <Sidebar @showFileUploadModal="showModal = true" />
-    <div class="panes">
+    <div class="panes" ref="panes-ref">
+
       <div id="documents" class="pane">
         <Topbar
             @list="currentMode = 'list'"
@@ -94,12 +96,13 @@
             @set-selected="setSelectedForPreview"
             :mode="currentMode" />
       </div>
+
       <PreviewPane
-          id="preview"
           v-if="selectedForPreview"
-          class="pane"
           :doc="selectedForPreview"
+          :container="useTemplateRef('panes-ref')"
           @set-selected="setSelectedForPreview" />
+
     </div>
     <div class="modal" v-show="showModal">
       <UploadFileModal @close="showModal = false" />
@@ -114,15 +117,18 @@
      display: flex;
      flex-grow: 2;
      padding: 16px 16px 16px 0;
+     height: 100%;
  }
 
  .panes {
+     position: relative;
      display: flex;
      flex-direction: column;
      flex-grow: 1;
      gap: 8px;
+     height: 100%;
 
-     & .pane {
+     & :deep(.pane) {
          background-color: var(--almost-white);
          padding: 16px;
          width: 100%;
@@ -131,11 +137,9 @@
          gap: 16px;
          border-radius: 16px;
          flex-grow: 1;
-         overflow-y: auto;
      }
-
-     & #documents { flex-grow: 3}
-     & #preview { flex-grow: 3; min-height: 200px; }
+     & :deep(.pane:not(:has(~ .pane))) { max-height: 100% }
+     & :deep(.pane:has(~ .pane)) { max-height: 50% }
  }
 
  .modal {
