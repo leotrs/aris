@@ -38,13 +38,15 @@
         :key="tag"
         :docID="docID"
         v-model="tagIsAssigned[idx]" />
-    <Tag
-        :tag="newTagPlaceholder"
-        :active="false"
-        @rename="(name) => createTag(name)"
-        v-model="renaming"
-        @click.stop="renaming=true"
-        @dblclick.stop />
+    <div class="new-tag-wrapper item">
+      <Tag
+          :tag="newTagPlaceholder"
+          :active="false"
+          @rename="(name) => createTag(name)"
+          v-model="renaming"
+          @click.stop="renaming=true"
+          @dblclick.stop />
+    </div>
   </ContextMenu>
 </template>
 

@@ -79,5 +79,9 @@
          border: var(--border-thin) solid var(--orange-500);
          color: var(--orange-500);
      }
+     &.new-tag-color {
+         border: var(--border-thin) solid var(--gray-400);
+         color: var(--gray-400);
+     }
  }
 </style>
