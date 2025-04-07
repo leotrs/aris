@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime
 
 from sqlalchemy.orm import Session
@@ -43,25 +44,27 @@ def soft_delete_user(user_id: int, db: Session):
     return user
 
 
-def get_user_documents(user_id: int, with_tags, db: Session):
+async def get_user_documents(user_id: int, with_tags, db: Session):
     user = get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")
 
-    documents = (
-        db.query(Document.id, Document.title, Document.source, Document.last_edited_at)
+    docs = (
+        db.query(Document)
         .filter(Document.owner_id == user_id, Document.deleted_at.is_(None))
         .all()
     )
+    titles = await asyncio.gather(*(extract_title(d) for d in docs))
+    for doc, title in zip(docs, titles):
+        doc.title = title
 
     return [
         {
             "id": doc.id,
-            "title": extract_title(doc),
+            "title": doc.title,
             "source": doc.source,
             "last_edited_at": doc.last_edited_at,
             "tags": get_document_tags(doc.id, db) if with_tags else [],
         }
-        for doc in documents
-        if doc
+        for doc in docs
     ]

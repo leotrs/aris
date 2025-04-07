@@ -11,12 +11,12 @@ router = APIRouter()
 
 
 @router.get("/documents")
-def get_documents(db: Session = Depends(get_db)):
-    return crud.get_documents(db)
+async def get_documents(db: Session = Depends(get_db)):
+    return await crud.get_documents(db)
 
 
 @router.get("/documents/{document_id}")
-def get_document(document_id: int, db: Session = Depends(get_db)):
+async def get_document(document_id: int, db: Session = Depends(get_db)):
     doc = crud.get_document(document_id, db)
     tags = crud.get_document_tags(document_id, db)
     if not doc:
@@ -32,7 +32,7 @@ def get_document(document_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/documents/{document_id}/html", response_class=HTMLResponse)
-def get_document_html(document_id: int, db: Session = Depends(get_db)):
+async def get_document_html(document_id: int, db: Session = Depends(get_db)):
     doc = crud.get_document_html(document_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
@@ -52,7 +52,7 @@ class DocumentCreate(BaseModel):
 
 
 @router.post("/documents")
-def create_document(
+async def create_document(
     doc: DocumentCreate,
     db: Session = Depends(get_db),
 ):
@@ -66,7 +66,7 @@ def create_document(
 
 
 @router.put("/documents/{document_id}")
-def update_document(
+async def update_document(
     document_id: int,
     title: str,
     abstract: str,
@@ -80,7 +80,7 @@ def update_document(
 
 
 @router.delete("/documents/{document_id}")
-def soft_delete_document(document_id: int, db: Session = Depends(get_db)):
+async def soft_delete_document(document_id: int, db: Session = Depends(get_db)):
     doc = crud.soft_delete_document(document_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")

@@ -1,3 +1,4 @@
+import asyncio
 from datetime import datetime
 
 import rsm
@@ -7,12 +8,11 @@ from ..models import Document, DocumentStatus, Tag, document_tags
 from .utils import extract_title
 
 
-def get_documents(db: Session):
+async def get_documents(db: Session):
     docs = db.query(Document).filter(Document.deleted_at.is_(None)).all()
-    for doc in docs:
-        if not doc:
-            continue
-        doc.title = extract_title(doc)
+    titles = await asyncio.gather(*(extract_title(d) for d in docs))
+    for doc, title in zip(docs, titles):
+        doc.title = title
     return docs
 
 
