@@ -37,7 +37,7 @@
     <template v-if="mode == 'cards'">
       <ContextMenu @rename="rename" />
     </template>
-    <div class="minimap" v-html="minimap"></div>
+    <div v-html="minimap"></div>
     <div class="tags">
       <MultiSelectTags :tags="doc.tags" :docID="doc.id" />
     </div>
@@ -129,5 +129,10 @@
 
  :deep(.dots > .cm-menu) {
      transform: translateX(-16px) translateY(-8px);
+ }
+
+ :deep(.minimap) {
+     transform: rotate(90deg) scale(0.4);
+     width: 48px;
  }
 </style>
