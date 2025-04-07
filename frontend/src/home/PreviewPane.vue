@@ -1,5 +1,6 @@
 <script setup>
- import { ref, onMounted } from 'vue';
+ import { ref, watch } from 'vue';
+ import axios from 'axios';
  import { useRouter } from 'vue-router';
  import { IconBook, IconFileCheck, IconVersions, IconX } from '@tabler/icons-vue';
  import useClosable from '@/composables/useClosable.js';
@@ -12,8 +13,8 @@
  const close = () => { emit('set-selected', ""); }
 
  const selfRef = ref(null);
- const abstract = ref("");
- onMounted(async () => {
+ const abstract = ref("<div>no abstract...</div>");
+ watch(() => doc, async () => {
      if (!selfRef) return;
      useClosable(close, selfRef, true, false);
      try {
@@ -42,11 +43,16 @@
     <div class="pane-content">
       <div class="pane-left">
         <div class="text-h4">{{ doc.title }}</div>
-        <div>{{ doc.last_edited_at }}</div>
-        <div>LT</div>
+        <div><Avatar name="LT" /><span>{{ doc.last_edited_at }}</span></div>
       </div>
       <div class="pane-right">
-        <div v-html="abstract"></div>
+
+        <div class="css-links">
+          <link rel="stylesheet" type="text/css" href="http://localhost:8000/static/rsm.css" />
+          <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.css">
+        </div>
+
+        <div class="manuscriptwrapper" v-html="abstract"></div>
       </div>
     </div>
   </div>
@@ -65,6 +71,7 @@
      display: flex;
      gap: 48px;
      padding-inline: 8px;
+     overflow-y: auto;
  }
 
  .actions-left {
