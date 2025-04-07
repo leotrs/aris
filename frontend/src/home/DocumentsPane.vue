@@ -32,14 +32,17 @@
      'Last Edited': { sortable: true, filterable: false, sortKey: 'last_edited_at' },
      'Owner': { sortable: false, filterable: false, sortKey: 'owner_id' }
  };
- const handleColumnHeaderEvent = (columnName, mode) => {
+ const handleColumnSortEvent = (columnName, mode) => {
      const sortKey = columnInfo[columnName]['sortKey'];
      if (mode == 'asc') {
          userDocs.value.sort((a, b) => a[sortKey].localeCompare(b[sortKey]));
      } else if (mode == 'desc') {
          userDocs.value.sort((a, b) => b[sortKey].localeCompare(a[sortKey]));
      }
- }
+ };
+  const handleColumnFilterEvent = (columnName, tags) => {
+      console.log(tags);
+  }
 
  onKeyUp (['j', 'J', 'ArrowDown'], (e) => {
      e.preventDefault();
@@ -73,9 +76,11 @@
         <ColumnHeader
             v-if="mode == 'list' || (mode == 'cards' && !columnInfo[name]['sortable'])"
             :name="name"
-            @none="handleColumnHeaderEvent(name, 'none')"
-            @asc="handleColumnHeaderEvent(name, 'asc')"
-            @desc="handleColumnHeaderEvent(name, 'desc')"
+            @sort-none="handleColumnSortEvent(name, 'none')"
+            @sort-asc="handleColumnSortEvent(name, 'asc')"
+            @sort-desc="handleColumnSortEvent(name, 'desc')"
+            @filter-on="handleColumnFilterEvent(name, tags)"
+            @filter-off="handleColumnFilterEvent(name, [])"
             :sortable="columnInfo[name]['sortable']"
             :filterable="columnInfo[name]['filterable']" />
       </template>

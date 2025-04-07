@@ -8,24 +8,35 @@
      filterable: { type: Boolean, default: true }
  })
 
- const allStates = ["none", "desc", "asc"];
- const emit = defineEmits(["none", "desc", "asc"]);
+ const allStates = {'sortable': ["sortNone", "sortDesc", "sortAsc"], 'filterable': ["filterOn", "filterOff"]};
+ const emit = defineEmits(["sortNone", "sortDesc", "sortAsc", "filterOn", "filterOff"]);
  const currentIndex = ref(0);
- const state = computed(() => allStates[currentIndex.value]);
+ const state = computed(() => {
+     const states = allStates[props.sortable ? 'sortable' : props.filterable ? 'filterable' : null];
+     return states[currentIndex.value];
+ });
  const nextState = () => {
+     let numStates = 1;
      if (props.sortable) {
-         currentIndex.value = (currentIndex.value + 1) % allStates.length;
-         emit(state.value);
+         const numStates = allStates['sortable'].length;
+         currentIndex.value = (currentIndex.value + 1) % numStates;
+     } else if (props.filterable) {
+         const numStates = allStates['filterable'].length;
+         currentIndex.value = (currentIndex.value + 1) % numStates;
      }
+     emit(state.value);
  };
 </script>
 
 
 <template>
-  <div class="col-header" :class="{ sortable: sortable }" @click="nextState">
+  <div
+      class="col-header"
+      :class="{ sortable: sortable, filterable: filterable }"
+      @click.stop="nextState" >
     <span>{{ name }}</span>
-    <span v-if="state == 'desc'"><IconSortDescendingLetters /></span>
-    <span v-if="state == 'asc'"><IconSortAscendingLetters /></span>
+    <span v-if="sortable && state == 'desc'"><IconSortDescendingLetters /></span>
+    <span v-if="sortable && state == 'asc'"><IconSortAscendingLetters /></span>
   </div>
 </template>
 
