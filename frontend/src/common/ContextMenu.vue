@@ -10,7 +10,9 @@
 <template>
   <div
       class="cm-wrapper"
-      :class="{ 'dots': icon == 'Dots' }" >
+      :class="{ 'dots': icon == 'Dots' }"
+      @click.stop
+      @dblclick.stop >
 
     <div
         class="cm-click-target"
@@ -37,7 +39,7 @@
  .cm-wrapper {
      position: relative;
 
-     & .cm-click-target {
+     & > .cm-click-target {
          border-radius: 8px;
          display: flex;
          justify-content: center;
@@ -65,7 +67,7 @@
          }
      }
 
-     & .cm-menu {
+     & > .cm-menu {
          position: absolute;
          right: 0;
          top: 0;
@@ -87,7 +89,7 @@
                  background-color: var(--surface-hover);
                  font-weight: var(--weight-medium);
              }
-             &:hover .tabler-icon { stroke-width: 2px }
+             &:hover > .tabler-icon { stroke-width: 2px }
 
              &.danger {
                  color: var(--text-error);

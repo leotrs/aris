@@ -49,10 +49,11 @@
             v-for="c in ['red', 'green', 'purple', 'orange']"
             :class="['color', c, tag.color == c ? 'active' : '']"
             @click.stop="setColor(c)"
-            @dblclick.stop ></span>
+            @dblclick.stop >
+        </span>
       </div>
-      <ContextMenuItem icon="Edit" caption="Rename" @click="renaming = true" />
-      <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="deleteTag" />
+      <ContextMenuItem icon="Edit" caption="Rename" @click="renaming = true" @dblclick.stop />
+      <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="deleteTag" @dblclick.stop />
     </ContextMenu>
   </div>
 </template>
@@ -60,7 +61,7 @@
 
 <style scoped>
  .tag-control :deep(.dots > .cm-menu) {
-     transform: translateX(0) translateY(40px);
+     transform: translateX(100%) translateY(-8px);
  }
 
  .pill:hover {

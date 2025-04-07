@@ -63,9 +63,8 @@
  }
 
  .cm-wrapper > :deep(.cm-menu) {
-     right: unset;
-     left: 0;
-     transform: translateX(32px) translateY(-8px);
+     right: 0;
+     transform: translateX(0) translateY(32px);
  }
 
  .cm-wrapper > :deep(.cm-menu > .item) {
