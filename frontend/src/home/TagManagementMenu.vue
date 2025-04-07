@@ -17,6 +17,7 @@
      if (tagIsAssigned.value.length === 0) { tagIsAssigned.value = [...currentAssignment.value] }
  });
  watch(tagIsAssigned.value, () => {
+     console.log(tagIsAssigned);
      tagIsAssigned.value.forEach((el, idx) => {
          if (tagIsAssigned.value[idx] && !currentAssignment.value[idx]){
              addOrRemoveTag(userTags.value[idx].id, props.docID, 'add');
