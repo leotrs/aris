@@ -1,15 +1,19 @@
 <script setup>
- import { onMounted, useTemplateRef } from 'vue';
+ import { watch, onBeforeMount, useTemplateRef } from 'vue';
+
  const { html } = defineProps({ html: { type: String, required: true }} );
 
- const manuscript = useTemplateRef('manuscript-ref');
- onMounted(async () => {
-     if (!manuscript.value) return;
+ let onload;
+ onBeforeMount(async () => {
      await import("http://localhost:8000/static/jquery-3.6.0.js");
      await import("http://localhost:8000/static/tooltipster.bundle.js");
-     const { onload } = await import("http://localhost:8000/static/onload.js");
-     const lsp_ws = onload();
+     const module = await import("http://localhost:8000/static/onload.js");
+     onload = module.onload;
  });
+
+ const manuscript = useTemplateRef('manuscript-ref');
+ let lsp_ws = null;
+ watch(() => html, async () => { manuscript.value && (lsp_ws = onload()) });
 </script>
 
 
@@ -24,6 +28,23 @@
 </template>
 
 
-<style scoped>
+<style>
+ /* Overwrite RSM's CSS but be CAREFUL!!! */
+ .manuscriptwrapper {
+     /* The background color comes from the user's choice within the settings overlay */
+     background-color: transparent !important;
 
+     /* Overwrite size and whitespace */
+     margin: 0 !important;
+     max-width: unset !important;
+     padding-top: 40px !important;
+     padding-bottom: 48px !important;
+     padding-inline: 0px !important;
+     border-radius: 0px !important;
+     & section.level-1 { margin-block: 0px !important };
+
+     /* Patches - for some reason the RSM CSS is broken? */
+     & .hr .hr-border-zone .hr-border-dots .icon.dots { padding-bottom: 0 !important };
+     & .hr .hr-collapse-zone .hr-collapse .icon.collapse { padding-bottom: 0 !important };
+ }
 </style>
