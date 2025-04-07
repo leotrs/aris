@@ -30,7 +30,8 @@
 
 
 <template>
-  <div ref="selfRef">
+  <div class="separator" ref="separator-ref" :style="style"></div>
+  <div id="preview" class="pane" ref="self-ref">
     <div class="pane-header">
       <div class="actions-left">
         <Button kind="primary" class="btn-sm" text="Read" icon="Book" @click="read"></Button>
@@ -55,6 +56,19 @@
 
 
 <style scoped>
+ #preview {
+     position: relative;
+ }
+
+ .separator {
+     position: absolute;
+     bottom: 0;
+     background-color: var(--gray-500);
+     width: 100%;
+     height: 10px;
+     z-index: 1;
+ }
+
  .pane-header {
      display: flex;
      justify-content: space-between;
@@ -87,5 +101,4 @@
      flex: 2;
      padding-block: 8px;
  }
-
 </style>
