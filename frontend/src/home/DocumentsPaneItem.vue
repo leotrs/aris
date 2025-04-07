@@ -16,13 +16,13 @@
  const fileTitleActive = ref(false);
  const rename = () => { fileTitleActive.value = true };
 
- const minimap = ref("");
+ const minimap = ref('<div>loading minimap...</div>');
  onMounted(async () => {
      try {
          const response = await axios.get(`http://localhost:8000/documents/${props.doc.id}/sections/minimap`);
          minimap.value = response.data;
      } catch (error) {
-         minimap.value = '<div></div>';
+         minimap.value = '<div>no minimap!</div>';
      }
  })
 </script>
