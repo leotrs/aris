@@ -1,6 +1,7 @@
 <script setup>
  import { ref, computed } from 'vue';
- import { IconSortAscendingLetters, IconSortDescendingLetters } from '@tabler/icons-vue';
+ import { IconSortAscendingLetters, IconSortDescendingLetters, IconFilter } from '@tabler/icons-vue';
+ import TagManagementMenu from './TagManagementMenu.vue';
 
  const props = defineProps({
      name: { type: String, required: true },
@@ -37,6 +38,7 @@
     <span>{{ name }}</span>
     <span v-if="sortable && state == 'desc'"><IconSortDescendingLetters /></span>
     <span v-if="sortable && state == 'asc'"><IconSortAscendingLetters /></span>
+    <span v-if="filterable"><TagManagementMenu :tags="[]" icon="Filter" /></span>
   </div>
 </template>
 
