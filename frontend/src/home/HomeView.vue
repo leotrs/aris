@@ -85,7 +85,7 @@
 <template>
   <div class="view-wrapper">
     <Sidebar @showFileUploadModal="showModal = true" />
-    <div id="panes">
+    <div class="panes">
       <div id="documents" class="pane">
         <Topbar
             @list="currentMode = 'list'"
@@ -116,23 +116,26 @@
      padding: 16px 16px 16px 0;
  }
 
- #panes {
+ .panes {
      display: flex;
      flex-direction: column;
      flex-grow: 1;
      gap: 8px;
- }
 
- .pane {
-     background-color: var(--almost-white);
-     padding: 16px;
-     width: 100%;
-     display: flex;
-     flex-direction: column;
-     gap: 16px;
-     border-radius: 16px;
-     flex-grow: 1;
-     overflow-y: auto;
+     & .pane {
+         background-color: var(--almost-white);
+         padding: 16px;
+         width: 100%;
+         display: flex;
+         flex-direction: column;
+         gap: 16px;
+         border-radius: 16px;
+         flex-grow: 1;
+         overflow-y: auto;
+     }
+
+     & #documents { flex-grow: 3}
+     & #preview { flex-grow: 3; min-height: 200px; }
  }
 
  .modal {
