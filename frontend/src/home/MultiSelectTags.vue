@@ -1,6 +1,7 @@
 <script setup>
  import { ref, reactive, inject, computed, watch, watchEffect } from 'vue';
  import { IconCirclePlus } from '@tabler/icons-vue';
+ import TagManagementMenu from './TagManagementMenu.vue';
 
  const props = defineProps({
      tags: { type: Array, required: true },
@@ -30,24 +31,7 @@
 
 <template>
   <Tag v-for="tag in tags" :tag="tag" :active="true" />
-  <ContextMenu icon="CirclePlus">
-    <TagControl
-        v-for="(tag, idx) in userTags"
-        class="item"
-        :tag="tag"
-        :key="tag"
-        :docID="docID"
-        v-model="tagIsAssigned[idx]" />
-    <div class="new-tag-wrapper item">
-      <Tag
-          :tag="newTagPlaceholder"
-          :active="false"
-          @rename="(name) => createTag(name)"
-          v-model="renaming"
-          @click.stop="renaming=true"
-          @dblclick.stop />
-    </div>
-  </ContextMenu>
+  <TagManagementMenu :tags="tags" :docID="docID" />
 </template>
 
 
