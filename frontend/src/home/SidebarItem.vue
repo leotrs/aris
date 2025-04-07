@@ -1,6 +1,6 @@
 <script setup>
  import { computed } from 'vue';
- import { IconHome, IconUserCircle, IconLifebuoy, IconBrandGit, IconPencil, IconBook, IconFileCheck, IconFiles, IconLayoutSidebarLeftCollapse, IconCirclePlus } from '@tabler/icons-vue';
+ import { IconHome, IconUserCircle, IconLifebuoy, IconBrandGit, IconPencil, IconBook, IconFileCheck, IconFiles, IconLayoutSidebarLeftCollapse, IconQuote, IconMessage, IconCirclePlus } from '@tabler/icons-vue';
 
  const props = defineProps({
      text: String,
@@ -9,16 +9,15 @@
  });
 
  const icons = {
+     New: IconCirclePlus,
      Home: IconHome,
-     Write: IconPencil,
-     Read: IconBook,
-     Review: IconFileCheck,
      'All Files': IconFiles,
-     Account: IconUserCircle,
-     Help: IconLifebuoy,
-     Contribute: IconBrandGit,
+     Read: IconBook,
+     Write: IconPencil,
+     Review: IconFileCheck,
+     Feedback: IconMessage,
+     References: IconQuote,
      Collapse: IconLayoutSidebarLeftCollapse,
-     New: IconCirclePlus
  };
 
  const selectedIcon = computed(() => icons[props.text] || null);
