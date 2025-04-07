@@ -91,8 +91,8 @@ async def soft_delete_document(document_id: int, db: Session):
 async def get_document_section(doc_id: int, section_name: str, db: Session):
     doc = db.query(Document).filter(Document.id == doc_id).first()
     if not doc:
-        raise ValueError("Document not found")
+        raise ValueError(f"Document {doc_id} not found")
     html = await extract_section(doc, section_name)
     if html is None:
-        raise ValueError("Section not found in document")
+        raise ValueError(f"Section {section_name} not found in document")
     return html

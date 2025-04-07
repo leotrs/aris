@@ -22,7 +22,7 @@
          const response = await axios.get(`http://localhost:8000/documents/${props.doc.id}/sections/minimap`);
          minimap.value = response.data;
      } catch (error) {
-         console.error('Failed to fetch minimap:', error);
+         minimap.value = '<div></div>';
      }
  })
 </script>
