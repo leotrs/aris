@@ -45,10 +45,11 @@
         @dblclick.stop />
     <ContextMenu>
       <div class="colors">
-        <span class="color red" @click="setColor('red')"></span>
-        <span class="color green" @click="setColor('green')"></span>
-        <span class="color purple" @click="setColor('purple')"></span>
-        <span class="color orange" @click="setColor('orange')"></span>
+        <span
+            v-for="c in ['red', 'green', 'purple', 'orange']"
+            :class="['color', c, tag.color == c ? 'active' : '']"
+            @click.stop="setColor(c)"
+            @dblclick.stop ></span>
       </div>
       <ContextMenuItem icon="Edit" caption="Rename" @click="renaming = true" />
       <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="deleteTag" />
@@ -58,8 +59,8 @@
 
 
 <style scoped>
- :deep(.dots > .menu) {
-     transform: translateX(100%) !important;
+ .tag-control :deep(.dots > .cm-menu) {
+     transform: translateX(0) translateY(40px);
  }
 
  .pill:hover {
@@ -73,14 +74,32 @@
  }
 
  .color {
-     height: 32px;
-     width: 16px;
+     height: calc(32px);
+     width: calc(16px);
+     border: var(--border-thin) solid var(--surface-primary);
      border-radius: 8px;
+     &:not(.active):hover {
+         cursor: pointer;
+         &.red { background-color: var(--red-100) }
+         &.green { background-color: var(--green-100) }
+         &.purple { background-color: var(--purple-100) }
+         &.orange { background-color: var(--orange-100) }
+     }
 
-     &.red { background-color: var(--red-500) }
-     &.green { background-color: var(--green-500) }
-     &.purple { background-color: var(--purple-500) }
-     &.orange { background-color: var(--orange-500) }
+     &.active {
+         &.red { background-color: var(--red-500); border-color: var(--red-500) }
+         &.green { background-color: var(--green-500); border-color: var(--green-500) }
+         &.purple { background-color: var(--purple-500); border-color: var(--purple-500) }
+         &.orange { background-color: var(--orange-500); border-color: var(--orange-500) }
+     }
 
+     &:not(.active) {
+         border-style: solid;
+         border-width: var(--border-thin);
+         &.red { border-color: var(--red-500) }
+         &.green { border-color: var(--green-500) }
+         &.purple { border-color: var(--purple-500) }
+         &.orange { border-color: var(--orange-500) }
+     }
  }
 </style>
