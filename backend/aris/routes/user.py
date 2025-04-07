@@ -8,12 +8,12 @@ router = APIRouter()
 
 
 @router.get("/users")
-def get_users(db: Session = Depends(get_db)):
+async def get_users(db: Session = Depends(get_db)):
     return crud.get_users(db)
 
 
 @router.get("/users/{user_id}")
-def get_user(user_id: int, db: Session = Depends(get_db)):
+async def get_user(user_id: int, db: Session = Depends(get_db)):
     user = crud.get_user(user_id, db)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -21,14 +21,14 @@ def get_user(user_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/users")
-def create_user(
+async def create_user(
     full_name: str, email: str, password_hash: str, db: Session = Depends(get_db)
 ):
     return crud.create_user(full_name, email, password_hash, db)
 
 
 @router.put("/users/{user_id}")
-def update_user(
+async def update_user(
     user_id: int, full_name: str, email: str, db: Session = Depends(get_db)
 ):
     user = crud.update_user(user_id, full_name, email, db)
@@ -38,7 +38,7 @@ def update_user(
 
 
 @router.delete("/users/{user_id}")
-def soft_delete_user(user_id: int, db: Session = Depends(get_db)):
+async def soft_delete_user(user_id: int, db: Session = Depends(get_db)):
     user = crud.soft_delete_user(user_id, db)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -46,5 +46,5 @@ def soft_delete_user(user_id: int, db: Session = Depends(get_db)):
 
 
 @router.get("/users/{user_id}/documents")
-def get_user_documents(user_id: int, db: Session = Depends(get_db)):
-    return crud.get_user_documents(user_id, True, db)
+async def get_user_documents(user_id: int, db: Session = Depends(get_db)):
+    return await crud.get_user_documents(user_id, True, db)
