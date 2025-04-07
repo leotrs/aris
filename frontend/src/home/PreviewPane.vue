@@ -1,18 +1,21 @@
 <script setup>
- import { ref, watch } from 'vue';
  import axios from 'axios';
+ import useClosable from '@/composables/useClosable.js';
+ import { ref, watch, useTemplateRef, onMounted } from 'vue';
  import { useRouter } from 'vue-router';
  import { IconBook, IconFileCheck, IconVersions, IconX } from '@tabler/icons-vue';
- import useClosable from '@/composables/useClosable.js';
 
- const { doc } = defineProps({ doc: Object });
+ const { doc, container } = defineProps({
+     doc: { type: Object, required: true },
+     container: { type: Object, required: true },
+ });
  const emit = defineEmits(["set-selected"]);
  const router = useRouter();
 
  const read = () => { router.push(`/${doc.id}/read`); }
  const close = () => { emit('set-selected', ""); }
 
- const selfRef = ref(null);
+ const selfRef = useTemplateRef('self-ref');
  const abstract = ref("<div>loading abstract...</div>");
  const loadAbstract = async () => {
      if (!selfRef) return;
@@ -30,7 +33,6 @@
 
 
 <template>
-  <div class="separator" ref="separator-ref" :style="style"></div>
   <div id="preview" class="pane" ref="self-ref">
     <div class="pane-header">
       <div class="actions-left">
@@ -56,19 +58,6 @@
 
 
 <style scoped>
- #preview {
-     position: relative;
- }
-
- .separator {
-     position: absolute;
-     bottom: 0;
-     background-color: var(--gray-500);
-     width: 100%;
-     height: 10px;
-     z-index: 1;
- }
-
  .pane-header {
      display: flex;
      justify-content: space-between;

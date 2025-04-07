@@ -1,5 +1,6 @@
 <script setup>
- import { ref, provide, onMounted } from 'vue';
+ import { ref, provide, computed, useTemplateRef, onMounted } from 'vue';
+ import { useDraggable } from '@vueuse/core'
  import axios from 'axios';
  import Sidebar from './Sidebar.vue';
  import Topbar from './Topbar.vue';
@@ -9,13 +10,13 @@
  import Separator from '../common/Separator.vue';
 
  const showModal = ref(false);
- const selectedForPreview = ref(null);
- const setSelectedForPreview = (doc) => { selectedForPreview.value = doc };
  const currentMode = ref("list");
 
+ /*********** userID ***********/
  const userID = 1;
  provide('userID', userID);
 
+ /*********** userDocs ***********/
  const userDocs = ref([]);
  const reloadDocs = async (docID) => {
      try {
@@ -28,6 +29,7 @@
  provide('userDocs', { userDocs, reloadDocs });
  onMounted(async () => { reloadDocs() });
 
+ /*********** userTags ***********/
  const userTags = ref([]);
  const updateUserTag = async (oldTag, newTag) => {
      if (oldTag) {
@@ -80,6 +82,34 @@
  }
  provide('userTags', { userTags, updateUserTag, createTag, addOrRemoveTag });
  onMounted(async () => { updateUserTag() });
+
+ /*********** draggable Preview pane ***********/
+ const container = useTemplateRef('separator-container-ref');;
+ const separator = useTemplateRef('separator-ref');
+ const preview = useTemplateRef('preview-ref');
+
+ const previewHeight = ref('50%');
+ const onSeparatorDragged = (pos, ev) => {
+     const rect = container.value.getBoundingClientRect();
+     console.log(pos.y, rect.height);
+     previewHeight.value = `calc(30% + ${rect.height}px - ${pos.y}px)`;
+ }
+ const style = ref({});
+ const selectedForPreview = ref(null);
+ const separatorPointerEvents = computed(() => selectedForPreview.value ? 'all' : 'none' );
+ const setSelectedForPreview = (doc) => {
+     selectedForPreview.value = doc;
+     if (!doc) return;
+     if (!container.value) return;
+     const { style } = useDraggable(separator, {
+         initialValue: { x: 0, y: container.value.getBoundingClientRect().height / 2 - 2 },
+         preventDefault: true,
+         axis: 'y',
+         onMove: onSeparatorDragged,
+         containerElement: container,
+     });
+     return style;
+ };
 </script>
 
 
@@ -93,15 +123,20 @@
             @list="currentMode = 'list'"
             @cards="currentMode = 'cards'" />
         <DocumentsPane
-            @set-selected="setSelectedForPreview"
+            @set-selected="(doc) => style = setSelectedForPreview(doc)"
             :mode="currentMode" />
+      </div>
+
+      <div class="separator-container" ref="separator-container-ref">
+        <div class="separator" ref="separator-ref" :style="style"></div>
       </div>
 
       <PreviewPane
           v-if="selectedForPreview"
+          ref="preview-ref"
           :doc="selectedForPreview"
           :container="useTemplateRef('panes-ref')"
-          @set-selected="setSelectedForPreview" />
+          @set-selected="(doc) => style = setSelectedForPreview(doc)" />
 
     </div>
     <div class="modal" v-show="showModal">
@@ -120,12 +155,28 @@
      height: 100%;
  }
 
+ .separator-container {
+     height: 40%;
+     position: absolute;
+     width: 100%;
+     top: 30%;
+     pointer-events: none;
+ }
+
+ .separator {
+     position: absolute;
+     bottom: 0;
+     background-color: transparent;
+     width: 100%;
+     height: 12px;
+     z-index: 1;
+     pointer-events: v-bind(separatorPointerEvents);
+     &:hover{ cursor: row-resize }
+ }
+
  .panes {
      position: relative;
-     display: flex;
-     flex-direction: column;
      flex-grow: 1;
-     gap: 8px;
      height: 100%;
 
      & :deep(.pane) {
@@ -136,10 +187,29 @@
          flex-direction: column;
          gap: 16px;
          border-radius: 16px;
-         flex-grow: 1;
      }
-     & :deep(.pane:not(:has(~ .pane))) { max-height: 100% }
-     & :deep(.pane:has(~ .pane)) { max-height: 50% }
+
+     & :deep(#documents:not(:has(~ .pane))) {
+         min-height: 100%;
+         max-height: 100%;
+     }
+     & :deep(#documents:has(~ .pane)) {
+         min-height: 20%;
+         max-height: 80%;
+     }
+     & :deep(#preview) {
+         min-height: 20%;
+         max-height: 80%;
+     }
+ }
+
+ #documents {
+     margin-bottom: 8px;
+     height: calc(100% - v-bind(previewHeight));
+ }
+
+ #preview {
+     height: v-bind(previewHeight);
  }
 
  .modal {
