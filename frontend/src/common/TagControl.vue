@@ -3,19 +3,9 @@
 
  const props = defineProps({
      tag: { type: Object, required: true },
-     docID: { type: Number, required: true }
  });
  const state = defineModel();
- const { userTags, updateUserTag, addOrRemoveTag } = inject('userTags');
-
- const toggle = () => {
-     if (!state.value) {
-         addOrRemoveTag(props.tag.id, props.docID, 'add');
-     } else {
-         addOrRemoveTag(props.tag.id, props.docID, 'remove');
-     }
-     state.value = !state.value;
- };
+ const { updateUserTag } = inject('userTags');
 
  const setColor = (color) => {
      const newTag = JSON.parse(JSON.stringify(props.tag));
@@ -41,7 +31,7 @@
         :active="state"
         v-model="renaming"
         @rename="renameTag"
-        @click.stop="toggle"
+        @click.stop="state = !state"
         @dblclick.stop />
     <ContextMenu>
       <div class="colors">

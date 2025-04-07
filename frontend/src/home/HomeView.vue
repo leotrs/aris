@@ -60,7 +60,6 @@
      }
  }
  const addOrRemoveTag = async (tagID, docID, mode) => {
-     console.log(`${mode} ${tagID} ${docID}`);
      const url = `http://localhost:8000/users/${userID}/documents/${docID}/tags/${tagID}`;
      if (mode == 'add') {
          try {
