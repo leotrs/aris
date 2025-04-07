@@ -87,7 +87,6 @@
              gap: 10px;
              &:hover {
                  background-color: var(--surface-hover);
-                 font-weight: var(--weight-medium);
              }
              &:hover > .tabler-icon { stroke-width: 2px }
 
