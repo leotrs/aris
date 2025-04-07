@@ -15,10 +15,10 @@ async def get_documents(db: Session = Depends(get_db)):
     return await crud.get_documents(db)
 
 
-@router.get("/documents/{document_id}")
-async def get_document(document_id: int, db: Session = Depends(get_db)):
-    doc = crud.get_document(document_id, db)
-    tags = crud.get_document_tags(document_id, db)
+@router.get("/documents/{doc_id}")
+async def get_document(doc_id: int, db: Session = Depends(get_db)):
+    doc = await crud.get_document(doc_id, db)
+    tags = await crud.get_document_tags(doc_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     return {
@@ -31,9 +31,9 @@ async def get_document(document_id: int, db: Session = Depends(get_db)):
     }
 
 
-@router.get("/documents/{document_id}/html", response_class=HTMLResponse)
-async def get_document_html(document_id: int, db: Session = Depends(get_db)):
-    doc = crud.get_document_html(document_id, db)
+@router.get("/documents/{doc_id}/html", response_class=HTMLResponse)
+async def get_document_html(doc_id: int, db: Session = Depends(get_db)):
+    doc = await crud.get_document_html(doc_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     return doc
@@ -61,27 +61,39 @@ async def create_document(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    result = crud.create_document(doc.source, doc.owner_id, doc.title, doc.abstract, db)
+    result = await crud.create_document(
+        doc.source, doc.owner_id, doc.title, doc.abstract, db
+    )
     return {"message": "Manuscript created", "id": result.id}
 
 
-@router.put("/documents/{document_id}")
+@router.put("/documents/{doc_id}")
 async def update_document(
-    document_id: int,
+    doc_id: int,
     title: str,
     abstract: str,
     status: str,
     db: Session = Depends(get_db),
 ):
-    doc = crud.update_document(document_id, title, abstract, status, db)
+    doc = await crud.update_document(doc_id, title, abstract, status, db)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     return doc
 
 
-@router.delete("/documents/{document_id}")
-async def soft_delete_document(document_id: int, db: Session = Depends(get_db)):
-    doc = crud.soft_delete_document(document_id, db)
+@router.delete("/documents/{doc_id}")
+async def soft_delete_document(doc_id: int, db: Session = Depends(get_db)):
+    doc = await crud.soft_delete_document(doc_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
-    return {"message": f"Document {document_id} soft deleted"}
+    return {"message": f"Document {doc_id} soft deleted"}
+
+
+@router.get("/documents/{doc_id}/sections/{section_name}", response_class=HTMLResponse)
+async def get_document_section(
+    doc_id: int, section_name: str, db: Session = Depends(get_db)
+):
+    html = await crud.get_document_section(doc_id, section_name, db)
+    if html is None:
+        raise HTTPException(status_code=404, detail="Section not found")
+    return HTMLResponse(content=html)

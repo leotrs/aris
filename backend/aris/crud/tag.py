@@ -9,7 +9,7 @@ from ..models import Document, Tag, User, document_tags
 COLORS = iter(["red", "purple", "green", "orange"])
 
 
-def create_tag(user_id: int, name: str, color: str, db: Session):
+async def create_tag(user_id: int, name: str, color: str, db: Session):
     """Create a new tag for the user."""
     user = db.query(User).filter(User.id == user_id).first()
     if not user:
@@ -30,7 +30,7 @@ def create_tag(user_id: int, name: str, color: str, db: Session):
         return None
 
 
-def get_user_tags(user_id: int, db: Session):
+async def get_user_tags(user_id: int, db: Session):
     """Get all tags for a user."""
     tags = (
         db.query(Tag)
@@ -46,7 +46,9 @@ def get_user_tags(user_id: int, db: Session):
     ]
 
 
-def update_tag(_id: int, user_id: int, new_name: str, new_color: str, db: Session):
+async def update_tag(
+    _id: int, user_id: int, new_name: str, new_color: str, db: Session
+):
     """Update the name of a tag."""
     tag_to_update = (
         db.query(Tag)
@@ -67,7 +69,7 @@ def update_tag(_id: int, user_id: int, new_name: str, new_color: str, db: Sessio
     return tag_to_update
 
 
-def soft_delete_tag(_id: int, user_id: int, db: Session):
+async def soft_delete_tag(_id: int, user_id: int, db: Session):
     """Delete a tag for a user."""
     tag_to_delete = (
         db.query(Tag)
@@ -86,7 +88,7 @@ def soft_delete_tag(_id: int, user_id: int, db: Session):
     return {"message": "Tag deleted successfully"}
 
 
-def get_document_tags(document_id: int, db: Session):
+async def get_document_tags(document_id: int, db: Session):
     tags = (
         db.query(Tag)
         .join(document_tags, document_tags.c.tag_id == Tag.id)
@@ -101,7 +103,7 @@ def get_document_tags(document_id: int, db: Session):
     return tags
 
 
-def add_tag_to_document(user_id: int, document_id: int, tag_id: str, db: Session):
+async def add_tag_to_document(user_id: int, document_id: int, tag_id: str, db: Session):
     with db.begin():
         document = db.get(Document, document_id)
         if not document or document.owner_id != user_id:
@@ -122,7 +124,9 @@ def add_tag_to_document(user_id: int, document_id: int, tag_id: str, db: Session
         )
 
 
-def remove_tag_from_document(user_id: int, document_id: int, tag_id: str, db: Session):
+async def remove_tag_from_document(
+    user_id: int, document_id: int, tag_id: str, db: Session
+):
     with db.begin():
         document = db.get(Document, document_id)
         if not document or document.owner_id != user_id:

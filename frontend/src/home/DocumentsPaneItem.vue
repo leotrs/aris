@@ -1,5 +1,6 @@
 <script setup>
- import { ref, inject } from 'vue';
+ import { ref, inject, onMounted } from 'vue';
+ import axios from 'axios';
  import RelativeTime from '@yaireo/relative-Time';
  import MultiSelectTags from './MultiSelectTags.vue';
 
@@ -14,6 +15,17 @@
 
  const fileTitleActive = ref(false);
  const rename = () => { fileTitleActive.value = true };
+
+ const minimap = ref("");
+ onMounted(async () => {
+     try {
+         const response = await axios.get(`http://localhost:8000/documents/${props.doc.id}/sections/minimap`);
+         /* minimap.value = response.data; */
+         minimap.value = '';
+     } catch (error) {
+         console.error('Failed to fetch minimap:', error);
+     }
+ })
 </script>
 
 <template>
@@ -27,7 +39,7 @@
       <ContextMenu @rename="rename" />
     </template>
     <div class="minimap">
-      minimap
+      {{ minimap }}
     </div>
     <div class="tags">
       <MultiSelectTags :tags="doc.tags" :docID="doc.id" />

@@ -8,15 +8,15 @@ from .tag import get_document_tags
 from .utils import extract_title
 
 
-def get_users(db: Session):
+async def get_users(db: Session):
     return db.query(User).filter(User.deleted_at.is_(None)).all()
 
 
-def get_user(user_id: int, db: Session):
+async def get_user(user_id: int, db: Session):
     return db.query(User).filter(User.id == user_id, User.deleted_at.is_(None)).first()
 
 
-def create_user(name: str, email: str, password_hash: str, db: Session):
+async def create_user(name: str, email: str, password_hash: str, db: Session):
     user = User(name=name, email=email, password_hash=password_hash)
     db.add(user)
     db.commit()
@@ -24,7 +24,7 @@ def create_user(name: str, email: str, password_hash: str, db: Session):
     return user
 
 
-def update_user(user_id: int, name: str, email: str, db: Session):
+async def update_user(user_id: int, name: str, email: str, db: Session):
     user = get_user(user_id, db)
     if not user:
         return None
@@ -35,7 +35,7 @@ def update_user(user_id: int, name: str, email: str, db: Session):
     return user
 
 
-def soft_delete_user(user_id: int, db: Session):
+async def soft_delete_user(user_id: int, db: Session):
     user = get_user(user_id, db)
     if not user:
         return None
@@ -45,7 +45,7 @@ def soft_delete_user(user_id: int, db: Session):
 
 
 async def get_user_documents(user_id: int, with_tags, db: Session):
-    user = get_user(user_id, db)
+    user = await get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")
 
@@ -64,7 +64,7 @@ async def get_user_documents(user_id: int, with_tags, db: Session):
             "title": doc.title,
             "source": doc.source,
             "last_edited_at": doc.last_edited_at,
-            "tags": get_document_tags(doc.id, db) if with_tags else [],
+            "tags": await get_document_tags(doc.id, db) if with_tags else [],
         }
         for doc in docs
     ]

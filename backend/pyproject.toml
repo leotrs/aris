@@ -6,7 +6,9 @@ readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
     "alembic>=1.15.1",
+    "beautifulsoup4>=4.13.3",
     "fastapi>=0.115.11",
+    "lxml>=5.3.2",
     "psycopg2>=2.9.10",
     "rsm-markup>=0.2.6",
     "sqlalchemy>=2.0.39",
