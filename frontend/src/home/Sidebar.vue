@@ -1,8 +1,11 @@
 <script setup>
- import { ref, onMounted, onUnmounted, onUpdated, useTemplateRef } from 'vue';
+ import { ref, inject, onMounted, onUnmounted, onUpdated, useTemplateRef } from 'vue';
+ import { IconMenu3 } from '@tabler/icons-vue';
  import SidebarItem from './SidebarItem.vue';
  import Separator from '@/common/Separator.vue';
 
+ const isMobile = inject('isMobile');
+ const showMobileMenu = ref(false);
  const emit = defineEmits(['showFileUploadModal']);
  const forceCollapsed = ref(false);
  const collapsed = ref(false);
@@ -34,30 +37,59 @@
 
 
 <template>
-  <div class="sb-wrapper" ref="sidebarRef" :class="collapsed ? 'collapsed' : null">
-    <div id="logo">
-      <img v-if="collapsed" src="../assets/logo-32px.svg" />
-      <img v-else src="../assets/logotype.svg" />
-    </div>
-    <div class="cta">
-      <Button
-          kind="secondary"
-          icon="CirclePlus"
-          :text="!collapsed ? 'New File' : ''"
-          @click="$emit('showFileUploadModal')" />
-    </div>
-    <div class="sb-menu">
-      <SidebarItem :collapsed="collapsed" text="Home" />
-      <SidebarItem :collapsed="collapsed" text="All Files" active />
-      <SidebarItem :collapsed="collapsed" text="Read" />
-      <SidebarItem :collapsed="collapsed" text="Write" />
-      <SidebarItem :collapsed="collapsed" text="Review" />
-      <Separator />
-      <SidebarItem :collapsed="collapsed" text="Feedback" />
-      <SidebarItem :collapsed="collapsed" text="References" />
-      <Separator />
-      <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />
-    </div>
+  <div ref="sidebarRef" :class="['sb-wrapper', isMobile ? 'mobile' : '', (!isMobile && collapsed) ? 'collapsed' : '']">
+
+    <template v-if="!isMobile">
+      <div id="logo">
+        <img v-if="collapsed" src="../assets/logo-32px.svg" />
+        <img v-else src="../assets/logotype.svg" />
+      </div>
+    </template>
+
+    <template>
+      <div class="cta">
+        <Button
+            kind="secondary"
+            icon="CirclePlus"
+            :text="(isMobile || !collapsed) ? 'NewFile' : ''"
+            @click="$emit('showFileUploadModal')" />
+      </div>
+    </template>
+
+    <template v-if="isMobile">
+      <div class="sb-btn mobile" @click.stop="showMobileMenu = !showMobileMenu">
+        <IconMenu3 />
+      </div>
+      <div v-if="showMobileMenu" class="sb-menu mobile">
+        <SidebarItem :collapsed="false" text="Home" />
+        <SidebarItem :collapsed="false" text="Feedback" />
+        <SidebarItem :collapsed="false" text="References" />
+        <Separator />
+        <SidebarItem :collapsed="false" text="Read" />
+        <SidebarItem :collapsed="false" text="Write" />
+        <SidebarItem :collapsed="false" text="Review" />
+        <SidebarItem :collapsed="false" text="All Files" active />
+        <Separator />
+        <SidebarItem :collapsed="false" text="Settings" />
+        <SidebarItem :collapsed="false" text="Account" />
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="sb-menu">
+        <SidebarItem :collapsed="collapsed" text="Home" />
+        <SidebarItem :collapsed="collapsed" text="Feedback" />
+        <SidebarItem :collapsed="collapsed" text="References" />
+        <Separator />
+        <SidebarItem :collapsed="collapsed" text="Read" />
+        <SidebarItem :collapsed="collapsed" text="Write" />
+        <SidebarItem :collapsed="collapsed" text="Review" />
+        <SidebarItem :collapsed="collapsed" text="All Files" active />
+        <Separator />
+        <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />
+      </div>
+    </template>
+
   </div>
 </template>
 
@@ -71,7 +103,9 @@
      &::-webkit-scrollbar { /* Chrome */
          display: none;
      }
-
+ }
+ 
+ .sb-wrapper:not(.mobile) {
      &:not(.collapsed) {
          flex-basis: 216px;
          flex-grow: 1;
@@ -84,7 +118,7 @@
          min-width: 64px;
          max-width: 90px;
          flex-grow: 1;
-         & > * { margin: 0 auto };
+         & > * { margin: 0 auto }
 
          & > #logo {
              margin-top: 9px;
@@ -93,10 +127,23 @@
              & > img { margin: 0 };
          }
 
-         &.collapsed > .cta {
-             justify-content: center;
-         }
+         & > .cta { justify-content: center }
      }
+ }
+
+ .sb-wrapper.mobile {
+     position: absolute;
+     z-index: 1;
+     background-color: var(--extra-light);
+     display: flex;
+     height: 48px;
+     width: 48px;
+     align-items: center;
+     justify-content: center;
+     overflow: visible;
+
+     & > .sb-btn { display: flex }
+     & > .sb-menu { background-color: var(--extra-light) }
  }
 
  #logo {
@@ -125,16 +172,4 @@
  }
 
  .sb-wrapper:not(.collapsed) .cta > button { padding-left: 6px; }
-
-
- /***************************************************************/
- /* this will never work bc scoped styles can't select children */
- .sb-wrapper .cta button .btn-text {
-     background: red;
- };
-
- /* this SHOULD work but DOESNT... */
- .cta button :deep(.btn-text) {
-     background: black !important;
- };
 </style>

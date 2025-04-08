@@ -1,5 +1,5 @@
 <script setup>
- import { ref, provide, computed, useTemplateRef, onMounted } from 'vue';
+ import { ref, provide, computed, useTemplateRef, onMounted, onUnmounted } from 'vue';
  import { useDraggable } from '@vueuse/core'
  import axios from 'axios';
  import Sidebar from './Sidebar.vue';
@@ -11,10 +11,31 @@
 
  const showModal = ref(false);
  const currentMode = ref("list");
+ const selfRef = useTemplateRef('selfRef');
 
  /*********** userID ***********/
  const userID = 1;
  provide('userID', userID);
+
+ /*********** isMobile ***********/
+ const isMobile = ref(false);
+ const setIsMobile = (el) => {
+     isMobile.value = el && el.contentRect.width < 432;
+ }
+ let observer;
+ onMounted(() => {
+     if (selfRef.value) {
+         observer = new ResizeObserver((entries) => {
+             for (let entry of entries) {
+                 setIsMobile(entry);
+             }
+         });
+         observer.observe(selfRef.value);
+     }
+ })
+ onUnmounted(() => { if (observer) observer.disconnect() });
+ setIsMobile(selfRef.value);
+ provide('isMobile', isMobile);
 
  /*********** userDocs ***********/
  const userDocs = ref([]);
@@ -114,7 +135,7 @@
 
 
 <template>
-  <div class="view-wrapper">
+  <div :class="['view-wrapper', isMobile ? 'mobile' : '']" ref="selfRef">
     <Sidebar @showFileUploadModal="showModal = true" />
     <div class="panes" ref="panes-ref">
 
@@ -132,7 +153,7 @@
       </div>
 
       <PreviewPane
-          v-if="selectedForPreview"
+          v-if="!isMobile && selectedForPreview"
           ref="preview-ref"
           :doc="selectedForPreview"
           :container="useTemplateRef('panes-ref')"
@@ -153,6 +174,10 @@
      flex-grow: 2;
      padding: 16px 16px 16px 0;
      height: 100%;
+ }
+ 
+ .view-wrapper.mobile {
+     padding: 0;
  }
 
  .separator-container {
