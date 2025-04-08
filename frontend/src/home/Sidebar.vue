@@ -50,7 +50,7 @@
       <Button
           kind="secondary"
           icon="CirclePlus"
-          :text="(!isMobile && !collapsed) ? 'NewFile' : ''"
+          :text="(!isMobile && !collapsed) ? 'New File' : ''"
           @click="$emit('showFileUploadModal')" />
     </div>
 

@@ -89,7 +89,7 @@
  button.secondary {
      background-color: var(--surface-primary);
      color: var(--primary-600);
-     border: var(--border-thin) solid var(--border-information);
+     border: var(--border-thin) solid var(--border-action-hover);
 
      &:hover {
          color: var(--text-action-hover);
