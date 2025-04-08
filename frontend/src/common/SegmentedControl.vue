@@ -55,24 +55,25 @@
      padding-block: 4px;
      display: flex;
      align-items: center;
+     padding-inline: calc(8px - 2*var(--border-thin));
+     border-width: var(--border-thin);
+     border-style: solid;
 
      &.active {
          color: var(--extra-dark);
          background-color: var(--surface-information);
-         border: var(--border-thin) solid var(--border-action);
-         padding-inline: calc(8px - var(--border-thin));
+         border-color: var(--border-action);
      }
 
      &:not(.active) {
          cursor: pointer;
          color: var(--dark);
          background-color: var(--surface-hover);
-         padding-inline: 8px;
+         border-color: var(--surface-hover);
          & > .sc-icon { color: var(--dark) }
 
          &:hover {
-             border: var(--border-thin) solid var(--dark);
-             padding-inline: calc(8px - var(--border-thin));
+             border-color: var(--dark);
              & > .sc-icon { color: var(--extra-dark) }
          }
      }

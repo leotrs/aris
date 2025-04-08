@@ -12,11 +12,9 @@
 <template>
   <div class="tb-wrapper" :class="{ mobile: isMobile }">
     <div class="tb-control">
-      <template v-if="isMobile">
-        <SegmentedControl
-            :icons="segmentedControlIcons"
-            @change="(idx) => idx == 0 ? $emit('list') : $emit('cards')" />
-      </template>
+      <SegmentedControl
+          :icons="segmentedControlIcons"
+          @change="(idx) => idx == 0 ? $emit('list') : $emit('cards')" />
     </div>
     <div class="tb-search">
       <SearchBar />
