@@ -39,22 +39,23 @@
 <template>
   <div ref="sidebarRef" :class="['sb-wrapper', isMobile ? 'mobile' : '', (!isMobile && collapsed) ? 'collapsed' : '']">
 
-    <template v-if="!isMobile">
+    <template v-if="isMobile">
+      <!-- No logo in mobile :( -->
+    </template>
+    <template v-else>
       <div id="logo">
         <img v-if="collapsed" src="../assets/logo-32px.svg" />
         <img v-else src="../assets/logotype.svg" />
       </div>
     </template>
 
-    <template>
-      <div class="cta">
-        <Button
-            kind="secondary"
-            icon="CirclePlus"
-            :text="(isMobile || !collapsed) ? 'NewFile' : ''"
-            @click="$emit('showFileUploadModal')" />
-      </div>
-    </template>
+    <div class="cta" :class="{ fab: isMobile }">
+      <Button
+          kind="secondary"
+          icon="CirclePlus"
+          :text="(!isMobile && !collapsed) ? 'NewFile' : ''"
+          @click="$emit('showFileUploadModal')" />
+    </div>
 
     <template v-if="isMobile">
       <div class="sb-btn mobile" @click.stop="showMobileMenu = !showMobileMenu">
@@ -159,7 +160,6 @@
 
  .cta {
      display: flex;
-
      align-items: center;
      padding-inline: 8px;
      flex-grow: 1;
@@ -169,6 +169,15 @@
          justify-content: center;
          width: 100%;
      }
+ }
+
+ .cta.fab {
+     position: fixed;
+     padding: 0;
+     margin: 0;
+     left: 100%;
+     bottom: 0;
+     transform: translateX(calc(-100% - 24px)) translateY(-24px);
  }
 
  .sb-wrapper:not(.collapsed) .cta > button { padding-left: 6px; }
