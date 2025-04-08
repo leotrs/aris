@@ -1,11 +1,9 @@
 <script setup>
- import { inject } from 'vue';
+ import { inject, computed } from 'vue';
  
  const emits = defineEmits(["list", 'cards']);
  const isMobile = inject('isMobile');
- 
- let segmentedControlIcons = ['LayoutList', 'LayoutCards']; 
- if (isMobile) { segmentedControlIcons.push('CropPortrait') }
+ const segmentedControlIcons = computed(() => isMobile.value ? ['LayoutList', 'LayoutCards', 'CropPortrait'] : ['LayoutList', 'LayoutCards'])
 </script>
 
 
