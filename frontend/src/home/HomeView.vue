@@ -20,7 +20,9 @@
  /*********** isMobile ***********/
  const isMobile = ref(false);
  const setIsMobile = (el) => {
-     isMobile.value = el && el.contentRect.width < 432;
+     if (el?.contentRect) {
+         isMobile.value = el.contentRect.width < 432;
+     }
  }
  let observer;
  onMounted(() => {
@@ -31,10 +33,10 @@
              }
          });
          observer.observe(selfRef.value);
+         setIsMobile(selfRef.value);
      }
  })
  onUnmounted(() => { if (observer) observer.disconnect() });
- setIsMobile(selfRef.value);
  provide('isMobile', isMobile);
 
  /*********** userDocs ***********/
@@ -227,6 +229,18 @@
          max-height: 80%;
      }
  }
+
+ .view-wrapper.mobile {
+     & :deep(.pane) {
+         padding: 0;
+         width: 100%;
+         display: flex;
+         flex-direction: column;
+         gap: 16px;
+         border-radius: 16px;
+     }
+ }
+ 
 
  #documents {
      margin-bottom: 8px;
