@@ -33,7 +33,7 @@
 <template>
   <div
       class="col-header"
-      :class="{ sortable: sortable, filterable: filterable }"
+      :class="[name.toLowerCase().replace(' ', '-'), { sortable: sortable, filterable: filterable }]"
       @click.stop="nextState" >
     <span>{{ name }}</span>
     <span v-if="sortable && state == 'desc'"><IconSortDescendingLetters /></span>

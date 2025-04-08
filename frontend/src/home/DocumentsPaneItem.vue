@@ -37,14 +37,14 @@
     <template v-if="mode == 'cards'">
       <ContextMenu @rename="rename" />
     </template>
-    <div v-html="minimap"></div>
+    <div class="progress" v-html="minimap"></div>
     <div class="tags">
       <MultiSelectTags :tags="doc.tags" :docID="doc.id" />
     </div>
     <div class="last-edited">
       {{ relativeTime.from(new Date(doc.last_edited_at)) }}
     </div>
-    <div class="grid-wrapper-1">
+    <div class="owner">
       <Avatar name="LT" />
     </div>
     <div class="grid-wrapper-2">
@@ -95,11 +95,11 @@
          border-color: var(--gray-400);
      }
 
-     & > .dots, & > .file-title, & > .last-edited, & > .grid-wrapper-1, & > .grid-wrapper-2 {
+     & > .dots, & > .file-title, & > .last-edited, & > .owner, & > .grid-wrapper-2 {
          display: inline-block;
      }
 
-     & > .dots, & > .grid-wrapper-1 {
+     & > .dots, & > .owner {
          float: right;
      }
 

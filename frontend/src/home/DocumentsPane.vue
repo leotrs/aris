@@ -85,8 +85,8 @@
             :filterable="columnInfo[name]['filterable']" />
       </template>
       <!-- to complete the grid -->
-      <span v-if="mode == 'list'" class="spacer"></span>
-      <span v-if="mode == 'list'" class="spacer"></span>
+      <span v-if="mode == 'list'" class="spacer spacer-1"></span>
+      <span v-if="mode == 'list'" class="spacer spacer-2"></span>
     </div>
 
     <div class="docs-group" :class="mode">
@@ -109,9 +109,13 @@
      width: 100%;
  }
 
+ .documents.list {
+     container-type: inline-size;
+ }
+
  .documents.list > :is(.pane-header, .docs-group)  {
      display: grid !important;
-     grid-template-columns: 2fr 1.5fr 1fr 100px 50px 16px 8px;
+     grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 50px 16px 8px;
  }
 
  .documents.list .pane-header {
@@ -172,5 +176,30 @@
 
  .spacer{
      background-color: var(--surface-information);
+ }
+
+ @container (max-width: 744px) {
+     .pane-header, .docs-group  {
+         grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px !important;
+     }
+     .pane-header, .item { grid-column: 1 / 6 !important }
+     :deep(.owner) { display: none }
+ }
+ @container (max-width: 684px) {
+     .pane-header, .docs-group  {
+         grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 100px 16px 8px !important;
+     }
+     .pane-header, .item { grid-column: 1 / 5 !important }
+     :deep(.tags) { display: none }
+ }
+ @container (max-width: 480px) {
+     .pane-header, .docs-group  {
+         grid-template-columns: minmax(75px, 2fr) 100px 16px 8px !important;
+     }
+     .pane-header, .item { grid-column: 1 / 4 !important }
+     :deep(.progress) { display: none }
+ }
+ @container (max-width: 432px) {
+
  }
 </style>
