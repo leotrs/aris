@@ -38,11 +38,8 @@
 
 <template>
   <div ref="sidebarRef" :class="['sb-wrapper', isMobile ? 'mobile' : '', (!isMobile && collapsed) ? 'collapsed' : '']">
-
-    <template v-if="isMobile">
-      <!-- No logo in mobile :( -->
-    </template>
-    <template v-else>
+    
+    <template v-if="!isMobile">
       <div id="logo">
         <img v-if="collapsed" src="../assets/logo-32px.svg" />
         <img v-else src="../assets/logotype.svg" />
@@ -94,7 +91,6 @@
   </div>
 </template>
 
-
 <style scoped>
  .sb-wrapper {
      height: 100%;
@@ -104,81 +100,81 @@
      &::-webkit-scrollbar { /* Chrome */
          display: none;
      }
- }
- 
- .sb-wrapper:not(.mobile) {
-     &:not(.collapsed) {
-         flex-basis: 216px;
-         flex-grow: 1;
-         min-width: 140px;
-         max-width: 216px;
-     }
 
-     &.collapsed {
-         padding-top: 16px;
-         min-width: 64px;
-         max-width: 90px;
-         flex-grow: 1;
-         & > * { margin: 0 auto }
+     &:not(.mobile) {
+         &:not(.collapsed) {
+             flex-basis: 216px;
+             flex-grow: 1;
+             min-width: 140px;
+             max-width: 216px;
 
-         & > #logo {
-             margin-top: 9px;
-             margin-bottom: 21px;
-             padding-inline: 17px;
-             & > img { margin: 0 };
+             .cta > button { padding-left: 6px }
          }
 
-         & > .cta { justify-content: center }
+         &.collapsed {
+             padding-top: 16px;
+             min-width: 64px;
+             max-width: 90px;
+             flex-grow: 1;
+             & > * { margin: 0 auto }
+
+             & > #logo {
+                 margin-top: 9px;
+                 margin-bottom: 21px;
+                 padding-inline: 17px;
+                 & > img { margin: 0 };
+             }
+         }
+
+         & .cta {
+             display: flex;
+             align-items: center;
+             padding-inline: 8px;
+             flex-grow: 1;
+             margin-bottom: 16px;
+             justify-content: center;
+
+             & > button {
+                 justify-content: center;
+                 width: 100%;
+             }
+         }
+     }
+
+     &.mobile {
+         position: absolute;
+         z-index: 1;
+         background-color: var(--extra-light);
+         display: flex;
+         height: 48px;
+         width: 48px;
+         align-items: center;
+         justify-content: center;
+         overflow: visible;
+
+         & .cta.fab {
+             position: fixed;
+             padding: 0;
+             margin: 0;
+             left: 100%;
+             bottom: 0;
+             transform: translateX(calc(-100% - 24px)) translateY(-24px);
+         }
+
+         & > .sb-btn { display: flex }
+         & > .sb-menu { background-color: var(--extra-light) }
      }
  }
-
- .sb-wrapper.mobile {
-     position: absolute;
-     z-index: 1;
-     background-color: var(--extra-light);
-     display: flex;
-     height: 48px;
-     width: 48px;
-     align-items: center;
-     justify-content: center;
-     overflow: visible;
-
-     & > .sb-btn { display: flex }
-     & > .sb-menu { background-color: var(--extra-light) }
- }
+ 
 
  #logo {
      display: flex;
      justify-content: center;
-     & > img { margin: 0 auto; }
+     & > img { margin: 0 auto }
  }
 
  .sb-menu > *, .cta > * {
      margin-block: 8px;
      gap: 6px;
  }
-
- .cta {
-     display: flex;
-     align-items: center;
-     padding-inline: 8px;
-     flex-grow: 1;
-     margin-bottom: 16px;
-
-     & > button {
-         justify-content: center;
-         width: 100%;
-     }
- }
-
- .cta.fab {
-     position: fixed;
-     padding: 0;
-     margin: 0;
-     left: 100%;
-     bottom: 0;
-     transform: translateX(calc(-100% - 24px)) translateY(-24px);
- }
-
- .sb-wrapper:not(.collapsed) .cta > button { padding-left: 6px; }
 </style>
