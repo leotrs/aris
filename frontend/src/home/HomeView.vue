@@ -44,12 +44,23 @@
  const reloadDocs = async (docID) => {
      try {
          const response = await axios.get(`http://localhost:8000/users/${userID}/documents`);
-         userDocs.value = response.data;
+         if (!userDocs.value) {
+             userDocs.value = response.data.map(doc => ({ ...doc, filtered: false }));
+         } else {
+             /* FIX ME: take the filtered value from the current userDocs, not from response.data */
+             userDocs.value = response.data.map(doc => ({ ...doc, filtered: false }));
+         }
      } catch (error) {
          console.error(`Failed to fetch document`, error);
      }
  };
- provide('userDocs', { userDocs, reloadDocs });
+ const sortDocs = async (func) => {
+    userDocs.value.sort((a, b) => func(a, b));
+ };
+ const filterDocs = async (docID) => {
+
+ };
+ provide('userDocs', { userDocs, reloadDocs, sortDocs, filterDocs });
  onMounted(async () => { reloadDocs() });
 
  /*********** userTags ***********/

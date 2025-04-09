@@ -9,7 +9,7 @@
      mode: { type: String, default: 'list' }
  })
  const userID = inject('userID');
- const { userDocs, _ } = inject('userDocs');
+ const { userDocs, sortDocs } = inject('userDocs');
 
  const emit = defineEmits(["set-selected"]);
  const activeIndex = ref(null);
@@ -35,9 +35,9 @@
  const handleColumnSortEvent = (columnName, mode) => {
      const sortKey = columnInfo[columnName]['sortKey'];
      if (mode == 'asc') {
-         userDocs.value.sort((a, b) => a[sortKey].localeCompare(b[sortKey]));
+         sortDocs((a, b) => a[sortKey].localeCompare(b[sortKey]));
      } else if (mode == 'desc') {
-         userDocs.value.sort((a, b) => b[sortKey].localeCompare(a[sortKey]));
+         sortDocs((a, b) => b[sortKey].localeCompare(a[sortKey]));
      }
  };
   const handleColumnFilterEvent = (columnName, tags) => {
@@ -178,28 +178,28 @@
      background-color: var(--surface-information);
  }
 
- @container (max-width: 744px) {
-     .pane-header, .docs-group  {
-         grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px !important;
-     }
-     .pane-header, .item { grid-column: 1 / 6 !important }
-     :deep(.owner) { display: none }
- }
- @container (max-width: 684px) {
-     .pane-header, .docs-group  {
-         grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 100px 16px 8px !important;
-     }
-     .pane-header, .item { grid-column: 1 / 5 !important }
-     :deep(.tags) { display: none }
- }
- @container (max-width: 480px) {
-     .pane-header, .docs-group  {
-         grid-template-columns: minmax(75px, 2fr) 100px 16px 8px !important;
-     }
-     .pane-header, .item { grid-column: 1 / 4 !important }
-     :deep(.progress) { display: none }
- }
- @container (max-width: 432px) {
+ /* @container (max-width: 744px) {
+    .pane-header, .docs-group  {
+    grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px !important;
+    }
+    .pane-header, .item { grid-column: 1 / 6 !important }
+    :deep(.owner) { display: none }
+    }
+    @container (max-width: 684px) {
+    .pane-header, .docs-group  {
+    grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 100px 16px 8px !important;
+    }
+    .pane-header, .item { grid-column: 1 / 5 !important }
+    :deep(.tags) { display: none }
+    }
+    @container (max-width: 480px) {
+    .pane-header, .docs-group  {
+    grid-template-columns: minmax(75px, 2fr) 100px 16px 8px !important;
+    }
+    .pane-header, .item { grid-column: 1 / 4 !important }
+    :deep(.progress) { display: none }
+    }
+    @container (max-width: 432px) {
 
- }
+    } */
 </style>
