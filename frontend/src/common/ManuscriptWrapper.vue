@@ -1,19 +1,25 @@
 <script setup>
- import { watch, onBeforeMount, useTemplateRef } from 'vue';
+import { ref, watch, onBeforeMount, useTemplateRef, nextTick } from 'vue';
 
- const { html } = defineProps({ html: { type: String, required: true }} );
+const { html } = defineProps({ html: { type: String, required: true }} );
+let onload = ref(null);
+const manuscript = useTemplateRef('manuscript-ref');
 
- let onload;
- onBeforeMount(async () => {
-     await import("http://localhost:8000/static/jquery-3.6.0.js");
-     await import("http://localhost:8000/static/tooltipster.bundle.js");
-     const module = await import("http://localhost:8000/static/onload.js");
-     onload = module.onload;
- });
+onBeforeMount(async () => {
+  await import("http://localhost:8000/static/jquery-3.6.0.js");
+  await import("http://localhost:8000/static/tooltipster.bundle.js");
+  const module = await import("http://localhost:8000/static/onload.js");
+  onload.value = module.onload;
+});
 
- const manuscript = useTemplateRef('manuscript-ref');
- let lsp_ws = null;
- watch(() => html, async () => { manuscript.value && (lsp_ws = onload()) });
+let lsp_ws = null;
+const tryExecuteOnload = async () => {
+  if (onload.value && manuscript.value) {
+    await nextTick();
+    lsp_ws = onload.value();
+  }
+};
+watch(onload, tryExecuteOnload);
 </script>
 
 
