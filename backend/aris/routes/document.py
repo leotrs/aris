@@ -97,6 +97,4 @@ async def get_document_section(
         html = await crud.get_document_section(doc_id, section_name, db)
     except ValueError:
         raise HTTPException(status_code=404, detail=f"Section {section_name} not found")
-    if html is None:
-        raise HTTPException(status_code=404, detail=f"Section {section_name} not found")
     return HTMLResponse(content=html)

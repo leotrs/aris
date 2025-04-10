@@ -1,5 +1,4 @@
 import asyncio
-import logging
 
 import rsm
 from bs4 import BeautifulSoup
