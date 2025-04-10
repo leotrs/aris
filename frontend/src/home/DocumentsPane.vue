@@ -91,7 +91,7 @@
 
     <div class="docs-group" :class="mode">
       <DocumentsPaneItem
-          v-for="(doc, idx) in userDocs"
+          v-for="(doc, idx) in userDocs.filter(doc => !doc.filtered )"
           :class="{ active: activeIndex == idx }"
           :doc="doc"
           :mode="mode"
