@@ -139,7 +139,6 @@
      background-color: v-bind("backgroundColor");
      border-bottom-right-radius: 16px;
      border-top-right-radius: 16px;
-     /* no scrollbar in any browser */
      overflow-y: auto;
 
      /* These are standard CSS that are not yet supported - switch to them in the future */
