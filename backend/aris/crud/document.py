@@ -80,7 +80,7 @@ async def update_document(
 
 
 async def soft_delete_document(document_id: int, db: Session):
-    doc = get_document(document_id, db)
+    doc = await get_document(document_id, db)
     if not doc:
         return None
     doc.deleted_at = datetime.utcnow()

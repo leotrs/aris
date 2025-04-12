@@ -8,11 +8,14 @@ export default function ({
   closeOnOutsideClick = true,
   closeOnCloseButton = true,
   closeButtonSelector = "button.btn-close",
+  autoActivate = true,
 }) {
   const instance = getCurrentInstance();
 
   // Handle ESC key press
-  const keyboardController = closeOnEsc ? useKeyboardShortcuts({ escape: onClose }) : null;
+  const keyboardController = closeOnEsc
+    ? useKeyboardShortcuts({ escape: onClose, autoActivate: autoActivate })
+    : null;
   const setupEscKey = () => keyboardController?.activate();
   const tearDownEscKey = () => keyboardController?.deactivate();
 
@@ -34,17 +37,18 @@ export default function ({
   const setupCloseButton = () => getCloseButton()?.addEventListener("click", onClose);
   const tearDownCloseButton = () => getCloseButton()?.removeEventListener("click", onClose);
 
+  onBeforeUnmount(() => {
+    console.log(`useClosable.onBeforeUnmount ${instance.uid}`);
+    if (closeOnEsc) tearDownEscKey();
+    if (closeOnOutsideClick) tearDownOutsideClick();
+    if (closeOnCloseButton) tearDownCloseButton();
+  });
+  if (!autoActivate) return;
   onMounted(() => {
     nextTick(() => {
       if (closeOnEsc) setupEscKey();
       if (closeOnOutsideClick) setupOutsideClick();
       if (closeOnCloseButton) setupCloseButton();
     });
-  });
-  onBeforeUnmount(() => {
-    console.log(`useClosable.onBeforeUnmount ${instance.uid}`);
-    if (closeOnEsc) tearDownEscKey();
-    if (closeOnOutsideClick) tearDownOutsideClick();
-    if (closeOnCloseButton) tearDownCloseButton();
   });
 }
