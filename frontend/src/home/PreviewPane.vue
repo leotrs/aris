@@ -14,7 +14,7 @@ const router = useRouter();
 const read = () => router.push(`/${doc.id}/read`);
 const close = () => emit("set-selected", "");
 
-useClosable({ onClose: close });
+useClosable({ onClose: close, closeOnOutsideClick: false });
 
 const abstract = ref("<div>loading abstract...</div>");
 onMounted(async () => {
