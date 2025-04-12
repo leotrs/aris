@@ -42,6 +42,7 @@ export default function ({
     });
   });
   onBeforeUnmount(() => {
+    console.log(`useClosable.onBeforeUnmount ${instance.uid}`);
     if (closeOnEsc) tearDownEscKey();
     if (closeOnOutsideClick) tearDownOutsideClick();
     if (closeOnCloseButton) tearDownCloseButton();
