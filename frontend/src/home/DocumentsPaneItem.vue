@@ -1,46 +1,54 @@
 <script setup>
-import { ref, inject, onMounted } from 'vue';
-import axios from 'axios';
-import RelativeTime from '@yaireo/relative-Time';
-import MultiSelectTags from './MultiSelectTags.vue';
+import { ref, inject, onMounted } from "vue";
+import axios from "axios";
+import RelativeTime from "@yaireo/relative-Time";
+import MultiSelectTags from "./MultiSelectTags.vue";
 
 const props = defineProps({
   doc: { type: Object, required: true },
-  mode: { type: String, default: 'list' }
-})
-const emits = defineEmits(["click", "dblclick"])
-const userID = inject('userID');
+  mode: { type: String, default: "list" },
+});
+const emits = defineEmits(["click", "dblclick"]);
 
-const relativeTime = new RelativeTime({ locale: 'en' });
+const relativeTime = new RelativeTime({ locale: "en" });
 
 const fileTitleActive = ref(false);
-const rename = () => { fileTitleActive.value = true };
 
-const minimap = ref('<div>loading minimap...</div>');
+const { reloadDocs } = inject("userDocs");
+const renameDoc = () => (fileTitleActive.value = true);
+const copyDoc = () => console.log("copy");
+const deleteDoc = async () => {
+  console.log("delete");
+  const url = `http://localhost:8000/documents/${props.doc.id}`;
+  try {
+    await axios.delete(url);
+    reloadDocs();
+  } catch (error) {
+    console.error(`Could not delete document ${props.doc.id}`);
+  }
+};
+
+const minimap = ref("<div>loading minimap...</div>");
 onMounted(async () => {
   try {
     const url = `http://localhost:8000/documents/${props.doc.id}/sections/minimap`;
     const response = await axios.get(url);
     if (response.status == 200 && !response.data) {
-      minimap.value = '<div>no minimap!</div>';
+      minimap.value = "<div>no minimap!</div>";
     } else {
       minimap.value = response.data;
     }
   } catch (error) {
-    minimap.value = '<div>error when retrieving minimap!</div>';
+    minimap.value = "<div>error when retrieving minimap!</div>";
   }
-})
+});
 </script>
 
 <template>
-  <div
-    class="item"
-    :class="mode"
-    @click="emits('click')"
-    @dblclick="emits('dblclick')" >
+  <div class="item" :class="mode" @click="emits('click')" @dblclick="emits('dblclick')">
     <FileTitle :doc="doc" v-model="fileTitleActive" />
     <template v-if="mode == 'cards'">
-      <ContextMenu @rename="rename" />
+      <ContextMenu />
     </template>
     <div class="progress" v-html="minimap"></div>
     <div class="tags">
@@ -54,18 +62,17 @@ onMounted(async () => {
     </div>
     <div class="grid-wrapper-2">
       <template v-if="mode == 'list'">
-        <ContextMenu @rename="rename">
-          <ContextMenuItem icon="Edit" @click="rename" caption="Rename" />
-          <ContextMenuItem icon="Copy" caption="Duplicate" />
+        <ContextMenu>
+          <ContextMenuItem icon="Edit" @click="renameDoc" caption="Rename" />
+          <ContextMenuItem icon="Copy" @click="copyDoc" caption="Duplicate" />
           <ContextMenuItem icon="Download" caption="Download" />
-          <ContextMenuItem icon="TrashX" caption="Delete" class="danger" />
+          <ContextMenuItem icon="TrashX" @click="deleteDoc" caption="Delete" class="danger" />
         </ContextMenu>
       </template>
     </div>
     <span></span>
   </div>
 </template>
-
 
 <style scoped>
 .item {
@@ -74,7 +81,10 @@ onMounted(async () => {
 }
 
 .item.list {
-  &:hover > * { background-color: var(--surface-hover); }
+  &:hover > * {
+    background-color: var(--surface-hover);
+  }
+
   & > * {
     transition: background 0.15s ease-in-out;
     border-bottom: var(--border-extrathin) solid var(--border-primary);
@@ -82,10 +92,22 @@ onMounted(async () => {
     height: 48px;
     padding-right: 16px;
   }
-  & .grid-wrapper-2 { padding-right: 0px };
-  & .dots { padding-right: 0px };
-  & > *:last-child { padding-right: 0px };
-  &.active > * { background-color: var(--secondary-50) };
+
+  & .grid-wrapper-2 {
+    padding-right: 0px;
+  }
+
+  & .dots {
+    padding-right: 0px;
+  }
+
+  & > *:last-child {
+    padding-right: 0px;
+  }
+
+  &.active > * {
+    background-color: var(--secondary-50);
+  }
 }
 
 .item.cards {
@@ -100,11 +122,16 @@ onMounted(async () => {
     border-color: var(--gray-400);
   }
 
-  & > .dots, & > .file-title, & > .last-edited, & > .owner, & > .grid-wrapper-2 {
+  & > .dots,
+  & > .file-title,
+  & > .last-edited,
+  & > .owner,
+  & > .grid-wrapper-2 {
     display: inline-block;
   }
 
-  & > .dots, & > .owner {
+  & > .dots,
+  & > .owner {
     float: right;
   }
 
@@ -123,10 +150,12 @@ onMounted(async () => {
     height: 8px;
     background-color: transparent;
   }
+
   &::-webkit-scrollbar-thumb {
     background-color: var(--gray-300);
     border-radius: 4px;
   }
+
   &::-webkit-scrollbar-thumb:hover {
     background: var(--surface-hint);
   }
