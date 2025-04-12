@@ -1,31 +1,21 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { IconUpload, IconX } from "@tabler/icons-vue";
+import { useTemplateRef } from "vue";
 import useClosable from "@/composables/useClosable.js";
 
 const emit = defineEmits(["close"]);
-const close = () => {
-  emit("close");
-};
-const selfRef = ref(null);
-onMounted(() => {
-  if (!selfRef) return;
-  /* useClosable(close, selfRef, true, true); */
-});
+const close = () => emit("close");
 
-const fileUpload = ref(null);
-const triggerFileUpload = () => {
-  fileUpload.value?.click();
-};
+useClosable({ onClose: close });
+
+const fileUpload = useTemplateRef("fileUpload");
+const triggerFileUpload = () => fileUpload.value?.click();
 
 const upload = () => {
   if (fileUpload.value.files.length == 0) return;
   const file = fileUpload.value.files[0];
 
   const reader = new FileReader();
-  reader.onerror = () => {
-    console.log("Error reading the file. Please try again.");
-  };
+  reader.onerror = () => console.log("Error reading the file. Please try again.");
   reader.onload = () => {
     const url = "http://localhost:8000/documents/";
     console.log(reader.result);

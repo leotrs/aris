@@ -2,7 +2,7 @@ import { ref, getCurrentInstance, onMounted, onBeforeUnmount } from "vue";
 
 /* Utilities */
 // Use a string rather than a ref because string keys are much simpler
-const refToKey = (ref) => (ref ? `${ref.uid || ref.value.uid}` : null);
+const refToKey = (ref) => (ref ? `${ref.uid || ref.value?.uid}` : null);
 
 /* Global state */
 const activeComponent = ref(null);
@@ -36,11 +36,11 @@ export function useKeyboardShortcuts(shortcuts, autoActivate = true) {
   listeners.value[componentId] = shortcuts;
 
   // Handle component lifecycle
-  const isActive = () => activeComponent.value === instance;
+  const isActive = () => refToKey(activeComponent.value) == refToKey(instance);
   const activate = () => (activeComponent.value = instance);
   const deactivate = () => (isActive() ? (activeComponent.value = null) : null);
   onMounted(() => (autoActivate ? activate() : null));
-  onBeforeUnmount(() => deactivate() || delete listeners.value[componentId]);
+  onBeforeUnmount(() => deactivate());
 
   return { activate, deactivate, isActive };
 }
