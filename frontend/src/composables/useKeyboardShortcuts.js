@@ -12,6 +12,7 @@ const handleKeyDown = (event) => {
   const shortcuts = listeners.value[refToKey(activeComponent)];
   const key = event.key.toLowerCase();
   if (!activeComponent.value || !shortcuts || !shortcuts[key]) return;
+  console.log(refToKey(activeComponent), key, shortcuts);
   event.preventDefault();
   shortcuts[key](event);
 };
@@ -34,6 +35,7 @@ export function useKeyboardShortcuts(shortcuts, autoActivate = true) {
 
   // Register component keyboard shortcuts;
   const componentId = refToKey(instance);
+  console.log(`registering ${componentId}`);
   listeners.value[componentId] = shortcuts;
 
   // Handle component lifecycle
