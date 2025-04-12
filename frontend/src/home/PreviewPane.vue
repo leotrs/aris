@@ -1,11 +1,8 @@
 <script setup>
 import axios from "axios";
 import useClosable from "@/composables/useClosable.js";
-import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts";
-import { ref, watch, useTemplateRef, onMounted } from "vue";
+import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { IconBook, IconFileCheck, IconVersions, IconX } from "@tabler/icons-vue";
-import { onKeyUp, onClickOutside, useCurrentElement, useFocus } from "@vueuse/core";
 
 const { doc, container } = defineProps({
   doc: { type: Object, required: true },
@@ -17,10 +14,9 @@ const router = useRouter();
 const read = () => router.push(`/${doc.id}/read`);
 const close = () => emit("set-selected", "");
 
+useClosable({ onClose: close });
+
 const abstract = ref("<div>loading abstract...</div>");
-
-useKeyboardShortcuts({ escape: close }, true);
-
 onMounted(async () => {
   try {
     const response = await axios.get(`http://localhost:8000/documents/${doc.id}/sections/abstract`);

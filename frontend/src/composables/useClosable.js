@@ -1,46 +1,49 @@
-import { onMounted, onBeforeUnmount, getCurrentInstance } from "vue";
+import { onMounted, onBeforeUnmount, getCurrentInstance, nextTick } from "vue";
 import { useKeyboardShortcuts } from "./useKeyboardShortcuts.js";
 
 /* Makes a component closable via ESC key, clicking outside, or close button */
 export default function ({
   onClose,
-  closeButtonSelector = null,
   closeOnEsc = true,
   closeOnOutsideClick = true,
+  closeOnCloseButton = true,
+  closeButtonSelector = "button.btn-close",
 }) {
   const instance = getCurrentInstance();
 
   // Handle ESC key press
-  const keyboardController = closeOnEsc ? useKeyboardShortcuts({ escape: () => onClose() }) : null;
+  const keyboardController = closeOnEsc ? useKeyboardShortcuts({ escape: onClose }) : null;
+  const setupEscKey = () => keyboardController?.activate();
+  const tearDownEscKey = () => keyboardController?.deactivate();
 
   // Handle clicks outside the component
   const handleOutsideClick = (event) => {
-    if (!instance.value) return;
-    if (!instance.value.$el.contains(event.target)) onClose();
+    if (!instance || !instance.$el) return;
+    if (!instance.$el.contains(event.target)) onClose();
   };
+  const setupOutsideClick = () =>
+    nextTick(() => document.addEventListener("click", handleOutsideClick));
+  const tearDownOutsideClick = () => document.removeEventListener("click", handleOutsideClick);
 
   // Handle clicking the close button
-  const setupCloseButton = () => {
-    if (!closeButtonSelector) return null;
-    const closeButton = document.querySelector(closeButtonSelector);
-    if (!closeButton) return null;
-
-    closeButton.addEventListener("click", onClose);
-    return () => closeButton.removeEventListener("click", onClose);
+  const getCloseButton = () => {
+    if (!closeButtonSelector || !instance || !instance.$el) return null;
+    const closeButton = instance.$el.querySelector(closeButtonSelector);
+    return closeButton ? closeButton : console.error("No close button found") || null;
   };
+  const setupCloseButton = () => getCloseButton()?.addEventListener("click", onClose);
+  const tearDownCloseButton = () => getCloseButton()?.removeEventListener("click", onClose);
 
-  // Set up event listeners on mount
-  let cleanupCloseButton = null;
   onMounted(() => {
-    if (closeOnEsc) keyboardController?.activate();
-    if (closeOnOutsideClick) cleanupCloseButton = setupCloseButton();
-    if (closeButtonSelector) XXXX;
+    nextTick(() => {
+      if (closeOnEsc) setupEscKey();
+      if (closeOnOutsideClick) setupOutsideClick();
+      if (closeOnCloseButton) setupCloseButton();
+    });
   });
-
-  // Clean up all event listeners on unmount
   onBeforeUnmount(() => {
-    if (closeOnEsc) keyboardController?.deactivate();
-    if (closeOnOutsideClick) document.removeEventListener("click", handleOutsideClick);
-    if (cleanupCloseButton) cleanupCloseButton();
+    if (closeOnEsc) tearDownEscKey();
+    if (closeOnOutsideClick) tearDownOutsideClick();
+    if (closeOnCloseButton) tearDownCloseButton();
   });
 }
