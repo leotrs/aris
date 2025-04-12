@@ -16,10 +16,10 @@ async def get_documents(db: Session):
     return docs
 
 
-async def get_document(document_id: int, db: Session):
+async def get_document(doc_id: int, db: Session):
     doc = (
         db.query(Document)
-        .filter(Document.id == document_id, Document.deleted_at.is_(None))
+        .filter(Document.id == doc_id, Document.deleted_at.is_(None))
         .first()
     )
     if doc:
@@ -27,10 +27,10 @@ async def get_document(document_id: int, db: Session):
     return doc
 
 
-async def get_document_html(document_id: int, db: Session):
+async def get_document_html(doc_id: int, db: Session):
     result = (
         db.query(Document.source)
-        .filter(Document.id == document_id, Document.deleted_at.is_(None))
+        .filter(Document.id == doc_id, Document.deleted_at.is_(None))
         .first()
     )
     if result:
@@ -62,13 +62,13 @@ async def create_document(
 
 
 async def update_document(
-    document_id: int,
+    doc_id: int,
     title: str,
     abstract: str,
     status: str,
     db: Session,
 ):
-    doc = get_document(document_id, db)
+    doc = get_document(doc_id, db)
     if not doc:
         return None
     doc.title = title
@@ -79,8 +79,8 @@ async def update_document(
     return doc
 
 
-async def soft_delete_document(document_id: int, db: Session):
-    doc = await get_document(document_id, db)
+async def soft_delete_document(doc_id: int, db: Session):
+    doc = await get_document(doc_id, db)
     if not doc:
         return None
     doc.deleted_at = datetime.utcnow()
