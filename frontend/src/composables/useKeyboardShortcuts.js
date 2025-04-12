@@ -1,11 +1,12 @@
-import { ref, getCurrentInstance, onMounted, onBeforeUnmount } from "vue";
+import { ref, reactive, computed, getCurrentInstance, onMounted, onBeforeUnmount } from "vue";
 
 /* Utilities */
 // Use a string rather than a ref because string keys are much simpler
 const refToKey = (ref) => (ref ? `${ref.uid || ref.value?.uid}` : null);
 
 /* Global state */
-const activeComponent = ref(null);
+const components = reactive([]);
+const activeComponent = computed(() => components.at(-1));
 const listeners = ref({});
 const handleKeyDown = (event) => {
   const shortcuts = listeners.value[refToKey(activeComponent)];
@@ -37,8 +38,8 @@ export function useKeyboardShortcuts(shortcuts, autoActivate = true) {
 
   // Handle component lifecycle
   const isActive = () => refToKey(activeComponent.value) == refToKey(instance);
-  const activate = () => (activeComponent.value = instance);
-  const deactivate = () => (isActive() ? (activeComponent.value = null) : null);
+  const activate = () => components.push(instance);
+  const deactivate = () => (isActive() ? components.pop() : null);
   onMounted(() => (autoActivate ? activate() : null));
   onBeforeUnmount(() => deactivate());
 
