@@ -130,7 +130,6 @@ onMounted(async () => {
 /*********** draggable Preview pane ***********/
 const container = useTemplateRef("separator-container-ref");
 const separator = useTemplateRef("separator-ref");
-const preview = useTemplateRef("preview-ref");
 
 const previewHeight = ref("50%");
 const onSeparatorDragged = (pos, ev) => {
@@ -180,7 +179,7 @@ const setSelectedForPreview = (doc) => {
         @set-selected="(doc) => (style = setSelectedForPreview(doc))"
       />
     </div>
-    <div class="modal" v-show="showModal">
+    <div class="modal" v-if="showModal">
       <UploadFileModal @close="showModal = false" />
     </div>
   </div>
