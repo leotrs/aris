@@ -85,7 +85,33 @@ async def soft_delete_document(document_id: int, db: Session):
         return None
     doc.deleted_at = datetime.utcnow()
     db.commit()
-    return {"message": f"Document {document_id} soft deleted"}
+    return {"message": f"Document {doc_id} soft deleted"}
+
+
+async def duplicate_document(doc_id: int, db: Session):
+    original = await get_document(doc_id, db)
+    if not original or original.deleted_at:
+        raise ValueError("Document not found")
+
+    new_doc = Document(
+        title=f"{original.title} (copy)",
+        source=original.source,
+        owner_id=original.owner_id,
+        last_edited_at=datetime.utcnow(),
+    )
+    db.add(new_doc)
+    db.flush()
+
+    tag_ids = db.execute(
+        document_tags.select().where(document_tags.c.document_id == doc_id)
+    ).fetchall()
+    db.execute(
+        document_tags.insert(),
+        [{"document_id": new_doc.id, "tag_id": tag.tag_id} for tag in tag_ids],
+    )
+    db.commit()
+
+    return new_doc
 
 
 async def get_document_section(doc_id: int, section_name: str, db: Session):

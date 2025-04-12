@@ -16,7 +16,16 @@ const fileTitleActive = ref(false);
 
 const { reloadDocs } = inject("userDocs");
 const renameDoc = () => (fileTitleActive.value = true);
-const copyDoc = () => console.log("copy");
+const copyDoc = async () => {
+  console.log("copy");
+  const url = `http://localhost:8000/documents/${props.doc.id}/duplicate`;
+  try {
+    await axios.post(url);
+    reloadDocs();
+  } catch (error) {
+    console.error(`Could not delete document ${props.doc.id}`);
+  }
+};
 const deleteDoc = async () => {
   console.log("delete");
   const url = `http://localhost:8000/documents/${props.doc.id}`;

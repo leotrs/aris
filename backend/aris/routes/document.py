@@ -89,6 +89,12 @@ async def soft_delete_document(doc_id: int, db: Session = Depends(get_db)):
     return {"message": f"Document {doc_id} soft deleted"}
 
 
+@router.post("/documents/{doc_id}/duplicate")
+async def duplicate_document(doc_id: int, db: Session = Depends(get_db)):
+    new_doc = await crud.duplicate_document(doc_id, db)
+    return {"id": new_doc.id, "message": "Document duplicated successfully"}
+
+
 @router.get("/documents/{doc_id}/sections/{section_name}", response_class=HTMLResponse)
 async def get_document_section(
     doc_id: int, section_name: str, db: Session = Depends(get_db)
