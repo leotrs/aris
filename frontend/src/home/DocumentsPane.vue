@@ -32,7 +32,7 @@ const columnInfo = {
   Progress: { sortable: false, filterable: false, sortKey: "" },
   Tags: { sortable: false, filterable: true, sortKey: "" },
   "Last Edited": { sortable: true, filterable: false, sortKey: "last_edited_at" },
-  Owner: { sortable: false, filterable: false, sortKey: "owner_id" },
+  /* Owner: { sortable: false, filterable: false, sortKey: "owner_id" }, */
 };
 const handleColumnSortEvent = (columnName, mode) => {
   const sortKey = columnInfo[columnName]["sortKey"];
@@ -121,12 +121,12 @@ useKeyboardShortcuts({
 
 .documents.list > :is(.pane-header, .docs-group) {
   display: grid !important;
-  grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 50px 16px 8px;
+  grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px;
 }
 
 .documents.list .pane-header {
   background-color: var(--surface-information);
-  grid-column: 1 / 7;
+  grid-column: 1 / 6;
 
   & > *:first-child {
     padding-left: 16px;
@@ -147,7 +147,7 @@ useKeyboardShortcuts({
 
   & > .item {
     display: contents;
-    grid-column: 1 / 7;
+    grid-column: 1 / 6;
 
     & > *:first-child {
       padding-left: 16px;
