@@ -1,8 +1,9 @@
 <script setup>
-import { ref, inject, onMounted } from "vue";
+import { ref, inject } from "vue";
 import axios from "axios";
 import RelativeTime from "@yaireo/relative-Time";
 import MultiSelectTags from "./MultiSelectTags.vue";
+import Minimap from "./Minimap.vue";
 
 const props = defineProps({
   doc: { type: Object, required: true },
@@ -36,21 +37,6 @@ const deleteDoc = async () => {
     console.error(`Could not delete document ${props.doc.id}`);
   }
 };
-
-const minimap = ref("<div>loading minimap...</div>");
-onMounted(async () => {
-  try {
-    const url = `http://localhost:8000/documents/${props.doc.id}/sections/minimap`;
-    const response = await axios.get(url);
-    if (response.status == 200 && !response.data) {
-      minimap.value = "<div>no minimap!</div>";
-    } else {
-      minimap.value = response.data;
-    }
-  } catch (error) {
-    minimap.value = "<div>error when retrieving minimap!</div>";
-  }
-});
 </script>
 
 <template>
@@ -59,7 +45,7 @@ onMounted(async () => {
     <template v-if="mode == 'cards'">
       <ContextMenu />
     </template>
-    <div class="progress" v-html="minimap"></div>
+    <Minimap :doc="doc" />
     <div class="tags">
       <MultiSelectTags :tags="doc.tags" :docID="doc.id" />
     </div>
@@ -172,10 +158,5 @@ onMounted(async () => {
 
 :deep(.dots > .cm-menu) {
   transform: translateX(-16px) translateY(-8px);
-}
-
-:deep(.minimap) {
-  transform: rotate(90deg) scale(0.4);
-  width: 48px;
 }
 </style>
