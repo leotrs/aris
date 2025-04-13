@@ -66,9 +66,9 @@ onMounted(async () => {
     <div class="last-edited">
       {{ relativeTime.from(new Date(doc.last_edited_at)) }}
     </div>
-    <div class="owner">
+    <!-- <div class="owner">
       <Avatar name="LT" />
-    </div>
+    </div> -->
     <div class="grid-wrapper-2">
       <template v-if="mode == 'list'">
         <ContextMenu>
