@@ -33,6 +33,11 @@ onMounted(async () => {
 </template>
 
 <style>
+.minimap {
+  --scale-factor: 0.7;
+  --base-pos: 20;
+}
+
 .minimap.loading {
   color: var(--light);
   background-color: var(--information-500);
@@ -41,6 +46,7 @@ onMounted(async () => {
 .minimap.error {
   background-color: var(--error-500);
 }
+
 .minimap:not(.loading),
 .minimap:not(.error) {
   background-color: transparent;
@@ -48,12 +54,22 @@ onMounted(async () => {
 
   & svg {
     overflow: visible;
-    width: 100%;
     height: 48px;
 
     & g {
       transform: rotate(270deg);
-      transform-origin: 32px 16px;
+      transform-origin: 16px 20px;
+
+      & rect {
+        transform: scaleY(var(--scale-factor));
+      }
+
+      & a circle {
+        /* transform: scale(calc(1 / 0.7)); */
+        /* transform: translateY(
+                  calc((attr(data-pos number) - var(--base-pos-) * (var(--scale-factor) - 1)))
+                ); */
+      }
     }
   }
 }
