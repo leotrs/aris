@@ -2,13 +2,13 @@
 import { ref, inject, computed, watch, watchEffect } from "vue";
 
 const props = defineProps({
-  tags: { type: Array, required: true },
   docID: { type: Number, default: -1 },
   icon: { type: String, default: "CirclePlus" },
 });
+const tags = defineModel();
 const { userTags, createTag, addOrRemoveTag } = inject("userTags");
 
-const tagsIDs = computed(() => props.tags.map((t) => t.id));
+const tagsIDs = computed(() => (tags.value ? tags.value.map((t) => t.id) : []));
 const currentAssignment = computed(() => userTags.value.map((t) => tagsIDs.value.includes(t.id)));
 const tagIsAssigned = ref([]);
 watchEffect(() => {

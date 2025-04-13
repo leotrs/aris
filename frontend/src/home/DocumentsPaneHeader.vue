@@ -1,5 +1,5 @@
 <script setup>
-import { inject } from "vue";
+import { reactive, inject } from "vue";
 import ColumnHeader from "./DocumentsPaneColumnHeader.vue";
 
 const props = defineProps({
@@ -15,6 +15,13 @@ const columnInfo = {
   "Last Edited": { sortable: true, filterable: false, sortKey: "last_edited_at" },
   /* Owner: { sortable: false, filterable: false, sortKey: "owner_id" }, */
 };
+const columnState = reactive({
+  Title: null,
+  Progress: null,
+  Tags: null,
+  "Last Edited": null,
+  /* Owner: null */
+});
 
 const handleColumnSortEvent = (columnName, mode) => {
   const sortKey = columnInfo[columnName]["sortKey"];
@@ -22,6 +29,12 @@ const handleColumnSortEvent = (columnName, mode) => {
     sortDocs((a, b) => a[sortKey].localeCompare(b[sortKey]));
   } else if (mode == "desc") {
     sortDocs((a, b) => b[sortKey].localeCompare(a[sortKey]));
+  }
+  for (let name in columnState) {
+    if (name == columnName) continue;
+    if (columnInfo[name]["sortable"]) {
+      columnState[name] = null;
+    }
   }
 };
 const handleColumnFilterEvent = (columnName, tags) => {
@@ -36,11 +49,9 @@ const handleColumnFilterEvent = (columnName, tags) => {
       <ColumnHeader
         v-if="mode == 'list' || (mode == 'cards' && !columnInfo[name]['sortable'])"
         :name="name"
-        @sort-none="handleColumnSortEvent(name, 'none')"
-        @sort-asc="handleColumnSortEvent(name, 'asc')"
-        @sort-desc="handleColumnSortEvent(name, 'desc')"
-        @filter-on="handleColumnFilterEvent(name, tags)"
-        @filter-off="handleColumnFilterEvent(name, [])"
+        v-model="columnState[name]"
+        @sort="(mode) => handleColumnSortEvent(name, mode)"
+        @filter="(tags) => handleColumnFilterEvent(name, tags)"
         :sortable="columnInfo[name]['sortable']"
         :filterable="columnInfo[name]['filterable']"
       />

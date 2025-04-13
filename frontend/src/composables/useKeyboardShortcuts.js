@@ -35,7 +35,6 @@ export function useKeyboardShortcuts(shortcuts, autoActivate = true) {
 
   // Register component keyboard shortcuts;
   const componentId = refToKey(instance);
-  console.log(`registering ${componentId}`);
   listeners.value[componentId] = shortcuts;
 
   // Handle component lifecycle

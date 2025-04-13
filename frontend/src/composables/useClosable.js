@@ -38,7 +38,6 @@ export default function ({
   const tearDownCloseButton = () => getCloseButton()?.removeEventListener("click", onClose);
 
   onBeforeUnmount(() => {
-    console.log(`useClosable.onBeforeUnmount ${instance.uid}`);
     if (closeOnEsc) tearDownEscKey();
     if (closeOnOutsideClick) tearDownOutsideClick();
     if (closeOnCloseButton) tearDownCloseButton();
