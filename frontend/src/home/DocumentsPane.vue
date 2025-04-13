@@ -7,10 +7,8 @@ import Topbar from "./Topbar.vue";
 import DocumentsPaneHeader from "./DocumentsPaneHeader.vue";
 import DocumentsPaneItem from "./DocumentsPaneItem.vue";
 
-const props = defineProps({
-  mode: { type: String, default: "list" },
-});
 const emit = defineEmits(["set-selected"]);
+const mode = ref("list");
 const numDocs = computed(() => userDocs.value.length);
 const userID = inject("userID");
 
@@ -135,7 +133,7 @@ useKeyboardShortcuts({
 </script>
 
 <template>
-  <Topbar @list="currentMode = 'list'" @cards="currentMode = 'cards'" />
+  <Topbar @list="mode = 'list'" @cards="mode = 'cards'" />
   <div class="documents" :class="mode">
     <DocumentsPaneHeader />
 

@@ -1,14 +1,12 @@
 <script setup>
 import { ref, provide, computed, useTemplateRef, onMounted, onUnmounted } from "vue";
 import { useDraggable } from "@vueuse/core";
-import axios from "axios";
 import Sidebar from "./Sidebar.vue";
 import DocumentsPane from "./DocumentsPane.vue";
 import PreviewPane from "./PreviewPane.vue";
 import UploadFileModal from "./UploadFileModal.vue";
 
 const showModal = ref(false);
-const currentMode = ref("list");
 const selfRef = useTemplateRef("selfRef");
 
 /*********** userID ***********/
@@ -80,10 +78,7 @@ const setSelectedForPreview = (doc) => {
 
     <div class="panes">
       <div id="documents" class="pane">
-        <DocumentsPane
-          @set-selected="(doc) => (style = setSelectedForPreview(doc))"
-          :mode="currentMode"
-        />
+        <DocumentsPane @set-selected="(doc) => (style = setSelectedForPreview(doc))" />
       </div>
 
       <div class="separator-container" ref="separator-container-ref">
