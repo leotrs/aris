@@ -1,17 +1,28 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, watch, nextTick, onMounted } from "vue";
 import axios from "axios";
 
 const props = defineProps({
   doc: { type: Object, required: true },
 });
+const html = ref('<div class="minimap loading">loading minimap...</div>');
 
 const swapViewBox = (html) => {
   const regex = /viewbox="(\b0\b)\s+(\b0\b)\s+(\d+)\s+(\d+)"/g;
   return html.replace(regex, (_, x, y, w, h) => `viewbox="${y} ${x} ${h} ${w}"`);
 };
 
-const html = ref('<div class="minimap loading">loading minimap...</div>');
+const waitForSvgRender = () =>
+  new Promise((resolve) => {
+    const interval = setInterval(() => {
+      const svg = document.querySelector(".mm-wrapper svg");
+      if (svg) {
+        clearInterval(interval);
+        resolve();
+      }
+    }, 50);
+  });
+
 onMounted(async () => {
   try {
     const url = `http://localhost:8000/documents/${props.doc.id}/sections/minimap`;
@@ -20,31 +31,63 @@ onMounted(async () => {
       html.value = '<div class="minimap error">no minimap!</div>';
     } else {
       html.value = swapViewBox(response.data);
+      await nextTick();
+      await waitForSvgRender();
+      setRectHeight();
+      positionCircles();
     }
   } catch (error) {
     console.error(error);
     html.value = '<div class="minimap error">error when retrieving minimap!</div>';
   }
 });
+
+const wrapperWidth = computed(
+  () => document.querySelector(".mm-wrapper")?.getBoundingClientRect()?.width || null,
+);
+
+const setRectHeight = () => {
+  if (!wrapperWidth.value) return;
+  const rects = document.querySelectorAll(".mm-wrapper svg rect");
+  rects.forEach((rect) => rect.setAttribute("height", wrapperWidth.value));
+};
+
+const positionCircles = () => {
+  console.log(wrapperWidth.value);
+
+  if (!html.value) return;
+  const circles = document.querySelectorAll(".mm-wrapper svg circle");
+  if (!circles) return;
+  const match = html.value.match(/height="(\d+)"/);
+  if (!match) return;
+
+  const originalLength = parseFloat(match[1]);
+  const scale = wrapperWidth.value / originalLength;
+
+  circles.forEach((circle) => {
+    const pos = parseFloat(circle.getAttribute("data-pos"));
+    if (!isNaN(pos)) {
+      circle.style.transform = `translateY(${10 - pos * (1 - scale)}px)`;
+    }
+  });
+};
+watch(wrapperWidth, () => positionCircles());
 </script>
 
 <template>
-  <div v-html="html"></div>
+  <div class="mm-wrapper" v-html="html"></div>
 </template>
 
 <style>
 .minimap {
-  --scale-factor: 0.7;
-  --base-pos: 20;
-}
+  &.loading {
+    color: var(--light);
+    background-color: var(--information-500);
+  }
 
-.minimap.loading {
-  color: var(--light);
-  background-color: var(--information-500);
-}
-
-.minimap.error {
-  background-color: var(--error-500);
+  &.error {
+    background-color: var(--error-500);
+  }
 }
 
 .minimap:not(.loading),
@@ -55,22 +98,12 @@ onMounted(async () => {
   & svg {
     overflow: visible;
     height: 48px;
-
-    & g {
-      transform: rotate(270deg);
-      transform-origin: 16px 20px;
-
-      & rect {
-        transform: scaleY(var(--scale-factor));
-      }
-
-      & a circle {
-        /* transform: scale(calc(1 / 0.7)); */
-        /* transform: translateY(
-                  calc((attr(data-pos number) - var(--base-pos-) * (var(--scale-factor) - 1)))
-                ); */
-      }
-    }
   }
+}
+
+.minimap svg g {
+  transform: rotate(270deg);
+  transform-origin: calc(16px - 4px) calc(16px + 4px);
+  /* now everything is rotated: height becomes width, translateY becomes translateX, etc */
 }
 </style>
