@@ -4,9 +4,8 @@ import useClosable from "@/composables/useClosable.js";
 import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
-const { doc, container } = defineProps({
+const { doc } = defineProps({
   doc: { type: Object, required: true },
-  container: { type: Object, required: true },
 });
 const emit = defineEmits(["set-selected"]);
 const router = useRouter();

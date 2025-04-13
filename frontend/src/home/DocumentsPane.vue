@@ -2,6 +2,7 @@
 import { ref, inject, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+import Topbar from "./Topbar.vue";
 import DocumentsPaneHeader from "./DocumentsPaneHeader.vue";
 import DocumentsPaneItem from "./DocumentsPaneItem.vue";
 
@@ -46,6 +47,7 @@ useKeyboardShortcuts({
 </script>
 
 <template>
+  <Topbar @list="currentMode = 'list'" @cards="currentMode = 'cards'" />
   <div class="documents" :class="mode">
     <DocumentsPaneHeader />
 
