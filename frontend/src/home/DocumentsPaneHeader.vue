@@ -1,0 +1,91 @@
+<script setup>
+import { inject } from "vue";
+import ColumnHeader from "./DocumentsPaneColumnHeader.vue";
+
+const props = defineProps({
+  mode: { type: String, default: "list" },
+});
+const emit = defineEmits(["set-selected"]);
+const { sortDocs, filterDocs } = inject("userDocs");
+
+const columnInfo = {
+  Title: { sortable: true, filterable: false, sortKey: "title" },
+  Progress: { sortable: false, filterable: false, sortKey: "" },
+  Tags: { sortable: false, filterable: true, sortKey: "" },
+  "Last Edited": { sortable: true, filterable: false, sortKey: "last_edited_at" },
+  /* Owner: { sortable: false, filterable: false, sortKey: "owner_id" }, */
+};
+
+const handleColumnSortEvent = (columnName, mode) => {
+  const sortKey = columnInfo[columnName]["sortKey"];
+  if (mode == "asc") {
+    sortDocs((a, b) => a[sortKey].localeCompare(b[sortKey]));
+  } else if (mode == "desc") {
+    sortDocs((a, b) => b[sortKey].localeCompare(a[sortKey]));
+  }
+};
+const handleColumnFilterEvent = (columnName, tags) => {
+  console.log(columnName, tags);
+};
+</script>
+
+<template>
+  <div class="pane-header text-label">
+    <span v-if="mode == 'cards'">Sort by:</span>
+    <template v-for="name in Object.keys(columnInfo)">
+      <ColumnHeader
+        v-if="mode == 'list' || (mode == 'cards' && !columnInfo[name]['sortable'])"
+        :name="name"
+        @sort-none="handleColumnSortEvent(name, 'none')"
+        @sort-asc="handleColumnSortEvent(name, 'asc')"
+        @sort-desc="handleColumnSortEvent(name, 'desc')"
+        @filter-on="handleColumnFilterEvent(name, tags)"
+        @filter-off="handleColumnFilterEvent(name, [])"
+        :sortable="columnInfo[name]['sortable']"
+        :filterable="columnInfo[name]['filterable']"
+      />
+    </template>
+    <!-- to complete the grid -->
+    <span v-if="mode == 'list'" class="spacer spacer-1"></span>
+    <span v-if="mode == 'list'" class="spacer spacer-2"></span>
+  </div>
+</template>
+
+<style scoped>
+.pane-header {
+  display: grid !important;
+  grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px;
+
+  background-color: var(--surface-information);
+  grid-column: 1 / 6;
+
+  & > *:first-child {
+    padding-left: 16px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+  }
+
+  & > *:last-child {
+    padding-right: 8px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+}
+
+.documents.cards .pane-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-inline: 16px;
+  margin-bottom: 16px;
+
+  & > .col-header {
+    width: fit-content;
+    padding-inline: 8px;
+  }
+}
+
+.spacer {
+  background-color: var(--surface-information);
+}
+</style>
