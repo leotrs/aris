@@ -46,8 +46,13 @@ const wrapperWidth = computed(
   () => document.querySelector(".mm-wrapper")?.getBoundingClientRect()?.width || null,
 );
 
+watch(wrapperWidth, () => setRectHeight());
+
 const setRectHeight = () => {
   if (!wrapperWidth.value) return;
+  const svg = document.querySelector(".mm-wrapper svg");
+  if (!svg) return;
+  svg.setAttribute("viewBox", `0 0 ${wrapperWidth.value} 32`);
   const rects = document.querySelectorAll(".mm-wrapper svg rect");
   rects.forEach((rect) => rect.setAttribute("height", wrapperWidth.value));
 };
@@ -101,7 +106,7 @@ watch(wrapperWidth, () => positionCircles());
 
 .minimap svg g {
   transform: rotate(270deg);
-  transform-origin: calc(16px - 4px) calc(16px + 4px);
+  transform-origin: calc(14px) calc(16px + 4px);
   /* now everything is rotated: height becomes width, translateY becomes translateX, etc */
 }
 </style>
