@@ -6,41 +6,39 @@ const props = defineProps({
   doc: { type: Object, required: true },
 });
 
-const html = ref("<div>loading minimap...</div>");
-const additionalClasses = ref(["loading"]);
+const html = ref('<div class="minimap loading">loading minimap...</div>');
 onMounted(async () => {
   try {
     const url = `http://localhost:8000/documents/${props.doc.id}/sections/minimap`;
     const response = await axios.get(url);
     if (response.status == 200 && !response.data) {
-      html.value = "<div>no minimap!</div>";
-      additionalClasses.value = [];
+      html.value = '<div class="minimap error">no minimap!</div>';
     } else {
       html.value = response.data;
     }
   } catch (error) {
     console.error(error);
-    html.value = '<div class="error">error when retrieving minimap!</div>';
-    additionalClasses.value.push("error");
+    html.value = '<div class="minimap error">error when retrieving minimap!</div>';
   }
 });
 </script>
 
 <template>
-  <div class="minimap" :class="additionalClasses" v-html="html"></div>
+  <div v-html="html"></div>
 </template>
 
 <style scoped>
-.minimap.loading {
+:deep(.minimap.loading) {
+  color: var(--light);
   background-color: var(--information-500);
 }
 
-.minimap.error {
+:deep(.minimap.error) {
   background-color: var(--error-500);
 }
 
-.minimap:not(.loading),
-.minimap:not(.error) {
+:deep(.minimap:not(.loading)),
+:deep(.minimap:not(.error)) {
   background-color: transparent;
   width: 48px;
   transform: rotate(90deg) scale(0.4);
