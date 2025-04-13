@@ -4,7 +4,7 @@ import { ref, inject } from "vue";
 const props = defineProps({
   tag: { type: Object, required: true },
 });
-const state = defineModel();
+const state = defineModel({ type: Boolean, default: false });
 const { updateUserTag } = inject("userTags");
 
 const setColor = (color) => {
@@ -45,7 +45,12 @@ const renameTag = (newName) => {
         >
         </span>
       </div>
-      <ContextMenuItem icon="Edit" caption="Rename" @click="renaming = true" @dblclick.stop />
+      <ContextMenuItem
+        icon="Edit"
+        caption="Rename"
+        @click="renaming = true"
+        @dblclick.stop
+      />
       <ContextMenuItem
         icon="TrashX"
         caption="Delete"

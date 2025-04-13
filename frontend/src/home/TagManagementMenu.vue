@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, inject, computed, watch, watchEffect } from "vue";
+import { ref, reactive, inject, watch } from "vue";
 
 const props = defineProps({
   docID: { type: Number, default: -1 },
@@ -8,19 +8,27 @@ const props = defineProps({
 const tags = defineModel();
 const { userTags, createTag, addOrRemoveTag } = inject("userTags");
 
-const tagsIDs = computed(() => (tags.value ? tags.value.map((t) => t.id) : []));
-const currentAssignment = computed(() => userTags.value.map((t) => tagsIDs.value.includes(t.id)));
-const tagIsAssigned = ref(Array(userTags.value.length).fill(false));
-watch(tagIsAssigned.value, () => {
-  console.log("hello");
-  tagIsAssigned.value.forEach((_, idx) => {
-    if (tagIsAssigned.value[idx] && !currentAssignment.value[idx]) {
-      if (props.docID != -1) addOrRemoveTag(userTags.value[idx].id, props.docID, "add");
-      tags.value.push(userTags.value[idx]);
+const tagIds = tags.value.map((t) => t.id);
+const tagIsAssigned = reactive(
+  userTags.value.map((t) => ({ value: tagIds.includes(t.id) })),
+);
+
+watch(tagIsAssigned, (newVal, oldVal) => {
+  console.log("tagIsAssigned has changed");
+  newVal.forEach((isNowAssigned, idx) => {
+    const wasAssigned = oldVal?.[idx];
+    const tag = userTags.value[idx];
+
+    console.log(isNowAssigned, wasAssigned, idx);
+
+    if (isNowAssigned && !wasAssigned) {
+      if (props.docID !== -1) addOrRemoveTag(tag.id, props.docID, "add");
+      if (!tags.value.some((t) => t.id === tag.id)) tags.value.push(tag);
     }
-    if (!tagIsAssigned.value[idx] && currentAssignment.value[idx]) {
-      if (props.docID != -1) addOrRemoveTag(userTags.value[idx].id, props.docID, "remove");
-      tags.value = tags.value.filter((it) => it != userTags.value[idx]);
+
+    if (!isNowAssigned && wasAssigned) {
+      if (props.docID !== -1) addOrRemoveTag(tag.id, props.docID, "remove");
+      tags.value = tags.value.filter((t) => t.id !== tag.id);
     }
   });
 });
@@ -39,8 +47,8 @@ const renaming = ref(false);
       v-for="(tag, idx) in userTags"
       class="item"
       :tag="tag"
-      :key="tag"
-      v-model="tagIsAssigned[idx]"
+      :key="tag.id"
+      v-model="tagIsAssigned[idx].value"
     />
     <div class="new-tag-wrapper item">
       <Tag

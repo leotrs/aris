@@ -28,7 +28,7 @@ onMounted(async () => {
     const url = `http://localhost:8000/documents/${props.doc.id}/sections/minimap`;
     const response = await axios.get(url);
     if (response.status == 200 && !response.data) {
-      html.value = '<div class="minimap error">no minimap!</div>';
+      html.value = '<div class="minimap error">-</div>';
     } else {
       html.value = swapViewBox(response.data);
       await nextTick();
