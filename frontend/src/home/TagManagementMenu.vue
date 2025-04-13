@@ -17,8 +17,8 @@ watchEffect(() => {
   }
 });
 watch(tagIsAssigned.value, () => {
-  if (props.docId == -1) return;
-  tagIsAssigned.value.forEach((el, idx) => {
+  if (props.docID == -1) return;
+  tagIsAssigned.value.forEach((_, idx) => {
     if (tagIsAssigned.value[idx] && !currentAssignment.value[idx]) {
       addOrRemoveTag(userTags.value[idx].id, props.docID, "add");
     }
