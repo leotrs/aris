@@ -3,7 +3,6 @@ import { ref, provide, computed, useTemplateRef, onMounted, onUnmounted } from "
 import { useDraggable } from "@vueuse/core";
 import axios from "axios";
 import Sidebar from "./Sidebar.vue";
-import Topbar from "./Topbar.vue";
 import DocumentsPane from "./DocumentsPane.vue";
 import PreviewPane from "./PreviewPane.vue";
 import UploadFileModal from "./UploadFileModal.vue";
@@ -132,7 +131,7 @@ const container = useTemplateRef("separator-container-ref");
 const separator = useTemplateRef("separator-ref");
 
 const previewHeight = ref("50%");
-const onSeparatorDragged = (pos, ev) => {
+const onSeparatorDragged = (pos, _) => {
   const rect = container.value.getBoundingClientRect();
   console.log(pos.y, rect.height);
   previewHeight.value = `calc(30% + ${rect.height}px - ${pos.y}px)`;
@@ -158,9 +157,16 @@ const setSelectedForPreview = (doc) => {
 <template>
   <div :class="['view-wrapper', isMobile ? 'mobile' : '']" ref="selfRef">
     <Sidebar @showFileUploadModal="showModal = true" />
-    <div class="panes" ref="panes-ref">
+
+    <div class="views-row">
+      <Button kind="tertiary" icon="Settings" />
+      <Button kind="tertiary">
+        <Avatar name="TER" />
+      </Button>
+    </div>
+
+    <div class="panes">
       <div id="documents" class="pane">
-        <Topbar @list="currentMode = 'list'" @cards="currentMode = 'cards'" />
         <DocumentsPane
           @set-selected="(doc) => (style = setSelectedForPreview(doc))"
           :mode="currentMode"
@@ -175,10 +181,10 @@ const setSelectedForPreview = (doc) => {
         v-if="!isMobile && selectedForPreview"
         ref="preview-ref"
         :doc="selectedForPreview"
-        :container="useTemplateRef('panes-ref')"
         @set-selected="(doc) => (style = setSelectedForPreview(doc))"
       />
     </div>
+
     <div class="modal" v-if="showModal">
       <UploadFileModal @close="showModal = false" />
     </div>
@@ -214,6 +220,7 @@ const setSelectedForPreview = (doc) => {
   height: 12px;
   z-index: 1;
   pointer-events: v-bind(separatorPointerEvents);
+
   &:hover {
     cursor: row-resize;
   }
@@ -238,10 +245,12 @@ const setSelectedForPreview = (doc) => {
     min-height: 100%;
     max-height: 100%;
   }
+
   & :deep(#documents:has(~ .pane)) {
     min-height: 20%;
     max-height: 80%;
   }
+
   & :deep(#preview) {
     min-height: 20%;
     max-height: 80%;
@@ -273,5 +282,14 @@ const setSelectedForPreview = (doc) => {
   width: 100vw;
   height: 100vh;
   backdrop-filter: blur(2px) brightness(0.9);
+}
+.views-row {
+  position: absolute;
+  right: 32px;
+  top: 32px;
+  z-index: 1;
+  display: flex;
+  gap: 4px;
+  white-space: nowrap;
 }
 </style>
