@@ -49,7 +49,9 @@ const onSeparatorDragged = (pos, _) => {
 };
 const style = ref({});
 const selectedForPreview = ref(null);
-const separatorPointerEvents = computed(() => (selectedForPreview.value ? "all" : "none"));
+const separatorPointerEvents = computed(() =>
+  selectedForPreview.value ? "all" : "none",
+);
 const setSelectedForPreview = (doc) => {
   selectedForPreview.value = doc;
   if (!doc) return;
@@ -191,6 +193,7 @@ const setSelectedForPreview = (doc) => {
   height: 100vh;
   backdrop-filter: blur(2px) brightness(0.9);
 }
+
 .views-row {
   position: absolute;
   right: 32px;
