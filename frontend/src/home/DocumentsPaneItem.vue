@@ -47,7 +47,7 @@ const deleteDoc = async () => {
     </template>
     <Minimap :doc="doc" />
     <div class="tags">
-      <MultiSelectTags :tags="doc.tags" :docID="doc.id" />
+      <MultiSelectTags v-model="doc.tags" :docID="doc.id" />
     </div>
     <div class="last-edited">
       {{ relativeTime.from(new Date(doc.last_edited_at)) }}

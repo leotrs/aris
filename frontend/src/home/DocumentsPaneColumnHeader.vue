@@ -8,26 +8,21 @@ const props = defineProps({
   sortable: { type: Boolean, default: true },
   filterable: { type: Boolean, default: true },
 });
+const state = defineModel();
+const emit = defineEmits(["sort", "filter"]);
+const tags = ref([]);
+const filterableSVGColor = computed(() =>
+  tags.value.length > 0 ? "var(--extra-dark)" : "var(--light)",
+);
 
-const allStates = {
-  sortable: ["sortNone", "sortDesc", "sortAsc"],
-  filterable: ["filterOn", "filterOff"],
-};
-const emit = defineEmits(["sortNone", "sortDesc", "sortAsc", "filterOn", "filterOff"]);
-const currentIndex = ref(0);
-const state = computed(() => {
-  const states = allStates[props.sortable ? "sortable" : props.filterable ? "filterable" : null];
-  return states[currentIndex.value];
-});
 const nextState = () => {
-  let numStates = 1;
   if (props.sortable) {
-    numStates = allStates["sortable"].length;
+    state.value = state.value == "asc" ? "desc" : "asc";
+    emit("sort", state.value);
   } else if (props.filterable) {
-    numStates = allStates["filterable"].length;
+    console.log("what do I do here");
+    emit("filter", tags);
   }
-  currentIndex.value = (currentIndex.value + 1) % numStates;
-  emit(state.value);
 };
 </script>
 
@@ -40,7 +35,7 @@ const nextState = () => {
     <span>{{ name }}</span>
     <span v-if="sortable && state == 'desc'"><IconSortDescendingLetters /></span>
     <span v-if="sortable && state == 'asc'"><IconSortAscendingLetters /></span>
-    <span v-if="filterable"><TagManagementMenu :tags="[]" icon="Filter" /></span>
+    <span v-if="filterable"><TagManagementMenu v-model="tags" icon="Filter" /></span>
   </div>
 </template>
 
@@ -49,6 +44,7 @@ const nextState = () => {
   display: flex;
   flex-wrap: wrap;
   align-content: center;
+  align-items: center;
   height: 40px;
   color: var(--almost-black);
   background-color: var(--surface-information);
@@ -56,7 +52,12 @@ const nextState = () => {
   &.sortable:hover {
     cursor: pointer;
   }
+
+  &.filterable :deep(svg.cm-btn) {
+    color: v-bind(filterableSVGColor);
+  }
 }
+
 .col-header:hover {
   background-color: var(--gray-50);
   align-items: center;

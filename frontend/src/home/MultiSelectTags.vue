@@ -3,12 +3,12 @@ import { ref, inject, computed, watch, watchEffect } from "vue";
 import TagManagementMenu from "./TagManagementMenu.vue";
 
 const props = defineProps({
-  tags: { type: Array, required: true },
   docID: { type: Number, required: true },
 });
+const tags = defineModel();
 const { userTags } = inject("userTags");
 
-const tagsIDs = computed(() => props.tags.map((t) => t.id));
+const tagsIDs = computed(() => (tags.value ? tags.value.map((t) => t.id) : []));
 const currentAssignment = computed(() => userTags.value.map((t) => tagsIDs.value.includes(t.id)));
 const tagIsAssigned = ref([]);
 watchEffect(() => {
@@ -23,7 +23,7 @@ watch(tagIsAssigned, () => {
 
 <template>
   <Tag v-for="tag in tags" :tag="tag" :active="true" />
-  <TagManagementMenu :tags="tags" :docID="docID" />
+  <TagManagementMenu v-model="tags" :docID="docID" />
 </template>
 
 <style scoped>

@@ -53,8 +53,6 @@ const setRectHeight = () => {
 };
 
 const positionCircles = () => {
-  console.log(wrapperWidth.value);
-
   if (!html.value) return;
   const circles = document.querySelectorAll(".mm-wrapper svg circle");
   if (!circles) return;
