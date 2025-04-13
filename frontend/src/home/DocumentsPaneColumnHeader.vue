@@ -15,36 +15,51 @@ const filterableSVGColor = computed(() =>
   tags.value.length > 0 ? "var(--extra-dark)" : "var(--light)",
 );
 
-const nextState = () => {
-  if (props.sortable) {
-    state.value = state.value == "asc" ? "desc" : "asc";
-    emit("sort", state.value);
-  } else if (props.filterable) {
-    console.log("nope");
-  }
+const nextSortableState = () => {
+  if (!props.sortable) return;
+  state.value = state.value == "asc" ? "desc" : "asc";
+  emit("sort", state.value);
 };
 
 const { filterDocs } = inject("userDocs");
-watch(tags, () =>
-  filterDocs((doc) => {
+watch(tags, () => {
+  console.log("tags changed");
+  return filterDocs((doc) => {
     const selectedTagIds = tags.value.map((t) => t.id);
     const docTagIds = doc.tags.map((t) => t.id);
     return selectedTagIds.filter((id) => docTagIds.includes(id));
-  }),
-);
+  });
+});
 </script>
 
 <template>
-  <div
-    class="col-header"
-    :class="[name.toLowerCase().replace(' ', '-'), { sortable: sortable, filterable: filterable }]"
-    @click.stop="nextState"
-  >
-    <span>{{ name }}</span>
-    <span v-if="sortable && state == 'desc'"><IconSortDescendingLetters /></span>
-    <span v-if="sortable && state == 'asc'"><IconSortAscendingLetters /></span>
-    <span v-if="filterable"><TagManagementMenu v-model="tags" icon="Filter" /></span>
-  </div>
+  <template v-if="sortable">
+    <div
+      class="col-header"
+      :class="[name.toLowerCase().replace(' ', '-'), 'sortable']"
+      @click.stop="nextSortableState"
+    >
+      <span>{{ name }}</span>
+      <span v-if="state == 'desc'"><IconSortDescendingLetters /></span>
+      <span v-if="state == 'asc'"><IconSortAscendingLetters /></span>
+    </div>
+  </template>
+
+  <template v-else-if="filterable">
+    <div
+      class="col-header"
+      :class="[name.toLowerCase().replace(' ', '-'), 'filterable']"
+    >
+      <span>{{ name }}</span>
+      <span><TagManagementMenu v-model="tags" icon="Filter" /></span>
+    </div>
+  </template>
+
+  <template v-else>
+    <div class="col-header" :class="name.toLowerCase().replace(' ', '-')">
+      <span>{{ name }}</span>
+    </div>
+  </template>
 </template>
 
 <style scoped>

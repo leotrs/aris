@@ -75,6 +75,7 @@ const createTag = async (name, color = null) => {
   }
 };
 const addOrRemoveTag = async (tagID, docID, mode) => {
+  console.log(mode);
   const url = `http://localhost:8000/users/${userID}/documents/${docID}/tags/${tagID}`;
   if (mode == "add") {
     try {
@@ -114,12 +115,15 @@ const openRead = (doc) => {
 /* Keyboard shortcuts */
 const nextItemOnKey = (ev) => {
   ev.preventDefault();
-  activeIndex.value = activeIndex.value === null ? 0 : (activeIndex.value + 1) % numDocs.value;
+  activeIndex.value =
+    activeIndex.value === null ? 0 : (activeIndex.value + 1) % numDocs.value;
 };
 const prevItemOnKey = (ev) => {
   ev.preventDefault();
   activeIndex.value =
-    activeIndex.value === null ? 0 : (activeIndex.value + numDocs.value - 1) % numDocs.value;
+    activeIndex.value === null
+      ? 0
+      : (activeIndex.value + numDocs.value - 1) % numDocs.value;
 };
 useKeyboardShortcuts({
   j: nextItemOnKey,
