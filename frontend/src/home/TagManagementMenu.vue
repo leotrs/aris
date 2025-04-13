@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, inject, watch } from "vue";
+import { ref, reactive, inject, watch, watchEffect } from "vue";
 
 const props = defineProps({
   docID: { type: Number, default: -1 },
@@ -8,13 +8,16 @@ const props = defineProps({
 const tags = defineModel();
 const { userTags, createTag, addOrRemoveTag } = inject("userTags");
 
-const tagIds = tags.value.map((t) => t.id);
-const tagIsAssigned = reactive(
-  userTags.value.map((t) => ({ value: tagIds.includes(t.id) })),
-);
-
+const tagIsAssigned = userTags.value.map(() => ref(false)); // array of refs!
+watchEffect(() => {
+  const tagIds = tags.value.map((t) => t.id);
+  userTags.value.forEach((tag, idx) => {
+    if (tagIsAssigned[idx]) {
+      tagIsAssigned[idx].value = tagIds.includes(tag.id);
+    }
+  });
+});
 watch(tagIsAssigned, (newVal, oldVal) => {
-  console.log("tagIsAssigned has changed");
   newVal.forEach((isNowAssigned, idx) => {
     const wasAssigned = oldVal?.[idx];
     const tag = userTags.value[idx];
