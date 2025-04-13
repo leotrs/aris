@@ -6,6 +6,11 @@ const props = defineProps({
   doc: { type: Object, required: true },
 });
 
+const swapViewBox = (html) => {
+  const regex = /viewbox="(\b0\b)\s+(\b0\b)\s+(\d+)\s+(\d+)"/g;
+  return html.replace(regex, (_, x, y, w, h) => `viewbox="${y} ${x} ${h} ${w}"`);
+};
+
 const html = ref('<div class="minimap loading">loading minimap...</div>');
 onMounted(async () => {
   try {
@@ -14,7 +19,7 @@ onMounted(async () => {
     if (response.status == 200 && !response.data) {
       html.value = '<div class="minimap error">no minimap!</div>';
     } else {
-      html.value = response.data;
+      html.value = swapViewBox(response.data);
     }
   } catch (error) {
     console.error(error);
@@ -27,23 +32,29 @@ onMounted(async () => {
   <div v-html="html"></div>
 </template>
 
-<style scoped>
-:deep(.minimap.loading) {
+<style>
+.minimap.loading {
   color: var(--light);
   background-color: var(--information-500);
 }
 
-:deep(.minimap.error) {
+.minimap.error {
   background-color: var(--error-500);
 }
-
-:deep(.minimap:not(.loading)),
-:deep(.minimap:not(.error)) {
+.minimap:not(.loading),
+.minimap:not(.error) {
   background-color: transparent;
-  width: 48px;
-  transform: rotate(90deg) scale(0.4);
+  width: 100%;
 
-  svg {
+  & svg {
+    overflow: visible;
+    width: 100%;
+    height: 48px;
+
+    & g {
+      transform: rotate(270deg);
+      transform-origin: 32px 16px;
+    }
   }
 }
 </style>
