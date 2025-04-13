@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, inject, watch } from "vue";
 import { IconSortAscendingLetters, IconSortDescendingLetters } from "@tabler/icons-vue";
 import TagManagementMenu from "./TagManagementMenu.vue";
 
@@ -20,10 +20,18 @@ const nextState = () => {
     state.value = state.value == "asc" ? "desc" : "asc";
     emit("sort", state.value);
   } else if (props.filterable) {
-    console.log("what do I do here");
-    emit("filter", tags);
+    console.log("nope");
   }
 };
+
+const { filterDocs } = inject("userDocs");
+watch(tags, () =>
+  filterDocs((doc) => {
+    const selectedTagIds = tags.value.map((t) => t.id);
+    const docTagIds = doc.tags.map((t) => t.id);
+    return selectedTagIds.filter((id) => docTagIds.includes(id));
+  }),
+);
 </script>
 
 <template>
