@@ -1,5 +1,5 @@
 <script setup>
-import { ref, inject, computed, watch, watchEffect } from "vue";
+import { ref, reactive, inject, computed, watch, watchEffect } from "vue";
 
 const props = defineProps({
   docID: { type: Number, default: -1 },
@@ -10,20 +10,17 @@ const { userTags, createTag, addOrRemoveTag } = inject("userTags");
 
 const tagsIDs = computed(() => (tags.value ? tags.value.map((t) => t.id) : []));
 const currentAssignment = computed(() => userTags.value.map((t) => tagsIDs.value.includes(t.id)));
-const tagIsAssigned = ref([]);
-watchEffect(() => {
-  if (tagIsAssigned.value.length === 0) {
-    tagIsAssigned.value = [...currentAssignment.value];
-  }
-});
+const tagIsAssigned = ref(Array(userTags.value.length).fill(false));
 watch(tagIsAssigned.value, () => {
-  if (props.docID == -1) return;
+  console.log("hello");
   tagIsAssigned.value.forEach((_, idx) => {
     if (tagIsAssigned.value[idx] && !currentAssignment.value[idx]) {
-      addOrRemoveTag(userTags.value[idx].id, props.docID, "add");
+      if (props.docID != -1) addOrRemoveTag(userTags.value[idx].id, props.docID, "add");
+      tags.value.push(userTags.value[idx]);
     }
     if (!tagIsAssigned.value[idx] && currentAssignment.value[idx]) {
-      addOrRemoveTag(userTags.value[idx].id, props.docID, "remove");
+      if (props.docID != -1) addOrRemoveTag(userTags.value[idx].id, props.docID, "remove");
+      tags.value = tags.value.filter((it) => it != userTags.value[idx]);
     }
   });
 });
