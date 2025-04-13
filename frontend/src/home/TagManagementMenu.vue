@@ -1,5 +1,5 @@
 <script setup>
-import { ref, reactive, inject, watch, watchEffect } from "vue";
+import { ref, inject, watch, watchEffect } from "vue";
 
 const props = defineProps({
   docID: { type: Number, default: -1 },
