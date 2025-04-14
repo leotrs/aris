@@ -98,7 +98,7 @@ onMounted(async () => {
   updateUserTag();
 });
 
-/* Handlers for child component events */
+/*********** Handlers for child component events ***********/
 const activeIndex = ref(null);
 let clickTimeout = ref(null);
 const selectForPreview = (doc, idx) => {
@@ -112,7 +112,7 @@ const openRead = (doc) => {
   router.push(`/${doc.id}/read`);
 };
 
-/* Keyboard shortcuts */
+/*********** Keyboard shortcuts ***********/
 const nextItemOnKey = (ev) => {
   ev.preventDefault();
   activeIndex.value =
