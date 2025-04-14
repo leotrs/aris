@@ -2,13 +2,13 @@
 import useClosable from "@/composables/useClosable.js";
 import { useRouter } from "vue-router";
 
-const { doc } = defineProps({
+const props = defineProps({
   doc: { type: Object, required: true },
 });
 const emit = defineEmits(["set-selected"]);
 const router = useRouter();
 
-const read = () => router.push(`/${doc.id}/read`);
+const read = () => router.push(`/${props.doc.id}/read`);
 const close = () => emit("set-selected", "");
 
 useClosable({ onClose: close, closeOnOutsideClick: false });
