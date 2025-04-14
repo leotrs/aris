@@ -20,6 +20,14 @@ app.add_middleware(
 app.include_router(user_router)
 app.include_router(document_router)
 app.include_router(tag_router)
+
+@app.middleware("http")
+async def add_no_cache_headers(request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/static"):
+        response.headers["Cache-Control"] = "no-store"
+    return response
+
 app.mount(
     "/static",
     StaticFiles(
