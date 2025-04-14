@@ -8,32 +8,33 @@ const props = defineProps({
   sortable: { type: Boolean, default: true },
   filterable: { type: Boolean, default: true },
 });
-const state = defineModel();
 const emit = defineEmits(["sort", "filter"]);
-const tags = ref([]);
-const filterableSVGColor = computed(() =>
-  tags.value.length > 0 ? "var(--extra-dark)" : "var(--light)",
-);
 
-const nextSortableState = () => {
+// Sortable column: cycle through asc and desc on click
+const sortState = defineModel({ default: null });
+const nextSortState = () => {
   if (!props.sortable) return;
-  state.value = state.value == "asc" ? "desc" : "asc";
-  emit("sort", state.value);
+  sortState.value = sortState.value == "asc" ? "desc" : "asc";
+  emit("sort", sortState.value);
 };
 
-const { filterDocs, clearFilterDocs } = inject("userDocs");
-watch(tags, () => {
-  console.log(tags.value);
-  if (tags.value.length == 0) {
-    clearFilterDocs();
-  } else {
-    filterDocs((doc) => {
-      const selectedTagIds = tags.value.map((t) => t.id);
-      const docTagIds = doc.tags.map((t) => t.id);
-      return selectedTagIds.some((id) => !docTagIds.includes(id));
-    });
-  }
-});
+// Filterable column: watch the tags of the TagManagementMenu and set the icon accordingly
+const tagsSelectedForFilter = ref([]);
+const filterableSVGColor = computed(() =>
+  tagsSelectedForFilter.value.length > 0 ? "var(--extra-dark)" : "var(--light)",
+);
+watch(tagsSelectedForFilter, () => emit("filter", tagsSelectedForFilter.value));
+/* watch(tagsSelectedForFilter, () => {
+ *     if (tagsSelectedForFilter.value.length == 0) {
+ *     clearFilterDocs();
+ *   } else {
+ *     filterDocs((doc) => {
+ *       const selectedTagIds = tagsSelectedForFilter.value.map((t) => t.id);
+ *       const docTagIds = doc.tags.map((t) => t.id);
+ *       return selectedTagIds.some((id) => !docTagIds.includes(id));
+ *     });
+ *   }
+ * }) */
 </script>
 
 <template>
@@ -41,11 +42,11 @@ watch(tags, () => {
     <div
       class="col-header"
       :class="[name.toLowerCase().replace(/ /g, '-'), 'sortable']"
-      @click.stop="nextSortableState"
+      @click.stop="nextSortState"
     >
       <span>{{ name }}</span>
-      <span v-if="state == 'desc'"><IconSortDescendingLetters /></span>
-      <span v-if="state == 'asc'"><IconSortAscendingLetters /></span>
+      <span v-if="sortState == 'desc'"><IconSortDescendingLetters /></span>
+      <span v-if="sortState == 'asc'"><IconSortAscendingLetters /></span>
     </div>
   </template>
 
@@ -55,7 +56,7 @@ watch(tags, () => {
       :class="[name.toLowerCase().replace(' ', '-'), 'filterable']"
     >
       <span>{{ name }}</span>
-      <span><TagManagementMenu v-model="tags" icon="Filter" /></span>
+      <span><TagManagementMenu v-model="tagsSelectedForFilter" icon="Filter" /></span>
     </div>
   </template>
 
