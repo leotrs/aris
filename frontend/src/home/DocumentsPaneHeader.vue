@@ -6,7 +6,7 @@ const props = defineProps({
   mode: { type: String, default: "list" },
 });
 const emit = defineEmits(["set-selected"]);
-const { sortDocs, filterDocs } = inject("userDocs");
+const { sortDocs, filterDocs, clearFilterDocs } = inject("userDocs");
 
 const columnInfo = {
   Title: { sortable: true, filterable: false, sortKey: "title" },
@@ -39,6 +39,15 @@ const handleColumnSortEvent = (columnName, mode) => {
 };
 const handleColumnFilterEvent = (columnName, tags) => {
   console.log(columnName, tags);
+  if (tags.length == 0) {
+    clearFilterDocs();
+  } else {
+    filterDocs((doc) => {
+      const filterTagIds = tags.map((t) => t.id);
+      const docTagIds = doc.tags.map((t) => t.id);
+      return filterTagIds.some((id) => !docTagIds.includes(id));
+    });
+  }
 };
 </script>
 
