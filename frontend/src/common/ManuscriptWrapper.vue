@@ -12,16 +12,14 @@ onBeforeMount(async () => {
   onload.value = module.onload;
 });
 
-let lsp_ws = null;
+const manuscript = useTemplateRef("manuscript-ref");
 const tryExecuteOnload = async () => {
-  if (onload.value && manuscript.value) {
-    await nextTick();
-    lsp_ws = onload.value();
-  }
+  if (!onload.value || !manuscript.value || !props.html) return;
+  await nextTick();
+  onload.value(manuscript.value);
 };
-watch(onload, tryExecuteOnload);
+watch([onload, () => manuscript.value, () => props.html], tryExecuteOnload);
 </script>
-
 
 <template>
   <div class="rsm-manuscript">
