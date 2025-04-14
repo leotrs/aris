@@ -20,7 +20,8 @@ watchEffect(() => {
 watch(
   () => [...state.tagIsAssigned],
   (newVal, oldVal) => {
-    if (!oldVal) return;
+    // On the first change, oldVal will be an empty array
+    if (oldVal.length == 0) oldVal = userTags.value.map(() => false);
 
     newVal.forEach((isNowAssigned, idx) => {
       const wasAssigned = oldVal[idx];
