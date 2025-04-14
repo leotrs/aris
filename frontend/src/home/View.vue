@@ -2,9 +2,9 @@
 import { ref, provide, computed, useTemplateRef, onMounted, onUnmounted } from "vue";
 import { useDraggable } from "@vueuse/core";
 import Sidebar from "./Sidebar.vue";
-import DocumentsPane from "./DocumentsPane.vue";
+import FilesPane from "./FilesPane.vue";
 import PreviewPane from "./PreviewPane.vue";
-import UploadFileModal from "./UploadFileModal.vue";
+import UploadFile from "./ModalUploadFile.vue";
 
 const showModal = ref(false);
 const selfRef = useTemplateRef("selfRef");
@@ -80,7 +80,7 @@ const setSelectedForPreview = (doc) => {
 
     <div class="panes">
       <div id="documents" class="pane">
-        <DocumentsPane @set-selected="(doc) => (style = setSelectedForPreview(doc))" />
+        <FilesPane @set-selected="(doc) => (style = setSelectedForPreview(doc))" />
       </div>
 
       <div class="separator-container" ref="separator-container-ref">
@@ -96,7 +96,7 @@ const setSelectedForPreview = (doc) => {
     </div>
 
     <div class="modal" v-if="showModal">
-      <UploadFileModal @close="showModal = false" />
+      <UploadFile @close="showModal = false" />
     </div>
   </div>
 </template>

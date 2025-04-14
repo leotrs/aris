@@ -3,9 +3,9 @@ import { ref, inject, provide, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 import axios from "axios";
-import Topbar from "./Topbar.vue";
-import DocumentsPaneHeader from "./DocumentsPaneHeader.vue";
-import DocumentsPaneItem from "./DocumentsPaneItem.vue";
+import Topbar from "./FilesTopbar.vue";
+import FilesHeader from "./FilesHeader.vue";
+import FilesItem from "./FilesItem.vue";
 
 const emit = defineEmits(["set-selected"]);
 const mode = ref("list");
@@ -139,10 +139,10 @@ useKeyboardShortcuts({
 <template>
   <Topbar @list="mode = 'list'" @cards="mode = 'cards'" />
   <div class="documents" :class="mode">
-    <DocumentsPaneHeader />
+    <FilesHeader />
 
     <div class="docs-group" :class="mode">
-      <DocumentsPaneItem
+      <FilesItem
         v-for="(doc, idx) in userDocs.filter((doc) => !doc.filtered)"
         :class="{ active: activeIndex == idx }"
         :doc="doc"
