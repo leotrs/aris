@@ -10,7 +10,7 @@ const selectedTags = ref([...tags.value]);
 
 <template>
   <Tag v-for="tag in tags" :tag="tag" :active="true" />
-  <MultiSelectTags v-model="tags" :docID="docID" />
+  <MultiSelectTags v-model="selectedTags" :docID="docID" />
 </template>
 
 <style scoped>
