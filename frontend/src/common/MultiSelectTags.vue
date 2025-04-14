@@ -27,9 +27,6 @@ watch(
       const wasAssigned = oldVal[idx];
       const tag = userTags.value[idx];
 
-      isNowAssigned,
-        wasAssigned ? console.log(`${idx}: ${isNowAssigned} -> ${wasAssigned}`) : null;
-
       if (isNowAssigned && !wasAssigned) {
         if (props.docID !== -1) addOrRemoveTag(tag.id, props.docID, "add");
         if (!tags.value.some((t) => t.id === tag.id))
