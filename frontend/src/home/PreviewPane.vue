@@ -1,7 +1,5 @@
 <script setup>
-import axios from "axios";
 import useClosable from "@/composables/useClosable.js";
-import { ref, onMounted } from "vue";
 import { useRouter } from "vue-router";
 
 const { doc } = defineProps({
@@ -14,25 +12,26 @@ const read = () => router.push(`/${doc.id}/read`);
 const close = () => emit("set-selected", "");
 
 useClosable({ onClose: close, closeOnOutsideClick: false });
-
-const abstract = ref("<div>loading abstract...</div>");
-onMounted(async () => {
-  try {
-    const response = await axios.get(`http://localhost:8000/documents/${doc.id}/sections/abstract`);
-    abstract.value = response.data;
-  } catch (error) {
-    abstract.value = "<div>no abstract!</div>";
-  }
-});
 </script>
 
 <template>
   <div id="preview" class="pane" ref="self-ref">
     <div class="pane-header">
       <div class="actions-left">
-        <Button kind="primary" class="btn-sm" text="Read" icon="Book" @click="read"></Button>
+        <Button
+          kind="primary"
+          class="btn-sm"
+          text="Read"
+          icon="Book"
+          @click="read"
+        ></Button>
         <Button kind="tertiary" class="btn-sm" text="Review" icon="FileCheck"></Button>
-        <Button kind="tertiary" class="btn-sm" text="Revisions" icon="Versions"></Button>
+        <Button
+          kind="tertiary"
+          class="btn-sm"
+          text="Revisions"
+          icon="Versions"
+        ></Button>
       </div>
       <div class="actions-right">
         <ButtonClose @close="close" />
@@ -46,7 +45,7 @@ onMounted(async () => {
         </div>
       </div>
       <div class="pane-right">
-        <ManuscriptWrapper :html="abstract" />
+        <Abstract :doc="doc" />
       </div>
     </div>
   </div>

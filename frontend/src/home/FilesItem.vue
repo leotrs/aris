@@ -46,7 +46,7 @@ const deleteDoc = async () => {
 
     <Minimap :doc="doc" />
 
-    <template v-if="mode == 'cards'">abstract here</template>
+    <template v-if="mode == 'cards'"><Abstract :doc="doc" /></template>
 
     <div class="tags"><TagRow v-model="doc.tags" :docID="doc.id" /></div>
 
