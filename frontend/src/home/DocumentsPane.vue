@@ -159,6 +159,7 @@ useKeyboardShortcuts({
   margin-top: 8px;
   overflow-y: auto;
   width: 100%;
+  height: 100%;
 }
 
 .documents.list {

@@ -1,5 +1,5 @@
 <script setup>
-import { ref, inject, watch, watchEffect } from "vue";
+import { ref, reactive, inject, watch, watchEffect } from "vue";
 
 const props = defineProps({
   docID: { type: Number, default: -1 },
@@ -8,33 +8,41 @@ const props = defineProps({
 const tags = defineModel();
 const { userTags, createTag, addOrRemoveTag } = inject("userTags");
 
-const tagIsAssigned = userTags.value.map(() => ref(false)); // array of refs!
+const state = reactive({
+  tagIsAssigned: userTags.value.map(() => false),
+});
 watchEffect(() => {
   const tagIds = tags.value.map((t) => t.id);
   userTags.value.forEach((tag, idx) => {
-    if (tagIsAssigned[idx]) {
-      tagIsAssigned[idx].value = tagIds.includes(tag.id);
-    }
+    state.tagIsAssigned[idx] = tagIds.includes(tag.id);
   });
 });
-watch(tagIsAssigned, (newVal, oldVal) => {
-  newVal.forEach((isNowAssigned, idx) => {
-    const wasAssigned = oldVal?.[idx];
-    const tag = userTags.value[idx];
+watch(
+  () => [...state.tagIsAssigned],
+  (newVal, oldVal) => {
+    if (!oldVal) return;
 
-    console.log(isNowAssigned, wasAssigned, idx);
+    newVal.forEach((isNowAssigned, idx) => {
+      const wasAssigned = oldVal[idx];
+      const tag = userTags.value[idx];
 
-    if (isNowAssigned && !wasAssigned) {
-      if (props.docID !== -1) addOrRemoveTag(tag.id, props.docID, "add");
-      if (!tags.value.some((t) => t.id === tag.id)) tags.value.push(tag);
-    }
+      isNowAssigned,
+        wasAssigned ? console.log(`${idx}: ${isNowAssigned} -> ${wasAssigned}`) : null;
 
-    if (!isNowAssigned && wasAssigned) {
-      if (props.docID !== -1) addOrRemoveTag(tag.id, props.docID, "remove");
-      tags.value = tags.value.filter((t) => t.id !== tag.id);
-    }
-  });
-});
+      if (isNowAssigned && !wasAssigned) {
+        if (props.docID !== -1) addOrRemoveTag(tag.id, props.docID, "add");
+        if (!tags.value.some((t) => t.id === tag.id))
+          tags.value = tags.value.concat([tag]);
+      }
+
+      if (!isNowAssigned && wasAssigned) {
+        if (props.docID !== -1) addOrRemoveTag(tag.id, props.docID, "remove");
+        tags.value = tags.value.filter((t) => t.id !== tag.id);
+      }
+    });
+  },
+  { deep: true },
+);
 
 const newTagPlaceholder = {
   id: null,
@@ -51,7 +59,7 @@ const renaming = ref(false);
       class="item"
       :tag="tag"
       :key="tag.id"
-      v-model="tagIsAssigned[idx].value"
+      v-model="state.tagIsAssigned[idx]"
     />
     <div class="new-tag-wrapper item">
       <Tag
