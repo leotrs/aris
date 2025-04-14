@@ -23,17 +23,6 @@ const filterableSVGColor = computed(() =>
   tagsSelectedForFilter.value.length > 0 ? "var(--extra-dark)" : "var(--light)",
 );
 watch(tagsSelectedForFilter, () => emit("filter", tagsSelectedForFilter.value));
-/* watch(tagsSelectedForFilter, () => {
- *     if (tagsSelectedForFilter.value.length == 0) {
- *     clearFilterDocs();
- *   } else {
- *     filterDocs((doc) => {
- *       const selectedTagIds = tagsSelectedForFilter.value.map((t) => t.id);
- *       const docTagIds = doc.tags.map((t) => t.id);
- *       return selectedTagIds.some((id) => !docTagIds.includes(id));
- *     });
- *   }
- * }) */
 </script>
 
 <template>

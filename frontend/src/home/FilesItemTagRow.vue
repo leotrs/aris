@@ -1,25 +1,11 @@
 <script setup>
-import { ref, inject, computed, watch, watchEffect } from "vue";
-
+import { ref } from "vue";
 const props = defineProps({
   docID: { type: Number, required: true },
 });
 const tags = defineModel();
-const { userTags } = inject("userTags");
 
-const tagsIDs = computed(() => (tags.value ? tags.value.map((t) => t.id) : []));
-const currentAssignment = computed(() =>
-  userTags.value.map((t) => tagsIDs.value.includes(t.id)),
-);
-const tagIsAssigned = ref([]);
-watchEffect(() => {
-  if (tagIsAssigned.value.length === 0) {
-    tagIsAssigned.value = [...currentAssignment.value];
-  }
-});
-watch(tagIsAssigned, () => {
-  console.log(tagIsAssigned.value, currentAssignment.value);
-});
+const selectedTags = ref([...tags.value]);
 </script>
 
 <template>
