@@ -173,7 +173,7 @@ useKeyboardShortcuts({
 
 .docs-group.list {
   overflow-y: auto;
-  height: calc(100% - 40px);
+  max-height: calc(100% - 40px);
 
   & > .item {
     display: contents;
