@@ -21,14 +21,18 @@ const nextSortableState = () => {
   emit("sort", state.value);
 };
 
-const { filterDocs } = inject("userDocs");
+const { filterDocs, clearFilterDocs } = inject("userDocs");
 watch(tags, () => {
-  console.log("tags changed");
-  return filterDocs((doc) => {
-    const selectedTagIds = tags.value.map((t) => t.id);
-    const docTagIds = doc.tags.map((t) => t.id);
-    return selectedTagIds.filter((id) => docTagIds.includes(id));
-  });
+  console.log(tags.value);
+  if (tags.value.length == 0) {
+    clearFilterDocs();
+  } else {
+    filterDocs((doc) => {
+      const selectedTagIds = tags.value.map((t) => t.id);
+      const docTagIds = doc.tags.map((t) => t.id);
+      return selectedTagIds.every((id) => !docTagIds.includes(id));
+    });
+  }
 });
 </script>
 
