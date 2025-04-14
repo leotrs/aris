@@ -1,27 +1,61 @@
 <script setup>
-import { ref, computed, watch, nextTick, onMounted } from "vue";
+import { ref, watch, nextTick, onMounted } from "vue";
+import { useElementSize, useDebounceFn } from "@vueuse/core";
 import axios from "axios";
 
 const props = defineProps({
   doc: { type: Object, required: true },
 });
-const html = ref('<div class="minimap loading">loading minimap...</div>');
 
-const swapViewBox = (html) => {
-  const regex = /viewbox="(\b0\b)\s+(\b0\b)\s+(\d+)\s+(\d+)"/g;
-  return html.replace(regex, (_, x, y, w, h) => `viewbox="${y} ${x} ${h} ${w}"`);
-};
+const html = ref('<div class="minimap loading">loading minimap...</div>');
+const wrapper = ref(null);
+const originalHeight = ref(null);
+const { width: wrapperWidth } = useElementSize(wrapper);
 
 const waitForSvgRender = () =>
   new Promise((resolve) => {
     const interval = setInterval(() => {
-      const svg = document.querySelector(".mm-wrapper svg");
+      const svg = wrapper.value?.querySelector("svg");
       if (svg) {
         clearInterval(interval);
         resolve();
       }
     }, 50);
   });
+
+const transformSVG = useDebounceFn(() => {
+  if (!html.value || !wrapperWidth.value || !wrapper.value) return;
+
+  const svg = wrapper.value.querySelector("svg");
+  if (!svg) return;
+
+  if (originalHeight.value === null) {
+    // only modify the viewBox the first time
+    const regex = /viewBox="0 0 \d+ (\d+)"/i;
+    const match = regex.exec(svg.outerHTML);
+    originalHeight.value = match?.[1] ? parseFloat(match[1]) : null;
+  }
+  if (!originalHeight.value) return;
+
+  const scale = wrapperWidth.value / (originalHeight.value + 48);
+  const padding = 14; // the rect starts at x=14 in the original coordinates
+
+  svg.style.width = `${wrapperWidth.value}px`;
+  svg.setAttribute("viewBox", `0 0 ${wrapperWidth.value} 32`);
+
+  const rects = svg.querySelectorAll("rect");
+  rects?.forEach((rect) =>
+    rect.setAttribute("height", originalHeight.value * scale - padding * 2),
+  );
+
+  const circles = svg.querySelectorAll("circle");
+  circles?.forEach((circle) => {
+    const pos = parseFloat(circle.getAttribute("data-pos"));
+    if (!isNaN(pos)) {
+      circle.style.transform = `translateY(${(padding - pos) * (1 - scale)}px)`;
+    }
+  });
+}, 50);
 
 onMounted(async () => {
   try {
@@ -30,55 +64,22 @@ onMounted(async () => {
     if (response.status == 200 && !response.data) {
       html.value = '<div class="minimap error">-</div>';
     } else {
-      html.value = swapViewBox(response.data);
+      html.value = response.data;
       await nextTick();
       await waitForSvgRender();
-      setRectHeight();
-      positionCircles();
+      originalHeight.value = null;
+      transformSVG();
     }
   } catch (error) {
     console.error(error);
     html.value = '<div class="minimap error">error when retrieving minimap!</div>';
   }
 });
-
-const wrapperWidth = computed(
-  () => document.querySelector(".mm-wrapper")?.getBoundingClientRect()?.width || null,
-);
-
-watch(wrapperWidth, () => setRectHeight());
-
-const setRectHeight = () => {
-  if (!wrapperWidth.value) return;
-  const svg = document.querySelector(".mm-wrapper svg");
-  if (!svg) return;
-  svg.setAttribute("viewBox", `0 0 ${wrapperWidth.value} 32`);
-  const rects = document.querySelectorAll(".mm-wrapper svg rect");
-  rects.forEach((rect) => rect.setAttribute("height", wrapperWidth.value));
-};
-
-const positionCircles = () => {
-  if (!html.value) return;
-  const circles = document.querySelectorAll(".mm-wrapper svg circle");
-  if (!circles) return;
-  const match = html.value.match(/height="(\d+)"/);
-  if (!match) return;
-
-  const originalLength = parseFloat(match[1]);
-  const scale = wrapperWidth.value / originalLength;
-
-  circles.forEach((circle) => {
-    const pos = parseFloat(circle.getAttribute("data-pos"));
-    if (!isNaN(pos)) {
-      circle.style.transform = `translateY(${10 - pos * (1 - scale)}px)`;
-    }
-  });
-};
-watch(wrapperWidth, () => positionCircles());
+watch(wrapperWidth, () => transformSVG(), { immediate: true });
 </script>
 
 <template>
-  <div class="mm-wrapper" v-html="html"></div>
+  <div class="mm-wrapper" ref="wrapper" v-html="html"></div>
 </template>
 
 <style>
@@ -106,7 +107,7 @@ watch(wrapperWidth, () => positionCircles());
 
 .minimap svg g {
   transform: rotate(270deg);
-  transform-origin: calc(14px) calc(16px + 4px);
-  /* now everything is rotated: height becomes width, translateY becomes translateX, etc */
+  /* x=14 is the start of the rect, and (14, 20) is the center of the first circle */
+  transform-origin: calc(14px) calc(20px);
 }
 </style>
