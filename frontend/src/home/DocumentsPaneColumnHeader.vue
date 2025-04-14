@@ -30,7 +30,7 @@ watch(tags, () => {
     filterDocs((doc) => {
       const selectedTagIds = tags.value.map((t) => t.id);
       const docTagIds = doc.tags.map((t) => t.id);
-      return selectedTagIds.every((id) => !docTagIds.includes(id));
+      return selectedTagIds.some((id) => !docTagIds.includes(id));
     });
   }
 });
@@ -40,7 +40,7 @@ watch(tags, () => {
   <template v-if="sortable">
     <div
       class="col-header"
-      :class="[name.toLowerCase().replace(' ', '-'), 'sortable']"
+      :class="[name.toLowerCase().replace(/ /g, '-'), 'sortable']"
       @click.stop="nextSortableState"
     >
       <span>{{ name }}</span>
