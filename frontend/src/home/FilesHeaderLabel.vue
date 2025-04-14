@@ -1,7 +1,6 @@
 <script setup>
-import { ref, computed, inject, watch } from "vue";
+import { ref, computed, watch } from "vue";
 import { IconSortAscendingLetters, IconSortDescendingLetters } from "@tabler/icons-vue";
-import TagManagementMenu from "./TagManagementMenu.vue";
 
 const props = defineProps({
   name: { type: String, required: true },
@@ -18,7 +17,7 @@ const nextSortState = () => {
   emit("sort", sortState.value);
 };
 
-// Filterable column: watch the tags of the TagManagementMenu and set the icon accordingly
+// Filterable column: watch the tags of the MultiSelectTags and set the icon accordingly
 const tagsSelectedForFilter = ref([]);
 const filterableSVGColor = computed(() =>
   tagsSelectedForFilter.value.length > 0 ? "var(--extra-dark)" : "var(--light)",
@@ -56,7 +55,7 @@ watch(tagsSelectedForFilter, () => emit("filter", tagsSelectedForFilter.value));
       :class="[name.toLowerCase().replace(' ', '-'), 'filterable']"
     >
       <span>{{ name }}</span>
-      <span><TagManagementMenu v-model="tagsSelectedForFilter" icon="Filter" /></span>
+      <span><MultiSelectTags v-model="tagsSelectedForFilter" icon="Filter" /></span>
     </div>
   </template>
 

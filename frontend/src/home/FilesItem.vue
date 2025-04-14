@@ -2,8 +2,7 @@
 import { ref, inject } from "vue";
 import axios from "axios";
 import RelativeTime from "@yaireo/relative-Time";
-import MultiSelectTags from "./MultiSelectTags.vue";
-import Minimap from "./Minimap.vue";
+import TagRow from "./FilesItemTagRow.vue";
 
 const props = defineProps({
   doc: { type: Object, required: true },
@@ -47,7 +46,7 @@ const deleteDoc = async () => {
     </template>
     <Minimap :doc="doc" />
     <div class="tags">
-      <MultiSelectTags v-model="doc.tags" :docID="doc.id" />
+      <TagRow v-model="doc.tags" :docID="doc.id" />
     </div>
     <div class="last-edited">
       {{ relativeTime.from(new Date(doc.last_edited_at)) }}
@@ -61,7 +60,12 @@ const deleteDoc = async () => {
           <ContextMenuItem icon="Edit" @click="renameDoc" caption="Rename" />
           <ContextMenuItem icon="Copy" @click="copyDoc" caption="Duplicate" />
           <ContextMenuItem icon="Download" caption="Download" />
-          <ContextMenuItem icon="TrashX" @click="deleteDoc" caption="Delete" class="danger" />
+          <ContextMenuItem
+            icon="TrashX"
+            @click="deleteDoc"
+            caption="Delete"
+            class="danger"
+          />
         </ContextMenu>
       </template>
     </div>

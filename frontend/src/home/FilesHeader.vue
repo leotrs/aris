@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, inject } from "vue";
-import ColumnHeader from "./DocumentsPaneColumnHeader.vue";
+import HeaderLabel from "./FilesHeaderLabel.vue";
 
 const props = defineProps({
   mode: { type: String, default: "list" },
@@ -55,7 +55,7 @@ const handleColumnFilterEvent = (columnName, tags) => {
   <div class="pane-header text-label">
     <span v-if="mode == 'cards'">Sort by:</span>
     <template v-for="name in Object.keys(columnInfo)">
-      <ColumnHeader
+      <HeaderLabel
         v-if="mode == 'list' || (mode == 'cards' && !columnInfo[name]['sortable'])"
         :name="name"
         v-model="columnState[name]"
