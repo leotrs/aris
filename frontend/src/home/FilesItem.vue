@@ -41,19 +41,21 @@ const deleteDoc = async () => {
 <template>
   <div class="item" :class="mode" @click="emits('click')" @dblclick="emits('dblclick')">
     <FileTitle :doc="doc" v-model="fileTitleActive" />
-    <template v-if="mode == 'cards'">
-      <ContextMenu />
-    </template>
+
+    <template v-if="mode == 'cards'"><ContextMenu /></template>
+
     <Minimap :doc="doc" />
-    <div class="tags">
-      <TagRow v-model="doc.tags" :docID="doc.id" />
-    </div>
-    <div class="last-edited">
-      {{ relativeTime.from(new Date(doc.last_edited_at)) }}
-    </div>
+
+    <template v-if="mode == 'cards'">abstract here</template>
+
+    <div class="tags"><TagRow v-model="doc.tags" :docID="doc.id" /></div>
+
+    <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
+
     <!-- <div class="owner">
       <Avatar name="LT" />
-    </div> -->
+         </div> -->
+
     <div class="grid-wrapper-2">
       <template v-if="mode == 'list'">
         <ContextMenu>
