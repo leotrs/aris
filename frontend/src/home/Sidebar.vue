@@ -129,9 +129,9 @@
          & .cta {
              display: flex;
              align-items: center;
-             padding-inline: 8px;
+             padding-inline: 16px;
              flex-grow: 1;
-             margin-bottom: 16px;
+             margin-bottom: 8px;
              justify-content: center;
 
              & > button {
