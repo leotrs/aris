@@ -3,7 +3,7 @@ import { ref, reactive, inject, watch, watchEffect } from "vue";
 
 const props = defineProps({
   docID: { type: Number, default: -1 },
-  icon: { type: String, default: "CirclePlus" },
+  icon: { type: String, default: "Tag" },
 });
 const tags = defineModel();
 const { userTags, createTag, addOrRemoveTag } = inject("userTags");
