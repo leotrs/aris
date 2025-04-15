@@ -1,17 +1,28 @@
 <script setup>
-import { ref, inject } from 'vue';
-import { IconSearch } from '@tabler/icons-vue';
+  import { ref, inject, useTemplateRef } from "vue";
+  import { IconSearch } from "@tabler/icons-vue";
 
-const searchText = ref("");
-const { userDocs, filterDocs, clearFilterDocs } = inject('userDocs');
+  const searchText = ref("");
+  const inputRef = useTemplateRef("inputRef");
 
-const submit = () => {
-  console.log('submit');
-  clearFilterDocs();
-  filterDocs((doc) => !doc.title.toLowerCase().includes(searchText.value.toLowerCase()));
-}
+  const { filterDocs, clearFilterDocs } = inject("userDocs");
+  const submit = () => {
+    console.log("submit");
+    clearFilterDocs();
+    filterDocs(
+      (doc) => !doc.title.toLowerCase().includes(searchText.value.toLowerCase())
+    );
+  };
+
+  const handleEscape = () => {
+    if (searchText.value) {
+      searchText.value = "";
+      submit();
+    } else {
+      inputRef.value?.blur();
+    }
+  };
 </script>
-
 
 <template>
   <div class="s-wrapper text-caption">
@@ -19,36 +30,51 @@ const submit = () => {
     <input
       type="text"
       placeholder="Search..."
+      ref="inputRef"
       v-model="searchText"
       @keyup.enter="submit"
-      @keyup.ESC="(searchText = '') && submit()"
+      @keyup.escape="handleEscape"
       @click.stop
-      @dblclick.stop />
+      @dblclick.stop
+    />
   </div>
 </template>
 
-
 <style scoped>
-.s-wrapper {
-  color: var(--extra-dark);
-  background-color: var(--surface-primary);
-  border: 2px solid var(--border-primary);
-  border-radius: 16px;
-  height: 48px;
-  min-width: 280;
-  display: flex;
-  align-items: center;
-  padding-block: 12px;
-  padding-inline: 16px;
-  gap: 16px;
+  .s-wrapper {
+    color: var(--extra-dark);
+    background-color: var(--surface-primary);
+    border: 2px solid var(--border-primary);
+    border-radius: 16px;
+    height: 48px;
+    min-width: 280;
+    display: flex;
+    align-items: center;
+    padding-block: 12px;
+    padding-inline: 16px;
+    gap: 16px;
 
-  & > .tabler-icon {
-    margin: unset;
+    &:has(> input:focus) {
+      border-color: var(--border-action);
+    }
+
+    & > .tabler-icon {
+      margin: unset;
+    }
+
+    & > input {
+      background: transparent;
+      border: none;
+      padding: 0;
+      margin: 0;
+      font: inherit;
+      color: inherit;
+      outline: none;
+      width: 100%;
+    }
+
+    &:hover {
+      cursor: text;
+    }
   }
-
-  &:hover {
-    cursor: text;
-  }
-
-}
 </style>
