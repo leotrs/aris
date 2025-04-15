@@ -29,22 +29,19 @@ const segmentedControlIcons = computed(() =>
   justify-content: flex-start;
   column-gap: 48px;
   row-gap: 8px;
-}
+  max-width: calc(100% - (100px + 48px));
 
-.tb-wrapper.mobile {
-  background-color: var(--extra-light);
-
-  & > .tb-search {
-    max-width: 20%;
+  &.mobile {
+    background-color: var(--extra-light);
   }
 }
 
-.tb-search {
-  flex-grow: 1;
-  max-width: 340px;
+.tb-wrapper .tb-search {
+  flex: 1;
 }
 
 .tb-control {
   align-content: center;
+  flex: 0;
 }
 </style>
