@@ -4,8 +4,8 @@ export function useEditableText(initialValue = "", options = {}) {
   const { onSave = () => {}, onCancel = () => {}, immediate = false } = options;
 
   const text = ref(initialValue);
-  const isEditing = ref(immediate);
   const inputValue = ref(initialValue);
+  const isEditing = ref(immediate);
 
   const startEditing = () => {
     inputValue.value = text.value;

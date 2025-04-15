@@ -7,7 +7,7 @@ from sqlalchemy.orm import Session
 from .. import crud, get_db
 from ..models import Document, Tag, User
 
-router = APIRouter()
+router = APIRouter(prefix="/users", tags=["users", "tags"])
 
 
 class TagRetrieveOrUpdate(BaseModel):
@@ -23,7 +23,7 @@ class TagCreate(BaseModel):
 
 
 @router.post(
-    "/users/{user_id}/tags",
+    "/{user_id}/tags",
     response_model=TagRetrieveOrUpdate,
     status_code=status.HTTP_201_CREATED,
 )
@@ -39,7 +39,7 @@ async def create_tag(user_id: int, tag: TagCreate, db: Session = Depends(get_db)
     return tag
 
 
-@router.get("/users/{user_id}/tags", response_model=list[TagRetrieveOrUpdate])
+@router.get("/{user_id}/tags", response_model=list[TagRetrieveOrUpdate])
 async def get_user_tags(user_id: int, db: Session = Depends(get_db)):
     """Get all tags for a user."""
     tags = await crud.get_user_tags(user_id, db)
@@ -48,7 +48,7 @@ async def get_user_tags(user_id: int, db: Session = Depends(get_db)):
     return tags
 
 
-@router.put("/users/{user_id}/tags/{_id}", response_model=TagRetrieveOrUpdate)
+@router.put("/{user_id}/tags/{_id}", response_model=TagRetrieveOrUpdate)
 async def update_tag(tag: TagRetrieveOrUpdate, db: Session = Depends(get_db)):
     """Update the name of a tag."""
     if tag.id not in (t["id"] for t in await crud.get_user_tags(tag.user_id, db)):
@@ -62,7 +62,7 @@ async def update_tag(tag: TagRetrieveOrUpdate, db: Session = Depends(get_db)):
     return updated_tag
 
 
-@router.delete("/users/{user_id}/tags/{_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/{user_id}/tags/{_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_tag(_id: int, user_id: int, db: Session = Depends(get_db)):
     """Delete a tag for a user."""
     if _id not in (t["id"] for t in await crud.get_user_tags(user_id, db)):
@@ -74,7 +74,7 @@ async def delete_tag(_id: int, user_id: int, db: Session = Depends(get_db)):
     return deleted_tag
 
 
-@router.post("/users/{user_id}/documents/{document_id}/tags/{_id}")
+@router.post("/{user_id}/documents/{document_id}/tags/{_id}")
 async def add_tag_to_document(
     user_id: int, document_id: int, _id: int, db: Session = Depends(get_db)
 ):
@@ -86,7 +86,7 @@ async def add_tag_to_document(
     return {"message": "Tag added successfully"}
 
 
-@router.delete("/users/{user_id}/documents/{document_id}/tags/{_id}")
+@router.delete("/{user_id}/documents/{document_id}/tags/{_id}")
 async def remove_tag_from_document(
     user_id: int, document_id: int, _id: int, db: Session = Depends(get_db)
 ):
