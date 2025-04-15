@@ -59,7 +59,7 @@ const transformSVG = useDebounceFn(() => {
 
 onMounted(async () => {
   try {
-    const url = `http://localhost:8000/documents/${props.doc.id}/sections/minimap`;
+    const url = `http://localhost:8000/documents/${props.doc.id}/content/minimap`;
     const response = await axios.get(url);
     if (response.status == 200 && !response.data) {
       html.value = '<div class="minimap error">-</div>';

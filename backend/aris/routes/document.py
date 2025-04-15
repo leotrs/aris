@@ -7,36 +7,7 @@ from sqlalchemy.orm import Session
 
 from .. import crud, get_db
 
-router = APIRouter()
-
-
-@router.get("/documents")
-async def get_documents(db: Session = Depends(get_db)):
-    return await crud.get_documents(db)
-
-
-@router.get("/documents/{doc_id}")
-async def get_document(doc_id: int, db: Session = Depends(get_db)):
-    doc = await crud.get_document(doc_id, db)
-    tags = await crud.get_document_tags(doc_id, db)
-    if not doc:
-        raise HTTPException(status_code=404, detail="Document not found")
-    return {
-        "title": doc.title,
-        "abstract": doc.abstract,
-        "last_edited_at": doc.last_edited_at,
-        "source": doc.source,
-        "owner_id": doc.owner_id,
-        "tags": [{"name": t.name, "id": t.id} for t in tags],
-    }
-
-
-@router.get("/documents/{doc_id}/html", response_class=HTMLResponse)
-async def get_document_html(doc_id: int, db: Session = Depends(get_db)):
-    doc = await crud.get_document_html(doc_id, db)
-    if not doc:
-        raise HTTPException(status_code=404, detail="Document not found")
-    return doc
+router = APIRouter(prefix="/documents", tags=["documents"])
 
 
 class DocumentCreate(BaseModel):
@@ -51,7 +22,12 @@ class DocumentCreate(BaseModel):
         return self
 
 
-@router.post("/documents")
+@router.get("")
+async def get_documents(db: Session = Depends(get_db)):
+    return await crud.get_documents(db)
+
+
+@router.post("")
 async def create_document(
     doc: DocumentCreate,
     db: Session = Depends(get_db),
@@ -67,7 +43,23 @@ async def create_document(
     return {"message": "Manuscript created", "id": result.id}
 
 
-@router.put("/documents/{doc_id}")
+@router.get("/{doc_id}")
+async def get_document(doc_id: int, db: Session = Depends(get_db)):
+    doc = await crud.get_document(doc_id, db)
+    tags = await crud.get_document_tags(doc_id, db)
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return {
+        "title": doc.title,
+        "abstract": doc.abstract,
+        "last_edited_at": doc.last_edited_at,
+        "source": doc.source,
+        "owner_id": doc.owner_id,
+        "tags": [{"name": t.name, "id": t.id} for t in tags],
+    }
+
+
+@router.put("/{doc_id}")
 async def update_document(
     doc_id: int,
     title: str,
@@ -81,7 +73,7 @@ async def update_document(
     return doc
 
 
-@router.delete("/documents/{doc_id}")
+@router.delete("/{doc_id}")
 async def soft_delete_document(doc_id: int, db: Session = Depends(get_db)):
     doc = await crud.soft_delete_document(doc_id, db)
     if not doc:
@@ -89,13 +81,21 @@ async def soft_delete_document(doc_id: int, db: Session = Depends(get_db)):
     return {"message": f"Document {doc_id} soft deleted"}
 
 
-@router.post("/documents/{doc_id}/duplicate")
+@router.post("/{doc_id}/duplicate")
 async def duplicate_document(doc_id: int, db: Session = Depends(get_db)):
     new_doc = await crud.duplicate_document(doc_id, db)
     return {"id": new_doc.id, "message": "Document duplicated successfully"}
 
 
-@router.get("/documents/{doc_id}/sections/{section_name}", response_class=HTMLResponse)
+@router.get("/{doc_id}/content", response_class=HTMLResponse)
+async def get_document_html(doc_id: int, db: Session = Depends(get_db)):
+    doc = await crud.get_document_html(doc_id, db)
+    if not doc:
+        raise HTTPException(status_code=404, detail="Document not found")
+    return doc
+
+
+@router.get("/{doc_id}/content/{section_name}", response_class=HTMLResponse)
 async def get_document_section(
     doc_id: int, section_name: str, db: Session = Depends(get_db)
 ):

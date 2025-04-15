@@ -8,7 +8,7 @@ const abstract = ref("<div>loading abstract...</div>");
 const loadAbstract = async () => {
   try {
     const response = await axios.get(
-      `http://localhost:8000/documents/${props.doc.id}/sections/abstract`,
+      `http://localhost:8000/documents/${props.doc.id}/content/abstract`,
     );
     abstract.value = response.data;
   } catch (error) {
