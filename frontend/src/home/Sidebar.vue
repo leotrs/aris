@@ -1,44 +1,51 @@
 <script setup>
- import { ref, inject, onMounted, onUnmounted, onUpdated, useTemplateRef } from 'vue';
- import { IconMenu3 } from '@tabler/icons-vue';
- import SidebarItem from './SidebarItem.vue';
- import Separator from '@/common/Separator.vue';
+  import { ref, inject, onMounted, onUnmounted, onUpdated, useTemplateRef } from "vue";
+  import { IconMenu3 } from "@tabler/icons-vue";
+  import SidebarItem from "./SidebarItem.vue";
+  import Separator from "@/common/Separator.vue";
 
- const isMobile = inject('isMobile');
- const showMobileMenu = ref(false);
- const emit = defineEmits(['showFileUploadModal']);
- const forceCollapsed = ref(false);
- const collapsed = ref(false);
- const toggleCollapsed = () => {
-     collapsed.value = !collapsed.value;
-     forceCollapsed.value = !forceCollapsed.value;
- };
+  const isMobile = inject("isMobile");
+  const showMobileMenu = ref(false);
+  const emit = defineEmits(["showFileUploadModal"]);
+  const forceCollapsed = ref(false);
+  const collapsed = ref(false);
+  const toggleCollapsed = () => {
+    collapsed.value = !collapsed.value;
+    forceCollapsed.value = !forceCollapsed.value;
+  };
 
- const sidebarRef = ref(null);
- let observer;
- onMounted(() => {
-     if (sidebarRef.value) {
-         observer = new ResizeObserver((entries) => {
-             for (let entry of entries) {
-                 if (!forceCollapsed.value) {
-                     if (entry.contentRect.width < 165 && !collapsed.value) {
-                         collapsed.value = true;
-                     } else if (entry.contentRect.width > 80 && collapsed.value) {
-                         collapsed.value = false;
-                     }
-                 }
-             }
-         });
-         observer.observe(sidebarRef.value);
-     }
- });
- onUnmounted(() => { if (observer) observer.disconnect() });
+  const sidebarRef = ref(null);
+  let observer;
+  onMounted(() => {
+    if (sidebarRef.value) {
+      observer = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+          if (!forceCollapsed.value) {
+            if (entry.contentRect.width < 165 && !collapsed.value) {
+              collapsed.value = true;
+            } else if (entry.contentRect.width > 80 && collapsed.value) {
+              collapsed.value = false;
+            }
+          }
+        }
+      });
+      observer.observe(sidebarRef.value);
+    }
+  });
+  onUnmounted(() => {
+    if (observer) observer.disconnect();
+  });
 </script>
 
-
 <template>
-  <div ref="sidebarRef" :class="['sb-wrapper', isMobile ? 'mobile' : '', (!isMobile && collapsed) ? 'collapsed' : '']">
-    
+  <div
+    ref="sidebarRef"
+    :class="[
+      'sb-wrapper',
+      isMobile ? 'mobile' : '',
+      !isMobile && collapsed ? 'collapsed' : '',
+    ]"
+  >
     <template v-if="!isMobile">
       <div id="logo">
         <img v-if="collapsed" src="../assets/logo-32px.svg" />
@@ -48,10 +55,11 @@
 
     <div class="cta" :class="{ fab: isMobile }">
       <Button
-          kind="secondary"
-          icon="CirclePlus"
-          :text="(!isMobile && !collapsed) ? 'New File' : ''"
-          @click="$emit('showFileUploadModal')" />
+        kind="secondary"
+        icon="CirclePlus"
+        :text="!isMobile && !collapsed ? 'New File' : ''"
+        @click="$emit('showFileUploadModal')"
+      />
     </div>
 
     <template v-if="isMobile">
@@ -87,94 +95,118 @@
         <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />
       </div>
     </template>
-
   </div>
 </template>
 
 <style scoped>
- .sb-wrapper {
-     height: 100%;
-     overflow-y: auto;
-     scrollbar-width: none;     /* firefox */
-     -ms-overflow-style: none;  /* Edge */
-     &::-webkit-scrollbar { /* Chrome */
-         display: none;
-     }
+  .sb-wrapper {
+    height: 100%;
+    overflow-y: auto;
+    scrollbar-width: none;
+    /* firefox */
+    -ms-overflow-style: none;
 
-     &:not(.mobile) {
-         &:not(.collapsed) {
-             flex-basis: 216px;
-             flex-grow: 1;
-             min-width: 140px;
-             max-width: 216px;
+    /* Edge */
+    &::-webkit-scrollbar {
+      /* Chrome */
+      display: none;
+    }
 
-             .cta > button { padding-left: 6px }
-         }
+    &:not(.mobile) {
+      &:not(.collapsed) {
+        flex-basis: 208px;
+        max-width: 208px;
+        flex-grow: 0;
+        flex-shrink: 0;
 
-         &.collapsed {
-             padding-top: 16px;
-             min-width: 64px;
-             max-width: 90px;
-             flex-grow: 1;
-             & > * { margin: 0 auto }
+        .cta > button {
+          padding-left: 6px;
+        }
+      }
 
-             & > #logo {
-                 margin-top: 9px;
-                 margin-bottom: 21px;
-                 padding-inline: 17px;
-                 & > img { margin: 0 };
-             }
-         }
+      &.collapsed {
+        padding-top: 16px;
+        min-width: 64px;
+        max-width: 64px;
+        flex-grow: 0;
 
-         & .cta {
-             display: flex;
-             align-items: center;
-             padding-inline: 16px;
-             flex-grow: 1;
-             margin-bottom: 8px;
-             justify-content: center;
+        & > * {
+          margin: 0 auto;
+        }
 
-             & > button {
-                 justify-content: center;
-                 width: 100%;
-             }
-         }
-     }
+        & > #logo {
+          margin-top: 9px;
+          margin-bottom: 21px;
+          padding-inline: 17px;
 
-     &.mobile {
-         position: absolute;
-         z-index: 1;
-         background-color: var(--extra-light);
-         display: flex;
-         height: 48px;
-         width: 48px;
-         align-items: center;
-         justify-content: center;
-         overflow: visible;
+          & > img {
+            margin: 0;
+          }
+        }
 
-         & .cta.fab {
-             position: fixed;
-             padding: 0;
-             margin: 0;
-             left: 100%;
-             bottom: 0;
-             transform: translateX(calc(-100% - 24px)) translateY(-24px);
-         }
+        & > .cta {
+          padding-inline: 8px;
+        }
+      }
 
-         & > .sb-btn { display: flex }
-         & > .sb-menu { background-color: var(--extra-light) }
-     }
- }
- 
+      & .cta {
+        display: flex;
+        align-items: center;
+        padding-inline: 16px;
+        flex-grow: 1;
+        margin-bottom: 8px;
+        justify-content: center;
 
- #logo {
-     display: flex;
-     justify-content: center;
-     & > img { margin: 0 auto }
- }
+        & > button {
+          justify-content: center;
+          width: 100%;
+        }
+      }
+    }
 
- .sb-menu > *, .cta > * {
-     margin-block: 8px;
-     gap: 6px;
- }
+    &.mobile {
+      position: absolute;
+      z-index: 1;
+      background-color: var(--extra-light);
+      display: flex;
+      height: 48px;
+      width: 48px;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+
+      & .cta.fab {
+        position: fixed;
+        padding: 0;
+        margin: 0;
+        left: 100%;
+        bottom: 0;
+        transform: translateX(calc(-100% - 24px)) translateY(-24px);
+      }
+
+      & > .sb-btn {
+        display: flex;
+      }
+
+      & > .sb-menu {
+        background-color: var(--extra-light);
+      }
+    }
+  }
+
+  #logo {
+    display: flex;
+    justify-content: center;
+
+    & > img {
+      margin: 0 auto;
+      padding-left: 3px; /* alignment with sidebar items' text */
+    }
+  }
+
+  .sb-menu > *,
+  .cta > * {
+    margin-block: 8px;
+    gap: 4px;
+  }
 </style>

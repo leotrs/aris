@@ -1,84 +1,88 @@
 <script setup>
- import { computed } from 'vue';
- import { IconHome, IconUserCircle, IconLifebuoy, IconBrandGit, IconPencil, IconBook, IconFileCheck, IconFiles, IconLayoutSidebarLeftCollapse, IconQuote, IconMessage, IconCirclePlus } from '@tabler/icons-vue';
+  import { computed } from "vue";
+  import {
+    IconHome,
+    IconPencil,
+    IconBook,
+    IconFileCheck,
+    IconFiles,
+    IconLayoutSidebarLeftCollapse,
+    IconQuote,
+    IconMessage,
+    IconCirclePlus,
+  } from "@tabler/icons-vue";
 
- const props = defineProps({
-     text: String,
-     collapsed: Boolean,
-     active: { type: Boolean, default: false }
- });
+  const props = defineProps({
+    text: String,
+    collapsed: Boolean,
+    active: { type: Boolean, default: false },
+  });
 
- const icons = {
-     New: IconCirclePlus,
-     Home: IconHome,
-     'All Files': IconFiles,
-     Read: IconBook,
-     Write: IconPencil,
-     Review: IconFileCheck,
-     Feedback: IconMessage,
-     References: IconQuote,
-     Collapse: IconLayoutSidebarLeftCollapse,
- };
+  const icons = {
+    New: IconCirclePlus,
+    Home: IconHome,
+    "All Files": IconFiles,
+    Read: IconBook,
+    Write: IconPencil,
+    Review: IconFileCheck,
+    Feedback: IconMessage,
+    References: IconQuote,
+    Collapse: IconLayoutSidebarLeftCollapse,
+  };
 
- const selectedIcon = computed(() => icons[props.text] || null);
-
+  const selectedIcon = computed(() => icons[props.text] || null);
 </script>
-
 
 <template>
   <div class="sb-item" :class="{ collapsed: collapsed, active: active }">
-
     <!--:key forces Vue to re-render when collapsing so we can animate it-->
-    <component
-        v-if="selectedIcon"
-        :is="selectedIcon"
-        class="sb-icon" />
+    <component v-if="selectedIcon" :is="selectedIcon" class="sb-icon" />
 
     <span v-if="!collapsed" class="text-h6 sb-text">{{ text }}</span>
-
   </div>
 </template>
 
-
 <style scoped>
- .sb-item {
-     height: 32px;
-     display: flex;
-     align-items: center;
-     gap: 8px;
-     padding-inline: 12px;
-     border-left: var(--border-med) solid transparent;
-     transition: background 0.15s ease-in-out;
+  .sb-item {
+    --padding-inline: 16px;
+    --border-left-width: var(--border-med);
 
-     &:hover {
-         background-color: var(--gray-200);
-         border-left-color: var(--light);
-         cursor: pointer;
-     }
+    height: 32px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-block: 8px;
+    border-left: var(--border-left-width) solid transparent;
+    padding-left: calc(var(--padding-inline) - var(--border-left-width));
+    padding-right: var(--padding-inline);
 
-     &.active {
-         background-color: var(--surface-primary);
-         border-left-color: var(--border-action);
-         & > svg { color: var(--primary-600); }
-         & > .sb-text { color: var(--primary-600); }
-     }
+    transition: background 0.15s ease-in-out;
 
-     & .sb-text { text-wrap: nowrap };
+    &:hover {
+      background-color: var(--gray-200);
+      border-left-color: var(--light);
+      cursor: pointer;
+    }
 
-     &.collapsed { justify-content: center };
- }
+    &.active {
+      background-color: var(--surface-primary);
+      border-left-color: var(--border-action);
 
- /* @keyframes fade {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.6; }
-    } */
+      & > svg {
+        color: var(--primary-600);
+      }
 
- /* .collapsed .sb-icon,
-    :not(.collapsed) .sb-icon {
-    animation: fade 0.5s ease-in-out;
-    } */
+      & > .sb-text {
+        color: var(--primary-600);
+      }
+    }
 
- /* .v-enter-active, .v-leave-active { transition: opacity 0.5s ease , max-width 0.4s ease, margin 0.4s ease; } */
- /* .v-enter-from, .v-leave-to { opacity: 0; max-width: 0; margin-left: -4px; } */
- /* .v-enter-to, .v-leave-from { opacity: 1; max-width: 100px; margin-left: 0; } */
+    & .sb-text {
+      text-wrap: nowrap;
+    }
+
+    &.collapsed {
+      justify-content: center;
+    }
+  }
 </style>
