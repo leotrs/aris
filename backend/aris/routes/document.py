@@ -1,5 +1,3 @@
-import datetime
-
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
@@ -97,10 +95,10 @@ async def get_document_html(doc_id: int, db: Session = Depends(get_db)):
 
 @router.get("/{doc_id}/content/{section_name}", response_class=HTMLResponse)
 async def get_document_section(
-    doc_id: int, section_name: str, db: Session = Depends(get_db)
+        doc_id: int, section_name: str, handrails: bool = True, db: Session = Depends(get_db)
 ):
     try:
-        html = await crud.get_document_section(doc_id, section_name, db)
+        html = await crud.get_document_section(doc_id, section_name, db, handrails)
     except ValueError:
         raise HTTPException(status_code=404, detail=f"Section {section_name} not found")
     return HTMLResponse(content=html)
