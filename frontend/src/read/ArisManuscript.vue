@@ -100,10 +100,8 @@
     position: relative;
     left: 64px;
     padding: 0 var(--outer-padding) var(--outer-padding) 0;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
+    border-radius: 16px;
   }
-
   .inner-wrapper {
     display: flex;
     width: 100%;
@@ -111,8 +109,6 @@
     position: relative;
     top: calc(var(--topbar-height) + var(--outer-padding));
     background-color: v-bind("backgroundColor");
-    border-bottom-right-radius: 16px;
-    border-bottom-left-radius: 16px;
     overflow-y: auto;
 
     /* These are standard CSS that are not yet supported - switch to them in the future */
