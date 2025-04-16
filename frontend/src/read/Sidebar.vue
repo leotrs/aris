@@ -1,18 +1,16 @@
 <script setup>
- import { ref, onMounted, onUpdated, onUnmounted, useTemplateRef } from 'vue';
- import { useRouter } from 'vue-router';
+  import { ref, onMounted, onUpdated, onUnmounted, useTemplateRef } from "vue";
+  import { useRouter } from "vue-router";
 
- const emit = defineEmits([
-     'showMinimap',
-     'hideMinimap'
- ]);
- const showMinimap = defineModel("showMinimap");
- const showSettings = defineModel("showSettings");
+  const emit = defineEmits(["showMinimap", "hideMinimap"]);
+  const showMinimap = defineModel("showMinimap");
+  const showSettings = defineModel("showSettings");
 
- const router = useRouter();
- const goHome = () => { router.push(`/`); }
+  const router = useRouter();
+  const goHome = () => {
+    router.push(`/`);
+  };
 </script>
-
 
 <template>
   <div class="sb-wrapper" ref="sidebar-ref">
@@ -20,83 +18,121 @@
       <img src="../assets/logo-32px.svg" />
     </div>
     <div class="sb-menu">
-      <ButtonToggle
-          icon="MapPin"
-          @on="showMinimap = true"
-          @off="showMinimap = false" />
+      <ButtonToggle icon="MapPin" @on="showMinimap = true" @off="showMinimap = false" />
       <ButtonToggle icon="Search">
-        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+        <SegmentedControl
+          :icons="[
+            'LayoutSidebarFilled',
+            'LayoutNavbarFilled',
+            'LayoutSidebarRightFilled',
+          ]"
+        />
       </ButtonToggle>
       <ButtonToggle icon="Quote">
-        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+        <SegmentedControl
+          :icons="[
+            'LayoutSidebarFilled',
+            'LayoutNavbarFilled',
+            'LayoutSidebarRightFilled',
+          ]"
+        />
       </ButtonToggle>
       <ButtonToggle icon="Variable">
-        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+        <SegmentedControl
+          :icons="[
+            'LayoutSidebarFilled',
+            'LayoutNavbarFilled',
+            'LayoutSidebarRightFilled',
+          ]"
+        />
       </ButtonToggle>
       <ButtonToggle icon="Blocks">
-        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+        <SegmentedControl
+          :icons="[
+            'LayoutSidebarFilled',
+            'LayoutNavbarFilled',
+            'LayoutSidebarRightFilled',
+          ]"
+        />
       </ButtonToggle>
       <ButtonToggle icon="Message">
-        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+        <SegmentedControl
+          :icons="[
+            'LayoutSidebarFilled',
+            'LayoutNavbarFilled',
+            'LayoutSidebarRightFilled',
+          ]"
+        />
       </ButtonToggle>
       <ButtonToggle icon="FileSettings" v-model="showSettings">
-        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']" />
+        <SegmentedControl
+          :icons="[
+            'LayoutSidebarFilled',
+            'LayoutNavbarFilled',
+            'LayoutSidebarRightFilled',
+          ]"
+        />
       </ButtonToggle>
     </div>
   </div>
 </template>
 
-
 <style scoped>
- .sb-wrapper {
-     height: 100%;
-     min-width: 64px;
-     max-width: 64px;
-     padding-inline: 8px;
-     padding-block: 8px;
-     background-color: var(--extra-light);
-     position: fixed;
-     z-index: 1;
-     /* border-right: var(--border-thin) solid var(--border-primary); */
+  .sb-wrapper {
+    height: 100%;
+    min-width: 64px;
+    max-width: 64px;
+    padding-inline: 8px;
+    padding-block: 8px;
+    background-color: var(--extra-light);
+    position: fixed;
+    z-index: 1;
+    /* border-right: var(--border-thin) solid var(--border-primary); */
 
-     /* no scrollbar in any browser */
-     overflow-y: auto;
-     scrollbar-width: none;     /* firefox */
-     -ms-overflow-style: none;  /* Edge */
-     &::-webkit-scrollbar { /* Chrome */
-         display: none;
-     }
- }
+    /* no scrollbar in any browser */
+    overflow-y: auto;
+    scrollbar-width: none; /* firefox */
+    -ms-overflow-style: none; /* Edge */
+    &::-webkit-scrollbar {
+      /* Chrome */
+      display: none;
+    }
+  }
 
- .btn-toggle {
-     position: relative;
- }
+  .btn-toggle {
+    position: relative;
+  }
 
- .sc-wrapper {
-     position: fixed;
-     left: calc(64px + 4px);
-     top: calc(64px + 16px + 56px + 8px);
-     z-index: 999;
+  .sc-wrapper {
+    display: none;
+    position: fixed;
+    left: calc(64px + 4px);
+    top: calc(64px + 16px + 56px + 8px);
+    z-index: 999;
 
-     :deep(& > .sc-item) {
-         padding-block: 0px !important;
-         padding-inline: 0px !important;
-     }
- }
+    :deep(& > .sc-item) {
+      padding-block: 0px !important;
+      padding-inline: 0px !important;
+    }
+  }
 
- #logo {
-     display: flex;
-     padding: 9px;
-     margin-bottom: 8px;
-     &:hover { cursor: pointer; }
-     & > img { margin: 0 auto; }
- }
+  #logo {
+    display: flex;
+    padding: 9px;
+    margin-bottom: 8px;
+    &:hover {
+      cursor: pointer;
+    }
+    & > img {
+      margin: 0 auto;
+    }
+  }
 
- .sb-menu {
-     padding-block: 16px;
-     & > * {
-         margin-bottom: 8px;
-         gap: 8px;
-     }
- }
+  .sb-menu {
+    padding-block: 16px;
+    & > * {
+      margin-bottom: 8px;
+      gap: 8px;
+    }
+  }
 </style>
