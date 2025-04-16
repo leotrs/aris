@@ -137,10 +137,10 @@
     }
 
     & :deep(.manuscriptwrapper) {
-      padding-block: 0 !important;
+      padding-block: 16px !important;
     }
 
-    & :deep(.manuscriptwrapper .abstract > .heading.hr) {
+    & :deep(.manuscriptwrapper .abstract > h3) {
       display: none;
     }
 
