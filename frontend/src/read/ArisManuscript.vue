@@ -190,4 +190,8 @@
     height: fit-content;
     background-color: v-bind("backgroundColor");
   }
+
+  :deep(.float-minimap-wrapper) {
+    display: none !important;
+  }
 </style>
