@@ -10,7 +10,7 @@
   const showSettings = ref(false);
 
   const docID = `${useRoute().params.doc_id}`;
-  const doc = ref(null);
+  const doc = ref({});
   onBeforeMount(async () => {
     try {
       const response = await axios.get(`http://localhost:8000/documents/${docID}`);

@@ -8,7 +8,9 @@
 </script>
 
 <template>
-  <div class="drawer"></div>
+  <div class="drawer">
+    <slot />
+  </div>
 </template>
 
 <style scoped>
