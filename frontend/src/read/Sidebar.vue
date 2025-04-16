@@ -1,87 +1,35 @@
 <script setup>
   import { ref, onMounted, onUpdated, onUnmounted, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
+  import SidebarItem from "@/read/SidebarItem.vue";
 
-  const emit = defineEmits(["showMinimap", "hideMinimap"]);
-  const showMinimap = defineModel("showMinimap");
-  const showSettings = defineModel("showSettings");
+  const emit = defineEmits(["showComponent", "hideComponent"]);
 
-  const router = useRouter();
-  const goHome = () => {
-    router.push(`/`);
+  const components = {
+    Minimap: "MapPin",
+    Search: "Search",
+    Quote: "Quote",
+    Variable: "Variable",
+    Blocks: "Blocks",
+    Message: "Message",
+    Sparkles: "Sparkles",
+    FileSettings: "FileSettings",
   };
+  const router = useRouter();
 </script>
 
 <template>
   <div class="sb-wrapper" ref="sidebar-ref">
-    <div id="logo" @click="goHome">
+    <div id="logo" @click="router?.push('/')">
       <img src="../assets/logo-32px.svg" />
     </div>
     <div class="sb-menu">
-      <ButtonToggle icon="MapPin" @on="showMinimap = true" @off="showMinimap = false" />
-      <ButtonToggle icon="Search">
-        <SegmentedControl
-          :icons="[
-            'LayoutSidebarFilled',
-            'LayoutNavbarFilled',
-            'LayoutSidebarRightFilled',
-          ]"
-        />
-      </ButtonToggle>
-      <ButtonToggle icon="Quote">
-        <SegmentedControl
-          :icons="[
-            'LayoutSidebarFilled',
-            'LayoutNavbarFilled',
-            'LayoutSidebarRightFilled',
-          ]"
-        />
-      </ButtonToggle>
-      <ButtonToggle icon="Variable">
-        <SegmentedControl
-          :icons="[
-            'LayoutSidebarFilled',
-            'LayoutNavbarFilled',
-            'LayoutSidebarRightFilled',
-          ]"
-        />
-      </ButtonToggle>
-      <ButtonToggle icon="Blocks">
-        <SegmentedControl
-          :icons="[
-            'LayoutSidebarFilled',
-            'LayoutNavbarFilled',
-            'LayoutSidebarRightFilled',
-          ]"
-        />
-      </ButtonToggle>
-      <ButtonToggle icon="Message">
-        <SegmentedControl
-          :icons="[
-            'LayoutSidebarFilled',
-            'LayoutNavbarFilled',
-            'LayoutSidebarRightFilled',
-          ]"
-        />
-      </ButtonToggle>
-      <ButtonToggle icon="Sparkles">
-        <SegmentedControl
-          :icons="[
-            'LayoutSidebarFilled',
-            'LayoutNavbarFilled',
-            'LayoutSidebarRightFilled',
-          ]"
-        />
-      </ButtonToggle>
-      <ButtonToggle icon="FileSettings" v-model="showSettings">
-        <SegmentedControl
-          :icons="[
-            'LayoutSidebarFilled',
-            'LayoutNavbarFilled',
-            'LayoutSidebarRightFilled',
-          ]"
-        />
-      </ButtonToggle>
+      <SidebarItem
+        v-for="(compIcon, compName) in components"
+        :icon="compIcon"
+        @on="emit('showComponent', compName)"
+        @off="emit('hideComponent', compName)"
+      />
     </div>
   </div>
 </template>
@@ -131,7 +79,7 @@
   #logo {
     display: flex;
     padding: 9px;
-    margin-bottom: 8px;
+    margin-top: 8px;
 
     &:hover {
       cursor: pointer;

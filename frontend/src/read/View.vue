@@ -21,21 +21,34 @@
   });
   provide("doc", doc);
 
+  const shownComponents = ref({ left: "", right: "", top: "" });
+  const showComponent = (compName) => {
+    console.log("show", compName);
+    shownComponents.left = compName;
+  };
+  const hideComponent = (compName) => {
+    console.log("hide", compName);
+    shownComponents.left = null;
+  };
   onKeyUp(["m", "M"], (e) => {
     e.preventDefault();
-    showMinimap.value = !showMinimap.value;
+    shownComponents.left = "Minimap";
   });
   onKeyUp(["s", "S"], (e) => {
     e.preventDefault();
-    showSettings.value = !showSettings.value;
+    shownComponents.left = "FileSettings";
   });
 </script>
 
 <template>
   <div class="read-view">
-    <Sidebar />
+    <Sidebar @showComponent="showComponent" @hideComponent="hideComponent" />
 
-    <ArisManuscript />
+    <ArisManuscript
+      :left="shownComponents.left"
+      :right="shownComponents.right"
+      :top="shownComponents.top"
+    />
 
     <div class="links">
       <Button kind="tertiary" icon="Share3" />
@@ -53,6 +66,7 @@
     width: 100%;
     background-color: transparent;
   }
+
   .links {
     position: absolute;
     right: 8px;

@@ -5,6 +5,11 @@
   import Topbar from "./Topbar.vue";
   import Drawer from "./Drawer.vue";
 
+  const props = defineProps({
+    left: { type: String, default: "" },
+    right: { type: String, default: "" },
+    top: { type: String, default: "" },
+  });
   const doc = inject("doc");
 
   const htmlContent = ref("");
@@ -49,6 +54,13 @@
   });
   onUnmounted(() => tearDown());
 
+  watch(
+    () => props.left,
+    () => {
+      console.log("hi");
+    }
+  );
+
   const backgroundColor = ref("var(--surface-page)");
 </script>
 
@@ -57,7 +69,7 @@
     <Topbar :show-title="!isMainTitleVisible" />
     <div class="inner-wrapper">
       <div class="left-column">
-        <Drawer side="left" :scroll="true" />
+        <Drawer side="left" :scroll="true"><component :is="left || null" /></Drawer>
         <Drawer side="left" :scroll="false" />
       </div>
 
