@@ -25,18 +25,6 @@
 
 <template>
   <div class="outer-wrapper">
-    <div class="css-links">
-      <link
-        rel="stylesheet"
-        type="text/css"
-        href="http://localhost:8000/static/rsm.css"
-      />
-      <link
-        rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.css"
-      />
-    </div>
-
     <Topbar />
 
     <div class="inner-wrapper">
@@ -46,10 +34,7 @@
       </div>
 
       <div class="middle-column">
-        <ManuscriptWrapper :html="htmlContent" />
-        <div class="middle-footer">
-          <div id="footer-logo"><img src="../assets/logo-32px.svg" /></div>
-        </div>
+        <ManuscriptWrapper :html="htmlContent" :show-footer="true" />
       </div>
 
       <div class="right-column">
@@ -171,12 +156,5 @@
     overflow-x: visible;
     height: fit-content;
     background-color: v-bind("backgroundColor");
-  }
-
-  #footer-logo {
-    display: flex;
-    justify-content: center;
-    padding-top: 48px;
-    padding-bottom: 96px;
   }
 </style>
