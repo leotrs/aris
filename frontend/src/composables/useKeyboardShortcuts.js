@@ -1,4 +1,11 @@
-import { ref, reactive, computed, getCurrentInstance, onMounted, onBeforeUnmount } from "vue";
+import {
+  ref,
+  reactive,
+  computed,
+  getCurrentInstance,
+  onMounted,
+  onBeforeUnmount,
+} from "vue";
 
 /* Utilities */
 // Use a string rather than a ref because string keys are much simpler

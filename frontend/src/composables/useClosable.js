@@ -14,7 +14,7 @@ export default function ({
 
   // Handle ESC key press
   const { activate, deactivate } = closeOnEsc
-    ? useKeyboardShortcuts({ escape: onClose, autoActivate: autoActivate })
+    ? useKeyboardShortcuts({ escape: onClose }, autoActivate)
     : null;
   const setupEscKey = () => activate();
   const tearDownEscKey = () => deactivate();
