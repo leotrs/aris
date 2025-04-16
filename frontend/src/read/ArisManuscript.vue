@@ -9,7 +9,6 @@
 
   watch(doc, async () => {
     if (!doc.value) return;
-    console.log(doc.value);
 
     try {
       const response = await axios.get(
@@ -38,7 +37,7 @@
       />
     </div>
 
-    <Topbar :title="doc?.title ?? ''" />
+    <Topbar />
 
     <div class="inner-wrapper">
       <div class="left-column">
