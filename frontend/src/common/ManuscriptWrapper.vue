@@ -1,7 +1,10 @@
 <script setup>
   import { ref, watch, onBeforeMount, useTemplateRef, nextTick } from "vue";
 
-  const props = defineProps({ html: { type: String, required: true } });
+  const props = defineProps({
+    html: { type: String, required: true },
+    showFooter: { type: Boolean, default: false },
+  });
 
   let onload = ref(null);
   onBeforeMount(async () => {
@@ -33,7 +36,12 @@
         href="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.css"
       />
     </div>
+
     <div class="manuscriptwrapper" v-html="html" ref="manuscript-ref"></div>
+
+    <div v-if="showFooter" class="middle-footer">
+      <div id="footer-logo"><img src="../assets/logo-32px.svg" /></div>
+    </div>
   </div>
 </template>
 
@@ -62,5 +70,12 @@
     & .hr .hr-collapse-zone .hr-collapse .icon.collapse {
       padding-bottom: 0 !important;
     }
+  }
+
+  #footer-logo {
+    display: flex;
+    justify-content: center;
+    padding-top: 48px;
+    padding-bottom: 96px;
   }
 </style>
