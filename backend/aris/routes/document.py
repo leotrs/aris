@@ -48,6 +48,7 @@ async def get_document(doc_id: int, db: Session = Depends(get_db)):
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     return {
+        "id": doc_id,
         "title": doc.title,
         "abstract": doc.abstract,
         "last_edited_at": doc.last_edited_at,

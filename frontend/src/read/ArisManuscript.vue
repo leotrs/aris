@@ -1,24 +1,26 @@
 <script setup>
-  import { ref, onMounted, inject } from "vue";
+  import { ref, watch, inject } from "vue";
+  import axios from "axios";
   import Topbar from "./Topbar.vue";
   import Drawer from "./Drawer.vue";
 
   const htmlContent = ref("");
-  const docID = inject("docID");
-  const baseURL = `http://localhost:8000/documents/${docID}`;
-  onMounted(async () => {
+  const doc = inject("doc");
+
+  watch(doc, async () => {
+    if (!doc.value) return;
+    console.log(doc.value);
+
     try {
-      const response = await fetch(`${baseURL}/content`);
-      if (!response.ok) {
-        throw new Error("Failed to fetch HTML");
-      }
-      htmlContent.value = await response.text();
+      const response = await axios.get(
+        `http://localhost:8000/documents/${doc.value.id}/content`
+      );
+      htmlContent.value = response.data;
     } catch (error) {
       console.error("Error fetching HTML:", error);
     }
   });
 
-  const docTitle = ref("");
   const backgroundColor = ref("var(--surface-page)");
 </script>
 
@@ -36,7 +38,7 @@
       />
     </div>
 
-    <Topbar :title="docTitle" />
+    <Topbar :title="doc?.title ?? ''" />
 
     <div class="inner-wrapper">
       <div class="left-column">
