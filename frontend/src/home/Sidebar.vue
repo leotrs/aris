@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, onMounted, onUnmounted, onUpdated, useTemplateRef } from "vue";
+  import { ref, inject, onMounted, onUnmounted } from "vue";
   import { IconMenu3 } from "@tabler/icons-vue";
   import SidebarItem from "./SidebarItem.vue";
   import Separator from "@/common/Separator.vue";

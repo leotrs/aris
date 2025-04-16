@@ -7,6 +7,7 @@
     IconFileCheck,
     IconFiles,
     IconLayoutSidebarLeftCollapse,
+    IconLayoutSidebarLeftExpand,
     IconQuote,
     IconMessage,
     IconCirclePlus,
@@ -27,10 +28,16 @@
     Review: IconFileCheck,
     Feedback: IconMessage,
     References: IconQuote,
-    Collapse: IconLayoutSidebarLeftCollapse,
+    Collapse: {
+      false: IconLayoutSidebarLeftCollapse,
+      true: IconLayoutSidebarLeftExpand,
+    },
   };
 
-  const selectedIcon = computed(() => icons[props.text] || null);
+  const selectedIcon = computed(() => {
+    const ic = icons[props.text];
+    return typeof ic === "object" ? ic[props.collapsed] : ic;
+  });
 </script>
 
 <template>
