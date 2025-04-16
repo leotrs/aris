@@ -13,11 +13,11 @@ export default function ({
   const instance = getCurrentInstance();
 
   // Handle ESC key press
-  const keyboardController = closeOnEsc
+  const { activate, deactivate } = closeOnEsc
     ? useKeyboardShortcuts({ escape: onClose, autoActivate: autoActivate })
     : null;
-  const setupEscKey = () => keyboardController?.activate();
-  const tearDownEscKey = () => keyboardController?.deactivate();
+  const setupEscKey = () => activate();
+  const tearDownEscKey = () => deactivate();
 
   // Handle clicks outside the component
   const handleOutsideClick = (event) => {
@@ -26,7 +26,8 @@ export default function ({
   };
   const setupOutsideClick = () =>
     nextTick(() => document.addEventListener("click", handleOutsideClick));
-  const tearDownOutsideClick = () => document.removeEventListener("click", handleOutsideClick);
+  const tearDownOutsideClick = () =>
+    document.removeEventListener("click", handleOutsideClick);
 
   // Handle clicking the close button
   const getCloseButton = () => {
@@ -35,14 +36,15 @@ export default function ({
     return closeButton ? closeButton : console.error("No close button found") || null;
   };
   const setupCloseButton = () => getCloseButton()?.addEventListener("click", onClose);
-  const tearDownCloseButton = () => getCloseButton()?.removeEventListener("click", onClose);
+  const tearDownCloseButton = () =>
+    getCloseButton()?.removeEventListener("click", onClose);
 
   onBeforeUnmount(() => {
     if (closeOnEsc) tearDownEscKey();
     if (closeOnOutsideClick) tearDownOutsideClick();
     if (closeOnCloseButton) tearDownCloseButton();
   });
-  if (!autoActivate) return;
+  if (!autoActivate) return { activate, deactivate };
   onMounted(() => {
     nextTick(() => {
       if (closeOnEsc) setupEscKey();
@@ -50,4 +52,6 @@ export default function ({
       if (closeOnCloseButton) setupCloseButton();
     });
   });
+
+  return { activate, deactivate };
 }
