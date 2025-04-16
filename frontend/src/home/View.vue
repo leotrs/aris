@@ -143,11 +143,11 @@
 
     & :deep(.pane) {
       background-color: var(--almost-white);
-      padding: 16px;
+      padding: 16px 16px 0 16px;
       width: 100%;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 24px;
       border-radius: 16px;
     }
 
