@@ -112,8 +112,8 @@
   }
 
   .sb-wrapper:not(.mobile):not(.collapsed) {
-    flex-basis: 208px;
-    max-width: 208px;
+    flex-basis: 204px;
+    max-width: 204px;
     flex-grow: 0;
     flex-shrink: 0;
 
@@ -132,7 +132,7 @@
     }
 
     & > #logo > img {
-      margin-bottom: -12px;
+      margin: 0 0 -12px 6px;
     }
   }
 
