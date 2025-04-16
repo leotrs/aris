@@ -47,6 +47,7 @@
     position: absolute;
     right: 8px;
     top: 8px;
+    height: 64px;
     display: flex;
     z-index: 1;
     padding: 8px;

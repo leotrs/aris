@@ -20,7 +20,7 @@
     --links-width: 144px;
 
     display: flex;
-    height: calc(var(--sidebar-width));
+    height: var(--sidebar-width);
     width: calc(
       100% - var(--sidebar-width) - var(--links-width) - 2 * var(--outer-padding)
     );
