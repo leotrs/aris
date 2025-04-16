@@ -1,12 +1,13 @@
 <script setup>
-  import { ref, watch, inject } from "vue";
+  import { ref, watch, inject, useTemplateRef, nextTick, onUnmounted } from "vue";
+  import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
   import axios from "axios";
   import Topbar from "./Topbar.vue";
   import Drawer from "./Drawer.vue";
 
-  const htmlContent = ref("");
   const doc = inject("doc");
 
+  const htmlContent = ref("");
   watch(doc, async () => {
     if (!doc.value) return;
 
@@ -20,13 +21,40 @@
     }
   });
 
+  const manuscriptRef = useTemplateRef("manuscriptRef");
+
+  const isMainTitleVisible = ref(true);
+  let tearDown = () => {};
+  watch(htmlContent, async () => {
+    if (!manuscriptRef.value) return;
+    await nextTick();
+    tearDown();
+
+    const mainTitle = manuscriptRef.value.$el.querySelector(
+      "section.level-1 > .heading.hr"
+    );
+    if (!mainTitle) return;
+
+    const { isVisible, tearDown: newtearDown } =
+      createElementVisibilityObserver(mainTitle);
+
+    isMainTitleVisible.value = isVisible.value;
+
+    const stopWatch = watch(isVisible, (newVal) => (isMainTitleVisible.value = newVal));
+
+    tearDown = () => {
+      newtearDown();
+      stopWatch();
+    };
+  });
+  onUnmounted(() => tearDown());
+
   const backgroundColor = ref("var(--surface-page)");
 </script>
 
 <template>
   <div class="outer-wrapper">
-    <Topbar />
-
+    <Topbar :show-title="!isMainTitleVisible" />
     <div class="inner-wrapper">
       <div class="left-column">
         <Drawer side="left" :scroll="true" />
@@ -34,7 +62,11 @@
       </div>
 
       <div class="middle-column">
-        <ManuscriptWrapper :html="htmlContent" :show-footer="true" />
+        <ManuscriptWrapper
+          ref="manuscriptRef"
+          :html="htmlContent"
+          :show-footer="true"
+        />
       </div>
 
       <div class="right-column">
@@ -59,6 +91,7 @@
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
   }
+
   .inner-wrapper {
     display: flex;
     width: 100%;

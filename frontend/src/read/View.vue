@@ -57,12 +57,11 @@
     position: absolute;
     right: 8px;
     top: 8px;
-    height: 64px;
+    height: calc(64px - var(--border-extrathin));
     display: flex;
     z-index: 1;
     padding: 8px;
     background-color: var(--surface-page);
     border-top-right-radius: 16px;
-    border-bottom: var(--border-extrathin) solid var(--border-primary);
   }
 </style>
