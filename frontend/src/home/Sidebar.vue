@@ -110,6 +110,7 @@
       display: none;
     }
   }
+
   .sb-wrapper:not(.mobile):not(.collapsed) {
     flex-basis: 208px;
     max-width: 208px;
@@ -120,7 +121,6 @@
       display: flex;
       margin-top: 20px;
       justify-content: center;
-      /* padding-inline: 8px; */
       padding-inline: 16px;
     }
 
@@ -145,13 +145,16 @@
     & > * {
       margin: 0 auto;
     }
+
     & > #logo {
-      margin-top: 9px;
-      margin-bottom: 21px;
+      margin-top: 6px;
+      margin-bottom: 18px;
       padding-inline: 16px;
 
       & > img {
         margin: 0 0 -12px 0;
+        width: 36px;
+        height: 36px;
       }
     }
 
