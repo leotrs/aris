@@ -22,10 +22,20 @@ export default function ({
   // Handle clicks outside the component
   const handleOutsideClick = (event) => {
     if (!instance || !instance.proxy.$el) return;
-    if (!instance.proxy.$el.contains(event.target)) onClose();
+    if (!instance.proxy.$el.contains(event.target)) {
+      onClose();
+    }
   };
   const setupOutsideClick = () =>
-    nextTick(() => document.addEventListener("click", handleOutsideClick));
+    // Using nextTick with setTimeout essentially waits for "two ticks". This is
+    // necessary because for components that call useClosable that appear by clicking on
+    // a button _and the button is *outside* the component_, the following event
+    // listener was being called on the very same click that opened the component in the
+    // first place, immediately closing it, and thus it would never show. Waiting for
+    // "two ticks" is enough to fix this.
+    nextTick(() =>
+      setTimeout(() => document.addEventListener("click", handleOutsideClick), 0)
+    );
   const tearDownOutsideClick = () =>
     document.removeEventListener("click", handleOutsideClick);
 
