@@ -162,20 +162,20 @@
 
 <style scoped>
   .files-wrapper {
+    display: grid;
+    grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px;
     margin-top: 8px;
     overflow-y: auto;
     width: 100%;
     height: 100%;
   }
+
   .files-wrapper.list {
     container-type: inline-size;
   }
-  .files-wrapper.list > :is(.pane-header, .files) {
-    display: grid !important;
-    grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px;
-  }
 
   .files.list {
+    display: contents;
     overflow-y: auto;
     max-height: calc(100% - 40px);
 
