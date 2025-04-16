@@ -64,6 +64,15 @@
           ]"
         />
       </ButtonToggle>
+      <ButtonToggle icon="Sparkles">
+        <SegmentedControl
+          :icons="[
+            'LayoutSidebarFilled',
+            'LayoutNavbarFilled',
+            'LayoutSidebarRightFilled',
+          ]"
+        />
+      </ButtonToggle>
       <ButtonToggle icon="FileSettings" v-model="showSettings">
         <SegmentedControl
           :icons="[
@@ -91,8 +100,11 @@
 
     /* no scrollbar in any browser */
     overflow-y: auto;
-    scrollbar-width: none; /* firefox */
-    -ms-overflow-style: none; /* Edge */
+    scrollbar-width: none;
+    /* firefox */
+    -ms-overflow-style: none;
+
+    /* Edge */
     &::-webkit-scrollbar {
       /* Chrome */
       display: none;
@@ -120,9 +132,11 @@
     display: flex;
     padding: 9px;
     margin-bottom: 8px;
+
     &:hover {
       cursor: pointer;
     }
+
     & > img {
       margin: 0 auto;
     }
@@ -130,6 +144,7 @@
 
   .sb-menu {
     padding-block: 16px;
+
     & > * {
       margin-bottom: 8px;
       gap: 8px;

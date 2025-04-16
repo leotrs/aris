@@ -1,8 +1,7 @@
 <script setup>
-  import { ref, watch, onMounted, inject } from "vue";
-  import { onKeyUp } from "@vueuse/core";
+  import { ref, onMounted, inject } from "vue";
   import Topbar from "./Topbar.vue";
-  import ReadOverlaySettings from "./PanelSettings.vue";
+  import Drawer from "./Drawer.vue";
 
   const htmlContent = ref("");
   const docID = inject("docID");
@@ -20,55 +19,7 @@
   });
 
   const docTitle = ref("");
-  const manuscriptRef = ref(null);
-  const minimapRef = ref(null);
-  const leftColumnFixed = ref(null);
-  onMounted(async () => {
-    if (!manuscriptRef.value) return;
-
-    /* Get the title and other info */
-    const response = await fetch(`${baseURL}`);
-    if (!response.ok) {
-      throw new Error("Failed to fetch HTML");
-    }
-    const json = await response.json();
-    docTitle.value = json.title;
-
-    /* Relocate the minimap */
-    if (leftColumnFixed.value) {
-      const minimap = manuscriptRef.value.querySelector(
-        ".float-minimap-wrapper .minimap"
-      );
-      if (minimap) {
-        console.log("relocating");
-        minimapRef.value = minimap;
-        minimap.remove();
-        leftColumnFixed.value.append(minimap);
-        minimap.style.visibility = "hidden";
-      }
-    }
-  });
-
-  const showMinimap = ref(false);
-  watch(showMinimap, (newValue, oldValue) => {
-    if (!minimapRef.value) return;
-    console.log(newValue);
-    if (newValue) minimapRef.value.style.visibility = "visible";
-    if (!newValue) minimapRef.value.style.visibility = "hidden";
-  });
-
-  const showSettings = ref(false);
-
   const backgroundColor = ref("var(--surface-page)");
-
-  onKeyUp(["m", "M"], (e) => {
-    e.preventDefault();
-    showMinimap.value = !showMinimap.value;
-  });
-  onKeyUp(["s", "S"], (e) => {
-    e.preventDefault();
-    showSettings.value = !showSettings.value;
-  });
 </script>
 
 <template>
@@ -88,18 +39,9 @@
     <Topbar :title="docTitle" />
 
     <div class="inner-wrapper">
-      <div class="left-column" ref="leftColumn"></div>
-      <div class="left-column fixed" ref="leftColumnFixed">
-        <ReadOverlaySettings
-          v-show="showSettings"
-          @close="showSettings = false"
-          @set-background="
-            (c) => {
-              console.log(c);
-              backgroundColor = c;
-            }
-          "
-        />
+      <div class="left-column">
+        <Drawer side="left" :scroll="true" />
+        <Drawer side="left" :scroll="false" />
       </div>
 
       <div class="middle-column">
@@ -109,28 +51,34 @@
         </div>
       </div>
 
-      <div class="right-column">right</div>
-      <div class="right-column fixed">right fixed</div>
+      <div class="right-column">
+        <Drawer side="right" :scroll="true" />
+        <Drawer side="right" :scroll="false" />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
   .outer-wrapper {
+    --outer-padding: 8px;
+    --sidebar-width: 64px;
+    --topbar-height: 64px;
+
     width: calc(100% - 64px);
     height: 100%;
     position: relative;
     left: 64px;
-    padding-right: 8px;
-    padding-bottom: 8px;
+    padding: 0 var(--outer-padding) var(--outer-padding) 0;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
   }
-
   .inner-wrapper {
     display: flex;
     width: 100%;
-    height: calc(100% - 64px);
+    height: calc(100% - var(--topbar-height) - var(--outer-padding));
     position: relative;
-    top: 64px;
+    top: calc(var(--topbar-height) + var(--outer-padding));
     background-color: v-bind("backgroundColor");
     border-bottom-right-radius: 16px;
     border-bottom-left-radius: 16px;
@@ -144,19 +92,26 @@
       width: 16px;
       background: transparent;
     }
+
     &::-webkit-scrollbar-track {
       border-bottom-right-radius: 16px;
       border-top-right-radius: 16px;
     }
+
     &::-webkit-scrollbar-thumb {
       background: var(--gray-200);
       border-radius: 8px;
       height: 32px;
       width: 16px;
     }
+
     &::-webkit-scrollbar-thumb:hover {
       background: var(--surface-hint);
     }
+  }
+
+  .middle-column {
+    margin-top: 8px;
   }
 
   .left-column,
@@ -216,6 +171,7 @@
     height: fit-content;
     background-color: v-bind("backgroundColor");
   }
+
   #footer-logo {
     display: flex;
     justify-content: center;
