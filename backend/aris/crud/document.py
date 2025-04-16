@@ -114,9 +114,9 @@ async def duplicate_document(doc_id: int, db: Session):
     return new_doc
 
 
-async def get_document_section(doc_id: int, section_name: str, db: Session):
+async def get_document_section(doc_id: int, section_name: str, db: Session, handrails: bool = True):
     doc = db.query(Document).filter(Document.id == doc_id).first()
     if not doc:
         raise ValueError(f"Document {doc_id} not found")
-    html = await extract_section(doc, section_name)
+    html = await extract_section(doc, section_name, handrails)
     return html or ''

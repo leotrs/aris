@@ -17,8 +17,8 @@ async def extract_title(doc: Document) -> str:
     return app.transformer.tree.title
 
 
-async def extract_section(doc: Document, section_name: str) -> str:
-    app = rsm.app.ProcessorApp(plain=doc.source, handrails=True)
+async def extract_section(doc: Document, section_name: str, handrails: bool = True) -> str:
+    app = rsm.app.ProcessorApp(plain=doc.source, handrails=handrails)
     await asyncio.to_thread(app.run)
     html = app.translator.body
 
