@@ -15,6 +15,14 @@
     "Edited on": { sortable: true, filterable: false, sortKey: "last_edited_at" },
     /* Owner: { sortable: false, filterable: false, sortKey: "owner_id" }, */
   };
+
+  const shouldShow = (columnName) => {
+    if (props.mode == "list") return true;
+    else if (props.mode == "cards") {
+      return columnInfo[columnName]["sortable"] || columnInfo[columnName]["filterable"];
+    }
+  };
+
   const columnState = reactive({
     Title: null,
     Progress: null,
@@ -53,10 +61,9 @@
 
 <template>
   <div class="pane-header text-label" :class="mode">
-    <span v-if="mode == 'cards'">Sort by:</span>
     <template v-for="name in Object.keys(columnInfo)">
       <HeaderLabel
-        v-if="mode == 'list' || (mode == 'cards' && !columnInfo[name]['sortable'])"
+        v-if="shouldShow(name)"
         :name="name"
         v-model="columnState[name]"
         @sort="(mode) => handleColumnSortEvent(name, mode)"
