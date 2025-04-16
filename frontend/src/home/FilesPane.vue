@@ -144,10 +144,10 @@
 
 <template>
   <Topbar @list="mode = 'list'" @cards="mode = 'cards'" />
-  <div class="documents" :class="mode">
+  <div class="files-wrapper" :class="mode">
     <FilesHeader />
 
-    <div class="docs-group" :class="mode">
+    <div class="files" :class="mode">
       <FilesItem
         v-for="(doc, idx) in userDocs.filter((doc) => !doc.filtered)"
         :class="{ active: activeIndex == idx }"
@@ -161,23 +161,21 @@
 </template>
 
 <style scoped>
-  .documents {
+  .files-wrapper {
     margin-top: 8px;
     overflow-y: auto;
     width: 100%;
     height: 100%;
   }
-
-  .documents.list {
+  .files-wrapper.list {
     container-type: inline-size;
   }
-
-  .documents.list > :is(.pane-header, .docs-group) {
+  .files-wrapper.list > :is(.pane-header, .files) {
     display: grid !important;
     grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px;
   }
 
-  .docs-group.list {
+  .files.list {
     overflow-y: auto;
     max-height: calc(100% - 40px);
 
@@ -191,10 +189,10 @@
     }
   }
 
-  .documents.cards {
+  .files-wrapper.cards {
   }
 
-  .docs-group.cards {
+  .files.cards {
     overflow-y: auto;
     columns: auto 250px;
     column-gap: 16px;
@@ -208,29 +206,4 @@
     display: flex;
     gap: 8px;
   }
-
-  /* @container (max-width: 744px) {
-    .pane-header, .docs-group  {
-    grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px !important;
-    }
-    .pane-header, .item { grid-column: 1 / 6 !important }
-    :deep(.owner) { display: none }
-    }
-    @container (max-width: 684px) {
-    .pane-header, .docs-group  {
-    grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 100px 16px 8px !important;
-    }
-    .pane-header, .item { grid-column: 1 / 5 !important }
-    :deep(.tags) { display: none }
-    }
-    @container (max-width: 480px) {
-    .pane-header, .docs-group  {
-    grid-template-columns: minmax(75px, 2fr) 100px 16px 8px !important;
-    }
-    .pane-header, .item { grid-column: 1 / 4 !important }
-    :deep(.progress) { display: none }
-    }
-    @container (max-width: 432px) {
-
-    } */
 </style>
