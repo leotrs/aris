@@ -145,7 +145,7 @@
 <template>
   <Topbar @list="mode = 'list'" @cards="mode = 'cards'" />
   <div class="files-wrapper" :class="mode">
-    <FilesHeader />
+    <FilesHeader :mode="mode" />
 
     <div class="files" :class="mode">
       <FilesItem
@@ -162,8 +162,6 @@
 
 <style scoped>
   .files-wrapper {
-    display: grid;
-    grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px;
     padding-bottom: 16px;
     overflow-y: auto;
     width: 100%;
@@ -171,7 +169,8 @@
   }
 
   .files-wrapper.list {
-    container-type: inline-size;
+    display: grid;
+    grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px;
   }
 
   .files.list {

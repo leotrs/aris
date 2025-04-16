@@ -136,6 +136,14 @@
       float: right;
     }
 
+    & :deep(.manuscriptwrapper) {
+      padding-block: 0 !important;
+    }
+
+    & :deep(.manuscriptwrapper .abstract > .heading.hr) {
+      display: none;
+    }
+
     & > .last-edited {
       height: 32px;
       align-content: center;

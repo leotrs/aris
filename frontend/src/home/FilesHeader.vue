@@ -52,7 +52,7 @@
 </script>
 
 <template>
-  <div class="pane-header text-label">
+  <div class="pane-header text-label" :class="mode">
     <span v-if="mode == 'cards'">Sort by:</span>
     <template v-for="name in Object.keys(columnInfo)">
       <HeaderLabel
@@ -74,6 +74,9 @@
 <style scoped>
   .pane-header {
     background-color: var(--surface-information);
+  }
+
+  .pane-header.list {
     display: contents;
     grid-column: 1 / 6;
 
@@ -90,7 +93,7 @@
     }
   }
 
-  .documents.cards .pane-header {
+  .pane-header.cards {
     display: flex;
     align-items: center;
     gap: 16px;
