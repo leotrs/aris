@@ -40,39 +40,39 @@
 
   .pill.on {
     &.red {
-      background-color: var(--red-500);
+      background-color: var(--red-400);
       color: var(--red-50);
     }
     &.purple {
-      background-color: var(--purple-500);
+      background-color: var(--purple-400);
       color: var(--purple-50);
     }
     &.green {
-      background-color: var(--green-500);
+      background-color: var(--green-400);
       color: var(--green-50);
     }
     &.orange {
-      background-color: var(--orange-500);
+      background-color: var(--orange-400);
       color: var(--orange-50);
     }
   }
 
   .pill.off {
     &.red {
-      border: var(--border-thin) solid var(--red-500);
-      color: var(--red-500);
+      border: var(--border-thin) solid var(--red-400);
+      color: var(--red-400);
     }
     &.purple {
-      border: var(--border-thin) solid var(--purple-500);
-      color: var(--purple-500);
+      border: var(--border-thin) solid var(--purple-400);
+      color: var(--purple-400);
     }
     &.green {
-      border: var(--border-thin) solid var(--green-500);
-      color: var(--green-500);
+      border: var(--border-thin) solid var(--green-400);
+      color: var(--green-400);
     }
     &.orange {
-      border: var(--border-thin) solid var(--orange-500);
-      color: var(--orange-500);
+      border: var(--border-thin) solid var(--orange-400);
+      color: var(--orange-400);
     }
     &.new-tag-color {
       border: var(--border-thin) solid var(--gray-400);
