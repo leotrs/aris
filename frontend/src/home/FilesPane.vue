@@ -164,7 +164,7 @@
   .files-wrapper {
     display: grid;
     grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px;
-    margin-top: 8px;
+    padding-bottom: 16px;
     overflow-y: auto;
     width: 100%;
     height: 100%;

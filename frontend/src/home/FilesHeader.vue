@@ -12,14 +12,14 @@
     Title: { sortable: true, filterable: false, sortKey: "title" },
     Progress: { sortable: false, filterable: false, sortKey: "" },
     Tags: { sortable: false, filterable: true, sortKey: "" },
-    "Last Edited": { sortable: true, filterable: false, sortKey: "last_edited_at" },
+    "Edited on": { sortable: true, filterable: false, sortKey: "last_edited_at" },
     /* Owner: { sortable: false, filterable: false, sortKey: "owner_id" }, */
   };
   const columnState = reactive({
     Title: null,
     Progress: null,
     Tags: null,
-    "Last Edited": null,
+    "Edited on": null,
     /* Owner: null */
   });
 
