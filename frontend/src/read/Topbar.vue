@@ -1,4 +1,6 @@
 <script setup>
+  import Drawer from "./Drawer.vue";
+
   const props = defineProps({
     title: { type: String },
   });
@@ -6,20 +8,8 @@
 
 <template>
   <div class="tb-wrapper">
-    <div class="left-column">
-      <div class="title">{{ title }}</div>
-    </div>
-
-    <div class="middle-column"></div>
-
-    <div class="right-column">
-      <Button kind="tertiary" icon="Sparkles" />
-      <Button kind="tertiary" icon="Share3" />
-      <Button kind="tertiary" icon="Lifebuoy" />
-      <Button kind="tertiary">
-        <Avatar name="TER" />
-      </Button>
-    </div>
+    <Drawer class="left" side="top" :scroll="false" />
+    <Drawer class="middle" side="top" :scroll="false" />
   </div>
 </template>
 
@@ -27,54 +17,33 @@
   .tb-wrapper {
     --outer-padding: 8px;
     --sidebar-width: 64px;
+    --links-width: 144px;
 
     display: flex;
-    height: calc(var(--sidebar-width) - var(--outer-padding));
-    width: calc(100% - var(--sidebar-width) - var(--outer-padding));
+    height: calc(var(--sidebar-width));
+    width: calc(
+      100% - var(--sidebar-width) - var(--links-width) - 2 * var(--outer-padding)
+    );
     position: fixed;
     top: 8px;
     background-color: transparent;
+    border-bottom: var(--border-extrathin) solid var(--border-primary);
     z-index: 1;
-
-    &:has(> .middle-column.empty) {
-      background-color: transparent;
-
-      & > .left-column,
-      & > .right-column {
-        background-color: var(--surface-page);
-      }
-    }
   }
 
-  .left-column,
-  .middle-column,
-  .right-column {
+  .drawer {
     background-color: var(--surface-page);
   }
 
-  .left-column,
-  .right-column {
+  .left {
     flex-basis: 292px;
     display: flex;
     align-items: center;
-  }
-
-  .left-column {
     border-top-left-radius: 16px;
     padding-inline: 16px;
   }
-  .right-column {
-    border-top-right-radius: 16px;
-    justify-content: flex-end;
-    padding-inline: 8px;
-    gap: 8px;
-  }
 
-  .middle-column {
+  .middle {
     flex-grow: 1;
-  }
-
-  .middle-column.empty {
-    background-color: var(--surface-page);
   }
 </style>

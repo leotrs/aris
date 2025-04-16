@@ -24,7 +24,16 @@
 <template>
   <div class="read-view">
     <Sidebar />
+
     <ArisManuscript />
+
+    <div class="links">
+      <Button kind="tertiary" icon="Share3" />
+      <Button kind="tertiary" icon="Lifebuoy" />
+      <Button kind="tertiary">
+        <Avatar name="TER" />
+      </Button>
+    </div>
   </div>
 </template>
 
@@ -33,5 +42,16 @@
     display: flex;
     width: 100%;
     background-color: transparent;
+  }
+  .links {
+    position: absolute;
+    right: 8px;
+    top: 8px;
+    display: flex;
+    z-index: 1;
+    padding: 8px;
+    background-color: var(--surface-page);
+    border-top-right-radius: 16px;
+    border-bottom: var(--border-extrathin) solid var(--border-primary);
   }
 </style>
