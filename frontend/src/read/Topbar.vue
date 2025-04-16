@@ -2,17 +2,22 @@
   import { inject } from "vue";
   import Drawer from "./Drawer.vue";
 
-  const props = defineProps({ showTitle: { type: Boolean, required: true } });
+  const props = defineProps({
+    showTitle: { type: Boolean, required: true },
+    drawer: { type: String, default: "" },
+  });
   const doc = inject("doc");
 </script>
 
 <template>
   <div class="tb-wrapper" :class="{ 'with-border': showTitle }">
     <Drawer class="left" side="top" :scroll="false">
-      <FileTitle v-if="showTitle" :doc="doc" />
+      <FileTitle v-if="showTitle && drawer" :doc="doc" />
     </Drawer>
 
-    <Drawer class="middle" side="top" :scroll="false"> </Drawer>
+    <Drawer class="middle" side="top" :scroll="false">
+      <FileTitle v-if="showTitle && !drawer" :doc="doc" />
+    </Drawer>
   </div>
 </template>
 
