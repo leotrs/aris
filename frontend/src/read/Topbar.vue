@@ -1,14 +1,15 @@
 <script setup>
+  import { inject } from "vue";
   import Drawer from "./Drawer.vue";
 
-  const props = defineProps({
-    title: { type: String },
-  });
+  const doc = inject("doc");
 </script>
 
 <template>
   <div class="tb-wrapper">
-    <Drawer class="left" side="top" :scroll="false" />
+    <Drawer class="left" side="top" :scroll="false">
+      <FileTitle :doc="doc" />
+    </Drawer>
     <Drawer class="middle" side="top" :scroll="false" />
   </div>
 </template>

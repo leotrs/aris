@@ -1,7 +1,8 @@
 <script setup>
-  import { ref, provide } from "vue";
+  import { ref, provide, onBeforeMount } from "vue";
   import { useRoute } from "vue-router";
   import { onKeyUp } from "@vueuse/core";
+  import axios from "axios";
   import Sidebar from "./Sidebar.vue";
   import ArisManuscript from "./ArisManuscript.vue";
 
@@ -9,7 +10,16 @@
   const showSettings = ref(false);
 
   const docID = `${useRoute().params.doc_id}`;
-  provide("docID", docID);
+  const doc = ref(null);
+  onBeforeMount(async () => {
+    try {
+      const response = await axios.get(`http://localhost:8000/documents/${docID}`);
+      doc.value = response.data;
+    } catch (error) {
+      console.error(`Failed to fetch document ${docID}`, error);
+    }
+  });
+  provide("doc", doc);
 
   onKeyUp(["m", "M"], (e) => {
     e.preventDefault();
