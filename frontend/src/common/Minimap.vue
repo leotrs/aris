@@ -58,6 +58,7 @@
   }, 50);
 
   onMounted(async () => {
+    if (!props.doc) return;
     try {
       const url = `http://localhost:8000/documents/${props.doc.id}/content/minimap`;
       const response = await axios.get(url);

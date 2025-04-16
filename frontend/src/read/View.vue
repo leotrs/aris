@@ -24,19 +24,19 @@
   const shownComponents = ref({ left: "", right: "", top: "" });
   const showComponent = (compName) => {
     console.log("show", compName);
-    shownComponents.left = compName;
+    shownComponents.value.left = compName;
   };
   const hideComponent = (compName) => {
     console.log("hide", compName);
-    shownComponents.left = null;
+    shownComponents.value.left = null;
   };
   onKeyUp(["m", "M"], (e) => {
     e.preventDefault();
-    shownComponents.left = "Minimap";
+    shownComponents.value.left = "Minimap";
   });
   onKeyUp(["s", "S"], (e) => {
     e.preventDefault();
-    shownComponents.left = "FileSettings";
+    shownComponents.value.left = "FileSettings";
   });
 </script>
 

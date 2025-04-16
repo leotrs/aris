@@ -14,7 +14,7 @@
 
   const htmlContent = ref("");
   watch(doc, async () => {
-    if (!doc.value) return;
+    if (!doc.value || !doc.value.id) return;
 
     try {
       const response = await axios.get(
@@ -32,7 +32,8 @@
   let tearDown = () => {};
   watch(htmlContent, async () => {
     if (!manuscriptRef.value) return;
-    await nextTick();
+    await nextTick(); // waits for ManuscriptWrapper to receive htmlContent
+    await nextTick(); // waits for v-html DOM to update
     tearDown();
 
     const mainTitle = manuscriptRef.value.$el.querySelector(
@@ -40,26 +41,17 @@
     );
     if (!mainTitle) return;
 
-    const { isVisible, tearDown: newtearDown } =
+    const { isVisible, tearDown: newTearDown } =
       createElementVisibilityObserver(mainTitle);
-
     isMainTitleVisible.value = isVisible.value;
 
     const stopWatch = watch(isVisible, (newVal) => (isMainTitleVisible.value = newVal));
-
     tearDown = () => {
-      newtearDown();
+      newTearDown();
       stopWatch();
     };
   });
   onUnmounted(() => tearDown());
-
-  watch(
-    () => props.left,
-    () => {
-      console.log("hi");
-    }
-  );
 
   const backgroundColor = ref("var(--surface-page)");
 </script>
@@ -69,7 +61,9 @@
     <Topbar :show-title="!isMainTitleVisible" />
     <div class="inner-wrapper">
       <div class="left-column">
-        <Drawer side="left" :scroll="true"><component :is="left || null" /></Drawer>
+        <Drawer side="left" :scroll="true"
+          ><component :is="left || null" :doc="doc"
+        /></Drawer>
         <Drawer side="left" :scroll="false" />
       </div>
 
