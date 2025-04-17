@@ -104,6 +104,7 @@
     top: calc(var(--topbar-height) + var(--outer-padding));
     background-color: v-bind("backgroundColor");
     overflow-y: auto;
+    justify-content: center;
 
     /* These are standard CSS that are not yet supported - switch to them in the future */
     /* scrollbar-color: var(--light);
@@ -132,13 +133,24 @@
   }
 
   .middle-column {
+    flex-basis: 720px;
+    flex-shrink: 1;
+    flex-grow: 1;
+    min-width: 450px;
+    max-width: 720px;
+    z-index: 1;
+    overflow-x: visible;
+    height: fit-content;
+    background-color: v-bind("backgroundColor");
     margin-top: 8px;
   }
 
   .left-column,
   .right-column {
-    flex-basis: 292px;
-    min-width: 120px;
+    max-width: 292px;
+    flex-basis: 200px;
+    min-width: 100px;
+    flex-shrink: 2;
     background-color: var(--surface-page);
     padding-inline: 16px;
     padding-block: 16px;

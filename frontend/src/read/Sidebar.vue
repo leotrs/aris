@@ -6,13 +6,13 @@
   const emit = defineEmits(["showComponent", "hideComponent"]);
 
   const components = {
-    Minimap: "MapPin",
+    Sparkles: "Sparkles",
     Search: "Search",
+    Minimap: "MapPin",
+    Message: "Message",
     Quote: "Quote",
     Variable: "Variable",
     Blocks: "Blocks",
-    Message: "Message",
-    Sparkles: "Sparkles",
     FileSettings: "FileSettings",
   };
   const router = useRouter();
