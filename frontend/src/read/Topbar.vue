@@ -29,16 +29,18 @@
 
     display: flex;
     height: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width) - 2 * var(--outer-padding));
+    width: calc(100% - var(--sidebar-width) - var(--outer-padding));
     position: fixed;
     top: 8px;
     background-color: transparent;
-    z-index: 1;
+    z-index: 2;
     border-bottom: var(--border-extrathin) solid var(--surface-page);
     padding-right: var(--links-width);
 
     &.with-border {
-      border-bottom-color: var(--border-primary);
+      box-shadow:
+        0px 4px 2px -2px rgba(0, 0, 0, 15%),
+        0px 8px 6px -6px rgba(0, 0, 0, 05%);
     }
   }
 
