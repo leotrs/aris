@@ -13,7 +13,7 @@
     Quote: "Quote",
     Variable: "Variable",
     Blocks: "Blocks",
-    FileSettings: "FileSettings",
+    PanelSettings: "FileSettings",
   };
   const router = useRouter();
 </script>

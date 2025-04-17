@@ -118,21 +118,19 @@
     /* scrollbar-color: var(--light);
         scrollbar-width: 16px; */
 
-    &::-webkit-scrollbar {
-      width: 16px;
-      background: transparent;
-    }
+    --scrollbar-width: 12px;
+    --scrollbar-height: 24px;
 
-    &::-webkit-scrollbar-track {
-      border-bottom-right-radius: 16px;
-      border-top-right-radius: 16px;
+    &::-webkit-scrollbar {
+      width: var(--scrollbar-width);
+      background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
       background: var(--gray-200);
       border-radius: 8px;
-      height: 32px;
-      width: 16px;
+      height: var(--scrollbar-height);
+      width: var(--scrollbar-width);
     }
 
     &::-webkit-scrollbar-thumb:hover {
@@ -158,8 +156,8 @@
     max-width: 292px;
     flex-basis: 200px;
     min-width: 100px;
-    flex-shrink: 2;
-    background-color: var(--surface-page);
+    flex-shrink: 1;
+    flex-grow: 2;
     padding-inline: 16px;
     padding-block: 16px;
     background-color: v-bind("backgroundColor");
@@ -167,41 +165,9 @@
   }
 
   .left-column {
-    position: relative;
   }
 
   .right-column {
-  }
-
-  .left-column.fixed,
-  .right-column.fixed {
-    position: fixed;
-    height: calc(100% - 64px);
-    background-color: transparent;
-    top: 64px;
-    overflow-y: auto;
-  }
-
-  .left-column.fixed {
-    left: 64px;
-
-    & > :deep(.minimap) {
-      position: absolute;
-      width: 48px;
-      top: calc(64px + 40px);
-      height: calc(100% - 152px);
-      left: 0;
-      right: 0;
-      margin: 0 auto;
-    }
-
-    & > :deep(.minimap > svg) {
-      height: 100%;
-    }
-  }
-
-  .right-column.fixed {
-    right: 0;
   }
 
   .middle-column {
@@ -215,5 +181,9 @@
 
   :deep(.float-minimap-wrapper) {
     display: none !important;
+  }
+
+  :deep(.mm-wrapper .minimap) {
+    position: fixed;
   }
 </style>

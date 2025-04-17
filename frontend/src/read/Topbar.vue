@@ -16,7 +16,7 @@
     </Drawer>
 
     <Drawer class="middle" side="top" :scroll="false">
-      <FileTitle v-if="showTitle && !drawer" :doc="doc" class="text-h4" />
+      <FileTitle v-if="showTitle && !drawer" :doc="doc" class="text-h6" />
     </Drawer>
   </div>
 </template>
