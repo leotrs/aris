@@ -4,6 +4,8 @@
   import axios from "axios";
   import Topbar from "./Topbar.vue";
   import Drawer from "./Drawer.vue";
+  import PanelSettings from "./PanelSettings.vue";
+  import Minimap from "../common/Minimap.vue";
 
   const props = defineProps({
     left: { type: String, default: "" },
@@ -11,6 +13,11 @@
     top: { type: String, default: "" },
   });
   const doc = inject("doc");
+
+  const validDrawerComponents = {
+    PanelSettings,
+    Minimap,
+  };
 
   const htmlContent = ref("");
   watch(doc, async () => {
@@ -61,10 +68,9 @@
     <Topbar :show-title="!isMainTitleVisible" />
     <div class="inner-wrapper">
       <div class="left-column">
-        <Drawer side="left" :scroll="true"
-          ><component :is="left || null" :doc="doc"
-        /></Drawer>
-        <Drawer side="left" :scroll="false" />
+        <Drawer side="left">
+          <component :is="validDrawerComponents[left]" :doc="doc" />
+        </Drawer>
       </div>
 
       <div class="middle-column">
@@ -76,8 +82,7 @@
       </div>
 
       <div class="right-column">
-        <Drawer side="right" :scroll="true" />
-        <Drawer side="right" :scroll="false" />
+        <Drawer side="right" />
       </div>
     </div>
   </div>
@@ -96,6 +101,7 @@
     padding: 0 var(--outer-padding) var(--outer-padding) 0;
     border-radius: 16px;
   }
+
   .inner-wrapper {
     display: flex;
     width: 100%;
