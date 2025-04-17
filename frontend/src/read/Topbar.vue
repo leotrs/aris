@@ -25,7 +25,7 @@
   .tb-wrapper {
     --outer-padding: 8px;
     --sidebar-width: 64px;
-    --links-width: 152px;
+    --links-width: 151px;
 
     display: flex;
     height: var(--sidebar-width);
