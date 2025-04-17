@@ -2,8 +2,7 @@
   import { ref, onMounted, inject } from "vue";
 
   const props = defineProps({
-    side: { type: String, required: true },
-    scroll: { type: Boolean, required: true },
+    doc: { type: String, required: true },
   });
 </script>
 
