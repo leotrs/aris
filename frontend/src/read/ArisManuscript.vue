@@ -105,6 +105,8 @@
     background-color: v-bind("backgroundColor");
     overflow-y: auto;
     justify-content: center;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
 
     /* These are standard CSS that are not yet supported - switch to them in the future */
     /* scrollbar-color: var(--light);
