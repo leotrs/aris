@@ -16,7 +16,7 @@
     </Drawer>
 
     <Drawer class="middle" side="top" :scroll="false">
-      <FileTitle v-if="showTitle && !drawer" :doc="doc" />
+      <FileTitle v-if="showTitle && !drawer" :doc="doc" class="text-h4" />
     </Drawer>
   </div>
 </template>
@@ -55,8 +55,13 @@
     border-top-left-radius: 16px;
     padding-inline: 16px;
   }
-
   .middle {
     flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & .file-title {
+    }
   }
 </style>
