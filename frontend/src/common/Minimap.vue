@@ -5,6 +5,7 @@
 
   const props = defineProps({
     doc: { type: Object, required: true },
+    orientation: { type: String, default: "horizontal" },
   });
 
   const html = ref('<div class="minimap loading">loading minimap...</div>');
