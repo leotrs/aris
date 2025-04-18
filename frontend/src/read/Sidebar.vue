@@ -6,14 +6,14 @@ import SidebarItem from "@/read/SidebarItem.vue";
 const emit = defineEmits(["showComponent", "hideComponent"]);
 
 const components = {
-    Sparkles: "Sparkles",
-    Search: "Search",
-    Minimap: "MapPin",
-    Message: "Message",
-    Quote: "Quote",
-    Variable: "Variable",
-    Blocks: "Blocks",
-    PanelSettings: "FileSettings",
+    Sparkles: { icon: "Sparkles", label: "chat" },
+    Search: { icon: "Search", label: "search" },
+    Minimap: { icon: "MapPin", label: "map" },
+    Message: { icon: "Message", label: "notes" },
+    Quote: { icon: "Quote", label: "citation" },
+    Variable: { icon: "Variable", label: "symbols" },
+    Blocks: { icon: "Blocks", label: "results" },
+    PanelSettings: { icon: "FileSettings", label: "settings" },
 };
 const router = useRouter();
 </script>
@@ -24,7 +24,7 @@ const router = useRouter();
             <img src="../assets/logo-32px.svg" />
         </div>
         <div class="sb-menu">
-            <SidebarItem v-for="(compIcon, compName) in components" :icon="compIcon"
+            <SidebarItem v-for="(obj, name) in components" :icon="obj.icon" :label="obj.label"
                 @on="(side) => emit('showComponent', compName, side)"
                 @off="(side) => emit('hideComponent', compName, side)" />
         </div>
