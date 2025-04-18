@@ -1,7 +1,6 @@
 <script setup>
 import { ref, reactive, provide, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
-import { onKeyUp } from "@vueuse/core";
 import axios from "axios";
 import Sidebar from "./Sidebar.vue";
 import ArisManuscript from "./ArisManuscript.vue";

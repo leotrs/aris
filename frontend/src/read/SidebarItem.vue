@@ -44,9 +44,13 @@ watch(controlState, (newVal) => {
 const buttonState = ref(false);
 watch(buttonState, (pressed) => {
     if (pressed) {
-        if (controlState.value == -1) controlState.value = 0;
-        // DONT emit anything since setting controlState.value to 0 will emit
-        // emit('on', sides[controlState.value]);
+        if (controlState.value == -1) {
+            controlState.value = 0;
+            // DONT emit here since setting controlState.value to 0 will emit
+            // emit('on', sides[controlState.value]);
+        } else {
+            emit('on', sides[controlState.value]);
+        }
     } else {
         emit('off', sides[controlState.value]);
         clearTimeout(hideTimeout);
