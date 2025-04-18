@@ -20,8 +20,8 @@ onBeforeMount(async () => {
 provide("doc", doc);
 
 const shownComponents = ref({ left: "", right: "", top: "" });
-const showComponent = (compName) => {
-    console.log("show", compName);
+const showComponent = (compName, side) => {
+    console.log("show", compName, side);
     shownComponents.value.left = compName;
 };
 const hideComponent = (compName) => {
