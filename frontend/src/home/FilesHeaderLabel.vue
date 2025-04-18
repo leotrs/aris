@@ -27,24 +27,23 @@ watch(tagsSelectedForFilter, () => emit("filter", tagsSelectedForFilter.value));
 
 <template>
   <template v-if="sortable">
-    <div
-      class="col-header"
-      :class="[name.toLowerCase().replace(/ /g, '-'), 'sortable']"
-      @click.stop="nextSortState"
-    >
+    <div class="col-header" :class="[name.toLowerCase().replace(/ /g, '-'), 'sortable']" @click.stop="nextSortState">
       <span>{{ name }}</span>
-      <span v-if="sortState == 'desc'"><IconSortDescendingLetters /></span>
-      <span v-if="sortState == 'asc'"><IconSortAscendingLetters /></span>
+      <span v-if="sortState == 'desc'">
+        <IconSortDescendingLetters />
+      </span>
+      <span v-if="sortState == 'asc'">
+        <IconSortAscendingLetters />
+      </span>
     </div>
   </template>
 
   <template v-else-if="filterable">
-    <div
-      class="col-header"
-      :class="[name.toLowerCase().replace(' ', '-'), 'filterable']"
-    >
+    <div class="col-header" :class="[name.toLowerCase().replace(' ', '-'), 'filterable']">
       <span>{{ name }}</span>
-      <span><MultiSelectTags v-model="tagsSelectedForFilter" icon="Filter" /></span>
+      <span>
+        <MultiSelectTags v-model="tagsSelectedForFilter" icon="Filter" />
+      </span>
     </div>
   </template>
 

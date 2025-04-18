@@ -22,16 +22,16 @@ const selectedTags = ref([...tags.value]);
   text-wrap: nowrap;
 }
 
-.cm-wrapper > :deep(.cm-click-target > .cm-btn) {
+.cm-wrapper> :deep(.cm-click-target > .cm-btn) {
   color: var(--light);
 }
 
-.cm-wrapper > :deep(.cm-menu) {
+.cm-wrapper> :deep(.cm-menu) {
   right: 0;
   transform: translateX(0) translateY(32px);
 }
 
-.cm-wrapper > :deep(.cm-menu > .item) {
+.cm-wrapper> :deep(.cm-menu > .item) {
   display: flex;
   align-items: center;
   justify-content: space-between;
