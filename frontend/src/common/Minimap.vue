@@ -111,14 +111,15 @@ watch(wrapperWidth, () => transformSVG(), { immediate: true });
 }
 
 .mm-wrapper.horizontal,
-.mm-wrapper.horizontal :deep(.minimap),
-.mm-wrapper.horizontal :deep(.minimap svg) {
+.mm-wrapper.horizontal :deep(.minimap) {
     height: 48px;
 }
 
-.mm-wrapper.vertical,
-.mm-wrapper.vertical :deep(.minimap),
-.mm-wrapper.vertical :deep(.minimap svg) {
-    width: 48px;
+.mm-wrapper.vertical {
+    & :deep(.minimap) {
+        width: 48px;
+        display: flex;
+        justify-content: center;
+    }
 }
 </style>
