@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, nextTick, onMounted } from "vue";
+  import { ref, onMounted, useTemplateRef } from "vue";
   import { useElementSize, useDebounceFn } from "@vueuse/core";
   import axios from "axios";
 
@@ -9,7 +9,7 @@
   });
 
   const html = ref('<div class="minimap loading">loading minimap...</div>');
-  const wrapper = ref(null);
+  const wrapper = useTemplateRef("wrapper");
   const originalHeight = ref(null);
   const { width: wrapperWidth } = useElementSize(wrapper);
 

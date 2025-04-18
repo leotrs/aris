@@ -1,8 +1,7 @@
 import enum
 from datetime import datetime
 
-from sqlalchemy import (Column, DateTime, Enum, ForeignKey, Integer, String,
-                        Table, Text, UniqueConstraint, create_engine)
+from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
