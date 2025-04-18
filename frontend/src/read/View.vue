@@ -27,10 +27,14 @@ const showComponent = (compName, side) => {
     console.log("show", compName, side);
     sideRefMap[side].push(compName);
 };
-const hideComponent = (compName) => {
+const hideComponent = (compName, side) => {
     console.log("hide", compName);
-    sideRefMap[side].pop();
+    const index = sideRefMap[side].indexOf(compName);
+    if (index !== -1) {
+        sideRefMap[side].splice(index, 1);
+    }
 };
+
 /* onKeyUp(["m", "M"], (e) => {
 *     e.preventDefault();
 * });
@@ -43,7 +47,7 @@ const hideComponent = (compName) => {
     <div class="read-view">
         <Sidebar @showComponent="showComponent" @hideComponent="hideComponent" />
 
-        <ArisManuscript :left="leftComponents.at(-1)" :right="rightComponents.at(-1)" :top="topComponents.at(-1)" />
+        <ArisManuscript :left="leftComponents" :right="rightComponents" :top="topComponents" />
 
         <div class="links">
             <Button kind="tertiary" icon="Share3" />

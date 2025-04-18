@@ -48,7 +48,7 @@ watch(buttonState, (pressed) => {
         // DONT emit anything since setting controlState.value to 0 will emit
         // emit('on', sides[controlState.value]);
     } else {
-        emit('off');
+        emit('off', sides[controlState.value]);
         clearTimeout(hideTimeout);
         controlVisibility.value = "hidden";
     }

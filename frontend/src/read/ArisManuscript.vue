@@ -20,9 +20,9 @@ import PanelSettings from "./PanelSettings.vue";
 import Minimap from "../common/Minimap.vue";
 
 const props = defineProps({
-    left: { type: String, default: "" },
-    right: { type: String, default: "" },
-    top: { type: String, default: "" },
+    left: { type: Array, default: [] },
+    right: { type: Array, default: [] },
+    top: { type: Array, default: [] },
 });
 const doc = inject("doc");
 
@@ -105,7 +105,7 @@ const backgroundColor = ref("var(--surface-page)");
         <div class="inner-wrapper">
             <div class="left-column" ref="leftColumnRef">
                 <Drawer side="left">
-                    <component :is="validDrawerComponents[left]" :doc="doc" />
+                    <component v-for="comp in left" :is="validDrawerComponents[comp]" :doc="doc" />
                 </Drawer>
             </div>
 
@@ -114,7 +114,9 @@ const backgroundColor = ref("var(--surface-page)");
             </div>
 
             <div class="right-column" ref="rightColumnRef">
-                <Drawer side="right" />
+                <Drawer side="right">
+                    <component v-for="comp in right" :is="validDrawerComponents[comp]" :doc="doc" />
+                </Drawer>
             </div>
         </div>
     </div>

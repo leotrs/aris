@@ -25,7 +25,8 @@ const router = useRouter();
         </div>
         <div class="sb-menu">
             <SidebarItem v-for="(compIcon, compName) in components" :icon="compIcon"
-                @on="(side) => emit('showComponent', compName, side)" @off="emit('hideComponent', compName)" />
+                @on="(side) => emit('showComponent', compName, side)"
+                @off="(side) => emit('hideComponent', compName, side)" />
         </div>
     </div>
 </template>
