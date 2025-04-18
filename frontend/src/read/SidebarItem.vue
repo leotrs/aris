@@ -3,6 +3,7 @@ import { ref, watch } from "vue";
 const props = defineProps({
   icon: { type: String, required: true },
   label: { type: String, default: "" },
+  preferredSide: { type: String, default: "left" }
 });
 const emit = defineEmits(["on", "off"]);
 
@@ -52,10 +53,11 @@ watch(controlState, (newVal, oldVal) => {
   }
 })
 
+const sideToIndexMap = { left: 0, top: 1, right: 2 };
 watch(buttonState, (pressed) => {
   if (pressed) {
     if (controlState.value == -1) {
-      controlState.value = 0;
+      controlState.value = sideToIndexMap[props.preferredSide];
       // DONT emit here since setting controlState.value = 0 will emit
       // emit('on', sides[controlState.value]);
     } else {
@@ -75,8 +77,7 @@ watch(buttonState, (pressed) => {
       <ButtonToggle :icon="icon" v-model="buttonState" @mouseenter="onMouseEnterButton"
         @mouseleave="onMouseLeaveButton" />
       <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']"
-        :default-ative="-1" v-model="controlState" @mouseenter="onMouseEnterControl"
-        @mouseleave="onMouseLeaveControl" />
+        v-model="controlState" @mouseenter="onMouseEnterControl" @mouseleave="onMouseLeaveControl" />
     </div>
     <div class="sb-item-label" :style="{ fontWeight: (buttonState ? 'var(--weight-semi)' : 'var(--weight-regular)') }">
       {{ label }}

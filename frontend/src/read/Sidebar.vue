@@ -6,14 +6,14 @@ import SidebarItem from "@/read/SidebarItem.vue";
 const emit = defineEmits(["showComponent", "hideComponent"]);
 
 const components = {
-  Sparkles: { icon: "Sparkles", label: "chat" },
-  SearchBar: { icon: "Search", label: "search" },
-  Minimap: { icon: "MapPin", label: "map" },
-  Message: { icon: "Message", label: "notes" },
-  Quote: { icon: "Quote", label: "citation" },
-  Variable: { icon: "Variable", label: "symbols" },
-  Results: { icon: "Bulb", label: "claims" },
-  PanelSettings: { icon: "FileSettings", label: "settings" },
+  Sparkles: { icon: "Sparkles", label: "chat", preferredSide: "left" },
+  SearchBar: { icon: "Search", label: "search", preferredSide: "top" },
+  Minimap: { icon: "MapPin", label: "map", preferredSide: "left" },
+  Message: { icon: "Message", label: "notes", preferredSide: "left" },
+  Quote: { icon: "Quote", label: "citation", preferredSide: "left" },
+  Variable: { icon: "Variable", label: "symbols", preferredSide: "left" },
+  Results: { icon: "Bulb", label: "claims", preferredSide: "left" },
+  PanelSettings: { icon: "FileSettings", label: "settings", preferredSide: "left" },
 };
 const router = useRouter();
 </script>
@@ -25,7 +25,8 @@ const router = useRouter();
     </div>
     <div class="sb-menu">
       <SidebarItem v-for="(obj, name) in components" :icon="obj.icon" :label="obj.label"
-        @on="(side) => emit('showComponent', name, side)" @off="(side) => emit('hideComponent', name, side)" />
+        :preferred-side="obj.preferredSide" @on="(side) => emit('showComponent', name, side)"
+        @off="(side) => emit('hideComponent', name, side)" />
     </div>
   </div>
 </template>
