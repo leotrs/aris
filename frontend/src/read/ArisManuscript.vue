@@ -107,7 +107,7 @@ const backgroundColor = ref("var(--surface-page)");
 
 <template>
   <div class="outer-wrapper">
-    <Topbar :show-title="!isMainTitleVisible" :drawer="validDrawerComponents[top.at(-1)]" />
+    <Topbar :show-title="!isMainTitleVisible" :component="validDrawerComponents[top.at(-1)]" />
 
     <div class="inner-wrapper">
       <Drawer class="left-column" ref="leftColumnRef">
