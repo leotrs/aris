@@ -4,7 +4,7 @@ import Drawer from "./Drawer.vue";
 
 const props = defineProps({
   showTitle: { type: Boolean, required: true },
-  drawer: { type: String, default: "" },
+  drawer: { type: Object, default: null },
 });
 const doc = inject("doc");
 
@@ -24,6 +24,7 @@ const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
     <div class="middle-column">
       <Drawer side="top">
         <FileTitle v-if="showTitle && !drawer" :doc="doc" class="text-h6" />
+        <component :is="drawer" />
       </Drawer>
     </div>
   </div>
