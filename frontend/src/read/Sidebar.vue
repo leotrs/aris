@@ -12,7 +12,7 @@ const components = {
     Message: { icon: "Message", label: "notes" },
     Quote: { icon: "Quote", label: "citation" },
     Variable: { icon: "Variable", label: "symbols" },
-    Blocks: { icon: "Blocks", label: "results" },
+    Results: { icon: "Bulb", label: "claims" },
     PanelSettings: { icon: "FileSettings", label: "settings" },
 };
 const router = useRouter();
