@@ -1,6 +1,9 @@
 <script setup>
 import { ref, watch } from "vue";
-const props = defineProps({ icon: { type: String, required: true } });
+const props = defineProps({
+    icon: { type: String, required: true },
+    label: { type: String, default: "" },
+});
 const emit = defineEmits(["on", "off"]);
 
 const controlVisibility = ref("hidden");
@@ -64,18 +67,35 @@ watch(buttonState, (pressed) => {
 
 <template>
     <div class="sb-item">
-        <ButtonToggle :icon="icon" v-model="buttonState" @mouseenter="onMouseEnterButton"
-            @mouseleave="onMouseLeaveButton" />
-        <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']"
-            :default-ative="-1" v-model="controlState" @mouseenter="onMouseEnterControl"
-            @mouseleave="onMouseLeaveControl" />
+        <div class="sb-item-btn">
+            <ButtonToggle :icon="icon" v-model="buttonState" @mouseenter="onMouseEnterButton"
+                @mouseleave="onMouseLeaveButton" />
+            <SegmentedControl :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']"
+                :default-ative="-1" v-model="controlState" @mouseenter="onMouseEnterControl"
+                @mouseleave="onMouseLeaveControl" />
+        </div>
+        <div class="sb-item-label"
+            :style="{ fontWeight: (buttonState ? 'var(--weight-semi)' : 'var(--weight-regular)') }">
+            {{ label }}
+        </div>
     </div>
 </template>
 
 <style scoped>
 .sb-item {
     display: flex;
+    flex-direction: column;
+}
+
+.sb-item-btn {
+    display: flex;
     gap: 16px;
+}
+
+.sb-item-label {
+    font-size: 13px;
+    width: 48px;
+    text-align: center;
 }
 
 .sc-wrapper {
@@ -85,5 +105,9 @@ watch(buttonState, (pressed) => {
 
 .sc-wrapper:hover {
     opacity: 1;
+}
+
+:deep(.btn-toggle) {
+    background-color: transparent;
 }
 </style>
