@@ -17,6 +17,7 @@
   },
   "include": [
     "src/**/*",
+    "src/**/*.vue",
     "env.d.ts"
   ],
   "exclude": [
