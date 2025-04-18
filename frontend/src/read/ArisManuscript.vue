@@ -185,9 +185,9 @@ const backgroundColor = ref("var(--surface-page)");
 
 .left-column,
 .right-column {
+    min-width: 100px;
     max-width: 292px;
     flex-basis: 200px;
-    min-width: 100px;
     flex-shrink: 1;
     flex-grow: 2;
     padding-inline: 16px;

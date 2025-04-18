@@ -38,6 +38,7 @@ const middleColumnWidth = computed(() => `${columnWidths.middle}px`);
 
     display: flex;
     height: var(--sidebar-width);
+    width: calc(100% - var(--sidebar-width) - var(--outer-padding));
     position: fixed;
     top: 8px;
     background-color: var(--surface-page);
@@ -59,17 +60,16 @@ const middleColumnWidth = computed(() => `${columnWidths.middle}px`);
 }
 
 .left-column {
-    display: flex;
-    align-items: center;
+    height: 100%;
+    margin-inline: 16px;
     border-top-left-radius: 16px;
-    padding-inline: 16px;
     width: v-bind("leftColumnWidth");
 }
 
 .middle-column {
     display: flex;
-    align-items: center;
     justify-content: center;
+    height: 100%;
     width: v-bind("middleColumnWidth");
 
     & .file-title {}
