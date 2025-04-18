@@ -1,11 +1,11 @@
 <script setup>
-  import { ref, onMounted, onUpdated, onUnmounted, useTemplateRef } from "vue";
-  import { useRouter } from "vue-router";
-  import SidebarItem from "@/read/SidebarItem.vue";
+import { ref, onMounted, onUpdated, onUnmounted, useTemplateRef } from "vue";
+import { useRouter } from "vue-router";
+import SidebarItem from "@/read/SidebarItem.vue";
 
-  const emit = defineEmits(["showComponent", "hideComponent"]);
+const emit = defineEmits(["showComponent", "hideComponent"]);
 
-  const components = {
+const components = {
     Sparkles: "Sparkles",
     Search: "Search",
     Minimap: "MapPin",
@@ -14,33 +14,30 @@
     Variable: "Variable",
     Blocks: "Blocks",
     PanelSettings: "FileSettings",
-  };
-  const router = useRouter();
+};
+const router = useRouter();
 </script>
 
 <template>
-  <div class="sb-wrapper" ref="sidebar-ref">
-    <div id="logo" @click="router?.push('/')">
-      <img src="../assets/logo-32px.svg" />
+    <div class="sb-wrapper" ref="sidebar-ref">
+        <div id="logo" @click="router?.push('/')">
+            <img src="../assets/logo-32px.svg" />
+        </div>
+        <div class="sb-menu">
+            <SidebarItem v-for="(compIcon, compName) in components" :icon="compIcon"
+                @on="(side) => emit('showComponent', compName, side)" @off="emit('hideComponent', compName)" />
+        </div>
     </div>
-    <div class="sb-menu">
-      <SidebarItem
-        v-for="(compIcon, compName) in components"
-        :icon="compIcon"
-        @on="emit('showComponent', compName)"
-        @off="emit('hideComponent', compName)"
-      />
-    </div>
-  </div>
 </template>
 
 <style scoped>
-  .sb-wrapper {
+.sb-wrapper {
     height: 100%;
     min-width: 64px;
     max-width: 64px;
     padding-inline: 8px;
     padding-block: 8px;
+    overflow-x: visible;
     background-color: var(--extra-light);
     position: fixed;
     z-index: 1;
@@ -54,16 +51,16 @@
 
     /* Edge */
     &::-webkit-scrollbar {
-      /* Chrome */
-      display: none;
+        /* Chrome */
+        display: none;
     }
-  }
+}
 
-  .btn-toggle {
+.btn-toggle {
     position: relative;
-  }
+}
 
-  .sc-wrapper {
+.sc-wrapper {
     display: none;
     position: fixed;
     left: calc(64px + 4px);
@@ -71,31 +68,31 @@
     z-index: 999;
 
     :deep(& > .sc-item) {
-      padding-block: 0px !important;
-      padding-inline: 0px !important;
+        padding-block: 0px !important;
+        padding-inline: 0px !important;
     }
-  }
+}
 
-  #logo {
+#logo {
     display: flex;
     padding: 9px;
     margin-top: 8px;
 
     &:hover {
-      cursor: pointer;
+        cursor: pointer;
     }
 
-    & > img {
-      margin: 0 auto;
+    &>img {
+        margin: 0 auto;
     }
-  }
+}
 
-  .sb-menu {
+.sb-menu {
     padding-block: 16px;
+    position: fixed;
 
-    & > * {
-      margin-bottom: 8px;
-      gap: 8px;
+    &>* {
+        margin-bottom: 8px;
     }
-  }
+}
 </style>
