@@ -28,7 +28,7 @@ const showComponent = (compName, side) => {
     console.log(sideRefMap[side]);
 };
 const hideComponent = (compName, side) => {
-    console.log("hide", compName);
+    console.log("hide", compName, side);
     const index = sideRefMap[side].indexOf(compName);
     if (index !== -1) {
         sideRefMap[side].splice(index, 1);

@@ -35,19 +35,19 @@ const onMouseLeaveControl = () => {
     hideTimeout = setTimeout(updateVisibility, 500);
 };
 
+const buttonState = ref(false);
 const controlState = ref(-1);
 const sides = ["left", "top", "right"];
 watch(controlState, (newVal, oldVal) => {
     clearTimeout(hideTimeout);
     controlVisibility.value = "hidden";
     buttonState.value = true;
-    if (oldVal != -1) {
+    if (oldVal !== -1) {
         emit('off', sides[oldVal]);
     };
     emit('on', sides[newVal]);
 })
 
-const buttonState = ref(false);
 watch(buttonState, (pressed) => {
     if (pressed) {
         if (controlState.value == -1) {

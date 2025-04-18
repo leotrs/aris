@@ -7,7 +7,7 @@ const emit = defineEmits(["showComponent", "hideComponent"]);
 
 const components = {
     Sparkles: { icon: "Sparkles", label: "chat" },
-    Search: { icon: "Search", label: "search" },
+    SearchBar: { icon: "Search", label: "search" },
     Minimap: { icon: "MapPin", label: "map" },
     Message: { icon: "Message", label: "notes" },
     Quote: { icon: "Quote", label: "citation" },
@@ -25,8 +25,7 @@ const router = useRouter();
         </div>
         <div class="sb-menu">
             <SidebarItem v-for="(obj, name) in components" :icon="obj.icon" :label="obj.label"
-                @on="(side) => emit('showComponent', compName, side)"
-                @off="(side) => emit('hideComponent', compName, side)" />
+                @on="(side) => emit('showComponent', name, side)" @off="(side) => emit('hideComponent', name, side)" />
         </div>
     </div>
 </template>
