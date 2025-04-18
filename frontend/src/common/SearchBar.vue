@@ -31,7 +31,7 @@ const handleEscape = () => {
   border: 2px solid var(--border-primary);
   border-radius: 16px;
   height: 48px;
-  min-width: 280;
+  min-width: 280px;
   display: flex;
   align-items: center;
   padding-block: 12px;

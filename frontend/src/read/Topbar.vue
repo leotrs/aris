@@ -15,18 +15,15 @@ const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
 
 <template>
   <div class="tb-wrapper" :class="{ 'with-border': showTitle }">
-    <div class="left-column">
-      <Drawer side="top">
-        <FileTitle v-if="showTitle && drawer" :doc="doc" class="text-h6" />
-      </Drawer>
-    </div>
+    <Drawer class="left-column top">
+      <FileTitle v-if="showTitle && drawer" :doc="doc" class="text-h6" />
+    </Drawer>
 
-    <div class="middle-column">
-      <Drawer side="top">
-        <FileTitle v-if="showTitle && !drawer" :doc="doc" class="text-h6" />
-        <component :is="drawer" />
-      </Drawer>
-    </div>
+    <Drawer class="middle-column top">
+      <FileTitle v-if="showTitle && !drawer" :doc="doc" class="text-h6" />
+      <component :is="drawer" />
+    </Drawer>
+
   </div>
 </template>
 
@@ -55,12 +52,9 @@ const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
   }
 }
 
-.drawer {
-  background-color: var(--surface-page);
-}
-
 .left-column,
 .middle-column {
+  background-color: var(--surface-page);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -75,9 +69,5 @@ const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
 
 .middle-column {
   width: v-bind("middleColumnWidth");
-
-  & .drawer {
-    margin: auto;
-  }
 }
 </style>
