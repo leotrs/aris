@@ -71,11 +71,12 @@ watch(buttonState, (pressed) => {
     gap: 16px;
 }
 
-/* .btn-toggle:hover+.sc-wrapper {
-    visibility: visible;
-} */
-
 .sc-wrapper {
+    opacity: 0.5;
     visibility: v-bind("controlVisibility");
+}
+
+.sc-wrapper:hover {
+    opacity: 1;
 }
 </style>
