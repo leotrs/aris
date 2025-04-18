@@ -1,117 +1,118 @@
 <script setup>
-  import { ref, inject } from "vue";
-  import axios from "axios";
-  import RelativeTime from "@yaireo/relative-Time";
-  import TagRow from "./FilesItemTagRow.vue";
+import { ref, inject } from "vue";
+import axios from "axios";
+import RelativeTime from "@yaireo/relative-Time";
+import TagRow from "./FilesItemTagRow.vue";
 
-  const props = defineProps({
+const props = defineProps({
     doc: { type: Object, required: true },
     mode: { type: String, default: "list" },
-  });
-  const emits = defineEmits(["click", "dblclick"]);
+});
+const emits = defineEmits(["click", "dblclick"]);
 
-  const relativeTime = new RelativeTime({ locale: "en" });
+const relativeTime = new RelativeTime({ locale: "en" });
 
-  const fileTitleActive = ref(false);
+const fileTitleActive = ref(false);
 
-  const { reloadDocs } = inject("userDocs");
-  const renameDoc = () => (fileTitleActive.value = true);
-  const copyDoc = async () => {
+const { reloadDocs } = inject("userDocs");
+const renameDoc = () => (fileTitleActive.value = true);
+const copyDoc = async () => {
     console.log("copy");
     const url = `http://localhost:8000/documents/${props.doc.id}/duplicate`;
     try {
-      await axios.post(url);
-      reloadDocs();
+        await axios.post(url);
+        reloadDocs();
     } catch (error) {
-      console.error(`Could not delete document ${props.doc.id}`);
+        console.error(`Could not delete document ${props.doc.id}`);
     }
-  };
-  const deleteDoc = async () => {
+};
+const deleteDoc = async () => {
     console.log("delete");
     const url = `http://localhost:8000/documents/${props.doc.id}`;
     try {
-      await axios.delete(url);
-      reloadDocs();
+        await axios.delete(url);
+        reloadDocs();
     } catch (error) {
-      console.error(`Could not delete document ${props.doc.id}`);
+        console.error(`Could not delete document ${props.doc.id}`);
     }
-  };
+};
 </script>
 
 <template>
-  <div class="item" :class="mode" @click="emits('click')" @dblclick="emits('dblclick')">
-    <FileTitle :doc="doc" v-model="fileTitleActive" />
+    <div class="item" :class="mode" @click="emits('click')" @dblclick="emits('dblclick')">
+        <FileTitle :doc="doc" v-model="fileTitleActive" />
 
-    <template v-if="mode == 'cards'"><ContextMenu /></template>
+        <template v-if="mode == 'cards'">
+            <ContextMenu />
+        </template>
 
-    <Minimap :doc="doc" />
+        <Minimap :doc="doc" orientation="horizontal" />
 
-    <template v-if="mode == 'cards'"><Abstract :doc="doc" /></template>
+        <template v-if="mode == 'cards'">
+            <Abstract :doc="doc" />
+        </template>
 
-    <div class="tags"><TagRow v-model="doc.tags" :docID="doc.id" /></div>
+        <div class="tags">
+            <TagRow v-model="doc.tags" :docID="doc.id" />
+        </div>
 
-    <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
+        <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
 
-    <!-- <div class="owner">
+        <!-- <div class="owner">
       <Avatar name="LT" />
          </div> -->
 
-    <div class="grid-wrapper-2">
-      <template v-if="mode == 'list'">
-        <ContextMenu>
-          <ContextMenuItem icon="Edit" @click="renameDoc" caption="Rename" />
-          <ContextMenuItem icon="Copy" @click="copyDoc" caption="Duplicate" />
-          <ContextMenuItem icon="Download" caption="Download" />
-          <ContextMenuItem
-            icon="TrashX"
-            @click="deleteDoc"
-            caption="Delete"
-            class="danger"
-          />
-        </ContextMenu>
-      </template>
+        <div class="grid-wrapper-2">
+            <template v-if="mode == 'list'">
+                <ContextMenu>
+                    <ContextMenuItem icon="Edit" @click="renameDoc" caption="Rename" />
+                    <ContextMenuItem icon="Copy" @click="copyDoc" caption="Duplicate" />
+                    <ContextMenuItem icon="Download" caption="Download" />
+                    <ContextMenuItem icon="TrashX" @click="deleteDoc" caption="Delete" class="danger" />
+                </ContextMenu>
+            </template>
+        </div>
+        <span></span>
     </div>
-    <span></span>
-  </div>
 </template>
 
 <style scoped>
-  .item {
+.item {
     color: var(--extra-dark);
     overflow-y: visible;
-  }
+}
 
-  .item.list {
-    &:hover > * {
-      background-color: var(--surface-hover);
+.item.list {
+    &:hover>* {
+        background-color: var(--surface-hover);
     }
 
-    & > * {
-      transition: background 0.15s ease-in-out;
-      border-bottom: var(--border-extrathin) solid var(--border-primary);
-      align-content: center;
-      height: 48px;
-      padding-right: 16px;
+    &>* {
+        transition: background 0.15s ease-in-out;
+        border-bottom: var(--border-extrathin) solid var(--border-primary);
+        align-content: center;
+        height: 48px;
+        padding-right: 16px;
     }
 
     & .grid-wrapper-2 {
-      padding-right: 0px;
+        padding-right: 0px;
     }
 
     & .dots {
-      padding-right: 0px;
+        padding-right: 0px;
     }
 
-    & > *:last-child {
-      padding-right: 0px;
+    &>*:last-child {
+        padding-right: 0px;
     }
 
-    &.active > * {
-      background-color: var(--secondary-50);
+    &.active>* {
+        background-color: var(--secondary-50);
     }
-  }
+}
 
-  .item.cards {
+.item.cards {
     border-radius: 16px;
     margin-bottom: 16px;
     padding: 16px;
@@ -119,58 +120,58 @@
     background-color: var(--surface-primary);
 
     &:hover {
-      background-color: var(--surface-hover);
-      border-color: var(--gray-400);
+        background-color: var(--surface-hover);
+        border-color: var(--gray-400);
     }
 
-    & > .dots,
-    & > .file-title,
-    & > .last-edited,
-    & > .owner,
-    & > .grid-wrapper-2 {
-      display: inline-block;
+    &>.dots,
+    &>.file-title,
+    &>.last-edited,
+    &>.owner,
+    &>.grid-wrapper-2 {
+        display: inline-block;
     }
 
-    & > .dots,
-    & > .owner {
-      float: right;
+    &>.dots,
+    &>.owner {
+        float: right;
     }
 
     & :deep(.manuscriptwrapper) {
-      padding-block: 16px !important;
+        padding-block: 16px !important;
     }
 
     & :deep(.manuscriptwrapper .abstract > h3) {
-      display: none;
+        display: none;
     }
 
-    & > .last-edited {
-      height: 32px;
-      align-content: center;
+    &>.last-edited {
+        height: 32px;
+        align-content: center;
     }
-  }
+}
 
-  .tags {
+.tags {
     position: relative;
     display: flex;
     align-items: center;
 
     &::-webkit-scrollbar {
-      height: 8px;
-      background-color: transparent;
+        height: 8px;
+        background-color: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
-      background-color: var(--gray-300);
-      border-radius: 4px;
+        background-color: var(--gray-300);
+        border-radius: 4px;
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background: var(--surface-hint);
+        background: var(--surface-hint);
     }
-  }
+}
 
-  :deep(.dots > .cm-menu) {
+:deep(.dots > .cm-menu) {
     transform: translateX(-16px) translateY(-8px);
-  }
+}
 </style>
