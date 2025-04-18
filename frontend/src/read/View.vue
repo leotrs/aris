@@ -25,6 +25,7 @@ const sideRefMap = { "left": leftComponents, "top": topComponents, "right": righ
 const showComponent = (compName, side) => {
     console.log("show", compName, side);
     sideRefMap[side].push(compName);
+    console.log(sideRefMap[side]);
 };
 const hideComponent = (compName, side) => {
     console.log("hide", compName);
@@ -32,14 +33,8 @@ const hideComponent = (compName, side) => {
     if (index !== -1) {
         sideRefMap[side].splice(index, 1);
     }
+    console.log(sideRefMap[side]);
 };
-
-/* onKeyUp(["m", "M"], (e) => {
-*     e.preventDefault();
-* });
-* onKeyUp(["s", "S"], (e) => {
-*     e.preventDefault();
-* }); */
 </script>
 
 <template>
