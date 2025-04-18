@@ -32,8 +32,8 @@ const transformSVG = useDebounceFn(() => {
     const svg = wrapper.value.querySelector("svg");
     if (!svg) return;
 
-    if (originalHeight.value === null) {
-        // only modify the viewBox the first time
+    // only modify the viewBox the first time
+    if (!originalHeight.value) {
         const regex = /viewBox="0 0 \d+ (\d+)"/i;
         const match = regex.exec(svg.outerHTML);
         originalHeight.value = match?.[1] ? parseFloat(match[1]) : null;
@@ -45,6 +45,8 @@ const transformSVG = useDebounceFn(() => {
 
     svg.style.width = `${wrapperWidth.value}px`;
     svg.setAttribute("viewBox", `0 0 ${wrapperWidth.value} 32`);
+    svg.style.transform = `rotate(270deg)`;
+    svg.style.transformOrigin = `14px 20px`;
 
     const rects = svg.querySelectorAll("rect");
     rects?.forEach((rect) =>
