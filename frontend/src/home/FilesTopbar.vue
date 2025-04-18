@@ -13,7 +13,7 @@ watch(controlState, (newVal) => emit(newVal == 0 ? "list" : "cards"));
 <template>
     <div class="tb-wrapper" :class="{ mobile: isMobile }">
         <div class="tb-control">
-            <SegmentedControl :icons="segmentedControlIcons" v-model="controlState" />
+            <SegmentedControl :icons="segmentedControlIcons" v-model="controlState" :default-active="0" />
         </div>
         <div class="tb-search">
             <SearchBar />
