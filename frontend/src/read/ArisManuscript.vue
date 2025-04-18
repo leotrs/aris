@@ -110,21 +110,17 @@ const backgroundColor = ref("var(--surface-page)");
     <Topbar :show-title="!isMainTitleVisible" :drawer="validDrawerComponents[top.at(-1)]" />
 
     <div class="inner-wrapper">
-      <div class="left-column" ref="leftColumnRef">
-        <Drawer side="left">
-          <component v-for="comp in left" :is="validDrawerComponents[comp]" :doc="doc" />
-        </Drawer>
-      </div>
+      <Drawer class="left-column" ref="leftColumnRef">
+        <component v-for="comp in left" :is="validDrawerComponents[comp]" :doc="doc" />
+      </Drawer>
 
-      <div class="middle-column" ref="middleColumnRef">
+      <Drawer class="middle-column" ref="middleColumnRef">
         <ManuscriptWrapper ref="manuscriptRef" :html="htmlContent" :show-footer="true" />
-      </div>
+      </Drawer>
 
-      <div class="right-column" ref="rightColumnRef">
-        <Drawer side="right">
-          <component v-for="comp in right" :is="validDrawerComponents[comp]" :doc="doc" />
-        </Drawer>
-      </div>
+      <Drawer class="right-column" ref="rightColumnRef">
+        <component v-for="comp in right" :is="validDrawerComponents[comp]" :doc="doc" />
+      </Drawer>
     </div>
   </div>
 </template>
