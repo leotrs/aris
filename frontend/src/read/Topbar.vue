@@ -68,10 +68,13 @@ const middleColumnWidth = computed(() => `${columnWidths.middle}px`);
 
 .middle-column {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     height: 100%;
     width: v-bind("middleColumnWidth");
 
-    & .file-title {}
+    & .drawer {
+        margin: auto;
+    }
 }
 </style>
