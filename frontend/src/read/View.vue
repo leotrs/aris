@@ -37,9 +37,9 @@ const hideComponent = (compName, side) => {
     <ArisManuscript :left="leftComponents" :right="rightComponents" :top="topComponents" />
 
     <div class="links">
-      <Button kind="tertiary" icon="Share" />
-      <Button kind="tertary" icon="Lifeboy" />
-      <Button tton kind="tertary">
+      <Button kind="tertiary" icon="Share3" />
+      <Button kind="tertiary" icon="Lifebuoy" />
+      <Button kind="tertiary">
         <Avatar name="TER" />
       </Button>
     </div>
