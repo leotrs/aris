@@ -6,6 +6,7 @@ export default {
     es2022: true,
   },
   extends: ["plugin:vue/vue3-recommended", "eslint:recommended", "prettier"],
+  plugins: ["vue"],
   parserOptions: {
     parser: "@babel/eslint-parser",
     ecmaVersion: 2022,
@@ -17,6 +18,7 @@ export default {
   },
   rules: {
     indent: ["error", 2],
+    "prettier/prettier": "error",
     "vue/html-indent": ["error", 2],
     "vue/script-indent": ["error", 2],
     "vue/multi-word-component-names": "off", // Optional: disable if you don't follow this convention
