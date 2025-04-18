@@ -8,7 +8,7 @@
 
 
 <style scoped>
- .separator {
-     border-bottom: var(--border-thin) solid var(--gray-200);
- }
+.separator {
+  border-bottom: var(--border-thin) solid var(--gray-200);
+}
 </style>

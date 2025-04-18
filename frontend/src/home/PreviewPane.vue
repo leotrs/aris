@@ -18,20 +18,9 @@ useClosable({ onClose: close, closeOnOutsideClick: false });
   <div id="preview" class="pane" ref="self-ref">
     <div class="pane-header">
       <div class="actions-left">
-        <Button
-          kind="primary"
-          class="btn-sm"
-          text="Read"
-          icon="Book"
-          @click="read"
-        ></Button>
+        <Button kind="primary" class="btn-sm" text="Read" icon="Book" @click="read"></Button>
         <Button kind="tertiary" class="btn-sm" text="Review" icon="FileCheck"></Button>
-        <Button
-          kind="tertiary"
-          class="btn-sm"
-          text="Revisions"
-          icon="Versions"
-        ></Button>
+        <Button kind="tertiary" class="btn-sm" text="Revisions" icon="Versions"></Button>
       </div>
       <div class="actions-right">
         <ButtonClose @close="close" />
