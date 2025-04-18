@@ -16,13 +16,9 @@ const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
 const middleCompRef = useTemplateRef("middle-comp");
 watch(() => props.component,
   async (newVal, oldVal) => {
-    // wait for middleCompRef to renderâ
+    // wait for middleCompRef to render
     await nextTick();
-    if (!middleCompRef.value) return;
-
-    if (newVal === SearchBar) {
-      middleCompRef.value.focusInput();
-    }
+    if (newVal === SearchBar) middleCompRef.value?.focusInput();
   }
 );
 </script>
