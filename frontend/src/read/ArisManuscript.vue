@@ -1,95 +1,127 @@
 <script setup>
-  import { ref, watch, inject, useTemplateRef, nextTick, onUnmounted } from "vue";
-  import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
-  import axios from "axios";
-  import Topbar from "./Topbar.vue";
-  import Drawer from "./Drawer.vue";
-  import PanelSettings from "./PanelSettings.vue";
-  import Minimap from "../common/Minimap.vue";
+import {
+    ref,
+    reactive,
+    watch,
+    inject,
+    provide,
+    useTemplateRef,
+    nextTick,
+    onMounted,
+    onUnmounted,
+} from "vue";
+import { useElementSize } from "@vueuse/core";
+import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
+import axios from "axios";
+import Topbar from "./Topbar.vue";
+import Drawer from "./Drawer.vue";
+import PanelSettings from "./PanelSettings.vue";
+import Minimap from "../common/Minimap.vue";
 
-  const props = defineProps({
+const props = defineProps({
     left: { type: String, default: "" },
     right: { type: String, default: "" },
     top: { type: String, default: "" },
-  });
-  const doc = inject("doc");
+});
+const doc = inject("doc");
 
-  const validDrawerComponents = {
+const validDrawerComponents = {
     PanelSettings,
     Minimap,
-  };
+};
 
-  const htmlContent = ref("");
-  watch(doc, async () => {
+const leftColumnRef = useTemplateRef("leftColumnRef");
+const middleColumnRef = useTemplateRef("middleColumnRef");
+const rightColumnRef = useTemplateRef("rightColumnRef");
+const columnWidths = reactive({ left: 0, middle: 0, right: 0 });
+onMounted(async () => {
+    await nextTick();
+
+    const { width: leftColumnWidth } = useElementSize(leftColumnRef);
+    const { width: middleColumnWidth } = useElementSize(middleColumnRef);
+    const { width: rightColumnWidth } = useElementSize(rightColumnRef);
+
+    // Watch and update columnWidths when width changes
+    watch(leftColumnWidth, (width) => {
+        console.log("left column width changed to", width)
+        columnWidths.left = width;
+    });
+    watch(middleColumnWidth, (width) => {
+        columnWidths.middle = width;
+    });
+    watch(rightColumnWidth, (width) => {
+        columnWidths.right = width;
+    });
+});
+provide("columnWidths", columnWidths);
+
+const htmlContent = ref("");
+watch(doc, async () => {
     if (!doc.value || !doc.value.id) return;
 
     try {
-      const response = await axios.get(
-        `http://localhost:8000/documents/${doc.value.id}/content`
-      );
-      htmlContent.value = response.data;
+        const response = await axios.get(
+            `http://localhost:8000/documents/${doc.value.id}/content`
+        );
+        htmlContent.value = response.data;
     } catch (error) {
-      console.error("Error fetching HTML:", error);
+        console.error("Error fetching HTML:", error);
     }
-  });
+});
 
-  const manuscriptRef = useTemplateRef("manuscriptRef");
+const manuscriptRef = useTemplateRef("manuscriptRef");
 
-  const isMainTitleVisible = ref(true);
-  let tearDown = () => {};
-  watch(htmlContent, async () => {
+const isMainTitleVisible = ref(true);
+let tearDown = () => {};
+watch(htmlContent, async () => {
     if (!manuscriptRef.value) return;
     await nextTick(); // waits for ManuscriptWrapper to receive htmlContent
     await nextTick(); // waits for v-html DOM to update
     tearDown();
 
     const mainTitle = manuscriptRef.value.$el.querySelector(
-      "section.level-1 > .heading.hr"
+        "section.level-1 > .heading.hr"
     );
     if (!mainTitle) return;
 
     const { isVisible, tearDown: newTearDown } =
-      createElementVisibilityObserver(mainTitle);
+        createElementVisibilityObserver(mainTitle);
     isMainTitleVisible.value = isVisible.value;
 
     const stopWatch = watch(isVisible, (newVal) => (isMainTitleVisible.value = newVal));
     tearDown = () => {
-      newTearDown();
-      stopWatch();
+        newTearDown();
+        stopWatch();
     };
-  });
-  onUnmounted(() => tearDown());
+});
+onUnmounted(() => tearDown());
 
-  const backgroundColor = ref("var(--surface-page)");
+const backgroundColor = ref("var(--surface-page)");
 </script>
 
 <template>
-  <div class="outer-wrapper">
-    <Topbar :show-title="!isMainTitleVisible" />
-    <div class="inner-wrapper">
-      <div class="left-column">
-        <Drawer side="left">
-          <component :is="validDrawerComponents[left]" :doc="doc" />
-        </Drawer>
-      </div>
+    <div class="outer-wrapper">
+        <Topbar :show-title="!isMainTitleVisible" />
+        <div class="inner-wrapper">
+            <div class="left-column" ref="leftColumnRef">
+                <Drawer side="left">
+                    <component :is="validDrawerComponents[left]" :doc="doc" />
+                </Drawer>
+            </div>
 
-      <div class="middle-column">
-        <ManuscriptWrapper
-          ref="manuscriptRef"
-          :html="htmlContent"
-          :show-footer="true"
-        />
-      </div>
+            <div class="middle-column" ref="middleColumnRef">
+                <ManuscriptWrapper ref="manuscriptRef" :html="htmlContent" :show-footer="true" />
+            </div>
 
-      <div class="right-column">
-        <Drawer side="right" />
-      </div>
+            <div class="right-column" ref="rightColumnRef">
+                <Drawer side="right" />
+            </div>
+        </div>
     </div>
-  </div>
 </template>
 
 <style scoped>
-  .outer-wrapper {
+.outer-wrapper {
     --outer-padding: 8px;
     --sidebar-width: 64px;
     --topbar-height: 64px;
@@ -100,9 +132,9 @@
     left: 64px;
     padding: 0 var(--outer-padding) var(--outer-padding) 0;
     border-radius: 16px;
-  }
+}
 
-  .inner-wrapper {
+.inner-wrapper {
     display: flex;
     width: 100%;
     height: calc(100% - var(--topbar-height) - var(--outer-padding));
@@ -122,23 +154,23 @@
     --scrollbar-height: 24px;
 
     &::-webkit-scrollbar {
-      width: var(--scrollbar-width);
-      background: transparent;
+        width: var(--scrollbar-width);
+        background: transparent;
     }
 
     &::-webkit-scrollbar-thumb {
-      background: var(--gray-200);
-      border-radius: 8px;
-      height: var(--scrollbar-height);
-      width: var(--scrollbar-width);
+        background: var(--gray-200);
+        border-radius: 8px;
+        height: var(--scrollbar-height);
+        width: var(--scrollbar-width);
     }
 
     &::-webkit-scrollbar-thumb:hover {
-      background: var(--surface-hint);
+        background: var(--surface-hint);
     }
-  }
+}
 
-  .middle-column {
+.middle-column {
     flex-basis: 720px;
     flex-shrink: 1;
     flex-grow: 1;
@@ -149,10 +181,10 @@
     height: fit-content;
     background-color: v-bind("backgroundColor");
     margin-top: 8px;
-  }
+}
 
-  .left-column,
-  .right-column {
+.left-column,
+.right-column {
     max-width: 292px;
     flex-basis: 200px;
     min-width: 100px;
@@ -162,28 +194,13 @@
     padding-block: 16px;
     background-color: v-bind("backgroundColor");
     height: 100%;
-  }
+}
 
-  .left-column {
-  }
-
-  .right-column {
-  }
-
-  .middle-column {
-    min-width: 576px;
-    max-width: 720px;
-    z-index: 1;
-    overflow-x: visible;
-    height: fit-content;
-    background-color: v-bind("backgroundColor");
-  }
-
-  :deep(.float-minimap-wrapper) {
+:deep(.float-minimap-wrapper) {
     display: none !important;
-  }
+}
 
-  :deep(.mm-wrapper .minimap) {
+:deep(.mm-wrapper .minimap) {
     position: fixed;
-  }
+}
 </style>
