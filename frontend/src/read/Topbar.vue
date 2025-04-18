@@ -1,27 +1,41 @@
 <script setup>
-import { inject, computed, watch } from "vue";
+import { inject, computed, watch, useTemplateRef, nextTick } from "vue";
 import Drawer from "./Drawer.vue";
+import SearchBar from "../common/SearchBar.vue";
 
 const props = defineProps({
   showTitle: { type: Boolean, required: true },
-  drawer: { type: Object, default: null },
+  component: { type: Object, default: null },
 });
 const doc = inject("doc");
 
 const columnSizes = inject("columnSizes");
 const leftColumnWidth = computed(() => `${columnSizes.left.width}px`);
 const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
+
+const middleCompRef = useTemplateRef("middle-comp");
+watch(() => props.component,
+  async (newVal, oldVal) => {
+    // wait for middleCompRef to renderâ
+    await nextTick();
+    if (!middleCompRef.value) return;
+
+    if (newVal === SearchBar) {
+      middleCompRef.value.focusInput();
+    }
+  }
+);
 </script>
 
 <template>
   <div class="tb-wrapper" :class="{ 'with-border': showTitle }">
     <Drawer class="left-column top">
-      <FileTitle v-if="showTitle && drawer" :doc="doc" class="text-h6" />
+      <FileTitle v-if="showTitle && component" :doc="doc" class="text-h6" />
     </Drawer>
 
     <Drawer class="middle-column top">
-      <FileTitle v-if="showTitle && !drawer" :doc="doc" class="text-h6" />
-      <component :is="drawer" />
+      <FileTitle v-if="showTitle && !component" :doc="doc" class="text-h6" />
+      <component :is="component" ref="middle-comp" />
     </Drawer>
 
   </div>

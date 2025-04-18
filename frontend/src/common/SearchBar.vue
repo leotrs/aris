@@ -14,6 +14,8 @@ const handleEscape = () => {
     inputRef.value?.blur();
   }
 };
+
+defineExpose({ focusInput: () => inputRef.value?.focus() });
 </script>
 
 <template>
@@ -47,7 +49,7 @@ const handleEscape = () => {
   }
 
   &>input {
-    background: transparent;
+    background-color: transparent;
     border: none;
     padding: 0;
     margin: 0;
