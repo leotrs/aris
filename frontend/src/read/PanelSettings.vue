@@ -137,14 +137,14 @@
 
 <style scoped>
   .overlay {
-    min-width: 200px;
+    min-width: 216px;
     display: flex;
     flex-direction: column;
     background-color: var(--surface-primary);
     border: var(--border-thin) solid var(--border-primary);
     border-radius: 16px;
     padding: 16px;
-    gap: 24px;
+    gap: 16px;
     position: fixed;
     z-index: 100;
   }
@@ -200,6 +200,15 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    & .label {
+      min-width: 64px;
+    }
+
+    & .control {
+      flex-grow: 1;
+    }
+
   }
 
   .column {
