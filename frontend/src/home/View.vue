@@ -49,27 +49,25 @@ const onSeparatorDragged = (pos, _) => {
 };
 const style = ref({});
 const selectedForPreview = ref(null);
-const separatorPointerEvents = computed(() =>
-  selectedForPreview.value ? "all" : "none"
-);
+const separatorPointerEvents = computed(() => (selectedForPreview.value ? "all" : "none"));
 const setSelectedForPreview = (doc) => {
   selectedForPreview.value = doc;
   if (!doc) return;
   if (!container.value) return;
-  const { style } = useDraggable(separator, {
+  const draggableStyle = useDraggable(separator, {
     initialValue: { x: 0, y: container.value.getBoundingClientRect().height / 2 - 2 },
     preventDefault: true,
     axis: "y",
     onMove: onSeparatorDragged,
     containerElement: container,
   });
-  return style;
+  style.value = draggableStyle.style.value;
 };
 </script>
 
 <template>
-  <div :class="['view-wrapper', isMobile ? 'mobile' : '']" ref="selfRef">
-    <Sidebar @showFileUploadModal="showModal = true" />
+  <div ref="selfRef" :class="['view-wrapper', isMobile ? 'mobile' : '']">
+    <Sidebar @show-file-upload-modal="showModal = true" />
 
     <div class="views-row">
       <Button kind="tertiary" icon="Settings" />
@@ -80,18 +78,18 @@ const setSelectedForPreview = (doc) => {
 
     <div class="panes">
       <div id="documents" class="pane">
-        <FilesPane @set-selected="(doc) => (style = setSelectedForPreview(doc))" />
+        <FilesPane @set-selected="setSelectedForPreview" />
       </div>
 
-      <div class="separator-container" ref="separator-container-ref">
-        <div class="separator" ref="separator-ref" :style="style"></div>
+      <div ref="separator-container-ref" class="separator-container">
+        <div ref="separator-ref" class="separator" :style="style" />
       </div>
 
       <PreviewPane v-if="!isMobile && selectedForPreview" ref="preview-ref" :doc="selectedForPreview"
-        @set-selected="(doc) => (style = setSelectedForPreview(doc))" />
+        @set-selected="setSelectedForPreview" />
     </div>
 
-    <div class="modal" v-if="showModal">
+    <div v-if="showModal" class="modal">
       <UploadFile @close="showModal = false" />
     </div>
   </div>

@@ -1,6 +1,5 @@
 <script setup>
 import { ref, reactive, provide, onBeforeMount } from "vue";
-
 import { useRoute } from "vue-router";
 import axios from "axios";
 import Sidebar from "./Sidebar.vue";
@@ -18,36 +17,29 @@ onBeforeMount(async () => {
   }
 });
 provide("doc", doc);
-
 const leftComponents = reactive([]);
 const topComponents = reactive([]);
 const rightComponents = reactive([]);
-const sideRefMap = { "left": leftComponents, "top": topComponents, "right": rightComponents };
+const sideRefMap = { left: leftComponents, top: topComponents, right: rightComponents };
 const showComponent = (compName, side) => {
-  console.log("show", compName, side);
   sideRefMap[side].push(compName);
-  console.log(sideRefMap[side]);
 };
 const hideComponent = (compName, side) => {
-  console.log("hide", compName, side);
   const index = sideRefMap[side].indexOf(compName);
-  if (index !== -1) {
-    sideRefMap[side].splice(index, 1);
-  }
-  console.log(sideRefMap[side]);
+  if (index !== -1) sideRefMap[side].splice(index, 1);
 };
 </script>
 
 <template>
   <div class="read-view">
-    <Sidebar @showComponent="showComponent" @hideComponent="hideComponent" />
+    <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
 
     <ArisManuscript :left="leftComponents" :right="rightComponents" :top="topComponents" />
 
     <div class="links">
-      <Button kind="tertiary" icon="Share3" />
-      <Button kind="tertiary" icon="Lifebuoy" />
-      <Button kind="tertiary">
+      <Button kind="tertiary" icon="Share" />
+      <Button kind="tertary" icon="Lifeboy" />
+      <Button tton kind="tertary">
         <Avatar name="TER" />
       </Button>
     </div>
