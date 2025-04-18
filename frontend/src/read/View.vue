@@ -1,5 +1,5 @@
 <script setup>
-import { ref, provide, onBeforeMount } from "vue";
+import { ref, reactive, provide, onBeforeMount } from "vue";
 import { useRoute } from "vue-router";
 import { onKeyUp } from "@vueuse/core";
 import axios from "axios";
@@ -19,30 +19,31 @@ onBeforeMount(async () => {
 });
 provide("doc", doc);
 
-const shownComponents = ref({ left: "", right: "", top: "" });
+const leftComponents = reactive([]);
+const topComponents = reactive([]);
+const rightComponents = reactive([]);
+const sideRefMap = { "left": leftComponents, "top": topComponents, "right": rightComponents };
 const showComponent = (compName, side) => {
     console.log("show", compName, side);
-    shownComponents.value.left = compName;
+    sideRefMap[side].push(compName);
 };
 const hideComponent = (compName) => {
     console.log("hide", compName);
-    shownComponents.value.left = null;
+    sideRefMap[side].pop();
 };
-onKeyUp(["m", "M"], (e) => {
-    e.preventDefault();
-    shownComponents.value.left = "Minimap";
-});
-onKeyUp(["s", "S"], (e) => {
-    e.preventDefault();
-    shownComponents.value.left = "FileSettings";
-});
+/* onKeyUp(["m", "M"], (e) => {
+*     e.preventDefault();
+* });
+* onKeyUp(["s", "S"], (e) => {
+*     e.preventDefault();
+* }); */
 </script>
 
 <template>
     <div class="read-view">
         <Sidebar @showComponent="showComponent" @hideComponent="hideComponent" />
 
-        <ArisManuscript :left="shownComponents.left" :right="shownComponents.right" :top="shownComponents.top" />
+        <ArisManuscript :left="leftComponents.at(-1)" :right="rightComponents.at(-1)" :top="topComponents.at(-1)" />
 
         <div class="links">
             <Button kind="tertiary" icon="Share3" />
