@@ -41,18 +41,22 @@ const sides = ["left", "top", "right"];
 watch(controlState, (newVal, oldVal) => {
     clearTimeout(hideTimeout);
     controlVisibility.value = "hidden";
-    buttonState.value = true;
-    if (oldVal !== -1) {
-        emit('off', sides[oldVal]);
-    };
-    emit('on', sides[newVal]);
+
+    if (!buttonState.value) {
+        buttonState.value = true;
+        // DONT emit here since setting buttonState.value = true will emit
+        // emit('on', sides[newVal]);
+    } else {
+        if (oldVal !== -1) emit('off', sides[oldVal]);
+        emit('on', sides[newVal]);
+    }
 })
 
 watch(buttonState, (pressed) => {
     if (pressed) {
         if (controlState.value == -1) {
             controlState.value = 0;
-            // DONT emit here since setting controlState.value to 0 will emit
+            // DONT emit here since setting controlState.value = 0 will emit
             // emit('on', sides[controlState.value]);
         } else {
             emit('on', sides[controlState.value]);
