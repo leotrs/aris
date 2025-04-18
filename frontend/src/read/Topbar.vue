@@ -68,6 +68,8 @@ const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
 }
 
 .middle-column {
+  padding-inline: 48px;
+  text-align: center;
   width: v-bind("middleColumnWidth");
 }
 </style>
