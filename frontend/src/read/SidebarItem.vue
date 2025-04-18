@@ -6,13 +6,13 @@ const props = defineProps({
 });
 const emit = defineEmits(["on", "off"]);
 
-const controlVisibility = ref("hidden");
+const controlDisplay = ref("none");
 const isHoveringButton = ref(false);
 const isHoveringControl = ref(false);
 const updateVisibility = () => {
-  controlVisibility.value = (isHoveringButton.value || isHoveringControl.value)
-    ? "visible"
-    : "hidden";
+  controlDisplay.value = (isHoveringButton.value || isHoveringControl.value)
+    ? "flex"
+    : "none";
 };
 
 let hideTimeout = null;
@@ -40,7 +40,7 @@ const controlState = ref(-1);
 const sides = ["left", "top", "right"];
 watch(controlState, (newVal, oldVal) => {
   clearTimeout(hideTimeout);
-  controlVisibility.value = "hidden";
+  controlDisplay.value = "none";
 
   if (!buttonState.value) {
     buttonState.value = true;
@@ -64,7 +64,7 @@ watch(buttonState, (pressed) => {
   } else {
     emit('off', sides[controlState.value]);
     clearTimeout(hideTimeout);
-    controlVisibility.value = "hidden";
+    controlDisplay.value = "none";
   }
 })
 </script>
@@ -103,7 +103,7 @@ watch(buttonState, (pressed) => {
 
 .sc-wrapper {
   opacity: 0.5;
-  visibility: v-bind("controlVisibility");
+  display: v-bind("controlDisplay");
 }
 
 .sc-wrapper:hover {
