@@ -1,9 +1,7 @@
 <script setup>
   import { ref, onMounted, inject } from "vue";
 
-  const props = defineProps({
-    doc: { type: String, required: true },
-  });
+  const props = defineProps({});
 </script>
 
 <template>
