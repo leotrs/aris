@@ -2,6 +2,7 @@
 import {
     ref,
     reactive,
+    computed,
     watch,
     inject,
     provide,
@@ -33,27 +34,26 @@ const validDrawerComponents = {
 const leftColumnRef = useTemplateRef("leftColumnRef");
 const middleColumnRef = useTemplateRef("middleColumnRef");
 const rightColumnRef = useTemplateRef("rightColumnRef");
-const columnWidths = reactive({ left: 0, middle: 0, right: 0 });
+const columnSizes = reactive({
+    left: { width: 0, height: 0 },
+    middle: { width: 0, height: 0 },
+    right: { width: 0, height: 0 },
+});
 onMounted(async () => {
     await nextTick();
-
-    const { width: leftColumnWidth } = useElementSize(leftColumnRef);
-    const { width: middleColumnWidth } = useElementSize(middleColumnRef);
-    const { width: rightColumnWidth } = useElementSize(rightColumnRef);
-
-    // Watch and update columnWidths when width changes
-    watch(leftColumnWidth, (width) => {
-        console.log("left column width changed to", width)
-        columnWidths.left = width;
-    });
-    watch(middleColumnWidth, (width) => {
-        columnWidths.middle = width;
-    });
-    watch(rightColumnWidth, (width) => {
-        columnWidths.right = width;
-    });
+    const { width: leftColumnWidth, height: leftColumnHeight } = useElementSize(leftColumnRef);
+    const { width: middleColumnWidth, height: middleColumnHeight } = useElementSize(middleColumnRef);
+    const { width: rightColumnWidth, height: rightColumnHeight } = useElementSize(rightColumnRef);
+    watch(leftColumnWidth, (w) => (columnSizes.left.width = w));
+    watch(middleColumnWidth, (w) => (columnSizes.middle.width = w));
+    watch(rightColumnWidth, (w) => (columnSizes.right.width = w));
+    watch(leftColumnHeight, (h) => (columnSizes.left.height = h));
+    watch(middleColumnHeight, (h) => (columnSizes.middle.height = h));
+    watch(rightColumnHeight, (h) => (columnSizes.right.height = h));
 });
-provide("columnWidths", columnWidths);
+provide("columnSizes", columnSizes);
+
+const minimapHeight = computed(() => `${columnSizes.left.height}px`);
 
 const htmlContent = ref("");
 watch(doc, async () => {
@@ -202,5 +202,9 @@ const backgroundColor = ref("var(--surface-page)");
 
 :deep(.mm-wrapper .minimap) {
     position: fixed;
+}
+
+:deep(.mm-wrapper .minimap svg) {
+    height: v-bind("minimapHeight");
 }
 </style>
