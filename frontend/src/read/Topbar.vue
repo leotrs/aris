@@ -18,7 +18,7 @@ const middleColumnWidth = computed(() => `${columnWidths.middle}px`);
     <div class="tb-wrapper" :class="{ 'with-border': showTitle }">
         <div class="left-column">
             <Drawer side="top">
-                <FileTitle v-if="showTitle && drawer" :doc="doc" />
+                <FileTitle v-if="showTitle && drawer" :doc="doc" class="text-h6" />
             </Drawer>
         </div>
 
@@ -59,18 +59,21 @@ const middleColumnWidth = computed(() => `${columnWidths.middle}px`);
     background-color: var(--surface-page);
 }
 
-.left-column {
+.left-column,
+.middle-column {
     height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.left-column {
     margin-inline: 16px;
     border-top-left-radius: 16px;
     width: v-bind("leftColumnWidth");
 }
 
 .middle-column {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    height: 100%;
     width: v-bind("middleColumnWidth");
 
     & .drawer {
