@@ -18,6 +18,7 @@ import Topbar from "./Topbar.vue";
 import Drawer from "./Drawer.vue";
 import PanelSettings from "./PanelSettings.vue";
 import Minimap from "../common/Minimap.vue";
+import SearchBar from "../common/SearchBar.vue";
 
 const props = defineProps({
     left: { type: Array, default: [] },
@@ -27,8 +28,13 @@ const props = defineProps({
 const doc = inject("doc");
 
 const validDrawerComponents = {
-    PanelSettings,
+    /* PanelChat, */
+    SearchBar,
     Minimap,
+    /* PanelComments,
+ * PanelInfo,
+ * PanelSymbols, */
+    PanelSettings,
 };
 
 const leftColumnRef = useTemplateRef("leftColumnRef");

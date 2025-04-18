@@ -6,7 +6,7 @@ export default {
     es2022: true,
   },
   extends: ["plugin:vue/vue3-recommended", "eslint:recommended", "prettier"],
-  plugins: ["vue"],
+  plugins: ["vue", "prettier"],
   parserOptions: {
     parser: "@babel/eslint-parser",
     ecmaVersion: 2022,
