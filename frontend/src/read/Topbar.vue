@@ -8,10 +8,9 @@ const props = defineProps({
 });
 const doc = inject("doc");
 
-const columnWidths = inject("columnWidths");
-watch(columnWidths, () => console.log(columnWidths));
-const leftColumnWidth = computed(() => `${columnWidths.left}px`);
-const middleColumnWidth = computed(() => `${columnWidths.middle}px`);
+const columnSizes = inject("columnSizes");
+const leftColumnWidth = computed(() => `${columnSizes.left.width}px`);
+const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
 </script>
 
 <template>
