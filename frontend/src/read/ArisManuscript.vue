@@ -64,13 +64,15 @@
 
   const fileSettings = reactive({
     background: "var(--surface-page)",
-    fontSize: "med",
-    density: "med",
+    fontSize: "16px",
+    lineHeight: "1.5",
     style: "sans",
-    margin: "narrow",
+    margin: "M",
     columns: 1,
   });
   provide("fileSettings", fileSettings);
+
+  watch(fileSettings, () => console.log(fileSettings));
 
   const minimapHeight = computed(() => `${columnSizes.left.height}px`);
 
@@ -218,5 +220,10 @@
 
   :deep(.mm-wrapper .minimap svg) {
     height: v-bind("minimapHeight");
+  }
+
+  :deep(.manuscriptwrapper) {
+    font-size: v-bind(fileSettings.fontSize) !important;
+    line-height: v-bind(fileSettings.lineHeight) !important;
   }
 </style>
