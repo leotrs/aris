@@ -16,9 +16,10 @@
   import axios from "axios";
   import Topbar from "./Topbar.vue";
   import Drawer from "./Drawer.vue";
-  import PanelSettings from "./PanelSettings.vue";
-  import Minimap from "../common/Minimap.vue";
   import PanelSearch from "./PanelSearch.vue";
+  import Minimap from "../common/Minimap.vue";
+  import PanelCitation from "./PanelCitation.vue";
+  import PanelSettings from "./PanelSettings.vue";
 
   const props = defineProps({
     left: { type: Array, default: [] },
@@ -31,9 +32,10 @@
     /* PanelChat, */
     PanelSearch,
     Minimap,
-    /* PanelComments,
-     * PanelInfo,
-     * PanelSymbols, */
+    /* Comments, */
+    PanelCitation,
+    /* PanelSymbols, */
+    /* PanelClaims, */
     PanelSettings,
   };
 
