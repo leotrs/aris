@@ -97,13 +97,13 @@
           <span class="text-label">Font</span>
         </div>
         <div class="s-content">
-          <div class="row">
+          <div class="row size">
             <span class="label">Size</span>
             <span class="control">
               <Slider
                 :number-stops="3"
-                icon-left="LetterA"
-                icon-right="LetterA"
+                label-left="Aa"
+                label-right="Aa"
                 :default-active="1"
                 @change="onSizeChange"
               />
@@ -239,6 +239,27 @@
     & .control {
       flex-grow: 1;
     }
+  }
+
+  .row.size :deep(.s-wrapper) {
+    align-items: baseline !important;
+  }
+
+  .row.size :deep(.s-label:first-child) {
+    font-size: 14px !important;
+    width: 20px;
+    height: 20px;
+    margin: 6px;
+    margin-bottom: 2px;
+    padding-inline: 2.5px;
+  }
+
+  .row.size :deep(.s-label:last-child) {
+    font-size: 18px !important;
+    width: 20px;
+    height: 20px;
+    padding-inline: 0.5px;
+    margin: 6px;
   }
 
   .row.style :deep(.sc-item:first-child) {
