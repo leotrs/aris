@@ -90,26 +90,28 @@
     &:last-child {
       border-top-right-radius: calc(16px - var(--border-thin));
     }
+  }
 
-    &:not(.active):hover {
-      cursor: pointer;
-      border-bottom-color: var(--extra-dark);
-      color: var(--extra-dark);
-      & .tab-label {
-        display: block;
-      }
-      & > svg {
-        color: var(--extra-dark);
-      }
+  .tab.active {
+    background-color: var(--information-100);
+    border-bottom-color: var(--border-action);
+    color: var(--text-action);
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
+
+    & > svg {
+      color: var(--icon-action);
     }
+  }
 
-    &.active {
-      background-color: var(--information-100);
-      border-bottom-color: var(--border-action);
-      color: var(--text-action);
-      & > svg {
-        color: var(--icon-action);
-      }
+  .tab:not(.active):hover {
+    cursor: pointer;
+    border-bottom-color: var(--extra-dark);
+    color: var(--extra-dark);
+    & .tab-label {
+      display: block;
+    }
+    & > svg {
+      color: var(--extra-dark);
     }
   }
 
