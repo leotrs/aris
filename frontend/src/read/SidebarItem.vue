@@ -86,7 +86,7 @@
       />
     </div>
     <div
-      class="sb-item-label text-caption"
+      class="sb-item-label text-default"
       :style="{ fontWeight: buttonState ? 'var(--weight-semi)' : 'var(--weight-regular)' }"
     >
       {{ label }}
@@ -108,6 +108,7 @@
   .sb-item-label {
     width: 48px;
     text-align: center;
+    font-size: 14px;
   }
 
   .sc-wrapper {
