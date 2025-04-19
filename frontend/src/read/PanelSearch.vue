@@ -14,7 +14,11 @@ onMounted(() => searchBar.value?.focusInput())
 </script>
 
 <template>
-  <SearchBar ref="searchBar" @submit="onSubmit" />
+  <SearchBar ref="searchBar" @submit="onSubmit" :buttons="true" />
 </template>
 
-<style scoped></style>
+<style>
+.search-result {
+  background-color: var(--secondary-200);
+}
+</style>

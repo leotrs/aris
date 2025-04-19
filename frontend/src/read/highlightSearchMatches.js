@@ -10,21 +10,12 @@
  * @returns {number} - Count of matches found
  */
 export default function highlightSearchMatches(rootEl, searchTerm, options = {}) {
-  if (!rootEl || !searchTerm || searchTerm.trim() === "") return 0;
+  if (!rootEl) return 0;
   const {
     caseSensitive = false,
-    highlightClass = "highlight",
-    highlightColor = "yellow",
+    highlightClass = "search-result",
     wholeWord = false
   } = options;
-
-  // Create style for highlights if it doesn't exist
-  if (!document.getElementById("highlight-style")) {
-    const style = document.createElement("style");
-    style.id = "highlight-style";
-    style.textContent = `.${highlightClass} { background-color: ${highlightColor}; }`;
-    document.head.appendChild(style);
-  }
 
   // Remove previous highlights
   const highlightMatches = () => {
@@ -42,6 +33,7 @@ export default function highlightSearchMatches(rootEl, searchTerm, options = {})
     rootEl.normalize();
   };
   highlightMatches();
+  if (!searchTerm || searchTerm.trim() === "") return 0;
 
   // Setup TreeWalker to find all text nodes
   const treeWalker = document.createTreeWalker(
@@ -68,7 +60,6 @@ export default function highlightSearchMatches(rootEl, searchTerm, options = {})
   let node;
   while ((node = treeWalker.nextNode())) {
     const length = node.textContent.length;
-    console.log(currentPosition, length);
     nodeInfo.push({
       node,
       start: currentPosition,
@@ -76,8 +67,6 @@ export default function highlightSearchMatches(rootEl, searchTerm, options = {})
     });
     currentPosition += length;
   }
-  console.log(rootEl);
-  console.log(nodeInfo);
 
   // If no text nodes found, exit
   if (nodeInfo.length === 0) {

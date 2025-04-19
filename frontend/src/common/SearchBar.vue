@@ -2,6 +2,7 @@
 import { ref, inject, useTemplateRef } from "vue";
 import { IconSearch } from "@tabler/icons-vue";
 
+const props = defineProps({ buttons: { type: Boolean, default: false } });
 const emit = defineEmits(["submit"]);
 const searchText = ref("");
 const inputRef = useTemplateRef("inputRef");
@@ -23,6 +24,10 @@ defineExpose({ focusInput: () => inputRef.value?.focus() });
     <IconSearch />
     <input type="text" placeholder="Search..." ref="inputRef" v-model="searchText"
       @keyup.enter="emit('submit', searchText)" @keyup.escape="handleEscape" @click.stop @dblclick.stop />
+    <div class="buttons" v-if="buttons">
+      <Button kind="tertiary" icon="ChevronDown" />
+      <Button kind="tertiary" icon="ChevronUp" />
+    </div>
   </div>
 </template>
 
@@ -45,7 +50,7 @@ defineExpose({ focusInput: () => inputRef.value?.focus() });
   }
 
   &>.tabler-icon {
-    margin: unset;
+    flex-shrink: 0;
   }
 
   &>input {
@@ -61,6 +66,16 @@ defineExpose({ focusInput: () => inputRef.value?.focus() });
 
   &:hover {
     cursor: text;
+  }
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+
+  :deep(&>button) {
+    padding: 0 !important;
+    height: fit-content;
   }
 }
 </style>
