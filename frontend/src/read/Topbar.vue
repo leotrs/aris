@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, computed, watch, useTemplateRef, nextTick } from "vue";
+  import { inject, computed } from "vue";
   import Drawer from "./Drawer.vue";
 
   const props = defineProps({
@@ -11,6 +11,8 @@
   const columnSizes = inject("columnSizes");
   const leftColumnWidth = computed(() => `${columnSizes.left.width}px`);
   const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
+
+  const fileSettings = inject("fileSettings");
 </script>
 
 <template>
@@ -37,11 +39,11 @@
     width: calc(100% - var(--sidebar-width) - var(--outer-padding));
     position: fixed;
     top: 8px;
-    background-color: var(--surface-page);
+    background-color: v-bind("fileSettings.background");
     z-index: 2;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    border-bottom: var(--border-extrathin) solid var(--surface-page);
+    border-bottom: var(--border-extrathin) solid transparent;
     padding-right: var(--links-width);
 
     &.with-border {
@@ -53,7 +55,7 @@
 
   .left-column,
   .middle-column {
-    background-color: var(--surface-page);
+    background-color: v-bind("fileSettings.background");
     height: 100%;
     display: flex;
     flex-direction: column;
