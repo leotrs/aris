@@ -186,6 +186,7 @@
   --text-disabled: var(--gray-400);
   --text-keyword: var(--primary-700);
   --text-hilite-bg: var(--secondary-200);
+  --text-action: var(--primary-600);
   --text-action-hover: var(--primary-600);
   --text-error: var(--error-500);
 

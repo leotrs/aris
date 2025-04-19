@@ -86,7 +86,7 @@
       />
     </div>
     <div
-      class="sb-item-label"
+      class="sb-item-label text-caption"
       :style="{ fontWeight: buttonState ? 'var(--weight-semi)' : 'var(--weight-regular)' }"
     >
       {{ label }}
@@ -106,7 +106,6 @@
   }
 
   .sb-item-label {
-    font-size: 13px;
     width: 48px;
     text-align: center;
   }
