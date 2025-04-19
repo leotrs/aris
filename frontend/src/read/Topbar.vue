@@ -1,5 +1,5 @@
 <script setup>
-import { inject, computed, watch, useTemplateRef, nextTick } from "vue";
+import { ref, inject, computed, watch, useTemplateRef, nextTick } from "vue";
 import Drawer from "./Drawer.vue";
 import SearchBar from "../common/SearchBar.vue";
 
@@ -21,6 +21,15 @@ watch(() => props.component,
     if (newVal === SearchBar) middleCompRef.value?.focusInput();
   }
 );
+
+const htmlContent = inject("htmlContent");
+const onSearchSubmit = (searchString) => {
+  if (!middleCompRef.value || !htmlContent.value) return;
+  const parser = new DOMParser();
+  const tmp = parser.parseFromString(htmlContent.value, "text/html");
+  const content = tmp.body.textContent || "";
+  console.log(content.toLowerCase().includes(searchString.toLowerCase()));
+}
 </script>
 
 <template>
@@ -31,7 +40,7 @@ watch(() => props.component,
 
     <Drawer class="middle-column top">
       <FileTitle v-if="showTitle && !component" :doc="doc" class="text-h6" />
-      <component :is="component" ref="middle-comp" />
+      <component :is="component" ref="middle-comp" @submit="onSearchSubmit" />
     </Drawer>
 
   </div>

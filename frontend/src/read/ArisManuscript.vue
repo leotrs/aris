@@ -74,6 +74,7 @@ watch(doc, async () => {
     console.error("Error fetching HTML:", error);
   }
 });
+provide("htmlContent", htmlContent);
 
 const manuscriptRef = useTemplateRef("manuscriptRef");
 
