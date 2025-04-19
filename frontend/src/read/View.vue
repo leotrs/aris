@@ -62,7 +62,7 @@
     display: flex;
     z-index: 3;
     padding: 8px;
-    background-color: var(--surface-page);
+    background-color: transparent;
     border-top-right-radius: 16px;
   }
 </style>

@@ -1,10 +1,9 @@
 <script setup>
-  import { ref, onMounted } from "vue";
+  import { ref, inject, onMounted } from "vue";
   import { IconFileSettings } from "@tabler/icons-vue";
   import useClosable from "@/composables/useClosable.js";
 
   const props = defineProps({ doc: { type: Object, default: {} } });
-  const emit = defineEmits(["set-background", "close"]);
   const colors = {
     white: "var(--surface-page)",
     gray: "var(--gray-75)",
@@ -20,6 +19,11 @@
     if (!selfRef.value) return;
     useClosable(close, selfRef, true, false);
   });
+
+  const fileSettings = inject("fileSettings");
+  const onChangeBackground = (colorName) => {
+    fileSettings.background = colors[colorName];
+  };
 </script>
 
 <template>
@@ -54,7 +58,7 @@
                 class="circle"
                 :class="name"
                 :style="{ 'background-color': color }"
-                @click="$emit('set-background', color)"
+                @click="onChangeBackground(name)"
               >
               </span>
             </span>

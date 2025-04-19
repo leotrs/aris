@@ -22,9 +22,9 @@
   import PanelSettings from "./PanelSettings.vue";
 
   const props = defineProps({
-    left: { type: Array, default: [] },
-    right: { type: Array, default: [] },
-    top: { type: Array, default: [] },
+    left: { type: Array, default: () => [] },
+    right: { type: Array, default: () => [] },
+    top: { type: Array, default: () => [] },
   });
   const doc = inject("doc");
 
@@ -61,6 +61,16 @@
     watch(rightColumnHeight, (h) => (columnSizes.right.height = h));
   });
   provide("columnSizes", columnSizes);
+
+  const fileSettings = reactive({
+    background: "var(--surface-page)",
+    fontSize: "med",
+    density: "med",
+    style: "sans",
+    margin: "narrow",
+    columns: 1,
+  });
+  provide("fileSettings", fileSettings);
 
   const minimapHeight = computed(() => `${columnSizes.left.height}px`);
 
@@ -100,8 +110,6 @@
     };
   });
   onUnmounted(() => tearDown());
-
-  const backgroundColor = ref("var(--surface-page)");
 </script>
 
 <template>
@@ -144,7 +152,7 @@
     height: calc(100% - var(--topbar-height) - var(--outer-padding));
     position: relative;
     top: calc(var(--topbar-height) + var(--outer-padding));
-    background-color: v-bind("backgroundColor");
+    background-color: v-bind("fileSettings.background");
     overflow-y: auto;
     justify-content: center;
     border-bottom-left-radius: 16px;
@@ -152,7 +160,7 @@
 
     /* These are standard CSS that are not yet supported - switch to them in the future */
     /* scrollbar-color: var(--light);
-        scrollbar-width: 16px; */
+      scrollbar-width: 16px; */
 
     --scrollbar-width: 12px;
     --scrollbar-height: 24px;
@@ -183,7 +191,7 @@
     z-index: 1;
     overflow-x: visible;
     height: fit-content;
-    background-color: v-bind("backgroundColor");
+    background-color: v-bind("fileSettings.background");
     margin-top: 8px;
   }
 
@@ -196,7 +204,7 @@
     flex-grow: 2;
     padding-inline: 16px;
     padding-block: 16px;
-    background-color: v-bind("backgroundColor");
+    background-color: v-bind("fileSettings.background");
     height: 100%;
   }
 
