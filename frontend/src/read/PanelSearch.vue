@@ -8,25 +8,31 @@
     matches: [],
     lastMatchScrolledTo: null,
   });
+
+  const startSearch = () => {
+    console.log("starting new search");
+    searchInfo.matches = highlightSearchMatches(manuscriptRef.value.$el, searchInfo.searchString);
+    searchInfo.lastMatchScrolledTo = null;
+    onNext();
+  };
+
+  const cancelSearch = () => {
+    console.log("cancelling search");
+    clearHighlights(manuscriptRef.value.$el);
+    searchInfo.isSearching = false;
+    searchInfo.searchString = "";
+    searchInfo.matches = [];
+    searchInfo.lastMatchScrolledTo = null;
+  };
+
   watch(
     () => searchInfo.isSearching,
-    (newVal) => {
-      if (newVal) {
-        searchInfo.matches = highlightSearchMatches(
-          manuscriptRef.value.$el,
-          searchInfo.searchString
-        );
-        onNext();
-      } else {
-        clearHighlights(manuscriptRef.value.$el);
-        searchInfo.matches = [];
-      }
-    }
+    (newVal) => (newVal ? startSearch() : cancelSearch())
   );
 
   const manuscriptRef = inject("manuscriptRef");
   const onSubmit = (searchString) => {
-    console.log("submit");
+    console.log("submit", searchString);
     if (!manuscriptRef.value) return;
     searchInfo.searchString = searchString.trim();
 
@@ -35,7 +41,6 @@
   };
 
   const onNext = () => {
-    console.log(searchInfo.lastMatchScrolledTo || -1);
     if (!searchInfo.isSearching) return;
     const lastMatchScrolledTo =
       searchInfo.lastMatchScrolledTo === null ? -1 : searchInfo.lastMatchScrolledTo;
@@ -70,6 +75,7 @@
     @submit="onSubmit"
     @next="onNext"
     @prev="onPrev"
+    @cancel="cancelSearch"
   />
 </template>
 

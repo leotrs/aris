@@ -6,24 +6,25 @@
     withButtons: { type: Boolean, default: false },
     buttonsDisabled: { type: Boolean, default: true },
   });
-  const emit = defineEmits(["submit", "next", "prev"]);
+  const emit = defineEmits(["submit", "cancel", "next", "prev"]);
   const searchText = ref("");
   const inputRef = useTemplateRef("inputRef");
+  const isSearching = ref(false);
 
   const onEscape = () => {
-    if (searchText.value) {
+    if (isSearching.value) {
+      isSearching.value = false;
       searchText.value = "";
-      emit("submit", "");
+      emit("cancel");
     } else {
       inputRef.value?.blur();
     }
   };
 
-  const lastSubmission = ref("");
   const onEnter = (ev) => {
-    if (searchText.value !== lastSubmission.value) {
+    if (!isSearching.value) {
+      isSearching.value = true;
       emit("submit", searchText.value);
-      lastSubmission.value = searchText.value;
       return;
     }
 
