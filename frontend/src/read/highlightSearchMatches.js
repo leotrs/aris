@@ -1,3 +1,19 @@
+export function clearHighlights(rootEl, highlightClass) {
+  const marks = rootEl.querySelectorAll(`mark.${highlightClass}`);
+  for (const mark of marks) {
+    const parent = mark.parentNode;
+    // Use document fragment for better performance
+    const fragment = document.createDocumentFragment();
+    while (mark.firstChild) {
+      fragment.appendChild(mark.firstChild);
+    }
+    parent.replaceChild(fragment, mark);
+  }
+  // Normalize at the root level once rather than per node
+  rootEl.normalize();
+};
+
+
 /**
  * Highlights text matches across multiple DOM nodes
  * @param {Element} rootEl - The root element to search within
@@ -9,31 +25,13 @@
  * @param {boolean} options.wholeWord - Match whole words only (default: false)
  * @returns {number} - Count of matches found
  */
-export default function highlightSearchMatches(rootEl, searchTerm, options = {}) {
-  if (!rootEl) return 0;
+export function highlightSearchMatches(rootEl, searchTerm, options = {}) {
   const {
     caseSensitive = false,
     highlightClass = "search-result",
     wholeWord = false
   } = options;
-
-  // Remove previous highlights
-  const highlightMatches = () => {
-    const marks = rootEl.querySelectorAll(`mark.${highlightClass}`);
-    for (const mark of marks) {
-      const parent = mark.parentNode;
-      // Use document fragment for better performance
-      const fragment = document.createDocumentFragment();
-      while (mark.firstChild) {
-        fragment.appendChild(mark.firstChild);
-      }
-      parent.replaceChild(fragment, mark);
-    }
-    // Normalize at the root level once rather than per node
-    rootEl.normalize();
-  };
-  highlightMatches();
-  if (!searchTerm || searchTerm.trim() === "") return 0;
+  if (!rootEl || !searchTerm || searchTerm.trim() === "") return 0;
 
   // Setup TreeWalker to find all text nodes
   const treeWalker = document.createTreeWalker(
@@ -93,35 +91,41 @@ export default function highlightSearchMatches(rootEl, searchTerm, options = {})
   if (wholeWord && searchRegex) {
     let match;
     while ((match = searchRegex.exec(searchIn)) !== null) {
-      matches.push([match.index, match.index + match[0].length]);
+      matches.push({
+        start: match.index,
+        end: match.index + match[0].length,
+        mark: null,
+      });
     }
   } else {
     let startIndex = 0;
     while ((startIndex = searchIn.indexOf(searchFor, startIndex)) !== -1) {
-      matches.push([startIndex, startIndex + searchFor.length]);
+      matches.push({
+        start: startIndex,
+        end: startIndex + searchFor.length,
+        mark: null,
+      });
       startIndex += searchFor.length;
     }
   }
 
   // Early return if no matches
-  if (matches.length === 0) {
-    return 0;
-  }
+  if (matches.length === 0) return 0;
 
   // Process matches in reverse order to avoid offset issues when modifying the DOM
-  matches.sort((a, b) => b[0] - a[0]);
+  matches.sort((a, b) => b.start - a.start);
 
-  for (const [start, end] of matches) {
+  for (let match of matches) {
     try {
       // Find nodes containing the start and end of match
       let startNodeInfo = null;
       let endNodeInfo = null;
 
       for (const info of nodeInfo) {
-        if (start >= info.start && start < info.end) {
+        if (match.start >= info.start && match.start < info.end) {
           startNodeInfo = info;
         }
-        if (end > info.start && end <= info.end) {
+        if (match.end > info.start && match.end <= info.end) {
           endNodeInfo = info;
         }
         if (startNodeInfo && endNodeInfo) {
@@ -129,19 +133,14 @@ export default function highlightSearchMatches(rootEl, searchTerm, options = {})
         }
       }
 
-      if (!startNodeInfo || !endNodeInfo) {
-        continue; // Skip if we can't find the nodes
-      }
+      // Skip if we can't find the nodes
+      if (!startNodeInfo || !endNodeInfo) continue;
 
-      // Create a range for the match
+      // Create a range for the match and skip if it is collapsed
       const range = document.createRange();
-      range.setStart(startNodeInfo.node, start - startNodeInfo.start);
-      range.setEnd(endNodeInfo.node, end - endNodeInfo.start);
-
-      // Skip if the range is collapsed or invalid
-      if (range.collapsed) {
-        continue;
-      }
+      range.setStart(startNodeInfo.node, match.start - startNodeInfo.start);
+      range.setEnd(endNodeInfo.node, match.end - endNodeInfo.start);
+      if (range.collapsed) continue;
 
       // Create highlight element
       const mark = document.createElement("mark");
@@ -159,13 +158,13 @@ export default function highlightSearchMatches(rootEl, searchTerm, options = {})
           range.insertNode(mark);
         }
       }
+      match.mark = mark;
 
       // Update node info to reflect changes to the DOM
       // We're processing in reverse order, so only need to update the current match
-      const markLength = mark.textContent.length;
       for (let i = 0; i < nodeInfo.length; i++) {
         const info = nodeInfo[i];
-        if (info.end > start) {
+        if (info.end > match.start) {
           // Update any node whose range is affected by this match
           if (info === startNodeInfo) {
             info.node = mark.firstChild || mark.nextSibling || mark.previousSibling;
@@ -179,18 +178,6 @@ export default function highlightSearchMatches(rootEl, searchTerm, options = {})
     }
   }
 
-  return matches.length;
+  // Need to reverse since we traversed the document backwards
+  return matches.toReversed();
 }
-
-// Example usage:
-/*
-highlightMultiNodeMatch(document.body, "search term");
-
-// With options
-highlightMultiNodeMatch(document.body, "search term", {
-  caseSensitive: true,
-  highlightClass: "custom-highlight",
-  highlightColor: "#ffcc00",
-  wholeWord: true
-});
-*/

@@ -1,29 +1,29 @@
 <script setup>
-import { ref, onMounted } from "vue";
-import { IconFileSettings } from "@tabler/icons-vue";
-import useClosable from "@/composables/useClosable.js";
+  import { ref, onMounted } from "vue";
+  import { IconFileSettings } from "@tabler/icons-vue";
+  import useClosable from "@/composables/useClosable.js";
 
-const props = defineProps({ doc: { type: Object, default: {} } });
-const emit = defineEmits(["set-background", "close"]);
-const colors = {
-  white: "var(--surface-page)",
-  gray: "var(--gray-75)",
-  sepia: "#F4E8D5",
-  green: "var(--green-50)",
-};
+  const props = defineProps({ doc: { type: Object, default: {} } });
+  const emit = defineEmits(["set-background", "close"]);
+  const colors = {
+    white: "var(--surface-page)",
+    gray: "var(--gray-75)",
+    sepia: "#F4E8D5",
+    green: "var(--green-50)",
+  };
 
-const selfRef = ref(null);
-const close = () => {
-  emit("close");
-};
-onMounted(() => {
-  if (!selfRef) return;
-  useClosable(close, selfRef, true, false);
-});
+  const selfRef = ref(null);
+  const close = () => {
+    emit("close");
+  };
+  onMounted(() => {
+    if (!selfRef.value) return;
+    useClosable(close, selfRef, true, false);
+  });
 </script>
 
 <template>
-  <div class="overlay settings" ref="selfRef">
+  <div ref="selfRef" class="overlay settings">
     <div class="ol-header">
       <div class="left">
         <IconFileSettings />
@@ -49,8 +49,13 @@ onMounted(() => {
           <div class="column">
             <span class="label">Background</span>
             <span class="control circles">
-              <span v-for="(color, name) in colors" class="circle" :class="name" :style="{ 'background-color': color }"
-                @click="$emit('set-background', color)">
+              <span
+                v-for="(color, name) in colors"
+                class="circle"
+                :class="name"
+                :style="{ 'background-color': color }"
+                @click="$emit('set-background', color)"
+              >
               </span>
             </span>
           </div>
@@ -64,14 +69,23 @@ onMounted(() => {
           <div class="row">
             <span class="label">Size</span>
             <span class="control">
-              <Slider :number-stops="3" icon-left="LetterA" icon-right="LetterA" :default-active="0" />
+              <Slider
+                :number-stops="3"
+                icon-left="LetterA"
+                icon-right="LetterA"
+                :default-active="0"
+              />
             </span>
           </div>
           <div class="row">
             <span class="label">Density</span>
             <span class="control">
-              <Slider :number-stops="3" icon-left="BaselineDensityLarge" icon-right="BaselineDensitySmall"
-                :default-active="0" />
+              <Slider
+                :number-stops="3"
+                icon-left="BaselineDensityLarge"
+                icon-right="BaselineDensitySmall"
+                :default-active="0"
+              />
             </span>
           </div>
           <div class="row">
@@ -90,7 +104,12 @@ onMounted(() => {
           <div class="row">
             <span class="label">Margins</span>
             <span class="control">
-              <Slider :number-stops="3" icon-left="ViewportNarrow" icon-right="ViewportWide" :default-active="0" />
+              <Slider
+                :number-stops="3"
+                icon-left="ViewportNarrow"
+                icon-right="ViewportWide"
+                :default-active="0"
+              />
             </span>
           </div>
           <div class="row">
@@ -111,101 +130,100 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.overlay {
-  min-width: 216px;
-  display: flex;
-  flex-direction: column;
-  background-color: var(--surface-primary);
-  border: var(--border-thin) solid var(--border-primary);
-  border-radius: 16px;
-  padding: 16px;
-  gap: 16px;
-  position: fixed;
-  z-index: 100;
-}
-
-.ol-header {
-  display: flex;
-  justify-content: space-between;
-  background-color: var(--surface-information);
-  border-radius: 8px;
-  padding-inline: 8px;
-  padding-block: 4px;
-
-  & .left {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-}
-
-.ol-content {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-
-  & .section {
+  .overlay {
+    min-width: 216px;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    background-color: var(--surface-primary);
+    border: var(--border-thin) solid var(--border-primary);
+    border-radius: 16px;
+    padding: 16px;
+    gap: 16px;
+    position: fixed;
+    z-index: 100;
   }
 
-  & .s-header {
+  .ol-header {
+    display: flex;
+    justify-content: space-between;
     background-color: var(--surface-information);
     border-radius: 8px;
     padding-inline: 8px;
+    padding-block: 4px;
+
+    & .left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
   }
 
-  & .s-content {
+  .ol-content {
     display: flex;
     flex-direction: column;
-    padding-inline: 8px;
+    gap: 24px;
+
+    & .section {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    & .s-header {
+      background-color: var(--surface-information);
+      border-radius: 8px;
+      padding-inline: 8px;
+    }
+
+    & .s-content {
+      display: flex;
+      flex-direction: column;
+      padding-inline: 8px;
+      gap: 8px;
+    }
+  }
+
+  .ol-footer {
+    display: flex;
+    justify-content: flex-end;
     gap: 8px;
-  }
-}
-
-.ol-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding-inline: 8px;
-}
-
-.row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-
-  & .label {
-    min-width: 64px;
+    padding-inline: 8px;
   }
 
-  & .control {
-    flex-grow: 1;
+  .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    & .label {
+      min-width: 64px;
+    }
+
+    & .control {
+      flex-grow: 1;
+    }
   }
 
-}
+  .column {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
 
-.column {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
+  .control.circles {
+    display: flex;
+    justify-content: space-between;
+  }
 
-.control.circles {
-  display: flex;
-  justify-content: space-between;
-}
+  .circle {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border-radius: 16px;
+    border: var(--border-thin) solid var(--dark);
+  }
 
-.circle {
-  display: inline-block;
-  width: 32px;
-  height: 32px;
-  border-radius: 16px;
-  border: var(--border-thin) solid var(--dark);
-}
-
-:deep(.sc-btn) {
-  padding: 0 !important;
-}
+  :deep(.sc-btn) {
+    padding: 0 !important;
+  }
 </style>

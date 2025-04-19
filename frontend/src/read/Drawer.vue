@@ -1,7 +1,7 @@
 <script setup>
-import { ref, onMounted, inject } from "vue";
+  import { ref, onMounted, inject } from "vue";
 
-const props = defineProps({});
+  const props = defineProps({});
 </script>
 
 <template>
@@ -11,5 +11,6 @@ const props = defineProps({});
 </template>
 
 <style scoped>
-.drawer {}
+  .drawer {
+  }
 </style>

@@ -1,7 +1,7 @@
 <script setup>
-const props = defineProps({
-  doc: { type: Object, required: true },
-});
+  const props = defineProps({
+    doc: { type: Object, required: true },
+  });
 </script>
 
 <template>
@@ -9,9 +9,9 @@ const props = defineProps({
 </template>
 
 <style scoped>
-.file-title {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  line-height: 1;
-}
+  .file-title {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: 1;
+  }
 </style>

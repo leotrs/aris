@@ -1,21 +1,21 @@
 <script setup>
-import useClosable from "@/composables/useClosable.js";
-import { useRouter } from "vue-router";
+  import useClosable from "@/composables/useClosable.js";
+  import { useRouter } from "vue-router";
 
-const props = defineProps({
-  doc: { type: Object, required: true },
-});
-const emit = defineEmits(["set-selected"]);
-const router = useRouter();
+  const props = defineProps({
+    doc: { type: Object, required: true },
+  });
+  const emit = defineEmits(["set-selected"]);
+  const router = useRouter();
 
-const read = () => router.push(`/${props.doc.id}/read`);
-const close = () => emit("set-selected", "");
+  const read = () => router.push(`/${props.doc.id}/read`);
+  const close = () => emit("set-selected", "");
 
-useClosable({ onClose: close, closeOnOutsideClick: false });
+  useClosable({ onClose: close, closeOnOutsideClick: false });
 </script>
 
 <template>
-  <div id="preview" class="pane" ref="self-ref">
+  <div id="preview" ref="self-ref" class="pane">
     <div class="pane-header">
       <div class="actions-left">
         <Button kind="primary" class="btn-sm" text="Read" icon="Book" @click="read"></Button>
@@ -41,36 +41,36 @@ useClosable({ onClose: close, closeOnOutsideClick: false });
 </template>
 
 <style scoped>
-.pane-header {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  padding: 8px;
-}
+  .pane-header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding: 8px;
+  }
 
-.pane-content {
-  display: flex;
-  gap: 48px;
-  padding-inline: 8px;
-  overflow-y: auto;
-}
+  .pane-content {
+    display: flex;
+    gap: 48px;
+    padding-inline: 8px;
+    overflow-y: auto;
+  }
 
-.actions-left {
-  display: flex;
-  flex-wrap: wrap;
-  row-gap: 16px;
-  column-gap: 8px;
-}
+  .actions-left {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 16px;
+    column-gap: 8px;
+  }
 
-.pane-left {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+  .pane-left {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
 
-.pane-right {
-  flex: 2;
-  padding-block: 8px;
-}
+  .pane-right {
+    flex: 2;
+    padding-block: 8px;
+  }
 </style>
