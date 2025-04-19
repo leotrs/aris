@@ -1,9 +1,10 @@
 <script setup>
-  import { ref, inject, onMounted } from "vue";
+  import { ref, inject, watch, onMounted } from "vue";
   import { IconFileSettings } from "@tabler/icons-vue";
   import useClosable from "@/composables/useClosable.js";
 
   const props = defineProps({ doc: { type: Object, default: () => {} } });
+
   const colors = {
     white: "var(--surface-page)",
     gray: "var(--gray-75)",
@@ -12,9 +13,6 @@
   };
 
   const selfRef = ref(null);
-  const close = () => {
-    emit("close");
-  };
   onMounted(() => {
     if (!selfRef.value) return;
     useClosable(close, selfRef, true, false);
@@ -34,6 +32,7 @@
       fileSettings.fontSize = "18px";
     }
   };
+
   const onDensityChange = (idx) => {
     if (idx === 0) {
       fileSettings.lineHeight = "1.2";
@@ -43,6 +42,15 @@
       fileSettings.lineHeight = "1.8";
     }
   };
+
+  const styleControlState = ref(0);
+  watch(styleControlState, (newVal) => {
+    if (newVal == 0) {
+      fileSettings.fontFamily = "Source Sans 3";
+    } else if (newVal == 1) {
+      fileSettings.fontFamily = "Source Serif 4";
+    }
+  });
 </script>
 
 <template>
@@ -53,7 +61,7 @@
         <span class="text-h5">Settings</span>
       </div>
       <div class="right">
-        <ButtonClose @close="close" />
+        <ButtonClose />
       </div>
     </div>
 
@@ -106,17 +114,21 @@
             <span class="control">
               <Slider
                 :number-stops="3"
-                icon-left="BaselineDensityLarge"
-                icon-right="BaselineDensitySmall"
+                icon-left="BaselineDensitySmall"
+                icon-right="BaselineDensityLarge"
                 :default-active="1"
                 @change="onDensityChange"
               />
             </span>
           </div>
-          <div class="row">
+          <div class="row style">
             <span class="label">Style</span>
             <span class="control">
-              <SegmentedControl :icons="['LetterA', 'LetterA']" :default-active="0" />
+              <SegmentedControl
+                v-model="styleControlState"
+                :labels="['sans', 'serif']"
+                :default-active="0"
+              />
             </span>
           </div>
         </div>
@@ -148,7 +160,7 @@
     </div>
 
     <div class="ol-footer">
-      <Button kind="secondary" text="Cancel" @click="close" />
+      <Button kind="secondary" text="Cancel" />
       <Button kind="primary" text="Save" />
     </div>
   </div>
@@ -227,6 +239,20 @@
     & .control {
       flex-grow: 1;
     }
+  }
+
+  .row.style :deep(.sc-item:first-child) {
+    padding: 4px 4px 4px 8px !important;
+  }
+  .row.style :deep(.sc-item:first-child .sc-label) {
+    font-family: "Source Sans 3" !important;
+  }
+
+  .row.style :deep(.sc-item:last-child) {
+    padding: 4px 8px 4px 4px !important;
+  }
+  .row.style :deep(.sc-item:last-child .sc-label) {
+    font-family: "Source Serif 4" !important;
   }
 
   .column {

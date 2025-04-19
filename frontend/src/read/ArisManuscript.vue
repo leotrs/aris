@@ -66,7 +66,7 @@
     background: "var(--surface-page)",
     fontSize: "16px",
     lineHeight: "1.5",
-    style: "sans",
+    fontFamily: "Source Sans 3",
     margin: "M",
     columns: 1,
   });
@@ -224,6 +224,7 @@
 
   :deep(.manuscriptwrapper) {
     font-size: v-bind(fileSettings.fontSize) !important;
+    font-family: v-bind(` "${fileSettings.fontFamily}" `) !important;
     line-height: v-bind(fileSettings.lineHeight) !important;
   }
 </style>
