@@ -1,14 +1,17 @@
 <script setup>
-  import { ref } from "vue";
+  import { ref, watch } from "vue";
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
-    iconLeft: String,
-    iconRight: String,
+    iconLeft: { type: String, required: true },
+    iconRight: { type: String, required: true },
     numberStops: { type: Number, default: 3 },
     defaultActive: { type: Number, default: 0 },
   });
+  const emit = defineEmits(["change"]);
+
   const active = ref(props.defaultActive);
+  watch(active, (newVal) => emit("change", newVal));
 </script>
 
 <template>

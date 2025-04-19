@@ -3,7 +3,7 @@
   import { IconFileSettings } from "@tabler/icons-vue";
   import useClosable from "@/composables/useClosable.js";
 
-  const props = defineProps({ doc: { type: Object, default: {} } });
+  const props = defineProps({ doc: { type: Object, default: () => {} } });
   const colors = {
     white: "var(--surface-page)",
     gray: "var(--gray-75)",
@@ -23,6 +23,25 @@
   const fileSettings = inject("fileSettings");
   const onChangeBackground = (colorName) => {
     fileSettings.background = colors[colorName];
+  };
+
+  const onSizeChange = (idx) => {
+    if (idx === 0) {
+      fileSettings.fontSize = "14px";
+    } else if (idx === 1) {
+      fileSettings.fontSize = "16px";
+    } else if (idx === 2) {
+      fileSettings.fontSize = "18px";
+    }
+  };
+  const onDensityChange = (idx) => {
+    if (idx === 0) {
+      fileSettings.lineHeight = "1.2";
+    } else if (idx === 1) {
+      fileSettings.lineHeight = "1.5";
+    } else if (idx === 2) {
+      fileSettings.lineHeight = "1.8";
+    }
   };
 </script>
 
@@ -77,7 +96,8 @@
                 :number-stops="3"
                 icon-left="LetterA"
                 icon-right="LetterA"
-                :default-active="0"
+                :default-active="1"
+                @change="onSizeChange"
               />
             </span>
           </div>
@@ -88,7 +108,8 @@
                 :number-stops="3"
                 icon-left="BaselineDensityLarge"
                 icon-right="BaselineDensitySmall"
-                :default-active="0"
+                :default-active="1"
+                @change="onDensityChange"
               />
             </span>
           </div>
@@ -112,7 +133,7 @@
                 :number-stops="3"
                 icon-left="ViewportNarrow"
                 icon-right="ViewportWide"
-                :default-active="0"
+                :default-active="1"
               />
             </span>
           </div>
@@ -225,6 +246,9 @@
     height: 32px;
     border-radius: 16px;
     border: var(--border-thin) solid var(--dark);
+    &:hover {
+      cursor: pointer;
+    }
   }
 
   :deep(.sc-btn) {
