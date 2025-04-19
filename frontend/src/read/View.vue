@@ -17,6 +17,7 @@
     }
   });
   provide("doc", doc);
+
   const leftComponents = reactive([]);
   const topComponents = reactive([]);
   const rightComponents = reactive([]);

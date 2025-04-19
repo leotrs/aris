@@ -1,18 +1,18 @@
 <script setup>
-  import { ref, onMounted, onUpdated, onUnmounted, useTemplateRef } from "vue";
+  import { ref } from "vue";
   import { useRouter } from "vue-router";
   import SidebarItem from "@/read/SidebarItem.vue";
 
   const emit = defineEmits(["showComponent", "hideComponent"]);
 
   const components = {
-    Sparkles: { icon: "Sparkles", label: "chat", preferredSide: "left" },
+    PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left" },
     PanelSearch: { icon: "Search", label: "search", preferredSide: "top" },
     Minimap: { icon: "MapPin", label: "map", preferredSide: "left" },
-    Message: { icon: "Message", label: "notes", preferredSide: "left" },
-    Quote: { icon: "Quote", label: "citation", preferredSide: "left" },
-    Variable: { icon: "Variable", label: "symbols", preferredSide: "left" },
-    Results: { icon: "Bulb", label: "claims", preferredSide: "left" },
+    Comments: { icon: "Message", label: "notes", preferredSide: "left" },
+    PanelCitation: { icon: "Quote", label: "citation", preferredSide: "left" },
+    PanelSymbols: { icon: "Variable", label: "symbols", preferredSide: "left" },
+    PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left" },
     PanelSettings: { icon: "FileSettings", label: "settings", preferredSide: "left" },
   };
   const router = useRouter();
