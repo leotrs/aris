@@ -7,7 +7,7 @@ const emit = defineEmits(["showComponent", "hideComponent"]);
 
 const components = {
   Sparkles: { icon: "Sparkles", label: "chat", preferredSide: "left" },
-  SearchBar: { icon: "Search", label: "search", preferredSide: "top" },
+  PanelSearch: { icon: "Search", label: "search", preferredSide: "top" },
   Minimap: { icon: "MapPin", label: "map", preferredSide: "left" },
   Message: { icon: "Message", label: "notes", preferredSide: "left" },
   Quote: { icon: "Quote", label: "citation", preferredSide: "left" },
