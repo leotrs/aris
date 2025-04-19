@@ -1,44 +1,51 @@
 <script setup>
-  import { reactive } from "vue";
+  import { ref, reactive } from "vue";
   import { IconQuote, IconUserEdit, IconCalendar, IconBook2 } from "@tabler/icons-vue";
 
   const tabInfo = reactive([
     {
       label: "Cite",
       icon: IconQuote,
-      active: true,
       content:
         "Citation content lorem ipsum. Citation content lorem ipsum. Citation content lorem ipsum. Citation content lorem ipsum. Citation content lorem ipsum. Citation content lorem ipsum. ",
     },
-    { label: "Author", icon: IconUserEdit, active: false },
-    { label: "Source", icon: IconBook2, active: false },
-    { label: "Date", icon: IconCalendar, active: false },
+    { label: "Author", icon: IconUserEdit },
+    { label: "Source", icon: IconBook2 },
+    { label: "Date", icon: IconCalendar },
   ]);
-
-  const onClick = (obj) => {
-    tabInfo.forEach((it) => (it.active = false));
-    obj.active = true;
-  };
+  const activeIndex = ref(0);
 </script>
 
 <template>
   <div ref="selfRef" class="panel citation">
     <div class="pn-header">
       <div
-        v-for="obj in tabInfo"
+        v-for="(obj, idx) in tabInfo"
         class="tab"
-        :class="{ active: obj.active }"
-        @click.stop="onClick(obj)"
+        :class="{ active: idx === activeIndex }"
+        @click.stop="activeIndex = idx"
       >
         <component :is="obj.icon" />
         <span class="tab-label text-default">{{ obj.label }}</span>
       </div>
     </div>
     <div class="pn-content">
-      <template v-for="obj in tabInfo">
-        <div v-if="obj.active" class="text-label">{{ obj.label }}</div>
-        <div v-if="obj.active">{{ obj.content }}</div>
-      </template>
+      <div class="pn-content-title">
+        <div class="left">
+          <div class="text-label">{{ tabInfo[activeIndex].label }}</div>
+        </div>
+        <div class="right">
+          <Button kind="tertiary" icon="Clipboard" />
+        </div>
+      </div>
+      <div class="pn-content-main">
+        <div>{{ tabInfo[activeIndex].content }}</div>
+        <SegmentedControl
+          v-if="tabInfo[activeIndex].label == 'Cite'"
+          :labels="['Plain', 'BibTex']"
+          :default-active="0"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -113,7 +120,40 @@
   }
 
   .pn-content {
-    padding: calc(12px + 8px) 12px 12px 12px;
+    padding: calc(12px + 4px) 12px 12px 12px;
     font-size: 15px;
+  }
+
+  .pn-content-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    & .left {
+    }
+
+    & .right {
+      display: flex;
+      gap: 4px;
+    }
+
+    & :deep(button.tertiary) {
+      padding: 0 !important;
+    }
+  }
+
+  .pn-content-main {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    & :deep(.sc-item) {
+      padding: 4px !important;
+    }
+    & :deep(.sc-item:first-child) {
+      padding-left: 6px !important;
+    }
+    & :deep(.sc-item:last-child) {
+      padding-right: 6px !important;
+    }
   }
 </style>
