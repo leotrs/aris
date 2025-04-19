@@ -1,16 +1,25 @@
 // eslint.config.js
 import js from "@eslint/js";
 import pluginVue from "eslint-plugin-vue";
+import prettierConfig from "eslint-config-prettier";
 import prettierPlugin from "eslint-plugin-prettier";
 import babelParser from "@babel/eslint-parser";
+import globals from "globals";
 
 export default [
   js.configs.recommended,
   ...pluginVue.configs["flat/recommended"],
+  prettierConfig,
 
+  // config for .js files
   {
     files: ["**/*.js"],
     languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.jquery,
+        ...globals.node,
+      },
       parser: babelParser,
       parserOptions: {
         ecmaVersion: 2022,
@@ -26,10 +35,17 @@ export default [
     },
 
   },
+
+  // config for .vue files
   {
-    files: ["**/*.vue"], // Vue files with their own config
+    files: ["**/*.vue"],
     languageOptions: {
-      parser: pluginVue.parser, // Use Vue's parser instead of Babel
+      globals: {
+        ...globals.browser,
+        ...globals.jquery,
+        ...globals.node,
+      },
+      parser: pluginVue.parser, // NOTE: NOT babelParser!
       parserOptions: {
         ecmaVersion: 2022,
         sourceType: "module",
@@ -37,13 +53,18 @@ export default [
     },
     plugins: {
       vue: pluginVue,
+      prettier: prettierPlugin,
     },
     rules: {
-      indent: ["error", 2],
+      // let prettier handle indentation
+      indent: "off",
+      "vue/script-indent": "off",
+      "vue/html-indent": "off",
+
+      // everything prettier complains about is an error
       "prettier/prettier": "error",
-      "vue/html-indent": ["error", 2],
-      "vue/script-indent": ["error", 2],
-      "vue/multi-word-component-names": "off",
+
+      // this is just silly
       "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
       "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
     },
