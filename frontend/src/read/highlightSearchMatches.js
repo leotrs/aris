@@ -1,4 +1,6 @@
-export function clearHighlights(rootEl, highlightClass) {
+export const highlightClass = "search-result";
+
+export function clearHighlights(rootEl) {
   const marks = rootEl.querySelectorAll(`mark.${highlightClass}`);
   for (const mark of marks) {
     const parent = mark.parentNode;
@@ -20,15 +22,12 @@ export function clearHighlights(rootEl, highlightClass) {
  * @param {string} searchTerm - The text to search for
  * @param {Object} options - Configuration options
  * @param {boolean} options.caseSensitive - Whether search should be case-sensitive (default: false)
- * @param {string} options.highlightClass - CSS class for highlights (default: "highlight")
- * @param {string} options.highlightColor - Background color for highlights (default: "yellow")
  * @param {boolean} options.wholeWord - Match whole words only (default: false)
  * @returns {number} - Count of matches found
  */
 export function highlightSearchMatches(rootEl, searchTerm, options = {}) {
   const {
     caseSensitive = false,
-    highlightClass = "search-result",
     wholeWord = false
   } = options;
   if (!rootEl || !searchTerm || searchTerm.trim() === "") return 0;
