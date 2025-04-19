@@ -18,7 +18,7 @@ import Topbar from "./Topbar.vue";
 import Drawer from "./Drawer.vue";
 import PanelSettings from "./PanelSettings.vue";
 import Minimap from "../common/Minimap.vue";
-import SearchBar from "../common/SearchBar.vue";
+import PanelSearch from "./PanelSearch.vue";
 
 const props = defineProps({
   left: { type: Array, default: [] },
@@ -29,7 +29,7 @@ const doc = inject("doc");
 
 const validDrawerComponents = {
   /* PanelChat, */
-  SearchBar,
+  PanelSearch,
   Minimap,
   /* PanelComments,
 * PanelInfo,
@@ -74,9 +74,9 @@ watch(doc, async () => {
     console.error("Error fetching HTML:", error);
   }
 });
-provide("htmlContent", htmlContent);
 
 const manuscriptRef = useTemplateRef("manuscriptRef");
+provide("manuscriptRef", manuscriptRef);
 
 const isMainTitleVisible = ref(true);
 let tearDown = () => {};

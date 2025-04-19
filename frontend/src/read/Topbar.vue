@@ -1,7 +1,6 @@
 <script setup>
 import { ref, inject, computed, watch, useTemplateRef, nextTick } from "vue";
 import Drawer from "./Drawer.vue";
-import SearchBar from "../common/SearchBar.vue";
 
 const props = defineProps({
   showTitle: { type: Boolean, required: true },
@@ -12,24 +11,6 @@ const doc = inject("doc");
 const columnSizes = inject("columnSizes");
 const leftColumnWidth = computed(() => `${columnSizes.left.width}px`);
 const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
-
-const middleCompRef = useTemplateRef("middle-comp");
-watch(() => props.component,
-  async (newVal, oldVal) => {
-    // wait for middleCompRef to render
-    await nextTick();
-    if (newVal === SearchBar) middleCompRef.value?.focusInput();
-  }
-);
-
-const htmlContent = inject("htmlContent");
-const onSearchSubmit = (searchString) => {
-  if (!middleCompRef.value || !htmlContent.value) return;
-  const parser = new DOMParser();
-  const tmp = parser.parseFromString(htmlContent.value, "text/html");
-  const content = tmp.body.textContent || "";
-  console.log(content.toLowerCase().includes(searchString.toLowerCase()));
-}
 </script>
 
 <template>
@@ -40,9 +21,8 @@ const onSearchSubmit = (searchString) => {
 
     <Drawer class="middle-column top">
       <FileTitle v-if="showTitle && !component" :doc="doc" class="text-h6" />
-      <component :is="component" ref="middle-comp" @submit="onSearchSubmit" />
+      <component :is="component" ref="middle-comp" />
     </Drawer>
-
   </div>
 </template>
 
