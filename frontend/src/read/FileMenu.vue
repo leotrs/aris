@@ -6,7 +6,7 @@
 <template>
   <div class="um-wrapper">
     <ContextMenu ref="menu-ref" icon="Menu3">
-      <ContextMenuItem icon="Inbox" caption="Notifications" />
+      <ContextMenuItem icon="Bell" caption="Notifications" />
       <ContextMenuItem icon="Share3" caption="Share" />
       <ContextMenuItem icon="UserPlus" caption="Invite User" />
       <Separator />

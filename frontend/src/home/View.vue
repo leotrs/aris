@@ -41,11 +41,9 @@
   <div ref="selfRef" :class="['view-wrapper', isMobile ? 'mobile' : '']">
     <Sidebar @show-file-upload-modal="showModal = true" />
 
-    <div class="views-row">
-      <Button kind="tertiary" icon="Settings" />
-      <Button kind="tertiary">
-        <Avatar />
-      </Button>
+    <div class="menus">
+      <Button kind="tertiary" icon="Bell" />
+      <UserMenu />
     </div>
 
     <div class="panes">
@@ -164,13 +162,13 @@
     backdrop-filter: blur(2px) brightness(0.9);
   }
 
-  .views-row {
+  .menus {
     position: absolute;
     right: 32px;
     top: 32px;
     z-index: 1;
     display: flex;
-    gap: 4px;
-    white-space: nowrap;
+    align-items: center;
+    gap: 8px;
   }
 </style>
