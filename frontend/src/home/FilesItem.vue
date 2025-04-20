@@ -70,7 +70,7 @@
           <ContextMenuItem icon="Share3" caption="Share" />
           <ContextMenuItem icon="UserPlus" caption="Invite User" />
           <Separator />
-          <ContextMenuItem icon="Versions" caption="Revisions" />
+          <ContextMenuItem icon="Clock" caption="History" />
           <ContextMenuItem icon="Download" caption="Download" />
           <ContextMenuItem icon="FileExport" caption="Export" />
           <Separator />

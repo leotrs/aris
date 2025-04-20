@@ -114,7 +114,8 @@
 
     & .cta {
       display: flex;
-      margin-top: 20px;
+      margin-top: 12px;
+      margin-bottom: 12px;
       justify-content: center;
       padding-inline: 16px;
     }
@@ -127,7 +128,8 @@
     }
 
     & > #logo > img {
-      margin: 0 0 -12px 6px;
+      height: 64px;
+      margin: 6px 0 -6px 6px;
     }
   }
 
@@ -142,20 +144,21 @@
     }
 
     & > #logo {
-      margin-top: 6px;
-      margin-bottom: 18px;
+      margin-top: 8px;
+      margin-bottom: 16px;
       padding-inline: 16px;
 
       & > img {
-        margin: 0 0 -12px 0;
-        width: 36px;
-        height: 36px;
+        margin: 0 0 -16px 0;
+        width: 32px;
+        height: 32px;
       }
     }
 
     & > .cta {
       padding-top: 12px;
       padding-inline: 8px;
+      margin-bottom: 12px;
     }
   }
 
