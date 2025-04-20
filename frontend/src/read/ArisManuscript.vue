@@ -115,23 +115,25 @@
 </script>
 
 <template>
-  <div class="outer-wrapper">
-    <Topbar :show-title="!isMainTitleVisible" :component="validDrawerComponents[top.at(-1)]" />
+  <Suspense>
+    <div class="outer-wrapper">
+      <Topbar :show-title="!isMainTitleVisible" :component="validDrawerComponents[top.at(-1)]" />
 
-    <div class="inner-wrapper">
-      <Drawer ref="leftColumnRef" class="left-column">
-        <component :is="validDrawerComponents[comp]" v-for="comp in left" :doc="doc" />
-      </Drawer>
+      <div class="inner-wrapper">
+        <Drawer ref="leftColumnRef" class="left-column">
+          <component :is="validDrawerComponents[comp]" v-for="comp in left" :doc="doc" />
+        </Drawer>
 
-      <Drawer ref="middleColumnRef" class="middle-column">
-        <ManuscriptWrapper ref="manuscriptRef" :html="htmlContent" :show-footer="true" />
-      </Drawer>
+        <Drawer ref="middleColumnRef" class="middle-column">
+          <ManuscriptWrapper ref="manuscriptRef" :html="htmlContent" :show-footer="true" />
+        </Drawer>
 
-      <Drawer ref="rightColumnRef" class="right-column">
-        <component :is="validDrawerComponents[comp]" v-for="comp in right" :doc="doc" />
-      </Drawer>
+        <Drawer ref="rightColumnRef" class="right-column">
+          <component :is="validDrawerComponents[comp]" v-for="comp in right" :doc="doc" />
+        </Drawer>
+      </div>
     </div>
-  </div>
+  </Suspense>
 </template>
 
 <style scoped>

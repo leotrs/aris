@@ -47,7 +47,10 @@
       <ContextMenu />
     </template>
 
-    <Minimap :doc="doc" orientation="horizontal" />
+    <Suspense>
+      <Minimap :doc="doc" orientation="horizontal" />
+      <template #fallback>loading...</template>
+    </Suspense>
 
     <template v-if="mode == 'cards'">
       <Abstract :doc="doc" />
