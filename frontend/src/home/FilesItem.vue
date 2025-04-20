@@ -2,6 +2,7 @@
   import { ref, inject } from "vue";
   import axios from "axios";
   import RelativeTime from "@yaireo/relative-Time";
+  import Separator from "../common/Separator.vue";
   import TagRow from "./FilesItemTagRow.vue";
 
   const props = defineProps({
@@ -59,15 +60,22 @@
     <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
 
     <!-- <div class="owner">
-      <Avatar name="LT" />
+      <Avatar />
          </div> -->
 
     <div class="grid-wrapper-2">
       <template v-if="mode == 'list'">
         <ContextMenu>
+          <ContextMenuItem icon="Inbox" caption="Notifications" />
+          <ContextMenuItem icon="Share3" caption="Share" />
+          <ContextMenuItem icon="UserPlus" caption="Invite User" />
+          <Separator />
+          <ContextMenuItem icon="Versions" caption="Revisions" />
+          <ContextMenuItem icon="Download" caption="Download" />
+          <ContextMenuItem icon="FileExport" caption="Export" />
+          <Separator />
           <ContextMenuItem icon="Edit" caption="Rename" @click="renameDoc" />
           <ContextMenuItem icon="Copy" caption="Duplicate" @click="copyDoc" />
-          <ContextMenuItem icon="Download" caption="Download" />
           <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="deleteDoc" />
         </ContextMenu>
       </template>

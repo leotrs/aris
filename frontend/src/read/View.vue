@@ -5,6 +5,7 @@
   import axios from "axios";
   import Sidebar from "./Sidebar.vue";
   import ArisManuscript from "./ArisManuscript.vue";
+  import FileMenu from "./FileMenu.vue";
 
   const docID = `${useRoute().params.doc_id}`;
   const doc = ref({});
@@ -44,11 +45,8 @@
     <ArisManuscript :left="leftComponents" :right="rightComponents" :top="topComponents" />
 
     <div class="links">
-      <Button kind="tertiary" icon="Share3" />
-      <Button kind="tertiary" icon="Lifebuoy" />
-      <Button kind="tertiary">
-        <Avatar name="TER" />
-      </Button>
+      <FileMenu />
+      <UserMenu />
     </div>
   </div>
 </template>

@@ -1,5 +1,28 @@
 <script setup>
-  import { RouterLink } from "vue-router";
+  import { ref, provide, onMounted, onUnmounted, nextTick } from "vue";
+
+  /*********** provide user info ***********/
+  const user = { id: 1, name: "TER" };
+  provide("user", user);
+
+  /*********** provide viewport info ***********/
+  const isMobile = ref(false);
+  const setIsMobile = (el) => {
+    isMobile.value = el?.contentRect.width < 432;
+  };
+
+  let observer;
+  onMounted(() =>
+    nextTick(() => {
+      observer = new ResizeObserver((entries) => {
+        entries.forEach((el) => setIsMobile(el));
+      });
+      observer.observe(document.documentElement);
+      setIsMobile();
+    })
+  );
+  onUnmounted(() => (observer ? observer.disconnect() : null));
+  provide("isMobile", isMobile);
 </script>
 
 <template>

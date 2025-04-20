@@ -15,6 +15,8 @@
     autoActivate: false,
   });
   watch(show, (isShown) => (isShown ? activate() : deactivate()));
+
+  defineExpose({ toggle: () => (show.value = !show.value) });
 </script>
 
 <template>
@@ -102,10 +104,6 @@
           background-color: var(--surface-hover);
         }
 
-        &:hover > .tabler-icon {
-          stroke-width: 2px;
-        }
-
         &.danger {
           color: var(--text-error);
 
@@ -121,7 +119,7 @@
 
       & > .item > .tabler-icon {
         display: inline-block;
-        stroke-width: 1.2px;
+        stroke-width: 1.75px;
       }
     }
   }
