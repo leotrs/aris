@@ -6,6 +6,7 @@
     preferredSide: { type: String, default: "left" },
   });
   const emit = defineEmits(["on", "off"]);
+  const buttonState = defineModel({ type: Boolean, default: false });
 
   const controlDisplay = ref("none");
   const isHoveringButton = ref(false);
@@ -34,7 +35,6 @@
     hideTimeout = setTimeout(updateVisibility, 500);
   };
 
-  const buttonState = ref(false);
   const controlState = ref(-1);
   const sides = ["left", "top", "right"];
   watch(controlState, (newVal, oldVal) => {
