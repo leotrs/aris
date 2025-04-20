@@ -1,10 +1,7 @@
 <script setup>
   import { ref, reactive } from "vue";
   import { useRouter } from "vue-router";
-  import {
-    useKeyboardShortcuts,
-    getRegisteredComponents,
-  } from "@/composables/useKeyboardShortcuts.js";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "@/read/SidebarItem.vue";
 
   const router = useRouter();
