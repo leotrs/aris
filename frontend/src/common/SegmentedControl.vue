@@ -84,6 +84,7 @@
       color: var(--extra-dark);
       background-color: var(--surface-information);
       border-color: var(--border-action);
+      box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
     }
 
     &:not(.active) {
