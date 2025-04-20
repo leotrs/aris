@@ -139,6 +139,7 @@
 
 <template>
   <Topbar @list="mode = 'list'" @cards="mode = 'cards'" />
+
   <div class="files-wrapper" :class="mode">
     <FilesHeader :mode="mode" />
 

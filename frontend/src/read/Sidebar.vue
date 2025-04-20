@@ -25,6 +25,13 @@
       key: "b",
       state: false,
     },
+    PanelTags: {
+      icon: "Tags",
+      label: "tags",
+      preferredSide: "top",
+      key: "g",
+      state: false,
+    },
     PanelSymbols: {
       icon: "Variable",
       label: "symbols",
