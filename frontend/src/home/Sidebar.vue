@@ -108,8 +108,8 @@
   }
 
   .sb-wrapper:not(.mobile):not(.collapsed) {
-    flex-basis: 204px;
-    max-width: 204px;
+    flex-basis: 192px;
+    max-width: 192px;
     flex-grow: 0;
     flex-shrink: 0;
 
@@ -122,10 +122,11 @@
     }
 
     & .cta > button {
-      padding-left: 6px;
+      padding-left: 2px;
       justify-content: center;
       margin: 0 auto;
       width: 100%;
+      gap: 0px;
     }
 
     & > #logo > img {
