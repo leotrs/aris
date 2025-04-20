@@ -90,7 +90,7 @@
             @click.stop="activeIndex = idx"
           >
             <component :is="obj.icon" />
-            <span class="tab-label text-default">{{ obj.label }}</span>
+            <span class="tab-label text-caption">{{ obj.label }}</span>
           </div>
         </div>
         <div class="tab-content">
@@ -167,10 +167,6 @@
       margin-top: 4px;
       margin-bottom: 2px;
     }
-  }
-
-  .tab-label {
-    font-size: 16px;
   }
 
   .tab.active {
