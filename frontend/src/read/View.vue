@@ -1,6 +1,7 @@
 <script setup>
   import { ref, reactive, provide, onBeforeMount } from "vue";
-  import { useRoute } from "vue-router";
+  import { useRoute, useRouter } from "vue-router";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
   import Sidebar from "./Sidebar.vue";
   import ArisManuscript from "./ArisManuscript.vue";
@@ -29,6 +30,11 @@
     const index = sideRefMap[side].indexOf(compName);
     if (index !== -1) sideRefMap[side].splice(index, 1);
   };
+
+  const router = useRouter();
+  useKeyboardShortcuts({
+    "g,h": () => router.push("/"),
+  });
 </script>
 
 <template>
