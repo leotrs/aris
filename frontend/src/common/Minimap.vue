@@ -27,69 +27,98 @@
       }, 50);
     });
 
-  const transformSVG = useDebounceFn(() => {
-    if (props.orientation == "vertical") return;
-    if (!html.value || !wrapperWidth.value || !wrapper.value) return;
+  const visibility = ref("hidden");
 
-    const svg = wrapper.value.querySelector("svg");
-    if (!svg) return;
-
-    // only modify the viewBox the first time
-    if (!originalHeight.value) {
-      const regex = /viewBox="0 0 \d+ (\d+)"/i;
-      const match = regex.exec(svg.outerHTML);
-      originalHeight.value = match?.[1] ? parseFloat(match[1]) : null;
-    }
-    if (!originalHeight.value) return;
-
-    const scale = wrapperWidth.value / (originalHeight.value + 48);
-    const padding = 14; // the rect starts at x=14 in the original coordinates
-
-    svg.style.width = `${wrapperWidth.value}px`;
-    svg.setAttribute("viewBox", `0 0 ${wrapperWidth.value} 32`);
-    svg.style.transform = `rotate(270deg)`;
-    svg.style.transformOrigin = `14px 20px`;
-
-    const rects = svg.querySelectorAll("rect");
-    rects?.forEach((rect) =>
-      rect.setAttribute("height", originalHeight.value * scale - padding * 2)
-    );
-
-    const circles = svg.querySelectorAll("circle");
-    circles?.forEach((circle) => {
-      const pos = parseFloat(circle.getAttribute("data-pos"));
-      if (!isNaN(pos)) {
-        circle.style.transform = `translateY(${(padding - pos) * (1 - scale)}px)`;
+  const doTransformSVG = () => {
+    return new Promise((resolve) => {
+      if (props.orientation == "vertical") {
+        resolve();
+        return;
       }
+      if (!html.value || !wrapperWidth.value || !wrapper.value) {
+        resolve();
+        return;
+      }
+
+      const originalSvg = wrapper.value.querySelector("svg");
+      if (!originalSvg) {
+        resolve();
+        return;
+      }
+
+      // clone and make transformations in memory, only swap when ready
+      const svg = originalSvg.cloneNode(true);
+
+      // only modify the viewBox the first time
+      if (!originalHeight.value) {
+        const regex = /viewBox="0 0 \d+ (\d+)"/i;
+        const match = regex.exec(svg.outerHTML);
+        originalHeight.value = match?.[1] ? parseFloat(match[1]) : null;
+      }
+      if (!originalHeight.value) return;
+
+      const scale = wrapperWidth.value / (originalHeight.value + 48);
+      const padding = 14; // the rect starts at x=14 in the original coordinates
+
+      svg.style.width = `${wrapperWidth.value}px`;
+      svg.setAttribute("viewBox", `0 0 ${wrapperWidth.value} 32`);
+      svg.style.transform = `rotate(270deg)`;
+      svg.style.transformOrigin = `14px 20px`;
+
+      const rects = svg.querySelectorAll("rect");
+      rects?.forEach((rect) =>
+        rect.setAttribute("height", originalHeight.value * scale - padding * 2)
+      );
+
+      const circles = svg.querySelectorAll("circle");
+      circles?.forEach((circle) => {
+        const pos = parseFloat(circle.getAttribute("data-pos"));
+        if (!isNaN(pos)) {
+          circle.style.transform = `translateY(${(padding - pos) * (1 - scale)}px)`;
+        }
+      });
+
+      originalSvg.parentNode.replaceChild(svg, originalSvg);
+      resolve();
     });
-  }, 50);
+  };
+
+  const transformSVG = useDebounceFn(async () => await doTransformSVG(), 50);
+
+  try {
+    const url = `http://localhost:8000/documents/${props.doc.id}/content/minimap`;
+    const response = await axios.get(url);
+    if (response.status == 200 && !response.data) {
+      html.value = '<div class="minimap error">-</div>';
+      visibility.value = "visible";
+    } else {
+      html.value = response.data;
+      originalHeight.value = null;
+      html.value = response.data;
+    }
+  } catch (error) {
+    console.error(error);
+    html.value = '<div class="minimap error">error when retrieving minimap!</div>';
+  }
 
   onMounted(async () => {
     if (!props.doc) return;
-    try {
-      const url = `http://localhost:8000/documents/${props.doc.id}/content/minimap`;
-      const response = await axios.get(url);
-      if (response.status == 200 && !response.data) {
-        html.value = '<div class="minimap error">-</div>';
-      } else {
-        html.value = response.data;
-        await nextTick();
-        await waitForSvgRender();
-        originalHeight.value = null;
-        transformSVG();
-        html.value = response.data;
-      }
-    } catch (error) {
-      console.error(error);
-      html.value = '<div class="minimap error">error when retrieving minimap!</div>';
-    }
+    await waitForSvgRender();
+    await transformSVG();
+    visibility.value = "visible";
   });
 
-  watch(wrapperWidth, () => transformSVG(), { immediate: true });
+  watch(wrapperWidth, async () => await transformSVG(), { immediate: true });
 </script>
 
 <template>
-  <div ref="wrapper" class="mm-wrapper" :class="orientationClass" v-html="html"></div>
+  <div
+    ref="wrapper"
+    class="mm-wrapper"
+    :class="orientationClass"
+    :style="{ visibility }"
+    v-html="html"
+  ></div>
 </template>
 
 <style scoped>
