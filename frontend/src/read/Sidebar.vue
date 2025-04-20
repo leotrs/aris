@@ -1,21 +1,34 @@
 <script setup>
   import { ref } from "vue";
   import { useRouter } from "vue-router";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "@/read/SidebarItem.vue";
 
+  const router = useRouter();
   const emit = defineEmits(["showComponent", "hideComponent"]);
 
   const components = {
-    PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left" },
-    PanelSearch: { icon: "Search", label: "search", preferredSide: "top" },
-    Minimap: { icon: "MapPin", label: "map", preferredSide: "left" },
-    Comments: { icon: "Message", label: "notes", preferredSide: "left" },
-    PanelCitation: { icon: "Quote", label: "citation", preferredSide: "left" },
-    PanelSymbols: { icon: "Variable", label: "symbols", preferredSide: "left" },
-    PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left" },
-    PanelSettings: { icon: "FileSettings", label: "settings", preferredSide: "left" },
+    PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a" },
+    PanelSearch: { icon: "Search", label: "search", preferredSide: "top", key: "f" },
+    Minimap: { icon: "MapPin", label: "map", preferredSide: "left", key: "m" },
+    Comments: { icon: "Message", label: "notes", preferredSide: "left", key: "c" },
+    PanelCitation: { icon: "Quote", label: "citation", preferredSide: "left", key: "b" },
+    PanelSymbols: { icon: "Variable", label: "symbols", preferredSide: "left", key: "x" },
+    PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t" },
+    PanelSettings: { icon: "FileSettings", label: "settings", preferredSide: "left", key: "s" },
   };
-  const router = useRouter();
+
+  useKeyboardShortcuts(
+    Object.fromEntries(
+      Object.entries(components).map(([name, obj]) => [
+        `p,${obj.key}`,
+        () => {
+          console.log("hi");
+          emit("showComponent", name, obj.preferredSide);
+        },
+      ])
+    )
+  );
 </script>
 
 <template>
