@@ -1,5 +1,11 @@
-<script setup></script>
+<script setup>
+  const props = defineProps({
+    doc: { type: Object, required: true },
+  });
+</script>
 
-<template>preview</template>
+<template>
+  <Abstract :doc="doc" />
+</template>
 
 <style scoped></style>

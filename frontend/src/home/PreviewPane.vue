@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive } from "vue";
+  import { ref } from "vue";
   import { useRouter } from "vue-router";
   import { IconEye, IconBolt, IconVersions, IconQuote } from "@tabler/icons-vue";
   import useClosable from "@/composables/useClosable.js";
@@ -56,7 +56,7 @@
           </div>
         </div>
         <div class="tab-content">
-          <component :is="tabInfo[activeIndex].component" />
+          <component :is="tabInfo[activeIndex].component" :doc="doc" />
         </div>
       </div>
     </div>
@@ -82,6 +82,8 @@
       flex-wrap: wrap;
       row-gap: 16px;
       column-gap: 8px;
+      /* otherwise the tabs will cover this */
+      z-index: 1;
     }
   }
 
@@ -93,11 +95,12 @@
     position: absolute;
     top: calc(var(--padding));
     left: calc(2 * var(--padding));
+    width: calc(100% - 4 * var(--padding) + 8px);
   }
 
   .tabs-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     gap: 4px;
     height: 48px;
     border-radius: 4px;
