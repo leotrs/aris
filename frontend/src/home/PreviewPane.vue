@@ -38,13 +38,44 @@
       <div class="left" :style="{ width: `${tabsHeaderWidth}px` }"></div>
 
       <div class="middle">
-        <Button kind="primary" class="btn-sm" icon="Book" @click="read"></Button>
-        <Button kind="tertiary" class="btn-sm" icon="Pencil"></Button>
-        <Button kind="tertiary" class="btn-sm" icon="FileCheck"></Button>
-        <Button kind="tertiary" class="btn-sm" icon="Share3"></Button>
-        <Button kind="tertiary" class="btn-sm" icon="UserPlus"></Button>
-        <Button kind="tertiary" class="btn-sm" icon="Download"></Button>
-        <Button kind="tertiary" class="btn-sm" icon="FileExport"></Button>
+        <Button
+          kind="primary"
+          size="sm"
+          text-float="bottom"
+          icon="Book"
+          text="Read"
+          @click="read"
+        ></Button>
+        <Button kind="tertiary" size="sm" text-float="bottom" text="Write" icon="Pencil"></Button>
+        <Button
+          kind="tertiary"
+          size="sm"
+          text-float="bottom"
+          text="Review"
+          icon="FileCheck"
+        ></Button>
+        <Button kind="tertiary" size="sm" text-float="bottom" text="Share" icon="Share3"></Button>
+        <Button
+          kind="tertiary"
+          size="sm"
+          text-float="bottom"
+          text="Collaborate"
+          icon="UserPlus"
+        ></Button>
+        <Button
+          kind="tertiary"
+          size="sm"
+          text-float="bottom"
+          text="Download"
+          icon="Download"
+        ></Button>
+        <Button
+          kind="tertiary"
+          size="sm"
+          text-float="bottom"
+          text="Export"
+          icon="FileExport"
+        ></Button>
       </div>
 
       <div class="right"><ButtonClose @close="close" /></div>
@@ -94,6 +125,8 @@
     }
 
     & .right {
+      /* otherwise the tabs will cover this */
+      z-index: 1;
     }
   }
 
