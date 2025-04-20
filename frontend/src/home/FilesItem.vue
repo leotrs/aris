@@ -59,9 +59,8 @@
 
     <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
 
-    <!-- <div class="owner">
-      <Avatar />
-         </div> -->
+    <!-- <div class="owner"><Avatar /></div> -->
+    <!-- <div class="collaborators"><Avatar v-for="..."/></div> -->
 
     <div class="grid-wrapper-2">
       <template v-if="mode == 'list'">
