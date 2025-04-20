@@ -1,31 +1,62 @@
 <script setup>
-  import { ref } from "vue";
+  import { ref, reactive } from "vue";
   import { useRouter } from "vue-router";
-  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import {
+    useKeyboardShortcuts,
+    getRegisteredComponents,
+  } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "@/read/SidebarItem.vue";
 
   const router = useRouter();
   const emit = defineEmits(["showComponent", "hideComponent"]);
 
-  const components = {
-    PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a" },
-    PanelSearch: { icon: "Search", label: "search", preferredSide: "top", key: "f" },
-    Minimap: { icon: "MapPin", label: "map", preferredSide: "left", key: "m" },
-    Comments: { icon: "Message", label: "notes", preferredSide: "left", key: "c" },
-    PanelCitation: { icon: "Quote", label: "citation", preferredSide: "left", key: "b" },
-    PanelSymbols: { icon: "Variable", label: "symbols", preferredSide: "left", key: "x" },
-    PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t" },
-    PanelSettings: { icon: "FileSettings", label: "settings", preferredSide: "left", key: "s" },
+  const components = reactive({
+    PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a", state: false },
+    PanelSearch: {
+      icon: "Search",
+      label: "search",
+      preferredSide: "top",
+      key: "f",
+      state: false,
+    },
+    Minimap: { icon: "MapPin", label: "map", preferredSide: "left", key: "m", state: false },
+    Comments: { icon: "Message", label: "notes", preferredSide: "left", key: "c", state: false },
+    PanelCitation: {
+      icon: "Quote",
+      label: "citation",
+      preferredSide: "left",
+      key: "b",
+      state: false,
+    },
+    PanelSymbols: {
+      icon: "Variable",
+      label: "symbols",
+      preferredSide: "left",
+      key: "x",
+      state: false,
+    },
+    PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t", state: false },
+    PanelSettings: {
+      icon: "FileSettings",
+      label: "settings",
+      preferredSide: "left",
+      key: "s",
+      state: false,
+    },
+  });
+
+  const togglePanel = (name, obj) => {
+    obj.state
+      ? emit("hideComponent", name, obj.preferredSide)
+      : emit("showComponent", name, obj.preferredSide);
+    obj.state = !obj.state;
   };
 
   useKeyboardShortcuts(
     Object.fromEntries(
       Object.entries(components).map(([name, obj]) => [
         `p,${obj.key}`,
-        () => {
-          console.log("hi");
-          emit("showComponent", name, obj.preferredSide);
-        },
+        () => togglePanel(name, obj),
       ])
     )
   );
@@ -39,6 +70,7 @@
     <div class="sb-menu">
       <SidebarItem
         v-for="(obj, name) in components"
+        v-model="obj.state"
         :icon="obj.icon"
         :label="obj.label"
         :preferred-side="obj.preferredSide"
