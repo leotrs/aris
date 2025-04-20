@@ -55,7 +55,7 @@
 
   .menus {
     position: absolute;
-    right: 16px;
+    right: 8px;
     top: 8px;
     height: calc(64px - var(--border-extrathin));
     display: flex;
