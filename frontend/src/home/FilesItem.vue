@@ -68,11 +68,14 @@
     <div class="grid-wrapper-2">
       <template v-if="mode == 'list'">
         <ContextMenu>
-          <ContextMenuItem icon="Inbox" caption="Notifications" />
-          <ContextMenuItem icon="Share3" caption="Share" />
-          <ContextMenuItem icon="UserPlus" caption="Invite User" />
+          <ContextMenuItem icon="Eye" caption="Preview" />
+          <ContextMenuItem icon="Bolt" caption="Activity" />
+          <ContextMenuItem icon="Versions" caption="Revisions" />
+          <ContextMenuItem icon="Quote" caption="Citation" />
           <Separator />
-          <ContextMenuItem icon="Clock" caption="History" />
+          <ContextMenuItem icon="Share3" caption="Share" />
+          <ContextMenuItem icon="UserPlus" caption="Collaborate" />
+          <Separator />
           <ContextMenuItem icon="Download" caption="Download" />
           <ContextMenuItem icon="FileExport" caption="Export" />
           <Separator />

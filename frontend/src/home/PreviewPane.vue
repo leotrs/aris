@@ -1,6 +1,12 @@
 <script setup>
-  import useClosable from "@/composables/useClosable.js";
+  import { ref, reactive } from "vue";
   import { useRouter } from "vue-router";
+  import { IconEye, IconBolt, IconVersions, IconQuote } from "@tabler/icons-vue";
+  import useClosable from "@/composables/useClosable.js";
+  import PreviewPreviewTab from "./PreviewPreviewTab.vue";
+  import PreviewActivityTab from "./PreviewActivityTab.vue";
+  import PreviewRevisionsTab from "./PreviewRevisionsTab.vue";
+  import PreviewCitationTab from "./PreviewCitationTab.vue";
 
   const props = defineProps({
     doc: { type: Object, required: true },
