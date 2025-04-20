@@ -18,29 +18,46 @@
   const close = () => emit("set-selected", "");
 
   useClosable({ onClose: close, closeOnOutsideClick: false });
+
+  const tabInfo = [
+    { label: "Preview", icon: IconEye, component: PreviewPreviewTab },
+    { label: "Activity", icon: IconBolt, component: PreviewActivityTab },
+    { label: "Revisions", icon: IconVersions, component: PreviewRevisionsTab },
+    { label: "Citation", icon: IconQuote, component: PreviewCitationTab },
+  ];
+  const activeIndex = ref(0);
 </script>
 
 <template>
   <div id="preview" ref="self-ref" class="pane">
     <div class="pane-header">
-      <div class="actions-left">
-        <Button kind="primary" class="btn-sm" text="Read" icon="Book" @click="read"></Button>
-        <Button kind="tertiary" class="btn-sm" text="Review" icon="FileCheck"></Button>
-        <Button kind="tertiary" class="btn-sm" text="Revisions" icon="Versions"></Button>
-      </div>
-      <div class="actions-right">
+      <div class="right">
+        <Button kind="primary" class="btn-sm" icon="Book" @click="read"></Button>
+        <Button kind="tertiary" class="btn-sm" icon="Pencil"></Button>
+        <Button kind="tertiary" class="btn-sm" icon="FileCheck"></Button>
+        <Button kind="tertiary" class="btn-sm" icon="Share3"></Button>
+        <Button kind="tertiary" class="btn-sm" icon="UserPlus"></Button>
+        <Button kind="tertiary" class="btn-sm" icon="Download"></Button>
+        <Button kind="tertiary" class="btn-sm" icon="FileExport"></Button>
         <ButtonClose @close="close" />
       </div>
     </div>
     <div class="pane-content">
-      <div class="pane-left">
-        <div class="text-h4">{{ doc.title }}</div>
-        <div>
-          <Avatar /><span>{{ doc.last_edited_at }}</span>
+      <div class="tabs">
+        <div class="tabs-header">
+          <div
+            v-for="(obj, idx) in tabInfo"
+            class="tab"
+            :class="{ active: idx === activeIndex }"
+            @click.stop="activeIndex = idx"
+          >
+            <component :is="obj.icon" />
+            <span class="tab-label text-default">{{ obj.label }}</span>
+          </div>
         </div>
-      </div>
-      <div class="pane-right">
-        <Abstract :doc="doc" />
+        <div class="tab-content">
+          <component :is="tabInfo[activeIndex].component" />
+        </div>
       </div>
     </div>
   </div>
