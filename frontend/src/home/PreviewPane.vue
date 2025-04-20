@@ -1,7 +1,8 @@
 <script setup>
-  import { ref } from "vue";
+  import { ref, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { IconEye, IconBolt, IconVersions, IconQuote } from "@tabler/icons-vue";
+  import { useElementSize } from "@vueuse/core";
   import useClosable from "@/composables/useClosable.js";
   import PreviewPreviewTab from "./PreviewPreviewTab.vue";
   import PreviewActivityTab from "./PreviewActivityTab.vue";
@@ -26,12 +27,17 @@
     { label: "Citation", icon: IconQuote, component: PreviewCitationTab },
   ];
   const activeIndex = ref(0);
+
+  const tabsHeaderRef = useTemplateRef("tabs-header-ref");
+  const { width: tabsHeaderWidth } = useElementSize(tabsHeaderRef);
 </script>
 
 <template>
   <div id="preview" ref="self-ref" class="pane">
     <div class="pane-header">
-      <div class="right">
+      <div class="left" :style="{ width: `${tabsHeaderWidth}px` }"></div>
+
+      <div class="middle">
         <Button kind="primary" class="btn-sm" icon="Book" @click="read"></Button>
         <Button kind="tertiary" class="btn-sm" icon="Pencil"></Button>
         <Button kind="tertiary" class="btn-sm" icon="FileCheck"></Button>
@@ -39,12 +45,13 @@
         <Button kind="tertiary" class="btn-sm" icon="UserPlus"></Button>
         <Button kind="tertiary" class="btn-sm" icon="Download"></Button>
         <Button kind="tertiary" class="btn-sm" icon="FileExport"></Button>
-        <ButtonClose @close="close" />
       </div>
+
+      <div class="right"><ButtonClose @close="close" /></div>
     </div>
     <div class="pane-content">
       <div class="tabs">
-        <div class="tabs-header">
+        <div ref="tabs-header-ref" class="tabs-header">
           <div
             v-for="(obj, idx) in tabInfo"
             class="tab"
@@ -73,17 +80,20 @@
 
   .pane-header {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     flex-wrap: wrap;
     padding: 8px;
 
-    & .right {
+    & .middle {
       display: flex;
       flex-wrap: wrap;
       row-gap: 16px;
       column-gap: 8px;
       /* otherwise the tabs will cover this */
       z-index: 1;
+    }
+
+    & .right {
     }
   }
 
@@ -94,14 +104,15 @@
   .tabs {
     position: absolute;
     top: calc(var(--padding));
-    left: calc(2 * var(--padding));
-    width: calc(100% - 4 * var(--padding) + 8px);
+    left: calc(1.5 * var(--padding));
+    width: calc(100% - 3.5 * var(--padding));
   }
 
   .tabs-header {
     display: flex;
     justify-content: flex-start;
     gap: 4px;
+    width: fit-content;
     height: 48px;
     border-radius: 4px;
     color: var(--dark);
@@ -118,8 +129,6 @@
     padding-inline: 8px;
     min-width: 48px;
     border-bottom: var(--border-thin) solid transparent;
-    border-top-left-radius: 4px;
-    border-top-right-radius: 4px;
 
     & > .tabler-icon {
       margin-top: 4px;
