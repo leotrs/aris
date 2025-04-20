@@ -27,7 +27,6 @@
     border-radius: 16px;
     width: 32px;
     height: 32px;
-    background-color: var(--orange-300);
     display: flex;
     align-items: center;
     justify-content: center;
