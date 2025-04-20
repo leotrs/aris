@@ -1,27 +1,38 @@
 <script setup>
+  import { computed } from "vue";
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
     kind: { type: String, default: "primary" },
+    size: { type: String, default: "md" },
     icon: { type: String, default: null },
     text: { type: String, default: "" },
-    size: { type: String, default: "md" },
+    textFloat: { type: String, default: "" },
     disabled: { type: Boolean, default: false },
   });
 </script>
 
 <template>
-  <button class="text-h6" :class="[kind, disabled ? 'disabled' : '']">
+  <button
+    :class="[
+      kind,
+      `btn-${size}`,
+      `text-float-${props.textFloat}`,
+      textFloat ? 'text-float' : '',
+      disabled ? 'disabled' : '',
+    ]"
+  >
     <template v-if="icon">
-      <component :is="Icons['Icon' + icon]" class="btn-icon" :class="`btn-${size}`" />
+      <component :is="Icons['Icon' + icon]" class="btn-icon" />
     </template>
-    <span v-if="text" class="btn-text">{{ text }}</span>
+    <span v-if="text" class="text-h6 btn-text">{{ text }}</span>
     <slot v-if="!icon && !text"></slot>
   </button>
 </template>
 
 <style scoped>
   button {
+    position: relative;
     display: flex;
     align-items: center;
     border: unset;
@@ -39,18 +50,20 @@
     border-radius: 8px;
     padding-block: 0px;
 
-    &:has(.btn-icon):has(.btn-text) {
-      padding-left: 2px;
-      padding-right: 8px;
-    }
+    &:not(.text-float) {
+      &:has(.btn-icon):has(.btn-text) {
+        padding-left: 2px;
+        padding-right: 8px;
+      }
 
-    &:has(.btn-icon):not(:has(.btn-text)) {
-      padding: 0px;
-    }
+      &:has(.btn-icon):not(:has(.btn-text)) {
+        padding: 0px;
+      }
 
-    &:not(:has(.btn-icon)):has(.btn-text) {
-      padding-left: 2px;
-      padding-right: 8px;
+      &:not(:has(.btn-icon)):has(.btn-text) {
+        padding-left: 2px;
+        padding-right: 8px;
+      }
     }
   }
 
@@ -90,6 +103,7 @@
   button.primary {
     background-color: var(--surface-action);
     color: var(--primary-50);
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
 
     &:hover {
       background-color: var(--surface-action-hover);
@@ -145,5 +159,14 @@
         color: var(--medium);
       }
     }
+  }
+
+  .text-float .btn-text {
+    position: absolute;
+  }
+
+  .text-float-bottom .btn-text {
+    top: 100%;
+    left: 0;
   }
 </style>
