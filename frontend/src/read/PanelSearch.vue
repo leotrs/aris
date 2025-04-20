@@ -1,5 +1,6 @@
 <script setup>
   import { reactive, watch, inject, onMounted, useTemplateRef } from "vue";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { highlightSearchMatches, clearHighlights } from "./highlightSearchMatches.js";
 
   const searchInfo = reactive({
@@ -65,6 +66,8 @@
 
   const searchBar = useTemplateRef("searchBar");
   onMounted(() => searchBar.value?.focusInput());
+
+  useKeyboardShortcuts({ "/": () => searchBar.value?.focusInput() });
 </script>
 
 <template>
