@@ -122,7 +122,6 @@
     }
 
     & .cta > button {
-      padding-left: 2px;
       justify-content: center;
       margin: 0 auto;
       width: 100%;

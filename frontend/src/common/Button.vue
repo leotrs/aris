@@ -17,7 +17,7 @@
     :class="[
       kind,
       `btn-${size}`,
-      `text-float-${props.textFloat}`,
+      textFloat ? `text-float-${props.textFloat}` : '',
       textFloat ? 'text-float' : '',
       disabled ? 'disabled' : '',
     ]"
@@ -81,16 +81,25 @@
     padding-inline: 16px;
     padding-block: 6px;
 
-    &:has(.btn-icon):has(.btn-text) {
-      padding-left: 2px;
-      padding-right: 8px;
+    &:not(.text-float) {
+      /* if the text is not floating, behave as normal */
+
+      &:has(.btn-icon):has(.btn-text) {
+        padding-left: 2px;
+        padding-right: 8px;
+      }
+
+      &:has(.btn-icon):not(:has(.btn-text)) {
+        padding: 6px;
+      }
+
+      &:not(:has(.btn-icon)):has(.btn-text) {
+      }
     }
 
-    &:has(.btn-icon):not(:has(.btn-text)) {
-      padding: 0px;
-    }
-
-    &:not(:has(.btn-icon)):has(.btn-text) {
+    &.text-float {
+      /* must have both an icon and text */
+      padding: 0;
     }
   }
 
