@@ -30,7 +30,7 @@
       <div class="pane-left">
         <div class="text-h4">{{ doc.title }}</div>
         <div>
-          <Avatar name="LT" /><span>{{ doc.last_edited_at }}</span>
+          <Avatar /><span>{{ doc.last_edited_at }}</span>
         </div>
       </div>
       <div class="pane-right">

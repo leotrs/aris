@@ -33,6 +33,13 @@
       state: false,
     },
     PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t", state: false },
+    PanelFocus: {
+      icon: "EyeX",
+      label: "focus",
+      preferredSide: "left",
+      key: "d",
+      state: false,
+    },
     PanelSettings: {
       icon: "FileSettings",
       label: "settings",

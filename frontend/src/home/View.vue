@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, provide, computed, useTemplateRef, onMounted, onUnmounted } from "vue";
+  import { ref, computed, useTemplateRef } from "vue";
   import { useDraggable } from "@vueuse/core";
   import Sidebar from "./Sidebar.vue";
   import FilesPane from "./FilesPane.vue";
@@ -8,34 +8,6 @@
 
   const showModal = ref(false);
   const selfRef = useTemplateRef("selfRef");
-
-  /*********** userID ***********/
-  const userID = 1;
-  provide("userID", userID);
-
-  /*********** isMobile ***********/
-  const isMobile = ref(false);
-  const setIsMobile = (el) => {
-    if (el?.contentRect) {
-      isMobile.value = el.contentRect.width < 432;
-    }
-  };
-  let observer;
-  onMounted(() => {
-    if (selfRef.value) {
-      observer = new ResizeObserver((entries) => {
-        for (let entry of entries) {
-          setIsMobile(entry);
-        }
-      });
-      observer.observe(selfRef.value);
-      setIsMobile(selfRef.value);
-    }
-  });
-  onUnmounted(() => {
-    if (observer) observer.disconnect();
-  });
-  provide("isMobile", isMobile);
 
   /*********** draggable Preview pane ***********/
   const container = useTemplateRef("separator-container-ref");
@@ -72,7 +44,7 @@
     <div class="views-row">
       <Button kind="tertiary" icon="Settings" />
       <Button kind="tertiary">
-        <Avatar name="TER" />
+        <Avatar />
       </Button>
     </div>
 

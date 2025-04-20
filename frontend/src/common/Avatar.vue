@@ -1,12 +1,11 @@
 <script setup>
-  const props = defineProps({
-    name: { type: String, required: true },
-  });
+  import { inject } from "vue";
+  const user = inject("user");
 </script>
 
 <template>
   <div class="av-wrapper">
-    <span class="av-name">{{ name }}</span>
+    <span class="av-name">{{ user.name }}</span>
   </div>
 </template>
 

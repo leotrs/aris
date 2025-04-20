@@ -10,13 +10,13 @@
   const emit = defineEmits(["set-selected"]);
   const mode = ref("list");
   const numDocs = computed(() => userDocs.value.length);
-  const userID = inject("userID");
+  const user = inject("user");
 
   /*********** Proivde userDocs ***********/
   const userDocs = ref([]);
   const reloadDocs = async (docID) => {
     try {
-      const response = await axios.get(`http://localhost:8000/users/${userID}/documents`);
+      const response = await axios.get(`http://localhost:8000/users/${user.id}/documents`);
       if (!userDocs.value) {
         userDocs.value = response.data.map((doc) => ({ ...doc, filtered: false }));
       } else {
@@ -43,7 +43,7 @@
   const userTags = ref([]);
   const updateUserTag = async (oldTag, newTag) => {
     if (oldTag) {
-      const url = `http://localhost:8000/users/${userID}/tags/${oldTag.id}`;
+      const url = `http://localhost:8000/users/${user.id}/tags/${oldTag.id}`;
       try {
         if (newTag == null) {
           await axios.delete(url);
@@ -57,7 +57,7 @@
     }
 
     try {
-      const response = await axios.get(`http://localhost:8000/users/${userID}/tags`);
+      const response = await axios.get(`http://localhost:8000/users/${user.id}/tags`);
       userTags.value = response.data;
     } catch (error) {
       console.error("Failed to fetch tags:", error);
@@ -65,7 +65,7 @@
   };
   const createTag = async (name, color = null) => {
     try {
-      await axios.post(`http://localhost:8000/users/${userID}/tags`, {
+      await axios.post(`http://localhost:8000/users/${user.id}/tags`, {
         name: name,
         color: color || "",
       });
@@ -76,7 +76,7 @@
   };
   const addOrRemoveTag = async (tagID, docID, mode) => {
     console.log(mode);
-    const url = `http://localhost:8000/users/${userID}/documents/${docID}/tags/${tagID}`;
+    const url = `http://localhost:8000/users/${user.id}/documents/${docID}/tags/${tagID}`;
     if (mode == "add") {
       try {
         await axios.post(url);
