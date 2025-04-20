@@ -4,8 +4,8 @@
 </script>
 
 <template>
-  <div class="um-wrapper" @click.stop="onClick">
-    <ContextMenu ref="menu-ref" icon="Dots">
+  <div class="um-wrapper">
+    <ContextMenu ref="menu-ref" icon="Menu3">
       <ContextMenuItem icon="Inbox" caption="Notifications" />
       <ContextMenuItem icon="Share3" caption="Share" />
       <ContextMenuItem icon="UserPlus" caption="Invite User" />
@@ -23,10 +23,8 @@
 
 <style scoped>
   .um-wrapper {
-    border-radius: 16px;
-    width: 32px;
-    height: 32px;
-    background-color: var(--orange-300);
+    width: 48px;
+    height: 48px;
     display: flex;
     align-items: center;
     justify-content: center;

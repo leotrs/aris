@@ -41,13 +41,8 @@
 <template>
   <div class="read-view">
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
-
     <ArisManuscript :left="leftComponents" :right="rightComponents" :top="topComponents" />
-
-    <div class="links">
-      <FileMenu />
-      <UserMenu />
-    </div>
+    <div class="menus"><FileMenu /><UserMenu /></div>
   </div>
 </template>
 
@@ -58,15 +53,16 @@
     background-color: transparent;
   }
 
-  .links {
+  .menus {
     position: absolute;
-    right: 8px;
+    right: 16px;
     top: 8px;
     height: calc(64px - var(--border-extrathin));
     display: flex;
+    align-items: center;
     z-index: 3;
     padding: 8px;
+    gap: 8px;
     background-color: transparent;
-    border-top-right-radius: 16px;
   }
 </style>
