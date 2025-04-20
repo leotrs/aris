@@ -2,17 +2,18 @@
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
-    kind: String,
-    icon: String,
-    text: String,
-    disabled: Boolean,
+    kind: { type: String, default: "primary" },
+    icon: { type: String, default: null },
+    text: { type: String, default: "" },
+    size: { type: String, default: "md" },
+    disabled: { type: Boolean, default: false },
   });
 </script>
 
 <template>
   <button class="text-h6" :class="[kind, disabled ? 'disabled' : '']">
     <template v-if="icon">
-      <component :is="Icons['Icon' + icon]" class="btn-icon" />
+      <component :is="Icons['Icon' + icon]" class="btn-icon" :class="`btn-${size}`" />
     </template>
     <span v-if="text" class="btn-text">{{ text }}</span>
     <slot v-if="!icon && !text"></slot>
@@ -27,17 +28,7 @@
     border-radius: 16px;
     transition: background 0.15s ease-in-out;
     gap: 2px;
-
     padding-block: 6px;
-
-    &:has(.btn-icon):has(.btn-text) {
-      padding-left: 2px;
-      padding-right: 8px;
-    }
-
-    &:has(.btn-icon):not(:has(.btn-text)) {
-      padding: 8px;
-    }
 
     &:hover {
       cursor: pointer;
@@ -74,7 +65,10 @@
     }
 
     &:has(.btn-icon):not(:has(.btn-text)) {
-      padding: 8px;
+      padding: 0px;
+    }
+
+    &:not(:has(.btn-icon)):has(.btn-text) {
     }
   }
 
@@ -82,6 +76,15 @@
     padding-inline: 24px;
     padding-block: 24px;
     border-radius: 24px;
+
+    &:has(.btn-icon):has(.btn-text) {
+    }
+
+    &:has(.btn-icon):not(:has(.btn-text)) {
+    }
+
+    &:not(:has(.btn-icon)):has(.btn-text) {
+    }
   }
 
   button.primary {
@@ -97,7 +100,6 @@
     }
   }
 
-  /* a lot of these styles only work when the button has an icon... */
   button.secondary {
     background-color: var(--surface-primary);
     color: var(--primary-600);
@@ -112,20 +114,11 @@
     & .btn-icon {
       color: var(--icon-action);
     }
-
-    &:has(span.btn-text) {
-      padding-right: 16px;
-    }
-
-    &:has(.btn-icon):not(:has(.btn-text)) {
-      padding: 6px;
-    }
   }
 
   button.tertiary {
     background-color: transparent;
     color: var(--extra-dark);
-    padding-inline: 8px;
 
     &:hover {
       background-color: var(--surface-hint);
@@ -134,10 +127,6 @@
       & > svg {
         color: var(--almost-black);
       }
-    }
-
-    &:has(.btn-icon):not(:has(.btn-text)) {
-      padding-inline: 8px;
     }
   }
 
