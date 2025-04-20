@@ -34,14 +34,19 @@
 
 <style scoped>
   button {
+    --border-width: var(--border-thin);
+
     position: relative;
     display: flex;
     align-items: center;
     border: unset;
     border-radius: 16px;
-    transition: background 0.15s ease-in-out;
+    transition:
+      background 0.15s ease-in-out,
+      border 0.15s ease-in-out;
     gap: 2px;
     padding-block: 6px;
+    border: var(--border-width) solid transparent;
 
     &:hover {
       cursor: pointer;
@@ -50,14 +55,19 @@
 
   button.btn-sm {
     border-radius: 8px;
-    padding-block: 0px;
+
+    & > .tabler-icon {
+      /* since all buttons must have border, in this case we
+      * need to decrease the icon margin to achieve 32x32 size */
+      margin: calc(6px - var(--border-width));
+    }
 
     &:not(.text-float) {
       /* if the text is not floating, behave as normal */
 
       &:has(.btn-icon):has(.btn-text) {
-        padding-left: 2px;
-        padding-right: 8px;
+        padding-left: calc(2px - var(--border-width));
+        padding-right: calc(8px - var(--border-width));
       }
 
       &:has(.btn-icon):not(:has(.btn-text)) {
@@ -65,8 +75,7 @@
       }
 
       &:not(:has(.btn-icon)):has(.btn-text) {
-        padding-left: 2px;
-        padding-right: 8px;
+        padding-inline: calc(8px - var(--border-width));
       }
 
       &:not(:has(.btn-icon)):not(:has(.btn-text)) {
@@ -81,26 +90,24 @@
 
   button.btn-md {
     border-radius: 16px;
-    padding-inline: 16px;
-    padding-block: 6px;
 
     &:not(.text-float) {
       /* if the text is not floating, behave as normal */
 
       &:has(.btn-icon):has(.btn-text) {
-        padding-left: 2px;
-        padding-right: 8px;
+        padding-left: calc(2px - var(--border-width));
+        padding-right: calc(8px - var(--border-width));
       }
 
       &:has(.btn-icon):not(:has(.btn-text)) {
-        padding: 8px;
+        padding: calc(8px - var(--border-width));
       }
 
       &:not(:has(.btn-icon)):has(.btn-text) {
       }
 
       &:not(:has(.btn-icon)):not(:has(.btn-text)) {
-        padding: 8px;
+        padding: calc(8px - var(--border-width));
       }
     }
 
@@ -110,8 +117,8 @@
   }
 
   button.btn-lg {
-    padding-inline: 24px;
-    padding-block: 24px;
+    padding-inline: calc(24px - var(--border-width));
+    padding-block: calc(24px - var(--border-width));
     border-radius: 24px;
     &:not(.text-float) {
       /* if the text is not floating, behave as normal */
@@ -135,11 +142,13 @@
 
   button.primary {
     background-color: var(--surface-action);
+    border-color: var(--surface-action);
     color: var(--primary-50);
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
 
     &:hover {
       background-color: var(--surface-action-hover);
+      border-color: var(--surface-action-hover);
     }
 
     & .btn-icon {
@@ -150,7 +159,7 @@
   button.secondary {
     background-color: var(--surface-primary);
     color: var(--primary-600);
-    border: var(--border-thin) solid var(--border-action-hover);
+    border-color: var(--border-action-hover);
 
     &:hover {
       color: var(--text-action-hover);
@@ -165,10 +174,12 @@
 
   button.tertiary {
     background-color: transparent;
+    border-color: transparent;
     color: var(--extra-dark);
 
     &:hover {
       background-color: var(--surface-hint);
+      border-color: var(--surface-hint);
       color: var(--almost-black);
 
       & > svg {
