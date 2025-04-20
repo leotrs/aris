@@ -68,10 +68,13 @@
         padding-left: 2px;
         padding-right: 8px;
       }
+
+      &:not(:has(.btn-icon)):not(:has(.btn-text)) {
+      }
     }
 
     &.text-float {
-      /* must have both an icon and text */
+      /* must have icon and text and not have slot */
       padding: 0;
     }
   }
@@ -90,16 +93,19 @@
       }
 
       &:has(.btn-icon):not(:has(.btn-text)) {
-        padding: 6px;
+        padding: 8px;
       }
 
       &:not(:has(.btn-icon)):has(.btn-text) {
+      }
+
+      &:not(:has(.btn-icon)):not(:has(.btn-text)) {
+        padding: 8px;
       }
     }
 
     &.text-float {
       /* must have both an icon and text */
-      padding: 0;
     }
   }
 
@@ -107,14 +113,23 @@
     padding-inline: 24px;
     padding-block: 24px;
     border-radius: 24px;
+    &:not(.text-float) {
+      /* if the text is not floating, behave as normal */
 
-    &:has(.btn-icon):has(.btn-text) {
+      &:has(.btn-icon):has(.btn-text) {
+      }
+
+      &:has(.btn-icon):not(:has(.btn-text)) {
+      }
+
+      &:not(:has(.btn-icon)):has(.btn-text) {
+      }
+
+      &:not(:has(.btn-icon)):not(:has(.btn-text)) {
+      }
     }
 
-    &:has(.btn-icon):not(:has(.btn-text)) {
-    }
-
-    &:not(:has(.btn-icon)):has(.btn-text) {
+    &.text-float {
     }
   }
 
