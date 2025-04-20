@@ -64,36 +64,106 @@
 </template>
 
 <style scoped>
+  .pane {
+    --padding: 16px;
+    --border-radius: 8px;
+
+    position: relative;
+  }
+
   .pane-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     flex-wrap: wrap;
     padding: 8px;
+
+    & .right {
+      display: flex;
+      flex-wrap: wrap;
+      row-gap: 16px;
+      column-gap: 8px;
+    }
   }
 
   .pane-content {
-    display: flex;
-    gap: 48px;
     padding-inline: 8px;
-    overflow-y: auto;
   }
 
-  .actions-left {
+  .tabs {
+    position: absolute;
+    top: calc(var(--padding));
+    left: calc(2 * var(--padding));
+  }
+
+  .tabs-header {
     display: flex;
-    flex-wrap: wrap;
-    row-gap: 16px;
-    column-gap: 8px;
+    justify-content: space-between;
+    gap: 4px;
+    height: 48px;
+    border-radius: 4px;
+    color: var(--dark);
+    & svg {
+      color: var(--dark);
+    }
   }
 
-  .pane-left {
-    flex: 1;
+  .tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-inline: 8px;
+    min-width: 48px;
+    border-bottom: var(--border-thin) solid transparent;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+
+    & > .tabler-icon {
+      margin-top: 4px;
+      margin-bottom: 2px;
+    }
+  }
+
+  .tab-label {
+    font-size: 16px;
+  }
+
+  .tab.active {
+    background-color: var(--information-200);
+    border-bottom-color: var(--information-500);
+    color: var(--information-700);
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
+
+    & > svg {
+      color: var(--information-700);
+    }
+  }
+
+  .tab:not(.active):hover {
+    cursor: pointer;
+    border-bottom-color: var(--extra-dark);
+    color: var(--extra-dark);
+    & .tab-label {
+      display: block;
+    }
+    & > svg {
+      color: var(--extra-dark);
+    }
+  }
+
+  .tab-content {
+    padding-inline: 8px;
     display: flex;
     flex-direction: column;
     gap: 8px;
-  }
-
-  .pane-right {
-    flex: 2;
-    padding-block: 8px;
+    & :deep(.sc-item) {
+      padding: 4px !important;
+    }
+    & :deep(.sc-item:first-child) {
+      padding-left: 6px !important;
+    }
+    & :deep(.sc-item:last-child) {
+      padding-right: 6px !important;
+    }
   }
 </style>
