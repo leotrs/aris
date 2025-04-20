@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, useTemplateRef } from "vue";
+  import { ref, computed, inject, useTemplateRef } from "vue";
   import { useDraggable } from "@vueuse/core";
   import Sidebar from "./Sidebar.vue";
   import FilesPane from "./FilesPane.vue";
@@ -8,6 +8,8 @@
 
   const showModal = ref(false);
   const selfRef = useTemplateRef("selfRef");
+
+  const isMobile = inject("isMobile");
 
   /*********** draggable Preview pane ***********/
   const container = useTemplateRef("separator-container-ref");
