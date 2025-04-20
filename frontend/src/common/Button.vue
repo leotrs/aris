@@ -25,7 +25,9 @@
     <template v-if="icon">
       <component :is="Icons['Icon' + icon]" class="btn-icon" />
     </template>
-    <span v-if="text" class="text-h6 btn-text">{{ text }}</span>
+    <span v-if="text" class="btn-text" :class="textFloat ? 'text-caption' : 'text-h6'">
+      {{ text }}
+    </span>
     <slot v-if="!icon && !text"></slot>
   </button>
 </template>
@@ -51,6 +53,8 @@
     padding-block: 0px;
 
     &:not(.text-float) {
+      /* if the text is not floating, behave as normal */
+
       &:has(.btn-icon):has(.btn-text) {
         padding-left: 2px;
         padding-right: 8px;
@@ -64,6 +68,11 @@
         padding-left: 2px;
         padding-right: 8px;
       }
+    }
+
+    &.text-float {
+      /* must have both an icon and text */
+      padding: 0;
     }
   }
 
@@ -161,12 +170,19 @@
     }
   }
 
-  .text-float .btn-text {
+  button.text-float .btn-text {
     position: absolute;
+    color: var(--extra-dark);
   }
 
-  .text-float-bottom .btn-text {
-    top: 100%;
-    left: 0;
+  button.text-float-bottom .btn-text {
+    top: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    display: none;
+  }
+
+  button.text-float:hover .btn-text {
+    display: block;
   }
 </style>
