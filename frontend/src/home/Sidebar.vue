@@ -34,6 +34,7 @@
         kind="secondary"
         icon="CirclePlus"
         text="New File"
+        shadow="true"
         :class="{ collapsed }"
         @click="$emit('showFileUploadModal')"
       />
@@ -194,7 +195,6 @@
   }
 
   .cta > button {
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
     justify-content: unset !important;
     padding-left: 24px !important;
     overflow-x: hidden;

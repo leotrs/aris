@@ -54,6 +54,7 @@
       cursor: pointer;
       background-color: v-bind("hoverColor");
       color: var(--text-action-hover);
+      box-shadow: var(--shadow-strong);
     }
 
     &.active {

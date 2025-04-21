@@ -2,8 +2,8 @@
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
-    icon: String,
-    caption: String,
+    icon: { type: String, required: true },
+    caption: { type: String, required: true },
   });
 </script>
 
@@ -43,9 +43,7 @@
     background-color: var(--surface-primary);
     padding-block: 8px;
     border-radius: 16px;
-    box-shadow:
-      0px 1px 2px rgba(0, 0, 0, 30%),
-      0px 2px 6px rgba(0, 0, 0, 15%);
+    box-shadow: var(--shadow-strong), var(--shadow-soft);
 
     & > *:not(:last-child) {
       margin-bottom: 8px;
