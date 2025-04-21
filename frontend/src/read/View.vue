@@ -5,7 +5,6 @@
   import axios from "axios";
   import Sidebar from "./Sidebar.vue";
   import ArisManuscript from "./ArisManuscript.vue";
-  import FileMenu from "./FileMenu.vue";
 
   const docID = `${useRoute().params.doc_id}`;
   const doc = ref({});

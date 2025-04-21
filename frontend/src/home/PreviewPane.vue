@@ -4,10 +4,10 @@
   import { IconEye, IconBolt, IconVersions, IconQuote } from "@tabler/icons-vue";
   import { useElementSize } from "@vueuse/core";
   import useClosable from "@/composables/useClosable.js";
-  import PreviewPreviewTab from "./PreviewPreviewTab.vue";
-  import PreviewActivityTab from "./PreviewActivityTab.vue";
-  import PreviewRevisionsTab from "./PreviewRevisionsTab.vue";
-  import PreviewCitationTab from "./PreviewCitationTab.vue";
+  import PreviewTabPreview from "./PreviewTabPreview.vue";
+  import PreviewTabActivity from "./PreviewTabActivity.vue";
+  import PreviewTabRevisions from "./PreviewTabRevisions.vue";
+  import PreviewTabCitation from "./PreviewTabCitation.vue";
 
   const props = defineProps({
     doc: { type: Object, required: true },
@@ -21,10 +21,10 @@
   useClosable({ onClose: close, closeOnOutsideClick: false });
 
   const tabInfo = [
-    { label: "Preview", icon: IconEye, component: PreviewPreviewTab },
-    { label: "Activity", icon: IconBolt, component: PreviewActivityTab },
-    { label: "Revisions", icon: IconVersions, component: PreviewRevisionsTab },
-    { label: "Citation", icon: IconQuote, component: PreviewCitationTab },
+    { label: "Preview", icon: IconEye, component: PreviewTabPreview },
+    { label: "Activity", icon: IconBolt, component: PreviewTabActivity },
+    { label: "Revisions", icon: IconVersions, component: PreviewTabRevisions },
+    { label: "Citation", icon: IconQuote, component: PreviewTabCitation },
   ];
   const activeIndex = ref(0);
 
