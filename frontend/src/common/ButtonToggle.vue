@@ -38,6 +38,7 @@
     transition: background 0.15s ease-in-out;
     gap: 2px;
     background-color: transparent;
+    outline: none;
 
     padding-block: 6px;
 
@@ -52,9 +53,15 @@
 
     &:hover {
       cursor: pointer;
-      background-color: v-bind("hoverColor");
-      color: var(--text-action-hover);
       box-shadow: var(--shadow-strong);
+    }
+
+    &.active:hover {
+      background-color: v-bind("activeColor");
+    }
+
+    &:not(.active):hover {
+      background-color: v-bind("hoverColor");
     }
 
     &.active {
@@ -101,5 +108,9 @@
     padding-inline: 24px;
     padding-block: 24px;
     border-radius: 24px;
+  }
+
+  button:active {
+    background-color: var(--surface-action) !important;
   }
 </style>
