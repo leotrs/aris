@@ -1,5 +1,6 @@
 <script setup>
-  import { ref, inject, computed, watch } from "vue";
+  import { ref, inject, computed, watch, useTemplateRef } from "vue";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
   const emit = defineEmits(["list", "cards"]);
   const isMobile = inject("isMobile");
@@ -15,6 +16,11 @@
     clearFilterDocs();
     filterDocs((doc) => !doc.title.toLowerCase().includes(searchString.toLowerCase()));
   };
+
+  const searchBar = useTemplateRef("search-bar-ref");
+  useKeyboardShortcuts({
+    "/": () => searchBar.value.focusInput(),
+  });
 </script>
 
 <template>
@@ -23,7 +29,7 @@
       <SegmentedControl v-model="controlState" :icons="segmentedControlIcons" :default-active="0" />
     </div>
     <div class="tb-search">
-      <SearchBar @submit="onSearchSubmit" />
+      <SearchBar ref="search-bar-ref" @submit="onSearchSubmit" />
     </div>
   </div>
 </template>
