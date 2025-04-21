@@ -1,10 +1,6 @@
 <script setup>
-  import { ref, computed, watch } from "vue";
-  import {
-    IconArrowsSort,
-    IconSortAscendingLetters,
-    IconSortDescendingLetters,
-  } from "@tabler/icons-vue";
+  import { ref, watch } from "vue";
+  import { IconArrowsSort, IconArrowNarrowDown, IconArrowNarrowUp } from "@tabler/icons-vue";
 
   const props = defineProps({
     name: { type: String, required: true },
@@ -40,8 +36,8 @@
     >
       <span class="col-header-label">{{ name }}</span>
       <component :is="IconArrowsSort" v-if="!sortState" class="no-sort" />
-      <component :is="IconSortDescendingLetters" v-if="sortState == 'desc'" />
-      <component :is="IconSortAscendingLetters" v-if="sortState == 'asc'" />
+      <component :is="IconArrowNarrowDown" v-if="sortState == 'desc'" />
+      <component :is="IconArrowNarrowUp" v-if="sortState == 'asc'" />
     </div>
   </template>
 
