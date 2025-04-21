@@ -97,6 +97,10 @@
     color: var(--light);
   }
 
+  :deep(.cm-btn:hover svg) {
+    color: var(--extra-dark);
+  }
+
   .new-tag {
     &:hover {
       background-color: var(--surface-hint);
