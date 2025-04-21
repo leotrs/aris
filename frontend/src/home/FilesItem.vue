@@ -41,31 +41,50 @@
 
 <template>
   <div class="item" :class="mode" @click="emits('click')" @dblclick="emits('dblclick')">
-    <FileTitle v-model="fileTitleActive" :doc="doc" />
-
     <template v-if="mode == 'cards'">
-      <ContextMenu />
+      <div class="card-header">
+        <FileTitle
+          v-model="fileTitleActive"
+          :doc="doc"
+          :class="mode == 'cards' ? 'text-label' : ''"
+        />
+        <ContextMenu />
+      </div>
+
+      <div class="card-content">
+        <Suspense>
+          <Minimap :doc="doc" orientation="horizontal" />
+          <template #fallback>loading...</template>
+        </Suspense>
+        <Abstract :doc="doc" />
+      </div>
+
+      <div class="card-footer">
+        <div class="tags"><TagRow v-model="doc.tags" :doc-id="doc.id" /></div>
+        <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
+        <Avatar :name="LT" />
+      </div>
     </template>
-
-    <Suspense>
-      <Minimap :doc="doc" orientation="horizontal" />
-      <template #fallback>loading...</template>
-    </Suspense>
-
-    <template v-if="mode == 'cards'">
-      <Abstract :doc="doc" />
-    </template>
-
-    <div class="tags">
-      <TagRow v-model="doc.tags" :doc-id="doc.id" />
-    </div>
-
-    <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
-
-    <!-- <div class="owner"><Avatar /></div> -->
-    <!-- <div class="collaborators"><Avatar v-for="..."/></div> -->
 
     <template v-if="mode == 'list'">
+      <FileTitle
+        v-model="fileTitleActive"
+        :doc="doc"
+        :class="mode == 'cards' ? 'text-label' : ''"
+      />
+
+      <Suspense>
+        <Minimap :doc="doc" orientation="horizontal" />
+        <template #fallback>loading...</template>
+      </Suspense>
+
+      <div class="tags"><TagRow v-model="doc.tags" :doc-id="doc.id" /></div>
+
+      <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
+
+      <!-- <div class="owner"><Avatar /></div> -->
+      <!-- <div class="collaborators"><Avatar v-for="..."/></div> -->
+
       <ContextMenu>
         <ContextMenuItem icon="Eye" caption="Preview" />
         <ContextMenuItem icon="Bolt" caption="Activity" />
@@ -82,9 +101,10 @@
         <ContextMenuItem icon="Copy" caption="Duplicate" @click="copyDoc" />
         <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="deleteDoc" />
       </ContextMenu>
-    </template>
 
-    <span></span>
+      <!-- to complete the grid -->
+      <span></span>
+    </template>
   </div>
 </template>
 
@@ -128,10 +148,38 @@
     padding: 16px;
     border: var(--border-thin) solid var(--border-primary);
     background-color: var(--surface-primary);
+    display: flex;
+    flex-direction: column;
 
     &:hover {
       background-color: var(--surface-hover);
       border-color: var(--gray-400);
+    }
+
+    & > .card-header {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    & > .card-content {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 8px;
+      margin-bottom: 16px;
+    }
+
+    & > .card-footer {
+      display: flex;
+      flex-wrap: wrap;
+      column-gap: 8px;
+      row-gap: 8px;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    & .file-title {
+      font-size: 18px;
+      margin-top: 8px;
     }
 
     & > .dots,
@@ -147,7 +195,8 @@
     }
 
     & :deep(.manuscriptwrapper) {
-      padding-block: 16px !important;
+      margin-top: 8px !important;
+      padding-block: 0px !important;
     }
 
     & :deep(.manuscriptwrapper .abstract > h3) {
