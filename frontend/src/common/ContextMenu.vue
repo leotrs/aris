@@ -1,6 +1,5 @@
 <script setup>
   import { ref, watch } from "vue";
-  import { IconDotsVertical } from "@tabler/icons-vue";
   import useClosable from "@/composables/useClosable.js";
 
   const props = defineProps({
@@ -22,10 +21,7 @@
 
 <template>
   <div class="cm-wrapper" @click.stop @dblclick.stop>
-    <template v-if="icon == 'Dots'">
-      <!-- <IconDotsVertical class="cm-btn" width="4" height="18" viewBox="10 3 4 18.25" /> -->
-      <!-- <ButtonDots /> -->
-    </template>
+    <template v-if="icon == 'Dots'"><ButtonDots v-model="show" class="cm-btn" /></template>
     <template v-else-if="icon">
       <ButtonToggle v-model="show" :icon="icon" class="cm-btn" hover-color="var(--surface-hint)" />
     </template>
@@ -37,37 +33,7 @@
 <style>
   .cm-wrapper {
     position: relative;
-
-    & > .cm-click-target {
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-
-      &.dots {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: var(--extra-dark);
-        stroke-width: 2px;
-        width: 16px;
-        height: 32px;
-
-        & > svg {
-          width: 4px;
-          height: 18px;
-          margin: 0;
-        }
-      }
-
-      &:hover {
-        background-color: var(--surface-hint);
-
-        & .tabler-icon.cm-btn {
-          color: var(--extra-dark);
-        }
-      }
-    }
+    width: fit-content;
 
     & > .cm-menu {
       position: absolute;

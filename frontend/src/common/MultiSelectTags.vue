@@ -80,10 +80,6 @@
     text-wrap: nowrap;
   }
 
-  .cm-wrapper > :deep(.cm-click-target > .cm-btn) {
-    color: var(--light);
-  }
-
   .cm-wrapper > :deep(.cm-menu) {
     right: 0;
     transform: translateX(0) translateY(32px);
@@ -95,6 +91,10 @@
     justify-content: space-between;
     padding-inline: 8px;
     gap: 8px;
+  }
+
+  :deep(.cm-btn svg) {
+    color: var(--light);
   }
 
   .new-tag {
