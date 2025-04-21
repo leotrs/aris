@@ -168,8 +168,13 @@
   }
 
   .files.list {
-    overflow-y: auto;
     flex: 1;
+  }
+
+  .pane-header.list,
+  .files.list {
+    overflow-y: auto;
+    scrollbar-gutter: stable;
   }
 
   .pane-header.list,
@@ -180,7 +185,6 @@
 
   .pane-header.list > *,
   .files.list .item > * {
-    padding-block: 4px;
     overflow-x: auto;
     text-overflow: ellipsis;
     display: flex;
