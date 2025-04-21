@@ -146,6 +146,7 @@
   .mm-wrapper.horizontal,
   .mm-wrapper.horizontal :deep(.minimap) {
     height: 48px;
+    margin-block: auto;
   }
 
   .mm-wrapper.vertical {

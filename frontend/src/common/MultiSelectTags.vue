@@ -2,7 +2,7 @@
   import { ref, reactive, inject, watch, watchEffect } from "vue";
 
   const props = defineProps({
-    docID: { type: Number, default: -1 },
+    docId: { type: Number, default: -1 },
     icon: { type: String, default: "Tag" },
   });
   const tags = defineModel();
