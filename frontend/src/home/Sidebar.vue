@@ -34,7 +34,7 @@
         kind="secondary"
         icon="CirclePlus"
         text="New File"
-        shadow="true"
+        :shadow="true"
         :class="{ collapsed }"
         @click="$emit('showFileUploadModal')"
       />
