@@ -44,7 +44,6 @@ async def create_document(
 @router.get("/{doc_id}")
 async def get_document(doc_id: int, db: Session = Depends(get_db)):
     doc = await crud.get_document(doc_id, db)
-    tags = await crud.get_document_tags(doc_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="Document not found")
     return {
@@ -54,7 +53,6 @@ async def get_document(doc_id: int, db: Session = Depends(get_db)):
         "last_edited_at": doc.last_edited_at,
         "source": doc.source,
         "owner_id": doc.owner_id,
-        "tags": [{"name": t.name, "id": t.id} for t in tags],
     }
 
 
@@ -96,7 +94,10 @@ async def get_document_html(doc_id: int, db: Session = Depends(get_db)):
 
 @router.get("/{doc_id}/content/{section_name}", response_class=HTMLResponse)
 async def get_document_section(
-        doc_id: int, section_name: str, handrails: bool = True, db: Session = Depends(get_db)
+    doc_id: int,
+    section_name: str,
+    handrails: bool = True,
+    db: Session = Depends(get_db),
 ):
     try:
         html = await crud.get_document_section(doc_id, section_name, db, handrails)

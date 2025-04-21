@@ -4,7 +4,8 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from ..models import Document, User
-from .tag import get_document_tags
+from .document import get_document
+from .tag import get_user_document_tags
 from .utils import extract_title
 
 
@@ -44,7 +45,7 @@ async def soft_delete_user(user_id: int, db: Session):
     return user
 
 
-async def get_user_documents(user_id: int, with_tags, db: Session):
+async def get_user_documents(user_id: int, with_tags: bool, db: Session):
     user = await get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")
@@ -64,7 +65,30 @@ async def get_user_documents(user_id: int, with_tags, db: Session):
             "title": doc.title,
             "source": doc.source,
             "last_edited_at": doc.last_edited_at,
-            "tags": await get_document_tags(doc.id, db) if with_tags else [],
+            "tags": await get_user_document_tags(user_id, doc.id, db)
+            if with_tags
+            else [],
         }
         for doc in docs
     ]
+
+
+async def get_user_document(user_id: int, doc_id: int, with_tags: bool, db: Session):
+    user = await get_user(user_id, db)
+    if not user:
+        raise ValueError(f"User {user_id} not found")
+
+    doc = await get_document(doc_id, db)
+    if not doc:
+        raise ValueError(f"Document {user_id} not found")
+
+    title = await extract_title(doc)
+    tags = (await get_user_document_tags(user_id, doc_id, db)) if with_tags else []
+
+    return {
+        "id": doc.id,
+        "title": title,
+        "source": doc.source,
+        "last_edited_at": doc.last_edited_at,
+        "tags": tags,
+    }

@@ -88,19 +88,14 @@ async def soft_delete_tag(_id: int, user_id: int, db: Session):
     return {"message": "Tag deleted successfully"}
 
 
-async def get_document_tags(document_id: int, db: Session):
-    tags = (
+async def get_user_document_tags(user_id: int, doc_id: int, db: Session):
+    return (
         db.query(Tag)
-        .join(document_tags, document_tags.c.tag_id == Tag.id)
-        .join(Document, Document.id == document_tags.c.document_id)
-        .filter(
-            document_tags.c.document_id == document_id,
-            Tag.deleted_at.is_(None),
-            Document.deleted_at.is_(None),
-        )
+        .join(document_tags, Tag.id == document_tags.c.tag_id)
+        .filter(document_tags.c.document_id == doc_id, Tag.user_id == user_id)
+        .order_by(Tag.name.asc())  # optional
         .all()
     )
-    return tags
 
 
 async def add_tag_to_document(user_id: int, document_id: int, tag_id: str, db: Session):

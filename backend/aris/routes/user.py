@@ -48,3 +48,8 @@ async def soft_delete_user(user_id: int, db: Session = Depends(get_db)):
 @router.get("/{user_id}/documents")
 async def get_user_documents(user_id: int, db: Session = Depends(get_db)):
     return await crud.get_user_documents(user_id, True, db)
+
+
+@router.get("/{user_id}/documents/{doc_id}")
+async def get_user_document(user_id: int, doc_id: int, db: Session = Depends(get_db)):
+    return await crud.get_user_document(user_id, doc_id, True, db)
