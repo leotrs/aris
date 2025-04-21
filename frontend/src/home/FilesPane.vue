@@ -39,65 +39,6 @@
   provide("userDocs", { userDocs, reloadDocs, sortDocs, filterDocs, clearFilterDocs });
   onMounted(async () => reloadDocs());
 
-  /*********** Provide userTags ***********/
-  const userTags = ref([]);
-  const updateUserTag = async (oldTag, newTag) => {
-    if (oldTag) {
-      const url = `http://localhost:8000/users/${user.id}/tags/${oldTag.id}`;
-      try {
-        if (newTag == null) {
-          await axios.delete(url);
-        } else {
-          await axios.put(url, newTag);
-        }
-        reloadDocs();
-      } catch (error) {
-        console.error("Error updating tag:", error);
-      }
-    }
-
-    try {
-      const response = await axios.get(`http://localhost:8000/users/${user.id}/tags`);
-      userTags.value = response.data;
-    } catch (error) {
-      console.error("Failed to fetch tags:", error);
-    }
-  };
-  const createTag = async (name, color = null) => {
-    try {
-      await axios.post(`http://localhost:8000/users/${user.id}/tags`, {
-        name: name,
-        color: color || "",
-      });
-      reloadDocs();
-    } catch (error) {
-      console.error("Error creating tag:", error);
-    }
-  };
-  const addOrRemoveTag = async (tagID, docID, mode) => {
-    console.log(mode);
-    const url = `http://localhost:8000/users/${user.id}/documents/${docID}/tags/${tagID}`;
-    if (mode == "add") {
-      try {
-        await axios.post(url);
-        reloadDocs();
-      } catch (error) {
-        console.error("Error updating tag:", error);
-      }
-    } else if (mode == "remove") {
-      try {
-        await axios.delete(url);
-        reloadDocs();
-      } catch (error) {
-        console.error("Error updating tag:", error);
-      }
-    }
-  };
-  provide("userTags", { userTags, updateUserTag, createTag, addOrRemoveTag });
-  onMounted(async () => {
-    updateUserTag();
-  });
-
   /*********** Handlers for child component events ***********/
   const activeIndex = ref(null);
   let clickTimeout = ref(null);
