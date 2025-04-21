@@ -19,7 +19,7 @@
     previewHeight.value = `calc(30% + ${rect.height}px - ${pos.y}px)`;
   };
   const { style } = useDraggable(separator, {
-    initialValue: { x: 0, y: "50%" },
+    initialValue: { x: 0, y: 150 },
     preventDefault: true,
     axis: "y",
     onMove: onSeparatorDragged,
