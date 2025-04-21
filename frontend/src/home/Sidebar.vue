@@ -183,4 +183,8 @@
     margin-block: 8px;
     gap: 4px;
   }
+
+  .cta > button {
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
+  }
 </style>
