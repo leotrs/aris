@@ -148,9 +148,9 @@
     width: fit-content;
     height: 48px;
     border-radius: 4px;
-    color: var(--dark);
+    color: var(--extra-dark);
     & svg {
-      color: var(--dark);
+      color: var(--extra-dark);
     }
   }
 
@@ -171,18 +171,18 @@
 
   .tab.active {
     background-color: var(--information-200);
-    border-bottom-color: var(--information-500);
-    color: var(--information-700);
+    border-bottom-color: var(--information-600);
+    color: var(--almost-black);
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
 
     & > svg {
-      color: var(--information-700);
+      color: var(--almost-black);
     }
   }
 
   .tab:not(.active):hover {
     cursor: pointer;
-    border-bottom-color: var(--extra-dark);
+    border-bottom-color: var(--dark);
     color: var(--extra-dark);
     & .tab-label {
       display: block;
