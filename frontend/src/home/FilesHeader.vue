@@ -12,7 +12,7 @@
     Title: { sortable: true, filterable: false, sortKey: "title" },
     Progress: { sortable: false, filterable: false, sortKey: "" },
     Tags: { sortable: false, filterable: true, sortKey: "" },
-    "Edited on": { sortable: true, filterable: false, sortKey: "last_edited_at" },
+    "Last edit": { sortable: true, filterable: false, sortKey: "last_edited_at" },
     /* Owner: { sortable: false, filterable: false, sortKey: "owner_id" }, */
   };
 
@@ -27,7 +27,7 @@
     Title: null,
     Progress: null,
     Tags: null,
-    "Edited on": null,
+    "Last edit": null,
     /* Owner: null */
   });
 
