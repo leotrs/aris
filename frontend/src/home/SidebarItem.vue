@@ -42,10 +42,8 @@
 
 <template>
   <div class="sb-item" :class="{ collapsed: collapsed, active: active }">
-    <!--:key forces Vue to re-render when collapsing so we can animate it-->
     <component :is="selectedIcon" v-if="selectedIcon" class="sb-icon" />
-
-    <span v-if="!collapsed" class="text-h6 sb-text">{{ text }}</span>
+    <span class="text-h6 sb-text">{{ text }}</span>
   </div>
 </template>
 
@@ -62,8 +60,7 @@
     border-left: var(--border-left-width) solid transparent;
     padding-left: calc(var(--padding-inline) - var(--border-left-width));
     padding-right: var(--padding-inline);
-    transition: background 0.15s ease-in-out;
-    transition: padding var(--transition-duration) ease;
+    transition: var(--transition-bg-color);
 
     &:hover {
       background-color: var(--gray-200);
