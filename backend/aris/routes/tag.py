@@ -74,25 +74,40 @@ async def delete_tag(_id: int, user_id: int, db: Session = Depends(get_db)):
     return deleted_tag
 
 
-@router.post("/{user_id}/documents/{document_id}/tags/{_id}")
+@router.get("/{user_id}/documents/{doc_id}/tags")
+async def get_user_document_tags(
+    user_id: int, doc_id: int, _id: int, db: Session = Depends(get_db)
+):
+    """Get a user's tags assigned to the document."""
+    try:
+        result = await crud.get_user_document_tags(user_id, doc_id, db)
+    except ValueError as e:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Error fetching tags for document {doc_id}: " + str(e),
+        )
+    return result
+
+
+@router.post("/{user_id}/documents/{doc_id}/tags/{_id}")
 async def add_tag_to_document(
-    user_id: int, document_id: int, _id: int, db: Session = Depends(get_db)
+    user_id: int, doc_id: int, _id: int, db: Session = Depends(get_db)
 ):
     """Assign a tag to a document."""
     try:
-        await crud.add_tag_to_document(user_id, document_id, _id, db)
+        await crud.add_tag_to_document(user_id, doc_id, _id, db)
     except ValueError as e:
         raise HTTPException(status_code=400, detail="Error adding tag: " + str(e))
     return {"message": "Tag added successfully"}
 
 
-@router.delete("/{user_id}/documents/{document_id}/tags/{_id}")
+@router.delete("/{user_id}/documents/{doc_id}/tags/{_id}")
 async def remove_tag_from_document(
-    user_id: int, document_id: int, _id: int, db: Session = Depends(get_db)
+    user_id: int, doc_id: int, _id: int, db: Session = Depends(get_db)
 ):
     """Remove a tag from a document."""
     try:
-        await crud.remove_tag_from_document(user_id, document_id, _id, db)
+        await crud.remove_tag_from_document(user_id, doc_id, _id, db)
     except ValueError as e:
         raise HTTPException(status_code=400, detail="Error removing tag: " + str(e))
     return {"message": "Tag removed successfully"}
