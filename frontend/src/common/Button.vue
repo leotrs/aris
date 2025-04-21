@@ -158,9 +158,14 @@
     }
   }
 
+  button.primary:active {
+    background-color: var(--surface-hint);
+    border-color: var(--surface-hint);
+  }
+
   button.secondary {
     background-color: var(--surface-primary);
-    border-color: var(--border-action-hover);
+    border-color: var(--border-action);
     color: var(--primary-600);
 
     &:hover {
@@ -177,6 +182,11 @@
 
   button.secondary.with-shadow {
     box-shadow: var(--shadow-strong);
+  }
+
+  button.secondary:active {
+    background-color: var(--surface-hint);
+    border-color: var(--border-action-hover);
   }
 
   button.tertiary {
@@ -215,6 +225,11 @@
         color: var(--medium);
       }
     }
+  }
+
+  button.tertiary:active {
+    background-color: var(--surface-action);
+    border-color: var(--surface-action);
   }
 
   button .btn-icon {
