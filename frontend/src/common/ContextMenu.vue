@@ -70,7 +70,7 @@
       &:hover {
         background-color: var(--surface-hint);
 
-        & > svg.cm-btn {
+        & .tabler-icon.cm-btn {
           color: var(--extra-dark);
         }
       }

@@ -64,6 +64,7 @@
     flex-wrap: wrap;
     align-content: center;
     align-items: center;
+    gap: 4px;
     height: 40px;
     color: var(--almost-black);
     background-color: var(--surface-information);

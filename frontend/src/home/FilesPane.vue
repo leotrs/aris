@@ -175,7 +175,7 @@
   .pane-header.list,
   .files.list > .item {
     display: grid;
-    grid-template-columns: minmax(144px, 2fr) minmax(144px, 1.5fr) 1fr 96px 16px 8px;
+    grid-template-columns: minmax(144px, 2fr) minmax(144px, 1.5fr) 1fr 102px 16px 8px;
   }
 
   .pane-header.list > *,
@@ -201,6 +201,7 @@
   }
 
   .files.cards {
+    padding-top: 16px;
     overflow-y: auto;
     columns: auto 250px;
     column-gap: 16px;
