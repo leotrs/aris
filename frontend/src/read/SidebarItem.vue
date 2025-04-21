@@ -100,6 +100,11 @@
     flex-direction: column;
   }
 
+  .sb-item-btn:hover button {
+    box-shadow: var(--shadow-strong);
+    background-color: var(--gray-50);
+  }
+
   .sb-item-btn {
     display: flex;
     gap: 16px;

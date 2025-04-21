@@ -46,21 +46,37 @@
           text="Read"
           @click="read"
         ></Button>
-        <Button kind="tertiary" size="sm" text-float="bottom" text="Write" icon="Pencil"></Button>
+        <Button
+          kind="tertiary"
+          size="sm"
+          text-float="bottom"
+          text="Write"
+          icon="Pencil"
+          shadow="true"
+        ></Button>
         <Button
           kind="tertiary"
           size="sm"
           text-float="bottom"
           text="Review"
           icon="FileCheck"
+          shadow="true"
         ></Button>
-        <Button kind="tertiary" size="sm" text-float="bottom" text="Share" icon="Share3"></Button>
+        <Button
+          kind="tertiary"
+          size="sm"
+          text-float="bottom"
+          text="Share"
+          icon="Share3"
+          shadow="true"
+        ></Button>
         <Button
           kind="tertiary"
           size="sm"
           text-float="bottom"
           text="Collaborate"
           icon="UserPlus"
+          shadow="true"
         ></Button>
         <Button
           kind="tertiary"
@@ -68,6 +84,7 @@
           text-float="bottom"
           text="Download"
           icon="Download"
+          shadow="true"
         ></Button>
         <Button
           kind="tertiary"
@@ -75,6 +92,7 @@
           text-float="bottom"
           text="Export"
           icon="FileExport"
+          shadow="true"
         ></Button>
       </div>
 
@@ -173,7 +191,7 @@
     background-color: var(--information-200);
     border-bottom-color: var(--information-600);
     color: var(--almost-black);
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
+    box-shadow: var(--shadow-strong);
 
     & > svg {
       color: var(--almost-black);
@@ -184,6 +202,8 @@
     cursor: pointer;
     border-bottom-color: var(--dark);
     color: var(--extra-dark);
+    box-shadow: var(--shadow-strong);
+
     & .tab-label {
       display: block;
     }

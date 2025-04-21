@@ -3,12 +3,13 @@
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
-    kind: { type: String, default: "primary" },
+    kind: { type: String, required: true },
     size: { type: String, default: "md" },
     icon: { type: String, default: null },
     text: { type: String, default: "" },
     textFloat: { type: String, default: "" },
     disabled: { type: Boolean, default: false },
+    shadow: { type: Boolean, default: false },
   });
 </script>
 
@@ -19,6 +20,7 @@
       `btn-${size}`,
       textFloat ? `text-float-${props.textFloat}` : '',
       textFloat ? 'text-float' : '',
+      shadow ? 'with-shadow' : '',
       disabled ? 'disabled' : '',
     ]"
   >
@@ -144,7 +146,7 @@
     background-color: var(--surface-action);
     border-color: var(--surface-action);
     color: var(--primary-50);
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
+    box-shadow: var(--shadow-soft), var(--shadow-strong);
 
     &:hover {
       background-color: var(--surface-action-hover);
@@ -165,11 +167,16 @@
       color: var(--text-action-hover);
       background-color: var(--surface-information);
       border-color: var(--border-action-hover);
+      box-shadow: var(--shadow-strong);
     }
 
     & .btn-icon {
       color: var(--icon-action);
     }
+  }
+
+  button.secondary.with-shadow {
+    box-shadow: var(--shadow-strong);
   }
 
   button.tertiary {
@@ -181,11 +188,16 @@
       background-color: var(--surface-hint);
       border-color: var(--surface-hint);
       color: var(--almost-black);
+      box-shadow: var(--shadow-strong);
 
       & > svg {
         color: var(--almost-black);
       }
     }
+  }
+
+  button.tertiary.with-shadow {
+    box-shadow: var(--shadow-strong);
   }
 
   button.tertiary.disabled {
