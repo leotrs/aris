@@ -6,6 +6,33 @@
   const user = { id: 1, name: "TER" };
   provide("user", user);
 
+  /*********** Proivde userDocs ***********/
+  const userDocs = ref([]);
+  const reloadDocs = async (docID) => {
+    try {
+      const response = await axios.get(`http://localhost:8000/users/${user.id}/documents`);
+      if (!userDocs.value) {
+        userDocs.value = response.data.map((doc) => ({ ...doc, filtered: false }));
+      } else {
+        /* FIX ME: take the filtered value from the current userDocs, not from response.data */
+        userDocs.value = response.data.map((doc) => ({ ...doc, filtered: false }));
+      }
+    } catch (error) {
+      console.error(`Failed to fetch document`, error);
+    }
+  };
+  const sortDocs = async (func) => {
+    userDocs.value.sort((a, b) => func(a, b));
+  };
+  const filterDocs = async (func) => {
+    userDocs.value = userDocs.value.map((doc) => ({ ...doc, filtered: func(doc) }));
+  };
+  const clearFilterDocs = async () => {
+    filterDocs((_) => false);
+  };
+  provide("userDocs", { userDocs, reloadDocs, sortDocs, filterDocs, clearFilterDocs });
+  onMounted(async () => reloadDocs());
+
   /*********** Provide userTags ***********/
   const userTags = ref([]);
   const updateUserTag = async (oldTag, newTag) => {
