@@ -32,28 +32,22 @@
       :class="[name.toLowerCase().replace(/ /g, '-'), 'sortable']"
       @click.stop="nextSortState"
     >
-      <span>{{ name }}</span>
-      <span v-if="sortState == 'desc'">
-        <IconSortDescendingLetters />
-      </span>
-      <span v-if="sortState == 'asc'">
-        <IconSortAscendingLetters />
-      </span>
+      <span class="col-header-label">{{ name }}</span>
+      <component :is="IconSortDescendingLetters" v-if="sortState == 'desc'" />
+      <component :is="IconSortAscendingLetters" v-if="sortState == 'asc'" />
     </div>
   </template>
 
   <template v-else-if="filterable">
     <div class="col-header" :class="[name.toLowerCase().replace(' ', '-'), 'filterable']">
-      <span>{{ name }}</span>
-      <span>
-        <MultiSelectTags v-model="tagsSelectedForFilter" icon="Filter" />
-      </span>
+      <span class="col-header-label">{{ name }}</span>
+      <MultiSelectTags v-model="tagsSelectedForFilter" icon="Filter" />
     </div>
   </template>
 
   <template v-else>
     <div class="col-header" :class="name.toLowerCase().replace(' ', '-')">
-      <span>{{ name }}</span>
+      <span class="col-header-label">{{ name }}</span>
     </div>
   </template>
 </template>
@@ -61,15 +55,15 @@
 <style scoped>
   .col-header {
     display: flex;
-    flex-wrap: wrap;
-    align-content: center;
     align-items: center;
     gap: 4px;
     height: 40px;
     color: var(--almost-black);
     background-color: var(--surface-information);
+    width: 100%;
 
-    &.sortable:hover {
+    &.sortable:hover,
+    &.filterable:hover {
       cursor: pointer;
     }
 
@@ -79,7 +73,5 @@
   }
 
   .col-header:hover {
-    background-color: var(--gray-50);
-    align-items: center;
   }
 </style>
