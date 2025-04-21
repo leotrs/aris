@@ -301,6 +301,23 @@
   &.icon-close { stroke-width: 1px; }
 }
 
+/* Scrollbars */
+/* These are standard CSS that are not yet supported - switch to them in the future */
+/* scrollbar-color: var(--light);
+   scrollbar-width: 16px; */
+*::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+  background-color: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background-color: var(--gray-300);
+  border-radius: 16px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--gray-700);
+}
+
 /* CSS reset */
 *,
 *::before,

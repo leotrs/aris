@@ -3,7 +3,7 @@
   const props = defineProps({
     docId: { type: Number, required: true },
   });
-  const tags = defineModel();
+  const tags = defineModel({ type: Array });
 
   const selectedTags = ref([...tags.value]);
 </script>
@@ -20,11 +20,6 @@
     padding-inline: 8px;
     padding-block: 4px;
     text-wrap: nowrap;
-  }
-
-  .cm-wrapper > :deep(.cm-menu) {
-    right: 0;
-    transform: translateX(0) translateY(32px);
   }
 
   .cm-wrapper > :deep(.cm-menu > .item) {
