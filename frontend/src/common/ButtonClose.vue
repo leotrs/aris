@@ -33,7 +33,7 @@
     }
 
     & .btn-icon {
-      stroke-width: 1px;
+      stroke-width: 1.25px;
     }
   }
 </style>
