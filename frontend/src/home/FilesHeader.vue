@@ -12,6 +12,7 @@
     Title: { sortable: true, filterable: false, sortKey: "title" },
     Progress: { sortable: false, filterable: false, sortKey: "" },
     Tags: { sortable: false, filterable: true, sortKey: "" },
+    Spacer: {},
     "Last edit": { sortable: true, filterable: false, sortKey: "last_edited_at" },
     /* Owner: { sortable: false, filterable: false, sortKey: "owner_id" }, */
   };
@@ -62,8 +63,9 @@
 <template>
   <div class="pane-header text-label" :class="mode">
     <template v-for="name in Object.keys(columnInfo)">
+      <div v-if="name == 'Spacer'" class="spacer"></div>
       <HeaderLabel
-        v-if="shouldShow(name)"
+        v-if="name !== 'Spacer' && shouldShow(name)"
         v-model="columnState[name]"
         :name="name"
         :sortable="columnInfo[name]['sortable']"

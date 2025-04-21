@@ -84,6 +84,9 @@
 
       <div class="tags"><TagRow v-model="doc.tags" :doc-id="doc.id" /></div>
 
+      <!-- necessary because tags tend to overflow -->
+      <div class="spacer"></div>
+
       <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
 
       <!-- <div class="owner"><Avatar /></div> -->
@@ -217,8 +220,5 @@
       height: 32px;
       align-content: center;
     }
-  }
-
-  .tags {
   }
 </style>
