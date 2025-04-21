@@ -145,6 +145,8 @@
 
   .mm-wrapper.horizontal,
   .mm-wrapper.horizontal :deep(.minimap) {
+    display: flex;
+    align-items: center;
     height: 48px;
     margin-block: auto;
   }
