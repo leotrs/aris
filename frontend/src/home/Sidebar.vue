@@ -86,14 +86,6 @@
       min-width var(--transition-duration) ease-out,
       max-width var(--transition-duration) ease-out,
       flex-basis var(--transition-duration) ease-out;
-
-    overflow-y: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
   }
 
   .sb-wrapper:not(.mobile):not(.collapsed) {
@@ -180,6 +172,16 @@
 
     & > img {
       margin: 0 auto;
+    }
+  }
+
+  .sb-menu {
+    height: calc(100% - 64px - 32px - 16px - 16px);
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
 

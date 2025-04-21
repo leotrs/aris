@@ -104,18 +104,6 @@
     position: fixed;
     z-index: 1;
     /* border-right: var(--border-thin) solid var(--border-primary); */
-
-    /* no scrollbar in any browser */
-    overflow-y: auto;
-    scrollbar-width: none;
-    /* firefox */
-    -ms-overflow-style: none;
-
-    /* Edge */
-    &::-webkit-scrollbar {
-      /* Chrome */
-      display: none;
-    }
   }
 
   .btn-toggle {
@@ -152,6 +140,15 @@
   .sb-menu {
     padding-block: 16px;
     position: fixed;
+    height: calc(100% - 48px + 4px);
+
+    /* no scrollbar in any browser */
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
 
     & > * {
       margin-bottom: 12px;
