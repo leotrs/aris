@@ -57,7 +57,7 @@
     </template>
 
     <div class="tags">
-      <TagRow v-model="doc.tags" :doc-i-d="doc.id" />
+      <TagRow v-model="doc.tags" :doc-id="doc.id" />
     </div>
 
     <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
@@ -108,6 +108,7 @@
       border-top: var(--border-width) solid transparent;
       border-bottom: var(--border-width) solid transparent;
       border-bottom-color: var(--border-primary);
+      overflow-y: hidden;
     }
 
     & > .dots {

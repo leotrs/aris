@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from "vue";
   const props = defineProps({
-    docID: { type: Number, required: true },
+    docId: { type: Number, required: true },
   });
   const tags = defineModel();
 
@@ -9,8 +9,8 @@
 </script>
 
 <template>
-  <Tag v-for="tag in tags" :tag="tag" :active="true" />
-  <MultiSelectTags v-model="selectedTags" :doc-i-d="docID" />
+  <Tag v-for="tag in tags" :key="tag" :tag="tag" :active="true" />
+  <MultiSelectTags v-model="selectedTags" :doc-id="docId" />
 </template>
 
 <style scoped>
