@@ -83,6 +83,9 @@
 </template>
 
 <style>
+  .s-wrapper {
+    background-color: var(--surface-page) !important;
+  }
   .search-result {
     background-color: var(--secondary-200);
   }

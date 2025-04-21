@@ -43,12 +43,11 @@
     align-items: center;
     border: unset;
     border-radius: 16px;
-    transition:
-      background 0.15s ease-in-out,
-      border 0.15s ease-in-out;
     gap: 2px;
     padding-block: 6px;
-    border: var(--border-width) solid transparent;
+    border-width: var(--border-width);
+    border-style: solid;
+    transition: var(--transition-bg-color), var(--transition-bd-color);
 
     &:hover {
       cursor: pointer;
@@ -122,6 +121,7 @@
     padding-inline: calc(24px - var(--border-width));
     padding-block: calc(24px - var(--border-width));
     border-radius: 24px;
+
     &:not(.text-float) {
       /* if the text is not floating, behave as normal */
 
@@ -160,8 +160,8 @@
 
   button.secondary {
     background-color: var(--surface-primary);
-    color: var(--primary-600);
     border-color: var(--border-action-hover);
+    color: var(--primary-600);
 
     &:hover {
       color: var(--text-action-hover);
