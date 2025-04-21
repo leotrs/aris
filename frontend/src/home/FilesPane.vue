@@ -146,6 +146,7 @@
     <div class="files" :class="mode">
       <FilesItem
         v-for="(doc, idx) in userDocs.filter((doc) => !doc.filtered)"
+        :key="doc"
         :class="{ active: activeIndex == idx }"
         :doc="doc"
         :mode="mode"
@@ -158,30 +159,42 @@
 
 <style scoped>
   .files-wrapper {
+    display: flex;
+    flex-direction: column;
     padding-bottom: 16px;
     overflow-y: auto;
     width: 100%;
     height: 100%;
   }
 
-  .files-wrapper.list {
-    display: grid;
-    grid-template-columns: minmax(150px, 2fr) minmax(150px, 1.5fr) 1fr 100px 16px 8px;
+  .files.list {
+    overflow-y: auto;
+    flex: 1;
   }
 
-  .files.list {
-    display: contents;
-    overflow-y: auto;
-    max-height: calc(100% - 40px);
+  .pane-header.list,
+  .files.list > .item {
+    display: grid;
+    grid-template-columns: minmax(144px, 2fr) minmax(144px, 1.5fr) 1fr 96px 16px 8px;
+  }
 
-    & > .item {
-      display: contents;
-      grid-column: 1 / 6;
+  .pane-header.list > *,
+  .files.list .item > * {
+    padding-block: 4px;
+    overflow-x: auto;
+    text-overflow: ellipsis;
+    display: flex;
+    align-items: center;
+  }
 
-      & > *:first-child {
-        padding-left: 16px;
-      }
-    }
+  .pane-header.list > *:first-child,
+  .files.list .item > *:first-child {
+    padding-left: 16px;
+  }
+
+  .pane-header.list > *:last-child,
+  .files.list .item > *:last-child {
+    padding-right: 8px;
   }
 
   .files-wrapper.cards {

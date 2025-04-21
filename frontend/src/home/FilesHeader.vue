@@ -80,23 +80,22 @@
 
 <style scoped>
   .pane-header {
+    --border-radius: 8px;
+
     background-color: var(--surface-information);
   }
 
   .pane-header.list {
-    display: contents;
-    grid-column: 1 / 6;
-
     & > *:first-child {
       padding-left: 16px;
-      border-top-left-radius: 8px;
-      border-bottom-left-radius: 8px;
+      border-top-left-radius: var(--border-radius);
+      border-bottom-left-radius: var(--border-radius);
     }
 
     & > *:last-child {
       padding-right: 8px;
-      border-top-right-radius: 8px;
-      border-bottom-right-radius: 8px;
+      border-top-right-radius: var(--border-radius);
+      border-bottom-right-radius: var(--border-radius);
     }
   }
 
@@ -111,9 +110,5 @@
       width: fit-content;
       padding-inline: 8px;
     }
-  }
-
-  .spacer {
-    background-color: var(--surface-information);
   }
 </style>
