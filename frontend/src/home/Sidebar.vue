@@ -80,7 +80,7 @@
   .sb-wrapper {
     --expanded-width: 192px;
     --collapsed-width: 64px;
-    --transition-duration: 0.25s;
+    --transition-duration: 0.3s;
 
     height: 100%;
     transition:
@@ -98,9 +98,8 @@
 
     & .cta {
       display: flex;
-      margin-top: 12px;
-      margin-bottom: 12px;
       justify-content: center;
+      padding-block: 12px;
       padding-inline: 16px;
     }
 
@@ -134,16 +133,15 @@
       padding-inline: 16px;
 
       & > img {
-        margin: 0 0 -16px 0;
+        margin: 0 0 -8px 0;
         width: 32px;
         height: 32px;
       }
     }
 
     & > .cta {
-      padding-top: 12px;
+      padding-block: 12px;
       padding-inline: 8px;
-      margin-bottom: 12px;
     }
 
     & > .cta > button {
@@ -198,12 +196,19 @@
     }
   }
 
+  .sb-menu > * {
+    margin-block: 8px;
+  }
+
   .sb-menu > *,
   .cta > button {
-    margin-block: 8px;
     gap: 4px;
     text-wrap: nowrap;
     white-space: nowrap;
+  }
+
+  .cta {
+    transition: padding-inline var(--transition-duration) ease;
   }
 
   .cta > button {
