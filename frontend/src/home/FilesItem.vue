@@ -60,9 +60,13 @@
       </div>
 
       <div class="card-footer">
-        <div class="tags"><TagRow v-model="doc.tags" :doc-id="doc.id" /></div>
-        <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
-        <Avatar :name="LT" />
+        <div class="card-footer-left">
+          <div class="tags"><TagRow v-model="doc.tags" :doc-id="doc.id" /></div>
+        </div>
+        <div class="card-footer-right">
+          <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
+          <Avatar :name="LT" />
+        </div>
       </div>
     </template>
 
@@ -175,6 +179,12 @@
       row-gap: 8px;
       justify-content: space-between;
       align-items: center;
+    }
+
+    & .card-footer-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
     }
 
     & .file-title {
