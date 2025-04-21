@@ -65,32 +65,33 @@
     <!-- <div class="owner"><Avatar /></div> -->
     <!-- <div class="collaborators"><Avatar v-for="..."/></div> -->
 
-    <div class="grid-wrapper-2">
-      <template v-if="mode == 'list'">
-        <ContextMenu>
-          <ContextMenuItem icon="Eye" caption="Preview" />
-          <ContextMenuItem icon="Bolt" caption="Activity" />
-          <ContextMenuItem icon="Versions" caption="Revisions" />
-          <ContextMenuItem icon="Quote" caption="Citation" />
-          <Separator />
-          <ContextMenuItem icon="Share3" caption="Share" />
-          <ContextMenuItem icon="UserPlus" caption="Collaborate" />
-          <Separator />
-          <ContextMenuItem icon="Download" caption="Download" />
-          <ContextMenuItem icon="FileExport" caption="Export" />
-          <Separator />
-          <ContextMenuItem icon="Edit" caption="Rename" @click="renameDoc" />
-          <ContextMenuItem icon="Copy" caption="Duplicate" @click="copyDoc" />
-          <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="deleteDoc" />
-        </ContextMenu>
-      </template>
-    </div>
+    <template v-if="mode == 'list'">
+      <ContextMenu>
+        <ContextMenuItem icon="Eye" caption="Preview" />
+        <ContextMenuItem icon="Bolt" caption="Activity" />
+        <ContextMenuItem icon="Versions" caption="Revisions" />
+        <ContextMenuItem icon="Quote" caption="Citation" />
+        <Separator />
+        <ContextMenuItem icon="Share3" caption="Share" />
+        <ContextMenuItem icon="UserPlus" caption="Collaborate" />
+        <Separator />
+        <ContextMenuItem icon="Download" caption="Download" />
+        <ContextMenuItem icon="FileExport" caption="Export" />
+        <Separator />
+        <ContextMenuItem icon="Edit" caption="Rename" @click="renameDoc" />
+        <ContextMenuItem icon="Copy" caption="Duplicate" @click="copyDoc" />
+        <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="deleteDoc" />
+      </ContextMenu>
+    </template>
+
     <span></span>
   </div>
 </template>
 
 <style scoped>
   .item {
+    --border-width: var(--border-extrathin);
+
     color: var(--extra-dark);
     overflow-y: visible;
   }
@@ -101,27 +102,21 @@
     }
 
     & > * {
+      height: calc(56px - 2 * var(--border-width));
+      padding-right: 8px;
       transition: background 0.15s ease-in-out;
-      border-bottom: var(--border-extrathin) solid var(--border-primary);
-      align-content: center;
-      height: 48px;
-      padding-right: 16px;
+      border-top: var(--border-width) solid transparent;
+      border-bottom: var(--border-width) solid transparent;
+      border-bottom-color: var(--border-primary);
     }
 
-    & .grid-wrapper-2 {
-      padding-right: 0px;
-    }
-
-    & .dots {
-      padding-right: 0px;
-    }
-
-    & > *:last-child {
-      padding-right: 0px;
+    & > .dots {
+      padding-inline: 0px;
     }
 
     &.active > * {
-      background-color: var(--secondary-50);
+      border-color: var(--border-action);
+      background-color: var(--surface-hover);
     }
   }
 
@@ -140,8 +135,7 @@
     & > .dots,
     & > .file-title,
     & > .last-edited,
-    & > .owner,
-    & > .grid-wrapper-2 {
+    & > .owner {
       display: inline-block;
     }
 
