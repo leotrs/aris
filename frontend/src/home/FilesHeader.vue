@@ -41,7 +41,7 @@
     for (let name in columnState) {
       if (name == columnName) continue;
       if (columnInfo[name]["sortable"]) {
-        columnState[name] = null;
+        columnState[name] = "";
       }
     }
   };

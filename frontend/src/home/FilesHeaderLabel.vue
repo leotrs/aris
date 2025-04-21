@@ -1,6 +1,10 @@
 <script setup>
   import { ref, computed, watch } from "vue";
-  import { IconSortAscendingLetters, IconSortDescendingLetters } from "@tabler/icons-vue";
+  import {
+    IconArrowsSort,
+    IconSortAscendingLetters,
+    IconSortDescendingLetters,
+  } from "@tabler/icons-vue";
 
   const props = defineProps({
     name: { type: String, required: true },
@@ -10,7 +14,7 @@
   const emit = defineEmits(["sort", "filter"]);
 
   // Sortable column: cycle through asc and desc on click
-  const sortState = defineModel({ default: null });
+  const sortState = defineModel({ type: String, default: "" });
   const nextSortState = () => {
     if (!props.sortable) return;
     sortState.value = sortState.value == "asc" ? "desc" : "asc";
@@ -19,10 +23,12 @@
 
   // Filterable column: watch the tags of the MultiSelectTags and set the icon accordingly
   const tagsSelectedForFilter = ref([]);
-  const filterableSVGColor = computed(() =>
-    tagsSelectedForFilter.value.length > 0 ? "var(--extra-dark)" : "var(--light)"
-  );
-  watch(tagsSelectedForFilter, () => emit("filter", tagsSelectedForFilter.value));
+  const filterableSVGColor = ref("transparent");
+  watch(tagsSelectedForFilter, () => {
+    filterableSVGColor.value =
+      tagsSelectedForFilter.value.length > 0 ? "var(--extra-dark)" : "transparent";
+    emit("filter", tagsSelectedForFilter.value);
+  });
 </script>
 
 <template>
@@ -33,13 +39,19 @@
       @click.stop="nextSortState"
     >
       <span class="col-header-label">{{ name }}</span>
+      <component :is="IconArrowsSort" v-if="!sortState" class="no-sort" />
       <component :is="IconSortDescendingLetters" v-if="sortState == 'desc'" />
       <component :is="IconSortAscendingLetters" v-if="sortState == 'asc'" />
     </div>
   </template>
 
   <template v-else-if="filterable">
-    <div class="col-header" :class="[name.toLowerCase().replace(' ', '-'), 'filterable']">
+    <div
+      class="col-header"
+      :class="[name.toLowerCase().replace(' ', '-'), 'filterable']"
+      @mouseenter="filterableSVGColor = 'var(--medium)'"
+      @mouseleave="filterableSVGColor = 'transparent'"
+    >
       <span class="col-header-label">{{ name }}</span>
       <MultiSelectTags v-model="tagsSelectedForFilter" icon="Filter" />
     </div>
@@ -72,6 +84,11 @@
     }
   }
 
-  .col-header:hover {
+  .col-header .no-sort {
+    color: transparent;
+  }
+
+  .col-header:hover .no-sort {
+    color: var(--medium);
   }
 </style>
