@@ -141,6 +141,10 @@
     padding-block: 16px;
     position: fixed;
     height: calc(100% - 48px + 4px);
+    min-width: 64px;
+    width: fit-content;
+    left: 0;
+    padding-inline: 8px;
 
     /* no scrollbar in any browser */
     overflow-y: auto;
