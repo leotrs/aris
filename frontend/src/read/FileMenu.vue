@@ -4,7 +4,7 @@
 </script>
 
 <template>
-  <div class="um-wrapper">
+  <div class="fm-wrapper">
     <ContextMenu ref="menu-ref" icon="Menu3">
       <ContextMenuItem icon="Bell" caption="Notifications" />
       <ContextMenuItem icon="Share3" caption="Share" />
@@ -22,7 +22,7 @@
 </template>
 
 <style scoped>
-  .um-wrapper {
+  .fm-wrapper {
     width: 48px;
     height: 48px;
     display: flex;
