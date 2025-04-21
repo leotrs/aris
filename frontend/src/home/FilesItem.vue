@@ -220,22 +220,5 @@
   }
 
   .tags {
-    position: relative;
-    display: flex;
-    align-items: center;
-
-    &::-webkit-scrollbar {
-      height: 8px;
-      background-color: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background-color: var(--gray-300);
-      border-radius: 4px;
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: var(--surface-hint);
-    }
   }
 </style>

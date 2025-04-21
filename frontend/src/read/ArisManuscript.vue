@@ -161,29 +161,6 @@
     justify-content: center;
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
-
-    /* These are standard CSS that are not yet supported - switch to them in the future */
-    /* scrollbar-color: var(--light);
-      scrollbar-width: 16px; */
-
-    --scrollbar-width: 12px;
-    --scrollbar-height: 24px;
-
-    &::-webkit-scrollbar {
-      width: var(--scrollbar-width);
-      background: transparent;
-    }
-
-    &::-webkit-scrollbar-thumb {
-      background: var(--gray-200);
-      border-radius: 8px;
-      height: var(--scrollbar-height);
-      width: var(--scrollbar-width);
-    }
-
-    &::-webkit-scrollbar-thumb:hover {
-      background: var(--surface-hint);
-    }
   }
 
   .middle-column {
