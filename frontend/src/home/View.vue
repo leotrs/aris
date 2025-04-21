@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, inject, useTemplateRef } from "vue";
+  import { ref, computed, inject, onMounted, useTemplateRef } from "vue";
   import { useDraggable } from "@vueuse/core";
   import Sidebar from "./Sidebar.vue";
   import FilesPane from "./FilesPane.vue";
@@ -11,34 +11,25 @@
   const isMobile = inject("isMobile");
 
   /*********** draggable Preview pane ***********/
-  const separator = useTemplateRef("separator-ref");
   const container = useTemplateRef("separator-container-ref");
+  const separator = useTemplateRef("separator-ref");
   const previewHeight = ref("50%");
   const onSeparatorDragged = (pos) => {
     const rect = container.value.getBoundingClientRect();
     previewHeight.value = `calc(30% + ${rect.height}px - ${pos.y}px)`;
-    separator.value.style.bottom = `calc(100% - ${pos.y}px - 12px)`;
   };
-  const makeDraggableOptions = () => {
-    return {
-      initialValue: { x: 0, y: container.value.getBoundingClientRect().height / 2 - 2 },
-      preventDefault: true,
-      axis: "y",
-      onMove: onSeparatorDragged,
-      containerElement: container,
-    };
-  };
+  const { style } = useDraggable(separator, {
+    initialValue: { x: 0, y: "50%" },
+    preventDefault: true,
+    axis: "y",
+    onMove: onSeparatorDragged,
+    containerElement: container,
+  });
 
   /*********** handle document selected for preview ***********/
-  const draggableStyle = ref({});
   const selectedForPreview = ref(null);
   const separatorPointerEvents = computed(() => (selectedForPreview.value ? "all" : "none"));
-  const setSelectedForPreview = (doc) => {
-    selectedForPreview.value = doc;
-    if (!doc || !container.value) return;
-    const newStyle = useDraggable(separator, makeDraggableOptions());
-    draggableStyle.value = newStyle.style.value;
-  };
+  const setSelectedForPreview = (doc) => (selectedForPreview.value = doc);
 </script>
 
 <template>
