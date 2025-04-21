@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, provide, computed, onMounted } from "vue";
+  import { ref, inject, computed } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
@@ -9,35 +9,8 @@
 
   const emit = defineEmits(["set-selected"]);
   const mode = ref("list");
+  const { userDocs } = inject("userDocs");
   const numDocs = computed(() => userDocs.value.length);
-  const user = inject("user");
-
-  /*********** Proivde userDocs ***********/
-  const userDocs = ref([]);
-  const reloadDocs = async (docID) => {
-    try {
-      const response = await axios.get(`http://localhost:8000/users/${user.id}/documents`);
-      if (!userDocs.value) {
-        userDocs.value = response.data.map((doc) => ({ ...doc, filtered: false }));
-      } else {
-        /* FIX ME: take the filtered value from the current userDocs, not from response.data */
-        userDocs.value = response.data.map((doc) => ({ ...doc, filtered: false }));
-      }
-    } catch (error) {
-      console.error(`Failed to fetch document`, error);
-    }
-  };
-  const sortDocs = async (func) => {
-    userDocs.value.sort((a, b) => func(a, b));
-  };
-  const filterDocs = async (func) => {
-    userDocs.value = userDocs.value.map((doc) => ({ ...doc, filtered: func(doc) }));
-  };
-  const clearFilterDocs = async () => {
-    filterDocs((_) => false);
-  };
-  provide("userDocs", { userDocs, reloadDocs, sortDocs, filterDocs, clearFilterDocs });
-  onMounted(async () => reloadDocs());
 
   /*********** Handlers for child component events ***********/
   const activeIndex = ref(null);
