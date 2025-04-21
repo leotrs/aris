@@ -8,34 +8,36 @@
 
   const showModal = ref(false);
   const selfRef = useTemplateRef("selfRef");
-
   const isMobile = inject("isMobile");
 
   /*********** draggable Preview pane ***********/
-  const container = useTemplateRef("separator-container-ref");
   const separator = useTemplateRef("separator-ref");
-
+  const container = useTemplateRef("separator-container-ref");
   const previewHeight = ref("50%");
-  const onSeparatorDragged = (pos, _) => {
+  const onSeparatorDragged = (pos) => {
     const rect = container.value.getBoundingClientRect();
-    console.log(pos.y, rect.height);
     previewHeight.value = `calc(30% + ${rect.height}px - ${pos.y}px)`;
+    separator.value.style.bottom = `calc(100% - ${pos.y}px - 12px)`;
   };
-  const style = ref({});
-  const selectedForPreview = ref(null);
-  const separatorPointerEvents = computed(() => (selectedForPreview.value ? "all" : "none"));
-  const setSelectedForPreview = (doc) => {
-    selectedForPreview.value = doc;
-    if (!doc) return;
-    if (!container.value) return;
-    const draggableStyle = useDraggable(separator, {
+  const makeDraggableOptions = () => {
+    return {
       initialValue: { x: 0, y: container.value.getBoundingClientRect().height / 2 - 2 },
       preventDefault: true,
       axis: "y",
       onMove: onSeparatorDragged,
       containerElement: container,
-    });
-    style.value = draggableStyle.style.value;
+    };
+  };
+
+  /*********** handle document selected for preview ***********/
+  const draggableStyle = ref({});
+  const selectedForPreview = ref(null);
+  const separatorPointerEvents = computed(() => (selectedForPreview.value ? "all" : "none"));
+  const setSelectedForPreview = (doc) => {
+    selectedForPreview.value = doc;
+    if (!doc || !container.value) return;
+    const newStyle = useDraggable(separator, makeDraggableOptions());
+    draggableStyle.value = newStyle.style.value;
   };
 </script>
 
