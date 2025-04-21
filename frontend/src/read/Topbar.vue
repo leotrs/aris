@@ -69,6 +69,9 @@
   }
 
   .middle-column {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
     padding-inline: 48px;
     text-align: center;
     width: v-bind("middleColumnWidth");
