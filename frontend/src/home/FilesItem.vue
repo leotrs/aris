@@ -3,7 +3,6 @@
   import axios from "axios";
   import RelativeTime from "@yaireo/relative-Time";
   import Separator from "../common/Separator.vue";
-  import TagRow from "./FilesItemTagRow.vue";
 
   const props = defineProps({
     doc: { type: Object, required: true },

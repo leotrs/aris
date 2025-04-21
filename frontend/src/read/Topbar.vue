@@ -23,7 +23,7 @@
 
     <Drawer class="middle-column top">
       <FileTitle v-if="showTitle && !component" :doc="doc" class="text-h6" />
-      <component :is="component" ref="middle-comp" />
+      <component :is="component" ref="middle-comp" :doc="doc" />
     </Drawer>
   </div>
 </template>
