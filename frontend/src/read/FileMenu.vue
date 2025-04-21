@@ -5,7 +5,7 @@
 
 <template>
   <div class="fm-wrapper">
-    <ContextMenu ref="menu-ref" icon="Menu3">
+    <ContextMenu ref="menu-ref" icon="Menu3" button-size="btn-md">
       <ContextMenuItem icon="Bell" caption="Notifications" />
       <ContextMenuItem icon="Share3" caption="Share" />
       <ContextMenuItem icon="UserPlus" caption="Invite User" />
