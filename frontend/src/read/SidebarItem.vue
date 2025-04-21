@@ -100,7 +100,7 @@
     flex-direction: column;
   }
 
-  .sb-item-btn:hover button {
+  .sb-item-btn:hover button:not(.active) {
     box-shadow: var(--shadow-strong);
     background-color: var(--gray-50);
   }
