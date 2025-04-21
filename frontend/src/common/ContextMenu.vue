@@ -56,36 +56,6 @@
       & > *:not(:last-child) {
         margin-bottom: 8px;
       }
-
-      & > .item {
-        display: flex;
-        align-items: center;
-        padding-left: 10px;
-        padding-right: 16px;
-        padding-block: 0px;
-        gap: 10px;
-
-        &:hover {
-          background-color: var(--surface-hover);
-        }
-
-        &.danger {
-          color: var(--text-error);
-
-          &:hover {
-            background-color: var(--surface-error);
-          }
-
-          & .tabler-icon {
-            color: var(--icon-error);
-          }
-        }
-      }
-
-      & > .item > .tabler-icon {
-        display: inline-block;
-        stroke-width: 1.75px;
-      }
     }
   }
 </style>

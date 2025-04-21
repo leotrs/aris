@@ -45,6 +45,7 @@
     border-radius: 16px;
     gap: 2px;
     padding-block: 6px;
+    outline: none;
     border-width: var(--border-width);
     border-style: solid;
     transition: var(--transition-bg-color), var(--transition-bd-color);
