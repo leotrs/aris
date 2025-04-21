@@ -122,9 +122,6 @@
     activeIndex.value =
       activeIndex.value === null ? 0 : (activeIndex.value + numDocs.value - 1) % numDocs.value;
   };
-  const focusSearchBar = (ev) => {
-    console.log("focus search");
-  };
   useKeyboardShortcuts({
     j: nextItemOnKey,
     J: nextItemOnKey,
@@ -133,7 +130,6 @@
     K: prevItemOnKey,
     ArrowUp: prevItemOnKey,
     escape: (ev) => ev.preventDefault() || (activeIndex.value = null),
-    Slash: focusSearchBar,
   });
 </script>
 
