@@ -3,10 +3,12 @@
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
-    icon: String,
-    text: String,
+    icon: { type: String, default: "" },
+    text: { type: String, default: "" },
+    hoverColor: { type: String, default: "var(--gray-50)" },
+    activeColor: { type: String, default: "var(--surface-hint)" },
   });
-  const active = defineModel();
+  const active = defineModel({ type: Boolean });
   const emit = defineEmits(["on", "off"]);
 
   watch(active, (newValue) => (newValue ? emit("on") : emit("off")));
@@ -30,6 +32,7 @@
     border-radius: 16px;
     transition: background 0.15s ease-in-out;
     gap: 2px;
+    background-color: transparent;
 
     padding-block: 6px;
 
@@ -44,12 +47,12 @@
 
     &:hover {
       cursor: pointer;
-      background-color: var(--gray-50);
+      background-color: v-bind("hoverColor");
       color: var(--text-action-hover);
     }
 
     &.active {
-      background-color: var(--surface-hint);
+      background-color: v-bind("activeColor");
       color: var(--almost-black);
     }
   }

@@ -2,9 +2,10 @@
   import { ref, watch } from "vue";
   import { IconDotsVertical } from "@tabler/icons-vue";
   import useClosable from "@/composables/useClosable.js";
-  import * as Icons from "@tabler/icons-vue";
 
-  const props = defineProps({ icon: { type: String, default: "Dots" } });
+  const props = defineProps({
+    icon: { type: String, default: "Dots" },
+  });
   const show = ref(false);
 
   const { activate, deactivate } = useClosable({
@@ -20,24 +21,16 @@
 </script>
 
 <template>
-  <div class="cm-wrapper" :class="{ dots: icon == 'Dots' }" @click.stop @dblclick.stop>
-    <div
-      class="cm-click-target"
-      :class="{ dots: icon == 'Dots' }"
-      @click.stop="show = !show"
-      @dblclick.stop
-    >
-      <template v-if="icon == 'Dots'">
-        <IconDotsVertical class="cm-btn" width="4" height="18" viewBox="10 3 4 18.25" />
-      </template>
-      <template v-else>
-        <component :is="Icons['Icon' + props.icon]" class="cm-btn" />
-      </template>
-    </div>
+  <div class="cm-wrapper" @click.stop @dblclick.stop>
+    <template v-if="icon == 'Dots'">
+      <!-- <IconDotsVertical class="cm-btn" width="4" height="18" viewBox="10 3 4 18.25" /> -->
+      <!-- <ButtonDots /> -->
+    </template>
+    <template v-else-if="icon">
+      <ButtonToggle v-model="show" :icon="icon" class="cm-btn" hover-color="var(--surface-hint)" />
+    </template>
 
-    <div v-if="show" class="cm-menu">
-      <slot />
-    </div>
+    <div v-if="show" class="cm-menu"><slot /></div>
   </div>
 </template>
 
@@ -78,8 +71,9 @@
 
     & > .cm-menu {
       position: absolute;
-      right: 0;
+      left: 0;
       top: 0;
+      transform: translateX(-100%);
       z-index: 999;
       background-color: var(--surface-primary);
       padding-block: 8px;
