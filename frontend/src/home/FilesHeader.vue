@@ -104,7 +104,6 @@
     align-items: center;
     gap: 16px;
     padding-inline: 16px;
-    margin-bottom: 16px;
 
     & > .col-header {
       width: fit-content;

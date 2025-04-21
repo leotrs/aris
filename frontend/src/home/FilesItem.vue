@@ -122,6 +122,7 @@
 
   .item.cards {
     border-radius: 16px;
+    padding-block: 16px;
     margin-bottom: 16px;
     padding: 16px;
     border: var(--border-thin) solid var(--border-primary);
