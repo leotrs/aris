@@ -85,6 +85,7 @@
     --border-radius: 8px;
 
     background-color: var(--surface-information);
+    height: 40px;
   }
 
   .pane-header.list {
@@ -105,7 +106,7 @@
     display: flex;
     align-items: center;
     gap: 16px;
-    padding-inline: 16px;
+    padding-inline: 8px;
 
     & > .col-header {
       width: fit-content;
