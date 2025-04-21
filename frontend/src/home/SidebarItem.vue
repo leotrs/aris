@@ -14,8 +14,8 @@
   } from "@tabler/icons-vue";
 
   const props = defineProps({
-    text: String,
-    collapsed: Boolean,
+    text: { type: String, required: true },
+    collapsed: { type: Boolean, required: true },
     active: { type: Boolean, default: false },
   });
 
@@ -62,8 +62,8 @@
     border-left: var(--border-left-width) solid transparent;
     padding-left: calc(var(--padding-inline) - var(--border-left-width));
     padding-right: var(--padding-inline);
-
     transition: background 0.15s ease-in-out;
+    transition: padding var(--transition-duration) ease;
 
     &:hover {
       background-color: var(--gray-200);
@@ -84,12 +84,15 @@
       }
     }
 
-    & .sb-text {
-      text-wrap: nowrap;
-    }
-
     &.collapsed {
-      justify-content: center;
     }
+  }
+
+  .sb-text {
+    text-wrap: nowrap;
+  }
+
+  .sb-icon {
+    flex-shrink: 0;
   }
 </style>

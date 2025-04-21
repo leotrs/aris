@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, onMounted, onUnmounted } from "vue";
+  import { ref, inject } from "vue";
   import SidebarItem from "./SidebarItem.vue";
   import Separator from "@/common/Separator.vue";
   import { IconMenu3 } from "@tabler/icons-vue";
@@ -15,26 +15,6 @@
   };
 
   const sidebarRef = ref(null);
-  let observer;
-  onMounted(() => {
-    if (sidebarRef.value) {
-      observer = new ResizeObserver((entries) => {
-        for (let entry of entries) {
-          if (!forceCollapsed.value) {
-            if (entry.contentRect.width < 165 && !collapsed.value) {
-              collapsed.value = true;
-            } else if (entry.contentRect.width > 80 && collapsed.value) {
-              collapsed.value = false;
-            }
-          }
-        }
-      });
-      observer.observe(sidebarRef.value);
-    }
-  });
-  onUnmounted(() => {
-    if (observer) observer.disconnect();
-  });
 </script>
 
 <template>
@@ -53,7 +33,8 @@
       <Button
         kind="secondary"
         icon="CirclePlus"
-        :text="!isMobile && !collapsed ? 'New File' : ''"
+        text="New File"
+        :class="{ collapsed }"
         @click="$emit('showFileUploadModal')"
       />
     </div>
@@ -96,7 +77,15 @@
 
 <style scoped>
   .sb-wrapper {
+    --expanded-width: 192px;
+    --collapsed-width: 64px;
+    --transition-duration: 0.25s;
+
     height: 100%;
+    transition:
+      min-width var(--transition-duration) ease-out,
+      max-width var(--transition-duration) ease-out,
+      flex-basis var(--transition-duration) ease-out;
 
     overflow-y: auto;
     scrollbar-width: none;
@@ -108,8 +97,9 @@
   }
 
   .sb-wrapper:not(.mobile):not(.collapsed) {
-    flex-basis: 192px;
-    max-width: 192px;
+    flex-basis: var(--expanded-width);
+    min-width: var(--expanded-width);
+    max-width: var(--expanded-width);
     flex-grow: 0;
     flex-shrink: 0;
 
@@ -136,8 +126,9 @@
 
   .sb-wrapper:not(.mobile).collapsed {
     padding-top: 16px;
-    min-width: 64px;
-    max-width: 64px;
+    min-width: var(--collapsed-width);
+    max-width: var(--collapsed-width);
+    flex-basis: var(--collapsed-width);
     flex-grow: 0;
 
     & > * {
@@ -161,9 +152,23 @@
       padding-inline: 8px;
       margin-bottom: 12px;
     }
+
+    & > .cta > button {
+      width: 48px;
+    }
   }
 
-  .sb-wrapper.mobile:not(.collapsed) {
+  .sb-wrapper:not(.mobile) {
+    #logo img {
+      transition:
+        width var(--transition-duration) ease-out,
+        height var(--transition-duration) ease-out,
+        margin var(--transition-duration) ease-out;
+    }
+
+    .sb-menu > * {
+      transition: opacity var(--transition-duration) ease-out;
+    }
   }
 
   .sb-wrapper.mobile.collapsed {
@@ -179,12 +184,41 @@
   }
 
   .sb-menu > *,
-  .cta > * {
+  .cta > button {
     margin-block: 8px;
     gap: 4px;
+    text-wrap: nowrap;
+    white-space: nowrap;
   }
 
   .cta > button {
     box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
+    justify-content: unset !important;
+    padding-left: 24px !important;
+    overflow-x: hidden;
+    transition:
+      width var(--transition-duration) ease,
+      padding var(--transition-duration) ease;
+  }
+
+  .cta > button > :deep(.btn-text) {
+    max-width: calc(var(--sidebar-width) - 16px - 32px);
+    opacity: 1;
+    transition:
+      opacity var(--transition-duration) ease,
+      width var(--transition-duration) ease,
+      max-width var(--transition-duration) ease;
+  }
+
+  .cta > button.collapsed > :deep(.btn-text) {
+    width: 0;
+    opacity: 0;
+    max-width: 0;
+  }
+
+  /* Overwrite Button padding so collapsing transition works well */
+  .cta > button.collapsed {
+    padding: calc(8px - var(--border-thin)) !important;
+    gap: 0px;
   }
 </style>

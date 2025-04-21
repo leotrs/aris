@@ -205,6 +205,10 @@
     }
   }
 
+  button .btn-icon {
+    flex-shrink: 0;
+  }
+
   button.text-float .btn-text {
     position: absolute;
     color: var(--extra-dark);
