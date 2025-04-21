@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive, provide, onBeforeMount } from "vue";
+  import { ref, reactive, inject, provide, onBeforeMount } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
@@ -7,11 +7,12 @@
   import ArisManuscript from "./ArisManuscript.vue";
 
   const docID = `${useRoute().params.doc_id}`;
+  const user = inject("user");
   const doc = ref({});
 
   onBeforeMount(async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/documents/${docID}`);
+      const response = await axios.get(`http://localhost:8000/users/${user.id}/documents/${docID}`);
       doc.value = response.data;
     } catch (error) {
       console.error(`Failed to fetch document ${docID}`, error);

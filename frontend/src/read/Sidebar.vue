@@ -29,7 +29,7 @@
       icon: "Tags",
       label: "tags",
       preferredSide: "top",
-      key: "g",
+      key: "t",
       state: false,
     },
     PanelSymbols: {

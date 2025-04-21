@@ -19,6 +19,7 @@
   import PanelSearch from "./PanelSearch.vue";
   import Minimap from "../common/Minimap.vue";
   import PanelCitation from "./PanelCitation.vue";
+  import PanelTags from "./PanelTags.vue";
   import PanelSettings from "./PanelSettings.vue";
 
   const props = defineProps({
@@ -34,6 +35,7 @@
     Minimap,
     /* Comments, */
     PanelCitation,
+    PanelTags,
     /* PanelSymbols, */
     /* PanelClaims, */
     PanelSettings,
