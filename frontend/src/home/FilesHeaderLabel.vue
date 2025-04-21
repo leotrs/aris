@@ -75,7 +75,7 @@
       cursor: pointer;
     }
 
-    &.filterable :deep(svg.cm-btn) {
+    &.filterable :deep(.cm-btn svg) {
       color: v-bind(filterableSVGColor);
     }
   }
