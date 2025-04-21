@@ -11,7 +11,7 @@
   const orientationClass = computed(() =>
     props.orientation == "horizontal" ? "horizontal" : "vertical"
   );
-  const html = ref('<div class="minimap loading">loading minimap...</div>');
+  const html = ref('<div class="loading">loading minimap...</div>');
   const wrapper = useTemplateRef("wrapper");
   const originalHeight = ref(null);
   const { width: wrapperWidth } = useElementSize(wrapper);

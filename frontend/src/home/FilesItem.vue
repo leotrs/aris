@@ -54,7 +54,7 @@
       <div class="card-content">
         <Suspense>
           <Minimap :doc="doc" orientation="horizontal" />
-          <template #fallback>loading...</template>
+          <template #fallback><span class="loading">loading...</span></template>
         </Suspense>
         <Abstract :doc="doc" />
       </div>
@@ -79,7 +79,7 @@
 
       <Suspense>
         <Minimap :doc="doc" orientation="horizontal" />
-        <template #fallback>loading...</template>
+        <template #fallback><span class="loading">loading...</span></template>
       </Suspense>
 
       <div class="tags"><TagRow v-model="doc.tags" :doc-id="doc.id" /></div>
@@ -237,9 +237,5 @@
     &::-webkit-scrollbar-thumb:hover {
       background: var(--surface-hint);
     }
-  }
-
-  :deep(.dots > .cm-menu) {
-    transform: translateX(-16px) translateY(-8px);
   }
 </style>
