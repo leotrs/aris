@@ -5,6 +5,7 @@
   const props = defineProps({
     icon: { type: String, default: "" },
     text: { type: String, default: "" },
+    buttonSize: { type: String, default: "btn-md" },
     hoverColor: { type: String, default: "var(--gray-50)" },
     activeColor: { type: String, default: "var(--surface-hint)" },
   });
@@ -15,7 +16,11 @@
 </script>
 
 <template>
-  <button class="text-h6 btn-toggle" :class="{ active: active }" @click="active = !active">
+  <button
+    class="text-h6 btn-toggle"
+    :class="[buttonSize, active ? 'active' : '']"
+    @click="active = !active"
+  >
     <template v-if="icon">
       <component :is="Icons['Icon' + props.icon]" class="btn-icon" />
     </template>

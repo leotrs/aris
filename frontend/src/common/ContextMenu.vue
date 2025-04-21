@@ -4,6 +4,7 @@
 
   const props = defineProps({
     icon: { type: String, default: "Dots" },
+    buttonSize: { type: String, default: "btn-sm" },
   });
   const show = ref(false);
 
@@ -23,7 +24,13 @@
   <div class="cm-wrapper" @click.stop @dblclick.stop>
     <template v-if="icon == 'Dots'"><ButtonDots v-model="show" class="cm-btn" /></template>
     <template v-else-if="icon">
-      <ButtonToggle v-model="show" :icon="icon" class="cm-btn" hover-color="var(--surface-hint)" />
+      <ButtonToggle
+        v-model="show"
+        :icon="icon"
+        class="cm-btn"
+        hover-color="var(--surface-hint)"
+        :button-size="buttonSize"
+      />
     </template>
 
     <div v-if="show" class="cm-menu"><slot /></div>

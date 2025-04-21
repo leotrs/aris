@@ -20,8 +20,9 @@
 
 <style scoped>
   .btn-toggle {
-    width: 16px;
-    height: 32px;
+    width: 16px !important;
+    height: 32px !important;
+    padding: 0 !important;
   }
 
   .btn-toggle svg {
