@@ -32,11 +32,12 @@
     else emit("prev", searchText.value);
   };
 
-  defineExpose({ focusInput: () => inputRef.value?.focus() });
+  const focusInput = () => inputRef.value?.focus();
+  defineExpose({ focusInput });
 </script>
 
 <template>
-  <div class="s-wrapper text-caption">
+  <div class="s-wrapper text-caption" @click.stop="focusInput">
     <IconSearch />
     <input
       ref="inputRef"
@@ -75,12 +76,13 @@
     min-width: 280px;
     display: flex;
     align-items: center;
-    padding-block: 12px;
     padding-inline: 12px;
     gap: 16px;
+    transition: var(--transition-bg-color), var(--transition-bd-color);
 
     &:has(> input:focus) {
       border-color: var(--border-action);
+      box-shadow: var(--shadow-strong);
     }
 
     & > .tabler-icon {
@@ -96,6 +98,7 @@
       color: inherit;
       outline: none;
       width: 100%;
+      height: 100%;
     }
 
     &:hover {

@@ -121,6 +121,7 @@
 
     color: var(--extra-dark);
     overflow-y: visible;
+    transition: var(--transition-bg-color);
   }
 
   .item.list {

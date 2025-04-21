@@ -63,6 +63,7 @@
     border-radius: 4px;
     border-width: var(--border-thin);
     border-style: solid;
+    transition: var(--transition-bd-color), var(--transition-bg-color);
 
     &:first-child,
     &:last-child {
