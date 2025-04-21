@@ -40,14 +40,11 @@
         return;
       }
 
-      const originalSvg = wrapper.value.querySelector("svg");
-      if (!originalSvg) {
+      const svg = wrapper.value.querySelector("svg");
+      if (!svg) {
         resolve();
         return;
       }
-
-      // clone and make transformations in memory, only swap when ready
-      const svg = originalSvg.cloneNode(true);
 
       // only modify the viewBox the first time
       if (!originalHeight.value) {
@@ -60,7 +57,7 @@
       const scale = wrapperWidth.value / (originalHeight.value + 48);
       const padding = 14; // the rect starts at x=14 in the original coordinates
 
-      svg.style.width = `${wrapperWidth.value}px`;
+      svg.style.setProperty("--minimap-width", `${wrapperWidth.value}px`);
       svg.setAttribute("viewBox", `0 0 ${wrapperWidth.value} 32`);
       svg.style.transform = `rotate(270deg)`;
       svg.style.transformOrigin = `14px 20px`;
@@ -78,7 +75,6 @@
         }
       });
 
-      originalSvg.parentNode.replaceChild(svg, originalSvg);
       resolve();
     });
   };
@@ -123,23 +119,14 @@
 
 <style scoped>
   :deep(.minimap) {
-    &.loading {
-      color: var(--light);
-      background-color: var(--information-500);
-    }
-
-    &.error {
-      background-color: var(--error-500);
-    }
-  }
-
-  :deep(.minimap:not(.loading)),
-  :deep(.minimap:not(.error)) {
     background-color: transparent;
     width: 100%;
+    transition: width 0.3s ease-in-out;
 
     & svg {
       overflow: visible;
+      width: var(--minimap-width);
+      transition: width 0.3s ease-in-out;
     }
   }
 
