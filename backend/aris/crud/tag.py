@@ -73,11 +73,7 @@ async def soft_delete_tag(_id: int, user_id: int, db: Session):
     """Delete a tag for a user."""
     tag_to_delete = (
         db.query(Tag)
-        .filter(
-            Tag.id == _id,
-            Tag.user_id == user_id,
-            Tag.deleted_at.is_(None),
-        )
+        .filter(Tag.id == _id, Tag.user_id == user_id, Tag.deleted_at.is_(None))
         .first()
     )
     if not tag_to_delete:
@@ -91,7 +87,7 @@ async def soft_delete_tag(_id: int, user_id: int, db: Session):
 async def get_user_document_tags(user_id: int, doc_id: int, db: Session):
     return (
         db.query(Tag)
-        .filter(Tag.user_id == user_id)
+        .filter(Tag.user_id == user_id, Tag.deleted_at.is_(None))
         .join(document_tags, Tag.id == document_tags.c.tag_id)
         .filter(document_tags.c.document_id == doc_id)
         .order_by(Tag.name.asc())
