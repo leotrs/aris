@@ -74,6 +74,7 @@
     padding-bottom: 16px;
     overflow-y: auto;
     width: 100%;
+    padding-inline: 8px;
     height: 100%;
   }
 

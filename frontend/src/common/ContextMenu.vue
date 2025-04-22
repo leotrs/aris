@@ -51,6 +51,7 @@
       background-color: var(--surface-primary);
       padding-block: 8px;
       border-radius: 16px;
+      overflow: hidden;
       box-shadow: var(--shadow-strong), var(--shadow-soft);
 
       & > *:not(:last-child) {

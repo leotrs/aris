@@ -103,6 +103,7 @@
     position: relative;
     flex-grow: 1;
     height: 100%;
+    border-radius: 16px;
 
     & :deep(.pane) {
       background-color: var(--almost-white);
@@ -112,6 +113,7 @@
       flex-direction: column;
       gap: 16px;
       border-radius: 16px;
+      box-shadow: var(--shadow-soft);
     }
 
     & :deep(#documents:not(:has(~ .pane))) {

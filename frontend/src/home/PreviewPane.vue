@@ -132,6 +132,7 @@
     justify-content: space-between;
     flex-wrap: wrap;
     padding: 8px;
+    border: var(--border-extrathin) solid var(--border-information);
 
     & .middle {
       display: flex;
@@ -179,6 +180,7 @@
     justify-content: center;
     padding-inline: 8px;
     min-width: 48px;
+    border-radius: 4px;
     border-bottom: var(--border-thin) solid transparent;
 
     & > .tabler-icon {
