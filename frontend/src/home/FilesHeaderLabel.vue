@@ -65,7 +65,7 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    height: 40px;
+    height: calc(40px -- 2 * var(--border-extrathin));
     color: var(--almost-black);
     background-color: var(--surface-information);
     width: 100%;

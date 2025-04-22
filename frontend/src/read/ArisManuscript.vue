@@ -163,6 +163,7 @@
     justify-content: center;
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
+    box-shadow: var(--shadow-soft);
   }
 
   .middle-column {

@@ -91,9 +91,10 @@ async def soft_delete_tag(_id: int, user_id: int, db: Session):
 async def get_user_document_tags(user_id: int, doc_id: int, db: Session):
     return (
         db.query(Tag)
+        .filter(Tag.user_id == user_id)
         .join(document_tags, Tag.id == document_tags.c.tag_id)
-        .filter(document_tags.c.document_id == doc_id, Tag.user_id == user_id)
-        .order_by(Tag.name.asc())  # optional
+        .filter(document_tags.c.document_id == doc_id)
+        .order_by(Tag.name.asc())
         .all()
     )
 

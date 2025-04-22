@@ -161,6 +161,13 @@
     &:hover {
       background-color: var(--surface-hover);
       border-color: var(--gray-400);
+      box-shadow: var(--shadow-strong);
+    }
+
+    &.active {
+      border-color: var(--border-information);
+      background-color: var(--surface-page);
+      box-shadow: var(--shadow-strong), var(--shadow-soft);
     }
 
     & > .card-header {

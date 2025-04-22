@@ -18,10 +18,10 @@
   .item {
     display: flex;
     align-items: center;
-    padding-left: 10px;
-    padding-right: 16px;
+    padding-left: 8px;
+    padding-right: 10px;
     padding-block: 0px;
-    gap: 10px;
+    gap: 4px;
     transition: var(--transition-bg-color);
 
     &:hover {

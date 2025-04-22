@@ -84,8 +84,9 @@
   .pane-header {
     --border-radius: 8px;
 
+    border: var(--border-extrathin) solid var(--border-information);
     background-color: var(--surface-information);
-    height: 40px;
+    height: calc(40px - 2 * var(--border-extrathin));
   }
 
   .pane-header.list {
