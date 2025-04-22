@@ -10,7 +10,9 @@
   const userDocs = ref([]);
   const reloadDocs = async (docID) => {
     try {
-      const response = await axios.get(`http://localhost:8000/users/${user.id}/documents`);
+      const response = await axios.get(`http://localhost:8000/users/${user.id}/documents`, {
+        params: { with_tags: true, with_minimap: true },
+      });
       if (!userDocs.value) {
         userDocs.value = response.data.map((doc) => ({ ...doc, filtered: false }));
       } else {

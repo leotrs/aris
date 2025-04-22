@@ -53,17 +53,21 @@
   <div class="files-wrapper" :class="mode">
     <FilesHeader :mode="mode" />
 
-    <div class="files" :class="mode">
-      <FilesItem
-        v-for="(doc, idx) in userDocs.filter((doc) => !doc.filtered)"
-        :key="doc"
-        :class="{ active: activeIndex == idx }"
-        :doc="doc"
-        :mode="mode"
-        @click="selectForPreview(doc, idx)"
-        @dblclick="openRead(doc)"
-      />
-    </div>
+    <Suspense>
+      <div class="files" :class="mode">
+        <FilesItem
+          v-for="(doc, idx) in userDocs.filter((doc) => !doc.filtered)"
+          :key="doc"
+          :class="{ active: activeIndex == idx }"
+          :doc="doc"
+          :mode="mode"
+          @click="selectForPreview(doc, idx)"
+          @dblclick="openRead(doc)"
+        />
+      </div>
+
+      <template #fallback><div class="loading">loading files...</div></template>
+    </Suspense>
   </div>
 </template>
 

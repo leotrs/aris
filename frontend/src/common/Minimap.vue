@@ -1,7 +1,6 @@
 <script setup>
-  import { ref, watch, computed, onMounted, useTemplateRef, nextTick } from "vue";
+  import { ref, watch, computed, onMounted, useTemplateRef } from "vue";
   import { useElementSize, useDebounceFn } from "@vueuse/core";
-  import axios from "axios";
 
   const props = defineProps({
     doc: { type: Object, required: true },
@@ -11,7 +10,7 @@
   const orientationClass = computed(() =>
     props.orientation == "horizontal" ? "horizontal" : "vertical"
   );
-  const html = ref('<div class="loading">loading minimap...</div>');
+
   const wrapper = useTemplateRef("wrapper");
   const originalHeight = ref(null);
   const { width: wrapperWidth } = useElementSize(wrapper);
@@ -78,29 +77,18 @@
       resolve();
     });
   };
-
   const transformSVG = useDebounceFn(async () => await doTransformSVG(), 50);
 
-  try {
-    const url = `http://localhost:8000/documents/${props.doc.id}/content/minimap`;
-    const response = await axios.get(url);
-    if (response.status == 200 && !response.data) {
-      html.value = '<div class="minimap error">-</div>';
-      visibility.value = "visible";
-    } else {
-      html.value = response.data;
-      originalHeight.value = null;
-      html.value = response.data;
-    }
-  } catch (error) {
-    console.error(error);
-    html.value = '<div class="minimap error">error when retrieving minimap!</div>';
-  }
-
+  const html = ref("");
   onMounted(async () => {
     if (!props.doc) return;
-    await waitForSvgRender();
-    await transformSVG();
+    if (props.doc.minimap) {
+      html.value = props.doc.minimap;
+      await waitForSvgRender();
+      await transformSVG();
+    } else {
+      html.value = '<div class="minimap error">-</div>';
+    }
     visibility.value = "visible";
   });
 

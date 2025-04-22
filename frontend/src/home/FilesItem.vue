@@ -64,7 +64,7 @@
         </div>
         <div class="card-footer-right">
           <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
-          <Avatar :name="LT" />
+          <Avatar />
         </div>
       </div>
     </template>
