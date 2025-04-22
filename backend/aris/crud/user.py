@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy.orm import Session
 
 from ..models import Document, User
-from .document import get_document
+from .document import get_document, get_document_section
 from .tag import get_user_document_tags
 from .utils import extract_title
 
@@ -45,7 +45,9 @@ async def soft_delete_user(user_id: int, db: Session):
     return user
 
 
-async def get_user_documents(user_id: int, with_tags: bool, db: Session):
+async def get_user_documents(
+    user_id: int, with_tags: bool, with_minimap: bool, db: Session
+):
     user = await get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")
@@ -55,25 +57,40 @@ async def get_user_documents(user_id: int, with_tags: bool, db: Session):
         .filter(Document.owner_id == user_id, Document.deleted_at.is_(None))
         .all()
     )
+
     titles = await asyncio.gather(*(extract_title(d) for d in docs))
-    for doc, title in zip(docs, titles):
-        doc.title = title
+    titles = dict(zip(docs, titles))
+
+    tags = None
+    if with_tags:
+        tags = await asyncio.gather(
+            *(get_user_document_tags(user_id, d.id, db) for d in docs)
+        )
+        tags = dict(zip(docs, tags))
+
+    minimaps = None
+    if with_minimap:
+        minimaps = await asyncio.gather(
+            *(get_document_section(d.id, "minimap", db) for d in docs)
+        )
+        minimaps = dict(zip(docs, minimaps))
 
     return [
         {
             "id": doc.id,
-            "title": doc.title,
+            "title": titles[doc],
             "source": doc.source,
             "last_edited_at": doc.last_edited_at,
-            "tags": await get_user_document_tags(user_id, doc.id, db)
-            if with_tags
-            else [],
+            "tags": tags[doc] if tags else [],
+            "minimap": str(minimaps[doc]) if minimaps else "",
         }
         for doc in docs
     ]
 
 
-async def get_user_document(user_id: int, doc_id: int, with_tags: bool, db: Session):
+async def get_user_document(
+    user_id: int, doc_id: int, with_tags: bool, with_minimap: bool, db: Session
+):
     user = await get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")
@@ -84,6 +101,9 @@ async def get_user_document(user_id: int, doc_id: int, with_tags: bool, db: Sess
 
     title = await extract_title(doc)
     tags = (await get_user_document_tags(user_id, doc_id, db)) if with_tags else []
+    minimap = (
+        (await get_document_section(doc_id, "minimap", db)) if with_minimap else ""
+    )
 
     return {
         "id": doc.id,
@@ -91,4 +111,5 @@ async def get_user_document(user_id: int, doc_id: int, with_tags: bool, db: Sess
         "source": doc.source,
         "last_edited_at": doc.last_edited_at,
         "tags": tags,
+        "minimap": str(minimap),
     }
