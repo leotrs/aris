@@ -2,7 +2,6 @@
   import { ref, inject } from "vue";
   import axios from "axios";
   import RelativeTime from "@yaireo/relative-Time";
-  import Separator from "../common/Separator.vue";
 
   const props = defineProps({
     doc: { type: Object, required: true },

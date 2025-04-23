@@ -1,4 +1,6 @@
-<script setup></script>
+<script setup>
+  import {} from "vue";
+</script>
 
 <template>
   <div class="separator"></div>
