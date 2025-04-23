@@ -72,7 +72,7 @@
 </template>
 
 <style scoped>
-  .pill {
+  .tag {
     margin-right: 4px;
     border-radius: 16px;
     padding-inline: 8px;

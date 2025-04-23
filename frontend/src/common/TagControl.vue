@@ -72,7 +72,7 @@
     transform: translateX(100%) translateY(-8px);
   }
 
-  .pill:hover {
+  .tag:hover {
     background-color: var(--surface-hover);
   }
 
