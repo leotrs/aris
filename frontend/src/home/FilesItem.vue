@@ -125,7 +125,7 @@
 
   .item.list {
     &:hover > * {
-      background-color: var(--surface-hover);
+      background-color: var(--gray-50);
     }
 
     & > * {
@@ -143,8 +143,7 @@
     }
 
     &.active > * {
-      border-color: var(--border-action);
-      background-color: var(--surface-hover);
+      background-color: var(--orange-100);
     }
   }
 
@@ -154,7 +153,7 @@
     margin-bottom: 16px;
     padding: 16px;
     border: var(--border-thin) solid var(--border-primary);
-    background-color: var(--surface-primary);
+    background-color: var(--surface-page);
     display: flex;
     flex-direction: column;
 
@@ -164,9 +163,11 @@
     }
 
     &.active {
-      border-color: var(--border-information);
+      border-color: var(--border-action);
       background-color: var(--surface-page);
       box-shadow: var(--shadow-strong), var(--shadow-soft);
+      /* used to artificially thicken the border without causing layout jiggle */
+      outline: var(--border-extrathin) solid var(--border-action);
     }
 
     & > .card-header {
