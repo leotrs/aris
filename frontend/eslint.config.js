@@ -67,6 +67,9 @@ export default [
       // this is just silly
       "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
       "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
+
+      // general customization
+      "vue/multi-word-component-names": "off"
     },
   }
 ];
