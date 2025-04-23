@@ -282,22 +282,6 @@
     gap: 4px;
   }
 
-  .control.circles {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  .circle {
-    display: inline-block;
-    width: 32px;
-    height: 32px;
-    border-radius: 16px;
-    border: var(--border-thin) solid var(--dark);
-    &:hover {
-      cursor: pointer;
-    }
-  }
-
   :deep(.sc-btn) {
     padding: 0 !important;
   }
