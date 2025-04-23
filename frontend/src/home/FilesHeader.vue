@@ -61,7 +61,7 @@
 </script>
 
 <template>
-  <div class="pane-header text-label" :class="mode">
+  <Header :class="mode">
     <template v-for="name in Object.keys(columnInfo)">
       <div v-if="name == 'Spacer'" class="spacer"></div>
       <HeaderLabel
@@ -77,18 +77,10 @@
     <!-- to complete the grid -->
     <span v-if="mode == 'list'" class="spacer spacer-1"></span>
     <span v-if="mode == 'list'" class="spacer spacer-2"></span>
-  </div>
+  </Header>
 </template>
 
 <style scoped>
-  .pane-header {
-    --border-radius: 8px;
-
-    border: var(--border-extrathin) solid var(--border-information);
-    background-color: var(--surface-information);
-    height: calc(40px - 2 * var(--border-extrathin));
-  }
-
   .pane-header.list {
     & > *:first-child {
       padding-left: 16px;

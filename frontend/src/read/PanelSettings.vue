@@ -55,7 +55,7 @@
 
 <template>
   <div ref="selfRef" class="overlay settings">
-    <div class="ol-header">
+    <Header>
       <div class="left">
         <IconFileSettings />
         <span class="text-h5">Settings</span>
@@ -63,7 +63,7 @@
       <div class="right">
         <ButtonClose />
       </div>
-    </div>
+    </Header>
 
     <div class="ol-content">
       <div class="section">
@@ -171,18 +171,18 @@
     z-index: 100;
   }
 
-  .ol-header {
-    display: flex;
-    justify-content: space-between;
-    background-color: var(--surface-information);
-    border-radius: 8px;
-    padding-inline: 8px;
-    padding-block: 4px;
+  .pane-header {
+    width: 100%;
 
     & .left {
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+
+    & .right {
+      display: flex;
+      align-items: center;
     }
   }
 
@@ -198,8 +198,7 @@
     }
 
     & .s-header {
-      background-color: var(--surface-information);
-      border-radius: 8px;
+      border-bottom: 2px solid var(--border-information);
       padding-inline: 8px;
     }
 
