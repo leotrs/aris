@@ -60,7 +60,7 @@
 
       <div class="card-footer">
         <div class="card-footer-left">
-          <div class="tags"><TagRow v-model="doc.tags" :doc-id="doc.id" /></div>
+          <TagRow v-model="doc.tags" :doc-id="doc.id" />
         </div>
         <div class="card-footer-right">
           <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
@@ -81,7 +81,7 @@
         <template #fallback><span class="loading">loading...</span></template>
       </Suspense>
 
-      <div class="tags"><TagRow v-model="doc.tags" :doc-id="doc.id" /></div>
+      <TagRow v-model="doc.tags" :doc-id="doc.id" />
 
       <!-- necessary because tags tend to overflow -->
       <div class="spacer"></div>
@@ -159,7 +159,6 @@
     flex-direction: column;
 
     &:hover {
-      background-color: var(--surface-hover);
       border-color: var(--gray-400);
       box-shadow: var(--shadow-strong);
     }
@@ -194,7 +193,7 @@
     & .card-footer-right {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
     }
 
     & .file-title {

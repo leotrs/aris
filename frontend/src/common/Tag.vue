@@ -38,6 +38,8 @@
     padding-inline: 8px;
     padding-block: 4px;
     text-wrap: nowrap;
+    height: 24px;
+    text-align: center;
   }
 
   .tag.on {
