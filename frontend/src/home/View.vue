@@ -106,7 +106,7 @@
     border-radius: 16px;
 
     & :deep(.pane) {
-      background-color: var(--almost-white);
+      background-color: var(--white);
       padding: 16px 16px 0 16px;
       width: 100%;
       display: flex;

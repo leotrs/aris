@@ -77,7 +77,7 @@
   }
 
   .sb-item.active {
-    background-color: var(--surface-primary);
+    background-color: var(--white);
     border-left-color: var(--border-action);
     box-shadow: var(--shadow-soft);
 
@@ -93,7 +93,7 @@
       position: absolute;
       width: 8px;
       height: 100%;
-      background-color: var(--surface-primary);
+      background-color: white;
       right: 0px;
       z-index: 9999;
     }
