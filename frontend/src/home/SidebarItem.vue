@@ -44,6 +44,9 @@
   <div class="sb-item" :class="{ collapsed: collapsed, active: active }">
     <component :is="selectedIcon" v-if="selectedIcon" class="sb-icon" />
     <span class="text-h6 sb-text">{{ text }}</span>
+
+    <!--for seamless transition to the panes-->
+    <span class="join"></span>
   </div>
 </template>
 
@@ -52,6 +55,7 @@
     --padding-inline: 16px;
     --border-left-width: var(--border-med);
 
+    position: relative;
     height: 32px;
     display: flex;
     align-items: center;
@@ -68,20 +72,30 @@
       cursor: pointer;
     }
 
-    &.active {
-      background-color: var(--surface-primary);
-      border-left-color: var(--border-action);
+    &.collapsed {
+    }
+  }
 
-      & > svg {
-        color: var(--primary-600);
-      }
+  .sb-item.active {
+    background-color: var(--surface-primary);
+    border-left-color: var(--border-action);
+    box-shadow: var(--shadow-soft);
 
-      & > .sb-text {
-        color: var(--primary-600);
-      }
+    & > svg {
+      color: var(--primary-600);
     }
 
-    &.collapsed {
+    & > .sb-text {
+      color: var(--primary-600);
+    }
+
+    & > .join {
+      position: absolute;
+      width: 8px;
+      height: 100%;
+      background-color: var(--surface-primary);
+      right: 0px;
+      z-index: 9999;
     }
   }
 
