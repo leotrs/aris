@@ -4,12 +4,13 @@
 
 <template>
   <div class="fm-wrapper">
-    <ContextMenu ref="menu-ref" icon="Menu3" button-size="btn-md">
-      <ContextMenuItem icon="Bell" caption="Notifications" />
-      <ContextMenuItem icon="Share3" caption="Share" />
-      <ContextMenuItem icon="UserPlus" caption="Invite User" />
-      <Separator />
+    <ContextMenu icon="Menu3" button-size="btn-md">
+      <ContextMenuItem icon="Bolt" caption="Activity" />
       <ContextMenuItem icon="Clock" caption="History" />
+      <Separator />
+      <ContextMenuItem icon="Share3" caption="Share" />
+      <ContextMenuItem icon="UserPlus" caption="Collaborate" />
+      <Separator />
       <ContextMenuItem icon="Download" caption="Download" />
       <ContextMenuItem icon="FileExport" caption="Export" />
       <Separator />

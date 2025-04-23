@@ -1,5 +1,6 @@
 <script setup>
-  import { ref, watch } from "vue";
+  import { ref, watch, useTemplateRef } from "vue";
+  import { useFloating, autoUpdate, offset, shift } from "@floating-ui/vue";
   import useClosable from "@/composables/useClosable.js";
 
   const props = defineProps({
@@ -18,13 +19,25 @@
   watch(show, (isShown) => (isShown ? activate() : deactivate()));
 
   defineExpose({ toggle: () => (show.value = !show.value) });
+
+  const btnRef = useTemplateRef("btn-ref");
+  const menuRef = useTemplateRef("menu-ref");
+  const { floatingStyles } = useFloating(btnRef, menuRef, {
+    strategy: "absolute",
+    placement: "left-start",
+    middleware: [offset({ mainAxis: 0, crossAxis: props.icon == "Dots" ? -8 : 0 }), shift()],
+    whileElementsMounted: autoUpdate,
+  });
 </script>
 
 <template>
   <div class="cm-wrapper" @click.stop @dblclick.stop>
-    <template v-if="icon == 'Dots'"><ButtonDots v-model="show" class="cm-btn" /></template>
+    <template v-if="icon == 'Dots'">
+      <ButtonDots ref="btn-ref" v-model="show" class="cm-btn" />
+    </template>
     <template v-else-if="icon">
       <ButtonToggle
+        ref="btn-ref"
         v-model="show"
         :icon="icon"
         class="cm-btn"
@@ -33,20 +46,19 @@
       />
     </template>
 
-    <div v-if="show" class="cm-menu"><slot /></div>
+    <div v-if="show" ref="menu-ref" class="cm-menu" :style="floatingStyles"><slot /></div>
   </div>
 </template>
 
 <style>
   .cm-wrapper {
-    position: relative;
     width: fit-content;
+    overflow: visible;
 
     & > .cm-menu {
       position: absolute;
-      left: 0;
       top: 0;
-      transform: translateX(-100%);
+      left: 0;
       z-index: 999;
       background-color: var(--surface-primary);
       padding-block: 8px;
