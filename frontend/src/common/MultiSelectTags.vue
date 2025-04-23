@@ -86,8 +86,6 @@
   }
 
   .cm-wrapper > :deep(.cm-menu > .item) {
-    display: flex;
-    align-items: center;
     justify-content: space-between;
     padding-inline: 8px;
     gap: 8px;

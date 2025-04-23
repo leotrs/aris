@@ -21,18 +21,11 @@
 
   .tag {
     margin-right: 4px;
-    border-radius: 16px;
-    padding-inline: 8px;
-    padding-block: 4px;
-    text-wrap: nowrap;
   }
 
-  .cm-wrapper > :deep(.cm-menu > .item) {
+  .nowrap {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding-inline: 8px;
-    gap: 8px;
   }
 
   .new-tag {
