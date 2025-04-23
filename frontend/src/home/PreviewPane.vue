@@ -46,54 +46,12 @@
           text="Read"
           @click="read"
         ></Button>
-        <Button
-          kind="tertiary"
-          size="sm"
-          text-float="bottom"
-          text="Write"
-          icon="Pencil"
-          shadow="true"
-        ></Button>
-        <Button
-          kind="tertiary"
-          size="sm"
-          text-float="bottom"
-          text="Review"
-          icon="FileCheck"
-          shadow="true"
-        ></Button>
-        <Button
-          kind="tertiary"
-          size="sm"
-          text-float="bottom"
-          text="Share"
-          icon="Share3"
-          shadow="true"
-        ></Button>
-        <Button
-          kind="tertiary"
-          size="sm"
-          text-float="bottom"
-          text="Collaborate"
-          icon="UserPlus"
-          shadow="true"
-        ></Button>
-        <Button
-          kind="tertiary"
-          size="sm"
-          text-float="bottom"
-          text="Download"
-          icon="Download"
-          shadow="true"
-        ></Button>
-        <Button
-          kind="tertiary"
-          size="sm"
-          text-float="bottom"
-          text="Export"
-          icon="FileExport"
-          shadow="true"
-        ></Button>
+        <Button kind="tertiary" size="sm" text-float="bottom" text="Write" icon="Pencil" />
+        <Button kind="tertiary" size="sm" text-float="bottom" text="Review" icon="FileCheck" />
+        <Button kind="tertiary" size="sm" text-float="bottom" text="Share" icon="Share3" />
+        <Button kind="tertiary" size="sm" text-float="bottom" text="Collaborate" icon="UserPlus" />
+        <Button kind="tertiary" size="sm" text-float="bottom" text="Download" icon="Download" />
+        <Button kind="tertiary" size="sm" text-float="bottom" text="Export" icon="FileExport" />
       </div>
 
       <div class="right"><ButtonClose @close="close" /></div>
