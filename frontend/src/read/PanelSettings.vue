@@ -79,16 +79,7 @@
           </div>
           <div class="column">
             <span class="label">Background</span>
-            <span class="control circles">
-              <span
-                v-for="(color, name) in colors"
-                class="circle"
-                :class="name"
-                :style="{ 'background-color': color }"
-                @click="onChangeBackground(name)"
-              >
-              </span>
-            </span>
+            <ColorPicker :colors="colors" @change="onChangeBackground" />
           </div>
         </div>
       </div>
