@@ -26,7 +26,6 @@
 <template>
   <div class="rsm-manuscript">
     <div class="css-links">
-      <link rel="stylesheet" type="text/css" href="http://localhost:8000/static/rsm.css" />
       <link
         rel="stylesheet"
         href="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.css"
