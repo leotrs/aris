@@ -66,12 +66,6 @@
   line-height: 20px;
 }
 
-.pane-header {
-  background-color: var(--surface-information);
-  /* border-bottom: var(--border-extrathin) solid var(--gray-300); */
-  border-radius: 8px;
-}
-
 
 /* Icon default state */
 .tabler-icon {

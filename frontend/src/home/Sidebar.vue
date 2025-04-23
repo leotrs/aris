@@ -1,7 +1,6 @@
 <script setup>
   import { ref, inject } from "vue";
   import SidebarItem from "./SidebarItem.vue";
-  import Separator from "@/common/Separator.vue";
   import { IconMenu3 } from "@tabler/icons-vue";
 
   const isMobile = inject("isMobile");

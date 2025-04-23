@@ -34,7 +34,7 @@
 
 <template>
   <div id="preview" ref="self-ref" class="pane">
-    <div class="pane-header">
+    <Header>
       <div class="left" :style="{ width: `${tabsHeaderWidth}px` }"></div>
 
       <div class="middle">
@@ -97,7 +97,7 @@
       </div>
 
       <div class="right"><ButtonClose @close="close" /></div>
-    </div>
+    </Header>
     <div class="pane-content">
       <div class="tabs">
         <div ref="tabs-header-ref" class="tabs-header">
@@ -128,11 +128,7 @@
   }
 
   .pane-header {
-    display: flex;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    padding: 8px;
-    border: var(--border-extrathin) solid var(--border-information);
+    padding-block: calc(8px - var(--border-extrathin));
 
     & .middle {
       display: flex;
