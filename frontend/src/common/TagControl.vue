@@ -44,7 +44,7 @@
       @click="state = !state"
       @done-editing="(newName) => renameTag(newName)"
     />
-    <ContextMenu>
+    <ContextMenu placement="right-start">
       <ColorPicker :colors="colors" @change="setColor" />
       <ContextMenuItem
         icon="Edit"
@@ -67,8 +67,9 @@
 </template>
 
 <style scoped>
-  .tag-control :deep(.dots > .cm-menu) {
-    transform: translateX(100%) translateY(-8px);
+  .tag-control {
+    display: flex;
+    justify-content: space-between;
   }
 
   .tag:hover {

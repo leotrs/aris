@@ -6,6 +6,7 @@
   const props = defineProps({
     icon: { type: String, default: "Dots" },
     buttonSize: { type: String, default: "btn-sm" },
+    placement: { type: String, default: "left-start" },
   });
   const show = ref(false);
 
@@ -24,7 +25,7 @@
   const menuRef = useTemplateRef("menu-ref");
   const { floatingStyles } = useFloating(btnRef, menuRef, {
     strategy: "absolute",
-    placement: "left-start",
+    placement: props.placement,
     middleware: [offset({ mainAxis: 0, crossAxis: props.icon == "Dots" ? -8 : 0 }), shift()],
     whileElementsMounted: autoUpdate,
   });

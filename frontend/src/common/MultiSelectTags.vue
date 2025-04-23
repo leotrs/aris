@@ -50,7 +50,7 @@
 </script>
 
 <template>
-  <ContextMenu :icon="icon">
+  <ContextMenu :icon="icon" placement="bottom-end">
     <TagControl
       v-for="(tag, idx) in userTags"
       :key="tag.id"
@@ -58,7 +58,7 @@
       class="item"
       :tag="tag"
     />
-    <div class="new-tag-wrapper item">
+    <div class="new-tag item">
       <Tag
         v-model="renaming"
         :tag="newTagPlaceholder"
@@ -80,13 +80,7 @@
     text-wrap: nowrap;
   }
 
-  .cm-wrapper > :deep(.cm-menu) {
-    right: 0;
-    transform: translateX(0) translateY(32px);
-  }
-
   .cm-wrapper > :deep(.cm-menu > .item) {
-    justify-content: space-between;
     padding-inline: 8px;
     gap: 8px;
   }
