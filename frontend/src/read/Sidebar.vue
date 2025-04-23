@@ -138,9 +138,10 @@
   }
 
   .sb-menu {
-    padding-block: 16px;
+    padding-top: 8px;
+    padding-bottom: 16px;
     position: fixed;
-    height: calc(100% - 48px + 4px);
+    height: calc(100% - 48px - 8px - 8px);
     min-width: 64px;
     width: fit-content;
     left: 0;
@@ -154,7 +155,7 @@
       display: none;
     }
 
-    & > * {
+    & > *:not(:last-child) {
       margin-bottom: 12px;
     }
   }
