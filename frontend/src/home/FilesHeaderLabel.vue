@@ -34,7 +34,7 @@
       :class="[name.toLowerCase().replace(/ /g, '-'), 'sortable']"
       @click.stop="nextSortState"
     >
-      <span class="col-header-label">{{ name }}</span>
+      <span class="col-header-label text-label">{{ name }}</span>
       <component :is="IconArrowsSort" v-if="!sortState" class="no-sort" />
       <component :is="IconArrowNarrowDown" v-if="sortState == 'desc'" />
       <component :is="IconArrowNarrowUp" v-if="sortState == 'asc'" />
@@ -48,14 +48,14 @@
       @mouseenter="filterableSVGColor = 'var(--medium)'"
       @mouseleave="filterableSVGColor = 'transparent'"
     >
-      <span class="col-header-label">{{ name }}</span>
+      <span class="col-header-label text-label">{{ name }}</span>
       <MultiSelectTags v-model="tagsSelectedForFilter" icon="Filter" />
     </div>
   </template>
 
   <template v-else>
     <div class="col-header" :class="name.toLowerCase().replace(' ', '-')">
-      <span class="col-header-label">{{ name }}</span>
+      <span class="col-header-label text-label">{{ name }}</span>
     </div>
   </template>
 </template>
