@@ -32,6 +32,7 @@
   .cp-wrapper {
     display: flex;
     justify-content: space-between;
+    gap: 4px;
   }
 
   .circle {
@@ -39,16 +40,16 @@
     width: 32px;
     height: 32px;
     border-radius: 16px;
-    border: var(--border-thin) solid var(--gray-500);
+    border: var(--border-thin) solid var(--gray-800);
 
     &:hover {
       cursor: pointer;
+      border-color: var(--almost-black);
       box-shadow: var(--shadow-strong);
-      border-color: var(--border-active);
     }
 
     &.active {
-      border-color: var(--border-active);
+      border-color: var(--almost-black);
       box-shadow: var(--shadow-strong);
     }
   }

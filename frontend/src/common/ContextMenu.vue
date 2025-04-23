@@ -51,7 +51,6 @@
       background-color: var(--surface-primary);
       padding-block: 8px;
       border-radius: 16px;
-      overflow: hidden;
       min-width: fit-content;
       box-shadow: var(--shadow-strong), var(--shadow-soft);
 
