@@ -82,10 +82,13 @@
   />
 </template>
 
-<style>
+<style scoped>
   .s-wrapper {
     background-color: var(--surface-page) !important;
   }
+</style>
+
+<style>
   .search-result {
     background-color: var(--secondary-200);
   }
