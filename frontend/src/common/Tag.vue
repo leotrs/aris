@@ -18,7 +18,7 @@
 </script>
 
 <template>
-  <span class="pill" :class="[active ? 'on' : 'off', tag.color]">
+  <span class="tag" :class="[active ? 'on' : 'off', tag.color]">
     <EditableText
       v-if="editable"
       ref="editableTextRef"
@@ -31,14 +31,16 @@
 </template>
 
 <style scoped>
-  .pill {
+  .tag {
+    display: flex;
+    align-items: center;
     border-radius: 16px;
     padding-inline: 8px;
     padding-block: 4px;
     text-wrap: nowrap;
   }
 
-  .pill.on {
+  .tag.on {
     &.red {
       background-color: var(--red-400);
       color: var(--red-50);
@@ -60,7 +62,7 @@
     }
   }
 
-  .pill.off {
+  .tag.off {
     &.red {
       border: var(--border-thin) solid var(--red-400);
       color: var(--red-400);

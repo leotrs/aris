@@ -14,7 +14,12 @@
 </template>
 
 <style scoped>
-  .pill {
+  .tag-row {
+    display: flex;
+    align-items: center;
+  }
+
+  .tag {
     margin-right: 4px;
     border-radius: 16px;
     padding-inline: 8px;
