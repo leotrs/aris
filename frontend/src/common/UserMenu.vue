@@ -1,6 +1,5 @@
 <script setup>
   import { useTemplateRef } from "vue";
-  import Separator from "../common/Separator.vue";
 
   const menuRef = useTemplateRef("menu-ref");
   const onClick = () => menuRef.value.toggle();
