@@ -1,7 +1,7 @@
 <script setup>
   import { ref, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
-  import { IconEye, IconBolt, IconVersions, IconQuote } from "@tabler/icons-vue";
+  import { IconEye, IconBolt, IconClock, IconQuote } from "@tabler/icons-vue";
   import { useElementSize } from "@vueuse/core";
   import useClosable from "@/composables/useClosable.js";
   import PreviewTabPreview from "./PreviewTabPreview.vue";
@@ -23,7 +23,7 @@
   const tabInfo = [
     { label: "Preview", icon: IconEye, component: PreviewTabPreview },
     { label: "Activity", icon: IconBolt, component: PreviewTabActivity },
-    { label: "Revisions", icon: IconVersions, component: PreviewTabRevisions },
+    { label: "History", icon: IconClock, component: PreviewTabRevisions },
     { label: "Citation", icon: IconQuote, component: PreviewTabCitation },
   ];
   const activeIndex = ref(0);
@@ -50,8 +50,8 @@
         <Button kind="tertiary" size="sm" text-float="bottom" text="Review" icon="FileCheck" />
         <Button kind="tertiary" size="sm" text-float="bottom" text="Share" icon="Share3" />
         <Button kind="tertiary" size="sm" text-float="bottom" text="Collaborate" icon="UserPlus" />
-        <Button kind="tertiary" size="sm" text-float="bottom" text="Download" icon="Download" />
-        <Button kind="tertiary" size="sm" text-float="bottom" text="Export" icon="FileExport" />
+        <!-- <Button kind="tertiary" size="sm" text-float="bottom" text="Download" icon="Download" /> -->
+        <!-- <Button kind="tertiary" size="sm" text-float="bottom" text="Export" icon="FileExport" /> -->
       </div>
 
       <div class="right"><ButtonClose @close="close" /></div>
