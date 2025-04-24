@@ -12,11 +12,12 @@
   /* Usually, we would just set :style="style" on the handle,
    * however, style has px units and we prefer percentages so
    * the handle is responsive to viewport resizing. */
+  const containerBottom = 30;
   const containerRef = useTemplateRef("container-ref");
   const containerHeight = computed(() => containerRef.value?.clientHeight ?? 1);
   const handleTop = ref(200);
   const onDrag = (newPos) => {
-    const containerHeightPercent = 70;
+    const containerHeightPercent = 100 - containerBottom;
     pos.value =
       (newPos.y / containerHeight.value) * (containerHeightPercent - props.offset) + props.offset;
     handleTop.value = `${(newPos.y / containerHeight.value) * 100}%`;
@@ -32,7 +33,11 @@
 
 <template>
   <div class="spacer"></div>
-  <div ref="container-ref" class="container" :style="{ top: `${offset}%` }">
+  <div
+    ref="container-ref"
+    class="container"
+    :style="{ bottom: `${containerBottom}%`, top: `${offset}%` }"
+  >
     <div
       ref="handle-ref"
       class="handle"
@@ -48,9 +53,8 @@
 
   .container {
     position: absolute;
-    bottom: 30%;
     outline: 2px solid blue;
-    width: 110%;
+    width: 100%;
     pointer-events: none;
   }
 
@@ -59,5 +63,6 @@
     height: 8px;
     background-color: pink;
     position: absolute;
+    cursor: row-resize;
   }
 </style>
