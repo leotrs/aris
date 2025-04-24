@@ -1,10 +1,11 @@
 <script setup>
   import {} from "vue";
+  const props = defineProps({ icon: { type: String, default: "Dots" } });
 </script>
 
 <template>
   <div class="fm-wrapper">
-    <ContextMenu icon="Menu3" button-size="btn-md">
+    <ContextMenu :icon="icon" button-size="btn-md">
       <ContextMenuItem icon="Bolt" caption="Activity" />
       <ContextMenuItem icon="Clock" caption="History" />
       <Separator />
@@ -23,7 +24,7 @@
 
 <style scoped>
   .fm-wrapper {
-    width: 48px;
+    width: fit-content;
     height: 48px;
     display: flex;
     align-items: center;

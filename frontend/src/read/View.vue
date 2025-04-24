@@ -42,7 +42,7 @@
   <div class="read-view">
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
     <ArisManuscript :left="leftComponents" :right="rightComponents" :top="topComponents" />
-    <div class="menus"><FileMenu /><UserMenu /></div>
+    <div class="menus"><FileMenu icon="Menu3" /><UserMenu /></div>
   </div>
 </template>
 
