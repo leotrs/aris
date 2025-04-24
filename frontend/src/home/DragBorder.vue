@@ -1,10 +1,9 @@
 <script setup>
-  import { watch, computed, useTemplateRef } from "vue";
+  import { computed, useTemplateRef } from "vue";
   import { useDraggable } from "@vueuse/core";
 
   const props = defineProps({
     active: { type: Boolean, default: false },
-    panesHeight: { type: Number, default: 100 },
     offset: { type: Number, default: 48 },
   });
   const model = defineModel({ type: Number });
@@ -16,7 +15,7 @@
   const onDrag = (pos) => (model.value = pos.y);
   const containerRef = useTemplateRef("container-ref");
   const { y } = useDraggable(useTemplateRef("handle-ref"), {
-    initialValue: { x: 0, y: 0 },
+    initialValue: { x: 0, y: window.innerHeight / 3 },
     preventDefault: true,
     axis: "y",
     containerElement: containerRef,
@@ -48,9 +47,9 @@
 
   .container {
     position: absolute;
-    bottom: 20%;
+    bottom: 30%;
     outline: 2px solid blue;
-    width: 100%;
+    width: 110%;
     pointer-events: none;
   }
 
