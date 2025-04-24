@@ -18,14 +18,10 @@
   const offset = 16 + 48 + 16;
   const offsetPercent = computed(() => (offset / panesHeight.value) * 100);
 
-  const filesHeight = computed(() => {
-    if (!selectedForPreview.value) return "100%";
-    return `${borderPos.value}%`;
-  });
-  const previewHeight = computed(() => {
-    if (!selectedForPreview.value) return "0";
-    return `${100 - borderPos.value}%`;
-  });
+  const filesHeight = computed(() => (selectedForPreview.value ? `${borderPos.value}%` : "100%"));
+  const previewHeight = computed(() =>
+    selectedForPreview.value ? `${100 - borderPos.value}%` : "0%"
+  );
 </script>
 
 <template>
