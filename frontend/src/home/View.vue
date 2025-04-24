@@ -12,20 +12,19 @@
   const setSelectedForPreview = (doc) => (selectedForPreview.value = doc);
 
   /* handle draggable border and pane height */
-  const borderPos = ref(window.innerHeight / 3);
+  const borderPos = ref(50);
   const panesRef = useTemplateRef("panes-ref");
   const panesHeight = computed(() => panesRef.value?.clientHeight || 1);
   const offset = 16 + 48 + 16;
+  const offsetPercent = computed(() => (offset / panesHeight.value) * 100);
 
   const filesHeight = computed(() => {
     if (!selectedForPreview.value) return "100%";
-    const percent = ((borderPos.value + offset) / panesHeight.value) * 100;
-    return `${percent}%`;
+    return `${borderPos.value}%`;
   });
   const previewHeight = computed(() => {
     if (!selectedForPreview.value) return "0";
-    const percent = (1 - (borderPos.value + offset) / panesHeight.value) * 100;
-    return `${percent}%`;
+    return `${100 - borderPos.value}%`;
   });
 </script>
 
@@ -45,7 +44,7 @@
         @set-selected="setSelectedForPreview"
       />
 
-      <DragBorder v-model="borderPos" :active="!!selectedForPreview" :offset="offset" />
+      <DragBorder v-model="borderPos" :active="!!selectedForPreview" :offset="offsetPercent" />
 
       <PreviewPane
         v-if="!isMobile && selectedForPreview"
