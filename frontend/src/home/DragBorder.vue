@@ -5,6 +5,7 @@
   const props = defineProps({
     active: { type: Boolean, default: false },
     panesHeight: { type: Number, default: 100 },
+    offset: { type: Number, default: 48 },
   });
   const model = defineModel({ type: Number });
   const pointerEvents = computed(() => (props.active ? "all" : "none"));
@@ -31,8 +32,12 @@
 
 <template>
   <div class="spacer"></div>
-  <div ref="container-ref" class="container">
-    <div ref="handle-ref" class="handle"></div>
+  <div ref="container-ref" class="container" :style="{ top: `${offset}px` }">
+    <div
+      ref="handle-ref"
+      class="handle"
+      :style="{ 'pointer-events': pointerEvents, top: handleTop }"
+    ></div>
   </div>
 </template>
 
@@ -43,7 +48,6 @@
 
   .container {
     position: absolute;
-    top: calc(16px + 48px + 16px + 40px);
     bottom: 20%;
     outline: 2px solid blue;
     width: 100%;
@@ -55,7 +59,5 @@
     height: 8px;
     background-color: pink;
     position: absolute;
-    pointer-events: v-bind(pointerEvents);
-    top: v-bind(handleTop);
   }
 </style>
