@@ -90,22 +90,7 @@
       <!-- <div class="owner"><Avatar /></div> -->
       <!-- <div class="collaborators"><Avatar v-for="..."/></div> -->
 
-      <ContextMenu>
-        <ContextMenuItem icon="Eye" caption="Preview" />
-        <ContextMenuItem icon="Bolt" caption="Activity" />
-        <ContextMenuItem icon="Versions" caption="Revisions" />
-        <ContextMenuItem icon="Quote" caption="Citation" />
-        <Separator />
-        <ContextMenuItem icon="Share3" caption="Share" />
-        <ContextMenuItem icon="UserPlus" caption="Collaborate" />
-        <Separator />
-        <ContextMenuItem icon="Download" caption="Download" />
-        <ContextMenuItem icon="FileExport" caption="Export" />
-        <Separator />
-        <ContextMenuItem icon="Edit" caption="Rename" @click="renameDoc" />
-        <ContextMenuItem icon="Copy" caption="Duplicate" @click="copyDoc" />
-        <ContextMenuItem icon="TrashX" caption="Delete" class="danger" @click="deleteDoc" />
-      </ContextMenu>
+      <FileMenu />
 
       <!-- to complete the grid -->
       <span></span>
