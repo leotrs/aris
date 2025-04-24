@@ -15,15 +15,15 @@
   const borderPos = ref(0.5);
   const panesRef = useTemplateRef("panes-ref");
   const panesHeight = computed(() => panesRef.value?.clientHeight || 1);
+  const offset = 16 + 48 + 16;
   const filesHeight = computed(() => {
     if (!selectedForPreview.value) return "100%";
-    const percent = ((borderPos.value + 16 + 48 + 16 + 40) / panesHeight.value) * 100;
+    const percent = ((borderPos.value + offset) / panesHeight.value) * 100;
     return `${percent}%`;
   });
   const previewHeight = computed(() => {
     if (!selectedForPreview.value) return "0";
-    const percent =
-      ((panesHeight.value - borderPos.value - 16 - 48 - 16 - 40) / panesHeight.value) * 100;
+    const percent = (1 - (borderPos.value + offset) / panesHeight.value) * 100;
     return `${percent}%`;
   });
 </script>
@@ -38,13 +38,23 @@
     </div>
 
     <div ref="panes-ref" class="panes">
-      <FilesPane id="documents" @set-selected="setSelectedForPreview" />
+      <FilesPane
+        id="documents"
+        :style="{ height: filesHeight }"
+        @set-selected="setSelectedForPreview"
+      />
 
-      <DragBorder v-model="borderPos" :active="!!selectedForPreview" :panes-height="panesHeight" />
+      <DragBorder
+        v-model="borderPos"
+        :active="!!selectedForPreview"
+        :panes-height="panesHeight"
+        :offset="offset"
+      />
 
       <PreviewPane
         v-if="!isMobile && selectedForPreview"
         :doc="selectedForPreview"
+        :style="{ height: previewHeight }"
         @set-selected="setSelectedForPreview"
       />
     </div>
@@ -84,27 +94,6 @@
       border-radius: 16px;
       box-shadow: var(--shadow-soft);
     }
-
-    & :deep(#documents:not(:has(~ .pane))) {
-    }
-
-    & :deep(#documents:has(~ .pane)) {
-      min-height: 20%;
-      max-height: 80%;
-    }
-
-    & :deep(#preview) {
-      min-height: 20%;
-      max-height: 80%;
-    }
-  }
-
-  #documents {
-    height: v-bind(filesHeight);
-  }
-
-  #preview {
-    height: v-bind(previewHeight);
   }
 
   .view-wrapper.mobile {
