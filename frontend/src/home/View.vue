@@ -14,8 +14,9 @@
   /* handle draggable border and pane height */
   const borderPos = ref(window.innerHeight / 3);
   const panesRef = useTemplateRef("panes-ref");
-  const panesHeight = computed(() => panesRef.value?.clientHeight || window.innerHeight / 3);
+  const panesHeight = computed(() => panesRef.value?.clientHeight || 1);
   const offset = 16 + 48 + 16;
+
   const filesHeight = computed(() => {
     if (!selectedForPreview.value) return "100%";
     const percent = ((borderPos.value + offset) / panesHeight.value) * 100;
