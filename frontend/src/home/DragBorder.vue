@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, useTemplateRef } from "vue";
+  import { ref, computed, useTemplateRef } from "vue";
   import { useDraggable } from "@vueuse/core";
 
   const props = defineProps({
@@ -12,26 +12,27 @@
   /* Usually, we would just set :style="style" on the handle,
    * however, style has px units and we prefer percentages so
    * the handle is responsive to viewport resizing. */
-  const onDrag = (newPos) => (pos.value = newPos.y);
   const containerRef = useTemplateRef("container-ref");
-  const { y } = useDraggable(useTemplateRef("handle-ref"), {
-    initialValue: { x: 0, y: pos.value },
+  const containerHeight = computed(() => containerRef.value?.clientHeight ?? 1);
+  const handleTop = ref(200);
+  const onDrag = (newPos) => {
+    const containerHeightPercent = 70;
+    pos.value =
+      (newPos.y / containerHeight.value) * (containerHeightPercent - props.offset) + props.offset;
+    handleTop.value = `${(newPos.y / containerHeight.value) * 100}%`;
+  };
+  useDraggable(useTemplateRef("handle-ref"), {
+    initialValue: { x: 0, y: 200 },
     preventDefault: true,
     axis: "y",
     containerElement: containerRef,
     onMove: onDrag,
   });
-
-  const handleTop = computed(() => {
-    const height = containerRef.value?.clientHeight ?? 1;
-    const percentage = (y.value / height) * 100;
-    return `${percentage}%`;
-  });
 </script>
 
 <template>
   <div class="spacer"></div>
-  <div ref="container-ref" class="container" :style="{ top: `${offset}px` }">
+  <div ref="container-ref" class="container" :style="{ top: `${offset}%` }">
     <div
       ref="handle-ref"
       class="handle"
