@@ -14,16 +14,17 @@
   const borderPos = ref(0.5);
   const panesRef = useTemplateRef("panes-ref");
   const panesHeight = computed(() => panesRef.value?.getBoundingClientRect().height || 0);
-  const filesHeight = computed(() =>
-    selectedForPreview.value
-      ? `calc(${borderPos.value}px + 16px + 48px + 16px + 40px)`
-      : `${panesHeight.value}px`
-  );
-  const previewHeight = computed(() =>
-    selectedForPreview.value
-      ? `calc(${panesHeight.value}px - ${borderPos.value}px - 16px - 48px - 16px - 40px)`
-      : "0px"
-  );
+  const filesHeight = computed(() => {
+    if (!selectedForPreview.value) return "100%";
+    const percent = ((borderPos.value + 16 + 48 + 16 + 40) / panesHeight.value) * 100;
+    return `${percent}%`;
+  });
+  const previewHeight = computed(() => {
+    if (!selectedForPreview.value) return "0";
+    const percent =
+      ((panesHeight.value - borderPos.value - 16 - 48 - 16 - 40) / panesHeight.value) * 100;
+    return `${percent}%`;
+  });
 </script>
 
 <template>
@@ -38,7 +39,7 @@
     <div ref="panes-ref" class="panes">
       <FilesPane id="documents" @set-selected="setSelectedForPreview" />
 
-      <DragBorder v-model="borderPos" :active="selectedForPreview" />
+      <DragBorder v-model="borderPos" :active="!!selectedForPreview" />
 
       <PreviewPane
         v-if="!isMobile && selectedForPreview"
