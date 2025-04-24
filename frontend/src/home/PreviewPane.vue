@@ -82,7 +82,6 @@
     --border-radius: 8px;
 
     position: relative;
-    bottom: 0;
   }
 
   .pane-header {
