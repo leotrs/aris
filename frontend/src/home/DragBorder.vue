@@ -1,26 +1,38 @@
 <script setup>
-  import { computed, useTemplateRef } from "vue";
+  import { watch, computed, useTemplateRef } from "vue";
   import { useDraggable } from "@vueuse/core";
 
-  const props = defineProps({ active: { type: Boolean, default: false } });
+  const props = defineProps({
+    active: { type: Boolean, default: false },
+    panesHeight: { type: Number, default: 100 },
+  });
   const model = defineModel({ type: Number });
+  const pointerEvents = computed(() => (props.active ? "all" : "none"));
 
+  /* Usually, we would just set :style="style" on the handle,
+   * however, style has px units and we prefer percentages so
+   * the handle is responsive to viewport resizing. */
   const onDrag = (pos) => (model.value = pos.y);
-  const { style } = useDraggable(useTemplateRef("self-ref"), {
+  const containerRef = useTemplateRef("container-ref");
+  const { y } = useDraggable(useTemplateRef("handle-ref"), {
     initialValue: { x: 0, y: 0 },
     preventDefault: true,
     axis: "y",
-    containerElement: useTemplateRef("container-ref"),
+    containerElement: containerRef,
     onMove: onDrag,
   });
 
-  const pointerEvents = computed(() => (props.active ? "all" : "none"));
+  const handleTop = computed(() => {
+    const height = containerRef.value?.clientHeight ?? 1;
+    const percentage = (y.value / height) * 100;
+    return `${percentage}%`;
+  });
 </script>
 
 <template>
   <div class="spacer"></div>
   <div ref="container-ref" class="container">
-    <div ref="self-ref" class="handle" :style="style"></div>
+    <div ref="handle-ref" class="handle"></div>
   </div>
 </template>
 
@@ -44,5 +56,6 @@
     background-color: pink;
     position: absolute;
     pointer-events: v-bind(pointerEvents);
+    top: v-bind(handleTop);
   }
 </style>
