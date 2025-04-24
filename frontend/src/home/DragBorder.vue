@@ -15,7 +15,7 @@
   const containerBottom = 30;
   const containerRef = useTemplateRef("container-ref");
   const containerHeight = computed(() => containerRef.value?.clientHeight ?? 1);
-  const handleTop = ref(200);
+  const handleTop = ref("66%");
   const onDrag = (newPos) => {
     const containerHeightPercent = 100 - containerBottom;
     pos.value =
@@ -23,7 +23,7 @@
     handleTop.value = `${(newPos.y / containerHeight.value) * 100}%`;
   };
   useDraggable(useTemplateRef("handle-ref"), {
-    initialValue: { x: 0, y: 200 },
+    initialValue: { x: 0, y: 0 },
     preventDefault: true,
     axis: "y",
     containerElement: containerRef,
@@ -53,16 +53,14 @@
 
   .container {
     position: absolute;
-    outline: 2px solid blue;
     width: 100%;
     pointer-events: none;
   }
 
   .handle {
+    position: absolute;
     width: 100%;
     height: 8px;
-    background-color: pink;
-    position: absolute;
     cursor: row-resize;
   }
 </style>
