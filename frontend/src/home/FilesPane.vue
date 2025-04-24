@@ -2,11 +2,11 @@
   import { ref, inject, computed } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import axios from "axios";
   import Topbar from "./FilesTopbar.vue";
   import FilesHeader from "./FilesHeader.vue";
   import FilesItem from "./FilesItem.vue";
 
+  const props = defineProps({});
   const emit = defineEmits(["set-selected"]);
   const mode = ref("list");
   const { userDocs } = inject("userDocs");
@@ -48,26 +48,28 @@
 </script>
 
 <template>
-  <Topbar @list="mode = 'list'" @cards="mode = 'cards'" />
+  <div class="pane">
+    <Topbar @list="mode = 'list'" @cards="mode = 'cards'" />
 
-  <div class="files-wrapper" :class="mode">
-    <FilesHeader :mode="mode" />
+    <div class="files-wrapper" :class="mode">
+      <FilesHeader :mode="mode" />
 
-    <Suspense>
-      <div class="files" :class="mode">
-        <FilesItem
-          v-for="(doc, idx) in userDocs.filter((doc) => !doc.filtered)"
-          :key="doc"
-          :class="{ active: activeIndex == idx }"
-          :doc="doc"
-          :mode="mode"
-          @click="selectForPreview(doc, idx)"
-          @dblclick="openRead(doc)"
-        />
-      </div>
+      <Suspense>
+        <div class="files" :class="mode">
+          <FilesItem
+            v-for="(doc, idx) in userDocs.filter((doc) => !doc.filtered)"
+            :key="doc"
+            :class="{ active: activeIndex == idx }"
+            :doc="doc"
+            :mode="mode"
+            @click="selectForPreview(doc, idx)"
+            @dblclick="openRead(doc)"
+          />
+        </div>
 
-      <template #fallback><div class="loading">loading files...</div></template>
-    </Suspense>
+        <template #fallback><div class="loading">loading files...</div></template>
+      </Suspense>
+    </div>
   </div>
 </template>
 
@@ -79,6 +81,7 @@
     overflow-y: auto;
     width: 100%;
     height: 100%;
+    padding-bottom: 8px;
   }
 
   .files.list {

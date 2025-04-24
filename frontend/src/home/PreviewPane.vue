@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, useTemplateRef } from "vue";
+  import { ref, watch, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { IconEye, IconBolt, IconClock, IconQuote } from "@tabler/icons-vue";
   import { useElementSize } from "@vueuse/core";
@@ -27,13 +27,12 @@
     { label: "Citation", icon: IconQuote, component: PreviewTabCitation },
   ];
   const activeIndex = ref(0);
-
   const tabsHeaderRef = useTemplateRef("tabs-header-ref");
   const { width: tabsHeaderWidth } = useElementSize(tabsHeaderRef);
 </script>
 
 <template>
-  <div id="preview" ref="self-ref" class="pane">
+  <div id="preview" class="pane">
     <Header>
       <div class="left" :style="{ width: `${tabsHeaderWidth}px` }"></div>
 
@@ -83,6 +82,7 @@
     --border-radius: 8px;
 
     position: relative;
+    bottom: 0;
   }
 
   .pane-header {

@@ -1,63 +1,29 @@
 <script setup>
-  import { ref, computed, inject, watch, useTemplateRef } from "vue";
-  import { useDraggable, useElementSize } from "@vueuse/core";
+  import { ref, inject, computed, useTemplateRef } from "vue";
   import Sidebar from "./Sidebar.vue";
   import FilesPane from "./FilesPane.vue";
   import PreviewPane from "./PreviewPane.vue";
   import UploadFile from "./ModalUploadFile.vue";
-
+  import DragBorder from "./DragBorder.vue";
   const showModal = ref(false);
-  const selfRef = useTemplateRef("selfRef");
   const isMobile = inject("isMobile");
 
-  /*********** draggable Preview pane ***********/
-  const container = useTemplateRef("separator-container-ref");
-  const separator = useTemplateRef("separator-ref");
-  const previewHeight = ref(0.5);
-  const containerTop = 0.2; // NOT reactive, just a const
-  const containerHeight = 0.6; // NOT reactive, just a const
-  const containerTopPercent = "20%";
-  const containerHeightPercent = "60%";
-
-  /* Both panes will use previewHeight to dynamically set their height */
-  const onSeparatorDragged = (pos) => {
-    const rect = container.value.getBoundingClientRect();
-    // Convert from `container`'s coordinates to `pane`'s coordinates.
-    const fraction = (rect.height - pos.y) / rect.height;
-    previewHeight.value =
-      ((containerHeight - containerTop) / containerHeight) * fraction + containerTop;
-  };
-
-  /* Sometimes the panes may change size when not being dragged -- e.g. when the viewport
-    is manually resized. In these cases we need to manually update the separator to match. */
-  const isDragging = ref(false);
-  const previewRef = useTemplateRef("preview-ref");
-  const panesRef = useTemplateRef("panes-ref");
-  const { height: realHeight } = useElementSize(previewRef);
-
-  watch(realHeight, (newVal) => {
-    if (isDragging.value) return;
-    const rect = panesRef.value.getBoundingClientRect();
-    // Convert from `pane`'s coordinates to `container`'s coordinates.
-    const fraction = (rect.height - newVal) / rect.height;
-    separator.value.style.top = `${fraction * 100}%`;
-  });
-
-  /* Start listening to dragging */
-  const { style } = useDraggable(separator, {
-    initialValue: { x: 0, y: 150 },
-    preventDefault: true,
-    axis: "y",
-    onMove: onSeparatorDragged,
-    containerElement: container,
-    onStart: () => (isDragging.value = true),
-    onEnd: () => (isDragging.value = false),
-  });
-
-  /*********** handle document selected for preview ***********/
   const selectedForPreview = ref(null);
-  const separatorPointerEvents = computed(() => (selectedForPreview.value ? "all" : "none"));
   const setSelectedForPreview = (doc) => (selectedForPreview.value = doc);
+
+  const borderPos = ref(0.5);
+  const panesRef = useTemplateRef("panes-ref");
+  const panesHeight = computed(() => panesRef.value?.getBoundingClientRect().height || 0);
+  const filesHeight = computed(() =>
+    selectedForPreview.value
+      ? `calc(${borderPos.value}px + 16px + 48px + 16px + 40px)`
+      : `${panesHeight.value}px`
+  );
+  const previewHeight = computed(() =>
+    selectedForPreview.value
+      ? `calc(${panesHeight.value}px - ${borderPos.value}px - 16px - 48px - 16px - 40px)`
+      : "0px"
+  );
 </script>
 
 <template>
@@ -70,23 +36,13 @@
     </div>
 
     <div ref="panes-ref" class="panes">
-      <div id="documents" class="pane" :style="{ height: `${(1 - previewHeight) * 100}%` }">
-        <FilesPane @set-selected="setSelectedForPreview" />
-      </div>
+      <FilesPane id="documents" @set-selected="setSelectedForPreview" />
 
-      <div
-        ref="separator-container-ref"
-        class="separator-container"
-        :style="{ top: containerTopPercent, height: containerHeightPercent }"
-      >
-        <div ref="separator-ref" class="separator" :style="style" />
-      </div>
+      <DragBorder v-model="borderPos" :active="selectedForPreview" />
 
       <PreviewPane
         v-if="!isMobile && selectedForPreview"
-        ref="preview-ref"
         :doc="selectedForPreview"
-        :style="{ height: `${previewHeight * 100}%` }"
         @set-selected="setSelectedForPreview"
       />
     </div>
@@ -110,28 +66,6 @@
     padding: 0;
   }
 
-  .separator-container {
-    position: absolute;
-    width: 100%;
-    pointer-events: none;
-    outline: 2px solid blue;
-  }
-
-  .separator {
-    position: absolute;
-    bottom: 0;
-    background-color: transparent;
-    background-color: pink;
-    width: 100%;
-    height: 12px;
-    z-index: 1;
-    pointer-events: v-bind(separatorPointerEvents);
-
-    &:hover {
-      cursor: row-resize;
-    }
-  }
-
   .panes {
     position: relative;
     flex-grow: 1;
@@ -150,8 +84,6 @@
     }
 
     & :deep(#documents:not(:has(~ .pane))) {
-      min-height: 100%;
-      max-height: 100%;
     }
 
     & :deep(#documents:has(~ .pane)) {
@@ -165,6 +97,14 @@
     }
   }
 
+  #documents {
+    height: v-bind(filesHeight);
+  }
+
+  #preview {
+    height: v-bind(previewHeight);
+  }
+
   .view-wrapper.mobile {
     & :deep(.pane) {
       padding: 0;
@@ -174,10 +114,6 @@
       gap: 16px;
       border-radius: 16px;
     }
-  }
-
-  #documents {
-    margin-bottom: 8px;
   }
 
   #preview {
