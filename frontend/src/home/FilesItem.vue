@@ -109,7 +109,7 @@
 
   .item.list {
     &:hover > * {
-      background-color: var(--gray-50);
+      background-color: var(--gray-75);
     }
 
     & > * {
