@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject } from "vue";
+  import { ref, inject, watch } from "vue";
   import SidebarItem from "./SidebarItem.vue";
   import { IconMenu3 } from "@tabler/icons-vue";
 
@@ -14,6 +14,16 @@
   };
 
   const sidebarRef = ref(null);
+
+  const modeActive = ref(-1);
+  watch(modeActive, (newVal) => {
+    if (newVal == 0) {
+      document.documentElement.classList.remove("dark-theme");
+    }
+    if (newVal == 2) {
+      document.documentElement.classList.add("dark-theme");
+    }
+  });
 </script>
 
 <template>
@@ -70,6 +80,11 @@
         <SidebarItem :collapsed="collapsed" text="All Files" active />
         <Separator />
         <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />
+        <SegmentedControl
+          v-model="modeActive"
+          :icons="['Sun', 'SunMoon', 'Moon']"
+          :default-active="1"
+        />
       </div>
     </template>
   </div>

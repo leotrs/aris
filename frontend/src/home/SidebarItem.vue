@@ -93,7 +93,7 @@
       position: absolute;
       width: 8px;
       height: 100%;
-      background-color: white;
+      background-color: var(--white);
       right: 0px;
       z-index: 9999;
     }
