@@ -148,22 +148,23 @@
     height: 100%;
     position: relative;
     left: 64px;
-    padding: 0 var(--outer-padding) var(--outer-padding) 0;
     border-radius: 16px;
+    z-index: 1;
+    box-shadow: var(--shadow-soft);
   }
 
   .inner-wrapper {
     display: flex;
     width: 100%;
-    height: calc(100% - var(--topbar-height) - var(--outer-padding));
+    height: calc(100% - var(--topbar-height));
     position: relative;
-    top: calc(var(--topbar-height) + var(--outer-padding));
+    top: calc(var(--topbar-height));
     background-color: v-bind("fileSettings.background");
+
     overflow-y: auto;
     justify-content: center;
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
-    box-shadow: var(--shadow-soft);
   }
 
   .middle-column {
@@ -175,8 +176,7 @@
     z-index: 1;
     overflow-x: visible;
     height: fit-content;
-    background-color: v-bind("fileSettings.background");
-    margin-top: 8px;
+    padding-top: 8px;
   }
 
   .left-column,
@@ -188,7 +188,6 @@
     flex-grow: 2;
     padding-inline: 16px;
     padding-block: 16px;
-    background-color: v-bind("fileSettings.background");
     height: 100%;
   }
 

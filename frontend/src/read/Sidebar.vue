@@ -100,7 +100,7 @@
     padding-inline: 8px;
     padding-block: 8px;
     overflow-x: visible;
-    background-color: var(--extra-light);
+    background-color: transparent;
     position: fixed;
     z-index: 1;
     /* border-right: var(--border-thin) solid var(--border-primary); */
