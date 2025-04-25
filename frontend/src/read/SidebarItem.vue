@@ -16,14 +16,16 @@
   };
 
   let hideTimeout = null;
+  let showTimeout = null;
   const onMouseEnterButton = () => {
     isHoveringButton.value = true;
     clearTimeout(hideTimeout);
-    updateVisibility();
+    showTimeout = setTimeout(updateVisibility, 500);
   };
   const onMouseLeaveButton = () => {
     isHoveringButton.value = false;
-    hideTimeout = setTimeout(updateVisibility, 500);
+    clearTimeout(showTimeout);
+    hideTimeout = setTimeout(updateVisibility, 300);
   };
   const onMouseEnterControl = () => {
     isHoveringControl.value = true;
@@ -32,7 +34,8 @@
   };
   const onMouseLeaveControl = () => {
     isHoveringControl.value = false;
-    hideTimeout = setTimeout(updateVisibility, 500);
+    clearTimeout(showTimeout);
+    hideTimeout = setTimeout(updateVisibility, 300);
   };
 
   const controlState = ref(-1);
