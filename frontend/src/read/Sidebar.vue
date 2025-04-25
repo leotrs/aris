@@ -17,7 +17,7 @@
       state: false,
     },
     Minimap: { icon: "MapPin", label: "map", preferredSide: "left", key: "m", state: false },
-    Comments: { icon: "Message", label: "notes", preferredSide: "left", key: "c", state: false },
+    Comments: { icon: "Message", label: "comments", preferredSide: "left", key: "c", state: false },
     PanelCitation: {
       icon: "Quote",
       label: "citation",
@@ -97,7 +97,7 @@
     height: 100%;
     min-width: 64px;
     max-width: 64px;
-    padding: 8px;
+    padding-block: 8px;
     position: fixed;
     z-index: 2;
   }
@@ -116,14 +116,12 @@
   }
 
   .sb-menu {
-    padding-top: 8px;
-    padding-bottom: 16px;
+    padding: 8px;
     position: fixed;
     height: calc(100% - 48px - 8px - 8px);
     min-width: 64px;
     width: fit-content;
     left: 0;
-    padding-inline: 8px;
 
     /* no scrollbar in any browser */
     overflow-y: auto;

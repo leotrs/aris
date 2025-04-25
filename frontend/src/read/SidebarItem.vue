@@ -114,9 +114,10 @@
   }
 
   .sb-item-label {
-    width: 48px;
+    margin-left: -8px;
+    width: 64px;
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
   }
 
   .sc-wrapper {
