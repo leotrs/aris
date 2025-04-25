@@ -47,9 +47,7 @@
     padding-right: var(--links-width);
 
     &.with-border {
-      box-shadow:
-        0px 4px 2px -2px rgba(0, 0, 0, 15%),
-        0px 8px 6px -6px rgba(0, 0, 0, 05%);
+      box-shadow: var(--shadow-soft);
     }
   }
 

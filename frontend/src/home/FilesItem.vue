@@ -10,9 +10,10 @@
   const emits = defineEmits(["click", "dblclick"]);
 
   const relativeTime = new RelativeTime({ locale: "en" });
-
   const fileTitleActive = ref(false);
+  const shouldShowColumn = inject("shouldShowColumn");
 
+  /* File menu callbacks */
   const { reloadDocs } = inject("userDocs");
   const renameDoc = () => (fileTitleActive.value = true);
   const copyDoc = async () => {
@@ -35,8 +36,6 @@
       console.error(`Could not delete document ${props.doc.id}`);
     }
   };
-
-  const shouldShowColumn = inject("shouldShowColumn");
 </script>
 
 <template>
@@ -82,9 +81,6 @@
           <Minimap :doc="doc" orientation="horizontal" />
           <template #fallback><span class="loading">loading...</span></template>
         </Suspense>
-      </template>
-      <template v-else>
-        <span></span>
       </template>
 
       <TagRow v-model="doc.tags" :doc-id="doc.id" />
@@ -134,7 +130,12 @@
     }
 
     &.active > * {
-      background-color: var(--orange-100);
+      background-color: var(--surface-hover);
+      outline: var(--border-thin) solid var(--red);
+    }
+
+    &.active > *:first-child {
+      border-left: var(--border-med) solid var(--border-action);
     }
   }
 

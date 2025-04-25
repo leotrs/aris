@@ -3,24 +3,29 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
   const emit = defineEmits(["list", "cards"]);
-  const isMobile = inject("isMobile");
-  const segmentedControlIcons = computed(() =>
-    isMobile.value ? ["LayoutList", "LayoutCards", "CropPortrait"] : ["LayoutList", "LayoutCards"]
-  );
 
+  /* View mode segmented control */
   const controlState = ref(0);
   watch(controlState, (newVal) => emit(newVal == 0 ? "list" : "cards"));
+  useKeyboardShortcuts({
+    "v,l": () => (controlState.value = 0),
+    "v,c": () => (controlState.value = 1),
+  });
 
+  /* Search */
   const { filterDocs, clearFilterDocs } = inject("userDocs");
   const onSearchSubmit = (searchString) => {
     clearFilterDocs();
     filterDocs((doc) => !doc.title.toLowerCase().includes(searchString.toLowerCase()));
   };
-
   const searchBar = useTemplateRef("search-bar-ref");
-  useKeyboardShortcuts({
-    "/": () => searchBar.value.focusInput(),
-  });
+  useKeyboardShortcuts({ "/": () => searchBar.value.focusInput() });
+
+  /* Breakpoints */
+  const isMobile = inject("isMobile");
+  const segmentedControlIcons = computed(() =>
+    isMobile.value ? ["LayoutList", "LayoutCards", "CropPortrait"] : ["LayoutList", "LayoutCards"]
+  );
 </script>
 
 <template>
