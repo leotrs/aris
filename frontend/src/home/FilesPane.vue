@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, provide, computed } from "vue";
+  import { ref, inject, watch, computed, provide } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import Topbar from "./FilesTopbar.vue";
@@ -12,19 +12,25 @@
   const { userDocs } = inject("userDocs");
   const numDocs = computed(() => userDocs.value.length);
 
-  /*********** Handlers for child component events ***********/
+  /* Open a file */
+  const router = useRouter();
+  const openRead = (doc) => {
+    clearTimeout(clickTimeout.value);
+    router.push(`/${doc.id}/read`);
+  };
+
+  /*********** File list ***********/
   const activeIndex = ref(null);
   let clickTimeout = ref(null);
   const selectForPreview = (doc, idx) => {
     activeIndex.value = idx;
     clickTimeout.value = setTimeout(() => emit("set-selected", doc), 200);
   };
-
-  const router = useRouter();
-  const openRead = (doc) => {
-    clearTimeout(clickTimeout.value);
-    router.push(`/${doc.id}/read`);
-  };
+  watch(activeIndex, (newVal) => {
+    const el = document.querySelector(`.files .item:nth-child(${newVal})`);
+    if (!el) return;
+    el.scrollIntoView({ behavior: "smooth" });
+  });
 
   /*********** Keyboard shortcuts ***********/
   const nextItemOnKey = (ev) => {
@@ -38,12 +44,13 @@
   };
   useKeyboardShortcuts({
     j: nextItemOnKey,
-    arrowdown: nextItemOnKey,
     k: prevItemOnKey,
+    arrowdown: nextItemOnKey,
     arrowup: prevItemOnKey,
     escape: (ev) => ev.preventDefault() || (activeIndex.value = null),
   });
 
+  /* Breakpoints */
   const breakpoints = inject("breakpoints");
   const gridTemplateColumns = computed(() => {
     return breakpoints.isGreater("md")

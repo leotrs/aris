@@ -129,6 +129,10 @@
       padding-inline: 0px;
     }
 
+    & .file-title {
+      border-left: var(--border-med) solid transparent;
+    }
+
     &.active > * {
       background-color: var(--surface-hover);
       outline: var(--border-thin) solid var(--red);
