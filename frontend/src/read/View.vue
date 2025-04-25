@@ -50,7 +50,7 @@
   .read-view {
     display: flex;
     width: 100%;
-    background-color: transparent;
+    padding: 8px 8px 8px 0;
   }
 
   .menus {
@@ -60,7 +60,7 @@
     height: calc(64px - var(--border-extrathin));
     display: flex;
     align-items: center;
-    z-index: 3;
+    z-index: 2;
     padding: 8px;
     gap: 8px;
     background-color: transparent;

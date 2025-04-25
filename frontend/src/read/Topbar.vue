@@ -38,7 +38,7 @@
     height: var(--sidebar-width);
     width: calc(100% - var(--sidebar-width) - var(--outer-padding));
     position: fixed;
-    top: 8px;
+
     background-color: v-bind("fileSettings.background");
     z-index: 2;
     border-top-left-radius: 16px;
