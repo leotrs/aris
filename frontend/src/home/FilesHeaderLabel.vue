@@ -69,6 +69,7 @@
     color: var(--almost-black);
     background-color: var(--surface-information);
     width: 100%;
+    padding-right: 8px;
 
     &.sortable:hover,
     &.filterable:hover {

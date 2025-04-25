@@ -38,27 +38,32 @@
   };
   useKeyboardShortcuts({
     j: nextItemOnKey,
-    J: nextItemOnKey,
-    ArrowDown: nextItemOnKey,
+    arrowdown: nextItemOnKey,
     k: prevItemOnKey,
-    K: prevItemOnKey,
-    ArrowUp: prevItemOnKey,
+    arrowup: prevItemOnKey,
     escape: (ev) => ev.preventDefault() || (activeIndex.value = null),
   });
 
   const breakpoints = inject("breakpoints");
-  const gridTemplateColumns = computed(() =>
-    breakpoints.greater("sm")
+  const gridTemplateColumns = computed(() => {
+    return breakpoints.isGreater("md")
       ? "minmax(144px, 2fr) minmax(144px, 1.5fr) 1fr 8px 102px 16px 8px"
-      : "minmax(144px, 2fr) 1fr 8px 102px 16px 8px"
-  );
+      : "minmax(144px, 2fr) 1fr 8px 102px 16px 8px";
+  });
 
   const shouldShowColumn = (columnName, mode) => {
-    if (mode == "list") {
-      return breakpoints.greater("sm") && columnName == "Map" ? false : true;
-    } else if (props.mode == "cards") {
-      return ["Title", "Map", "Last edit"].includes(columnName);
-    }
+    return true;
+    /* console.log(columnName, mode, breakpoints.isGreater("md"));
+     * if (mode == "cards") {
+     *   return ["Title", "Tags", "Last edit"].includes(columnName);
+     * }
+
+     * if (mode == "list") {
+     *   if (breakpoints.greater("md")) return true;
+     *   return columnName != "Map";
+     * }
+
+     * return false; */
   };
   provide("shouldShowColumn", shouldShowColumn);
 </script>
@@ -113,7 +118,7 @@
   .pane-header.list,
   .files.list > .item {
     display: grid;
-    grid-template-columns: v-bind("gridTemplateColumns");
+    grid-template-columns: minmax(144px, 2fr) minmax(144px, 1.5fr) 1fr 8px 102px 16px 8px;
   }
 
   .pane-header.list > *,

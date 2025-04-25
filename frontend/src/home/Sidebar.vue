@@ -1,20 +1,21 @@
 <script setup>
   import { ref, inject, watch } from "vue";
-  import SidebarItem from "./SidebarItem.vue";
   import { IconMenu3 } from "@tabler/icons-vue";
+  import SidebarItem from "./SidebarItem.vue";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
-  const isMobile = inject("isMobile");
-  const showMobileMenu = ref(false);
   const emit = defineEmits(["showFileUploadModal"]);
+
+  /* Collapsing */
   const forceCollapsed = ref(false);
   const collapsed = ref(false);
   const toggleCollapsed = () => {
     collapsed.value = !collapsed.value;
     forceCollapsed.value = !forceCollapsed.value;
   };
+  useKeyboardShortcuts({ c: toggleCollapsed });
 
-  const sidebarRef = ref(null);
-
+  /* Change the theme */
   const modeActive = ref(-1);
   watch(modeActive, (newVal) => {
     if (newVal == 0) {
@@ -25,7 +26,13 @@
     }
   });
 
+  /* New file upload */
+  useKeyboardShortcuts({ n: () => emit("showFileUploadModal") });
+
+  /* Breakpoints */
   const breakpoints = inject("breakpoints");
+  const isMobile = inject("isMobile");
+  const showMobileMenu = ref(false);
 </script>
 
 <template>
@@ -257,5 +264,9 @@
   .cta > button.collapsed {
     padding: calc(8px - var(--border-thin)) !important;
     gap: 0px;
+  }
+
+  .sc-wrapper {
+    margin-left: 20px;
   }
 </style>
