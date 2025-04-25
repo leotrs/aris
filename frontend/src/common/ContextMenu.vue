@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, useTemplateRef } from "vue";
+  import { ref, watch, computed, onMounted, useTemplateRef } from "vue";
   import { useFloating, autoUpdate, offset, shift } from "@floating-ui/vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import useClosable from "@/composables/useClosable.js";
@@ -25,11 +25,27 @@
   });
 
   /* Keys */
-  useKeyboardShortcuts({
-    j: nextItemOnKey,
-    k: prevItemOnKey,
-    arrowdown: nextItemOnKey,
-    arrowup: prevItemOnKey,
+  const activeIndex = ref(null);
+  const numItems = computed(() => menuRef.value.querySelectorAll(".item").length);
+  const nextItemOnKey = (ev) => {
+    ev.preventDefault();
+    activeIndex.value = activeIndex.value === null ? 0 : (activeIndex.value + 1) % numItems.value;
+    menuRef.value
+      .querySelector(`.item:nth-child(${activeIndex.value + 1})`)
+      .classList.add("active");
+  };
+  const prevItemOnKey = (ev) => {
+    ev.preventDefault();
+    activeIndex.value =
+      activeIndex.value === null ? 0 : (activeIndex.value + numItems.value - 1) % numItems.value;
+  };
+  onMounted(() => {
+    useKeyboardShortcuts({
+      j: nextItemOnKey,
+      k: prevItemOnKey,
+      arrowdown: nextItemOnKey,
+      arrowup: prevItemOnKey,
+    });
   });
   const { activate, deactivate } = useClosable({
     onClose: () => (show.value = false),

@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, useTemplateRef } from "vue";
+  import { ref, inject, watch, useTemplateRef } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
   import RelativeTime from "@yaireo/relative-Time";
@@ -8,6 +8,7 @@
     doc: { type: Object, required: true },
     mode: { type: String, default: "list" },
   });
+  const active = defineModel({ type: Boolean, required: true });
   const emits = defineEmits(["click", "dblclick"]);
 
   const relativeTime = new RelativeTime({ locale: "en" });
@@ -38,11 +39,18 @@
     }
   };
   const menuRef = useTemplateRef("menu-ref");
-  useKeyboardShortcuts({ ".": () => menuRef.value?.toggle() });
+
+  const { activate, deactivate } = useKeyboardShortcuts({ ".": () => menuRef.value?.toggle() });
+  watch(active, (newVal) => (newVal ? activate() : deactivate()));
 </script>
 
 <template>
-  <div class="item" :class="mode" @click="emits('click')" @dblclick="emits('dblclick')">
+  <div
+    class="item"
+    :class="[mode, active ? 'active' : '']"
+    @click="emits('click')"
+    @dblclick="emits('dblclick')"
+  >
     <template v-if="mode == 'cards'">
       <div class="card-header">
         <FileTitle
