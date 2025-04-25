@@ -124,8 +124,4 @@
   .sc-wrapper:hover {
     opacity: 1;
   }
-
-  :deep(.btn-toggle) {
-    background-color: transparent;
-  }
 </style>
