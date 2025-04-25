@@ -1,6 +1,7 @@
 <script setup>
   import { ref, watch, useTemplateRef } from "vue";
   import { useFloating, autoUpdate, offset, shift } from "@floating-ui/vue";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import useClosable from "@/composables/useClosable.js";
 
   const props = defineProps({
@@ -8,19 +9,12 @@
     buttonSize: { type: String, default: "btn-sm" },
     placement: { type: String, default: "left-start" },
   });
+
+  /* Main state model */
   const show = ref(false);
-
-  const { activate, deactivate } = useClosable({
-    onClose: () => (show.value = false),
-    closeOnEsc: true,
-    closeOnOutsideClick: true,
-    closeOnCloseButton: false,
-    autoActivate: false,
-  });
-  watch(show, (isShown) => (isShown ? activate() : deactivate()));
-
   defineExpose({ toggle: () => (show.value = !show.value) });
 
+  /* Floating-UI config */
   const btnRef = useTemplateRef("btn-ref");
   const menuRef = useTemplateRef("menu-ref");
   const { floatingStyles } = useFloating(btnRef, menuRef, {
@@ -29,6 +23,22 @@
     middleware: [offset({ mainAxis: 0, crossAxis: props.icon == "Dots" ? -8 : 0 }), shift()],
     whileElementsMounted: autoUpdate,
   });
+
+  /* Keys */
+  useKeyboardShortcuts({
+    j: nextItemOnKey,
+    k: prevItemOnKey,
+    arrowdown: nextItemOnKey,
+    arrowup: prevItemOnKey,
+  });
+  const { activate, deactivate } = useClosable({
+    onClose: () => (show.value = false),
+    closeOnEsc: true,
+    closeOnOutsideClick: true,
+    closeOnCloseButton: false,
+    autoActivate: false,
+  });
+  watch(show, (isShown) => (isShown ? activate() : deactivate()));
 </script>
 
 <template>

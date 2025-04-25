@@ -1,11 +1,14 @@
 <script setup>
-  import {} from "vue";
+  import { useTemplateRef } from "vue";
   const props = defineProps({ icon: { type: String, default: "Dots" } });
+
+  const menuRef = useTemplateRef("menu-ref");
+  defineExpose({ toggle: () => menuRef.value?.toggle() });
 </script>
 
 <template>
   <div class="fm-wrapper">
-    <ContextMenu :icon="icon" button-size="btn-md">
+    <ContextMenu ref="menu-ref" :icon="icon" button-size="btn-md">
       <ContextMenuItem icon="Bolt" caption="Activity" />
       <ContextMenuItem icon="Clock" caption="History" />
       <Separator />

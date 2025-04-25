@@ -27,6 +27,7 @@
     clickTimeout.value = setTimeout(() => emit("set-selected", doc), 200);
   };
   watch(activeIndex, (newVal) => {
+    if (Number.isNaN(newVal)) return;
     const el = document.querySelector(`.files .item:nth-child(${newVal})`);
     if (!el) return;
     el.scrollIntoView({ behavior: "smooth" });
