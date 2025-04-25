@@ -98,6 +98,7 @@
   .pane-header.cards {
     display: flex;
     align-items: center;
+    justify-content: flex-start;
     gap: 16px;
     padding-inline: 8px;
 
