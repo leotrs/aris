@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, watch, computed, provide } from "vue";
+  import { ref, reactive, watch, watchEffect, computed, inject, provide } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import Topbar from "./FilesTopbar.vue";
@@ -21,14 +21,23 @@
 
   /*********** File list ***********/
   const activeIndex = ref(null);
+  const state = reactive({ itemActive: userDocs.value.map(() => false) });
+  watchEffect(() => {
+    userDocs.value.forEach((doc, idx) => {
+      state.itemActive = userDocs.value.map(() => false);
+    });
+  });
   let clickTimeout = ref(null);
   const selectForPreview = (doc, idx) => {
     activeIndex.value = idx;
     clickTimeout.value = setTimeout(() => emit("set-selected", doc), 200);
   };
-  watch(activeIndex, (newVal) => {
-    if (Number.isNaN(newVal)) return;
-    const el = document.querySelector(`.files .item:nth-child(${newVal})`);
+  watch(activeIndex, (idx) => {
+    if (Number.isNaN(idx)) return;
+    state.itemActive.fill(false);
+    state.itemActive[idx] = true;
+    if (idx === null) return;
+    const el = document.querySelector(`.files .item:nth-child(${idx + 1})`);
     if (!el) return;
     el.scrollIntoView({ behavior: "smooth" });
   });
@@ -88,7 +97,7 @@
           <FilesItem
             v-for="(doc, idx) in userDocs.filter((doc) => !doc.filtered)"
             :key="doc"
-            :class="{ active: activeIndex == idx }"
+            v-model="state.itemActive[idx]"
             :doc="doc"
             :mode="mode"
             @click="selectForPreview(doc, idx)"

@@ -5,7 +5,7 @@
     docId: { type: Number, default: -1 },
     icon: { type: String, default: "Tag" },
   });
-  const tags = defineModel();
+  const tags = defineModel({ type: Array });
   const { userTags, createTag, addOrRemoveTag } = inject("userTags");
 
   const state = reactive({
