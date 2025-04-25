@@ -9,7 +9,7 @@
     mode: { type: String, default: "list" },
   });
   const active = defineModel({ type: Boolean, required: true });
-  const emits = defineEmits(["click", "dblclick"]);
+  const emit = defineEmits(["click", "dblclick"]);
 
   const relativeTime = new RelativeTime({ locale: "en" });
   const fileTitleActive = ref(false);
@@ -40,7 +40,10 @@
   };
   const menuRef = useTemplateRef("menu-ref");
 
-  const { activate, deactivate } = useKeyboardShortcuts({ ".": () => menuRef.value?.toggle() });
+  const { activate, deactivate } = useKeyboardShortcuts({
+    ".": () => menuRef.value?.toggle(),
+    enter: () => emit("click"),
+  });
   watch(active, (newVal) => (newVal ? activate() : deactivate()));
 </script>
 
@@ -48,8 +51,8 @@
   <div
     class="item"
     :class="[mode, active ? 'active' : '']"
-    @click="emits('click')"
-    @dblclick="emits('dblclick')"
+    @click="emit('click')"
+    @dblclick="emit('dblclick')"
   >
     <template v-if="mode == 'cards'">
       <div class="card-header">
