@@ -76,4 +76,8 @@
     text-align: center;
     width: v-bind("middleColumnWidth");
   }
+
+  .file-title {
+    text-align: right;
+  }
 </style>
