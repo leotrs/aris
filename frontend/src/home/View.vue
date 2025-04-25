@@ -29,7 +29,7 @@
     <Sidebar @show-file-upload-modal="showModal = true" />
 
     <div class="menus">
-      <Button kind="tertiary" icon="Bell" />
+      <Button kind="tertiary" icon="Settings" />
       <UserMenu />
     </div>
 
