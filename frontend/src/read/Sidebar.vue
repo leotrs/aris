@@ -97,36 +97,14 @@
     height: 100%;
     min-width: 64px;
     max-width: 64px;
-    padding-inline: 8px;
-    padding-block: 8px;
-    overflow-x: visible;
-    background-color: transparent;
+    padding: 8px;
     position: fixed;
-    z-index: 1;
-    /* border-right: var(--border-thin) solid var(--border-primary); */
-  }
-
-  .btn-toggle {
-    position: relative;
-  }
-
-  .sc-wrapper {
-    display: none;
-    position: fixed;
-    left: calc(64px + 4px);
-    top: calc(64px + 16px + 56px + 8px);
-    z-index: 999;
-
-    :deep(& > .sc-item) {
-      padding-block: 0px !important;
-      padding-inline: 0px !important;
-    }
+    z-index: 2;
   }
 
   #logo {
     display: flex;
     padding: 9px;
-    margin-top: 8px;
 
     &:hover {
       cursor: pointer;
