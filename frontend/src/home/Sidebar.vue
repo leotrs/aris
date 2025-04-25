@@ -24,6 +24,8 @@
       document.documentElement.classList.add("dark-theme");
     }
   });
+
+  const breakpoints = inject("breakpoints");
 </script>
 
 <template>
@@ -37,6 +39,8 @@
         <img v-else src="../assets/logotype.svg" />
       </div>
     </template>
+
+    {{ breakpoints.active() }}
 
     <div class="cta" :class="{ fab: isMobile }">
       <Button

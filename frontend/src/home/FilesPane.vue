@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, computed } from "vue";
+  import { ref, inject, provide, computed } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import Topbar from "./FilesTopbar.vue";
@@ -45,6 +45,22 @@
     ArrowUp: prevItemOnKey,
     escape: (ev) => ev.preventDefault() || (activeIndex.value = null),
   });
+
+  const breakpoints = inject("breakpoints");
+  const gridTemplateColumns = computed(() =>
+    breakpoints.greater("sm")
+      ? "minmax(144px, 2fr) minmax(144px, 1.5fr) 1fr 8px 102px 16px 8px;"
+      : "minmax(144px, 2fr) 1fr 8px 102px 16px 8px"
+  );
+
+  const shouldShowColumn = (columnName, mode) => {
+    if (mode == "list") {
+      return breakpoints.greater("sm") && columnName == "Map" ? false : true;
+    } else if (props.mode == "cards") {
+      return ["Title", "Map", "Last edit"].includes(columnName);
+    }
+  };
+  provide("shouldShowColumn", shouldShowColumn);
 </script>
 
 <template>
@@ -97,7 +113,7 @@
   .pane-header.list,
   .files.list > .item {
     display: grid;
-    grid-template-columns: minmax(144px, 2fr) minmax(144px, 1.5fr) 1fr 8px 102px 16px 8px;
+    grid-template-columns: v-bind("gridTemplateColumns");
   }
 
   .pane-header.list > *,
