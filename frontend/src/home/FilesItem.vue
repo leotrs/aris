@@ -1,5 +1,6 @@
 <script setup>
-  import { ref, inject } from "vue";
+  import { ref, inject, useTemplateRef } from "vue";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
   import RelativeTime from "@yaireo/relative-Time";
 
@@ -36,6 +37,8 @@
       console.error(`Could not delete document ${props.doc.id}`);
     }
   };
+  const menuRef = useTemplateRef("menu-ref");
+  useKeyboardShortcuts({ ".": () => menuRef.value?.toggle() });
 </script>
 
 <template>
@@ -47,7 +50,7 @@
           :doc="doc"
           :class="mode == 'cards' ? 'text-label' : ''"
         />
-        <ContextMenu />
+        <FileMenu ref="menu-ref" />
       </div>
 
       <div class="card-content">
@@ -93,7 +96,7 @@
       <!-- <div class="owner"><Avatar /></div> -->
       <!-- <div class="collaborators"><Avatar v-for="..."/></div> -->
 
-      <FileMenu />
+      <FileMenu ref="menu-ref" />
 
       <!-- to complete the grid -->
       <span></span>
