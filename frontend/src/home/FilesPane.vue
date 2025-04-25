@@ -49,7 +49,7 @@
   const breakpoints = inject("breakpoints");
   const gridTemplateColumns = computed(() =>
     breakpoints.greater("sm")
-      ? "minmax(144px, 2fr) minmax(144px, 1.5fr) 1fr 8px 102px 16px 8px;"
+      ? "minmax(144px, 2fr) minmax(144px, 1.5fr) 1fr 8px 102px 16px 8px"
       : "minmax(144px, 2fr) 1fr 8px 102px 16px 8px"
   );
 
