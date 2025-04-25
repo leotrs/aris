@@ -10,7 +10,7 @@
 
   const columnInfo = {
     Title: { sortable: true, filterable: false, sortKey: "title" },
-    Progress: { sortable: false, filterable: false, sortKey: "" },
+    Map: { sortable: false, filterable: false, sortKey: "" },
     Tags: { sortable: false, filterable: true, sortKey: "" },
     Spacer: {},
     "Last edit": { sortable: true, filterable: false, sortKey: "last_edited_at" },
