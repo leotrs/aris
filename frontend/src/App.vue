@@ -1,5 +1,7 @@
 <script setup>
-  import { ref, provide, onMounted, onUnmounted, nextTick } from "vue";
+  import { ref, provide, onMounted } from "vue";
+  import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+
   import axios from "axios";
 
   /*********** provide user info ***********/
@@ -95,22 +97,11 @@
   });
 
   /*********** provide viewport info ***********/
-  const isMobile = ref(false);
-  const setIsMobile = (el) => {
-    isMobile.value = el?.contentRect.width < 432;
-  };
+  const breakpoints = useBreakpoints({ xs: 0, ...breakpointsTailwind });
+  const activeBreakpoint = breakpoints.active();
+  provide("viewportBreakpoint", activeBreakpoint);
 
-  let observer;
-  onMounted(() =>
-    nextTick(() => {
-      observer = new ResizeObserver((entries) => {
-        entries.forEach((el) => setIsMobile(el));
-      });
-      observer.observe(document.documentElement);
-      setIsMobile();
-    })
-  );
-  onUnmounted(() => (observer ? observer.disconnect() : null));
+  const isMobile = ref(false);
   provide("isMobile", isMobile);
 </script>
 
