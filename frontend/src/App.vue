@@ -99,7 +99,7 @@
   /*********** provide viewport info ***********/
   const breakpoints = useBreakpoints({ xs: 0, ...breakpointsTailwind });
   const activeBreakpoint = breakpoints.active();
-  provide("viewportBreakpoint", activeBreakpoint);
+  provide("breakpoints", breakpoints);
 
   const isMobile = ref(false);
   provide("isMobile", isMobile);

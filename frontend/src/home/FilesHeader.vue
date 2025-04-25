@@ -16,14 +16,6 @@
     "Last edit": { sortable: true, filterable: false, sortKey: "last_edited_at" },
     /* Owner: { sortable: false, filterable: false, sortKey: "owner_id" }, */
   };
-
-  const shouldShow = (columnName) => {
-    if (props.mode == "list") return true;
-    else if (props.mode == "cards") {
-      return columnInfo[columnName]["sortable"] || columnInfo[columnName]["filterable"];
-    }
-  };
-
   const columnState = reactive({
     Title: null,
     Progress: null,
@@ -31,6 +23,7 @@
     "Last edit": null,
     /* Owner: null */
   });
+  const shouldShowColumn = inject("shouldShowColumn");
 
   const handleColumnSortEvent = (columnName, mode) => {
     const sortKey = columnInfo[columnName]["sortKey"];
@@ -65,7 +58,7 @@
     <template v-for="name in Object.keys(columnInfo)">
       <div v-if="name == 'Spacer'" class="spacer"></div>
       <HeaderLabel
-        v-if="name !== 'Spacer' && shouldShow(name)"
+        v-if="name !== 'Spacer' && shouldShowColumn(name, mode)"
         v-model="columnState[name]"
         :name="name"
         :sortable="columnInfo[name]['sortable']"

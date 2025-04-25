@@ -35,6 +35,8 @@
       console.error(`Could not delete document ${props.doc.id}`);
     }
   };
+
+  const shouldShowColumn = inject("shouldShowColumn");
 </script>
 
 <template>
@@ -75,10 +77,15 @@
         :class="mode == 'cards' ? 'text-label' : ''"
       />
 
-      <Suspense>
-        <Minimap :doc="doc" orientation="horizontal" />
-        <template #fallback><span class="loading">loading...</span></template>
-      </Suspense>
+      <template v-if="shouldShowColumn('Map', 'list')">
+        <Suspense>
+          <Minimap :doc="doc" orientation="horizontal" />
+          <template #fallback><span class="loading">loading...</span></template>
+        </Suspense>
+      </template>
+      <template v-else>
+        <span></span>
+      </template>
 
       <TagRow v-model="doc.tags" :doc-id="doc.id" />
 
