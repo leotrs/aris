@@ -67,14 +67,7 @@
 
   /* Focus mode */
   const focusMode = ref(false);
-  watch(
-    focusMode,
-    (newVal) => {
-      console.log(newVal);
-      emit("focusMode", newVal);
-    },
-    { immediate: true }
-  );
+  watch(focusMode, (newVal) => emit("focusMode", newVal));
   const sidebarWidth = computed(() => (focusMode.value ? "0" : "64px"));
   const sidebarPadding = computed(() => (focusMode.value ? "16px 8px 16px 8px" : "8px 0 16px 0"));
 
@@ -97,7 +90,8 @@
     }"
   >
     <div id="logo" @click="onLogoClick">
-      <img src="../assets/logo-32px.svg" />
+      <Button v-if="focusMode" kind="tertiary" icon="Layout" />
+      <img v-else src="../assets/logo-32px.svg" />
     </div>
     <div v-if="!focusMode" class="sb-menu">
       <SidebarItem
