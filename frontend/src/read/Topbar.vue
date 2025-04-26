@@ -15,6 +15,7 @@
   const fileSettings = inject("fileSettings");
 
   const focusMode = inject("focusMode");
+  const topbarOpacity = computed(() => (focusMode.value ? "0" : "1"));
   const topbarHeight = computed(() => (focusMode.value ? "0" : "64px"));
   const topbarWidth = computed(() =>
     focusMode.value ? "100%" : "calc(100% - var(--sidebar-width) - var(--outer-padding))"
@@ -27,11 +28,11 @@
     :class="{ 'with-border': showTitle }"
     :style="{ height: topbarHeight, width: topbarWidth }"
   >
-    <Drawer class="left-column top">
+    <Drawer class="left-column top" :style="{ opacity: topbarOpacity }">
       <FileTitle v-if="showTitle && component" :doc="doc" class="text-h6" />
     </Drawer>
 
-    <Drawer class="middle-column top">
+    <Drawer class="middle-column top" :style="{ opacity: topbarOpacity }">
       <FileTitle v-if="showTitle && !component" :doc="doc" class="text-h6" />
       <component :is="component" ref="middle-comp" :doc="doc" />
     </Drawer>
@@ -51,7 +52,6 @@
     z-index: 2;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    border-bottom: var(--border-extrathin) solid transparent;
     padding-right: var(--links-width);
     transition:
       height var(--transition-duration) ease,
@@ -69,6 +69,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    transition: opacity var(--transition-duration) ease;
   }
 
   .left-column {
