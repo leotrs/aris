@@ -1,9 +1,10 @@
 <script setup>
-  import { ref, watch, useTemplateRef } from "vue";
+  import { ref, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { IconEye, IconBolt, IconClock, IconQuote } from "@tabler/icons-vue";
   import { useElementSize } from "@vueuse/core";
   import useClosable from "@/composables/useClosable.js";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import PreviewTabPreview from "./PreviewTabPreview.vue";
   import PreviewTabActivity from "./PreviewTabActivity.vue";
   import PreviewTabRevisions from "./PreviewTabRevisions.vue";
@@ -29,6 +30,11 @@
   const activeIndex = ref(0);
   const tabsHeaderRef = useTemplateRef("tabs-header-ref");
   const { width: tabsHeaderWidth } = useElementSize(tabsHeaderRef);
+
+  /* Keyboard shortcuts */
+  useKeyboardShortcuts({
+    enter: (ev) => read(),
+  });
 </script>
 
 <template>
