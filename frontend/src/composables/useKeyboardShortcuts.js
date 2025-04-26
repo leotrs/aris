@@ -32,7 +32,7 @@ const dispatchSequenceKey = (ev, shortcuts, key) => {
   const sequenceKey = `${lastKeyPressed.value},${key}`;
   if (!shortcuts[sequenceKey]) return false;
   console.log("dispatching sequence", sequenceKey);
-  ev.prevDefault();
+  ev.preventDefault();
 
   try {
     shortcuts[sequenceKey](ev);
