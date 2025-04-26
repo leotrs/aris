@@ -109,6 +109,7 @@
 <style scoped>
   .sb-wrapper {
     position: fixed;
+    height: 100%;
     z-index: 2;
     padding-block: 8px;
     max-width: 64px;
@@ -118,13 +119,9 @@
   }
 
   #logo {
-    display: flex;
-    justify-content: center;
     padding-inline: 17px;
-    margin-top: 8px;
+    margin-block: 8px;
     padding-block: 9px;
-    width: 48px;
-    overflow-x: hidden;
     transition:
       width var(--transition-duration) ease,
       opacity var(--transition-duration) ease;
@@ -136,6 +133,7 @@
 
   .sb-menu {
     padding: 8px;
+    padding-bottom: 24px;
     position: fixed;
     height: calc(100% - 48px - 8px - 8px);
     max-width: 64px;
