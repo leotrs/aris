@@ -11,7 +11,7 @@
     onMounted,
     onUnmounted,
   } from "vue";
-  import { useElementSize } from "@vueuse/core";
+  import { useElementSize, useScroll } from "@vueuse/core";
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
   import axios from "axios";
   import Topbar from "./Topbar.vue";
@@ -90,7 +90,7 @@
     }
   });
 
-  const manuscriptRef = useTemplateRef("manuscriptRef");
+  const manuscriptRef = useTemplateRef("manuscript-ref");
   provide("manuscriptRef", manuscriptRef);
 
   const isMainTitleVisible = ref(true);
@@ -114,6 +114,15 @@
     };
   });
   onUnmounted(() => tearDown());
+
+  /* Scroll position */
+  const innerRef = useTemplateRef("inner-ref");
+  const { y: yScroll } = useScroll(innerRef);
+  watch(yScroll, () => console.log("Naked yScroll", yScroll.value));
+  const yScrollPercent = computed(
+    () => (yScroll.value / (manuscriptRef.value?.$el.clientHeight ?? 1)) * 100
+  );
+  provide("yScroll", yScrollPercent);
 
   /* Focus mode */
   const focusMode = inject("focusMode");
@@ -156,7 +165,7 @@
     <div class="outer-wrapper">
       <Topbar :show-title="!isMainTitleVisible" :component="validDrawerComponents[top.at(-1)]" />
 
-      <div class="inner-wrapper">
+      <div ref="inner-ref" class="inner-wrapper">
         <Drawer ref="leftColumnRef" class="left-column">
           <component :is="validDrawerComponents[comp]" v-for="comp in left" :doc="doc" />
         </Drawer>
@@ -167,7 +176,7 @@
           :style="{ 'padding-top': middlePaddingTop }"
         >
           <ManuscriptWrapper
-            ref="manuscriptRef"
+            ref="manuscript-ref"
             :html="htmlContent"
             :keys="true"
             :show-footer="true"
