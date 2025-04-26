@@ -161,7 +161,11 @@
           <component :is="validDrawerComponents[comp]" v-for="comp in left" :doc="doc" />
         </Drawer>
 
-        <Drawer ref="middleColumnRef" class="middle-column">
+        <Drawer
+          ref="middleColumnRef"
+          class="middle-column"
+          :style="{ 'padding-top': middlePaddingTop }"
+        >
           <ManuscriptWrapper
             ref="manuscriptRef"
             :html="htmlContent"
@@ -223,7 +227,6 @@
     z-index: 1;
     overflow-x: visible;
     height: fit-content;
-    padding-top: v-bind(middlePaddingTop);
     transition: padding-top var(--transition-duration) ease;
   }
 

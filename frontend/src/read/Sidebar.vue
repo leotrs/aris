@@ -119,15 +119,19 @@
   }
 
   #logo {
-    padding-inline: 17px;
-    margin-block: 8px;
-    padding-block: 9px;
+    height: 64px;
+    padding: 17px;
     transition:
       width var(--transition-duration) ease,
       opacity var(--transition-duration) ease;
 
     &:hover {
       cursor: pointer;
+    }
+
+    & img {
+      width: 30px;
+      height: 30px;
     }
   }
 
@@ -159,6 +163,6 @@
     position: fixed;
     bottom: 0;
     margin-inline: 8px;
-    margin-block: 24px;
+    margin-block: 32px;
   }
 </style>
