@@ -69,11 +69,12 @@
   const focusMode = ref(false);
   watch(focusMode, (newVal) => emit("focusMode", newVal));
   const sidebarOpacity = computed(() => (focusMode.value ? "0" : "1"));
-  const sidebarHeight = computed(() => (focusMode.value ? "0" : "100%"));
+  const sidebarWidth = computed(() => (focusMode.value ? "0" : "64px"));
+  const sidebarTop = computed(() => (focusMode.value ? "8px" : "0"));
 </script>
 
 <template>
-  <div ref="sidebar-ref" class="sb-wrapper">
+  <div ref="sidebar-ref" class="sb-wrapper" :style="{ width: sidebarWidth, top: sidebarTop }">
     <Button
       v-show="focusMode"
       class="layout-on"
@@ -82,10 +83,14 @@
       @click="focusMode = false"
     />
 
-    <div id="logo" :style="{ opacity: sidebarOpacity }" @click="router?.push('/')">
+    <div
+      id="logo"
+      :style="{ opacity: sidebarOpacity, width: sidebarWidth }"
+      @click="router?.push('/')"
+    >
       <img src="../assets/logo-32px.svg" />
     </div>
-    <div class="sb-menu" :style="{ opacity: sidebarOpacity }">
+    <div class="sb-menu" :style="{ opacity: sidebarOpacity, width: sidebarWidth }">
       <SidebarItem
         v-for="(obj, name) in panelComponents"
         :key="obj"
@@ -106,15 +111,18 @@
     position: fixed;
     z-index: 2;
     padding-block: 8px;
-    min-width: 64px;
     max-width: 64px;
-    transition: height var(--transition-duration) ease;
+    transition:
+      width var(--transition-duration) ease,
+      top var(--transition-duration) ease;
   }
 
   #logo {
     display: flex;
     padding: 9px;
-    transition: opacity var(--transition-duration) ease;
+    transition:
+      opacity var(--transition-duration) ease,
+      width var(--transition-duration) ease;
 
     &:hover {
       cursor: pointer;
@@ -129,10 +137,11 @@
     padding: 8px;
     position: fixed;
     height: calc(100% - 48px - 8px - 8px);
-    min-width: 64px;
-    width: fit-content;
+    max-width: 64px;
     left: 0;
-    transition: opacity var(--transition-duration) ease;
+    transition:
+      opacity var(--transition-duration) ease,
+      width var(--transition-duration) ease;
 
     /* no scrollbar in any browser */
     overflow-y: auto;
@@ -148,7 +157,7 @@
   }
 
   .layout-on {
-    position: absolute;
+    position: fixed;
     bottom: 0;
     margin-inline: 8px;
     margin-block: 24px;
