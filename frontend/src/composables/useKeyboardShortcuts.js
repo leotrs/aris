@@ -21,15 +21,17 @@ const SEQUENCE_DELAY = 500;
 
 
 /* Event dispatching */
-const dispatchSequenceKey = (event, shortcuts, key) => {
+const dispatchSequenceKey = (ev, shortcuts, key) => {
+  if (hasModifiers(ev)) return false;
+
   if (!lastKeyPressed.value) return false;
   const sequenceKey = `${lastKeyPressed.value},${key}`;
   if (!shortcuts[sequenceKey]) return false;
   console.log("dispatching sequence", sequenceKey);
-  event.preventDefault();
+  ev.prevDefault();
 
   try {
-    shortcuts[sequenceKey](event);
+    shortcuts[sequenceKey](ev);
   } catch (error) {
     console.error(`Error executing sequence shortcut "${sequenceKey}":`, error);
   }
@@ -39,11 +41,12 @@ const dispatchSequenceKey = (event, shortcuts, key) => {
   return true;
 };
 
-const dispatchSingleKey = (event, shortcuts, key) => {
+const dispatchSingleKey = (ev, shortcuts, key) => {
+  if (hasModifiers(ev)) return false;
   const isFirstKeyInSequence = Object.keys(shortcuts).some(k => k.startsWith(`${key},`));
 
   if (isFirstKeyInSequence) {
-    event.preventDefault();
+    ev.preventDefault();
 
     // Restart the sequence tracking
     lastKeyPressed.value = key;
@@ -54,7 +57,7 @@ const dispatchSingleKey = (event, shortcuts, key) => {
       if (shortcuts[key]) {
         console.log("dispatching delayed", key);
         try {
-          shortcuts[key](event);
+          shortcuts[key](ev);
         } catch (error) {
           console.error(`Error executing shortcut "${key}:"`, error);
         }
@@ -65,10 +68,10 @@ const dispatchSingleKey = (event, shortcuts, key) => {
     return true;
   } else if (shortcuts[key]) {
     console.log("dispatching", key);
-    event.preventDefault();
+    ev.preventDefault();
 
     try {
-      shortcuts[key](event);
+      shortcuts[key](ev);
     } catch (error) {
       console.error(`Error executing shortcut "${key}:"`, error);
     }
@@ -80,28 +83,30 @@ const dispatchSingleKey = (event, shortcuts, key) => {
   return false;
 }
 
-const tryHandleKeyEvent = (event, componentRef, key) => {
+const tryHandleKeyEvent = (ev, componentRef, key) => {
+  if (hasModifiers(ev)) return false;
   const componentId = refToKey(componentRef);
   const componentShortcuts = listeners.value[componentId];
   if (!componentShortcuts) return false;
-  return dispatchSequenceKey(event, componentShortcuts, key) ||
-    dispatchSingleKey(event, componentShortcuts, key);
+  return dispatchSequenceKey(ev, componentShortcuts, key) ||
+    dispatchSingleKey(ev, componentShortcuts, key);
 };
 
-const handleKeyDown = (event) => {
-  if (event.target.tagName === 'INPUT' ||
-    event.target.tagName === 'TEXTAREA' ||
-    event.target.isContentEditable) {
+const handleKeyDown = (ev) => {
+  if (ev.target.tagName === 'INPUT'
+    || ev.target.tagName === 'TEXTAREA'
+    || ev.target.isContentEditable
+    || hasModifiers(ev)) {
     return;
   }
 
-  const key = event.key.toLowerCase();
+  const key = ev.key.toLowerCase();
   if (components.length === 0) return;
   console.log('Key pressed:', key, '. Last key:', lastKeyPressed.value);
 
   // Try components in reverse order (most recently activated first)
   for (let i = components.length - 1; i >= 0; i--) {
-    if (tryHandleKeyEvent(event, components[i], key)) return;
+    if (tryHandleKeyEvent(ev, components[i], key)) return;
   }
 };
 
