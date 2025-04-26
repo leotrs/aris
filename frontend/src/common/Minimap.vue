@@ -143,16 +143,17 @@
       cy: percent * lineHeight,
       r: radiusDelta * (6 - level),
     }));
-    const { circles: adjustedCircles, newLineHeight } = adjustCirclePositions(
-      circles,
-      lineHeight,
-      minGap
-    );
-    circles = adjustedCircles;
+    /* const { circles: adjustedCircles, newLineHeight } = adjustCirclePositions(
+     *   circles,
+     *   lineHeight,
+     *   minGap
+     * );
+     * circles = adjustedCircles;
+     * lineHeight = newLineHeight; */
 
     // Store initial data for future resizing
     svgInitialData.value = {
-      initialHeight: newLineHeight,
+      initialHeight: lineHeight,
       initialCircles: JSON.parse(JSON.stringify(circles)), // Deep copy to prevent reference issues
       lineX,
       strokeWidth,
@@ -160,14 +161,14 @@
     circlePositions.value = JSON.parse(JSON.stringify(circles));
 
     const minY = Math.min(...circles.map((c) => c.cy - c.r - strokeWidth));
-    const maxY = Math.max(newLineHeight, ...circles.map((c) => c.cy + c.r + strokeWidth));
+    const maxY = Math.max(lineHeight, ...circles.map((c) => c.cy + c.r + strokeWidth));
     const maxX = Math.max(...circles.map((c) => c.r + strokeWidth));
     const width = lineX + maxX;
     const height = maxY - minY;
 
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 ${minY} ${width} ${height}" preserveAspectRatio="xMidYMid meet" >
-      <line x1="${lineX}" y1="0" x2="${lineX}" y2="${newLineHeight}" stroke-width="${strokeWidth}" stroke-linecap="round"/>
+      <line x1="${lineX}" y1="0" x2="${lineX}" y2="${lineHeight}" stroke-width="${strokeWidth}" stroke-linecap="round"/>
       ${circles.map((c, idx) => `<circle class="mm-circle" data-index="${idx} "cx="${c.cx}" cy="${c.cy}" r="${c.r}" stroke-width="${strokeWidth}" />`).join("\n  ")}
       <line class="scroll-indicator" x1="${lineX}" y1="0" x2="${lineX}" y2="0" stroke-width="${strokeWidth}" stroke-linecap="round"/>
     </svg>`;
@@ -198,11 +199,18 @@
       circle.classList.remove("current-section", "section-end");
     });
 
+    // Remove any existing section-line highlight
+    const existingHighlightLine = svg.querySelector(".section-line-highlight");
+    if (existingHighlightLine) {
+      existingHighlightLine.remove();
+    }
+
     // Get circle data with positions and sizes
     const circleData = Array.from(circles).map((circle) => ({
       element: circle,
       cy: parseFloat(circle.getAttribute("cy")),
       r: parseFloat(circle.getAttribute("r")), // Radius represents hierarchy level
+      cx: parseFloat(circle.getAttribute("cx")),
     }));
 
     // Sort by vertical position
@@ -217,19 +225,48 @@
       }
     }
 
-    // If we found a current section, highlight it
+    // If we found a current section, highlight it and the section line
     if (currentSectionIndex >= 0) {
       const currentSection = circleData[currentSectionIndex];
       currentSection.element.classList.add("current-section");
 
-      // Find the end of the current section (next circle of same size or LARGER - smaller or equal radius)
+      // Find the end of the current section (next circle of same size or larger)
       const currentRadius = currentSection.r;
+      let sectionEndIndex = -1;
 
       for (let i = currentSectionIndex + 1; i < circleData.length; i++) {
         if (circleData[i].r <= currentRadius) {
           // Same level or higher level (smaller or equal radius)
+          sectionEndIndex = i;
           circleData[i].element.classList.add("section-end");
           break; // Only highlight the first one we find
+        }
+      }
+
+      // If we found both the start and end, highlight the line segment between them
+      if (sectionEndIndex >= 0) {
+        const sectionEnd = circleData[sectionEndIndex];
+
+        // Create a new line element to highlight the section
+        const mainLine = svg.querySelector("line:not(.scroll-indicator)");
+        if (mainLine) {
+          const lineX = currentSection.cx; // Use the x position from the circles
+          const lineStrokeWidth = parseFloat(mainLine.getAttribute("stroke-width")) || 3;
+
+          // Create new line element for the highlighted segment
+          const highlightLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
+          highlightLine.setAttribute("class", "section-line-highlight");
+          highlightLine.setAttribute("x1", lineX);
+          highlightLine.setAttribute("y1", currentSection.cy);
+          highlightLine.setAttribute("x2", lineX);
+          highlightLine.setAttribute("y2", sectionEnd.cy);
+          highlightLine.setAttribute("stroke-width", lineStrokeWidth);
+          highlightLine.setAttribute("stroke", "var(--primary-300, #a5b4fc)");
+          highlightLine.setAttribute("stroke-linecap", "round");
+
+          // Insert the highlight line before the scroll indicator so it appears behind it
+          const beforeElement = scrollIndicator || null;
+          svg.insertBefore(highlightLine, beforeElement);
         }
       }
     }
@@ -318,25 +355,27 @@
   }
 
   .mm-wrapper svg .scroll-indicator {
-    stroke: var(--secondary-500);
+    stroke: var(--secondary-800);
   }
 
-  /* Add to your existing CSS */
   .mm-wrapper svg circle.mm-circle {
     transition:
       fill 0.3s ease,
       stroke 0.3s ease;
   }
 
-  /* Current section start */
   .mm-wrapper svg circle.mm-circle.current-section {
-    fill: var(--primary-500);
-    stroke: var(--primary-700);
+    fill: var(--surface-primary);
+    stroke: var(--primary-500);
   }
 
-  /* Current section end */
   .mm-wrapper svg circle.mm-circle.section-end {
-    fill: var(--secondary-300);
-    stroke: var(--secondary-500);
+    fill: var(--surface-primary);
+    stroke: var(--primary-500);
+  }
+
+  .mm-wrapper svg .section-line-highlight {
+    stroke: var(--secondary-300);
+    transition: stroke 0.3s ease;
   }
 </style>
