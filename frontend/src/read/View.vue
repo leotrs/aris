@@ -61,8 +61,10 @@
 
 <style scoped>
   .read-view {
+    --transition-duration: 0.75s;
     display: flex;
     width: 100%;
+    transition: padding var(--transition-duration) ease;
   }
 
   .menus {
