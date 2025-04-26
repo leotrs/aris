@@ -188,13 +188,16 @@
     --sidebar-width: 64px;
     --topbar-height: 64px;
 
-    height: 100%;
     position: relative;
     z-index: 1;
     box-shadow: var(--shadow-soft);
     width: v-bind(outerWidth);
     left: v-bind(outerLeft);
     border-radius: v-bind(borderRadius);
+    transition:
+      width var(--transition-duration) ease,
+      left var(--transition-duration) ease,
+      border-radius var(--transition-duration) ease;
   }
 
   .inner-wrapper {
@@ -204,11 +207,15 @@
     position: relative;
     top: v-bind(innerTop);
     background-color: v-bind("fileSettings.background");
-
     overflow-y: auto;
     justify-content: center;
     border-bottom-left-radius: v-bind(borderRadius);
     border-bottom-right-radius: v-bind(borderRadius);
+
+    transition:
+      border-radius var(--transition-duration) ease,
+      height var(--transition-duration) ease,
+      top var(--transition-duration) ease;
   }
 
   .middle-column {
@@ -221,6 +228,7 @@
     overflow-x: visible;
     height: fit-content;
     padding-top: v-bind(middlePaddingTop);
+    transition: padding-top var(--transition-duration) ease;
   }
 
   .left-column,
