@@ -68,6 +68,8 @@
   /* Focus mode */
   const focusMode = ref(false);
   watch(focusMode, (newVal) => emit("focusMode", newVal));
+  const sidebarOpacity = computed(() => (focusMode.value ? "0" : "1"));
+  const sidebarHeight = computed(() => (focusMode.value ? "0" : "100%"));
 </script>
 
 <template>
@@ -80,10 +82,10 @@
       @click="focusMode = false"
     />
 
-    <div v-show="!focusMode" id="logo" @click="router?.push('/')">
+    <div id="logo" :style="{ opacity: sidebarOpacity }" @click="router?.push('/')">
       <img src="../assets/logo-32px.svg" />
     </div>
-    <div v-show="!focusMode" class="sb-menu">
+    <div class="sb-menu" :style="{ opacity: sidebarOpacity }">
       <SidebarItem
         v-for="(obj, name) in panelComponents"
         :key="obj"
@@ -101,17 +103,18 @@
 
 <style scoped>
   .sb-wrapper {
-    height: 100%;
     position: fixed;
     z-index: 2;
+    padding-block: 8px;
     min-width: 64px;
     max-width: 64px;
-    padding-block: 8px;
+    transition: height var(--transition-duration) ease;
   }
 
   #logo {
     display: flex;
     padding: 9px;
+    transition: opacity var(--transition-duration) ease;
 
     &:hover {
       cursor: pointer;
@@ -129,6 +132,7 @@
     min-width: 64px;
     width: fit-content;
     left: 0;
+    transition: opacity var(--transition-duration) ease;
 
     /* no scrollbar in any browser */
     overflow-y: auto;

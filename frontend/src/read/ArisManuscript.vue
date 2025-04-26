@@ -154,11 +154,7 @@
 <template>
   <Suspense>
     <div class="outer-wrapper">
-      <Topbar
-        v-if="!focusMode"
-        :show-title="!isMainTitleVisible"
-        :component="validDrawerComponents[top.at(-1)]"
-      />
+      <Topbar :show-title="!isMainTitleVisible" :component="validDrawerComponents[top.at(-1)]" />
 
       <div class="inner-wrapper">
         <Drawer ref="leftColumnRef" class="left-column">

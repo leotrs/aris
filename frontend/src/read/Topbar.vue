@@ -13,10 +13,20 @@
   const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
 
   const fileSettings = inject("fileSettings");
+
+  const focusMode = inject("focusMode");
+  const topbarHeight = computed(() => (focusMode.value ? "0" : "64px"));
+  const topbarWidth = computed(() =>
+    focusMode.value ? "100%" : "calc(100% - var(--sidebar-width) - var(--outer-padding))"
+  );
 </script>
 
 <template>
-  <div class="tb-wrapper" :class="{ 'with-border': showTitle }">
+  <div
+    class="tb-wrapper"
+    :class="{ 'with-border': showTitle }"
+    :style="{ height: topbarHeight, width: topbarWidth }"
+  >
     <Drawer class="left-column top">
       <FileTitle v-if="showTitle && component" :doc="doc" class="text-h6" />
     </Drawer>
@@ -35,16 +45,17 @@
     --links-width: 151px;
 
     display: flex;
-    height: var(--sidebar-width);
-    width: calc(100% - var(--sidebar-width) - var(--outer-padding));
-    position: fixed;
 
+    position: fixed;
     background-color: v-bind("fileSettings.background");
     z-index: 2;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
     border-bottom: var(--border-extrathin) solid transparent;
     padding-right: var(--links-width);
+    transition:
+      height var(--transition-duration) ease,
+      width var(--transition-duration) ease;
 
     &.with-border {
       box-shadow: var(--shadow-soft);
