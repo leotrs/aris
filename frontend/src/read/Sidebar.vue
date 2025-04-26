@@ -70,7 +70,7 @@
   watch(focusMode, (newVal) => emit("focusMode", newVal));
   const sidebarOpacity = computed(() => (focusMode.value ? "0" : "1"));
   const sidebarWidth = computed(() => (focusMode.value ? "0" : "64px"));
-  const sidebarTop = computed(() => (focusMode.value ? "8px" : "0"));
+  const sidebarTop = computed(() => (focusMode.value ? "0" : "0"));
 </script>
 
 <template>
@@ -119,17 +119,18 @@
 
   #logo {
     display: flex;
-    padding: 9px;
+    justify-content: center;
+    padding-inline: 17px;
+    margin-top: 8px;
+    padding-block: 9px;
+    width: 48px;
+    overflow-x: hidden;
     transition:
-      opacity var(--transition-duration) ease,
-      width var(--transition-duration) ease;
+      width var(--transition-duration) ease,
+      opacity var(--transition-duration) ease;
 
     &:hover {
       cursor: pointer;
-    }
-
-    & > img {
-      margin: 0 auto;
     }
   }
 
@@ -140,8 +141,8 @@
     max-width: 64px;
     left: 0;
     transition:
-      opacity var(--transition-duration) ease,
-      width var(--transition-duration) ease;
+      width var(--transition-duration) ease,
+      opacity var(--transition-duration) ease;
 
     /* no scrollbar in any browser */
     overflow-y: auto;

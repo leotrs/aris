@@ -63,7 +63,7 @@
 
 <style scoped>
   .read-view {
-    --transition-duration: 0.3s;
+    --transition-duration: 1s;
     display: flex;
     width: 100%;
     transition: padding var(--transition-duration) ease;
