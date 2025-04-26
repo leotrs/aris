@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive, inject, provide, onBeforeMount } from "vue";
+  import { ref, computed, reactive, inject, provide, onBeforeMount } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
@@ -32,17 +32,30 @@
     if (index !== -1) sideRefMap[side].splice(index, 1);
   };
 
+  /* Keyboard shortcuts */
   const router = useRouter();
   useKeyboardShortcuts({
     "g,h": () => router.push("/"),
   });
+
+  /* Focus Mode */
+  const focusMode = ref(false);
+  const onFocusModeChange = (mode) => (focusMode.value = mode);
+  provide("focusMode", focusMode);
 </script>
 
 <template>
-  <div class="read-view">
-    <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
+  <div class="read-view" :style="{ padding: focusMode ? '0' : '8px 8px 8px 0' }">
+    <Sidebar
+      @show-component="showComponent"
+      @hide-component="hideComponent"
+      @focus-mode="onFocusModeChange"
+    />
     <ArisManuscript :left="leftComponents" :right="rightComponents" :top="topComponents" />
-    <div class="menus"><FileMenu icon="Menu3" /><UserMenu /></div>
+    <div v-if="!focusMode" class="menus">
+      <FileMenu icon="Menu3" />
+      <UserMenu />
+    </div>
   </div>
 </template>
 
@@ -50,7 +63,6 @@
   .read-view {
     display: flex;
     width: 100%;
-    padding: 8px 8px 8px 0;
   }
 
   .menus {

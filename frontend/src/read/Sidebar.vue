@@ -1,13 +1,13 @@
 <script setup>
-  import { ref, reactive } from "vue";
+  import { ref, computed, reactive, watch } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "@/read/SidebarItem.vue";
 
   const router = useRouter();
-  const emit = defineEmits(["showComponent", "hideComponent"]);
+  const emit = defineEmits(["showComponent", "hideComponent", "focusMode"]);
 
-  const components = reactive({
+  const panelComponents = reactive({
     PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a", state: false },
     PanelSearch: {
       icon: "Search",
@@ -47,13 +47,6 @@
       key: "s",
       state: false,
     },
-    PanelFocus: {
-      icon: "LayoutOff",
-      label: "focus",
-      preferredSide: "left",
-      key: "d",
-      state: false,
-    },
   });
 
   const togglePanel = (name, obj) => {
@@ -65,22 +58,51 @@
 
   useKeyboardShortcuts(
     Object.fromEntries(
-      Object.entries(components).map(([name, obj]) => [
+      Object.entries(panelComponents).map(([name, obj]) => [
         `p,${obj.key}`,
         () => togglePanel(name, obj),
       ])
     )
   );
+
+  /* Focus mode */
+  const focusMode = ref(false);
+  watch(
+    focusMode,
+    (newVal) => {
+      console.log(newVal);
+      emit("focusMode", newVal);
+    },
+    { immediate: true }
+  );
+  const sidebarWidth = computed(() => (focusMode.value ? "0" : "64px"));
+  const sidebarPadding = computed(() => (focusMode.value ? "16px 8px 16px 8px" : "8px 0 16px 0"));
+
+  /* Logo functionality */
+  const onLogoClick = () => {
+    if (focusMode.value) focusMode.value = false;
+    else router?.push("/");
+  };
 </script>
 
 <template>
-  <div ref="sidebar-ref" class="sb-wrapper">
-    <div id="logo" @click="router?.push('/')">
+  <div
+    ref="sidebar-ref"
+    class="sb-wrapper"
+    :style="{
+      width: sidebarWidth,
+      'max-width': sidebarWidth,
+      'min-width': sidebarWidth,
+      padding: sidebarPadding,
+    }"
+  >
+    <div id="logo" @click="onLogoClick">
       <img src="../assets/logo-32px.svg" />
     </div>
-    <div class="sb-menu">
+    <div v-if="!focusMode" class="sb-menu">
       <SidebarItem
-        v-for="(obj, name) in components"
+        v-for="(obj, name) in panelComponents"
+        :key="obj"
         v-model="obj.state"
         :icon="obj.icon"
         :label="obj.label"
@@ -88,6 +110,7 @@
         @on="(side) => emit('showComponent', name, side)"
         @off="(side) => emit('hideComponent', name, side)"
       />
+      <SidebarItem v-model="focusMode" icon="LayoutOff" label="focus" :with-side-control="false" />
     </div>
   </div>
 </template>
@@ -95,9 +118,6 @@
 <style scoped>
   .sb-wrapper {
     height: 100%;
-    min-width: 64px;
-    max-width: 64px;
-    padding-block: 8px;
     position: fixed;
     z-index: 2;
   }
