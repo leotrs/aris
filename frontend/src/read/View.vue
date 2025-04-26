@@ -42,6 +42,8 @@
   const focusMode = ref(false);
   const onFocusModeChange = (mode) => (focusMode.value = mode);
   provide("focusMode", focusMode);
+
+  const menuOpacity = computed(() => (focusMode.value ? "0" : "1"));
 </script>
 
 <template>
@@ -52,7 +54,7 @@
       @focus-mode="onFocusModeChange"
     />
     <ArisManuscript :left="leftComponents" :right="rightComponents" :top="topComponents" />
-    <div v-if="!focusMode" class="menus">
+    <div class="menus" :style="{ opacity: menuOpacity }">
       <FileMenu icon="Menu3" />
       <UserMenu />
     </div>
@@ -78,5 +80,6 @@
     padding: 8px;
     gap: 8px;
     background-color: transparent;
+    transition: opacity var(--transition-duration) ease;
   }
 </style>
