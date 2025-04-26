@@ -72,33 +72,30 @@
 
 <template>
   <div ref="sidebar-ref" class="sb-wrapper">
-    <template v-if="focusMode">
-      <Button kind="tertiary" icon="Layout" @click="focusMode = false" />
-    </template>
+    <Button
+      v-show="focusMode"
+      class="layout-on"
+      kind="tertiary"
+      icon="Layout"
+      @click="focusMode = false"
+    />
 
-    <template v-if="!focusMode">
-      <div id="logo" @click="router?.push('/')">
-        <img src="../assets/logo-32px.svg" />
-      </div>
-      <div class="sb-menu">
-        <SidebarItem
-          v-for="(obj, name) in panelComponents"
-          :key="obj"
-          v-model="obj.state"
-          :icon="obj.icon"
-          :label="obj.label"
-          :preferred-side="obj.preferredSide"
-          @on="(side) => emit('showComponent', name, side)"
-          @off="(side) => emit('hideComponent', name, side)"
-        />
-        <SidebarItem
-          v-model="focusMode"
-          icon="LayoutOff"
-          label="focus"
-          :with-side-control="false"
-        />
-      </div>
-    </template>
+    <div v-show="!focusMode" id="logo" @click="router?.push('/')">
+      <img src="../assets/logo-32px.svg" />
+    </div>
+    <div v-show="!focusMode" class="sb-menu">
+      <SidebarItem
+        v-for="(obj, name) in panelComponents"
+        :key="obj"
+        v-model="obj.state"
+        :icon="obj.icon"
+        :label="obj.label"
+        :preferred-side="obj.preferredSide"
+        @on="(side) => emit('showComponent', name, side)"
+        @off="(side) => emit('hideComponent', name, side)"
+      />
+      <SidebarItem v-model="focusMode" icon="LayoutOff" label="focus" :with-side-control="false" />
+    </div>
   </div>
 </template>
 
@@ -144,5 +141,12 @@
     & > *:not(:last-child) {
       margin-bottom: 12px;
     }
+  }
+
+  .layout-on {
+    position: absolute;
+    bottom: 0;
+    margin-inline: 8px;
+    margin-block: 24px;
   }
 </style>
