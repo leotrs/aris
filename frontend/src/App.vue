@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, provide, onMounted } from "vue";
+  import { ref, reactive, provide, onMounted } from "vue";
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
 
   import axios from "axios";

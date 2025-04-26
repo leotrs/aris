@@ -1,89 +1,19 @@
 <script setup>
-  import { ref, watch, computed, onMounted, useTemplateRef } from "vue";
-  import { useElementSize, useDebounceFn } from "@vueuse/core";
+  import { ref, watch, onMounted, useTemplateRef, nextTick } from "vue";
+  import { useElementSize } from "@vueuse/core";
 
   const props = defineProps({
     doc: { type: Object, required: true },
     orientation: { type: String, default: "vertical" },
   });
 
-  const orientationClass = computed(() =>
-    props.orientation == "horizontal" ? "horizontal" : "vertical"
-  );
-
-  const wrapper = useTemplateRef("wrapper");
-  const originalHeight = ref(null);
-  const { width: wrapperWidth } = useElementSize(wrapper);
-
-  const waitForSvgRender = () =>
-    new Promise((resolve) => {
-      const interval = setInterval(() => {
-        const svg = wrapper.value?.querySelector("svg");
-        if (svg) {
-          clearInterval(interval);
-          resolve();
-        }
-      }, 50);
-    });
-
-  const visibility = ref("hidden");
-
-  const doTransformSVG = () => {
-    return new Promise((resolve) => {
-      if (props.orientation == "vertical") {
-        resolve();
-        return;
-      }
-      if (!html.value || !wrapperWidth.value || !wrapper.value) {
-        resolve();
-        return;
-      }
-
-      const svg = wrapper.value.querySelector("svg");
-      if (!svg) {
-        resolve();
-        return;
-      }
-
-      // only modify the viewBox the first time
-      if (!originalHeight.value) {
-        const regex = /viewBox="0 0 \d+ (\d+)"/i;
-        const match = regex.exec(svg.outerHTML);
-        originalHeight.value = match?.[1] ? parseFloat(match[1]) : null;
-      }
-      if (!originalHeight.value) return;
-
-      const scale = wrapperWidth.value / (originalHeight.value + 48);
-      const padding = 14; // the rect starts at x=14 in the original coordinates
-
-      svg.style.setProperty("--minimap-width", `${wrapperWidth.value}px`);
-      svg.setAttribute("viewBox", `0 0 ${wrapperWidth.value} 32`);
-      svg.style.transform = `rotate(270deg)`;
-      svg.style.transformOrigin = `14px 20px`;
-
-      const rects = svg.querySelectorAll("rect");
-      rects?.forEach((rect) =>
-        rect.setAttribute("height", originalHeight.value * scale - padding * 2)
-      );
-
-      const circles = svg.querySelectorAll("circle");
-      circles?.forEach((circle) => {
-        const pos = parseFloat(circle.getAttribute("data-pos"));
-        if (!isNaN(pos)) {
-          circle.style.transform = `translateY(${(padding - pos) * (1 - scale)}px)`;
-        }
-      });
-
-      resolve();
-    });
-  };
-  const transformSVG = useDebounceFn(async () => await doTransformSVG(), 50);
-
+  /* Utilities */
   const countLeadingPounds = (str) => {
     const match = str.match(/^\s*#+/);
     return match ? match[0].trimStart().length : 0;
   };
 
+  /* Extract information from different sources */
   const getSectionsFromSource = (src) => {
     const lines = src.split("\n");
     if (!src || lines.length < 1) return [];
@@ -103,6 +33,44 @@
       }));
 
     return [{ percent: 0, level: 1 }, ...sections];
+  };
+
+  /* SVG manipulation */
+  const resizeMinimap = (wrapper, initialData) => {
+    const svg = wrapper.querySelector("svg");
+    if (!svg) return;
+    const { initialHeight, initialCircles, lineX, strokeWidth } = initialData;
+
+    const containerHeight = wrapper.clientHeight;
+    if (containerHeight <= 0) return;
+    const scaleFactor = containerHeight / initialHeight;
+    console.log("Resizing with scale factor:", scaleFactor, "container height:", containerHeight);
+
+    // Update line height
+    const line = svg.querySelector("line");
+    if (line) line.setAttribute("y2", initialHeight * scaleFactor);
+
+    // Update circle positions
+    const circles = svg.querySelectorAll("circle");
+    circles.forEach((circle, index) =>
+      circle.setAttribute("cy", initialCircles[index].cy * scaleFactor)
+    );
+
+    // Update viewBox to match new dimensions
+    const cAttr = (c, a) => parseFloat(c.getAttribute(a));
+    const maxX = Math.max(...[...circles].map((c) => cAttr(c, "cx") + cAttr(c, "r") + strokeWidth));
+    const minY = Math.min(...[...circles].map((c) => cAttr(c, "cy") - cAttr(c, "r") - strokeWidth));
+    const maxY = Math.max(
+      initialHeight * scaleFactor,
+      ...[...circles].map((c) => cAttr(c, "cy") + cAttr(c, "r") + strokeWidth)
+    );
+    const width = lineX + maxX;
+    const height = maxY - minY;
+    /* svg.setAttribute("viewBox", `0 ${minY} ${width} ${height}`); */
+    /* svg.setAttribute("height", height); */
+    svg.setAttribute("viewBox", `0 ${minY} ${width} ${height}`);
+    svg.style.width = "100%";
+    svg.style.height = "100%";
   };
 
   const adjustCirclePositions = (circles, initialLineHeight, minGap) => {
@@ -156,19 +124,19 @@
 
     // Calculate the new required line height
     const lastCircle = circles[circles.length - 1];
-    const newLineHeight = Math.max(
-      initialLineHeight,
-      lastCircle.cy + lastCircle.r + 10 // Add some padding at the bottom
-    );
+    const newLineHeight = Math.max(initialLineHeight, lastCircle.cy + lastCircle.r);
 
     return { circles, newLineHeight };
   };
 
+  const svgInitialData = ref(null);
   const makeMinimap = (
     sections,
-    options = { lineHeight: 400, lineX: 12, strokeWidth: 3, radiusDelta: 2, minGap: -4 }
+    containerHeight = 400,
+    options = { lineX: 12, strokeWidth: 3, radiusDelta: 2, minGap: -4 }
   ) => {
-    const { lineHeight, lineX, strokeWidth, radiusDelta, minGap } = options;
+    const { lineX, strokeWidth, radiusDelta, minGap } = options;
+    const lineHeight = containerHeight || 400;
     let circles = sections.map(({ percent, level }) => ({
       cx: lineX,
       cy: percent * lineHeight,
@@ -181,6 +149,14 @@
     );
     circles = adjustedCircles;
 
+    // Store initial data for future resizing
+    svgInitialData.value = {
+      initialHeight: newLineHeight,
+      initialCircles: JSON.parse(JSON.stringify(circles)), // Deep copy to prevent reference issues
+      lineX,
+      strokeWidth,
+    };
+
     const minY = Math.min(...circles.map((c) => c.cy - c.r - strokeWidth));
     const maxY = Math.max(newLineHeight, ...circles.map((c) => c.cy + c.r + strokeWidth));
     const maxX = Math.max(...circles.map((c) => c.r + strokeWidth));
@@ -188,45 +164,48 @@
     const height = maxY - minY;
 
     const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 ${minY} ${width} ${height}" width="${width}" height="${height}">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 ${minY} ${width} ${height}" preserveAspectRatio="xMidYMid meet" >
       <line x1="${lineX}" y1="0" x2="${lineX}" y2="${newLineHeight}" stroke-width="${strokeWidth}" stroke-linecap="round"/>
       ${circles.map((c) => `<circle cx="${c.cx}" cy="${c.cy}" r="${c.r}" fill="white" stroke-width="${strokeWidth}" />`).join("\n  ")}
     </svg>`;
     return svg;
   };
 
+  /* Make, mount, display */
+  const wrapperRef = useTemplateRef("mm-wrapper");
+  const { height: wrapperHeight } = useElementSize(wrapperRef);
   const html = ref("");
+  const visibility = ref("hidden");
   onMounted(async () => {
     if (!props.doc) return;
-    html.value = '<div class="minimap error">-<svg></svg></div>';
+    await nextTick();
 
-    if (props.doc.html) {
-      console.log("html found");
-    } else if (props.doc.source) {
-      console.log("source found");
+    const currentHeight = wrapperRef.value?.clientHeight || 400;
+    console.log("Initial container height:", currentHeight);
+
+    if (props.doc.source) {
       const sections = getSectionsFromSource(props.doc.source);
-      const minimapHTML = makeMinimap(sections);
-      html.value = `<div class="minimap">${minimapHTML}</div>`;
+      const minimapSVG = makeMinimap(sections, currentHeight);
+      html.value = minimapSVG;
     } else if (props.doc.minimap) {
       html.value = props.doc.minimap;
+    } else {
+      html.value = "<svg></svg>";
     }
-
-    await waitForSvgRender();
-    /* await transformSVG(); */
     visibility.value = "visible";
-  });
 
-  watch(wrapperWidth, async () => await transformSVG(), { immediate: true });
+    // Watch for height changes and trigger resize
+    watch(wrapperHeight, (newHeight) => {
+      if (newHeight > 0 && svgInitialData.value && wrapperRef.value) {
+        console.log("Height changed to:", newHeight);
+        resizeMinimap(wrapperRef.value, svgInitialData.value);
+      }
+    });
+  });
 </script>
 
 <template>
-  <div
-    ref="wrapper"
-    class="mm-wrapper"
-    :class="orientationClass"
-    :style="{ visibility }"
-    v-html="html"
-  ></div>
+  <div ref="mm-wrapper" class="mm-wrapper" :style="{ visibility }" v-html="html"></div>
 </template>
 
 <style scoped>
@@ -241,30 +220,23 @@
       transition: width 0.3s ease-in-out;
     }
   }
-
-  .mm-wrapper.horizontal,
-  .mm-wrapper.horizontal :deep(.minimap) {
-    display: flex;
-    align-items: center;
-    height: 48px;
-    margin-block: auto;
-  }
-
-  .mm-wrapper.vertical {
-    & :deep(.minimap) {
-      width: 48px;
-      display: flex;
-      justify-content: center;
-    }
-  }
 </style>
 
 <style>
-  .mm-wrapper .minimap svg line {
+  .mm-wrapper {
+    position: absolute;
+    width: fit-content;
+    left: 48px;
+    min-height: 200px;
+    height: 75%;
+    overflow: hidden;
+  }
+
+  .mm-wrapper svg line {
     stroke: var(--gray-400);
   }
 
-  .mm-wrapper .minimap svg circle {
+  .mm-wrapper svg circle {
     fill: var(--surface-page);
     stroke: var(--gray-400);
     transition:
@@ -272,7 +244,7 @@
       stroke 0.2s ease;
   }
 
-  .mm-wrapper .minimap svg circle:hover {
+  .mm-wrapper svg circle:hover {
     fill: var(--surface-information);
     stroke: var(--border-action);
     z-index: 999;
