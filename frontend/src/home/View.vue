@@ -45,7 +45,7 @@
       <DragBorder v-model="borderPos" :active="!!selectedForPreview" :offset="offsetPercent" />
 
       <PreviewPane
-        v-if="!isMobile && selectedForPreview"
+        v-if="!isMobile"
         :doc="selectedForPreview"
         :style="{ height: previewHeight }"
         @set-selected="setSelectedForPreview"
@@ -60,6 +60,8 @@
 
 <style scoped>
   .view-wrapper {
+    --transition-duration: 0.3s;
+
     position: relative;
     display: flex;
     flex-grow: 2;
@@ -92,6 +94,10 @@
         border-color: var(--border-primary);
       }
     }
+  }
+
+  .pane {
+    transition: height var(--transition-duration) ease;
   }
 
   .view-wrapper.mobile {

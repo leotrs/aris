@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, useTemplateRef } from "vue";
+  import { ref, computed, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { IconEye, IconBolt, IconClock, IconQuote } from "@tabler/icons-vue";
   import { useElementSize } from "@vueuse/core";
@@ -35,10 +35,13 @@
   useKeyboardShortcuts({
     enter: (ev) => read(),
   });
+
+  /* Transition */
+  const paneTop = computed(() => (props.doc ? "0" : "8px"));
 </script>
 
 <template>
-  <div id="preview" class="pane">
+  <div id="preview" class="pane" :style="{ top: paneTop }">
     <Header>
       <div class="left" :style="{ width: `${tabsHeaderWidth}px` }"></div>
 
@@ -88,6 +91,8 @@
     --border-radius: 8px;
 
     position: relative;
+    overflow-y: hidden;
+    transition: top var(--transition-duration) ease;
   }
 
   .pane-header {
