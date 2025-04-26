@@ -127,7 +127,12 @@
         </Drawer>
 
         <Drawer ref="middleColumnRef" class="middle-column">
-          <ManuscriptWrapper ref="manuscriptRef" :html="htmlContent" :show-footer="true" />
+          <ManuscriptWrapper
+            ref="manuscriptRef"
+            :html="htmlContent"
+            :keys="true"
+            :show-footer="true"
+          />
         </Drawer>
 
         <Drawer ref="rightColumnRef" class="right-column">

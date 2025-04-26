@@ -24,7 +24,7 @@
 </script>
 
 <template>
-  <ManuscriptWrapper :html="abstract" />
+  <ManuscriptWrapper :html="abstract" :keys="false" />
 </template>
 
 <style scoped></style>

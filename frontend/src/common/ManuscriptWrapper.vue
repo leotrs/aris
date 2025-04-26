@@ -3,6 +3,7 @@
 
   const props = defineProps({
     html: { type: String, required: true },
+    keys: { type: Boolean, required: true },
     showFooter: { type: Boolean, default: false },
   });
 
@@ -18,7 +19,7 @@
   const tryExecuteOnload = async () => {
     if (!onload.value || !manuscript.value || !props.html) return;
     await nextTick();
-    onload.value(manuscript.value);
+    onload.value(manuscript.value, { keys: props.keys });
   };
   watch([onload, () => manuscript.value, () => props.html], tryExecuteOnload);
 </script>
