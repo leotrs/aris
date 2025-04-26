@@ -68,44 +68,37 @@
   /* Focus mode */
   const focusMode = ref(false);
   watch(focusMode, (newVal) => emit("focusMode", newVal));
-  const sidebarWidth = computed(() => (focusMode.value ? "0" : "64px"));
-  const sidebarPadding = computed(() => (focusMode.value ? "16px 8px 16px 8px" : "8px 0 16px 0"));
-
-  /* Logo functionality */
-  const onLogoClick = () => {
-    if (focusMode.value) focusMode.value = false;
-    else router?.push("/");
-  };
 </script>
 
 <template>
-  <div
-    ref="sidebar-ref"
-    class="sb-wrapper"
-    :style="{
-      width: sidebarWidth,
-      'max-width': sidebarWidth,
-      'min-width': sidebarWidth,
-      padding: sidebarPadding,
-    }"
-  >
-    <div id="logo" @click="onLogoClick">
-      <Button v-if="focusMode" kind="tertiary" icon="Layout" />
-      <img v-else src="../assets/logo-32px.svg" />
-    </div>
-    <div v-if="!focusMode" class="sb-menu">
-      <SidebarItem
-        v-for="(obj, name) in panelComponents"
-        :key="obj"
-        v-model="obj.state"
-        :icon="obj.icon"
-        :label="obj.label"
-        :preferred-side="obj.preferredSide"
-        @on="(side) => emit('showComponent', name, side)"
-        @off="(side) => emit('hideComponent', name, side)"
-      />
-      <SidebarItem v-model="focusMode" icon="LayoutOff" label="focus" :with-side-control="false" />
-    </div>
+  <div ref="sidebar-ref" class="sb-wrapper">
+    <template v-if="focusMode">
+      <Button kind="tertiary" icon="Layout" @click="focusMode = false" />
+    </template>
+
+    <template v-if="!focusMode">
+      <div id="logo" @click="router?.push('/')">
+        <img src="../assets/logo-32px.svg" />
+      </div>
+      <div class="sb-menu">
+        <SidebarItem
+          v-for="(obj, name) in panelComponents"
+          :key="obj"
+          v-model="obj.state"
+          :icon="obj.icon"
+          :label="obj.label"
+          :preferred-side="obj.preferredSide"
+          @on="(side) => emit('showComponent', name, side)"
+          @off="(side) => emit('hideComponent', name, side)"
+        />
+        <SidebarItem
+          v-model="focusMode"
+          icon="LayoutOff"
+          label="focus"
+          :with-side-control="false"
+        />
+      </div>
+    </template>
   </div>
 </template>
 
@@ -114,6 +107,9 @@
     height: 100%;
     position: fixed;
     z-index: 2;
+    min-width: 64px;
+    max-width: 64px;
+    padding-block: 8px;
   }
 
   #logo {
