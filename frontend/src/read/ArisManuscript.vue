@@ -114,12 +114,51 @@
     };
   });
   onUnmounted(() => tearDown());
+
+  /* Focus mode. */
+  const focusMode = inject("focusMode");
+  // We would rather stick all of these options inside a style object and pass that to
+  // :style. However, in <script> we need to use v-bind to apply fileSettings to specific
+  // elements, and v-bind will overwrite :style. Thus all reactive styles in this
+  // component need to be applied via v-bind.
+  const outerWidth = ref(null);
+  const outerLeft = ref(null);
+  const borderRadius = ref(null);
+  const innerHeight = ref(null);
+  const innerTop = ref(null);
+  const middlePaddingTop = ref(null);
+
+  watch(
+    focusMode,
+    (newVal) => {
+      if (newVal) {
+        outerWidth.value = "100%";
+        outerLeft.value = "0";
+        borderRadius.value = "0";
+        innerHeight.value = "100%";
+        innerTop.value = "0";
+        middlePaddingTop.value = "48px";
+      } else {
+        outerWidth.value = "calc(100% - 64px)";
+        outerLeft.value = "64px";
+        borderRadius.value = "16px";
+        innerHeight.value = "calc(100% - var(--topbar-height))";
+        innerTop.value = "calc(var(--topbar-height))";
+        middlePaddingTop.value = "8px";
+      }
+    },
+    { immediate: true }
+  );
 </script>
 
 <template>
   <Suspense>
     <div class="outer-wrapper">
-      <Topbar :show-title="!isMainTitleVisible" :component="validDrawerComponents[top.at(-1)]" />
+      <Topbar
+        v-if="!focusMode"
+        :show-title="!isMainTitleVisible"
+        :component="validDrawerComponents[top.at(-1)]"
+      />
 
       <div class="inner-wrapper">
         <Drawer ref="leftColumnRef" class="left-column">
@@ -149,27 +188,27 @@
     --sidebar-width: 64px;
     --topbar-height: 64px;
 
-    width: calc(100% - 64px);
     height: 100%;
     position: relative;
-    left: 64px;
-    border-radius: 16px;
     z-index: 1;
     box-shadow: var(--shadow-soft);
+    width: v-bind(outerWidth);
+    left: v-bind(outerLeft);
+    border-radius: v-bind(borderRadius);
   }
 
   .inner-wrapper {
     display: flex;
     width: 100%;
-    height: calc(100% - var(--topbar-height));
+    height: v-bind(innerHeight);
     position: relative;
-    top: calc(var(--topbar-height));
+    top: v-bind(innerTop);
     background-color: v-bind("fileSettings.background");
 
     overflow-y: auto;
     justify-content: center;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
+    border-bottom-left-radius: v-bind(borderRadius);
+    border-bottom-right-radius: v-bind(borderRadius);
   }
 
   .middle-column {
@@ -181,7 +220,7 @@
     z-index: 1;
     overflow-x: visible;
     height: fit-content;
-    padding-top: 8px;
+    padding-top: v-bind(middlePaddingTop);
   }
 
   .left-column,

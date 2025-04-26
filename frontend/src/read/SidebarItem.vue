@@ -3,6 +3,7 @@
   const props = defineProps({
     icon: { type: String, required: true },
     label: { type: String, default: "" },
+    withSideControl: { type: Boolean, default: true },
     preferredSide: { type: String, default: "left" },
   });
   const emit = defineEmits(["on", "off"]);
@@ -82,6 +83,7 @@
         @mouseleave="onMouseLeaveButton"
       />
       <SegmentedControl
+        v-if="withSideControl"
         v-model="controlState"
         :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']"
         @mouseenter="onMouseEnterControl"
