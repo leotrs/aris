@@ -268,5 +268,6 @@
 
   .sc-wrapper {
     margin-left: 20px;
+    margin-bottom: 0;
   }
 </style>

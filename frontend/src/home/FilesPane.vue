@@ -39,7 +39,7 @@
     if (idx === null) return;
     const el = document.querySelector(`.files .item:nth-child(${idx + 1})`);
     if (!el) return;
-    el.scrollIntoView({ behavior: "smooth" });
+    el.scrollIntoView({ behavior: "smooth", block: "nearest" });
   });
 
   /*********** Keyboard shortcuts ***********/

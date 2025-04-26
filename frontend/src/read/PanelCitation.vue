@@ -96,7 +96,7 @@
     background-color: var(--information-100);
     border-bottom-color: var(--border-action);
     color: var(--text-action);
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 30%);
+    box-shadow: var(--shadow-strong);
 
     & > svg {
       color: var(--icon-action);
