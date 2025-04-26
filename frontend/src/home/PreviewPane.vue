@@ -108,8 +108,8 @@
 
   .tabs {
     position: absolute;
-    top: calc(var(--padding));
-    left: calc(var(--padding));
+    top: var(--padding);
+    left: var(--padding);
     width: calc(100% - 3.5 * var(--padding));
   }
 
