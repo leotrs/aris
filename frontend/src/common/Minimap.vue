@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, onMounted, useTemplateRef, nextTick } from "vue";
+  import { ref, watch, inject, onMounted, useTemplateRef, nextTick } from "vue";
   import { useElementSize } from "@vueuse/core";
 
   const props = defineProps({
@@ -167,8 +167,16 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 ${minY} ${width} ${height}" preserveAspectRatio="xMidYMid meet" >
       <line x1="${lineX}" y1="0" x2="${lineX}" y2="${newLineHeight}" stroke-width="${strokeWidth}" stroke-linecap="round"/>
       ${circles.map((c) => `<circle cx="${c.cx}" cy="${c.cy}" r="${c.r}" fill="white" stroke-width="${strokeWidth}" />`).join("\n  ")}
+      <line class="scroll-indicator" x1="${lineX}" y1="-999" x2="${lineX}" y2="-999" stroke-width="${strokeWidth}" stroke-linecap="round"/>
     </svg>`;
     return svg;
+  };
+
+  const highlightScrollPos = (pos) => {
+    console.log("highlightScrollPos", pos);
+    const scrollIndicator = wrapperRef.value.querySelector("svg .scroll-indicator");
+    scrollIndicator.setAttribute("y1", `${pos - 0.5}%`);
+    scrollIndicator.setAttribute("y2", `${pos + 0.5}%`);
   };
 
   /* Make, mount, display */
@@ -197,11 +205,14 @@
     // Watch for height changes and trigger resize
     watch(wrapperHeight, (newHeight) => {
       if (newHeight > 0 && svgInitialData.value && wrapperRef.value) {
-        console.log("Height changed to:", newHeight);
         resizeMinimap(wrapperRef.value, svgInitialData.value);
       }
     });
   });
+
+  /* Highlight scroll position */
+  const yScroll = inject("yScroll");
+  watch(yScroll, (newVal) => highlightScrollPos(newVal));
 </script>
 
 <template>
@@ -224,9 +235,10 @@
 
 <style>
   .mm-wrapper {
-    position: absolute;
+    position: fixed;
     width: fit-content;
-    left: 48px;
+    top: calc(64px + px);
+    left: calc(64px + 48px);
     min-height: 200px;
     height: 75%;
     overflow: hidden;
@@ -247,6 +259,9 @@
   .mm-wrapper svg circle:hover {
     fill: var(--surface-information);
     stroke: var(--border-action);
-    z-index: 999;
+  }
+
+  .mm-wrapper svg .scroll-indicator {
+    stroke: var(--secondary-500);
   }
 </style>
