@@ -118,7 +118,6 @@
   /* Scroll position */
   const innerRef = useTemplateRef("inner-ref");
   const { y: yScroll } = useScroll(innerRef);
-  watch(yScroll, () => console.log("Naked yScroll", yScroll.value));
   const yScrollPercent = computed(
     () => (yScroll.value / (manuscriptRef.value?.$el.clientHeight ?? 1)) * 100
   );

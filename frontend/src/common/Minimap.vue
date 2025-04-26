@@ -130,6 +130,7 @@
   };
 
   const svgInitialData = ref(null);
+  const circlePositions = ref([]);
   const makeMinimap = (
     sections,
     containerHeight = 400,
@@ -156,6 +157,7 @@
       lineX,
       strokeWidth,
     };
+    circlePositions.value = JSON.parse(JSON.stringify(circles));
 
     const minY = Math.min(...circles.map((c) => c.cy - c.r - strokeWidth));
     const maxY = Math.max(newLineHeight, ...circles.map((c) => c.cy + c.r + strokeWidth));
@@ -166,7 +168,7 @@
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 ${minY} ${width} ${height}" preserveAspectRatio="xMidYMid meet" >
       <line x1="${lineX}" y1="0" x2="${lineX}" y2="${newLineHeight}" stroke-width="${strokeWidth}" stroke-linecap="round"/>
-      ${circles.map((c) => `<circle cx="${c.cx}" cy="${c.cy}" r="${c.r}" fill="white" stroke-width="${strokeWidth}" />`).join("\n  ")}
+      ${circles.map((c, idx) => `<circle class="mm-circle" data-index="${idx} "cx="${c.cx}" cy="${c.cy}" r="${c.r}" stroke-width="${strokeWidth}" />`).join("\n  ")}
       <line class="scroll-indicator" x1="${lineX}" y1="0" x2="${lineX}" y2="0" stroke-width="${strokeWidth}" stroke-linecap="round"/>
     </svg>`;
     return svg;
@@ -174,12 +176,63 @@
 
   const highlightScrollPos = (pos) => {
     if (!wrapperRef.value) return;
-    console.log("highlightScrollPos", pos);
-    const scrollIndicator = wrapperRef.value.querySelector("svg .scroll-indicator");
-    const halfHeight = (3 / wrapperRef.value.clientHeight) * 100;
+
+    // Skip if position is too small
     if (pos < 0.5) return;
+
+    const svg = wrapperRef.value.querySelector("svg");
+    const circles = svg.querySelectorAll("circle.mm-circle");
+    const scrollIndicator = svg.querySelector(".scroll-indicator");
+    const containerHeight = wrapperRef.value.clientHeight;
+
+    // Set the position of the scroll indicator
+    const halfHeight = (3 / containerHeight) * 100;
     scrollIndicator.setAttribute("y1", `${pos - halfHeight}%`);
     scrollIndicator.setAttribute("y2", `${pos + halfHeight}%`);
+
+    // Calculate the actual Y position in pixels
+    const indicatorY = (pos / 100) * containerHeight;
+
+    // Reset all classes first
+    circles.forEach((circle) => {
+      circle.classList.remove("current-section", "section-end");
+    });
+
+    // Get circle data with positions and sizes
+    const circleData = Array.from(circles).map((circle) => ({
+      element: circle,
+      cy: parseFloat(circle.getAttribute("cy")),
+      r: parseFloat(circle.getAttribute("r")), // Radius represents hierarchy level
+    }));
+
+    // Sort by vertical position
+    circleData.sort((a, b) => a.cy - b.cy);
+
+    // Find the innermost section where the scroll is positioned
+    let currentSectionIndex = -1;
+    for (let i = circleData.length - 1; i >= 0; i--) {
+      if (circleData[i].cy <= indicatorY) {
+        currentSectionIndex = i;
+        break;
+      }
+    }
+
+    // If we found a current section, highlight it
+    if (currentSectionIndex >= 0) {
+      const currentSection = circleData[currentSectionIndex];
+      currentSection.element.classList.add("current-section");
+
+      // Find the end of the current section (next circle of same size or LARGER - smaller or equal radius)
+      const currentRadius = currentSection.r;
+
+      for (let i = currentSectionIndex + 1; i < circleData.length; i++) {
+        if (circleData[i].r <= currentRadius) {
+          // Same level or higher level (smaller or equal radius)
+          circleData[i].element.classList.add("section-end");
+          break; // Only highlight the first one we find
+        }
+      }
+    }
   };
 
   /* Make, mount, display */
@@ -265,6 +318,25 @@
   }
 
   .mm-wrapper svg .scroll-indicator {
+    stroke: var(--secondary-500);
+  }
+
+  /* Add to your existing CSS */
+  .mm-wrapper svg circle.mm-circle {
+    transition:
+      fill 0.3s ease,
+      stroke 0.3s ease;
+  }
+
+  /* Current section start */
+  .mm-wrapper svg circle.mm-circle.current-section {
+    fill: var(--primary-500);
+    stroke: var(--primary-700);
+  }
+
+  /* Current section end */
+  .mm-wrapper svg circle.mm-circle.section-end {
+    fill: var(--secondary-300);
     stroke: var(--secondary-500);
   }
 </style>
