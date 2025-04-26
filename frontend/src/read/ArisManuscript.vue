@@ -115,7 +115,7 @@
   });
   onUnmounted(() => tearDown());
 
-  /* Focus mode. */
+  /* Focus mode */
   const focusMode = inject("focusMode");
   // We would rather stick all of these options inside a style object and pass that to
   // :style. However, in <script> we need to use v-bind to apply fileSettings to specific
