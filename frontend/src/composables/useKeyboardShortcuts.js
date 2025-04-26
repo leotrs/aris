@@ -11,6 +11,10 @@ import {
 // Use a string rather than a ref because string keys are much simpler
 const refToKey = (ref) => (ref ? `${ref.uid || ref.value?.uid}` : null);
 
+const hasModifiers = (ev) => {
+  return ev.ctrlKey || ev.altKey || ev.shiftKey || ev.metaKey;
+};
+
 
 /* Global state */
 const components = reactive([]);
