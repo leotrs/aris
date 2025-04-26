@@ -126,6 +126,10 @@
     flex: 1;
   }
 
+  .pane-header.list {
+    margin-bottom: 4px;
+  }
+
   .pane-header.list,
   .files.list {
     overflow-y: auto;
