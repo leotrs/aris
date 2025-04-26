@@ -167,16 +167,19 @@
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 ${minY} ${width} ${height}" preserveAspectRatio="xMidYMid meet" >
       <line x1="${lineX}" y1="0" x2="${lineX}" y2="${newLineHeight}" stroke-width="${strokeWidth}" stroke-linecap="round"/>
       ${circles.map((c) => `<circle cx="${c.cx}" cy="${c.cy}" r="${c.r}" fill="white" stroke-width="${strokeWidth}" />`).join("\n  ")}
-      <line class="scroll-indicator" x1="${lineX}" y1="-999" x2="${lineX}" y2="-999" stroke-width="${strokeWidth}" stroke-linecap="round"/>
+      <line class="scroll-indicator" x1="${lineX}" y1="0" x2="${lineX}" y2="0" stroke-width="${strokeWidth}" stroke-linecap="round"/>
     </svg>`;
     return svg;
   };
 
   const highlightScrollPos = (pos) => {
+    if (!wrapperRef.value) return;
     console.log("highlightScrollPos", pos);
     const scrollIndicator = wrapperRef.value.querySelector("svg .scroll-indicator");
-    scrollIndicator.setAttribute("y1", `${pos - 0.5}%`);
-    scrollIndicator.setAttribute("y2", `${pos + 0.5}%`);
+    const halfHeight = (3 / wrapperRef.value.clientHeight) * 100;
+    if (pos < 0.5) return;
+    scrollIndicator.setAttribute("y1", `${pos - halfHeight}%`);
+    scrollIndicator.setAttribute("y2", `${pos + halfHeight}%`);
   };
 
   /* Make, mount, display */
