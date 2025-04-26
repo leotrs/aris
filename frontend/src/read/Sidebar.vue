@@ -90,17 +90,22 @@
     >
       <img src="../assets/logo-32px.svg" />
     </div>
+
     <div class="sb-menu" :style="{ opacity: sidebarOpacity, width: sidebarWidth }">
-      <SidebarItem
-        v-for="(obj, name) in panelComponents"
-        :key="obj"
-        v-model="obj.state"
-        :icon="obj.icon"
-        :label="obj.label"
-        :preferred-side="obj.preferredSide"
-        @on="(side) => emit('showComponent', name, side)"
-        @off="(side) => emit('hideComponent', name, side)"
-      />
+      <Separator />
+      <div class="sb-menu-inner">
+        <SidebarItem
+          v-for="(obj, name) in panelComponents"
+          :key="obj"
+          v-model="obj.state"
+          :icon="obj.icon"
+          :label="obj.label"
+          :preferred-side="obj.preferredSide"
+          @on="(side) => emit('showComponent', name, side)"
+          @off="(side) => emit('hideComponent', name, side)"
+        />
+      </div>
+      <Separator />
       <SidebarItem v-model="focusMode" icon="LayoutOff" label="focus" :with-side-control="false" />
     </div>
   </div>
@@ -111,7 +116,6 @@
     position: fixed;
     height: 100%;
     z-index: 2;
-    padding-block: 8px;
     max-width: 64px;
     transition:
       width var(--transition-duration) ease,
@@ -120,7 +124,7 @@
 
   #logo {
     height: 64px;
-    padding: 17px;
+    padding: 25px 17px 9px 17px;
     transition:
       width var(--transition-duration) ease,
       opacity var(--transition-duration) ease;
@@ -136,8 +140,7 @@
   }
 
   .sb-menu {
-    padding: 8px;
-    padding-bottom: 24px;
+    padding: 8px 4px 24px 4px;
     position: fixed;
     height: calc(100% - 48px - 8px - 8px);
     max-width: 64px;
@@ -145,7 +148,17 @@
     transition:
       width var(--transition-duration) ease,
       opacity var(--transition-duration) ease;
+  }
 
+  .sb-menu > .sb-item:last-child {
+    padding-inline: 4px;
+    padding-block: 8px;
+  }
+
+  .sb-menu-inner {
+    height: calc(100% - 48px - 16px);
+    padding-block: 8px;
+    padding-inline: 4px;
     /* no scrollbar in any browser */
     overflow-y: auto;
     scrollbar-width: none;
