@@ -84,6 +84,11 @@
       gap: 16px;
       border-radius: 16px;
       box-shadow: var(--shadow-soft);
+
+      & :deep(.pane-header) {
+        background-color: var(--surface-hover);
+        border-color: var(--border-primary);
+      }
     }
   }
 

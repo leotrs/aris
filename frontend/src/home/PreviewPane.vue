@@ -109,7 +109,7 @@
   .tabs {
     position: absolute;
     top: calc(var(--padding));
-    left: calc(1.5 * var(--padding));
+    left: calc(var(--padding));
     width: calc(100% - 3.5 * var(--padding));
   }
 
@@ -133,7 +133,10 @@
     justify-content: center;
     padding-inline: 8px;
     min-width: 48px;
-    border-radius: 4px;
+    height: 100%;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-top: var(--border-extrathin) solid transparent;
     border-bottom: var(--border-thin) solid transparent;
 
     & > .tabler-icon {
@@ -143,8 +146,9 @@
   }
 
   .tab.active {
-    background-color: var(--information-200);
-    border-bottom-color: var(--information-600);
+    background-color: var(--information-100);
+    border-top-color: var(--gray-200);
+    border-bottom-color: var(--border-action);
     color: var(--almost-black);
     box-shadow: var(--shadow-strong);
 

@@ -148,12 +148,19 @@
     }
 
     &.active > * {
-      background-color: var(--surface-hover);
+      background-color: var(--surface-information);
       outline: var(--border-thin) solid var(--red);
     }
 
     &.active > *:first-child {
       border-left: var(--border-med) solid var(--border-action);
+      border-top-left-radius: 4px;
+      border-bottom-left-radius: 4px;
+    }
+
+    &.active > *:last-child {
+      border-top-right-radius: 4px;
+      border-bottom-right-radius: 4px;
     }
   }
 
@@ -174,7 +181,7 @@
 
     &.active {
       border-color: var(--border-action);
-      background-color: var(--surface-page);
+      background-color: var(--surface-information);
       box-shadow: var(--shadow-strong), var(--shadow-soft);
       /* used to artificially thicken the border without causing layout jiggle */
       outline: var(--border-extrathin) solid var(--border-action);
