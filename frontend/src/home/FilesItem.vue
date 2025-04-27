@@ -139,6 +139,10 @@
       overflow-y: hidden;
     }
 
+    & > *:first-child {
+      padding-left: calc(16px - var(--border-med));
+    }
+
     & > .dots {
       padding-inline: 0px;
     }

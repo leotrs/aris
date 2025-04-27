@@ -74,11 +74,16 @@
 </template>
 
 <style scoped>
+  .pane-header {
+    padding-inline: 0;
+  }
+
   .pane-header.list {
     & > *:first-child {
-      padding-left: 16px;
+      padding-left: calc(16px - var(--border-med));
       border-top-left-radius: var(--border-radius);
       border-bottom-left-radius: var(--border-radius);
+      border-left: var(--border-med) solid transparent;
     }
 
     & > *:last-child {
