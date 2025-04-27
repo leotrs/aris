@@ -58,6 +58,15 @@
     border-radius: 8px;
     width: fit-content;
     background-color: var(--surface-hover);
+    border: var(--border-extrathin) solid var(--border-primary);
+  }
+
+  .tabs-header .tab-wrapper:first-child:not(.active) {
+    border-bottom-left-radius: 8px !important;
+  }
+
+  .tabs-header .tab-wrapper:last-child:not(.active) {
+    border-bottom-right-radius: 8px !important;
   }
 
   .tabs-content {
