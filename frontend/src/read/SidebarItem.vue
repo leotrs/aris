@@ -9,11 +9,11 @@
   const emit = defineEmits(["on", "off"]);
   const buttonState = defineModel({ type: Boolean, default: false });
 
-  const controlDisplay = ref("none");
   const isHoveringButton = ref(false);
   const isHoveringControl = ref(false);
+  const visibilityClass = ref("");
   const updateVisibility = () => {
-    controlDisplay.value = isHoveringButton.value || isHoveringControl.value ? "flex" : "none";
+    visibilityClass.value = isHoveringButton.value || isHoveringControl.value ? "show" : "";
   };
 
   let hideTimeout = null;
@@ -43,7 +43,7 @@
   const sides = ["left", "top", "right"];
   watch(controlState, (newVal, oldVal) => {
     clearTimeout(hideTimeout);
-    controlDisplay.value = "none";
+    visibilityClass.value = "";
 
     if (!buttonState.value) {
       buttonState.value = true;
@@ -68,7 +68,7 @@
     } else {
       emit("off", sides[controlState.value]);
       clearTimeout(hideTimeout);
-      controlDisplay.value = "none";
+      visibilityClass.value = "";
     }
   });
 </script>
@@ -86,6 +86,7 @@
         v-if="withSideControl"
         v-model="controlState"
         :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']"
+        :class="visibilityClass"
         @mouseenter="onMouseEnterControl"
         @mouseleave="onMouseLeaveControl"
       />
@@ -119,11 +120,18 @@
   }
 
   .sc-wrapper {
-    display: v-bind(controlDisplay);
+    z-index: -1;
     position: absolute;
     left: calc(64px + 8px);
+    transform: translateX(calc(-100% - 64px - 8px));
     opacity: 0.5;
-    transition: opacity 0.3s ease;
+    transition:
+      opacity 0.3s ease,
+      transform 0.3s ease;
+  }
+
+  .sc-wrapper.show {
+    transform: translateX(0);
   }
 
   .sc-wrapper:hover {
