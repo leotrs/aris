@@ -15,17 +15,6 @@
   };
   useKeyboardShortcuts({ c: toggleCollapsed });
 
-  /* Change the theme */
-  const modeActive = ref(-1);
-  watch(modeActive, (newVal) => {
-    if (newVal == 0) {
-      document.documentElement.classList.remove("dark-theme");
-    }
-    if (newVal == 2) {
-      document.documentElement.classList.add("dark-theme");
-    }
-  });
-
   /* New file upload */
   useKeyboardShortcuts({ n: () => emit("showFileUploadModal") });
 
@@ -91,11 +80,7 @@
         <SidebarItem :collapsed="collapsed" text="All Files" active />
         <Separator />
         <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />
-        <SegmentedControl
-          v-model="modeActive"
-          :icons="['Sun', 'SunMoon', 'Moon']"
-          :default-active="1"
-        />
+        <ThemeSwitch />
       </div>
     </template>
   </div>
