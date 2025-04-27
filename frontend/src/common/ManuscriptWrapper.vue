@@ -15,17 +15,17 @@
     onload.value = module.onload;
   });
 
-  const manuscript = useTemplateRef("manuscript-ref");
+  const selfRef = useTemplateRef("self-ref");
   const tryExecuteOnload = async () => {
-    if (!onload.value || !manuscript.value || !props.html) return;
+    if (!onload.value || !selfRef.value || !props.html) return;
     await nextTick();
-    onload.value(manuscript.value, { keys: props.keys });
+    onload.value(selfRef.value, { keys: props.keys });
   };
-  watch([onload, () => manuscript.value, () => props.html], tryExecuteOnload);
+  watch([onload, () => selfRef.value, () => props.html], tryExecuteOnload);
 </script>
 
 <template>
-  <div class="rsm-manuscript">
+  <div ref="self-ref" class="rsm-manuscript">
     <div class="css-links">
       <link
         rel="stylesheet"
