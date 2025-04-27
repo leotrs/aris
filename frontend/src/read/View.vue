@@ -61,6 +61,7 @@
     display: flex;
     width: 100%;
     padding: 8px 8px 8px 0;
+    will-change: padding;
     transition: padding var(--transition-duration) ease;
   }
 
@@ -80,6 +81,7 @@
     gap: 8px;
     background-color: transparent;
     opacity: 1;
+    will-change: opacity;
     transition: opacity var(--transition-duration) ease;
   }
 

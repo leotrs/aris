@@ -170,6 +170,7 @@
     width: calc(100% - 64px);
     left: 64px;
     border-radius: 16px;
+    will-change: width, left, border-radius;
     transition:
       width var(--transition-duration) ease,
       left var(--transition-duration) ease,
@@ -194,6 +195,7 @@
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
     top: var(--topbar-height);
+    will-change: border-radius, height, top;
     transition:
       border-radius var(--transition-duration) ease,
       height var(--transition-duration) ease,
@@ -217,6 +219,7 @@
     overflow-x: visible;
     height: fit-content;
     padding-top: 8px;
+    will-change: padding-top;
     transition: padding-top var(--transition-duration) ease;
   }
 
