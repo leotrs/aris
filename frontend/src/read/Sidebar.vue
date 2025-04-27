@@ -139,6 +139,7 @@
     height: 100%;
     padding-block: 8px;
     padding-inline: 4px;
+
     /* no scrollbar in any browser */
     overflow-y: auto;
     scrollbar-width: none;
