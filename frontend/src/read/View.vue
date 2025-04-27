@@ -32,16 +32,17 @@
     if (index !== -1) sideRefMap[side].splice(index, 1);
   };
 
-  /* Keyboard shortcuts */
-  const router = useRouter();
-  useKeyboardShortcuts({
-    "g,h": () => router.push("/"),
-  });
-
   /* Focus Mode */
   const focusMode = ref(false);
   const onFocusModeChange = (mode) => (focusMode.value = mode);
   provide("focusMode", focusMode);
+
+  /* Keyboard shortcuts */
+  const router = useRouter();
+  useKeyboardShortcuts({
+    "g,h": () => router.push("/"),
+    c: () => (focusMode.value = !focusMode.value),
+  });
 
   const menuOpacity = computed(() => (focusMode.value ? "0" : "1"));
 </script>
