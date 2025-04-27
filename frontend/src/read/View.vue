@@ -34,7 +34,6 @@
 
   /* Focus Mode */
   const focusMode = ref(false);
-  const onFocusModeChange = (mode) => (focusMode.value = mode);
   provide("focusMode", focusMode);
 
   /* Keyboard shortcuts */
@@ -43,19 +42,13 @@
     "g,h": () => router.push("/"),
     c: () => (focusMode.value = !focusMode.value),
   });
-
-  const menuOpacity = computed(() => (focusMode.value ? "0" : "1"));
 </script>
 
 <template>
-  <div class="read-view" :style="{ padding: focusMode ? '0' : '8px 8px 8px 0' }">
-    <Sidebar
-      @show-component="showComponent"
-      @hide-component="hideComponent"
-      @focus-mode="onFocusModeChange"
-    />
+  <div class="read-view" :class="{ focus: focusMode }">
+    <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
     <ArisManuscript :left="leftComponents" :right="rightComponents" :top="topComponents" />
-    <div class="menus" :style="{ opacity: menuOpacity }">
+    <div class="menus" :class="{ focus: focusMode }">
       <FileMenu icon="Menu3" />
       <UserMenu />
     </div>
@@ -67,7 +60,12 @@
     --transition-duration: 0.3s;
     display: flex;
     width: 100%;
+    padding: 8px 8px 8px 0;
     transition: padding var(--transition-duration) ease;
+  }
+
+  .read-view.focus {
+    padding: 0;
   }
 
   .menus {
@@ -81,6 +79,11 @@
     padding: 8px;
     gap: 8px;
     background-color: transparent;
+    opacity: 1;
     transition: opacity var(--transition-duration) ease;
+  }
+
+  .menus.focus {
+    opacity: 0;
   }
 </style>

@@ -129,55 +129,19 @@
 
   /* Focus mode */
   const focusMode = inject("focusMode");
-  // We would rather stick all of these options inside a style object and pass that to
-  // :style. However, in <script> we need to use v-bind to apply fileSettings to specific
-  // elements, and v-bind will overwrite :style. Thus all reactive styles in this
-  // component need to be applied via v-bind.
-  const outerWidth = ref(null);
-  const outerLeft = ref(null);
-  const borderRadius = ref(null);
-  const innerHeight = ref(null);
-  const innerTop = ref(null);
-  const middlePaddingTop = ref(null);
-
-  watch(
-    focusMode,
-    (newVal) => {
-      if (newVal) {
-        outerWidth.value = "100%";
-        outerLeft.value = "0";
-        borderRadius.value = "0";
-        innerHeight.value = "100%";
-        innerTop.value = "0";
-        middlePaddingTop.value = "48px";
-      } else {
-        outerWidth.value = "calc(100% - 64px)";
-        outerLeft.value = "64px";
-        borderRadius.value = "16px";
-        innerHeight.value = "calc(100% - var(--topbar-height))";
-        innerTop.value = "calc(var(--topbar-height))";
-        middlePaddingTop.value = "8px";
-      }
-    },
-    { immediate: true }
-  );
 </script>
 
 <template>
   <Suspense>
-    <div class="outer-wrapper">
+    <div class="outer-wrapper" :class="{ focus: focusMode }">
       <Topbar :show-title="!isMainTitleVisible" :component="validDrawerComponents[top.at(-1)]" />
 
-      <div ref="inner-ref" class="inner-wrapper">
+      <div ref="inner-ref" class="inner-wrapper" :class="{ focus: focusMode }">
         <Drawer ref="leftColumnRef" class="left-column">
           <component :is="validDrawerComponents[comp]" v-for="comp in left" :doc="doc" />
         </Drawer>
 
-        <Drawer
-          ref="middleColumnRef"
-          class="middle-column"
-          :style="{ 'padding-top': middlePaddingTop }"
-        >
+        <Drawer ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
           <ManuscriptWrapper
             ref="manuscript-ref"
             :html="htmlContent"
@@ -203,31 +167,44 @@
     position: relative;
     z-index: 1;
     box-shadow: var(--shadow-soft);
-    width: v-bind(outerWidth);
-    left: v-bind(outerLeft);
-    border-radius: v-bind(borderRadius);
+    width: calc(100% - 64px);
+    left: 64px;
+    border-radius: 16px;
     transition:
       width var(--transition-duration) ease,
       left var(--transition-duration) ease,
       border-radius var(--transition-duration) ease;
   }
 
+  .outer-wrapper.focus {
+    left: 0;
+    border-radius: 0;
+    width: 100%;
+  }
+
   .inner-wrapper {
     display: flex;
     width: 100%;
-    height: v-bind(innerHeight);
+    height: calc(100% - var(--topbar-height));
     position: relative;
     top: v-bind(innerTop);
     background-color: v-bind("fileSettings.background");
     overflow-y: auto;
     justify-content: center;
-    border-bottom-left-radius: v-bind(borderRadius);
-    border-bottom-right-radius: v-bind(borderRadius);
-
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    top: var(--topbar-height);
     transition:
       border-radius var(--transition-duration) ease,
       height var(--transition-duration) ease,
       top var(--transition-duration) ease;
+  }
+
+  .inner-wrapper.focus {
+    top: 0;
+    height: 100%;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
   }
 
   .middle-column {
@@ -239,7 +216,12 @@
     z-index: 1;
     overflow-x: visible;
     height: fit-content;
+    padding-top: 8px;
     transition: padding-top var(--transition-duration) ease;
+  }
+
+  .middle-column.focus {
+    padding-top: 48px;
   }
 
   .left-column,
