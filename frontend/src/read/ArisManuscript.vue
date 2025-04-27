@@ -164,6 +164,7 @@
     position: relative;
     z-index: 1;
     box-shadow: var(--shadow-soft);
+
     width: calc(100% - 64px);
     left: 64px;
     border-radius: 16px;
@@ -175,9 +176,9 @@
   }
 
   .outer-wrapper.focus {
+    width: 100%;
     left: 0;
     border-radius: 0;
-    width: 100%;
   }
 
   .inner-wrapper {

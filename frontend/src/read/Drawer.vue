@@ -63,6 +63,7 @@
     right: 0;
     z-index: 2;
     transform: translateX(calc(100% - 32px - 8px - 8px));
+    will-change: transform;
     transition: transform var(--transition-duration) ease;
   }
 
@@ -94,14 +95,11 @@
     width: calc(64px * 5 + + 4px * 4 + 2 * var(--padding));
 
     opacity: 0;
-    transition:
-      transform var(--transition-duration) ease,
-      opacity var(--transition-duration) ease;
+    transition: opacity var(--transition-duration) ease;
   }
 
   .drawer.active {
     pointer-events: all;
-    transform: transformX(0);
     opacity: 1;
   }
 </style>

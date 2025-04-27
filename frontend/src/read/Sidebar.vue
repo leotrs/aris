@@ -58,11 +58,11 @@
       @click="focusMode = false"
     />
 
-    <div id="logo" :class="{ focus: focusMode }" @click="router?.push('/')">
+    <div id="logo" @click="router?.push('/')">
       <img src="../assets/logo-32px.svg" />
     </div>
 
-    <div class="sb-menu" :class="{ focus: focusMode }">
+    <div class="sb-menu">
       <div class="sb-menu-inner">
         <SidebarItem
           v-for="(obj, name) in panelComponents"
@@ -93,28 +93,24 @@
     max-width: 64px;
     width: 64px;
     top: 0;
-    will-change: width, top;
+
+    opacity: 1;
+    transform: translateX(0);
+    will-change: opacity, transform;
     transition:
-      width var(--transition-duration) ease,
-      top var(--transition-duration) ease;
+      opacity var(--transition-duration) ease,
+      transform var(--transition-duration) ease;
   }
 
   .sb-wrapper.focus {
-    width: 0;
-    /* do NOT delete this! */
-    top: 0;
+    opacity: 0;
+    transform: translateX(-100%);
   }
 
   #logo {
     height: 64px;
     padding: 25px 17px 9px 17px;
     width: 64px;
-    opacity: 1;
-    will-change: width, opacity;
-    transition:
-      width var(--transition-duration) ease,
-      opacity var(--transition-duration) ease;
-
     &:hover {
       cursor: pointer;
     }
@@ -125,11 +121,6 @@
     }
   }
 
-  #logo.focus {
-    opacity: 0;
-    width: 0;
-  }
-
   .sb-menu {
     padding: 8px 4px 24px 4px;
     position: fixed;
@@ -137,16 +128,6 @@
     max-width: 64px;
     left: 0;
     width: 64px;
-    opacity: 1;
-    will-change: width, opacity;
-    transition:
-      width var(--transition-duration) ease,
-      opacity var(--transition-duration) ease;
-  }
-
-  .sb-menu.focus {
-    opacity: 0;
-    width: 0;
   }
 
   .sb-menu > .sb-item:last-child {
