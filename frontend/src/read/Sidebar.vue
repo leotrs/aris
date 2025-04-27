@@ -68,13 +68,10 @@
   /* Focus mode */
   const focusMode = inject("focusMode");
   watch(focusMode, (newVal) => emit("focusMode", newVal));
-  const sidebarOpacity = computed(() => (focusMode.value ? "0" : "1"));
-  const sidebarWidth = computed(() => (focusMode.value ? "0" : "64px"));
-  const sidebarTop = computed(() => (focusMode.value ? "0" : "0"));
 </script>
 
 <template>
-  <div ref="sidebar-ref" class="sb-wrapper" :style="{ width: sidebarWidth, top: sidebarTop }">
+  <div ref="sidebar-ref" class="sb-wrapper" :class="{ focus: focusMode }">
     <Button
       v-show="focusMode"
       class="layout-on"
@@ -83,15 +80,11 @@
       @click="focusMode = false"
     />
 
-    <div
-      id="logo"
-      :style="{ opacity: sidebarOpacity, width: sidebarWidth }"
-      @click="router?.push('/')"
-    >
+    <div id="logo" :class="{ focus: focusMode }" @click="router?.push('/')">
       <img src="../assets/logo-32px.svg" />
     </div>
 
-    <div class="sb-menu" :style="{ opacity: sidebarOpacity, width: sidebarWidth }">
+    <div class="sb-menu" :class="{ focus: focusMode }">
       <Separator />
       <div class="sb-menu-inner">
         <SidebarItem
@@ -117,14 +110,24 @@
     height: 100%;
     z-index: 2;
     max-width: 64px;
+    width: 64px;
+    top: 0;
     transition:
       width var(--transition-duration) ease,
       top var(--transition-duration) ease;
   }
 
+  .sb-wrapper.focus {
+    width: 0;
+    /* do NOT delete this! */
+    top: 0;
+  }
+
   #logo {
     height: 64px;
     padding: 25px 17px 9px 17px;
+    width: 64px;
+    opacity: 1;
     transition:
       width var(--transition-duration) ease,
       opacity var(--transition-duration) ease;
@@ -139,15 +142,27 @@
     }
   }
 
+  #logo.focus {
+    opacity: 0;
+    width: 0;
+  }
+
   .sb-menu {
     padding: 8px 4px 24px 4px;
     position: fixed;
     height: calc(100% - 48px - 8px - 8px);
     max-width: 64px;
     left: 0;
+    width: 64px;
+    opacity: 1;
     transition:
       width var(--transition-duration) ease,
       opacity var(--transition-duration) ease;
+  }
+
+  .sb-menu.focus {
+    opacity: 0;
+    width: 0;
   }
 
   .sb-menu > .sb-item:last-child {
