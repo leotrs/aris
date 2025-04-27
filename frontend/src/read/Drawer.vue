@@ -15,7 +15,18 @@
       :icon="active ? 'LayoutSidebarRightCollapse' : 'LayoutSidebarRightExpand'"
       :class="{ active }"
     />
-    <div class="drawer" :class="{ active }">hi</div>
+    <div class="drawer" :class="{ active }">
+      <Tabs
+        :labels="['activity', 'history', 'settings', 'citation', 'tags']"
+        :icons="['Bolt', 'Clock', 'FileSettings', 'Quote', 'Tag']"
+      >
+        <TabPage>activity</TabPage>
+        <TabPage>history</TabPage>
+        <TabPage>settings</TabPage>
+        <TabPage>citation</TabPage>
+        <TabPage>tags</TabPage>
+      </Tabs>
+    </div>
   </div>
 </template>
 
@@ -25,21 +36,22 @@
 
     position: fixed;
     right: calc(var(--scrollbar-size));
+    z-index: 1;
   }
 
   .drawer {
     height: 500px;
-
     border: var(--border-thin) solid var(--border-primary);
     border-right-color: transparent;
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
+    background-color: var(--surface-primary);
     padding: 16px;
     width: 0;
     transition: width var(--transition-duration) ease;
   }
 
   .drawer.active {
-    width: 200px;
+    width: 300px;
   }
 </style>
