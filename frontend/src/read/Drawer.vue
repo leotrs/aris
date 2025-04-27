@@ -1,8 +1,20 @@
 <script setup>
-  import {} from "vue";
+  import { ref, watch, useTemplateRef } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
   const active = defineModel({ type: Boolean, default: false });
+
+  /* State */
+  const tabsRef = useTemplateRef("tabs-ref");
+  const activeTabIndex = ref(null);
+  watch(activeTabIndex, () => {
+    const pages = tabsRef.value.$el.querySelectorAll(".tab-page-wrapper");
+    pages.forEach((page) => (page.style.display = "none"));
+    if (activeTabIndex.value === null) return;
+    pages[activeTabIndex.value].style.display = "block";
+  });
+
+  /* Keys */
   useKeyboardShortcuts({
     d: () => (active.value = !active.value),
   });
@@ -17,6 +29,8 @@
     />
     <div class="drawer" :class="{ active }">
       <Tabs
+        ref="tabs-ref"
+        v-model="activeTabIndex"
         :labels="['activity', 'history', 'settings', 'citation', 'tags']"
         :icons="['Bolt', 'Clock', 'FileSettings', 'Quote', 'Tag']"
       >
