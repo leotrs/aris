@@ -33,7 +33,7 @@
 
   /* Keyboard shortcuts */
   useKeyboardShortcuts({
-    enter: (ev) => read(),
+    enter: () => read(),
   });
 
   /* Transition */
