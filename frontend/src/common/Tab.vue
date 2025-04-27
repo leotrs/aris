@@ -20,7 +20,7 @@
   .tab-wrapper {
     --transition-duration: 0.3s;
 
-    height: 48px;
+    height: calc(48px - var(--border-extrathin));
     width: 64px;
     display: flex;
     flex-direction: column;

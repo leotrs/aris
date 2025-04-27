@@ -30,7 +30,8 @@
     <ButtonToggle
       v-model="active"
       :icon="active ? 'LayoutSidebarRightCollapse' : 'LayoutSidebarRightExpand'"
-      :class="{ active }"
+      button-size="btn-sm"
+      class="d-btn"
     />
     <div class="drawer" :class="{ active }">
       <Tabs
@@ -56,24 +57,45 @@
     --padding: 8px;
 
     position: fixed;
-    right: calc(var(--scrollbar-size));
+    display: flex;
+    align-items: flex-start;
+    right: 0;
     z-index: 1;
+  }
+
+  .d-btn {
+    position: relative;
+    top: 20px;
+  }
+
+  .d-btn.active {
+    box-shadow: var(--shadow-strong), var(--shadow-soft);
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
   }
 
   .drawer {
     height: 500px;
-    border: var(--border-thin) solid var(--border-primary);
+    border: var(--border-extrathin) solid var(--border-primary);
     border-right-color: transparent;
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
     background-color: var(--surface-primary);
     padding: var(--padding);
+    pointer-events: none;
+    box-shadow: var(--shadow-strong), var(--shadow-soft);
 
     width: 0;
-    transition: width var(--transition-duration) ease;
+    opacity: 0;
+
+    transition:
+      width var(--transition-duration) ease,
+      opacity var(--transition-duration) ease;
   }
 
   .drawer.active {
+    pointer-events: all;
     width: calc(64px * 5 + + 4px * 4 + 2 * var(--padding));
+    opacity: 1;
   }
 </style>
