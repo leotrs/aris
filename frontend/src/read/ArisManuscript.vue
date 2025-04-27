@@ -20,9 +20,6 @@
   import Drawer from "./Drawer.vue";
   import PanelSearch from "./PanelSearch.vue";
   import Minimap from "../common/Minimap.vue";
-  import PanelCitation from "./PanelCitation.vue";
-  import PanelTags from "./PanelTags.vue";
-  import PanelSettings from "./PanelSettings.vue";
 
   const props = defineProps({
     left: { type: Array, default: () => [] },
@@ -36,11 +33,8 @@
     PanelSearch,
     Minimap,
     /* Comments, */
-    PanelCitation,
-    PanelTags,
     /* PanelSymbols, */
     /* PanelClaims, */
-    PanelSettings,
   };
 
   const leftColumnRef = useTemplateRef("leftColumnRef");

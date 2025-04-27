@@ -45,15 +45,26 @@
 
 <style>
   .tabs-wrapper {
+    --header-height: 48px;
+
+    width: min-content;
+    height: 100%;
   }
 
   .tabs-header {
-    height: 48px;
+    height: var(--header-height);
     display: flex;
     gap: 4px;
     border-radius: 8px;
     width: fit-content;
     background-color: var(--surface-hover);
-    margin-bottom: 8px;
+  }
+
+  .tabs-content {
+    width: 100%;
+    height: calc(100% - var(--header-height));
+    padding-block: 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 </style>

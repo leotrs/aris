@@ -11,5 +11,6 @@
 <style>
   .tab-page-wrapper {
     padding-inline: 8px;
+    width: 100%;
   }
 </style>
