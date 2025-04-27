@@ -69,7 +69,7 @@
 <style scoped>
   .s-wrapper {
     color: var(--extra-dark);
-    background-color: transparent;
+    background-color: var(--surface-page);
     border: 2px solid var(--border-primary);
     border-radius: 16px;
     height: 48px;
@@ -81,7 +81,7 @@
     transition: var(--transition-bg-color), var(--transition-bd-color);
 
     &:has(> input:focus) {
-      background-color: var(--surface-page);
+      background-color: var(--surface-primary);
       border-color: var(--border-action);
       box-shadow: var(--shadow-strong);
     }
