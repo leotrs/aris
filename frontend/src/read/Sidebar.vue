@@ -25,13 +25,6 @@
       key: "b",
       state: false,
     },
-    PanelTags: {
-      icon: "Tags",
-      label: "tags",
-      preferredSide: "top",
-      key: "t",
-      state: false,
-    },
     PanelSymbols: {
       icon: "Variable",
       label: "symbols",
@@ -40,13 +33,6 @@
       state: false,
     },
     PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t", state: false },
-    PanelSettings: {
-      icon: "FileSettings",
-      label: "settings",
-      preferredSide: "left",
-      key: "s",
-      state: false,
-    },
   });
 
   const togglePanel = (name, obj) => {

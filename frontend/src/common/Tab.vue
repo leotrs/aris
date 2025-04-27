@@ -6,18 +6,43 @@
     label: { type: String, default: "" },
     icon: { type: String, default: "" },
   });
+  const active = defineModel({ type: Boolean, default: false });
 </script>
 
 <template>
-  <div class="tab-wrapper">
+  <div class="tab-wrapper" :class="{ active }" @click="active = true">
     <component :is="Icons['Icon' + icon]" class="tab-icon" />
-    <span class="tab-label">{{ label }}</span>
+    <span class="tab-label text-caption">{{ label }}</span>
   </div>
 </template>
 
 <style>
   .tab-wrapper {
+    --transition-duration: 0.3s;
+
+    height: 48px;
+    width: 64px;
     display: flex;
     flex-direction: column;
+    align-items: center;
+    padding-inline: 8px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    border-bottom: var(--border-thin) solid transparent;
+    transition:
+      background-color var(--transition-duration) ease,
+      box-shadow var(--transition-duration) ease,
+      border-bottom-color var(--transition-duration) ease;
+  }
+
+  .tab-wrapper:not(.active):hover {
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+  }
+
+  .tab-wrapper.active {
+    background-color: var(--surface-hint);
+    box-shadow: var(--shadow-soft);
+    border-bottom-color: var(--border-action);
   }
 </style>
