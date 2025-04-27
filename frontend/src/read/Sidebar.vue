@@ -63,7 +63,6 @@
     </div>
 
     <div class="sb-menu" :class="{ focus: focusMode }">
-      <Separator />
       <div class="sb-menu-inner">
         <SidebarItem
           v-for="(obj, name) in panelComponents"
@@ -75,9 +74,13 @@
           @on="(side) => emit('showComponent', name, side)"
           @off="(side) => emit('hideComponent', name, side)"
         />
+        <SidebarItem
+          v-model="focusMode"
+          icon="LayoutOff"
+          label="focus"
+          :with-side-control="false"
+        />
       </div>
-      <Separator />
-      <SidebarItem v-model="focusMode" icon="LayoutOff" label="focus" :with-side-control="false" />
     </div>
   </div>
 </template>
@@ -152,7 +155,7 @@
   }
 
   .sb-menu-inner {
-    height: calc(100% - 48px - 16px);
+    height: 100%;
     padding-block: 8px;
     padding-inline: 4px;
     /* no scrollbar in any browser */
