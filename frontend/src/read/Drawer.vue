@@ -60,7 +60,7 @@
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
     background-color: var(--surface-primary);
-    padding: 16px;
+    padding: 8px;
     width: 0;
     transition: width var(--transition-duration) ease;
   }
