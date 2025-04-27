@@ -13,26 +13,16 @@
   const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
 
   const fileSettings = inject("fileSettings");
-
   const focusMode = inject("focusMode");
-  const topbarOpacity = computed(() => (focusMode.value ? "0" : "1"));
-  const topbarHeight = computed(() => (focusMode.value ? "0" : "64px"));
-  const topbarWidth = computed(() =>
-    focusMode.value ? "100%" : "calc(100% - var(--sidebar-width) - var(--outer-padding))"
-  );
 </script>
 
 <template>
-  <div
-    class="tb-wrapper"
-    :class="{ 'with-border': showTitle }"
-    :style="{ height: topbarHeight, width: topbarWidth }"
-  >
-    <Dock class="left-column top" :style="{ opacity: topbarOpacity }">
+  <div class="tb-wrapper" :class="{ 'with-border': showTitle, focus: focusMode }">
+    <Dock class="left-column top">
       <FileTitle v-if="showTitle && component" :doc="doc" class="text-h6" />
     </Dock>
 
-    <Dock class="middle-column top" :style="{ opacity: topbarOpacity }">
+    <Dock class="middle-column top">
       <FileTitle v-if="showTitle && !component" :doc="doc" class="text-h6" />
       <component :is="component" ref="middle-comp" :doc="doc" />
     </Dock>
@@ -46,20 +36,32 @@
     --links-width: 151px;
 
     display: flex;
-
+    height: 64px;
     position: fixed;
     background-color: v-bind("fileSettings.background");
     z-index: 2;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
     padding-right: var(--links-width);
+
+    opacity: 1;
+    transform: translateY(0);
+    width: calc(100% - var(--sidebar-width) - var(--outer-padding));
+    will-change: opacity, transform, width;
     transition:
-      height var(--transition-duration) ease,
+      opacity var(--transition-duration) ease,
+      transform var(--transition-duration) ease,
       width var(--transition-duration) ease;
 
     &.with-border {
       box-shadow: var(--shadow-soft);
     }
+  }
+
+  .tb-wrapper.focus {
+    opacity: 0;
+    transform: translateY(-100%);
+    width: 100%;
   }
 
   .left-column,

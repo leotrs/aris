@@ -80,12 +80,17 @@
     padding: 8px;
     gap: 8px;
     background-color: transparent;
+
     opacity: 1;
-    will-change: opacity;
-    transition: opacity var(--transition-duration) ease;
+    transform: translateX(0);
+    will-change: opacity, transform;
+    transition:
+      opacity var(--transition-duration) ease,
+      transform var(--transition-duration) ease;
   }
 
   .menus.focus {
     opacity: 0;
+    transform: translateX(100%);
   }
 </style>
