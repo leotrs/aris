@@ -13,10 +13,11 @@
   } from "vue";
   import { useElementSize, useScroll } from "@vueuse/core";
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
-  import { useKeyboardShortcuts, registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
+  import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
   import Topbar from "./Topbar.vue";
   import Dock from "./Dock.vue";
+  import Drawer from "./Drawer.vue";
   import PanelSearch from "./PanelSearch.vue";
   import Minimap from "../common/Minimap.vue";
   import PanelCitation from "./PanelCitation.vue";
@@ -138,7 +139,7 @@
 
       <div ref="inner-ref" class="inner-wrapper" :class="{ focus: focusMode }">
         <Dock ref="leftColumnRef" class="left-column">
-          <component :is="validDockComponents[comp]" v-for="comp in left" :doc="doc" />
+          <component :is="validDockComponents[comp]" v-for="comp in left" :key="comp" :doc="doc" />
         </Dock>
 
         <Dock ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
@@ -151,8 +152,10 @@
         </Dock>
 
         <Dock ref="rightColumnRef" class="right-column">
-          <component :is="validDockComponents[comp]" v-for="comp in right" :doc="doc" />
+          <component :is="validDockComponents[comp]" v-for="comp in right" :key="comp" :doc="doc" />
         </Dock>
+
+        <Drawer />
       </div>
     </div>
   </Suspense>
