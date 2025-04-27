@@ -90,12 +90,7 @@
         @mouseleave="onMouseLeaveControl"
       />
     </div>
-    <div
-      class="sb-item-label text-default"
-      :style="{ fontWeight: buttonState ? 'var(--weight-semi)' : 'var(--weight-regular)' }"
-    >
-      {{ label }}
-    </div>
+    <div class="sb-item-label text-default">{{ label }}</div>
   </div>
 </template>
 
@@ -113,6 +108,7 @@
   .sb-item-btn {
     display: flex;
     gap: 16px;
+    align-items: center;
   }
 
   .sb-item-label {
@@ -123,8 +119,11 @@
   }
 
   .sc-wrapper {
+    display: v-bind(controlDisplay);
+    position: absolute;
+    left: calc(64px + 8px);
     opacity: 0.5;
-    display: v-bind("controlDisplay");
+    transition: opacity 0.3s ease;
   }
 
   .sc-wrapper:hover {
