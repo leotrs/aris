@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, reactive, watch } from "vue";
+  import { ref, inject, computed, reactive, watch } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "@/read/SidebarItem.vue";
@@ -66,7 +66,7 @@
   );
 
   /* Focus mode */
-  const focusMode = ref(false);
+  const focusMode = inject("focusMode");
   watch(focusMode, (newVal) => emit("focusMode", newVal));
   const sidebarOpacity = computed(() => (focusMode.value ? "0" : "1"));
   const sidebarWidth = computed(() => (focusMode.value ? "0" : "64px"));
