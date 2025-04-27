@@ -61,10 +61,11 @@
   }
 
   .tabs-content {
-    width: 100%;
+    width: calc(100% + var(--scrollbar-size));
     height: calc(100% - var(--header-height));
     padding-block: 16px;
     overflow-x: hidden;
     overflow-y: auto;
+    scrollbar-gutter: stable;
   }
 </style>
