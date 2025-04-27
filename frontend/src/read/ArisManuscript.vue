@@ -149,7 +149,7 @@
           <component :is="validDockComponents[comp]" v-for="comp in right" :key="comp" :doc="doc" />
         </Dock>
 
-        <Drawer />
+        <Drawer :class="{ focus: focusMode }" />
       </div>
     </div>
   </Suspense>
@@ -233,6 +233,11 @@
     padding-inline: 16px;
     padding-block: 16px;
     height: 100%;
+  }
+
+  .d-wrapper.focus {
+    opacity: 0;
+    transition: opacity var(--transition-duration) ease;
   }
 
   :deep(.float-minimap-wrapper) {

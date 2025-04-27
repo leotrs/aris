@@ -60,7 +60,7 @@
     display: flex;
     align-items: flex-start;
     right: 0;
-    z-index: 1;
+    z-index: 2;
   }
 
   .d-btn {
