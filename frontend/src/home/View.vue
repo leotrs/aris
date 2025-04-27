@@ -8,8 +8,8 @@
   const showModal = ref(false);
   const isMobile = inject("isMobile");
 
-  const selectedForPreview = ref(null);
-  const setSelectedForPreview = (doc) => (selectedForPreview.value = doc);
+  const selectedForPreview = ref({});
+  const setSelectedForPreview = (doc) => (selectedForPreview.value = doc || {});
 
   /* handle draggable border and pane height */
   const borderPos = ref(50);
@@ -19,10 +19,10 @@
   const offsetPercent = computed(() => (offset / panesHeight.value) * 100);
 
   const filesHeight = computed(() =>
-    selectedForPreview.value ? `calc(${borderPos.value}% - 4px)` : "100%"
+    selectedForPreview.value?.id ? `calc(${borderPos.value}% - 4px)` : "100%"
   );
   const previewHeight = computed(() =>
-    selectedForPreview.value ? `calc(${100 - borderPos.value}% - 4px)` : "0%"
+    selectedForPreview.value?.id ? `calc(${100 - borderPos.value}% - 4px)` : "0%"
   );
 </script>
 

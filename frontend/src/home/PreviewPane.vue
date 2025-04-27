@@ -16,8 +16,8 @@
   const emit = defineEmits(["set-selected"]);
   const router = useRouter();
 
-  const read = () => router.push(`/${props.doc.id}/read`);
-  const close = () => emit("set-selected", "");
+  const read = () => props.doc?.id && router.push(`/${props.doc.id}/read`);
+  const close = () => emit("set-selected", {});
 
   useClosable({ onClose: close, closeOnOutsideClick: false });
 
@@ -37,7 +37,7 @@
   });
 
   /* Transition */
-  const paneTop = computed(() => (props.doc ? "0" : "8px"));
+  const paneTop = computed(() => (props.doc?.id ? "0" : "8px"));
 </script>
 
 <template>

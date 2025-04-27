@@ -9,6 +9,7 @@
     text.length > maxLength ? text.substring(0, maxLength) + "..." : text;
 
   const loadAbstract = async () => {
+    if (!props.doc?.id) return;
     try {
       const response = await axios.get(
         `http://localhost:8000/documents/${props.doc.id}/content/abstract?handrails=false`

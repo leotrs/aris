@@ -30,7 +30,7 @@
   let clickTimeout = ref(null);
   const selectForPreview = (doc, idx) => {
     activeIndex.value = idx;
-    clickTimeout.value = setTimeout(() => emit("set-selected", doc), 200);
+    clickTimeout.value = setTimeout(() => emit("set-selected", doc || {}), 200);
   };
   watch(activeIndex, (idx) => {
     if (Number.isNaN(idx)) return;
