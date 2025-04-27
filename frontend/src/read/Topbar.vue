@@ -1,6 +1,6 @@
 <script setup>
   import { inject, computed } from "vue";
-  import Drawer from "./Drawer.vue";
+  import Dock from "./Dock.vue";
 
   const props = defineProps({
     showTitle: { type: Boolean, required: true },
@@ -28,14 +28,14 @@
     :class="{ 'with-border': showTitle }"
     :style="{ height: topbarHeight, width: topbarWidth }"
   >
-    <Drawer class="left-column top" :style="{ opacity: topbarOpacity }">
+    <Dock class="left-column top" :style="{ opacity: topbarOpacity }">
       <FileTitle v-if="showTitle && component" :doc="doc" class="text-h6" />
-    </Drawer>
+    </Dock>
 
-    <Drawer class="middle-column top" :style="{ opacity: topbarOpacity }">
+    <Dock class="middle-column top" :style="{ opacity: topbarOpacity }">
       <FileTitle v-if="showTitle && !component" :doc="doc" class="text-h6" />
       <component :is="component" ref="middle-comp" :doc="doc" />
-    </Drawer>
+    </Dock>
   </div>
 </template>
 

@@ -16,7 +16,7 @@
   import { useKeyboardShortcuts, registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
   import Topbar from "./Topbar.vue";
-  import Drawer from "./Drawer.vue";
+  import Dock from "./Dock.vue";
   import PanelSearch from "./PanelSearch.vue";
   import Minimap from "../common/Minimap.vue";
   import PanelCitation from "./PanelCitation.vue";
@@ -30,7 +30,7 @@
   });
   const doc = inject("doc");
 
-  const validDrawerComponents = {
+  const validDockComponents = {
     /* PanelChat, */
     PanelSearch,
     Minimap,
@@ -134,25 +134,25 @@
 <template>
   <Suspense>
     <div class="outer-wrapper" :class="{ focus: focusMode }">
-      <Topbar :show-title="!isMainTitleVisible" :component="validDrawerComponents[top.at(-1)]" />
+      <Topbar :show-title="!isMainTitleVisible" :component="validDockComponents[top.at(-1)]" />
 
       <div ref="inner-ref" class="inner-wrapper" :class="{ focus: focusMode }">
-        <Drawer ref="leftColumnRef" class="left-column">
-          <component :is="validDrawerComponents[comp]" v-for="comp in left" :doc="doc" />
-        </Drawer>
+        <Dock ref="leftColumnRef" class="left-column">
+          <component :is="validDockComponents[comp]" v-for="comp in left" :doc="doc" />
+        </Dock>
 
-        <Drawer ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
+        <Dock ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
           <ManuscriptWrapper
             ref="manuscript-ref"
             :html="htmlContent"
             :keys="true"
             :show-footer="true"
           />
-        </Drawer>
+        </Dock>
 
-        <Drawer ref="rightColumnRef" class="right-column">
-          <component :is="validDrawerComponents[comp]" v-for="comp in right" :doc="doc" />
-        </Drawer>
+        <Dock ref="rightColumnRef" class="right-column">
+          <component :is="validDockComponents[comp]" v-for="comp in right" :doc="doc" />
+        </Dock>
       </div>
     </div>
   </Suspense>
