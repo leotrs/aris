@@ -5,6 +5,7 @@
 
   const active = defineModel({ type: Boolean, default: false });
   const doc = inject("doc");
+  const columnSizes = inject("columnSizes");
 
   /* State */
   const tabsRef = useTemplateRef("tabs-ref");
@@ -26,7 +27,7 @@
 </script>
 
 <template>
-  <div class="d-wrapper">
+  <div class="d-wrapper" :style="{ height: `${columnSizes.right.height}px` }">
     <ButtonToggle
       v-model="active"
       :icon="active ? 'LayoutSidebarRightCollapse' : 'LayoutSidebarRightExpand'"
@@ -75,13 +76,13 @@
   }
 
   .drawer {
-    height: 500px;
     border: var(--border-extrathin) solid var(--border-primary);
     border-right-color: transparent;
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
     background-color: var(--surface-primary);
     padding: var(--padding);
+    height: calc(100%);
     pointer-events: none;
     box-shadow: var(--shadow-strong), var(--shadow-soft);
 
