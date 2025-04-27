@@ -27,7 +27,7 @@
 </script>
 
 <template>
-  <div class="d-wrapper" :style="{ height: `${columnSizes.right.height}px` }">
+  <div class="d-wrapper" :class="{ active }" :style="{ height: `${columnSizes.right.height}px` }">
     <ButtonToggle
       v-model="active"
       :icon="active ? 'LayoutSidebarRightCollapse' : 'LayoutSidebarRightExpand'"
@@ -62,6 +62,12 @@
     align-items: flex-start;
     right: 0;
     z-index: 2;
+    transform: translateX(calc(100% - 32px - 8px - 8px));
+    transition: transform var(--transition-duration) ease;
+  }
+
+  .d-wrapper.active {
+    transform: translateX(0);
   }
 
   .d-btn {
@@ -85,18 +91,17 @@
     height: calc(100%);
     pointer-events: none;
     box-shadow: var(--shadow-strong), var(--shadow-soft);
+    width: calc(64px * 5 + + 4px * 4 + 2 * var(--padding));
 
-    width: 0;
     opacity: 0;
-
     transition:
-      width var(--transition-duration) ease,
+      transform var(--transition-duration) ease,
       opacity var(--transition-duration) ease;
   }
 
   .drawer.active {
     pointer-events: all;
-    width: calc(64px * 5 + + 4px * 4 + 2 * var(--padding));
+    transform: transformX(0);
     opacity: 1;
   }
 </style>
