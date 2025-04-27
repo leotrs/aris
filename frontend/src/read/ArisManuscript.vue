@@ -13,6 +13,7 @@
   } from "vue";
   import { useElementSize, useScroll } from "@vueuse/core";
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
+  import { useKeyboardShortcuts, registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
   import Topbar from "./Topbar.vue";
   import Drawer from "./Drawer.vue";
@@ -122,6 +123,9 @@
     () => (yScroll.value / (manuscriptRef.value?.$el.clientHeight ?? 1)) * 100
   );
   provide("yScroll", yScrollPercent);
+
+  /* Keyboard shortcuts */
+  registerAsFallback(manuscriptRef);
 
   /* Focus mode */
   const focusMode = inject("focusMode");

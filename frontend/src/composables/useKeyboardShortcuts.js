@@ -1,5 +1,6 @@
 import {
   ref,
+  computed,
   reactive,
   getCurrentInstance,
   onMounted,
@@ -22,6 +23,8 @@ const listeners = ref({});
 const lastKeyPressed = ref("");
 const sequenceTimeout = ref(null);
 const SEQUENCE_DELAY = 500;
+let isForwardingEvent = false;
+let fallbackComponent = computed(() => null);
 
 
 /* Event dispatching */
@@ -97,7 +100,8 @@ const tryHandleKeyEvent = (ev, componentRef, key) => {
 };
 
 const handleKeyDown = (ev) => {
-  if (ev.target.tagName === 'INPUT'
+  if (isForwardingEvent
+    || ev.target.tagName === 'INPUT'
     || ev.target.tagName === 'TEXTAREA'
     || ev.target.isContentEditable
     || hasModifiers(ev)) {
@@ -105,12 +109,38 @@ const handleKeyDown = (ev) => {
   }
 
   const key = ev.key.toLowerCase();
-  if (components.length === 0) return;
+  if (components.length === 0 && !fallbackComponent.value) return;
   console.log('Key pressed:', key, '. Last key:', lastKeyPressed.value);
 
   // Try components in reverse order (most recently activated first)
   for (let i = components.length - 1; i >= 0; i--) {
     if (tryHandleKeyEvent(ev, components[i], key)) return;
+  }
+
+  // Try the fallback component
+  if (!fallbackComponent.value) return;
+  isForwardingEvent = true;
+  console.log("trying fallback:", fallbackComponent.value.$el);
+  try {
+    const clonedEvent = new KeyboardEvent('keydown', {
+      key: ev.key,
+      code: ev.code,
+      keyCode: ev.keyCode,
+      charCode: ev.charCode,
+      which: ev.which,
+      altKey: ev.altKey,
+      ctrlKey: ev.ctrlKey,
+      metaKey: ev.metaKey,
+      shiftKey: ev.shiftKey,
+      repeat: ev.repeat,
+      bubbles: true,
+      cancelable: true
+    });
+    fallbackComponent.value.$el.focus();
+    fallbackComponent.value.$el.dispatchEvent(clonedEvent);
+    if (clonedEvent.defaultPrevented) ev.preventDefault();
+  } finally {
+    isForwardingEvent = false;
   }
 };
 
@@ -169,4 +199,14 @@ export function useKeyboardShortcuts(shortcuts, autoActivate = true) {
   onMounted(() => (autoActivate ? activate() : null));
   onBeforeUnmount(() => { deactivate(); listeners.value[componentId] = {}; });
   return { activate, deactivate, isRegistered };
+}
+
+export function registerAsFallback(component) {
+  fallbackComponent = computed(() => component?.value || null);
+
+  if (!getCurrentInstance()) return;
+  onBeforeUnmount(() => {
+    if (refToKey(fallbackComponent.value) === refToKey(component.value))
+      fallbackComponent = computed(() => null);
+  });
 }
