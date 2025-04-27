@@ -45,4 +45,10 @@
     box-shadow: var(--shadow-soft);
     border-bottom-color: var(--border-action);
   }
+
+  .tab-wrapper .tabler-icon {
+    margin-top: 4px;
+    margin-bottom: 2px;
+    stroke-width: 1.5px;
+  }
 </style>
