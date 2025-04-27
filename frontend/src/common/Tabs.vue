@@ -53,5 +53,6 @@
     border-radius: 8px;
     width: fit-content;
     background-color: var(--surface-hover);
+    margin-bottom: 8px;
   }
 </style>

@@ -9,6 +9,7 @@
 </template>
 
 <style>
-  .tab-wrapper {
+  .tab-page-wrapper {
+    padding-inline: 8px;
   }
 </style>
