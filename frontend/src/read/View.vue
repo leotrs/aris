@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, reactive, inject, provide, onBeforeMount } from "vue";
+  import { ref, reactive, inject, provide, onBeforeMount } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
@@ -8,7 +8,7 @@
 
   const docID = `${useRoute().params.doc_id}`;
   const user = inject("user");
-  const doc = ref({});
+  const doc = ref({ id: -1, tags: [] });
 
   onBeforeMount(async () => {
     try {

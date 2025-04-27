@@ -5,7 +5,7 @@
 
 <template>
   <div class="wrapper">
-    <span class="text-label">Tags: </span>
+    <span class="text-label">Tags</span>
     <div class="tag-row">
       <TagRow v-model="doc.tags" :doc-id="doc.id" />
     </div>

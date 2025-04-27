@@ -1,5 +1,5 @@
 <script setup>
-  import { reactive, computed, watch } from "vue";
+  import { reactive, computed, watch, onMounted } from "vue";
 
   const props = defineProps({
     labels: { type: Array, default: null },
@@ -23,6 +23,7 @@
       }
     }
   );
+  onMounted(() => (tabStates.active[0] = true));
 </script>
 
 <template>
