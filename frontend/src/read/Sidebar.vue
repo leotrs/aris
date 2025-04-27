@@ -67,7 +67,6 @@
 
   /* Focus mode */
   const focusMode = inject("focusMode");
-  watch(focusMode, (newVal) => emit("focusMode", newVal));
 </script>
 
 <template>
@@ -112,6 +111,7 @@
     max-width: 64px;
     width: 64px;
     top: 0;
+    will-change: width, top;
     transition:
       width var(--transition-duration) ease,
       top var(--transition-duration) ease;
@@ -128,6 +128,7 @@
     padding: 25px 17px 9px 17px;
     width: 64px;
     opacity: 1;
+    will-change: width, opacity;
     transition:
       width var(--transition-duration) ease,
       opacity var(--transition-duration) ease;
@@ -155,6 +156,7 @@
     left: 0;
     width: 64px;
     opacity: 1;
+    will-change: width, opacity;
     transition:
       width var(--transition-duration) ease,
       opacity var(--transition-duration) ease;
@@ -189,8 +191,7 @@
 
   .layout-on {
     position: fixed;
-    bottom: 0;
-    margin-inline: 8px;
-    margin-block: 32px;
+    bottom: 21px;
+    margin: 8px;
   }
 </style>
