@@ -556,7 +556,7 @@
   });
 
   /* Highlight scroll position */
-  const yScroll = inject("yScroll");
+  const yScroll = inject("yScroll", ref(null));
   watch(yScroll, (newVal) => highlightScrollPos(newVal));
 </script>
 
