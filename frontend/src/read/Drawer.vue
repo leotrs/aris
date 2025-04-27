@@ -1,6 +1,7 @@
 <script setup>
   import { ref, watch, inject, useTemplateRef, onMounted } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import TabCitation from "./TabCitation.vue";
 
   const active = defineModel({ type: Boolean, default: false });
   const doc = inject("doc");
@@ -40,8 +41,8 @@
       >
         <TabPage>activity</TabPage>
         <TabPage>history</TabPage>
+        <TabPage><TabCitation /></TabPage>
         <TabPage><TagRow v-model="doc.tags" :doc-id="doc.id" /></TabPage>
-        <TabPage>citation</TabPage>
         <TabPage>settings</TabPage>
       </Tabs>
     </div>
@@ -67,6 +68,7 @@
     border-bottom-left-radius: 16px;
     background-color: var(--surface-primary);
     padding: var(--padding);
+
     width: 0;
     transition: width var(--transition-duration) ease;
   }

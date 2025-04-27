@@ -41,13 +41,13 @@
   }
 
   .tab-wrapper.active {
-    background-color: var(--surface-hint);
-    box-shadow: var(--shadow-soft);
+    background-color: var(--information-100);
+    box-shadow: var(--shadow-strong);
     border-bottom-color: var(--border-action);
   }
 
   .tab-wrapper .tabler-icon {
-    margin-top: 4px;
+    margin-top: 6px;
     margin-bottom: 2px;
     stroke-width: 1.5px;
   }

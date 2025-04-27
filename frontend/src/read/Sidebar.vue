@@ -18,13 +18,6 @@
     },
     Minimap: { icon: "MapPin", label: "map", preferredSide: "left", key: "m", state: false },
     Comments: { icon: "Message", label: "comments", preferredSide: "left", key: "c", state: false },
-    PanelCitation: {
-      icon: "Quote",
-      label: "citation",
-      preferredSide: "left",
-      key: "b",
-      state: false,
-    },
     PanelSymbols: {
       icon: "Variable",
       label: "symbols",
