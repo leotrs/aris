@@ -38,7 +38,7 @@
       <Tabs
         ref="tabs-ref"
         v-model="activeTabIndex"
-        :labels="['activity', 'history', 'citation', 'tags', 'settings']"
+        :labels="['Activity', 'History', 'Citation', 'Tags', 'Settings']"
         :icons="['Bolt', 'Clock', 'Quote', 'Tag', 'FileSettings']"
       >
         <TabPage>activity</TabPage>

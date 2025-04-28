@@ -58,7 +58,6 @@
     height: 2px;
     width: 100%;
     background-color: var(--light);
-    z-index: -1;
   }
 
   .s-stop {
@@ -66,6 +65,7 @@
     width: 8px;
     border-radius: 4px;
     background-color: var(--light);
+    z-index: 1;
     border: var(--border-thin) solid transparent;
 
     &.active {
