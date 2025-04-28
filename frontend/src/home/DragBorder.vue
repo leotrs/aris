@@ -4,38 +4,39 @@
 
   const props = defineProps({
     active: { type: Boolean, default: false },
-    offset: { type: Number, required: true },
+    boxTop: { type: Number, required: true },
+    boxBot: { type: Number, default: 48 + 16 },
     parentHeight: { type: Number, required: true },
   });
-  const pos = defineModel({ type: Number });
   const pointerEvents = computed(() => (props.active ? "all" : "none"));
 
-  const bottom = 48 + 16;
-  const containerBottom = computed(() => Math.min((bottom / props.parentHeight) * 100, 95));
-  const offsetPercent = computed(() => Math.max((props.offset / props.parentHeight) * 100, 5));
-  const containerRef = useTemplateRef("container-ref");
-  const containerHeight = computed(() => containerRef.value?.clientHeight ?? 1);
+  const topPercent = computed(() => Math.max((props.boxTop / props.parentHeight) * 100, 5));
+  const botPercent = computed(() => Math.min((props.boxBot / props.parentHeight) * 100, 95));
+  const boxRef = useTemplateRef("box-ref");
+  const boxHeight = computed(() => boxRef.value?.clientHeight ?? 1);
   const handleTop = ref("0%");
+
+  const pos = defineModel({ type: Number });
   const onDrag = (newPos) => {
-    const containerHeightPercent = 100 - containerBottom.value;
+    const boxHeightPercent = (boxHeight.value / props.parentHeight) * 100;
     pos.value =
-      (newPos.y / containerHeight.value) * (containerHeightPercent - props.offsetPercent) +
-      props.offsetPercent;
-    handleTop.value = `${(newPos.y / containerHeight.value) * 100}%`;
+      (newPos.y / boxHeight.value) * (boxHeightPercent - props.offsetPercent) + props.offsetPercent;
+    handleTop.value = `${(newPos.y / boxHeight.value) * 100}%`;
+    console.log(newPos, handleTop.value);
   };
-  onMounted(() => onDrag(offsetPercent.value));
   useDraggable(useTemplateRef("handle-ref"), {
     initialValue: { x: 0, y: 0 },
     preventDefault: true,
     axis: "y",
-    containerElement: containerRef,
+    containerElement: boxRef,
     onMove: onDrag,
   });
+  onMounted(() => onDrag(topPercent.value));
 </script>
 
 <template>
   <div class="spacer"></div>
-  <div ref="container-ref" class="container" :style="{ bottom: `${bottom}px`, top: `${offset}px` }">
+  <div ref="box-ref" class="box" :style="{ bottom: `${boxBot}px`, top: `${boxTop}px` }">
     <div
       ref="handle-ref"
       class="handle"
@@ -49,7 +50,7 @@
     height: 8px;
   }
 
-  .container {
+  .box {
     position: absolute;
     width: 100%;
     pointer-events: none;
