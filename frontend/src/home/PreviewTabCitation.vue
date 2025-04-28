@@ -1,7 +1,5 @@
 <script setup></script>
 
-<template>
-  <PanelCitation />
-</template>
+<template></template>
 
 <style scoped></style>
