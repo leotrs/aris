@@ -1,5 +1,5 @@
 <script setup>
-  import { reactive, computed, watch, onMounted } from "vue";
+  import { reactive, computed, watch, onMounted, useTemplateRef } from "vue";
 
   const props = defineProps({
     labels: { type: Array, default: null },
@@ -24,10 +24,20 @@
     }
   );
   onMounted(() => (tabStates.active[0] = true));
+
+  const contentRef = useTemplateRef("content-ref");
+  const updatePages = () => {
+    if (!contentRef.value) return;
+    const pages = contentRef.value.querySelectorAll(".tab-page-wrapper");
+    pages.forEach((page) => (page.style.display = "none"));
+    pages[activeIndex.value].style.display = "block";
+  };
+  watch(activeIndex, () => updatePages(), { immediate: true });
+  onMounted(() => updatePages());
 </script>
 
 <template>
-  <div class="tabs-wrapper">
+  <div ref="self-ref" class="tabs-wrapper">
     <div class="tabs-header">
       <div v-for="count in numTabs" :key="count" class="tabs-header-item">
         <Tab
@@ -37,7 +47,7 @@
         />
       </div>
     </div>
-    <div class="tabs-content">
+    <div ref="content-ref" class="tabs-content">
       <slot />
     </div>
   </div>

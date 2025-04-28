@@ -11,15 +11,6 @@
   const tabsRef = useTemplateRef("tabs-ref");
   const activeTabIndex = ref(0);
 
-  const updatePages = () => {
-    if (!tabsRef.value || !tabsRef.value.$el) return;
-    const pages = tabsRef.value.$el.querySelectorAll(".tab-page-wrapper");
-    pages.forEach((page) => (page.style.display = "none"));
-    pages[activeTabIndex.value].style.display = "block";
-  };
-  watch(activeTabIndex, () => updatePages(), { immediate: true });
-  onMounted(() => updatePages());
-
   /* Keys */
   useKeyboardShortcuts({
     d: () => (active.value = !active.value),
