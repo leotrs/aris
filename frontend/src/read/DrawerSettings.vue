@@ -48,7 +48,7 @@
 
 <template>
   <div class="settings">
-    <div class="ol-content">
+    <div class="content">
       <div class="sec">
         <div class="sec-header">
           <span class="text-label">Colors</span>
@@ -57,10 +57,10 @@
           <div class="row">
             <span class="label">Theme</span>
             <span class="control">
-              <SegmentedControl :icons="['Sun', 'SunMoon', 'Moon']" :default-active="1" />
+              <ThemeSwitch />
             </span>
           </div>
-          <div class="column">
+          <div class="row">
             <span class="label">Background</span>
             <ColorPicker :colors="colors" @change="onChangeBackground" />
           </div>
@@ -133,7 +133,8 @@
       </div>
     </div>
 
-    <div class="ol-footer">
+    <div class="footer">
+      <Button kind="secondary" text="Reset" />
       <Button kind="secondary" text="Cancel" />
       <Button kind="primary" text="Save" />
     </div>
@@ -141,35 +142,13 @@
 </template>
 
 <style scoped>
-  .overlay {
-    min-width: 216px;
+  .settings {
     display: flex;
     flex-direction: column;
-    background-color: var(--surface-primary);
-    border: var(--border-thin) solid var(--border-primary);
-    border-radius: 16px;
-    padding: 16px;
-    gap: 16px;
-    position: fixed;
-    z-index: 100;
+    gap: 24px;
   }
 
-  .pane-header {
-    width: 100%;
-
-    & .left {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    & .right {
-      display: flex;
-      align-items: center;
-    }
-  }
-
-  .ol-content {
+  .content {
     display: flex;
     flex-direction: column;
     gap: 24px;
@@ -181,6 +160,7 @@
     }
 
     & .sec-header {
+      height: 32px;
       border-bottom: 2px solid var(--border-information);
       padding-inline: 8px;
     }
@@ -193,7 +173,7 @@
     }
   }
 
-  .ol-footer {
+  .footer {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
@@ -202,51 +182,18 @@
 
   .row {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 24px;
     align-items: center;
 
     & .label {
-      min-width: 64px;
+      text-align: left;
+      width: 80px;
     }
 
     & .control {
       flex-grow: 1;
     }
-  }
-
-  .row.size :deep(.s-wrapper) {
-    align-items: baseline !important;
-  }
-
-  .row.size :deep(.s-label:first-child) {
-    font-size: 14px !important;
-    width: 20px;
-    height: 20px;
-    margin: 6px;
-    margin-bottom: 2px;
-    padding-inline: 2.5px;
-  }
-
-  .row.size :deep(.s-label:last-child) {
-    font-size: 18px !important;
-    width: 20px;
-    height: 20px;
-    padding-inline: 0.5px;
-    margin: 6px;
-  }
-
-  .row.style :deep(.sc-item:first-child) {
-    padding: 4px 4px 4px 8px !important;
-  }
-  .row.style :deep(.sc-item:first-child .sc-label) {
-    font-family: "Source Sans 3" !important;
-  }
-
-  .row.style :deep(.sc-item:last-child) {
-    padding: 4px 8px 4px 4px !important;
-  }
-  .row.style :deep(.sc-item:last-child .sc-label) {
-    font-family: "Source Serif 4" !important;
   }
 
   .column {
@@ -255,7 +202,59 @@
     gap: 4px;
   }
 
-  :deep(.sc-btn) {
-    padding: 0 !important;
+  .control {
+    & :deep(.sc-btn) {
+      padding: 0;
+    }
+
+    & :deep(.sc-btn .tabler-icon) {
+      margin: 4px;
+    }
+
+    & :deep(.sc-btn:first-child .tabler-icon) {
+      margin-left: 6px;
+    }
+
+    & :deep(.sc-btn:last-child .tabler-icon) {
+      margin-right: 6px;
+    }
+  }
+
+  .style {
+    & :deep(.sc-item .sc-label) {
+      padding-block: 4px;
+      padding-inline: 6px;
+    }
+
+    & :deep(.sc-item:first-child .sc-label) {
+      font-family: "Source Sans 3" !important;
+    }
+
+    & :deep(.sc-item:last-child .sc-label) {
+      font-family: "Source Serif 4" !important;
+    }
+  }
+
+  .size {
+    & :deep(.s-wrapper) {
+      align-items: baseline !important;
+    }
+
+    & :deep(.s-label:first-child) {
+      font-size: 14px !important;
+      width: 20px;
+      height: 20px;
+      margin: 6px;
+      margin-bottom: 2px;
+      padding-inline: 2.5px;
+    }
+
+    & :deep(.s-label:last-child) {
+      font-size: 18px !important;
+      width: 20px;
+      height: 20px;
+      padding-inline: 0.5px;
+      margin: 6px;
+    }
   }
 </style>

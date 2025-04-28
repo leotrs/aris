@@ -6,7 +6,6 @@
 
   const active = defineModel({ type: Boolean, default: false });
   const doc = inject("doc");
-  const columnSizes = inject("columnSizes");
 
   /* State */
   const tabsRef = useTemplateRef("tabs-ref");
@@ -28,7 +27,7 @@
 </script>
 
 <template>
-  <div class="d-wrapper" :class="{ active }" :style="{ height: `${columnSizes.right.height}px` }">
+  <div class="d-wrapper" :class="{ active }">
     <ButtonToggle
       v-model="active"
       :icon="active ? 'LayoutSidebarRightCollapse' : 'LayoutSidebarRightExpand'"
@@ -57,6 +56,7 @@
     --transition-duration: 0.3s;
     --tab-width: 64px;
     --padding: 8px;
+    --border-width: var(--border-extrathin);
 
     position: fixed;
     display: flex;
@@ -74,7 +74,8 @@
 
   .d-btn {
     position: relative;
-    top: 20px;
+    top: calc(var(--padding) + 8px);
+    right: calc(-1 * var(--padding) - var(--border-width));
   }
 
   .d-btn.active {
@@ -84,19 +85,22 @@
   }
 
   .drawer {
-    border: var(--border-extrathin) solid var(--border-primary);
+    border: var(--border-width) solid var(--border-primary);
     border-right-color: transparent;
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
     background-color: var(--surface-primary);
     padding: var(--padding);
-    height: calc(100%);
     pointer-events: none;
     box-shadow: var(--shadow-strong), var(--shadow-soft);
     width: calc(64px * 5 + + 4px * 4 + 2 * var(--padding));
+    height: fit-content;
+    max-height: 100%;
 
     opacity: 0;
-    transition: opacity var(--transition-duration) ease;
+    transition:
+      opacity var(--transition-duration) ease,
+      height var(--transition-duration) ease;
   }
 
   .drawer.active {
