@@ -49,7 +49,7 @@
 
       <div class="right"><ButtonClose @close="close" /></div>
     </Header>
-    <div class="pane-content">
+    <div v-if="doc && 'tags' in doc && 'id' in doc" class="pane-content">
       <Tabs
         ref="tabs-ref"
         v-model="activeTabIndex"
