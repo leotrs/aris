@@ -23,9 +23,6 @@
   useKeyboardShortcuts({
     enter: () => read(),
   });
-
-  /* Transition */
-  const paneTop = computed(() => (props.doc?.id ? "0" : "8px"));
 </script>
 
 <template>

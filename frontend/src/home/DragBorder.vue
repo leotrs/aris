@@ -5,12 +5,11 @@
   const props = defineProps({
     active: { type: Boolean, default: false },
     boxTop: { type: Number, required: true },
-    boxBot: { type: Number, default: 48 + 24 },
+    boxBot: { type: Number, default: 48 + 2 * 8 + 8 }, // height of the Preview pane header + 2 * padding + outer padding
     parentHeight: { type: Number, required: true },
   });
   const pointerEvents = computed(() => (props.active ? "all" : "none"));
 
-  const botPercent = computed(() => Math.min((props.boxBot / props.parentHeight) * 100, 95));
   const boxRef = useTemplateRef("box-ref");
   const { height: boxHeight } = useElementSize(boxRef);
   const boxHeightPercent = computed(() => (boxHeight.value / props.parentHeight) * 100);

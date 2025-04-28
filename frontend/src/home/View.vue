@@ -25,11 +25,17 @@
   const previewHeight = computed(() =>
     selectedForPreview.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
   );
+
+  /* Dragging should be instantaneous, thus we only want a transition when NOT dragging */
   const borderRef = useTemplateRef("border-ref");
   const paneHeightTransition = computed(() => {
     if (!borderRef.value) return "";
     else return borderRef.value.isDragging ? "" : "height var(--transition-duration) ease";
   });
+
+  /* Since the gap between panes is 8px but the outer padding is 16px, when the Preview
+   * pane is inactive, its top edge peeks out by 8px. This hides it. */
+  const previewPaneTop = computed(() => (selectedForPreview.value?.id ? "0" : "8px"));
 </script>
 
 <template>
@@ -59,7 +65,7 @@
       <PreviewPane
         v-if="!isMobile"
         :doc="selectedForPreview"
-        :style="{ height: previewHeight }"
+        :style="{ height: previewHeight, top: previewPaneTop }"
         @set-selected="setSelectedForPreview"
       />
     </div>
