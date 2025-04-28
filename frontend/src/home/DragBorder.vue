@@ -29,19 +29,6 @@
   const onDrag = (newPos) => {
     const posFraction = updateBorderPos(newPos.y);
     updatePos(posFraction);
-
-    /* console.log(
-     *   "newPos.y",
-     *   newPos.y,
-     *   "pos",
-     *   pos.value,
-     *   "posFraction",
-     *   posFraction,
-     *   "boxHeight",
-     *   boxHeight.value,
-     *   "boxHeightPercent",
-     *   boxHeightPercent.value
-     * ) */
   };
   const { isDragging } = useDraggable(useTemplateRef("handle-ref"), {
     initialValue: { x: 0, y: 0 },
