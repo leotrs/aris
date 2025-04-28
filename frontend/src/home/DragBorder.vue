@@ -1,6 +1,6 @@
 <script setup>
-  import { ref, computed, useTemplateRef, onMounted } from "vue";
-  import { useDraggable } from "@vueuse/core";
+  import { ref, computed, useTemplateRef, onMounted, watch } from "vue";
+  import { useDraggable, useElementSize } from "@vueuse/core";
 
   const props = defineProps({
     active: { type: Boolean, default: false },
@@ -10,19 +10,39 @@
   });
   const pointerEvents = computed(() => (props.active ? "all" : "none"));
 
-  const topPercent = computed(() => Math.max((props.boxTop / props.parentHeight) * 100, 5));
   const botPercent = computed(() => Math.min((props.boxBot / props.parentHeight) * 100, 95));
   const boxRef = useTemplateRef("box-ref");
-  const boxHeight = computed(() => boxRef.value?.clientHeight ?? 1);
-  const handleTop = ref("0%");
+  const { height: boxHeight } = useElementSize(boxRef);
+  const boxHeightPercent = computed(() => (boxHeight.value / props.parentHeight) * 100);
+  const topPercent = computed(() => (props.boxTop / props.parentHeight) * 100);
+
+  const borderPos = ref("0%");
+  const updateBorderPos = (y) => {
+    const posFraction = y / boxHeight.value;
+    borderPos.value = `${posFraction * 100}%`;
+    return posFraction;
+  };
 
   const pos = defineModel({ type: Number });
+  const updatePos = (frac) => {
+    pos.value = frac * boxHeightPercent.value + topPercent.value;
+  };
   const onDrag = (newPos) => {
-    const boxHeightPercent = (boxHeight.value / props.parentHeight) * 100;
-    pos.value =
-      (newPos.y / boxHeight.value) * (boxHeightPercent - props.offsetPercent) + props.offsetPercent;
-    handleTop.value = `${(newPos.y / boxHeight.value) * 100}%`;
-    console.log(newPos, handleTop.value);
+    const posFraction = updateBorderPos(newPos.y);
+    updatePos(posFraction);
+
+    console.log(
+      "newPos.y",
+      newPos.y,
+      "pos",
+      pos.value,
+      "posFraction",
+      posFraction,
+      "boxHeight",
+      boxHeight.value,
+      "boxHeightPercent",
+      boxHeightPercent.value
+    );
   };
   useDraggable(useTemplateRef("handle-ref"), {
     initialValue: { x: 0, y: 0 },
@@ -31,7 +51,6 @@
     containerElement: boxRef,
     onMove: onDrag,
   });
-  onMounted(() => onDrag(topPercent.value));
 </script>
 
 <template>
@@ -40,7 +59,7 @@
     <div
       ref="handle-ref"
       class="handle"
-      :style="{ 'pointer-events': pointerEvents, top: handleTop }"
+      :style="{ 'pointer-events': pointerEvents, top: borderPos }"
     ></div>
   </div>
 </template>

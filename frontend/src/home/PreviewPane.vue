@@ -29,7 +29,7 @@
 </script>
 
 <template>
-  <div id="preview" class="pane" :style="{ top: paneTop }">
+  <div id="preview" class="pane">
     <Header>
       <div class="left"></div>
 
