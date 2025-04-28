@@ -31,26 +31,31 @@
     const posFraction = updateBorderPos(newPos.y);
     updatePos(posFraction);
 
-    console.log(
-      "newPos.y",
-      newPos.y,
-      "pos",
-      pos.value,
-      "posFraction",
-      posFraction,
-      "boxHeight",
-      boxHeight.value,
-      "boxHeightPercent",
-      boxHeightPercent.value
-    );
+    /* console.log(
+     *   "newPos.y",
+     *   newPos.y,
+     *   "pos",
+     *   pos.value,
+     *   "posFraction",
+     *   posFraction,
+     *   "boxHeight",
+     *   boxHeight.value,
+     *   "boxHeightPercent",
+     *   boxHeightPercent.value
+     * ) */
   };
-  useDraggable(useTemplateRef("handle-ref"), {
+  const draggable = useDraggable(useTemplateRef("handle-ref"), {
     initialValue: { x: 0, y: 0 },
     preventDefault: true,
     axis: "y",
     containerElement: boxRef,
     onMove: onDrag,
   });
+  watch(
+    () => draggable.isDragging.value,
+    (newVal) => console.log(newVal)
+  );
+  defineExpose({ isDragging: () => draggable.isDragging.value });
 </script>
 
 <template>

@@ -75,7 +75,6 @@
 
     position: relative;
     overflow-y: hidden;
-    transition: top var(--transition-duration) ease;
   }
 
   .pane-header {
