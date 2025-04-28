@@ -8,7 +8,7 @@
 </script>
 
 <template>
-  <div class="item">
+  <div class="item" :class="mode">
     <component :is="Icons['Icon' + props.icon]" class="cmi-icon" />
     <span class="cmi-caption">{{ caption }}</span>
   </div>

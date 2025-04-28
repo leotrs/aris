@@ -1,27 +1,38 @@
 <script setup>
-  import { useTemplateRef } from "vue";
-  const props = defineProps({ icon: { type: String, default: "Dots" } });
+  import { computed, useTemplateRef } from "vue";
+  const props = defineProps({
+    icon: { type: String, default: "Dots" },
+    mode: { type: String, default: "ContextMenu" },
+  });
+  const comp = computed(() => (props.mode == "ContextMenu" ? "ContextMenuItem" : "Button"));
+  const childProps = (icon, caption) => {
+    if (props.mode == "ContextMeu") return { icon: icon, caption: caption };
+    else if (props.mode == "ButtonRow")
+      return { icon: icon, caption: caption, kind: "tertiary", size: "sm", textFloat: "bottom" };
+  };
 
   const menuRef = useTemplateRef("menu-ref");
   defineExpose({ toggle: () => menuRef.value?.toggle() });
 </script>
 
 <template>
-  <div class="fm-wrapper">
-    <ContextMenu ref="menu-ref" :icon="icon" button-size="btn-md">
-      <ContextMenuItem icon="Bolt" caption="Activity" />
-      <ContextMenuItem icon="Clock" caption="History" />
+  <div class="fm-wrapper" :class="mode">
+    <component :is="mode" ref="menu-ref" :icon="icon" button-size="btn-md">
+      <template v-if="mode == 'ContextMenu'">
+        <component :is="comp" v-bind="childProps('Bolt', 'Activity')" />
+        <component :is="comp" v-bind="childProps('Clock', 'History')" />
+      </template>
       <Separator />
-      <ContextMenuItem icon="Share3" caption="Share" />
-      <ContextMenuItem icon="UserPlus" caption="Collaborate" />
+      <component :is="comp" v-bind="childProps('Share3', 'Share')" />
+      <component :is="comp" v-bind="childProps('UserPlus', 'Collaborate')" />
       <Separator />
-      <ContextMenuItem icon="Download" caption="Download" />
-      <ContextMenuItem icon="FileExport" caption="Export" />
+      <component :is="comp" v-bind="childProps('Download', 'Download')" />
+      <component :is="comp" v-bind="childProps('FileExport', 'Export')" />
       <Separator />
-      <ContextMenuItem icon="Edit" caption="Rename" />
-      <ContextMenuItem icon="Copy" caption="Duplicate" />
-      <ContextMenuItem icon="TrashX" caption="Delete" class="danger" />
-    </ContextMenu>
+      <component :is="comp" v-bind="childProps('Edit', 'Rename')" />
+      <component :is="comp" v-bind="childProps('Copy', 'Duplicate')" />
+      <component :is="comp" v-bind="childProps('TrashX', 'Delete')" class="danger" />
+    </component>
   </div>
 </template>
 
@@ -32,5 +43,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .fm-wrapper.ButtonRow {
+    height: 32px;
+  }
+
+  :deep(.danger) {
+    color: var(--text-error);
+  }
+  :deep(.danger:hover) {
+    background-color: var(--surface-error) !important;
+    color: var(--text-error);
+    border-color: var(--surface-error) !important;
+  }
+  :deep(.danger) .tabler-icon {
+    color: var(--icon-error);
+  }
+  :deep(.danger:hover) .tabler-icon {
+    color: var(--icon-error);
   }
 </style>

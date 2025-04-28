@@ -32,22 +32,7 @@
     <Header>
       <div class="left"></div>
 
-      <div class="middle">
-        <Button
-          kind="primary"
-          size="sm"
-          text-float="bottom"
-          icon="Book"
-          text="Read"
-          @click="read"
-        ></Button>
-        <Button kind="tertiary" size="sm" text-float="bottom" text="Write" icon="Pencil" />
-        <Button kind="tertiary" size="sm" text-float="bottom" text="Review" icon="FileCheck" />
-        <Button kind="tertiary" size="sm" text-float="bottom" text="Share" icon="Share3" />
-        <Button kind="tertiary" size="sm" text-float="bottom" text="Collaborate" icon="UserPlus" />
-        <!-- <Button kind="tertiary" size="sm" text-float="bottom" text="Download" icon="Download" /> -->
-        <!-- <Button kind="tertiary" size="sm" text-float="bottom" text="Export" icon="FileExport" /> -->
-      </div>
+      <div class="middle"><FileMenu mode="ButtonRow" /></div>
 
       <div class="right"><ButtonClose @close="close" /></div>
     </Header>
@@ -64,6 +49,14 @@
         <TabPage><PreviewTabCitation :doc="doc" /></TabPage>
       </Tabs>
     </div>
+    <div class="pane-footer">
+      <div class="left">{{ doc.last_edited_at }}</div>
+      <div class="right">
+        <Button kind="tertiary" size="sm" text="Write" icon="Pencil" />
+        <Button kind="tertiary" size="sm" text="Review" icon="FileCheck" />
+        <Button kind="primary" size="sm" text="Read" icon="Book" @click="read"></Button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -74,6 +67,10 @@
 
     position: relative;
     overflow-y: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding-bottom: 16px !important;
   }
 
   .pane-header {
@@ -117,5 +114,18 @@
     position: relative;
     left: 16px;
     gap: 8px;
+  }
+
+  .pane-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 8px;
+
+    .right {
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+    }
   }
 </style>
