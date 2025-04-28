@@ -60,14 +60,12 @@
     position: absolute;
     width: 100%;
     pointer-events: none;
-    outline: 2px solid blue;
   }
 
   .handle {
     position: absolute;
-    width: 110%;
+    width: 100%;
     height: 8px;
     cursor: row-resize;
-    background-color: pink;
   }
 </style>
