@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, computed, useTemplateRef, watch } from "vue";
+  import { ref, inject, computed, watch, useTemplateRef, onMounted } from "vue";
   import { useElementSize } from "@vueuse/core";
   import Sidebar from "./Sidebar.vue";
   import FilesPane from "./FilesPane.vue";
@@ -12,17 +12,22 @@
   const selectedForPreview = ref({});
   const setSelectedForPreview = (doc) => (selectedForPreview.value = doc || {});
 
-  /* handle draggable border and pane height */
+  /* Handle draggable border and pane height */
   const panesRef = useTemplateRef("panes-ref");
   const { height: panesHeight } = useElementSize(panesRef);
-  const offsetPixels = 16 + 48 + 16 + 40 + 2 + 56; // padding + topbar height + gap + pane header height + margin + height of one item row
+  const boxTopPixels = 16 + 48 + 16 + 40 + 2 + 56; // padding + topbar height + gap + pane header height + margin + height of one item row
   const borderPos = ref(0);
 
+  /* Set panes' heights based on where the border is */
   const filesHeight = computed(() =>
     selectedForPreview.value?.id ? `calc(${borderPos.value}%)` : "100%"
   );
   const previewHeight = computed(() =>
     selectedForPreview.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
+  );
+  const borderRef = useTemplateRef("border-ref");
+  const paneHeightTransition = computed(() =>
+    borderRef.value?.isDragging() ? "" : "height var(--transition-duration) ease"
   );
 </script>
 
@@ -43,9 +48,10 @@
       />
 
       <DragBorder
+        ref="border-ref"
         v-model="borderPos"
         :active="!!Object.keys(selectedForPreview).length"
-        :box-top="offsetPixels"
+        :box-top="boxTopPixels"
         :parent-height="panesHeight"
       />
 
@@ -102,7 +108,7 @@
   }
 
   .pane {
-    transition: height var(--transition-duration) ease;
+    transition: v-bind(paneHeightTransition);
   }
 
   .view-wrapper.mobile {
