@@ -1,8 +1,6 @@
 <script setup>
-  import { ref, computed, useTemplateRef } from "vue";
+  import { ref, computed } from "vue";
   import { useRouter } from "vue-router";
-  import { IconEye, IconBolt, IconClock, IconQuote } from "@tabler/icons-vue";
-  import { useElementSize } from "@vueuse/core";
   import useClosable from "@/composables/useClosable.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import PreviewTabPreview from "./PreviewTabPreview.vue";
@@ -18,12 +16,8 @@
 
   const read = () => props.doc?.id && router.push(`/${props.doc.id}/read`);
   const close = () => emit("set-selected", {});
-
   useClosable({ onClose: close, closeOnOutsideClick: false });
-
   const activeTabIndex = ref(0);
-  const tabsHeaderRef = useTemplateRef("tabs-header-ref");
-  const { width: tabsHeaderWidth } = useElementSize(tabsHeaderRef);
 
   /* Keyboard shortcuts */
   useKeyboardShortcuts({
@@ -37,7 +31,7 @@
 <template>
   <div id="preview" class="pane" :style="{ top: paneTop }">
     <Header>
-      <div class="left" :style="{ width: `${tabsHeaderWidth}px` }"></div>
+      <div class="left"></div>
 
       <div class="middle">
         <Button
@@ -87,6 +81,10 @@
   .pane-header {
     padding-block: calc(8px - var(--border-extrathin));
 
+    & .left {
+      width: calc(64px * 4 + 4px * 3);
+    }
+
     & .middle {
       display: flex;
       flex-wrap: wrap;
@@ -107,5 +105,9 @@
     top: var(--padding);
     left: var(--padding);
     width: calc(100% - 3.5 * var(--padding));
+  }
+
+  :deep(.tabs-header) {
+    border-left-color: transparent;
   }
 </style>
