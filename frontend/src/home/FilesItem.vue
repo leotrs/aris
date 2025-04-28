@@ -249,4 +249,15 @@
       align-content: center;
     }
   }
+
+  .item .fm-wrapper :deep(.cm-btn) {
+    opacity: 0;
+    transition:
+      opacity,
+      0.3s ease;
+  }
+
+  :is(.item:hover, .item.active) .fm-wrapper :deep(.cm-btn) {
+    opacity: 1;
+  }
 </style>
