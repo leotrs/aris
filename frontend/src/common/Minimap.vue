@@ -47,12 +47,12 @@
       const containerWidth = wrapper.clientWidth;
       if (containerWidth <= 0) return;
       const scaleFactor = containerWidth / initialWidth;
-      console.log(
-        "Resizing horizontal with scale factor:",
-        scaleFactor,
-        "container width:",
-        containerWidth
-      );
+      /* console.log(
+       *   "Resizing horizontal with scale factor:",
+       *   scaleFactor,
+       *   "container width:",
+       *   containerWidth
+       * ); */
 
       // Update line width
       const line = svg.querySelector("line:not(.scroll-indicator)");
@@ -87,12 +87,12 @@
       const containerHeight = wrapper.clientHeight;
       if (containerHeight <= 0) return;
       const scaleFactor = containerHeight / initialHeight;
-      console.log(
-        "Resizing vertical with scale factor:",
-        scaleFactor,
-        "container height:",
-        containerHeight
-      );
+      /* console.log(
+       *   "Resizing vertical with scale factor:",
+       *   scaleFactor,
+       *   "container height:",
+       *   containerHeight
+       * ); */
 
       // Update line height
       const line = svg.querySelector("line:not(.scroll-indicator)");
@@ -526,7 +526,7 @@
     const currentSize = isHorizontal
       ? wrapperRef.value?.clientWidth || 400
       : wrapperRef.value?.clientHeight || 400;
-    console.log(`Initial container ${isHorizontal ? "width" : "height"}:`, currentSize);
+    /* console.log(`Initial container ${isHorizontal ? "width" : "height"}:`, currentSize); */
 
     if (props.doc.source) {
       const sections = getSectionsFromSource(props.doc.source);

@@ -1,5 +1,6 @@
 <script setup>
-  import { ref, inject, computed, useTemplateRef } from "vue";
+  import { ref, inject, computed, useTemplateRef, watch } from "vue";
+  import { useElementSize } from "@vueuse/core";
   import Sidebar from "./Sidebar.vue";
   import FilesPane from "./FilesPane.vue";
   import PreviewPane from "./PreviewPane.vue";
@@ -13,15 +14,15 @@
 
   /* handle draggable border and pane height */
   const panesRef = useTemplateRef("panes-ref");
-  const panesHeight = computed(() => panesRef.value?.clientHeight || 1);
+  const { height: panesHeight } = useElementSize(panesRef);
   const offsetPixels = 16 + 48 + 16 + 40 + 2 + 56; // padding + topbar height + gap + pane header height + margin + height of one item row
   const borderPos = ref(0);
 
   const filesHeight = computed(() =>
-    selectedForPreview.value?.id ? `calc(${borderPos.value}% - 4px)` : "100%"
+    selectedForPreview.value?.id ? `calc(${borderPos.value}%)` : "100%"
   );
   const previewHeight = computed(() =>
-    selectedForPreview.value?.id ? `calc(${100 - borderPos.value}% - 4px)` : "0%"
+    selectedForPreview.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
   );
 </script>
 
