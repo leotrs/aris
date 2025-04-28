@@ -25,6 +25,13 @@
   const previewHeight = computed(() =>
     selectedForPreview.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
   );
+  watch(
+    () => !!selectedForPreview.value?.id,
+    (hasSelection, oldValue) => {
+      // Make sure borderPos is correct when transitioning from no selection to having a selection
+      if (hasSelection && !oldValue) borderPos.value = (boxTopPixels / panesHeight.value) * 100;
+    }
+  );
 
   /* Dragging should be instantaneous, thus we only want a transition when NOT dragging */
   const borderRef = useTemplateRef("border-ref");
