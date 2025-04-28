@@ -1,27 +1,29 @@
 <script setup>
-  import { ref, computed, useTemplateRef } from "vue";
+  import { ref, computed, useTemplateRef, onMounted } from "vue";
   import { useDraggable } from "@vueuse/core";
 
   const props = defineProps({
     active: { type: Boolean, default: false },
-    offset: { type: Number, default: 48 },
+    offset: { type: Number, required: true },
+    parentHeight: { type: Number, required: true },
   });
   const pos = defineModel({ type: Number });
   const pointerEvents = computed(() => (props.active ? "all" : "none"));
 
-  /* Usually, we would just set :style="style" on the handle,
-   * however, style has px units and we prefer percentages so
-   * the handle is responsive to viewport resizing. */
-  const containerBottom = 30;
+  const bottom = 48 + 16;
+  const containerBottom = computed(() => Math.min((bottom / props.parentHeight) * 100, 95));
+  const offsetPercent = computed(() => Math.max((props.offset / props.parentHeight) * 100, 5));
   const containerRef = useTemplateRef("container-ref");
   const containerHeight = computed(() => containerRef.value?.clientHeight ?? 1);
-  const handleTop = ref("66%");
+  const handleTop = ref("0%");
   const onDrag = (newPos) => {
-    const containerHeightPercent = 100 - containerBottom;
+    const containerHeightPercent = 100 - containerBottom.value;
     pos.value =
-      (newPos.y / containerHeight.value) * (containerHeightPercent - props.offset) + props.offset;
+      (newPos.y / containerHeight.value) * (containerHeightPercent - props.offsetPercent) +
+      props.offsetPercent;
     handleTop.value = `${(newPos.y / containerHeight.value) * 100}%`;
   };
+  onMounted(() => onDrag(offsetPercent.value));
   useDraggable(useTemplateRef("handle-ref"), {
     initialValue: { x: 0, y: 0 },
     preventDefault: true,
@@ -33,11 +35,7 @@
 
 <template>
   <div class="spacer"></div>
-  <div
-    ref="container-ref"
-    class="container"
-    :style="{ bottom: `${containerBottom}%`, top: `${offset}%` }"
-  >
+  <div ref="container-ref" class="container" :style="{ bottom: `${bottom}px`, top: `${offset}px` }">
     <div
       ref="handle-ref"
       class="handle"
@@ -55,12 +53,14 @@
     position: absolute;
     width: 100%;
     pointer-events: none;
+    outline: 2px solid blue;
   }
 
   .handle {
     position: absolute;
-    width: 100%;
+    width: 110%;
     height: 8px;
     cursor: row-resize;
+    background-color: pink;
   }
 </style>
