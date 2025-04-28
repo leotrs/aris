@@ -26,9 +26,10 @@
     selectedForPreview.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
   );
   const borderRef = useTemplateRef("border-ref");
-  const paneHeightTransition = computed(() =>
-    borderRef.value?.isDragging() ? "" : "height var(--transition-duration) ease"
-  );
+  const paneHeightTransition = computed(() => {
+    if (!borderRef.value) return "";
+    else return borderRef.value.isDragging ? "" : "height var(--transition-duration) ease";
+  });
 </script>
 
 <template>

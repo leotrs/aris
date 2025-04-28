@@ -44,14 +44,14 @@
      *   boxHeightPercent.value
      * ) */
   };
-  const draggable = useDraggable(useTemplateRef("handle-ref"), {
+  const { isDragging } = useDraggable(useTemplateRef("handle-ref"), {
     initialValue: { x: 0, y: 0 },
     preventDefault: true,
     axis: "y",
     containerElement: boxRef,
     onMove: onDrag,
   });
-  defineExpose({ isDragging: () => draggable.isDragging.value });
+  defineExpose({ isDragging });
 </script>
 
 <template>
