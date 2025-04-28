@@ -51,7 +51,7 @@
 </script>
 
 <template>
-  <div class="sec-wrapper">
+  <div class="citation">
     <div v-for="obj in sectionData" :key="obj" :class="['sec', obj.label.toLowerCase()]">
       <div class="sec-title text-label">
         <div class="left">
@@ -75,7 +75,7 @@
 </template>
 
 <style scoped>
-  .sec-wrapper {
+  .citation {
     display: flex;
     flex-direction: column;
     gap: 16px;

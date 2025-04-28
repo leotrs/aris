@@ -1,7 +1,6 @@
 <script setup>
-  import { ref, inject, watch, onMounted } from "vue";
+  import { ref, inject, watch } from "vue";
   import { IconFileSettings } from "@tabler/icons-vue";
-  import useClosable from "@/composables/useClosable.js";
 
   const props = defineProps({ doc: { type: Object, default: () => {} } });
 
@@ -11,12 +10,6 @@
     sepia: "#F4E8D5",
     green: "var(--green-50)",
   };
-
-  const selfRef = ref(null);
-  onMounted(() => {
-    if (!selfRef.value) return;
-    useClosable(close, selfRef, true, false);
-  });
 
   const fileSettings = inject("fileSettings");
   const onChangeBackground = (colorName) => {
@@ -54,20 +47,10 @@
 </script>
 
 <template>
-  <div ref="selfRef" class="overlay settings">
-    <Header>
-      <div class="left">
-        <IconFileSettings />
-        <span class="text-h5">Settings</span>
-      </div>
-      <div class="right">
-        <ButtonClose />
-      </div>
-    </Header>
-
+  <div class="settings">
     <div class="ol-content">
-      <div class="section">
-        <div class="s-header">
+      <div class="sec">
+        <div class="sec-header">
           <span class="text-label">Colors</span>
         </div>
         <div class="s-content">
@@ -83,8 +66,8 @@
           </div>
         </div>
       </div>
-      <div class="section">
-        <div class="s-header">
+      <div class="sec">
+        <div class="sec-header">
           <span class="text-label">Font</span>
         </div>
         <div class="s-content">
@@ -124,8 +107,8 @@
           </div>
         </div>
       </div>
-      <div class="section">
-        <div class="s-header">
+      <div class="sec">
+        <div class="sec-header">
           <span class="text-label">Layout</span>
         </div>
         <div class="s-content">
@@ -191,13 +174,13 @@
     flex-direction: column;
     gap: 24px;
 
-    & .section {
+    & .sec {
       display: flex;
       flex-direction: column;
       gap: 8px;
     }
 
-    & .s-header {
+    & .sec-header {
       border-bottom: 2px solid var(--border-information);
       padding-inline: 8px;
     }
