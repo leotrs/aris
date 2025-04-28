@@ -1,6 +1,16 @@
 <script setup>
-  import { ref, reactive, watch, watchEffect, computed, inject, provide } from "vue";
+  import {
+    ref,
+    reactive,
+    watch,
+    watchEffect,
+    computed,
+    inject,
+    provide,
+    useTemplateRef,
+  } from "vue";
   import { useRouter } from "vue-router";
+  import { useScroll } from "@vueuse/core";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import Topbar from "./FilesTopbar.vue";
   import FilesHeader from "./FilesHeader.vue";
@@ -27,10 +37,20 @@
       state.itemActive = userDocs.value.map(() => false);
     });
   });
+  const filesRef = useTemplateRef("files-ref");
   let clickTimeout = ref(null);
   const selectForPreview = (doc, idx) => {
     activeIndex.value = idx;
     clickTimeout.value = setTimeout(() => emit("set-selected", doc || {}), 200);
+    const el = filesRef.value.querySelector(`.item:nth-child(${idx + 1})`);
+    if (!el) return;
+    setTimeout(() => {
+      const parent = el.parentElement;
+      parent.scrollTo({
+        top: el.offsetTop - parent.offsetTop,
+        behavior: "smooth",
+      });
+    }, 300);
   };
   watch(activeIndex, (idx) => {
     if (Number.isNaN(idx)) return;
@@ -93,7 +113,7 @@
       <FilesHeader :mode="mode" />
 
       <Suspense>
-        <div class="files" :class="mode">
+        <div ref="files-ref" class="files" :class="mode">
           <FilesItem
             v-for="(doc, idx) in userDocs.filter((doc) => !doc.filtered)"
             :key="doc"
