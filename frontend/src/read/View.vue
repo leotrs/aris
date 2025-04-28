@@ -4,7 +4,7 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
   import Sidebar from "./Sidebar.vue";
-  import ArisManuscript from "./ArisManuscript.vue";
+  import Canvas from "./Canvas.vue";
 
   const docID = `${useRoute().params.doc_id}`;
   const user = inject("user");
@@ -47,7 +47,7 @@
 <template>
   <div class="read-view" :class="{ focus: focusMode }">
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
-    <ArisManuscript :left="leftComponents" :right="rightComponents" :top="topComponents" />
+    <Canvas :left="leftComponents" :right="rightComponents" :top="topComponents" />
     <div class="menus" :class="{ focus: focusMode }">
       <FileMenu icon="Menu3" />
       <UserMenu />

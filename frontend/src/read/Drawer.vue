@@ -1,7 +1,7 @@
 <script setup>
   import { ref, watch, inject, useTemplateRef, onMounted } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import TabCitation from "./TabCitation.vue";
+  import DrawerCitation from "./DrawerCitation.vue";
 
   const active = defineModel({ type: Boolean, default: false });
   const doc = inject("doc");
@@ -43,7 +43,7 @@
       >
         <TabPage>activity</TabPage>
         <TabPage>history</TabPage>
-        <TabPage><TabCitation /></TabPage>
+        <TabPage><DrawerCitation /></TabPage>
         <TabPage><TagRow v-model="doc.tags" :doc-id="doc.id" /></TabPage>
         <TabPage>settings</TabPage>
       </Tabs>

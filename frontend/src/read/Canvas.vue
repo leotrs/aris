@@ -15,10 +15,10 @@
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
   import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
-  import Topbar from "./Topbar.vue";
+  import Topbar from "./CanvasTopbar.vue";
   import Dock from "./Dock.vue";
   import Drawer from "./Drawer.vue";
-  import PanelSearch from "./PanelSearch.vue";
+  import DockableSearch from "./DockableSearch.vue";
   import Minimap from "../common/Minimap.vue";
 
   const props = defineProps({
@@ -30,7 +30,7 @@
 
   const validDockComponents = {
     /* PanelChat, */
-    PanelSearch,
+    DockableSearch,
     Minimap,
     /* Comments, */
     /* PanelSymbols, */
