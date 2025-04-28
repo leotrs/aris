@@ -15,7 +15,7 @@
   /* Handle draggable border and pane height */
   const panesRef = useTemplateRef("panes-ref");
   const { height: panesHeight } = useElementSize(panesRef);
-  const boxTopPixels = 16 + 48 + 16 + 40 + 2 + 56; // padding + topbar height + gap + pane header height + margin + height of one item row
+  const boxTopPixels = 16 + 48 + 16 + 40 + 56 + 6; // padding + topbar height + gap + pane header height + height of one item row + epsilon
   const borderPos = ref(0);
 
   /* Set panes' heights based on where the border is */
