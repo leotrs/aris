@@ -1,5 +1,5 @@
 <script setup>
-  import { computed } from "vue";
+  import {} from "vue";
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
@@ -57,6 +57,7 @@
 
   button.btn-sm {
     border-radius: 8px;
+    padding-block: 0;
 
     & > .tabler-icon {
       /* since all buttons must have border, in this case we

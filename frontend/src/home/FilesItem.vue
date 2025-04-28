@@ -98,19 +98,15 @@
       </template>
 
       <TagRow v-model="doc.tags" :doc-id="doc.id" />
-
       <!-- necessary because tags tend to overflow -->
       <div class="spacer"></div>
 
       <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
 
-      <!-- <div class="owner"><Avatar /></div> -->
-      <!-- <div class="collaborators"><Avatar v-for="..."/></div> -->
-
-      <FileMenu ref="menu-ref" />
+      <FileMenu v-if="!active" ref="menu-ref" />
 
       <!-- to complete the grid -->
-      <span></span>
+      <span class="spacer"></span>
     </template>
   </div>
 </template>
@@ -125,10 +121,6 @@
   }
 
   .item.list {
-    &:hover > * {
-      background-color: var(--gray-75);
-    }
-
     & > * {
       height: calc(56px - 2 * var(--border-width));
       padding-right: 8px;
@@ -137,6 +129,10 @@
       border-bottom: var(--border-width) solid transparent;
       border-bottom-color: var(--border-primary);
       overflow-y: hidden;
+    }
+
+    &:hover > * {
+      background-color: var(--gray-75);
     }
 
     & > *:first-child {
@@ -150,19 +146,31 @@
     & .file-title {
       border-left: var(--border-med) solid transparent;
     }
+  }
 
-    &.active > * {
-      background-color: var(--surface-information);
-      outline: var(--border-thin) solid var(--red);
+  .item.list.active {
+    & > :is(.mm-wrapper, .tag-row, .last-edited, .spacer) {
+      display: none;
     }
 
-    &.active > *:first-child {
+    & > .file-title {
+      font-size: 18px;
+      font-weight: var(--weight-semi);
+      grid-column: 1 / 8;
+      width: 100%;
+    }
+
+    & > * {
+      background-color: var(--surface-information);
+    }
+
+    & > *:first-child {
       border-left: var(--border-med) solid var(--border-action);
       border-top-left-radius: 4px;
       border-bottom-left-radius: 4px;
     }
 
-    &.active > *:last-child {
+    & > *:last-child {
       border-top-right-radius: 4px;
       border-bottom-right-radius: 4px;
     }

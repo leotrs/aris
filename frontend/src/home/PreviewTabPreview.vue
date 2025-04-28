@@ -12,7 +12,6 @@
     </div>
     <div class="right">
       <TagRow v-model="doc.tags" :doc-id="doc.id" />
-      <span class="last-edit">{{ doc.last_edited_at }}</span>
     </div>
   </div>
 </template>
@@ -36,16 +35,13 @@
   .right {
     display: flex;
     position: absolute;
-    top: 17px;
+    top: 7px;
     right: 0;
     align-items: center;
-    gap: 48px;
-  }
-
-  .tag-row {
   }
 
   :deep(h3) {
+    margin-block: 8px;
     border-bottom: var(--border-thin) solid var(--border-information);
   }
 </style>
