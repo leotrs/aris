@@ -5,7 +5,7 @@
   const props = defineProps({
     active: { type: Boolean, default: false },
     boxTop: { type: Number, required: true },
-    boxBot: { type: Number, default: 48 + 16 },
+    boxBot: { type: Number, default: 48 + 24 },
     parentHeight: { type: Number, required: true },
   });
   const pointerEvents = computed(() => (props.active ? "all" : "none"));
