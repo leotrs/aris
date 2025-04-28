@@ -44,7 +44,7 @@
       <DragBorder
         v-model="borderPos"
         :active="!!Object.keys(selectedForPreview).length"
-        :offset="offsetPixels"
+        :box-top="offsetPixels"
         :parent-height="panesHeight"
       />
 
