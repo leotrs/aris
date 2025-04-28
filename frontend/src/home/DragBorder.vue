@@ -51,10 +51,6 @@
     containerElement: boxRef,
     onMove: onDrag,
   });
-  watch(
-    () => draggable.isDragging.value,
-    (newVal) => console.log(newVal)
-  );
   defineExpose({ isDragging: () => draggable.isDragging.value });
 </script>
 
