@@ -82,7 +82,13 @@
     padding-block: calc(8px - var(--border-extrathin));
 
     & .left {
-      width: calc(64px * 4 + 4px * 3);
+      /* 64px: width of a tab
+       *    4: number of tabs
+       *  8px: gap between tabs
+       *    3: number of gaps (number of tabs - 1)
+       * 16px: left position for the tabs header
+       */
+      width: calc(64px * 4 + 8px * 3 + 16px);
     }
 
     & .middle {
@@ -102,12 +108,16 @@
 
   .tabs-wrapper {
     position: absolute;
-    top: var(--padding);
-    left: var(--padding);
+    top: calc(var(--padding) + var(--border-extrathin));
+    left: calc(var(--padding) + var(--border-extrathin));
     width: calc(100% - 3.5 * var(--padding));
   }
 
   :deep(.tabs-header) {
-    border-left-color: transparent;
+    height: calc(48px - 2 * var(--border-thin));
+    border: unset;
+    position: relative;
+    left: 16px;
+    gap: 8px;
   }
 </style>
