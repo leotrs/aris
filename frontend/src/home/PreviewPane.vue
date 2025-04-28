@@ -14,7 +14,9 @@
   const emit = defineEmits(["set-selected"]);
   const router = useRouter();
 
-  const read = () => props.doc?.id && router.push(`/${props.doc.id}/read`);
+  const read = () => {
+    props.doc?.id && router.push(`/${props.doc.id}/read`);
+  };
   const close = () => emit("set-selected", {});
   useClosable({ onClose: close, closeOnOutsideClick: false });
   const activeTabIndex = ref(0);
