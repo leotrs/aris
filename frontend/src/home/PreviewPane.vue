@@ -50,7 +50,7 @@
       </Tabs>
     </div>
     <div class="pane-footer">
-      <div class="left">{{ doc.last_edited_at }}</div>
+      <div class="left">Last edit: {{ doc.last_edited_at }}.</div>
       <div class="right">
         <Button kind="tertiary" size="sm" text="Write" icon="Pencil" />
         <Button kind="tertiary" size="sm" text="Review" icon="FileCheck" />
