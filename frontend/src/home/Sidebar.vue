@@ -218,7 +218,7 @@
   }
 
   .cta {
-    transition: padding-inline var(--transition-duration) ease;
+    transition: padding-inline 0.25s ease 0.05s;
   }
 
   .cta > button {

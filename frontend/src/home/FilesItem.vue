@@ -2,7 +2,6 @@
   import { ref, inject, watch, useTemplateRef } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
-  import RelativeTime from "@yaireo/relative-Time";
 
   const props = defineProps({
     doc: { type: Object, required: true },
@@ -11,7 +10,6 @@
   const active = defineModel({ type: Boolean, required: true });
   const emit = defineEmits(["click", "dblclick"]);
 
-  const relativeTime = new RelativeTime({ locale: "en" });
   const fileTitleActive = ref(false);
   const shouldShowColumn = inject("shouldShowColumn");
 
@@ -77,7 +75,7 @@
           <TagRow v-model="doc.tags" :doc-id="doc.id" />
         </div>
         <div class="card-footer-right">
-          <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
+          <div class="last-edited">{{ doc.last_edited_at }}</div>
           <Avatar />
         </div>
       </div>
@@ -101,7 +99,7 @@
       <!-- necessary because tags tend to overflow -->
       <div class="spacer"></div>
 
-      <div class="last-edited">{{ relativeTime.from(new Date(doc.last_edited_at)) }}</div>
+      <div class="last-edited">{{ doc.last_edited_at }}</div>
 
       <FileMenu v-if="!active" ref="menu-ref" />
 

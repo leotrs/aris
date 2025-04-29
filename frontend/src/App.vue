@@ -1,12 +1,17 @@
 <script setup>
   import { ref, reactive, provide, onMounted } from "vue";
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+  import RelativeTime from "@yaireo/relative-Time";
 
   import axios from "axios";
 
   /*********** provide user info ***********/
   const user = { id: 1, name: "TER" };
   provide("user", user);
+
+  /* Utilities */
+  const relativeTime = new RelativeTime({ locale: "en" });
+  const formatDate = (doc) => relativeTime.from(new Date(doc.last_edited_at));
 
   /*********** Proivde userDocs ***********/
   const userDocs = ref([]);
@@ -16,10 +21,18 @@
         params: { with_tags: true, with_minimap: true },
       });
       if (!userDocs.value) {
-        userDocs.value = response.data.map((doc) => ({ ...doc, filtered: false }));
+        userDocs.value = response.data.map((doc) => ({
+          ...doc,
+          last_edited_at: formatDate(doc),
+          filtered: false,
+        }));
       } else {
         /* FIX ME: take the filtered value from the current userDocs, not from response.data */
-        userDocs.value = response.data.map((doc) => ({ ...doc, filtered: false }));
+        userDocs.value = response.data.map((doc) => ({
+          ...doc,
+          last_edited_at: formatDate(doc),
+          filtered: false,
+        }));
       }
     } catch (error) {
       console.error(`Failed to fetch document`, error);
