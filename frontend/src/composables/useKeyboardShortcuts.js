@@ -152,22 +152,21 @@ if (typeof window !== "undefined") {
 /* Global state management */
 function registerShortcuts(componentId, shortcuts) {
   const existingShortcuts = listeners.value[componentId];
-  let result = true;
 
-  if (existingShortcuts) {
-    const conflicts = Object.keys(shortcuts).filter(key => existingShortcuts[key]);
-    if (conflicts.length > 0) {
-      console.error(`Component ${componentId} requesting to overwrite shortcuts ${conflicts.join(', ')}`);
-      result = false;
-    }
+  const conflicts = Object.keys(shortcuts).filter(key =>
+    existingShortcuts &&
+    existingShortcuts[key] &&
+    existingShortcuts[key].toString() !== shortcuts[key].toString()
+  );
+
+  if (conflicts.length > 0) {
+    console.warn(`Component ${componentId} overwriting shortcuts: ${conflicts.join(', ')}`);
   }
 
   listeners.value[componentId] = {
-    ...(existingShortcuts || {}),
+    ...existingShortcuts,
     ...shortcuts
   };
-
-  return result;
 }
 
 
@@ -176,7 +175,7 @@ export function getRegisteredComponents() {
   return [...components];
 }
 
-export function useKeyboardShortcuts(shortcuts, autoActivate = true) {
+export function useKeyboardShortcuts(shortcuts = {}, autoActivate = true) {
   const instance = getCurrentInstance();
   if (!instance) {
     console.error("useKeyboardShortcuts must be used within setup()");
@@ -184,10 +183,7 @@ export function useKeyboardShortcuts(shortcuts, autoActivate = true) {
   }
 
   const componentId = refToKey(instance);
-  if (!registerShortcuts(componentId, shortcuts)) {
-    console.error("Error: clashing shortcuts");
-    return {};
-  }
+  registerShortcuts(componentId, shortcuts);
 
   // Handle component lifecycle
   const isRegistered = () => components.some(comp => refToKey(comp) === componentId);
@@ -196,9 +192,20 @@ export function useKeyboardShortcuts(shortcuts, autoActivate = true) {
     if (idx !== -1) components.splice(idx, 1);
   };
   const activate = () => { deactivate(); components.push(instance); };
-  onMounted(() => (autoActivate ? activate() : null));
-  onBeforeUnmount(() => { deactivate(); listeners.value[componentId] = {}; });
-  return { activate, deactivate, isRegistered };
+  const addShortcuts = (newShortcuts) => registerShortcuts(componentId, newShortcuts);
+  const removeShortcuts = (keys) => {
+    if (!listeners.value[componentId]) return;
+    if (Array.isArray(keys)) {
+      keys.forEach(key => delete listeners.value[componentId][key]);
+    } else if (keys === undefined) {
+      listeners.value[componentId] = {};
+    }
+  };
+  onMounted(() => autoActivate && activate());
+  onBeforeUnmount(() => { deactivate(); removeShortcuts(); });
+  return {
+    activate, deactivate, isRegistered, addShortcuts, removeShortcuts, getShortcuts: () => ({ ...listeners.value[componentId] }),
+  };
 }
 
 export function registerAsFallback(component) {

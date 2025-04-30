@@ -38,6 +38,7 @@
   };
   const menuRef = useTemplateRef("menu-ref");
 
+  /* Keys */
   const { activate, deactivate } = useKeyboardShortcuts({
     ".": () => menuRef.value?.toggle(),
     enter: () => emit("click"),
