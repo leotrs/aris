@@ -1,111 +1,100 @@
 <script setup>
   import { ref, inject, watch, useTemplateRef } from "vue";
+  import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import axios from "axios";
 
-  const props = defineProps({
-    doc: { type: Object, required: true },
-    mode: { type: String, default: "list" },
-  });
-  const active = defineModel({ type: Boolean, required: true });
-  const emit = defineEmits(["click", "dblclick"]);
+  const props = defineProps({ mode: { type: String, default: "list" } });
+  const doc = defineModel({ type: Object, required: true });
+  const { selectFile } = inject("userDocs");
 
-  const fileTitleActive = ref(false);
+  /* State */
+  const selectThisFile = () => selectFile(doc.value);
+  const router = useRouter();
+  const readFile = () => {
+    selectFile(doc.value);
+    router.push(`/${doc.value.id}/read`);
+  };
+
+  /* Breakpoints */
   const shouldShowColumn = inject("shouldShowColumn");
 
   /* File menu callbacks */
-  const { reloadDocs } = inject("userDocs");
-  const renameDoc = () => (fileTitleActive.value = true);
-  const copyDoc = async () => {
-    console.log("copy");
-    const url = `http://localhost:8000/documents/${props.doc.id}/duplicate`;
-    try {
-      await axios.post(url);
-      reloadDocs();
-    } catch (error) {
-      console.error(`Could not delete document ${props.doc.id}`);
-    }
-  };
-  const deleteDoc = async () => {
-    console.log("delete");
-    const url = `http://localhost:8000/documents/${props.doc.id}`;
-    try {
-      await axios.delete(url);
-      reloadDocs();
-    } catch (error) {
-      console.error(`Could not delete document ${props.doc.id}`);
-    }
-  };
+  const fileTitleActive = ref(false);
   const menuRef = useTemplateRef("menu-ref");
 
   /* Keys */
   const { activate, deactivate } = useKeyboardShortcuts({
     ".": () => menuRef.value?.toggle(),
-    enter: () => emit("click"),
+    enter: () => selectThisFile(doc.value),
   });
-  watch(active, (newVal) => (newVal ? activate() : deactivate()));
+  watch(
+    () => doc.value?.selected,
+    (newVal) => (newVal ? activate() : deactivate())
+  );
 </script>
 
 <template>
   <div
     class="item"
-    :class="[mode, active ? 'active' : '']"
-    @click="emit('click')"
-    @dblclick="emit('dblclick')"
+    :class="[mode, doc.selected ? 'active' : '']"
+    @click="selectThisFile"
+    @dblclick="readFile"
   >
-    <template v-if="mode == 'cards'">
-      <div class="card-header">
+    <template v-if="!!doc">
+      <template v-if="mode == 'cards'">
+        <div class="card-header">
+          <FileTitle
+            v-model="fileTitleActive"
+            :doc="doc"
+            :class="mode == 'cards' ? 'text-label' : ''"
+          />
+          <FileMenu ref="menu-ref" />
+        </div>
+
+        <div class="card-content">
+          <Suspense>
+            <Minimap :doc="doc" orientation="horizontal" />
+            <template #fallback><span class="loading">loading...</span></template>
+          </Suspense>
+          <Abstract :doc="doc" />
+        </div>
+
+        <div class="card-footer">
+          <div class="card-footer-left">
+            <TagRow v-model="doc.tags" :doc-id="doc.id" />
+          </div>
+          <div class="card-footer-right">
+            <div class="last-edited">{{ doc.last_edited_at }}</div>
+            <Avatar />
+          </div>
+        </div>
+      </template>
+
+      <template v-if="mode == 'list'">
         <FileTitle
           v-model="fileTitleActive"
           :doc="doc"
           :class="mode == 'cards' ? 'text-label' : ''"
         />
-        <FileMenu ref="menu-ref" />
-      </div>
 
-      <div class="card-content">
-        <Suspense>
-          <Minimap :doc="doc" orientation="horizontal" />
-          <template #fallback><span class="loading">loading...</span></template>
-        </Suspense>
-        <Abstract :doc="doc" />
-      </div>
+        <template v-if="shouldShowColumn('Map', 'list')">
+          <Suspense>
+            <Minimap :doc="doc" orientation="horizontal" />
+            <template #fallback><span class="loading">loading...</span></template>
+          </Suspense>
+        </template>
 
-      <div class="card-footer">
-        <div class="card-footer-left">
-          <TagRow v-model="doc.tags" :doc-id="doc.id" />
-        </div>
-        <div class="card-footer-right">
-          <div class="last-edited">{{ doc.last_edited_at }}</div>
-          <Avatar />
-        </div>
-      </div>
-    </template>
+        <TagRow v-model="doc.tags" :doc-id="doc.id" />
+        <!-- necessary because tags tend to overflow -->
+        <div class="spacer"></div>
 
-    <template v-if="mode == 'list'">
-      <FileTitle
-        v-model="fileTitleActive"
-        :doc="doc"
-        :class="mode == 'cards' ? 'text-label' : ''"
-      />
+        <div class="last-edited">{{ doc.last_edited_at }}</div>
 
-      <template v-if="shouldShowColumn('Map', 'list')">
-        <Suspense>
-          <Minimap :doc="doc" orientation="horizontal" />
-          <template #fallback><span class="loading">loading...</span></template>
-        </Suspense>
+        <FileMenu v-if="!doc.selected" ref="menu-ref" />
+
+        <!-- to complete the grid -->
+        <span class="spacer"></span>
       </template>
-
-      <TagRow v-model="doc.tags" :doc-id="doc.id" />
-      <!-- necessary because tags tend to overflow -->
-      <div class="spacer"></div>
-
-      <div class="last-edited">{{ doc.last_edited_at }}</div>
-
-      <FileMenu v-if="!active" ref="menu-ref" />
-
-      <!-- to complete the grid -->
-      <span class="spacer"></span>
     </template>
   </div>
 </template>

@@ -1,29 +1,30 @@
 <script setup>
-  import { ref, computed } from "vue";
+  import { ref, inject } from "vue";
   import { useRouter } from "vue-router";
-  import useClosable from "@/composables/useClosable.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import useClosable from "@/composables/useClosable.js";
   import PreviewTabPreview from "./PreviewTabPreview.vue";
   import PreviewTabActivity from "./PreviewTabActivity.vue";
   import PreviewTabHistory from "./PreviewTabHistory.vue";
   import PreviewTabCitation from "./PreviewTabCitation.vue";
 
-  const props = defineProps({
-    doc: { type: Object, required: true },
-  });
-  const emit = defineEmits(["set-selected"]);
-  const router = useRouter();
+  const props = defineProps({ doc: { type: Object, required: true } });
+  const { clearSelection } = inject("userDocs");
 
-  const read = () => {
-    props.doc?.id && router.push(`/${props.doc.id}/read`);
-  };
-  const close = () => emit("set-selected", {});
-  useClosable({ onClose: close, closeOnOutsideClick: false });
+  /* Tabs */
   const activeTabIndex = ref(0);
+
+  /* Closable */
+  const close = () => clearSelection();
+  useClosable({ onClose: close, closeOnOutsideClick: false });
+
+  /* Actions */
+  const router = useRouter();
+  const read = () => props.doc?.id && router.push(`/${props.doc.id}/read`);
 
   /* Keyboard shortcuts */
   useKeyboardShortcuts({
-    enter: () => read(),
+    enter: read,
   });
 </script>
 

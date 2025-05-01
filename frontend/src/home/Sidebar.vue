@@ -36,7 +36,7 @@
       </div>
     </template>
 
-    {{ breakpoints.active() }}
+    <!-- {{ breakpoints.active() }} -->
 
     <div class="cta" :class="{ fab: isMobile }">
       <Button
