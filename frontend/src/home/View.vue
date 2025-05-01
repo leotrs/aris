@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, computed, watch, useTemplateRef, onMounted } from "vue";
+  import { ref, inject, computed, watch, useTemplateRef } from "vue";
   import { useElementSize } from "@vueuse/core";
   import Sidebar from "./Sidebar.vue";
   import FilesPane from "./FilesPane.vue";
@@ -9,8 +9,7 @@
   const showModal = ref(false);
   const isMobile = inject("isMobile");
 
-  const selectedForPreview = ref({});
-  const setSelectedForPreview = (doc) => (selectedForPreview.value = doc || {});
+  const { selectedFile, selectFile } = inject("userDocs");
 
   /* Handle draggable border and pane height */
   const panesRef = useTemplateRef("panes-ref");
@@ -20,13 +19,13 @@
 
   /* Set panes' heights based on where the border is */
   const filesHeight = computed(() =>
-    selectedForPreview.value?.id ? `calc(${borderPos.value}%)` : "100%"
+    selectedFile.value?.id ? `calc(${borderPos.value}%)` : "100%"
   );
   const previewHeight = computed(() =>
-    selectedForPreview.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
+    selectedFile.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
   );
   watch(
-    () => !!selectedForPreview.value?.id,
+    () => !!selectedFile.value?.id,
     (hasSelection, oldValue) => {
       // Make sure borderPos is correct when transitioning from no selection to having a selection
       if (hasSelection && !oldValue) borderPos.value = (boxTopPixels / panesHeight.value) * 100;
@@ -42,7 +41,7 @@
 
   /* Since the gap between panes is 8px but the outer padding is 16px, when the Preview
    * pane is inactive, its top edge peeks out by 8px. This hides it. */
-  const previewPaneTop = computed(() => (selectedForPreview.value?.id ? "0" : "8px"));
+  const previewPaneTop = computed(() => (selectedFile.value?.id ? "0" : "8px"));
 </script>
 
 <template>
@@ -55,25 +54,21 @@
     </div>
 
     <div ref="panes-ref" class="panes">
-      <FilesPane
-        id="documents"
-        :style="{ height: filesHeight }"
-        @set-selected="setSelectedForPreview"
-      />
+      <FilesPane id="documents" :style="{ height: filesHeight }" @set-selected="selectFile(doc)" />
 
       <DragBorder
         ref="border-ref"
         v-model="borderPos"
-        :active="!!Object.keys(selectedForPreview).length"
+        :active="!!Object.keys(selectedFile).length"
         :box-top="boxTopPixels"
         :parent-height="panesHeight"
       />
 
       <PreviewPane
         v-if="!isMobile"
-        :doc="selectedForPreview"
+        :doc="selectedFile"
         :style="{ height: previewHeight, top: previewPaneTop }"
-        @set-selected="setSelectedForPreview"
+        @set-selected="selectFile(doc)"
       />
     </div>
 

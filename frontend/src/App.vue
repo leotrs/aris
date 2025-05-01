@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive, provide, onMounted } from "vue";
+  import { ref, computed, provide, onMounted } from "vue";
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
   import RelativeTime from "@yaireo/relative-Time";
 
@@ -25,6 +25,7 @@
           ...doc,
           last_edited_at: formatDate(doc),
           filtered: false,
+          selected: false,
         }));
       } else {
         /* FIX ME: take the filtered value from the current userDocs, not from response.data */
@@ -32,23 +33,41 @@
           ...doc,
           last_edited_at: formatDate(doc),
           filtered: false,
+          selected: false,
         }));
       }
     } catch (error) {
       console.error(`Failed to fetch document`, error);
     }
   };
-  const sortDocs = async (func) => {
-    userDocs.value.sort((a, b) => func(a, b));
-  };
-  const filterDocs = async (func) => {
-    userDocs.value = userDocs.value.map((doc) => ({ ...doc, filtered: func(doc) }));
-  };
-  const clearFilterDocs = async () => {
-    filterDocs((_) => false);
-  };
-  provide("userDocs", { userDocs, reloadDocs, sortDocs, filterDocs, clearFilterDocs });
   onMounted(async () => reloadDocs());
+
+  const sortDocs = async (func) => userDocs.value.sort((a, b) => func(a, b));
+  const filterDocs = async (func) =>
+    (userDocs.value = userDocs.value.map((doc) => ({ ...doc, filtered: func(doc) })));
+  const clearFilterDocs = async () => filterDocs(() => false);
+
+  const selectFile = (doc) => {
+    if (doc.selected) return;
+    userDocs.value.forEach((d) => d.selected && (d.selected = false));
+    console.log("selecting:", doc);
+    doc.selected = true;
+  };
+  const clearSelection = () => {
+    userDocs.value.forEach((d) => d.selected && (d.selected = false));
+  };
+  const selectedFile = computed(() => userDocs.value.find((d) => d.selected) || {});
+
+  provide("userDocs", {
+    userDocs,
+    reloadDocs,
+    sortDocs,
+    filterDocs,
+    clearFilterDocs,
+    selectFile,
+    clearSelection,
+    selectedFile,
+  });
 
   /*********** Provide userTags ***********/
   const userTags = ref([]);
