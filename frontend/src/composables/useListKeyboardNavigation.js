@@ -1,7 +1,7 @@
 import { ref, watch, nextTick } from "vue";
 import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
-export function useListKeyboardNavigation(listLengthRef, rootElementRef, useEscape = false) {
+export function useListKeyboardNavigation(listLengthRef, rootElementRef, useEscape = false, autoActivate = true) {
   console.log("Composable init:", {
     listLengthRefValue: listLengthRef?.value,
     rootElementRefValue: rootElementRef?.value
@@ -75,16 +75,17 @@ export function useListKeyboardNavigation(listLengthRef, rootElementRef, useEsca
     k: prevItem,
     arrowdown: nextItem,
     arrowup: prevItem,
-  };
-  useKeyboardShortcuts({
-    ...shortcuts,
     ...(useEscape ? { escape: clearSelection } : {}),
-  });
+  };
+  // Register keyboard shortcuts; allow manual control of activation
+  const { activate, deactivate } = useKeyboardShortcuts(shortcuts, autoActivate);
 
   return {
     activeIndex,
     nextItem,
     prevItem,
     clearSelection,
+    activate,
+    deactivate,
   };
 }

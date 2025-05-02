@@ -44,4 +44,7 @@
       color: var(--icon-error);
     }
   }
+  .item.focused {
+    background-color: var(--surface-hover);
+  }
 </style>

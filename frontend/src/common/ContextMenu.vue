@@ -27,12 +27,22 @@
   /* Keys */
   const numItems = computed(() => menuRef.value?.querySelectorAll(".item").length || 0);
 
+  // List keyboard navigation for the context menu items
+  const {
+    activeIndex,
+    nextItem,
+    prevItem,
+    clearSelection: clearMenuSelection,
+    activate: activateNav,
+    deactivate: deactivateNav
+  } = useListKeyboardNavigation(numItems, menuRef, false, false);
+
   /* Closable */
   const close = () => {
     show.value = false;
-    clearSelection();
+    clearMenuSelection();
   };
-  const { activate, deactivate } = useClosable({
+  const { activate: activateClosable, deactivate: deactivateClosable } = useClosable({
     onClose: close,
     closeOnEsc: true,
     closeOnOutsideClick: true,
@@ -44,14 +54,25 @@
     show,
     (isShown) => {
       if (isShown) {
-        activate();
-        const { activeIndex, clearSelection } = useListKeyboardNavigation(numItems, menuRef, false);
+        activateClosable();
+        activateNav();
       } else {
-        deactivate();
+        deactivateNav();
+        deactivateClosable();
       }
     },
     { immediate: true }
   );
+  // Highlight focused menu item on keyboard navigation
+  watch(activeIndex, (newIndex) => {
+    const menuEl = menuRef.value;
+    if (!menuEl) return;
+    const items = menuEl.querySelectorAll('.item');
+    items.forEach(el => el.classList.remove('focused'));
+    if (newIndex !== null && newIndex >= 0 && newIndex < items.length) {
+      items[newIndex].classList.add('focused');
+    }
+  });
 </script>
 
 <template>
