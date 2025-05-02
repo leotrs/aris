@@ -42,7 +42,7 @@
       <component :is="IconArrowsSort" v-if="!sortState" class="no-sort" />
       <component :is="IconArrowNarrowDown" v-if="sortState == 'desc'" />
       <component :is="IconArrowNarrowUp" v-if="sortState == 'asc'" />
-    </div>
+    </button>
   </template>
 
   <template v-else-if="filterable">
@@ -53,11 +53,11 @@
       :class="[name.toLowerCase().replace(' ', '-'), 'filterable']"
       @mouseenter="filterableSVGColor = 'var(--medium)'"
       @mouseleave="filterableSVGColor = 'transparent'"
-      @focus-visible="/* noop for outline */"
+      @focus-visible=""
     >
       <span class="col-header-label text-label">{{ name }}</span>
       <MultiSelectTags v-model="tagsSelectedForFilter" icon="Filter" />
-    </div>
+    </button>
   </template>
 
   <template v-else>
@@ -69,6 +69,11 @@
 
 <style scoped>
   .col-header {
+    /* reset default button appearance */
+    background: transparent;
+    border: none;
+    font: inherit;
+    cursor: default;
     display: flex;
     align-items: center;
     gap: 4px;
