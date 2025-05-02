@@ -21,6 +21,7 @@
   <button
     type="button"
     class="tag"
+    :class="[active ? 'on' : 'off', tag.color]"
     role="checkbox"
     :aria-checked="active"
     tabindex="0"
@@ -39,6 +40,11 @@
 
 <style scoped>
   .tag {
+    /* reset default button styles */
+    background: transparent;
+    border: none;
+    font: inherit;
+    cursor: pointer;
     display: flex;
     align-items: center;
     border-radius: 16px;
