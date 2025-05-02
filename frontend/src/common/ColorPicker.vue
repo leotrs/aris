@@ -2,7 +2,7 @@
   import { ref } from "vue";
 
   const props = defineProps({
-    colors: { type: Array, required: true },
+    colors: { type: Object, required: true },
     defaultActive: { type: String, default: "" },
   });
   const emit = defineEmits(["change"]);

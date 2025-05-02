@@ -39,6 +39,7 @@
     closeOnCloseButton: false,
     autoActivate: false,
   });
+
   watch(
     show,
     (isShown) => {
