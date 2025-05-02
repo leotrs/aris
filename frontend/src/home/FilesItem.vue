@@ -36,9 +36,13 @@
 <template>
   <div
     class="item"
+    role="button"
+    tabindex="0"
     :class="[mode, doc.selected ? 'active' : '']"
     @click="selectThisFile"
     @dblclick="readFile"
+    @keydown.enter.prevent="selectThisFile"
+    @keydown.space.prevent="selectThisFile"
   >
     <template v-if="!!doc">
       <template v-if="mode == 'cards'">

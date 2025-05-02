@@ -8,10 +8,10 @@
 </script>
 
 <template>
-  <div class="item">
+  <button type="button" class="item" role="menuitem" tabindex="-1">
     <component :is="Icons['Icon' + props.icon]" class="cmi-icon" />
     <span class="cmi-caption">{{ caption }}</span>
-  </div>
+  </button>
 </template>
 
 <style scoped>

@@ -18,7 +18,14 @@
 </script>
 
 <template>
-  <span class="tag" :class="[active ? 'on' : 'off', tag.color]">
+  <button
+    type="button"
+    class="tag"
+    role="checkbox"
+    :aria-checked="active"
+    tabindex="0"
+    @click="$emit('click')"
+  >
     <EditableText
       v-if="editable"
       ref="editableTextRef"
@@ -27,7 +34,7 @@
       @save="(newName) => emit('doneEditing', newName)"
     />
     <span v-else>{{ tag.name }}</span>
-  </span>
+  </button>
 </template>
 
 <style scoped>
@@ -89,5 +96,9 @@
       border: var(--border-thin) solid var(--gray-400);
       color: var(--gray-400);
     }
+  }
+  .tag:focus-visible {
+    outline: var(--border-med) solid var(--border-action);
+    outline-offset: var(--border-extrathin);
   }
 </style>

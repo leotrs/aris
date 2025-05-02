@@ -17,14 +17,16 @@
 
 <template>
   <span class="cp-wrapper">
-    <span
+    <button
       v-for="(color, name) in colors"
+      type="button"
       class="circle"
       :class="[name, activeColor == name ? 'active' : '']"
       :style="{ 'background-color': color }"
       @click="onClick(name)"
-    >
-    </span>
+      @keydown.enter.prevent="onClick(name)"
+      @keydown.space.prevent="onClick(name)"
+    />
   </span>
 </template>
 

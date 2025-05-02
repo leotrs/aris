@@ -22,13 +22,15 @@
     <span class="s-label">{{ labelLeft }}</span>
     <div class="s-control">
       <span class="s-track"></span>
-      <span
+      <button
         v-for="idx in Array(numberStops).keys()"
+        type="button"
         class="s-stop"
-        :class="[{ active: idx == active }]"
+        :class="{ active: idx == active }"
         @click="active = idx"
-      >
-      </span>
+        @keydown.enter.prevent="active = idx"
+        @keydown.space.prevent="active = idx"
+      />
     </div>
     <component :is="Icons['Icon' + iconRight]" class="s-icon" />
     <span class="s-label">{{ labelRight }}</span>

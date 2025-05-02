@@ -58,7 +58,7 @@
       class="item"
       :tag="tag"
     />
-    <div class="new-tag item">
+    <div class="new-tag">
       <Tag
         v-model="renaming"
         :tag="newTagPlaceholder"

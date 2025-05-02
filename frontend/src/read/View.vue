@@ -25,6 +25,7 @@
   const rightComponents = reactive([]);
   const sideRefMap = { left: leftComponents, top: topComponents, right: rightComponents };
   const showComponent = (compName, side) => {
+    console.log("showing: ", compName, "on side: ", side);
     sideRefMap[side].push(compName);
   };
   const hideComponent = (compName, side) => {

@@ -30,11 +30,9 @@
   // List keyboard navigation for the context menu items
   const {
     activeIndex,
-    nextItem,
-    prevItem,
     clearSelection: clearMenuSelection,
     activate: activateNav,
-    deactivate: deactivateNav
+    deactivate: deactivateNav,
   } = useListKeyboardNavigation(numItems, menuRef, false, false);
 
   /* Closable */
@@ -63,14 +61,13 @@
     },
     { immediate: true }
   );
-  // Highlight focused menu item on keyboard navigation
+  // Focus the menu item when navigated via keyboard
   watch(activeIndex, (newIndex) => {
     const menuEl = menuRef.value;
     if (!menuEl) return;
-    const items = menuEl.querySelectorAll('.item');
-    items.forEach(el => el.classList.remove('focused'));
+    const items = menuEl.querySelectorAll(".item");
     if (newIndex !== null && newIndex >= 0 && newIndex < items.length) {
-      items[newIndex].classList.add('focused');
+      items[newIndex].focus();
     }
   });
 </script>
@@ -91,7 +88,9 @@
       />
     </template>
 
-    <div v-if="show" ref="menu-ref" class="cm-menu" :style="floatingStyles"><slot /></div>
+    <div v-if="show" ref="menu-ref" class="cm-menu" role="menu" :style="floatingStyles">
+      <slot />
+    </div>
   </div>
 </template>
 
