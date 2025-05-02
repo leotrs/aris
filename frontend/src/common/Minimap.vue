@@ -37,9 +37,11 @@
   };
 
   /* SVG manipulation */
-  const resizeMinimap = (wrapper, initialData) => {
+  const resizeMinimap = (wrapper, initialData, options = { minSizeForSubsections: 250 }) => {
     const svg = wrapper.querySelector("svg");
     if (!svg) return;
+
+    const { minSizeForSubsections } = options;
 
     const isHorizontal = props.orientation === "horizontal";
     const { initialHeight, initialWidth, initialCircles, lineX, lineY, strokeWidth } = initialData;
@@ -47,6 +49,7 @@
     if (isHorizontal) {
       const containerWidth = wrapper.clientWidth;
       if (containerWidth <= 0) return;
+
       const scaleFactor = containerWidth / initialWidth;
       /* console.log(
        *   "Resizing horizontal with scale factor:",
@@ -61,9 +64,12 @@
 
       // Update circle positions
       const circles = svg.querySelectorAll("circle");
-      circles.forEach((circle, index) =>
-        circle.setAttribute("cx", initialCircles[index].cx * scaleFactor)
-      );
+      circles.forEach((circle, index) => {
+        circle.setAttribute("cx", initialCircles[index].cx * scaleFactor);
+        if (containerWidth < minSizeForSubsections && initialCircles[index].level > 2)
+          circle.style.visibility = "hidden";
+        if (containerWidth >= minSizeForSubsections) circle.style.visibility = "visible";
+      });
 
       // Update viewBox to match new dimensions
       const cAttr = (c, a) => parseFloat(c.getAttribute(a));
@@ -257,6 +263,7 @@
         cy: lineY,
         r: radiusDelta * (6 - level),
         percent, // Keep original percent for scroll tracking
+        level, // Keep original level for filtering
       }));
 
       // Store initial data for future resizing
@@ -542,15 +549,23 @@
 
     // Watch for size changes and trigger resize
     if (isHorizontal) {
-      watch(wrapperWidth, (newWidth) => {
-        if (newWidth > 0 && svgInitialData.value && wrapperRef.value)
-          resizeMinimap(wrapperRef.value, svgInitialData.value);
-      });
+      watch(
+        wrapperWidth,
+        (newWidth) => {
+          if (newWidth > 0 && svgInitialData.value && wrapperRef.value)
+            resizeMinimap(wrapperRef.value, svgInitialData.value);
+        },
+        { immediate: true }
+      );
     } else {
-      watch(wrapperHeight, (newHeight) => {
-        if (newHeight > 0 && svgInitialData.value && wrapperRef.value)
-          resizeMinimap(wrapperRef.value, svgInitialData.value);
-      });
+      watch(
+        wrapperHeight,
+        (newHeight) => {
+          if (newHeight > 0 && svgInitialData.value && wrapperRef.value)
+            resizeMinimap(wrapperRef.value, svgInitialData.value);
+        },
+        { immediate: true }
+      );
     }
   });
 
