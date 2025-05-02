@@ -81,5 +81,9 @@
         background-color: var(--primary-300);
       }
     }
+    &:focus-visible {
+      outline: var(--border-med) solid var(--border-action);
+      outline-offset: var(--border-extrathin);
+    }
   }
 </style>

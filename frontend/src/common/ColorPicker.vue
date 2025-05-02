@@ -47,6 +47,12 @@
       border-color: var(--almost-black);
       box-shadow: var(--shadow-strong);
     }
+    &:focus-visible {
+      border-color: var(--almost-black);
+      box-shadow: var(--shadow-strong);
+      outline: var(--border-med) solid var(--border-action);
+      outline-offset: var(--border-extrathin);
+    }
 
     &.active {
       border-color: var(--almost-black);

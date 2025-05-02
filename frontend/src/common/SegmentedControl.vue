@@ -97,6 +97,11 @@
       &:hover {
         box-shadow: var(--shadow-strong);
       }
+    }
+    &:focus-visible {
+      background-color: var(--surface-hover);
+      outline: var(--border-med) solid var(--border-action);
+      outline-offset: var(--border-extrathin);
 
       & > .sc-icon {
         color: var(--dark);

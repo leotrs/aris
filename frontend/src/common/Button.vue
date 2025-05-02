@@ -53,6 +53,10 @@
     &:hover {
       cursor: pointer;
     }
+    &:focus-visible {
+      outline: var(--border-med) solid var(--border-action);
+      outline-offset: var(--border-extrathin);
+    }
   }
 
   button.btn-sm {
