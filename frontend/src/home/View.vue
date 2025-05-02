@@ -6,9 +6,9 @@
   import PreviewPane from "./PreviewPane.vue";
   import UploadFile from "./ModalUploadFile.vue";
   import DragBorder from "./DragBorder.vue";
+
   const showModal = ref(false);
   const isMobile = inject("isMobile");
-
   const { selectedFile, selectFile } = inject("userDocs");
 
   /* Handle draggable border and pane height */
@@ -16,8 +16,6 @@
   const { height: panesHeight } = useElementSize(panesRef);
   const boxTopPixels = 16 + 48 + 16 + 40 + 56 + 6; // padding + topbar height + gap + pane header height + height of one item row + epsilon
   const borderPos = ref(0);
-
-  /* Set panes' heights based on where the border is */
   const filesHeight = computed(() =>
     selectedFile.value?.id ? `calc(${borderPos.value}%)` : "100%"
   );
@@ -41,11 +39,11 @@
 
   /* Since the gap between panes is 8px but the outer padding is 16px, when the Preview
    * pane is inactive, its top edge peeks out by 8px. This hides it. */
-  const previewPaneTop = computed(() => (selectedFile.value?.id ? "0" : "8px"));
+  const previewTop = computed(() => (selectedFile.value?.id ? "0" : "8px"));
 </script>
 
 <template>
-  <div ref="selfRef" :class="['view-wrapper', isMobile ? 'mobile' : '']">
+  <div :class="['view-wrapper', isMobile ? 'mobile' : '']">
     <Sidebar @show-file-upload-modal="showModal = true" />
 
     <div class="menus">
@@ -54,7 +52,7 @@
     </div>
 
     <div ref="panes-ref" class="panes">
-      <FilesPane id="documents" :style="{ height: filesHeight }" @set-selected="selectFile(doc)" />
+      <FilesPane :style="{ height: filesHeight }" />
 
       <DragBorder
         ref="border-ref"
@@ -64,11 +62,7 @@
         :parent-height="panesHeight"
       />
 
-      <PreviewPane
-        v-if="!isMobile"
-        :doc="selectedFile"
-        :style="{ height: previewHeight, top: previewPaneTop }"
-      />
+      <PreviewPane :doc="selectedFile" :style="{ height: previewHeight, top: previewTop }" />
     </div>
 
     <div v-if="showModal" class="modal">
@@ -90,36 +84,7 @@
 
   .view-wrapper.mobile {
     padding: 0;
-  }
 
-  .panes {
-    position: relative;
-    flex-grow: 1;
-    height: 100%;
-    border-radius: 16px;
-
-    & :deep(.pane) {
-      background-color: var(--white);
-      padding: 16px 16px 0 16px;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      border-radius: 16px;
-      box-shadow: var(--shadow-soft);
-
-      & :deep(.pane-header) {
-        background-color: var(--surface-hover);
-        border-color: var(--border-primary);
-      }
-    }
-  }
-
-  .pane {
-    transition: v-bind(paneHeightTransition);
-  }
-
-  .view-wrapper.mobile {
     & :deep(.pane) {
       padding: 0;
       width: 100%;
@@ -130,13 +95,6 @@
     }
   }
 
-  .modal {
-    position: absolute;
-    width: 100vw;
-    height: 100vh;
-    backdrop-filter: blur(2px) brightness(0.9);
-  }
-
   .menus {
     position: absolute;
     right: 32px;
@@ -145,5 +103,31 @@
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+
+  .panes {
+    position: relative;
+    flex-grow: 1;
+    height: 100%;
+    border-radius: 16px;
+  }
+
+  .pane {
+    background-color: var(--surface-primary);
+    padding: 16px 16px 0 16px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+    transition: v-bind(paneHeightTransition);
+  }
+
+  .modal {
+    position: absolute;
+    width: 100vw;
+    height: 100vh;
+    backdrop-filter: blur(2px) brightness(0.9);
   }
 </style>

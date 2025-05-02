@@ -12,8 +12,8 @@
   .pane-header {
     display: flex;
     justify-content: space-between;
-    border: var(--border-extrathin) solid var(--border-information);
-    background-color: var(--surface-information);
+    border: var(--border-extrathin) solid var(--border-primary);
+    background-color: var(--surface-hover);
     min-height: 40px;
     border-radius: 8px;
     padding-inline: 8px;
