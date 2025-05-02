@@ -97,3 +97,17 @@ html, body {
   height: 100%;
   width: 100%;
 }
+/* Interactive focus/hover states */
+/* Transient hover or keyboard focus highlight */
+.item:hover,
+.item:focus-visible {
+  background-color: var(--surface-hover);
+}
+
+/* Consistent focus outline for buttons and focusable elements */
+button:focus-visible,
+[role="menuitem"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: var(--border-med) solid var(--border-action);
+  outline-offset: var(--border-extrathin);
+}

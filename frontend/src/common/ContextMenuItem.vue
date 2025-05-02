@@ -16,6 +16,11 @@
 
 <style scoped>
   .item {
+    /* reset button default styles */
+    background: transparent;
+    border: none;
+    font: inherit;
+    cursor: pointer;
     display: flex;
     align-items: center;
     padding-left: 10px;
@@ -26,6 +31,10 @@
 
     &:hover {
       background-color: var(--surface-hover);
+    }
+    &:focus-visible {
+      background-color: var(--surface-hover);
+      outline: none;
     }
   }
 

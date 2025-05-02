@@ -106,6 +106,10 @@
     color: var(--extra-dark);
     overflow-y: visible;
     transition: var(--transition-bg-color);
+    &:focus-visible {
+      background-color: var(--surface-hover);
+      outline: none;
+    }
   }
 
   .item.list {

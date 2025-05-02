@@ -31,6 +31,11 @@
         color: var(--almost-black);
       }
     }
+    &:focus-visible {
+      background-color: var(--surface-hint);
+      outline: var(--border-med) solid var(--border-action);
+      outline-offset: var(--border-extrathin);
+    }
 
     & .btn-icon {
       stroke-width: 1.25px;
