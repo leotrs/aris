@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, computed, reactive, watch } from "vue";
+  import { inject, reactive } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "@/read/SidebarItem.vue";
@@ -28,18 +28,11 @@
     PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t", state: false },
   });
 
-  const togglePanel = (name, obj) => {
-    obj.state
-      ? emit("hideComponent", name, obj.preferredSide)
-      : emit("showComponent", name, obj.preferredSide);
-    obj.state = !obj.state;
-  };
-
   useKeyboardShortcuts(
     Object.fromEntries(
       Object.entries(panelComponents).map(([name, obj]) => [
         `p,${obj.key}`,
-        () => togglePanel(name, obj),
+        () => (obj.state = !obj.state),
       ])
     )
   );
