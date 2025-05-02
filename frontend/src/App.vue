@@ -1,19 +1,18 @@
 <script setup>
   import { ref, computed, provide, onMounted } from "vue";
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+  import axios from "axios";
   import RelativeTime from "@yaireo/relative-Time";
 
-  import axios from "axios";
-
-  /*********** provide user info ***********/
+  /* Provide user ser info */
   const user = { id: 1, name: "TER" };
   provide("user", user);
 
-  /* Utilities */
+  /* Date utilities */
   const relativeTime = new RelativeTime({ locale: "en" });
   const formatDate = (doc) => relativeTime.from(new Date(doc.last_edited_at));
 
-  /*********** Proivde userDocs ***********/
+  /* Provide userDocs */
   const userDocs = ref([]);
   const reloadDocs = async (docID) => {
     try {
@@ -28,7 +27,7 @@
           selected: false,
         }));
       } else {
-        /* FIX ME: take the filtered value from the current userDocs, not from response.data */
+        /* FIX ME: take the filtered and selected value from the current userDocs, not from response.data */
         userDocs.value = response.data.map((doc) => ({
           ...doc,
           last_edited_at: formatDate(doc),
@@ -68,7 +67,7 @@
     selectedFile,
   });
 
-  /*********** Provide userTags ***********/
+  /* Provide userTags */
   const userTags = ref([]);
   const updateUserTag = async (oldTag, newTag) => {
     if (oldTag) {
@@ -127,10 +126,9 @@
     updateUserTag();
   });
 
-  /*********** provide viewport info ***********/
+  /* Provide viewport info */
   const breakpoints = useBreakpoints(breakpointsTailwind);
   provide("breakpoints", breakpoints);
-
   const isMobile = ref(false);
   provide("isMobile", isMobile);
 </script>
