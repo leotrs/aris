@@ -1,8 +1,8 @@
 <script setup>
-  import { ref, inject, watch } from "vue";
+  import { ref, inject } from "vue";
   import { IconMenu3 } from "@tabler/icons-vue";
-  import SidebarItem from "./SidebarItem.vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import SidebarItem from "./SidebarItem.vue";
 
   const emit = defineEmits(["showFileUploadModal"]);
 
@@ -13,22 +13,21 @@
     collapsed.value = !collapsed.value;
     forceCollapsed.value = !forceCollapsed.value;
   };
-  useKeyboardShortcuts({ c: toggleCollapsed });
-
-  /* New file upload */
-  useKeyboardShortcuts({ n: () => emit("showFileUploadModal") });
 
   /* Breakpoints */
   const breakpoints = inject("breakpoints");
   const isMobile = inject("isMobile");
   const showMobileMenu = ref(false);
+
+  /* Keys */
+  useKeyboardShortcuts({
+    n: () => emit("showFileUploadModal"),
+    c: toggleCollapsed,
+  });
 </script>
 
 <template>
-  <div
-    ref="sidebarRef"
-    :class="['sb-wrapper', isMobile ? 'mobile' : '', !isMobile && collapsed ? 'collapsed' : '']"
-  >
+  <div :class="['sb-wrapper', isMobile ? 'mobile' : '', !isMobile && collapsed ? 'collapsed' : '']">
     <template v-if="!isMobile">
       <div id="logo">
         <img v-if="collapsed" src="../assets/logo-32px.svg" />
@@ -45,7 +44,7 @@
         text="New File"
         :shadow="true"
         :class="{ collapsed }"
-        @click="$emit('showFileUploadModal')"
+        @click="emit('showFileUploadModal')"
       />
     </div>
 
@@ -218,7 +217,7 @@
   }
 
   .cta {
-    transition: padding-inline 0.25s ease 0.05s;
+    transition: padding-inline 0.2s ease 0.1s;
   }
 
   .cta > button {
