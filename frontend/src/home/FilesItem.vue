@@ -25,7 +25,7 @@
   /* Keys */
   const { activate, deactivate } = useKeyboardShortcuts({
     ".": () => menuRef.value?.toggle(),
-    enter: () => selectThisFile(doc.value),
+    enter: selectThisFile,
   });
   watch(
     () => doc.value?.selected,
