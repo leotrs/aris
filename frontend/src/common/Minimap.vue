@@ -5,6 +5,7 @@
   const props = defineProps({
     doc: { type: Object, required: true },
     orientation: { type: String, default: "vertical" },
+    highlightScroll: { type: Boolean, default: true },
   });
 
   /* Utilities */
@@ -286,7 +287,7 @@
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="${minX} 0 ${width} ${height}" preserveAspectRatio="xMidYMid meet">
         <line x1="0" y1="${lineY}" x2="${lineSize}" y2="${lineY}" stroke-width="${strokeWidth}" stroke-linecap="round"/>
         ${circles.map((c, idx) => `<circle class="mm-circle" data-index="${idx}" data-percent="${c.percent}" cx="${c.cx}" cy="${c.cy}" r="${c.r}" stroke-width="${strokeWidth}" />`).join("\n  ")}
-        <line class="scroll-indicator" x1="0" y1="${lineY}" x2="0" y2="${lineY}" stroke-width="${strokeWidth}" stroke-linecap="round"/>
+        ${props.highlightScroll ? `<line class="scroll-indicator" x1="0" y1="${lineY}" x2="0" y2="${lineY}" stroke-width="${strokeWidth}" stroke-linecap="round"/>` : ""}
       </svg>`;
 
       return svg;
@@ -542,22 +543,20 @@
     // Watch for size changes and trigger resize
     if (isHorizontal) {
       watch(wrapperWidth, (newWidth) => {
-        if (newWidth > 0 && svgInitialData.value && wrapperRef.value) {
+        if (newWidth > 0 && svgInitialData.value && wrapperRef.value)
           resizeMinimap(wrapperRef.value, svgInitialData.value);
-        }
       });
     } else {
       watch(wrapperHeight, (newHeight) => {
-        if (newHeight > 0 && svgInitialData.value && wrapperRef.value) {
+        if (newHeight > 0 && svgInitialData.value && wrapperRef.value)
           resizeMinimap(wrapperRef.value, svgInitialData.value);
-        }
       });
     }
   });
 
   /* Highlight scroll position */
   const yScroll = inject("yScroll", ref(null));
-  watch(yScroll, (newVal) => highlightScrollPos(newVal));
+  watch(yScroll, (newVal) => props.highlightScroll && highlightScrollPos(newVal));
 </script>
 
 <template>

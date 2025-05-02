@@ -53,7 +53,7 @@
 
         <div class="card-content">
           <Suspense>
-            <Minimap :doc="doc" orientation="horizontal" />
+            <Minimap :doc="doc" orientation="horizontal" :highlight-scroll="false" />
             <template #fallback><span class="loading">loading...</span></template>
           </Suspense>
           <Abstract :doc="doc" />
@@ -79,7 +79,7 @@
 
         <template v-if="shouldShowColumn('Map', 'list')">
           <Suspense>
-            <Minimap :doc="doc" orientation="horizontal" />
+            <Minimap :doc="doc" orientation="horizontal" :highlight-scroll="false" />
             <template #fallback><span class="loading">loading...</span></template>
           </Suspense>
         </template>
@@ -110,7 +110,7 @@
 
   .item.list {
     & > * {
-      height: calc(56px - 2 * var(--border-width));
+      height: 56px;
       padding-right: 8px;
       transition: background 0.15s ease-in-out;
       border-top: var(--border-width) solid transparent;
