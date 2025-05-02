@@ -6,7 +6,7 @@
   });
   const comp = computed(() => (props.mode == "ContextMenu" ? "ContextMenuItem" : "Button"));
   const childProps = (icon, caption) => {
-    if (props.mode == "ContextMeu") return { icon: icon, caption: caption };
+    if (props.mode == "ContextMenu") return { icon: icon, caption: caption };
     else if (props.mode == "ButtonRow")
       return { icon: icon, caption: caption, kind: "tertiary", size: "sm", textFloat: "bottom" };
   };

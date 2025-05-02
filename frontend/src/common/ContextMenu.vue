@@ -1,7 +1,7 @@
 <script setup>
-  import { ref, watch, computed, onMounted, useTemplateRef } from "vue";
+  import { ref, watch, computed, useTemplateRef } from "vue";
   import { useFloating, autoUpdate, offset, shift } from "@floating-ui/vue";
-  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
 
   const props = defineProps({
@@ -10,7 +10,7 @@
     placement: { type: String, default: "left-start" },
   });
 
-  /* Main state model */
+  /* State */
   const show = ref(false);
   defineExpose({ toggle: () => (show.value = !show.value) });
 
@@ -25,30 +25,16 @@
   });
 
   /* Keys */
-  const activeIndex = ref(null);
-  const numItems = computed(() => menuRef.value.querySelectorAll(".item").length);
-  const nextItemOnKey = (ev) => {
-    ev.preventDefault();
-    activeIndex.value = activeIndex.value === null ? 0 : (activeIndex.value + 1) % numItems.value;
-    menuRef.value
-      .querySelector(`.item:nth-child(${activeIndex.value + 1})`)
-      .classList.add("active");
+  const numItems = computed(() => menuRef.value?.querySelectorAll(".item").length || 0);
+  const { activeIndex, clearSelection } = useListKeyboardNavigation(numItems, menuRef, false);
+
+  /* Closable */
+  const close = () => {
+    show.value = false;
+    clearSelection();
   };
-  const prevItemOnKey = (ev) => {
-    ev.preventDefault();
-    activeIndex.value =
-      activeIndex.value === null ? 0 : (activeIndex.value + numItems.value - 1) % numItems.value;
-  };
-  onMounted(() => {
-    useKeyboardShortcuts({
-      j: nextItemOnKey,
-      k: prevItemOnKey,
-      arrowdown: nextItemOnKey,
-      arrowup: prevItemOnKey,
-    });
-  });
   const { activate, deactivate } = useClosable({
-    onClose: () => (show.value = false),
+    onClose: close,
     closeOnEsc: true,
     closeOnOutsideClick: true,
     closeOnCloseButton: false,
