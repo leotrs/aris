@@ -23,6 +23,7 @@
     cursor: pointer;
     display: flex;
     align-items: center;
+    width: 100%;
     padding-left: 10px;
     padding-right: 16px;
     padding-block: 0px;
