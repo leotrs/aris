@@ -68,7 +68,6 @@
         v-if="!isMobile"
         :doc="selectedFile"
         :style="{ height: previewHeight, top: previewPaneTop }"
-        @set-selected="selectFile(doc)"
       />
     </div>
 

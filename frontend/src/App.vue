@@ -50,7 +50,6 @@
   const selectFile = (doc) => {
     if (doc.selected) return;
     userDocs.value.forEach((d) => d.selected && (d.selected = false));
-    console.log("selecting:", doc);
     doc.selected = true;
   };
   const clearSelection = () => {

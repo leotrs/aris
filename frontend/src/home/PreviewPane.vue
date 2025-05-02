@@ -51,7 +51,7 @@
       </Tabs>
     </div>
     <div class="pane-footer">
-      <div class="left">Last edit: {{ doc.last_edited_at }}.</div>
+      <span class="left text-caption">Last edited {{ doc.last_edited_at }}</span>
       <div class="right">
         <Button kind="tertiary" size="sm" text="Write" icon="Pencil" />
         <Button kind="tertiary" size="sm" text="Review" icon="FileCheck" />
@@ -122,6 +122,11 @@
     align-items: center;
     justify-content: space-between;
     padding-left: 8px;
+
+    .left {
+      font-size: 12px;
+      color: var(--medium);
+    }
 
     .right {
       display: flex;

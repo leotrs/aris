@@ -34,7 +34,7 @@ const dispatchSequenceKey = (ev, shortcuts, key) => {
   if (!lastKeyPressed.value) return false;
   const sequenceKey = `${lastKeyPressed.value},${key}`;
   if (!shortcuts[sequenceKey]) return false;
-  console.log("dispatching sequence", sequenceKey);
+  // console.log("dispatching sequence", sequenceKey);
   ev.preventDefault();
 
   try {
@@ -62,7 +62,7 @@ const dispatchSingleKey = (ev, shortcuts, key) => {
     // After a delay, execute the single key shortcut, if it exists
     sequenceTimeout.value = setTimeout(() => {
       if (shortcuts[key]) {
-        console.log("dispatching delayed", key);
+        // console.log("dispatching delayed", key);
         try {
           shortcuts[key](ev);
         } catch (error) {
@@ -74,7 +74,7 @@ const dispatchSingleKey = (ev, shortcuts, key) => {
 
     return true;
   } else if (shortcuts[key]) {
-    console.log("dispatching", key);
+    // console.log("dispatching", key);
     ev.preventDefault();
 
     try {
@@ -110,7 +110,7 @@ const handleKeyDown = (ev) => {
 
   const key = ev.key.toLowerCase();
   if (components.length === 0 && !fallbackComponent.value) return;
-  console.log('Key pressed:', key, '. Last key:', lastKeyPressed.value);
+  // console.log('Key pressed:', key, '. Last key:', lastKeyPressed.value);
 
   // Try components in reverse order (most recently activated first)
   for (let i = components.length - 1; i >= 0; i--) {
@@ -120,7 +120,7 @@ const handleKeyDown = (ev) => {
   // Try the fallback component
   if (!fallbackComponent.value) return;
   isForwardingEvent = true;
-  console.log("trying fallback:", fallbackComponent.value.$el);
+  // console.log("trying fallback:", fallbackComponent.value.$el);
   try {
     const clonedEvent = new KeyboardEvent('keydown', {
       key: ev.key,

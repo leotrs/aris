@@ -5,7 +5,6 @@
   const props = defineProps({
     mode: { type: String, default: "list" },
   });
-  const emit = defineEmits(["set-selected"]);
   const { sortDocs, filterDocs, clearFilterDocs } = inject("userDocs");
 
   const columnInfo = {

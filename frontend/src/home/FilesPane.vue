@@ -1,13 +1,12 @@
 <script setup>
-  import { ref, computed, inject, provide, useTemplateRef } from "vue";
+  import { ref, computed, inject, provide, watch, useTemplateRef } from "vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import Topbar from "./FilesTopbar.vue";
   import FilesHeader from "./FilesHeader.vue";
   import FilesItem from "./FilesItem.vue";
 
   const props = defineProps({});
-  const emit = defineEmits(["set-selected"]);
-  const { userDocs } = inject("userDocs");
+  const { userDocs, selectFile } = inject("userDocs");
 
   /* Selected file */
   const filesRef = useTemplateRef("files-ref");
