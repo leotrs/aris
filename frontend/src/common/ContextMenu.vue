@@ -26,7 +26,6 @@
 
   /* Keys */
   const numItems = computed(() => menuRef.value?.querySelectorAll(".item").length || 0);
-  const { activeIndex, clearSelection } = useListKeyboardNavigation(numItems, menuRef, false);
 
   /* Closable */
   const close = () => {
@@ -40,7 +39,18 @@
     closeOnCloseButton: false,
     autoActivate: false,
   });
-  watch(show, (isShown) => (isShown ? activate() : deactivate()));
+  watch(
+    show,
+    (isShown) => {
+      if (isShown) {
+        activate();
+        const { activeIndex, clearSelection } = useListKeyboardNavigation(numItems, menuRef, false);
+      } else {
+        deactivate();
+      }
+    },
+    { immediate: true }
+  );
 </script>
 
 <template>
