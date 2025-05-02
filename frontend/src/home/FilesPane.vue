@@ -13,7 +13,8 @@
 
   /* Keyboard shortcuts */
   const numDocs = computed(() => userDocs.value?.length || 0);
-  const { listActiveIndex } = useListKeyboardNavigation(numDocs, filesRef, true);
+  const { activeIndex } = useListKeyboardNavigation(numDocs, filesRef, true);
+  watch(activeIndex, (newVal) => selectFile(userDocs.value[newVal]));
 
   /* Breakpoints */
   const breakpoints = inject("breakpoints");
