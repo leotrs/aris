@@ -10,14 +10,31 @@
 </script>
 
 <template>
-  <div class="tab-wrapper" :class="{ active }" @click="active = true">
+  <button
+    type="button"
+    role="tab"
+    :aria-selected="active"
+    class="tab-wrapper"
+    :class="{ active }"
+    tabindex="-1"
+    @click="active = true"
+    @keydown.enter.prevent="active = true"
+    @keydown.space.prevent="active = true"
+  >
     <component :is="Icons['Icon' + icon]" class="tab-icon" />
     <span class="tab-label text-caption">{{ label }}</span>
-  </div>
+  </button>
 </template>
 
 <style>
+  /* reset default button styles */
   .tab-wrapper {
+    background: transparent;
+    border: none;
+    font: inherit;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
     --transition-duration: 0.3s;
 
     height: calc(48px - var(--border-extrathin));
@@ -40,6 +57,10 @@
 
     & .tabler-icon {
       color: var(--gray-800);
+    }
+    &:focus-visible {
+      outline: var(--border-med) solid var(--border-action);
+      outline-offset: var(--border-extrathin);
     }
   }
 

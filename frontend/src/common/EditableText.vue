@@ -61,14 +61,18 @@
 
 <template>
   <span>
-    <span
+    <button
       v-if="!isEditing"
+      type="button"
       class="editable"
       :class="textClass"
+      tabindex="0"
       @click="() => editOnClick && startEditing()"
+      @keydown.enter.prevent="startEditing()"
+      @keydown.space.prevent="startEditing()"
     >
       {{ text }}
-    </span>
+    </button>
     <input
       v-else
       ref="inputRef"
@@ -92,5 +96,9 @@
     color: inherit;
     outline: none;
     width: 100%;
+  }
+  .editable:focus-visible {
+    outline: var(--border-med) solid var(--border-action);
+    outline-offset: var(--border-extrathin);
   }
 </style>

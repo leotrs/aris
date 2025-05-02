@@ -34,14 +34,15 @@
 <template>
   <div class="sc-wrapper">
     <template v-for="idx in numItems">
-      <span
-        class="sc-item"
-        :class="['sc-btn', { active: idx - 1 == active }]"
+      <button
+        type="button"
+        class="sc-item sc-btn"
+        :class="{ active: idx - 1 == active }"
         @click="click(idx - 1)"
       >
         <component :is="Icons['Icon' + icons[idx - 1]]" v-if="icons" class="sc-icon" />
         <span v-if="labels" class="sc-label text-default">{{ labels[idx - 1] }}</span>
-      </span>
+      </button>
     </template>
   </div>
 </template>

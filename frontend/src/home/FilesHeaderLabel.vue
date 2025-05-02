@@ -29,10 +29,14 @@
 
 <template>
   <template v-if="sortable">
-    <div
+    <button
+      type="button"
+      role="button"
       class="col-header"
       :class="[name.toLowerCase().replace(/ /g, '-'), 'sortable']"
       @click.stop="nextSortState"
+      @keydown.enter.stop.prevent="nextSortState"
+      @keydown.space.stop.prevent="nextSortState"
     >
       <span class="col-header-label text-label">{{ name }}</span>
       <component :is="IconArrowsSort" v-if="!sortState" class="no-sort" />
@@ -42,11 +46,14 @@
   </template>
 
   <template v-else-if="filterable">
-    <div
+    <button
+      type="button"
+      role="button"
       class="col-header"
       :class="[name.toLowerCase().replace(' ', '-'), 'filterable']"
       @mouseenter="filterableSVGColor = 'var(--medium)'"
       @mouseleave="filterableSVGColor = 'transparent'"
+      @focus-visible="/* noop for outline */"
     >
       <span class="col-header-label text-label">{{ name }}</span>
       <MultiSelectTags v-model="tagsSelectedForFilter" icon="Filter" />
@@ -73,6 +80,10 @@
     &.sortable:hover,
     &.filterable:hover {
       cursor: pointer;
+    }
+    &:focus-visible {
+      outline: var(--border-med) solid var(--border-action);
+      outline-offset: var(--border-extrathin);
     }
 
     &.filterable :deep(.cm-btn svg) {
