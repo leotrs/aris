@@ -9,7 +9,7 @@
 
   const showModal = ref(false);
   const isMobile = inject("isMobile");
-  const { selectedFile, selectFile } = inject("userDocs");
+  const { selectedFile } = inject("userDocs");
 
   /* Handle draggable border and pane height */
   const panesRef = useTemplateRef("panes-ref");
@@ -129,5 +129,6 @@
     width: 100vw;
     height: 100vh;
     backdrop-filter: blur(2px) brightness(0.9);
+    z-index: 999;
   }
 </style>

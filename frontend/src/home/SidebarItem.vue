@@ -77,7 +77,7 @@
   }
 
   .sb-item.active {
-    background-color: var(--white);
+    background-color: var(--surface-primary);
     border-left-color: var(--border-action);
     box-shadow: var(--shadow-soft);
 
@@ -93,9 +93,9 @@
       position: absolute;
       width: 8px;
       height: 100%;
-      background-color: var(--white);
+      background-color: var(--surface-primary);
       right: 0px;
-      z-index: 9999;
+      z-index: 1;
     }
   }
 
