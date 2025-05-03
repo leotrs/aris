@@ -57,7 +57,7 @@
 
         <div class="card-content">
           <Suspense>
-            <Minimap :doc="doc" orientation="horizontal" :highlight-scroll="false" />
+            <Minimap :doc="doc" orientation="horizontal" side="top" :highlight-scroll="false" />
             <template #fallback><span class="loading">loading...</span></template>
           </Suspense>
           <Abstract :doc="doc" />
@@ -83,7 +83,7 @@
 
         <template v-if="shouldShowColumn('Map', 'list')">
           <Suspense>
-            <Minimap :doc="doc" orientation="horizontal" :highlight-scroll="false" />
+            <Minimap :doc="doc" orientation="horizontal" side="top" :highlight-scroll="false" />
             <template #fallback><span class="loading">loading...</span></template>
           </Suspense>
         </template>
