@@ -1,58 +1,70 @@
 <script setup>
-  import { ref, computed, provide, onMounted } from "vue";
+  import { ref, computed, provide, onMounted, reactive } from "vue";
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
   import axios from "axios";
   import RelativeTime from "@yaireo/relative-Time";
 
-  /* Provide user ser info */
-  const user = { id: 1, name: "TER" };
+  // Create API instance with base URL and error handling
+  const api = axios.create({
+    baseURL: "http://localhost:8000",
+    timeout: 10000,
+  });
+  api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+      console.error(`API Error: ${error.message}`, error);
+      return Promise.reject(error);
+    }
+  );
+
+  // Provide user info
+  const user = reactive({ id: 1, name: "TER" });
   provide("user", user);
 
-  /* Date utilities */
+  // Date utilities
   const relativeTime = new RelativeTime({ locale: "en" });
   const formatDate = (doc) => relativeTime.from(new Date(doc.last_edited_at));
 
-  /* Provide userDocs */
+  // Provide userDocs
   const userDocs = ref([]);
-  const reloadDocs = async (docID) => {
+  const reloadDocs = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/users/${user.id}/documents`, {
+      const response = await api.get(`/users/${user.id}/documents`, {
         params: { with_tags: true, with_minimap: true },
       });
-      if (!userDocs.value) {
-        userDocs.value = response.data.map((doc) => ({
-          ...doc,
-          last_edited_at: formatDate(doc),
-          filtered: false,
-          selected: false,
-        }));
-      } else {
-        /* FIX ME: take the filtered and selected value from the current userDocs, not from response.data */
-        userDocs.value = response.data.map((doc) => ({
-          ...doc,
-          last_edited_at: formatDate(doc),
-          filtered: false,
-          selected: false,
-        }));
-      }
+
+      // Preserve selected and filtered states when reloading
+      userDocs.value = response.data.map((newDoc) => {
+        const existingDoc = userDocs.value.find((d) => d.id === newDoc.id);
+        return {
+          ...newDoc,
+          last_edited_at: formatDate(newDoc),
+          filtered: existingDoc ? existingDoc.filtered : false,
+          selected: existingDoc ? existingDoc.selected : false,
+        };
+      });
     } catch (error) {
-      console.error(`Failed to fetch document`, error);
+      console.error("Error in reloadDocs:", error);
     }
   };
-  onMounted(async () => reloadDocs());
+  onMounted(() => reloadDocs());
 
-  const sortDocs = async (func) => userDocs.value.sort((a, b) => func(a, b));
-  const filterDocs = async (func) =>
-    (userDocs.value = userDocs.value.map((doc) => ({ ...doc, filtered: func(doc) })));
-  const clearFilterDocs = async () => filterDocs(() => false);
-
+  const sortDocs = (compareFunc) => userDocs.value.sort(compareFunc);
+  const filterDocs = (filterFunc) => {
+    userDocs.value.forEach((doc) => (doc.filtered = filterFunc(doc)));
+  };
+  const clearFilterDocs = () => {
+    userDocs.value.forEach((doc) => (doc.filtered = false));
+  };
   const selectFile = (doc) => {
     if (doc.selected) return;
-    userDocs.value.forEach((d) => d.selected && (d.selected = false));
+    const currentSelected = userDocs.value.find((d) => d.selected);
+    if (currentSelected) currentSelected.selected = false;
     doc.selected = true;
   };
   const clearSelection = () => {
-    userDocs.value.forEach((d) => d.selected && (d.selected = false));
+    const selected = userDocs.value.find((d) => d.selected);
+    if (selected) selected.selected = false;
   };
   const selectedFile = computed(() => userDocs.value.find((d) => d.selected) || {});
 
@@ -67,69 +79,67 @@
     selectedFile,
   });
 
-  /* Provide userTags */
+  // Provide userTags
   const userTags = ref([]);
-  const updateUserTag = async (oldTag, newTag) => {
-    if (oldTag) {
-      const url = `http://localhost:8000/users/${user.id}/tags/${oldTag.id}`;
-      try {
-        if (newTag == null) {
-          await axios.delete(url);
-        } else {
-          await axios.put(url, newTag);
-        }
-        reloadDocs();
-      } catch (error) {
-        console.error("Error updating tag:", error);
-      }
-    }
-
+  const fetchTags = async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/users/${user.id}/tags`);
+      const response = await api.get(`/users/${user.id}/tags`);
       userTags.value = response.data;
     } catch (error) {
-      console.error("Failed to fetch tags:", error);
+      console.error("Error in fetchTags:", error);
+    }
+  };
+  const updateUserTag = async (oldTag, newTag) => {
+    if (!oldTag) return await fetchTags();
+
+    const url = `/users/${user.id}/tags/${oldTag.id}`;
+    try {
+      if (newTag == null) {
+        await api.delete(url);
+      } else {
+        await api.put(url, newTag);
+      }
+      await reloadDocs();
+      await fetchTags();
+    } catch (error) {
+      console.error("Error in updateUserTag:", error);
     }
   };
   const createTag = async (name, color = null) => {
     try {
-      await axios.post(`http://localhost:8000/users/${user.id}/tags`, {
-        name: name,
+      await api.post(`/users/${user.id}/tags`, {
+        name,
         color: color || "",
       });
-      reloadDocs();
+      await reloadDocs();
+      await fetchTags();
     } catch (error) {
-      console.error("Error creating tag:", error);
+      console.error("Error in createTag:", error);
     }
   };
   const addOrRemoveTag = async (tagID, docID, mode) => {
-    console.log(mode);
-    const url = `http://localhost:8000/users/${user.id}/documents/${docID}/tags/${tagID}`;
-    if (mode == "add") {
-      try {
-        await axios.post(url);
-        reloadDocs();
-      } catch (error) {
-        console.error("Error updating tag:", error);
+    const url = `/users/${user.id}/documents/${docID}/tags/${tagID}`;
+    try {
+      if (mode === "add") {
+        await api.post(url);
+      } else if (mode === "remove") {
+        await api.delete(url);
+      } else {
+        console.warn(`Invalid tag operation mode: ${mode}`);
+        return;
       }
-    } else if (mode == "remove") {
-      try {
-        await axios.delete(url);
-        reloadDocs();
-      } catch (error) {
-        console.error("Error updating tag:", error);
-      }
+      await reloadDocs();
+    } catch (error) {
+      console.error("Error in addOrRemoveTag:", error);
     }
   };
   provide("userTags", { userTags, updateUserTag, createTag, addOrRemoveTag });
-  onMounted(async () => {
-    updateUserTag();
-  });
+  onMounted(() => fetchTags());
 
-  /* Provide viewport info */
+  // Provide viewport info
   const breakpoints = useBreakpoints(breakpointsTailwind);
   provide("breakpoints", breakpoints);
-  const isMobile = ref(false);
+  const isMobile = computed(() => breakpoints.smaller("md"));
   provide("isMobile", isMobile);
 </script>
 
