@@ -69,11 +69,6 @@
 
 <style scoped>
   .col-header {
-    /* reset default button appearance */
-    background: transparent;
-    border: none;
-    font: inherit;
-    cursor: default;
     display: flex;
     align-items: center;
     gap: 4px;
