@@ -209,6 +209,10 @@
     margin-block: 8px;
   }
 
+  .sb-menu > *:first-child {
+    margin-top: 2px;
+  }
+
   .sb-menu > *,
   .cta > button {
     gap: 4px;

@@ -72,6 +72,15 @@
   &.icon-close { stroke-width: 1px; }
 }
 
+/* Button reset */
+button {
+  background: transparent;
+  border: none;
+  font: inherit;
+  cursor: default;
+  padding: 0px;
+}
+
 /* Scrollbars */
 /* These are standard CSS that are not yet supported - switch to them in the future */
 /* scrollbar-color: var(--light);
