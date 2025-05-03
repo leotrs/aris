@@ -5,8 +5,7 @@
   import SidebarItem from "@/read/SidebarItem.vue";
 
   const router = useRouter();
-  const emit = defineEmits(["showComponent", "hideComponent", "focusMode"]);
-
+  const emit = defineEmits(["showComponent", "hideComponent"]);
   const panelComponents = reactive({
     PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a", state: false },
     PanelSearch: {
@@ -28,6 +27,7 @@
     PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t", state: false },
   });
 
+  // Keys
   useKeyboardShortcuts(
     Object.fromEntries(
       Object.entries(panelComponents).map(([name, obj]) => [
@@ -37,7 +37,7 @@
     )
   );
 
-  /* Focus mode */
+  // Focus mode
   const focusMode = inject("focusMode");
 </script>
 
