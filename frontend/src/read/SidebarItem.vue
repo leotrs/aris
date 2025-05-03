@@ -1,10 +1,17 @@
 <script setup>
-  import { ref, watch } from "vue";
+  import { ref, watch, onBeforeUnmount } from "vue";
+
   const props = defineProps({
     icon: { type: String, required: true },
     label: { type: String, default: "" },
     withSideControl: { type: Boolean, default: true },
-    preferredSide: { type: String, default: "left" },
+    preferredSide: {
+      type: String,
+      default: "left",
+      validator: (value) => ["left", "top", "right"].includes(value),
+    },
+    showDelay: { type: Number, default: 500 },
+    hideDelay: { type: Number, default: 300 },
   });
   const emit = defineEmits(["on", "off"]);
   const buttonState = defineModel({ type: Boolean, default: false });
@@ -39,6 +46,7 @@
     hideTimeout = setTimeout(updateVisibility, 300);
   };
 
+  // Segmented control allows user to choose side
   const controlState = ref(-1);
   const sides = ["left", "top", "right"];
   watch(controlState, (newVal, oldVal) => {
@@ -71,6 +79,18 @@
       visibilityClass.value = "";
     }
   });
+
+  // Clean up any timers when component is unmounted
+  onBeforeUnmount(() => {
+    if (hideTimeout) {
+      clearTimeout(hideTimeout);
+      hideTimeout = null;
+    }
+    if (showTimeout) {
+      clearTimeout(showTimeout);
+      showTimeout = null;
+    }
+  });
 </script>
 
 <template>
@@ -79,6 +99,9 @@
       <ButtonToggle
         v-model="buttonState"
         :icon="icon"
+        :aria-label="label || 'Toggle ' + icon"
+        :aria-pressed="buttonState"
+        tabindex="0"
         @mouseenter="onMouseEnterButton"
         @mouseleave="onMouseLeaveButton"
       />
@@ -87,6 +110,9 @@
         v-model="controlState"
         :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']"
         :class="visibilityClass"
+        :aria-orientation="'horizontal'"
+        role="tablist"
+        tabindex="0"
         @mouseenter="onMouseEnterControl"
         @mouseleave="onMouseLeaveControl"
       />
@@ -101,15 +127,15 @@
     flex-direction: column;
   }
 
-  .sb-item-btn:hover button:not(.active) {
-    box-shadow: var(--shadow-strong);
-    background-color: var(--gray-50);
-  }
-
   .sb-item-btn {
     display: flex;
     gap: 16px;
     align-items: center;
+  }
+
+  .sb-item-btn:hover button:not(.active) {
+    box-shadow: var(--shadow-strong);
+    background-color: var(--gray-50);
   }
 
   .sb-item-label {
