@@ -16,6 +16,7 @@
       return Promise.reject(error);
     }
   );
+  provide("api", api);
 
   // Provide user info
   const user = reactive({ id: 1, name: "TER" });
