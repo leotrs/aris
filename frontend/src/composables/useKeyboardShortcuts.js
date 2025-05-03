@@ -88,7 +88,7 @@ const dispatchSingleKey = (ev, shortcuts, key) => {
   }
 
   return false;
-}
+};
 
 const tryHandleKeyEvent = (ev, componentRef, key) => {
   if (hasModifiers(ev)) return false;

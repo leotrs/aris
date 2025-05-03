@@ -15,17 +15,18 @@
     router.push(`/${doc.value.id}/read`);
   };
 
-  /* Breakpoints */
+  // Breakpoints
   const shouldShowColumn = inject("shouldShowColumn");
 
-  /* File menu callbacks */
+  // File menu callbacks
   const fileTitleActive = ref(false);
   const menuRef = useTemplateRef("menu-ref");
 
-  /* Keys */
+  // Keys
   const { activate, deactivate } = useKeyboardShortcuts({
     ".": () => menuRef.value?.toggle(),
     enter: selectThisFile,
+    " ": selectThisFile,
   });
   watch(
     () => doc.value?.selected,
@@ -41,8 +42,6 @@
     :class="[mode, doc.selected ? 'active' : '']"
     @click="selectThisFile"
     @dblclick="readFile"
-    @keydown.enter.prevent="selectThisFile"
-    @keydown.space.prevent="selectThisFile"
   >
     <template v-if="!!doc">
       <template v-if="mode == 'cards'">

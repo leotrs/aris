@@ -11,19 +11,19 @@
   const props = defineProps({ doc: { type: Object, required: true } });
   const { clearSelection } = inject("userDocs");
 
-  /* Tabs */
+  // Tabs
   const activeTabIndex = ref(0);
 
-  /* Closable */
+  // Closable
   const close = () => clearSelection();
   useClosable({ onClose: close, closeOnOutsideClick: false });
 
-  /* Actions */
+  // Actions
   const router = useRouter();
   const read = () => props.doc?.id && router.push(`/${props.doc.id}/read`);
 
-  /* Keyboard shortcuts */
-  useKeyboardShortcuts({
+  // Keys
+  const { activate, deactivate } = useKeyboardShortcuts({
     enter: read,
   });
 </script>
