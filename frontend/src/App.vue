@@ -140,7 +140,8 @@
   // Provide viewport info
   const breakpoints = useBreakpoints(breakpointsTailwind);
   provide("breakpoints", breakpoints);
-  const isMobile = computed(() => breakpoints.smaller("md"));
+  /* const isMobile = computed(() => breakpoints.smaller("md")); */
+  const isMobile = computed(() => false);
   provide("isMobile", isMobile);
 </script>
 
