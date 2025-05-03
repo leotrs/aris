@@ -1,37 +1,52 @@
 <script setup>
-  import { ref, reactive, inject, provide, onBeforeMount } from "vue";
+  import { ref, reactive, computed, inject, provide, onBeforeMount } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import axios from "axios";
   import Sidebar from "./Sidebar.vue";
   import Canvas from "./Canvas.vue";
 
-  const docID = `${useRoute().params.doc_id}`;
+  const docID = computed(() => `${useRoute().params.doc_id}`);
   const user = inject("user");
   const doc = ref({ id: -1, tags: [] });
+  const api = inject("api");
 
+  // Load and provide document
   onBeforeMount(async () => {
     try {
-      const response = await axios.get(`http://localhost:8000/users/${user.id}/documents/${docID}`);
+      const response = await api.get(`/users/${user.id}/documents/${docID.value}`);
       doc.value = response.data;
     } catch (error) {
-      console.error(`Failed to fetch document ${docID}`, error);
+      console.error(`Failed to fetch document ${docID.value}`, error);
     }
   });
   provide("doc", doc);
 
+  // Panel component management
   const leftComponents = reactive([]);
   const topComponents = reactive([]);
   const rightComponents = reactive([]);
   const sideRefMap = { left: leftComponents, top: topComponents, right: rightComponents };
   const showComponent = (compName, side) => {
-    console.log("showing: ", compName, "on side: ", side);
-    sideRefMap[side].push(compName);
+    if (!sideRefMap[side]) {
+      console.warn(`Invalid side specified: ${side}`);
+      return;
+    }
+    if (!sideRefMap[side].includes(compName)) sideRefMap[side].push(compName);
   };
+
   const hideComponent = (compName, side) => {
+    if (!sideRefMap[side]) {
+      console.warn(`Invalid side specified: ${side}`);
+      return;
+    }
     const index = sideRefMap[side].indexOf(compName);
     if (index !== -1) sideRefMap[side].splice(index, 1);
   };
+  provide("panelManager", {
+    showComponent,
+    hideComponent,
+    panels: sideRefMap,
+  });
 
   /* Focus Mode */
   const focusMode = ref(false);
@@ -64,6 +79,7 @@
     padding: 8px 8px 8px 0;
     will-change: padding;
     transition: padding var(--transition-duration) ease;
+    position: relative;
   }
 
   .read-view.focus {
