@@ -245,7 +245,7 @@
     display: none !important;
   }
 
-  :deep(.mm-wrapper .minimap) {
+  :deep(.mm-wrapper) {
     position: fixed;
   }
 
