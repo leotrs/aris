@@ -15,7 +15,13 @@
       key: "f",
       state: false,
     },
-    Minimap: { icon: "MapPin", label: "map", preferredSide: "left", key: "m", state: false },
+    DockableMinimap: {
+      icon: "MapPin",
+      label: "map",
+      preferredSide: "left",
+      key: "m",
+      state: false,
+    },
     Comments: { icon: "Message", label: "comments", preferredSide: "left", key: "c", state: false },
     PanelSymbols: {
       icon: "Variable",

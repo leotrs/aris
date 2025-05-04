@@ -44,19 +44,19 @@
     switch (side) {
       case "left":
         // Left semi-circle
-        return `M ${cx} ${cy - r} A ${r} ${r} 0 0 0 ${cx} ${cy + r} L ${cx} ${cy} Z`;
+        return `M ${cx} ${cy - r} A ${r} ${r} 0 0 0 ${cx} ${cy + r}`;
       case "right":
         // Right semi-circle
-        return `M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r} L ${cx} ${cy} Z`;
+        return `M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r}`;
       case "top":
         // Top semi-circle
-        return `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy} L ${cx} ${cy} Z`;
+        return `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
       case "bottom":
         // Bottom semi-circle
-        return `M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy} L ${cx} ${cy} Z`;
+        return `M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`;
       default:
         // Default to right side
-        return `M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r} L ${cx} ${cy} Z`;
+        return `M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r}`;
     }
   };
 
@@ -594,30 +594,22 @@
     overflow: hidden;
 
     &.vertical {
-      top: calc(64px + 8px);
-      left: calc(64px + 48px);
-      min-height: 200px;
       height: 75%;
       width: fit-content;
     }
 
     &.horizontal {
-      left: 64px;
-      bottom: 24px;
-      min-width: 200px;
       height: fit-content;
     }
 
     &.top,
     &.bottom {
-      padding-top: 8px;
-      padding-bottom: 8px;
+      padding-block: 8px;
     }
 
     &.left,
     &.right {
-      padding-left: 8px;
-      padding-right: 8px;
+      padding-inline: 8px;
     }
   }
 
