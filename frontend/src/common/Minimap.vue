@@ -362,7 +362,7 @@
       };
     });
 
-    // Sort by percentage (vertical scroll position)
+    // Sort by percentage (scroll position)
     pathData.sort((a, b) => a.percent - b.percent);
 
     // Find the innermost section where the scroll is positioned
@@ -374,7 +374,7 @@
       }
     }
 
-    // If we found a current section, highlight it and the section line
+    // If we found a current section, highlight it and the section shape
     if (currentSectionIndex >= 0) {
       const currentSection = pathData[currentSectionIndex];
       currentSection.element.classList.add("current-section");
@@ -384,7 +384,7 @@
       let sectionEndIndex = -1;
 
       for (let i = currentSectionIndex + 1; i < pathData.length; i++) {
-        if (pathData[i].r <= currentRadius) {
+        if (pathData[i].r >= currentRadius) {
           sectionEndIndex = i;
           pathData[i].element.classList.add("section-end");
           break;
