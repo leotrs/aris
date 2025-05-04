@@ -33,7 +33,7 @@
       />
     </div>
 
-    <div ref="manuscript-ref" class="manuscriptwrapper" v-html="html"></div>
+    <div class="manuscriptwrapper" v-html="html"></div>
 
     <div v-if="showFooter" class="middle-footer">
       <div id="footer-logo"><img src="../assets/logo-32px.svg" /></div>

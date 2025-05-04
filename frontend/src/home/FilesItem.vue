@@ -7,7 +7,7 @@
   const doc = defineModel({ type: Object, required: true });
   const { selectFile } = inject("userDocs");
 
-  /* State */
+  // State
   const selectThisFile = () => selectFile(doc.value);
   const router = useRouter();
   const readFile = () => {
@@ -23,11 +23,14 @@
   const menuRef = useTemplateRef("menu-ref");
 
   // Keys
-  const { activate, deactivate } = useKeyboardShortcuts({
-    ".": () => menuRef.value?.toggle(),
-    enter: selectThisFile,
-    " ": selectThisFile,
-  });
+  const { activate, deactivate } = useKeyboardShortcuts(
+    {
+      ".": () => menuRef.value?.toggle(),
+      enter: selectThisFile,
+      " ": selectThisFile,
+    },
+    false
+  );
   watch(
     () => doc.value?.selected,
     (newVal) => (newVal ? activate() : deactivate())

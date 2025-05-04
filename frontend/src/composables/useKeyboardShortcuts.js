@@ -171,8 +171,12 @@ function registerShortcuts(componentId, shortcuts) {
 
 
 /* Public interface */
-export function getRegisteredComponents() {
+export function getActiveComponents() {
   return [...components];
+}
+
+export function getRegisteredComponents() {
+  return listeners.value;
 }
 
 export function useKeyboardShortcuts(shortcuts = {}, autoActivate = true) {

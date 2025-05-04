@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject } from "vue";
+  import { ref, inject, watch } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import useClosable from "@/composables/useClosable.js";
@@ -23,9 +23,12 @@
   const read = () => props.doc?.id && router.push(`/${props.doc.id}/read`);
 
   // Keys
-  const { activate, deactivate } = useKeyboardShortcuts({
-    enter: read,
-  });
+  const { activate, deactivate } = useKeyboardShortcuts({ enter: read });
+  watch(
+    () => props.doc,
+    (newVal) => (newVal?.id ? activate() : deactivate()),
+    { immediate: true, flush: "post" }
+  );
 </script>
 
 <template>
