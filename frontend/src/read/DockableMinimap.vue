@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive, computed } from "vue";
+  import { reactive, computed } from "vue";
 
   const props = defineProps({
     doc: { type: Object, required: true },
@@ -17,6 +17,7 @@
     side: dockSideToCircleSide[props.side],
     highlightScroll: true,
     shape: "line",
+    trackWidth: props.side == "right" ? 8 : 3,
   });
 
   const top = computed(() => {
@@ -45,7 +46,7 @@
     if (props.side == "left") {
       return "";
     } else if (props.side == "right") {
-      return "8px";
+      return "-4px";
     } else if (props.side == "top") {
       return "64px";
     } else {
@@ -63,6 +64,12 @@
   .mm-wrapper.dock-right {
     height: calc(100% - 64px - 16px - 8px - 8px);
     & :deep(> svg > line.track) {
+      visibility: hidden;
+    }
+  }
+
+  .mm-wrapper.dock-right {
+    & :deep(> svg > line.scroll-indicator) {
       visibility: hidden;
     }
   }
