@@ -52,8 +52,8 @@
     position: fixed;
     display: flex;
     align-items: flex-start;
-    top: calc(64px);
-    right: 24px;
+    top: calc(64px - 8px);
+    right: 32px;
     z-index: 2;
     transform: translateX(calc(100% - 32px - 8px - 8px));
     will-change: transform;
