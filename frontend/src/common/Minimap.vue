@@ -8,6 +8,7 @@
     side: { type: String, default: "right" },
     highlightScroll: { type: Boolean, default: true },
     shape: { type: String, default: "arc" },
+    trackWidth: { type: Number, default: 3 },
   });
 
   /* Utilities */
@@ -93,11 +94,11 @@
     const width = maxX - minX;
 
     if (props.side == "top") {
-      minY = lineY - offset - 10; // 10 = radiusDelta * (6-1)
-      maxY = lineY + strokeWidth;
+      minY = lineY - offset - 20; // 20 = 2 * (radiusDelta * (6-1))
+      maxY = lineY + props.trackWidth;
     } else if (props.side == "bottom") {
-      minY = lineY - strokeWidth;
-      maxY = lineY + offset + 10; // 10 = radiusDelta * (6-1)
+      minY = lineY - props.trackWidth;
+      maxY = lineY + offset + 20; // 20 = 2 * (radiusDelta * (6-1))
     } else {
       console.error(`Unknown side ${props.side}, must be either 'top' or 'bottom'`);
     }
@@ -115,11 +116,11 @@
     let minX, maxX, minY, maxY;
 
     if (props.side == "left") {
-      minX = lineX - offset - 10; // 10 = radiusDelta * (6-1)
-      maxX = lineX + strokeWidth;
+      minX = lineX - offset - 20; // 20 = 2 * (radiusDelta * (6-1))
+      maxX = lineX + props.trackWidth;
     } else if (props.side == "right") {
-      minX = lineX - strokeWidth;
-      maxX = lineX + offset + 10; // 10 = radiusDelta * (6-1)
+      minX = lineX - props.trackWidth;
+      maxX = lineX + offset + 20; // 20 = 2 * (radiusDelta * (6-1))
     } else {
       console.error(`Unknown side ${props.side}, must be either 'left' or 'right'`);
     }
@@ -174,28 +175,28 @@
         y1="${layout.track.y1}"
         x2="${layout.track.x2}"
         y2="${layout.track.y2}"
-        stroke-width="${options.strokeWidth}"
+        stroke-width="${props.trackWidth}"
         stroke-linecap="round"
       />
       ${shapes
         .map(
           (s, idx) =>
             `<path class="mm-shape" data-index="${idx}" data-percent="${s.percent}"
-    d="${createShapePath(s.cx, s.cy, s.r, props.side)}"
-    stroke-width="${options.strokeWidth - 1}"
-    stroke-linecap="round" />`
+   d="${createShapePath(s.cx, s.cy, s.r, props.side)}"
+   stroke-width="${options.strokeWidth - 1}"
+   stroke-linecap="round" />`
         )
         .join("\n  ")}
       ${
         props.highlightScroll
           ? `<line class="scroll-indicator"
-    x1="${layout.scrollLine.x1}"
-    y1="${layout.scrollLine.y1}"
-    x2="${layout.scrollLine.x2}"
-    y2="${layout.scrollLine.y2}"
-    stroke-width="${options.strokeWidth}"
-    stroke-linecap="round"
-    />`
+   x1="${layout.scrollLine.x1}"
+   y1="${layout.scrollLine.y1}"
+   x2="${layout.scrollLine.x2}"
+   y2="${layout.scrollLine.y2}"
+   stroke-width="${options.strokeWidth}"
+   stroke-linecap="round"
+   />`
           : ""
       }
     </svg>`;
@@ -230,77 +231,30 @@
     const initialDimension = isHorizontal ? initialWidth : initialHeight;
     const scaleFactor = containerDimension / initialDimension;
 
-    // Update main line
-    const line = svg.querySelector("line:not(.scroll-indicator)");
+    // Update track
+    const line = svg.querySelector("line.track");
     if (line) {
       const lineAttr = isHorizontal ? "x2" : "y2";
       line.setAttribute(lineAttr, initialDimension * scaleFactor);
     }
 
-    // Update semi-circle positions
+    // Update shape positions
     const paths = svg.querySelectorAll("path.mm-shape");
     paths.forEach((path, index) => {
       const shape = initialShapes[index];
+      let newCx = isHorizontal ? shape.cx * scaleFactor : shape.cx;
+      let newCy = isHorizontal ? shape.cy : shape.cy * scaleFactor;
+      path.setAttribute("d", createShapePath(newCx, newCy, shape.r, props.side));
 
-      // Update position based on orientation
-      if (isHorizontal) {
-        const newCx = shape.cx * scaleFactor;
-        const newPath = createShapePath(newCx, shape.cy, shape.r, props.side);
-        path.setAttribute("d", newPath);
-
-        // Hide small subsections if container is too small
-        if (containerDimension < minSizeForSubsections && shape.level > 2) {
-          path.style.visibility = "hidden";
-        } else {
-          path.style.visibility = "visible";
-        }
-      } else {
-        const newCy = shape.cy * scaleFactor;
-        const newPath = createShapePath(shape.cx, newCy, shape.r, props.side);
-        path.setAttribute("d", newPath);
-      }
+      // Hide small subsections if container is too small
+      const shouldHide = containerDimension < minSizeForSubsections && shape.level > 2;
+      path.style.visibility = shouldHide ? "hidden" : "visible";
     });
 
-    // Calculate bounds for the shapes
-    const allBBoxes = [...paths].map((path) => path.getBBox());
-
-    // Update viewBox based on orientation and side
-    if (isHorizontal) {
-      const minX = Math.min(0, ...allBBoxes.map((box) => box.x));
-      const maxX = Math.max(
-        initialWidth * scaleFactor,
-        ...allBBoxes.map((box) => box.x + box.width)
-      );
-
-      const minY = Math.min(0, ...allBBoxes.map((box) => box.y));
-      const maxY = Math.max(
-        isHorizontalSide ? initialHeight * scaleFactor : 0,
-        ...allBBoxes.map((box) => box.y + box.height)
-      );
-
-      const width = maxX - minX;
-      const height = maxY - minY;
-
-      svg.setAttribute("viewBox", `${minX} ${minY} ${width} ${height}`);
-    } else {
-      const minX = Math.min(0, ...allBBoxes.map((box) => box.x));
-      const maxX = Math.max(
-        isHorizontalSide ? 0 : initialWidth * scaleFactor,
-        ...allBBoxes.map((box) => box.x + box.width)
-      );
-
-      const minY = Math.min(0, ...allBBoxes.map((box) => box.y));
-      const maxY = Math.max(
-        initialHeight * scaleFactor,
-        ...allBBoxes.map((box) => box.y + box.height)
-      );
-
-      const width = maxX - minX;
-      const height = maxY - minY;
-
-      svg.setAttribute("viewBox", `${minX} ${minY} ${width} ${height}`);
-    }
-
+    const layout = isHorizontal
+      ? getLayoutParametersHorizontal(containerDimension, options)
+      : getLayoutParametersVertical(containerDimension, options);
+    svg.setAttribute("viewBox", layout.viewBox);
     svg.style.width = "100%";
     svg.style.height = "100%";
   };
@@ -391,10 +345,10 @@
         const track = svg.querySelector("line:not(.scroll-indicator)");
 
         if (track) {
-          const lineStrokeWidth = parseFloat(track.getAttribute("stroke-width")) || 3;
+          const trackStrokeWidth = parseFloat(track.getAttribute("stroke-width")) || 3;
           const highlightLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
           highlightLine.setAttribute("class", "section-line-highlight");
-          highlightLine.setAttribute("stroke-width", lineStrokeWidth);
+          highlightLine.setAttribute("stroke-width", trackStrokeWidth);
           highlightLine.setAttribute("stroke", "var(--primary-300)");
           highlightLine.setAttribute("stroke-linecap", "round");
 
@@ -535,7 +489,8 @@
     }
 
     & .section-line-highlight {
-      stroke: var(--secondary-300);
+      stroke: var(--secondary-500);
+      opacity: 0.25;
       transition: stroke 0.3s ease;
     }
 
