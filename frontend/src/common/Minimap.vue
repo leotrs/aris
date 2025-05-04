@@ -260,47 +260,36 @@
   };
 
   const highlightScrollPos = (pos) => {
-    if (!wrapperRef.value || pos < 0.5) return;
+    if (!wrapperRef.value) return;
 
+    const scrollPercent = pos / 100;
+    const containerDimension =
+      props.orientation === "horizontal"
+        ? wrapperRef.value.clientWidth
+        : wrapperRef.value.clientHeight;
+    const scrollPos = scrollPercent * containerDimension;
     const svg = wrapperRef.value.querySelector("svg");
     const paths = svg.querySelectorAll("path.mm-shape");
     const scrollIndicator = svg.querySelector(".scroll-indicator");
-    const isHorizontal = props.orientation === "horizontal";
-
-    // Get container dimension
-    const containerDimension = isHorizontal
-      ? wrapperRef.value.clientWidth
-      : wrapperRef.value.clientHeight;
-
-    // Calculate scroll position
-    const scrollPercent = pos / 100;
-    const scrollPos = scrollPercent * containerDimension;
 
     // Set the position of the scroll indicator
-    if (isHorizontal) {
+    if (props.orientation === "horizontal") {
       scrollIndicator.setAttribute("x1", scrollPos);
       scrollIndicator.setAttribute("x2", scrollPos);
     } else {
-      const halfHeight = (3 / containerDimension) * 100;
-      scrollIndicator.setAttribute("y1", `${pos - halfHeight}%`);
-      scrollIndicator.setAttribute("y2", `${pos + halfHeight}%`);
+      scrollIndicator.setAttribute("y1", `${pos}%`);
+      scrollIndicator.setAttribute("y2", `${pos}%`);
     }
 
-    // Reset all classes first
-    paths.forEach((path) => path.classList.remove("current-section", "section-end"));
-
-    // Remove any existing section-line highlight
-    const existingHighlightLine = svg.querySelector(".section-line-highlight");
-    if (existingHighlightLine) {
-      existingHighlightLine.remove();
-    }
+    // Reset classes and existing current-section line
+    paths.forEach((path) => path.classList.remove("section-start", "section-end"));
+    svg.querySelector(".current-section")?.remove();
 
     // Get path data with positions and percentages
     const pathData = Array.from(paths).map((path) => {
       const percent = parseFloat(path.getAttribute("data-percent")) * 100;
       const idx = parseInt(path.getAttribute("data-index"));
       const shape = shapePositions.value[idx];
-
       return {
         element: path,
         cx: shape.cx,
@@ -313,63 +302,41 @@
     // Sort by percentage (scroll position)
     pathData.sort((a, b) => a.percent - b.percent);
 
-    // Find the innermost section where the scroll is positioned
-    let currentSectionIndex = -1;
+    // Find and highlight the start: the innermost section where the scroll is positioned
+    let sectionStartIndex = -1;
     for (let i = pathData.length - 1; i >= 0; i--) {
       if (pathData[i].percent <= pos) {
-        currentSectionIndex = i;
+        sectionStartIndex = i;
         break;
       }
     }
+    if (sectionStartIndex < 0) return;
+    const sectionStart = pathData[sectionStartIndex];
+    sectionStart.element.classList.add("section-start");
 
-    // If we found a current section, highlight it and the section shape
-    if (currentSectionIndex >= 0) {
-      const currentSection = pathData[currentSectionIndex];
-      currentSection.element.classList.add("current-section");
-
-      // Find the end of the current section (next shape of same size or larger)
-      const currentRadius = currentSection.r;
-      let sectionEndIndex = -1;
-
-      for (let i = currentSectionIndex + 1; i < pathData.length; i++) {
-        if (pathData[i].r >= currentRadius) {
-          sectionEndIndex = i;
-          pathData[i].element.classList.add("section-end");
-          break;
-        }
-      }
-
-      // If we found both the start and end, highlight the line segment between them
-      if (sectionEndIndex >= 0) {
-        const sectionEnd = pathData[sectionEndIndex];
-        const track = svg.querySelector("line:not(.scroll-indicator)");
-
-        if (track) {
-          const trackStrokeWidth = parseFloat(track.getAttribute("stroke-width")) || 3;
-          const highlightLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
-          highlightLine.setAttribute("class", "section-line-highlight");
-          highlightLine.setAttribute("stroke-width", trackStrokeWidth);
-          highlightLine.setAttribute("stroke", "var(--primary-300)");
-          highlightLine.setAttribute("stroke-linecap", "round");
-
-          if (isHorizontal) {
-            const lineY = currentSection.cy;
-            highlightLine.setAttribute("x1", currentSection.cx);
-            highlightLine.setAttribute("y1", lineY);
-            highlightLine.setAttribute("x2", sectionEnd.cx);
-            highlightLine.setAttribute("y2", lineY);
-          } else {
-            const lineX = currentSection.cx;
-            highlightLine.setAttribute("x1", lineX);
-            highlightLine.setAttribute("y1", currentSection.cy);
-            highlightLine.setAttribute("x2", lineX);
-            highlightLine.setAttribute("y2", sectionEnd.cy);
-          }
-
-          svg.insertBefore(highlightLine, scrollIndicator || null);
-        }
+    // Find and highlight the end: the next shape of same size or larger
+    const currentRadius = sectionStart.r;
+    let sectionEndIndex = -1;
+    for (let i = sectionStartIndex + 1; i < pathData.length; i++) {
+      if (pathData[i].r >= currentRadius) {
+        sectionEndIndex = i;
+        break;
       }
     }
+    if (sectionEndIndex < 0 || sectionEndIndex >= pathData.length) return;
+    const sectionEnd = pathData[sectionEndIndex];
+    sectionEnd.element.classList.add("section-end");
+
+    // If we found both the start and end, highlight the line segment between them
+    const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+    line.setAttribute("class", "current-section");
+    line.setAttribute("stroke-width", props.trackWidth);
+    line.setAttribute("stroke-linecap", "round");
+    line.setAttribute("x1", sectionStart.cx);
+    line.setAttribute("y1", sectionStart.cy);
+    line.setAttribute("x2", sectionEnd.cx);
+    line.setAttribute("y2", sectionEnd.cy);
+    svg.insertBefore(line, scrollIndicator || null);
   };
 
   /* Make, mount, display */
@@ -488,7 +455,7 @@
       stroke: var(--secondary-800);
     }
 
-    & .section-line-highlight {
+    & .current-section {
       stroke: var(--secondary-500);
       opacity: 0.25;
       transition: stroke 0.3s ease;
@@ -506,7 +473,7 @@
         stroke: var(--border-action);
       }
 
-      &.current-section {
+      &.section-start {
         fill: var(--surface-primary);
         stroke: var(--primary-500);
       }
