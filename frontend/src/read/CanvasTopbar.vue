@@ -24,7 +24,7 @@
 
     <Dock class="middle-column top">
       <FileTitle v-if="showTitle && !component" :doc="doc" class="text-h6" />
-      <component :is="component" ref="middle-comp" :doc="doc" />
+      <component :is="component" ref="middle-comp" :doc="doc" side="top" />
     </Dock>
   </div>
 </template>
