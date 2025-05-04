@@ -2,7 +2,7 @@
   import { ref, watch, onBeforeMount, useTemplateRef, nextTick } from "vue";
 
   const props = defineProps({
-    html: { type: String, required: true },
+    htmlString: { type: String, required: true },
     keys: { type: Boolean, required: true },
     showFooter: { type: Boolean, default: false },
   });
@@ -17,11 +17,11 @@
 
   const selfRef = useTemplateRef("self-ref");
   const tryExecuteOnload = async () => {
-    if (!onload.value || !selfRef.value || !props.html) return;
+    if (!onload.value || !selfRef.value || !props.htmlString) return;
     await nextTick();
     onload.value(selfRef.value, { keys: props.keys });
   };
-  watch([onload, () => selfRef.value, () => props.html], tryExecuteOnload);
+  watch([onload, () => selfRef.value, () => props.htmlString], tryExecuteOnload);
 </script>
 
 <template>
@@ -33,42 +33,16 @@
       />
     </div>
 
-    <div class="manuscriptwrapper" v-html="html"></div>
+    <Manuscript :html-string="htmlString" />
 
     <div v-if="showFooter" class="middle-footer">
-      <div id="footer-logo"><img src="../assets/logo-32px.svg" /></div>
+      <div class="footer-logo"><img src="../assets/logo-32px.svg" /></div>
     </div>
   </div>
 </template>
 
-<style>
-  /* Overwrite RSM's CSS but be CAREFUL!!! */
-  .manuscriptwrapper {
-    /* The background color comes from the user's choice within the settings overlay */
-    background-color: transparent !important;
-
-    /* Overwrite size and whitespace */
-    margin: 0 !important;
-    max-width: unset !important;
-    padding-bottom: 48px !important;
-    padding-inline: 0px !important;
-    border-radius: 0px !important;
-
-    & section.level-1 {
-      margin-block: 0px !important;
-    }
-
-    /* Patches - for some reason the RSM CSS is broken? */
-    & .hr .hr-border-zone .hr-border-dots .icon.dots {
-      padding-bottom: 0 !important;
-    }
-
-    & .hr .hr-collapse-zone .hr-collapse .icon.collapse {
-      padding-bottom: 0 !important;
-    }
-  }
-
-  #footer-logo {
+<style scoped>
+  .footer-logo {
     display: flex;
     justify-content: center;
     padding-top: 48px;

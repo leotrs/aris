@@ -139,7 +139,7 @@
         <Dock ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
           <ManuscriptWrapper
             ref="manuscript-ref"
-            :html="htmlContent"
+            :html-string="htmlContent"
             :keys="true"
             :show-footer="true"
           />
