@@ -52,7 +52,8 @@
     position: fixed;
     display: flex;
     align-items: flex-start;
-    right: 0;
+    top: calc(64px);
+    right: 24px;
     z-index: 2;
     transform: translateX(calc(100% - 32px - 8px - 8px));
     will-change: transform;
@@ -61,6 +62,7 @@
 
   .d-wrapper.active {
     transform: translateX(0);
+    right: 0;
   }
 
   .d-btn {

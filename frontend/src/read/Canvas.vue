@@ -133,7 +133,13 @@
 
       <div ref="inner-ref" class="inner-wrapper" :class="{ focus: focusMode }">
         <Dock ref="leftColumnRef" class="left-column">
-          <component :is="validDockComponents[comp]" v-for="comp in left" :key="comp" :doc="doc" />
+          <component
+            :is="validDockComponents[comp]"
+            v-for="comp in left"
+            :key="comp"
+            :doc="doc"
+            side="left"
+          />
         </Dock>
 
         <Dock ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
@@ -146,7 +152,13 @@
         </Dock>
 
         <Dock ref="rightColumnRef" class="right-column">
-          <component :is="validDockComponents[comp]" v-for="comp in right" :key="comp" :doc="doc" />
+          <component
+            :is="validDockComponents[comp]"
+            v-for="comp in right"
+            :key="comp"
+            :doc="doc"
+            side="right"
+          />
         </Dock>
 
         <Drawer :class="{ focus: focusMode }" />
