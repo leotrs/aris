@@ -7,11 +7,10 @@
   const active = defineModel({ type: Boolean, default: false });
   const doc = inject("doc");
 
-  /* State */
-  const tabsRef = useTemplateRef("tabs-ref");
+  // State
   const activeTabIndex = ref(0);
 
-  /* Keys */
+  // Keys
   useKeyboardShortcuts({
     d: () => (active.value = !active.value),
   });

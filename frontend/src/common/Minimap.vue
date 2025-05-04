@@ -36,7 +36,8 @@
         level: countLeadingPounds(obj.line) + 1,
       }));
 
-    return [{ percent: 0, level: 1 }, ...sections, { percent: 1, level: 1 }];
+    const offset = 1 / lines.length;
+    return [{ percent: offset, level: 1 }, ...sections, { percent: 1 - offset, level: 1 }];
   };
 
   /* Generate semi-circle path for SVG - enhanced to support all four sides */
@@ -115,7 +116,7 @@
 
       return {
         viewBox: `${minX} ${minY} ${width} ${height}`,
-        mainLine: { x1: "0", y1: lineY, x2: lineSize, y2: lineY },
+        track: { x1: "0", y1: lineY, x2: lineSize, y2: lineY },
         scrollLine: { x1: "0", y1: lineY, x2: "0", y2: lineY },
       };
     } else {
@@ -147,7 +148,7 @@
 
       return {
         viewBox: `${minX} ${minY} ${width} ${height}`,
-        mainLine: { x1: lineX, y1: "-2", x2: lineX, y2: lineSize + 2 },
+        track: { x1: lineX, y1: "0", x2: lineX, y2: lineSize },
         scrollLine: { x1: lineX, y1: "0", x2: lineX, y2: "0" },
       };
     }
@@ -184,11 +185,11 @@
     // Create the SVG markup
     const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="${layout.viewBox}" preserveAspectRatio="xMidYMid meet">
-      <line
-        x1="${layout.mainLine.x1}"
-        y1="${layout.mainLine.y1}"
-        x2="${layout.mainLine.x2}"
-        y2="${layout.mainLine.y2}"
+      <line class="track"
+        x1="${layout.track.x1}"
+        y1="${layout.track.y1}"
+        x2="${layout.track.x2}"
+        y2="${layout.track.y2}"
         stroke-width="${options.strokeWidth}"
         stroke-linecap="round"
       />
@@ -393,10 +394,10 @@
       // If we found both the start and end, highlight the line segment between them
       if (sectionEndIndex >= 0) {
         const sectionEnd = pathData[sectionEndIndex];
-        const mainLine = svg.querySelector("line:not(.scroll-indicator)");
+        const track = svg.querySelector("line:not(.scroll-indicator)");
 
-        if (mainLine) {
-          const lineStrokeWidth = parseFloat(mainLine.getAttribute("stroke-width")) || 3;
+        if (track) {
+          const lineStrokeWidth = parseFloat(track.getAttribute("stroke-width")) || 3;
           const highlightLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
           highlightLine.setAttribute("class", "section-line-highlight");
           highlightLine.setAttribute("stroke-width", lineStrokeWidth);
@@ -508,6 +509,7 @@
 
 <style>
   .mm-wrapper {
+    --mm-gray: var(--gray-200);
     overflow: hidden;
 
     &.vertical {
@@ -532,7 +534,7 @@
 
   .mm-wrapper svg {
     & line {
-      stroke: var(--gray-400);
+      stroke: var(--mm-gray);
     }
 
     & .scroll-indicator {
@@ -546,7 +548,7 @@
 
     & path.mm-shape {
       fill: var(--surface-page);
-      stroke: var(--gray-400);
+      stroke: var(--mm-gray);
       transition:
         fill 0.2s ease,
         stroke 0.2s ease;

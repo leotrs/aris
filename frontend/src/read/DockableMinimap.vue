@@ -45,7 +45,7 @@
     if (props.side == "left") {
       return "";
     } else if (props.side == "right") {
-      return "7.5px";
+      return "8px";
     } else if (props.side == "top") {
       return "64px";
     } else {
@@ -65,7 +65,7 @@
 
   .mm-wrapper.dock-right {
     height: calc(100% - 64px - 16px - 8px - 8px);
-    & :deep(> svg > line) {
+    & :deep(> svg > line.track) {
       visibility: hidden;
     }
   }
