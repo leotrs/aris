@@ -19,7 +19,7 @@
   import Dock from "./Dock.vue";
   import Drawer from "./Drawer.vue";
   import DockableSearch from "./DockableSearch.vue";
-  import Minimap from "../common/Minimap.vue";
+  import DockableMinimap from "./DockableMinimap.vue";
 
   const props = defineProps({
     left: { type: Array, default: () => [] },
@@ -29,12 +29,12 @@
   const doc = inject("doc");
 
   const validDockComponents = {
-    /* PanelChat, */
+    /* DockableChat, */
     DockableSearch,
-    Minimap,
-    /* Comments, */
-    /* PanelSymbols, */
-    /* PanelClaims, */
+    DockableMinimap,
+    /* DockableComments, */
+    /* DockableSymbols, */
+    /* DockableClaims, */
   };
 
   const leftColumnRef = useTemplateRef("leftColumnRef");
