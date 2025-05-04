@@ -44,15 +44,16 @@
   const createShapePath = (cx, cy, r, side, options = { offset: 4 }) => {
     const { offset } = options;
     if (props.shape === "line") {
+      const len = 2 * r;
       switch (side) {
         case "left":
-          return `M ${cx - offset} ${cy} L ${cx - offset - 2 * r} ${cy}`;
+          return `M ${cx - offset} ${cy} L ${cx - offset - len} ${cy}`;
         case "right":
-          return `M ${cx + offset} ${cy} L ${cx + offset + 2 * r} ${cy}`;
+          return `M ${cx + offset} ${cy} L ${cx + offset + len} ${cy}`;
         case "top":
-          return `M ${cx - offset} ${cy} L ${cx - offset} ${cy - 2 * r}`;
+          return `M ${cx - offset} ${cy} L ${cx - offset} ${cy - len}`;
         case "bottom":
-          return `M ${cx + offset} ${cy} L ${cx + offset} ${cy + 2 * r}`;
+          return `M ${cx + offset} ${cy} L ${cx + offset} ${cy + len}`;
       }
     } else if (props.shape === "arc") {
       switch (side) {
@@ -69,10 +70,10 @@
       console.error(`Unknown shape ${props.shape}, must be one of 'line' or 'arc'`);
     }
   };
+
   /* Common layout logic for both orientations */
   const createShapes = (sections, lineSize, options, isHorizontal) => {
     const { lineX, lineY, radiusDelta } = options;
-
     return sections.map(({ percent, level }) => ({
       cx: isHorizontal ? percent * lineSize : lineX,
       cy: isHorizontal ? lineY : percent * lineSize,
@@ -83,75 +84,56 @@
   };
 
   /* SVG manipulation - handle orientation differences and all sides */
-  const getLayoutParameters = (shapes, lineSize, options, isHorizontal, side) => {
-    const { lineX, lineY } = options;
-    const isHorizontalSide = side === "top" || side === "bottom";
+  const getLayoutParametersHorizontal = (lineSize, options) => {
+    const { lineY, strokeWidth, offset } = options;
+    let minX, maxX, minY, maxY;
 
-    if (isHorizontal) {
-      // Horizontal orientation
-      const minX = Math.min(
-        0,
-        ...shapes.map((s) =>
-          isHorizontalSide ? s.cx - s.r : side === "left" ? s.cx - s.r : s.cx - s.r / 4
-        )
-      );
-      const maxX = Math.max(
-        lineSize,
-        ...shapes.map((s) =>
-          isHorizontalSide ? s.cx + s.r : side === "right" ? s.cx + s.r : s.cx + s.r / 4
-        )
-      );
+    minX = -strokeWidth;
+    maxX = lineSize + strokeWidth;
+    const width = maxX - minX;
 
-      const minY = Math.min(
-        0,
-        ...shapes.map((s) => (isHorizontalSide && side === "top" ? s.cy - s.r : 0))
-      );
-      const maxY = Math.max(
-        lineY,
-        ...shapes.map((s) => (isHorizontalSide && side === "bottom" ? s.cy + s.r : s.cy + s.r))
-      );
-
-      const width = maxX - minX + 4;
-      const height = maxY - minY + 4;
-
-      return {
-        viewBox: `${minX} ${minY} ${width} ${height}`,
-        track: { x1: "0", y1: lineY, x2: lineSize, y2: lineY },
-        scrollLine: { x1: "0", y1: lineY, x2: "0", y2: lineY },
-      };
+    if (props.side == "top") {
+      minY = lineY - offset - 10; // 10 = radiusDelta * (6-1)
+      maxY = lineY + strokeWidth;
+    } else if (props.side == "bottom") {
+      minY = lineY - strokeWidth;
+      maxY = lineY + offset + 10; // 10 = radiusDelta * (6-1)
     } else {
-      // Vertical orientation
-      const minY = Math.min(
-        0,
-        ...shapes.map((s) =>
-          isHorizontalSide ? (side === "top" ? s.cy - s.r : s.cy - s.r / 2) : s.cy - s.r
-        )
-      );
-      const maxY = Math.max(
-        lineSize,
-        ...shapes.map((s) =>
-          isHorizontalSide ? (side === "bottom" ? s.cy + s.r : s.cy + s.r / 2) : s.cy + s.r
-        )
-      );
-
-      const minX = Math.min(
-        0,
-        ...shapes.map((s) => (!isHorizontalSide && side === "left" ? s.cx - s.r : 0))
-      );
-      const maxX = Math.max(
-        lineX,
-        ...shapes.map((s) => (!isHorizontalSide && side === "right" ? s.cx + s.r : s.cx + s.r))
-      );
-
-      const width = maxX - minX;
-      const height = maxY - minY + 4;
-
-      return {
-        viewBox: `${minX} ${minY} ${width} ${height}`,
-        track: { x1: lineX, y1: "0", x2: lineX, y2: lineSize },
-        scrollLine: { x1: lineX, y1: "0", x2: lineX, y2: "0" },
-      };
+      console.error(`Unknown side ${props.side}, must be either 'top' or 'bottom'`);
     }
+    const height = maxY - minY;
+
+    return {
+      viewBox: `${minX} ${minY} ${width} ${height}`,
+      track: { x1: "0", y1: lineY, x2: lineSize, y2: lineY },
+      scrollLine: { x1: "0", y1: lineY, x2: "0", y2: lineY },
+    };
+  };
+
+  const getLayoutParametersVertical = (lineSize, options) => {
+    const { lineX, strokeWidth, offset } = options;
+    let minX, maxX, minY, maxY;
+
+    if (props.side == "left") {
+      minX = lineX - offset - 10; // 10 = radiusDelta * (6-1)
+      maxX = lineX + strokeWidth;
+    } else if (props.side == "right") {
+      minX = lineX - strokeWidth;
+      maxX = lineX + offset + 10; // 10 = radiusDelta * (6-1)
+    } else {
+      console.error(`Unknown side ${props.side}, must be either 'left' or 'right'`);
+    }
+    const width = maxX - minX;
+
+    minY = -strokeWidth;
+    maxY = lineSize + strokeWidth;
+    const height = maxY - minY;
+
+    return {
+      viewBox: `${minX} ${minY} ${width} ${height}`,
+      track: { x1: lineX, y1: "0", x2: lineX, y2: lineSize },
+      scrollLine: { x1: lineX, y1: "0", x2: lineX, y2: "0" },
+    };
   };
 
   const svgInitialData = ref(null);
@@ -160,7 +142,7 @@
   const makeMinimap = (
     sections,
     containerSize = 400,
-    options = { lineX: 12, lineY: 12, strokeWidth: 3, radiusDelta: 2 }
+    options = { lineX: 12, lineY: 12, strokeWidth: 3, radiusDelta: 2, offset: 4 }
   ) => {
     const isHorizontal = props.orientation === "horizontal";
 
@@ -180,7 +162,9 @@
     shapePositions.value = JSON.parse(JSON.stringify(shapes));
 
     // Get layout parameters based on orientation and side
-    const layout = getLayoutParameters(shapes, lineSize, options, isHorizontal, props.side);
+    const layout = isHorizontal
+      ? getLayoutParametersHorizontal(lineSize, options)
+      : getLayoutParametersVertical(lineSize, options);
 
     // Create the SVG markup
     const svg = `
@@ -197,21 +181,21 @@
         .map(
           (s, idx) =>
             `<path class="mm-shape" data-index="${idx}" data-percent="${s.percent}"
-              d="${createShapePath(s.cx, s.cy, s.r, props.side)}"
-              stroke-width="${options.strokeWidth - 1}"
-              stroke-linecap="round" />`
+    d="${createShapePath(s.cx, s.cy, s.r, props.side)}"
+    stroke-width="${options.strokeWidth - 1}"
+    stroke-linecap="round" />`
         )
         .join("\n  ")}
       ${
         props.highlightScroll
           ? `<line class="scroll-indicator"
-              x1="${layout.scrollLine.x1}"
-              y1="${layout.scrollLine.y1}"
-              x2="${layout.scrollLine.x2}"
-              y2="${layout.scrollLine.y2}"
-              stroke-width="${options.strokeWidth}"
-              stroke-linecap="round"
-            />`
+    x1="${layout.scrollLine.x1}"
+    y1="${layout.scrollLine.y1}"
+    x2="${layout.scrollLine.x2}"
+    y2="${layout.scrollLine.y2}"
+    stroke-width="${options.strokeWidth}"
+    stroke-linecap="round"
+    />`
           : ""
       }
     </svg>`;
@@ -219,14 +203,24 @@
     return svg;
   };
 
-  const resizeMinimap = (wrapper, initialData, options = { minSizeForSubsections: 250 }) => {
+  const resizeMinimap = (
+    wrapper,
+    initialData,
+    options = {
+      lineX: 12,
+      lineY: 12,
+      strokeWidth: 3,
+      radiusDelta: 2,
+      offset: 4,
+      minSizeForSubsections: 250,
+    }
+  ) => {
     const svg = wrapper.querySelector("svg");
     if (!svg) return;
 
     const { minSizeForSubsections } = options;
     const isHorizontal = props.orientation === "horizontal";
     const { initialHeight, initialWidth, initialShapes } = initialData;
-    const isHorizontalSide = props.side === "top" || props.side === "bottom";
 
     // Get container dimension based on orientation
     const containerDimension = isHorizontal ? wrapper.clientWidth : wrapper.clientHeight;
@@ -401,7 +395,7 @@
           const highlightLine = document.createElementNS("http://www.w3.org/2000/svg", "line");
           highlightLine.setAttribute("class", "section-line-highlight");
           highlightLine.setAttribute("stroke-width", lineStrokeWidth);
-          highlightLine.setAttribute("stroke", "var(--primary-300, #a5b4fc)");
+          highlightLine.setAttribute("stroke", "var(--primary-300)");
           highlightLine.setAttribute("stroke-linecap", "round");
 
           if (isHorizontal) {
@@ -432,7 +426,6 @@
 
   onMounted(async () => {
     if (!props.doc) return;
-
     await nextTick();
 
     const isHorizontal = props.orientation === "horizontal";

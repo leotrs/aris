@@ -32,7 +32,7 @@
   });
   const left = computed(() => {
     if (props.side == "left") {
-      return "64px";
+      return "calc(64px - 16px)";
     } else if (props.side == "right") {
       return "";
     } else if (props.side == "top") {
@@ -59,10 +59,7 @@
 </template>
 
 <style scoped>
-  .mm-wrapper.dock-left {
-    height: calc(100% - 64px - 16px - 8px - 8px);
-  }
-
+  .mm-wrapper.dock-left,
   .mm-wrapper.dock-right {
     height: calc(100% - 64px - 16px - 8px - 8px);
     & :deep(> svg > line.track) {

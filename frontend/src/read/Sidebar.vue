@@ -18,7 +18,7 @@
     DockableMinimap: {
       icon: "MapPin",
       label: "map",
-      preferredSide: "left",
+      preferredSide: "right",
       key: "m",
       state: false,
     },
