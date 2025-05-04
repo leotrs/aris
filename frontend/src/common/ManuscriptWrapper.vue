@@ -1,5 +1,6 @@
 <script setup>
   import { ref, watch, onBeforeMount, useTemplateRef, nextTick } from "vue";
+  import Manuscript from "./Manuscript.vue";
 
   const props = defineProps({
     htmlString: { type: String, required: true },
