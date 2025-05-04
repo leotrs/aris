@@ -16,6 +16,7 @@
     orientation: props.side == "top" ? "horizontal" : "vertical",
     side: dockSideToCircleSide[props.side],
     highlightScroll: true,
+    shape: "line",
   });
 
   const top = computed(() => {
@@ -58,14 +59,14 @@
 </template>
 
 <style scoped>
+  .mm-wrapper.dock-left {
+    height: calc(100% - 64px - 16px - 8px - 8px);
+  }
+
   .mm-wrapper.dock-right {
-    height: calc(100% - 64px - 16px);
+    height: calc(100% - 64px - 16px - 8px - 8px);
     & :deep(> svg > line) {
       visibility: hidden;
     }
-  }
-
-  .mm-wrapper.dock-left {
-    height: calc(100% - 64px - 16px);
   }
 </style>

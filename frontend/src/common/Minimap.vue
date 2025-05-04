@@ -7,6 +7,7 @@
     orientation: { type: String, default: "vertical" },
     side: { type: String, default: "right" },
     highlightScroll: { type: Boolean, default: true },
+    shape: { type: String, default: "arc" },
   });
 
   /* Utilities */
@@ -35,31 +36,38 @@
         level: countLeadingPounds(obj.line) + 1,
       }));
 
-    return [{ percent: 0, level: 1 }, ...sections];
+    return [{ percent: 0, level: 1 }, ...sections, { percent: 1, level: 1 }];
   };
 
   /* Generate semi-circle path for SVG - enhanced to support all four sides */
-  const createSemiCirclePath = (cx, cy, r, side) => {
-    // Determine the arc parameters based on side
-    switch (side) {
-      case "left":
-        // Left semi-circle
-        return `M ${cx} ${cy - r} A ${r} ${r} 0 0 0 ${cx} ${cy + r}`;
-      case "right":
-        // Right semi-circle
-        return `M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r}`;
-      case "top":
-        // Top semi-circle
-        return `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
-      case "bottom":
-        // Bottom semi-circle
-        return `M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`;
-      default:
-        // Default to right side
-        return `M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r}`;
+  const createShapePath = (cx, cy, r, side, options = { offset: 4 }) => {
+    const { offset } = options;
+    if (props.shape === "line") {
+      switch (side) {
+        case "left":
+          return `M ${cx - offset} ${cy} L ${cx - offset - 2 * r} ${cy}`;
+        case "right":
+          return `M ${cx + offset} ${cy} L ${cx + offset + 2 * r} ${cy}`;
+        case "top":
+          return `M ${cx - offset} ${cy} L ${cx - offset} ${cy - 2 * r}`;
+        case "bottom":
+          return `M ${cx + offset} ${cy} L ${cx + offset} ${cy + 2 * r}`;
+      }
+    } else if (props.shape === "arc") {
+      switch (side) {
+        case "left":
+          return `M ${cx} ${cy - r} A ${r} ${r} 0 0 0 ${cx} ${cy + r}`;
+        case "right":
+          return `M ${cx} ${cy - r} A ${r} ${r} 0 0 1 ${cx} ${cy + r}`;
+        case "top":
+          return `M ${cx - r} ${cy} A ${r} ${r} 0 0 1 ${cx + r} ${cy}`;
+        case "bottom":
+          return `M ${cx - r} ${cy} A ${r} ${r} 0 0 0 ${cx + r} ${cy}`;
+      }
+    } else {
+      console.error(`Unknown shape ${props.shape}, must be one of 'line' or 'arc'`);
     }
   };
-
   /* Common layout logic for both orientations */
   const createShapes = (sections, lineSize, options, isHorizontal) => {
     const { lineX, lineY, radiusDelta } = options;
@@ -78,14 +86,8 @@
     const { lineX, lineY } = options;
     const isHorizontalSide = side === "top" || side === "bottom";
 
-    // Determine if we're dealing with horizontal or vertical sides
-    const isNormalOrientation =
-      (isHorizontal && !isHorizontalSide) || (!isHorizontal && isHorizontalSide);
-
     if (isHorizontal) {
       // Horizontal orientation
-      const sideOffset = isHorizontalSide ? (side === "top" ? -1 : 1) : side === "left" ? -1 : 1;
-
       const minX = Math.min(
         0,
         ...shapes.map((s) =>
@@ -108,8 +110,8 @@
         ...shapes.map((s) => (isHorizontalSide && side === "bottom" ? s.cy + s.r : s.cy + s.r))
       );
 
-      const width = maxX - minX;
-      const height = maxY - minY;
+      const width = maxX - minX + 4;
+      const height = maxY - minY + 4;
 
       return {
         viewBox: `${minX} ${minY} ${width} ${height}`,
@@ -121,13 +123,13 @@
       const minY = Math.min(
         0,
         ...shapes.map((s) =>
-          isHorizontalSide ? (side === "top" ? s.cy - s.r : s.cy - s.r / 4) : s.cy - s.r
+          isHorizontalSide ? (side === "top" ? s.cy - s.r : s.cy - s.r / 2) : s.cy - s.r
         )
       );
       const maxY = Math.max(
         lineSize,
         ...shapes.map((s) =>
-          isHorizontalSide ? (side === "bottom" ? s.cy + s.r : s.cy + s.r / 4) : s.cy + s.r
+          isHorizontalSide ? (side === "bottom" ? s.cy + s.r : s.cy + s.r / 2) : s.cy + s.r
         )
       );
 
@@ -141,74 +143,14 @@
       );
 
       const width = maxX - minX;
-      const height = maxY - minY;
+      const height = maxY - minY + 4;
 
       return {
         viewBox: `${minX} ${minY} ${width} ${height}`,
-        mainLine: { x1: lineX, y1: "0", x2: lineX, y2: lineSize },
+        mainLine: { x1: lineX, y1: "-2", x2: lineX, y2: lineSize + 2 },
         scrollLine: { x1: lineX, y1: "0", x2: lineX, y2: "0" },
       };
     }
-  };
-
-  /* Universal overlap resolution for both orientations */
-  const adjustShapePositions = (shapes, initialSize, minGap, isHorizontal) => {
-    const axisProp = isHorizontal ? "cx" : "cy";
-
-    // Sort by position
-    shapes.sort((a, b) => a[axisProp] - b[axisProp]);
-
-    // First pass: identify overlaps and calculate total needed shift
-    let totalOverlap = 0;
-    const overlaps = [];
-
-    for (let i = 1; i < shapes.length; i++) {
-      const prev = shapes[i - 1];
-      const curr = shapes[i];
-      const minDistance = prev.r + curr.r + minGap;
-      const actualDistance = curr[axisProp] - prev[axisProp];
-
-      if (actualDistance < minDistance) {
-        const overlap = minDistance - actualDistance;
-        overlaps.push({ index: i, overlap });
-        totalOverlap += overlap;
-      } else {
-        overlaps.push({ index: i, overlap: 0 });
-      }
-    }
-
-    // Second pass: distribute remaining space
-    if (totalOverlap > 0) {
-      const availableSpace =
-        initialSize - shapes[0][axisProp] - shapes[shapes.length - 1][axisProp];
-      const spaceToUse = Math.min(availableSpace * 0.8, totalOverlap);
-      let cumulativeShift = 0;
-
-      for (let i = 1; i < shapes.length; i++) {
-        const shiftRatio = overlaps[i - 1].overlap / totalOverlap;
-        cumulativeShift += shiftRatio * spaceToUse;
-        shapes[i][axisProp] += cumulativeShift;
-      }
-    }
-
-    // Final pass: fix any remaining overlaps with direct adjustments
-    if (totalOverlap > 0) {
-      for (let i = 1; i < shapes.length; i++) {
-        const prev = shapes[i - 1];
-        const curr = shapes[i];
-        const minDistance = prev.r + curr.r + minGap;
-
-        if (curr[axisProp] - prev[axisProp] < minDistance) {
-          curr[axisProp] = prev[axisProp] + minDistance;
-        }
-      }
-    }
-
-    // Calculate the new required line size
-    const lastShape = shapes[shapes.length - 1];
-    const newSize = Math.max(initialSize, lastShape[axisProp] + lastShape.r);
-
-    return { shapes, newSize };
   };
 
   const svgInitialData = ref(null);
@@ -217,27 +159,12 @@
   const makeMinimap = (
     sections,
     containerSize = 400,
-    options = { lineX: 12, lineY: 12, strokeWidth: 3, radiusDelta: 2, minGap: -4 }
+    options = { lineX: 12, lineY: 12, strokeWidth: 3, radiusDelta: 2 }
   ) => {
     const isHorizontal = props.orientation === "horizontal";
-    // Adjust lineY or lineX based on side for top/bottom orientations
-    const isHorizontalSide = props.side === "top" || props.side === "bottom";
 
-    if (isHorizontalSide) {
-      if (props.side === "top") {
-        options.lineY = options.lineY * 2; // Move line down to make room for top semi-circles
-      } else if (props.side === "bottom") {
-        options.lineY = options.lineY / 2; // Move line up to make room for bottom semi-circles
-      }
-    } else {
-      if (props.side === "left") {
-        options.lineX = options.lineX * 2; // Move line right to make room for left semi-circles
-      } else if (props.side === "right") {
-        options.lineX = options.lineX / 2; // Move line left to make room for right semi-circles
-      }
-    }
-
-    const lineSize = containerSize || 400;
+    // Leave some padding between the line and the container
+    const lineSize = (containerSize || 400) - 8;
 
     // Create shapes based on orientation
     let shapes = createShapes(sections, lineSize, options, isHorizontal);
@@ -249,17 +176,7 @@
       initialShapes: JSON.parse(JSON.stringify(shapes)),
       ...options,
     };
-
     shapePositions.value = JSON.parse(JSON.stringify(shapes));
-
-    // Adjust shape positions to prevent overlaps
-    const { shapes: newShapes } = adjustShapePositions(
-      shapes,
-      lineSize,
-      options.minGap,
-      isHorizontal
-    );
-    shapes = newShapes;
 
     // Get layout parameters based on orientation and side
     const layout = getLayoutParameters(shapes, lineSize, options, isHorizontal, props.side);
@@ -279,8 +196,9 @@
         .map(
           (s, idx) =>
             `<path class="mm-shape" data-index="${idx}" data-percent="${s.percent}"
-              d="${createSemiCirclePath(s.cx, s.cy, s.r, props.side)}"
-              stroke-width="${options.strokeWidth}" />`
+              d="${createShapePath(s.cx, s.cy, s.r, props.side)}"
+              stroke-width="${options.strokeWidth - 1}"
+              stroke-linecap="round" />`
         )
         .join("\n  ")}
       ${
@@ -306,7 +224,7 @@
 
     const { minSizeForSubsections } = options;
     const isHorizontal = props.orientation === "horizontal";
-    const { initialHeight, initialWidth, initialShapes, lineX, lineY, strokeWidth } = initialData;
+    const { initialHeight, initialWidth, initialShapes } = initialData;
     const isHorizontalSide = props.side === "top" || props.side === "bottom";
 
     // Get container dimension based on orientation
@@ -332,7 +250,7 @@
       // Update position based on orientation
       if (isHorizontal) {
         const newCx = shape.cx * scaleFactor;
-        const newPath = createSemiCirclePath(newCx, shape.cy, shape.r, props.side);
+        const newPath = createShapePath(newCx, shape.cy, shape.r, props.side);
         path.setAttribute("d", newPath);
 
         // Hide small subsections if container is too small
@@ -343,7 +261,7 @@
         }
       } else {
         const newCy = shape.cy * scaleFactor;
-        const newPath = createSemiCirclePath(shape.cx, newCy, shape.r, props.side);
+        const newPath = createShapePath(shape.cx, newCy, shape.r, props.side);
         path.setAttribute("d", newPath);
       }
     });
@@ -399,7 +317,6 @@
     const paths = svg.querySelectorAll("path.mm-shape");
     const scrollIndicator = svg.querySelector(".scroll-indicator");
     const isHorizontal = props.orientation === "horizontal";
-    const isHorizontalSide = props.side === "top" || props.side === "bottom";
 
     // Get container dimension
     const containerDimension = isHorizontal
