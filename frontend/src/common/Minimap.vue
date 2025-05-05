@@ -28,17 +28,27 @@
       () => [props.side, props.doc, props.orientation],
       () => {
         if (!wrapperRef.value) return;
-        html.value = makeMinimap(props.doc, isHorizontal.value, wrapperWidth, wrapperHeight);
+        html.value = makeMinimap(
+          props.doc,
+          isHorizontal.value,
+          wrapperWidth.value,
+          wrapperHeight.value
+        );
       },
       { deep: true, immediate: true }
     );
 
     // Responsiveness
     watch(
-      () => (isHorizontal.value ? wrapperWidth : wrapperHeight),
+      () => (isHorizontal.value ? wrapperWidth.value : wrapperHeight.value),
       (newDimension) => {
         if (newDimension <= 0 || !wrapperRef.value) return;
-        resizeMinimap(wrapperRef.value, isHorizontal.value);
+        resizeMinimap(
+          wrapperRef.value.querySelector("svg"),
+          wrapperWidth.value,
+          wrapperHeight.value,
+          isHorizontal.value
+        );
       },
       { immediate: true }
     );
@@ -51,8 +61,8 @@
         highlightScrollPos(
           newVal,
           isHorizontal.value,
-          wrapperWidth,
-          wrapperHeight,
+          wrapperWidth.value,
+          wrapperHeight.value,
           wrapperRef.value.querySelector("svg")
         );
       },
