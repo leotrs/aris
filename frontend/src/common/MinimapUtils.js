@@ -28,16 +28,30 @@ export function getSectionsFromSource(src) {
   return [{ percent: offset, level: 1 }, ...sections, { percent: 1 - offset, level: 1 }];
 };
 
-export function getSectionsFromHTML(html) {
-  const sections = [];
+export function getSectionsFromHTMLString(html) {
+  const parser = new DOMParser();
+  const dom = parser.parseFromString(html, "text/html");
+  const sections = [...dom.querySelectorAll("section")].map((s) => s);
   const offset = 0.01;
   return [{ percent: offset, level: 1 }, ...sections, { percent: 1 - offset, level: 1 }];
 };
 
+export function getSectionsFromHTML(doc) {
+  const sections = [...doc.isMountedAt.value.querySelectorAll("section")].map((s) => s);
+  const offset = 0.01;
+  return [{ percent: offset, level: 1 }, ...sections, { percent: 1 - offset, level: 1 }];
+}
+
+
 export function getSections(doc) {
-  if (doc.html) {
-    return getSectionsFromHTML(doc.html);
+  if (doc.isMountedAt) {
+    console.log('extracting from mounted html');
+    return getSectionsFromHTML(doc);
+  } else if (doc.html) {
+    console.log('extracting from html string');
+    return getSectionsFromHTMLString(doc.html);
   } else if (doc.source) {
+    console.log('extracting from source');
     return getSectionsFromSource(doc.source);
   } else {
     return {};
