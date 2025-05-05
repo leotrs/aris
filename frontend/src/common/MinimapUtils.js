@@ -36,10 +36,8 @@ export function getSectionsFromHTML(html) {
 
 export function getSections(doc) {
   if (doc.html) {
-    console.log('sections from html:', getSectionsFromHTML(doc.html));
     return getSectionsFromHTML(doc.html);
   } else if (doc.source) {
-    console.log('sections from src:', getSectionsFromSource(doc.source));
     return getSectionsFromSource(doc.source);
   } else {
     return {};
@@ -234,12 +232,10 @@ export function resizeMinimap(
   if (!svg) return;
   const { initialHeight, initialWidth, initialShapes } = svgInitialData;
 
-  // Get container dimension based on orientation
+  // Get dimensions based on orientation
   const containerDimension = isHorizontal ? wrapperWidth : wrapperHeight;
-  if (containerDimension <= 0) return;
-
-  // Calculate scale factor
   const initialDimension = isHorizontal ? initialWidth : initialHeight;
+  if (containerDimension <= 0 || initialDimension <= 0) return;
   const scaleFactor = containerDimension / initialDimension;
 
   // Update track
@@ -266,8 +262,6 @@ export function resizeMinimap(
     ? getLayoutParametersHorizontal(containerDimension, options)
     : getLayoutParametersVertical(containerDimension, options);
   svg.setAttribute("viewBox", layout.viewBox);
-  svg.style.width = "100%";
-  svg.style.height = "100%";
 };
 
 export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeight, svg, options = { trackWidth: 3 }) {
