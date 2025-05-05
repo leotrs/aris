@@ -24,38 +24,47 @@ export function getSectionsFromSource(src) {
       level: countLeadingPounds(obj.line) + 1,
     }));
 
-  const offset = Math.min(1 / lines.length, 0.01);
-  return [{ percent: offset, level: 1 }, ...sections, { percent: 1 - offset, level: 1 }];
+  return sections;
 };
 
 export function getSectionsFromHTMLString(html) {
   const parser = new DOMParser();
   const dom = parser.parseFromString(html, "text/html");
   const sections = [...dom.querySelectorAll("section")].map((s) => s);
-  const offset = 0.01;
-  return [{ percent: offset, level: 1 }, ...sections, { percent: 1 - offset, level: 1 }];
+  return sections;
 };
 
 export function getSectionsFromHTML(doc) {
-  const sections = [...doc.isMountedAt.value.querySelectorAll("section")].map((s) => s);
-  const offset = 0.01;
-  return [{ percent: offset, level: 1 }, ...sections, { percent: 1 - offset, level: 1 }];
+  const el = doc.isMountedAt;
+  const parentEl = el.parentElement;
+  const sections = [...el.querySelectorAll("section")].map((s) => {
+    const rect = s.getBoundingClientRect();
+    const parentRect = el.getBoundingClientRect();
+    const percent = (rect.top - parentRect.top) / parentEl.clientHeight;
+
+    const levelClass = [...s.classList].find((c) => c.startsWith("level-"));
+    const level = levelClass ? parseInt(levelClass.split("-")[1], 10) : null;
+
+    return { percent, level };
+  });
+
+  return sections;
 }
 
 
 export function getSections(doc) {
+  let sections = [];
   if (doc.isMountedAt) {
     console.log('extracting from mounted html');
-    return getSectionsFromHTML(doc);
+    sections = getSectionsFromHTML(doc);
   } else if (doc.html) {
     console.log('extracting from html string');
-    return getSectionsFromHTMLString(doc.html);
+    sections = getSectionsFromHTMLString(doc.html);
   } else if (doc.source) {
     console.log('extracting from source');
-    return getSectionsFromSource(doc.source);
-  } else {
-    return {};
+    sections = getSectionsFromSource(doc.source);
   }
+  return [{ percent: 0, level: 1 }, ...sections, { percent: 1, level: 1 }];
 };
 
 // Shapes
