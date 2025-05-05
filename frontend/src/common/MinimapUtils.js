@@ -35,6 +35,11 @@ export function getSectionsFromHTMLString(html) {
 };
 
 export function getSectionsFromHTML(doc) {
+  // The following works by looking at the parent's height because there are only two
+  // cases: if the level is 1, then the parent is manuscript wrapper, and if the level
+  // is more than 1, the parent is actually the section of level-1. Both this section
+  // and its parent have the same height, both equaling the entire height of the
+  // manuscript.
   const el = doc.isMountedAt;
   const parentEl = el.parentElement;
   const sections = [...el.querySelectorAll("section")].map((s) => {
@@ -362,3 +367,19 @@ export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeigh
   line.setAttribute("y2", sectionEnd.cy);
   svg.insertBefore(line, scrollIndicator || null);
 };
+
+
+export function addIcons(totalHeightEl, newIcons) {
+  // totalHeightEl must be an element whose height equals that of the entire manuscript,
+  // e.g. the .manuscriptwrapper, .manuscrupt, or even .middle-column or
+  // section.level-1.
+  if (!totalHeightEl || !newIcons) return;
+  const totalHeight = totalHeightEl.clientHeight;
+  console.log(totalHeight);
+
+  for (const [key, obj] of Object.entries(newIcons)) {
+    const top = obj.element.parentElement.getBoundingClientRect().top + window.scrollY;
+    const yPos = top / totalHeight;
+    console.log(top, totalHeight, yPos);
+  }
+}
