@@ -1,5 +1,5 @@
 <script setup>
-  import { reactive, computed, useTemplateRef } from "vue";
+  import { reactive, computed, inject, useTemplateRef, useId } from "vue";
 
   const icons = reactive([
     { icon: "BookmarkFilled", caption: "Notable", class: "bookmark", active: false },
@@ -11,6 +11,9 @@
     { icon: "QuoteFilled", caption: "Citable", class: "quote", active: false },
   ]);
 
+  const myId = useId();
+  const doc = inject("doc");
+  const selfRef = useTemplateRef("self-ref");
   const menuRef = useTemplateRef("menu-ref");
   const deactivateAll = () => {
     for (var i = 0; i < icons.length; i++) {
@@ -27,13 +30,19 @@
         icons[i].active = false;
       }
     }
+
+    const currentIcons = doc.value.icons || {};
+    doc.value.icons = {
+      ...currentIcons,
+      [myId]: { class: icons[i].class, element: selfRef.value.parentElement },
+    };
     menuRef.value.toggle();
   };
   const activeObj = computed(() => icons.find((obj) => obj.active));
 </script>
 
 <template>
-  <div class="feedback">
+  <div ref="self-ref" class="feedback">
     <ContextMenu
       ref="menu-ref"
       :icon="activeObj?.icon || 'MoodPlus'"
