@@ -1,7 +1,7 @@
 <script setup>
   import { ref, watch, inject, computed, onMounted, useTemplateRef, nextTick } from "vue";
   import { useElementSize } from "@vueuse/core";
-  import { makeMinimap, resizeMinimap, highlightScrollPos } from "./MinimapUtils.js";
+  import { makeMinimap, resizeMinimap, highlightScrollPos, addIcons } from "./MinimapUtils.js";
 
   const props = defineProps({
     doc: { type: Object, required: true },
@@ -25,7 +25,7 @@
 
     // Remake when neccessary
     watch(
-      () => [props.side, props.doc, props.orientation],
+      () => [props.side, props.doc.id, props.orientation],
       () => {
         if (!wrapperRef.value) return;
         html.value = makeMinimap(
@@ -65,6 +65,17 @@
           wrapperHeight.value,
           wrapperRef.value.querySelector("svg")
         );
+      },
+      { immediate: true }
+    );
+
+    // Include feedback icons
+    watch(
+      () => props.doc.icons,
+      (newIcons) => {
+        console.log("hi");
+        if (!wrapperRef.value || !newIcons || !props.doc.isMountedAt) return;
+        addIcons(props.doc.isMountedAt, newIcons);
       },
       { immediate: true }
     );
