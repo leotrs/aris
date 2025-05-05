@@ -1,5 +1,5 @@
 <script>
-  import { h } from "vue";
+  import { h, inject, onMounted, useTemplateRef } from "vue";
   import FeedbackIcon from "./FeedbackIcon.vue";
 
   export default {
@@ -17,6 +17,10 @@
     },
 
     setup(props) {
+      const doc = inject("doc");
+      const mountPointRef = useTemplateRef("manuscript-mount-point");
+      onMounted(() => (doc.value.isMountedAt = mountPointRef));
+
       const makeRenderFn = (htmlString) => {
         // Build a map for quick component lookup by class name
         const replacementMap = {};
@@ -128,14 +132,8 @@
           .map(createVNode)
           .filter((vnode) => vnode !== null && vnode !== "");
 
-        // Return a render function
-        if (bodyContent.length === 0) {
-          return () => h("div");
-        } else if (bodyContent.length === 1) {
-          return () => bodyContent[0];
-        } else {
-          return () => h("div", {}, bodyContent);
-        }
+        // Attach a ref to the root node -- and remember to return a render function
+        return () => h("div", { ref: "manuscript-mount-point" }, bodyContent);
       };
 
       return () => makeRenderFn(props.htmlString)();
