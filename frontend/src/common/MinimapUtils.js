@@ -147,19 +147,17 @@ let shapePositions = [];
 
 // Public interface
 export function makeMinimap(doc, isHorizontal, wrapperWidth, wrapperHeight) {
-  if (doc.minimap) {
-    return doc.minimap;
-  } else {
-    const currentSize = isHorizontal ? (wrapperWidth || 400) : (wrapperHeight || 400);
-    return _makeMinimap(getSections(doc), isHorizontal, currentSize);
-  }
+  // DO NOT use doc.minimap -- this is usually the one extracted from the HTMl, we want to make our own
+  // if (doc.minimap) return doc.minimap;
+  const currentSize = isHorizontal ? (wrapperWidth || 400) : (wrapperHeight || 400);
+  return _makeMinimap(getSections(doc), isHorizontal, currentSize);
 }
 
 export function _makeMinimap(
   sections,
   isHorizontal,
   containerSize = 400,
-  options = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 4, highlightScroll: true, side: 'left' }
+  options = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 4, highlightScroll: true, side: 'left', shape: 'line', offset: 4 }
 ) {
   // Leave some padding between the line and the container
   const lineSize = (containerSize || 400) - 8;
@@ -196,7 +194,7 @@ export function _makeMinimap(
       .map(
         (s, idx) =>
           `<path class="mm-shape" data-index="${idx}" data-percent="${s.percent}"
-   d="${createShapePath(s.cx, s.cy, s.r, options.side)}"
+  d="${createShapePath(s.cx, s.cy, s.r, options.side, options.shape, options.offset)}"
    stroke-width="${options.strokeWidth - 1}"
    stroke-linecap="round" />`
       )
@@ -218,8 +216,10 @@ export function _makeMinimap(
 };
 
 export function resizeMinimap(
-  wrapper,
+  svg,
   isHorizontal,
+  wrapperWidth,
+  wrapperHeight,
   options = {
     lineX: 12,
     lineY: 12,
@@ -231,12 +231,11 @@ export function resizeMinimap(
     side: 'left'
   }
 ) {
-  const svg = wrapper.querySelector("svg");
   if (!svg) return;
   const { initialHeight, initialWidth, initialShapes } = svgInitialData;
 
   // Get container dimension based on orientation
-  const containerDimension = isHorizontal ? wrapper.clientWidth : wrapper.clientHeight;
+  const containerDimension = isHorizontal ? wrapperWidth : wrapperHeight;
   if (containerDimension <= 0) return;
 
   // Calculate scale factor
@@ -271,7 +270,7 @@ export function resizeMinimap(
   svg.style.height = "100%";
 };
 
-export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeight, svg) {
+export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeight, svg, options = { trackWidth: 3 }) {
   if (!svg) return;
   const scrollPercent = pos / 100;
   const containerDimension = isHorizontal ? wrapperWidth : wrapperHeight;
@@ -338,7 +337,7 @@ export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeigh
   // If we found both the start and end, highlight the line segment between them
   const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
   line.setAttribute("class", "current-section");
-  line.setAttribute("stroke-width", props.trackWidth);
+  line.setAttribute("stroke-width", options.trackWidth);
   line.setAttribute("stroke-linecap", "round");
   line.setAttribute("x1", sectionStart.cx);
   line.setAttribute("y1", sectionStart.cy);
