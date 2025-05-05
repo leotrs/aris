@@ -74,13 +74,13 @@
 
   const minimapHeight = computed(() => `${columnSizes.left.height}px`);
 
-  const htmlContent = ref("");
   watch(doc, async () => {
     if (!doc.value || !doc.value.id) return;
 
     try {
       const response = await axios.get(`http://localhost:8000/documents/${doc.value.id}/content`);
-      htmlContent.value = response.data;
+      console.log("setting doc.value.html");
+      doc.value.html = response.data;
     } catch (error) {
       console.error("Error fetching HTML:", error);
     }
@@ -91,24 +91,27 @@
 
   const isMainTitleVisible = ref(true);
   let tearDown = () => {};
-  watch(htmlContent, async () => {
-    if (!manuscriptRef.value) return;
-    await nextTick(); // waits for ManuscriptWrapper to receive htmlContent
-    await nextTick(); // waits for v-html DOM to update
-    tearDown();
+  watch(
+    () => doc.value.html,
+    async () => {
+      if (!manuscriptRef.value) return;
+      await nextTick(); // waits for ManuscriptWrapper to receive html
+      await nextTick(); // waits for v-html DOM to update
+      tearDown();
 
-    const mainTitle = manuscriptRef.value.$el.querySelector("section.level-1 > .heading.hr");
-    if (!mainTitle) return;
+      const mainTitle = manuscriptRef.value.$el.querySelector("section.level-1 > .heading.hr");
+      if (!mainTitle) return;
 
-    const { isVisible, tearDown: newTearDown } = createElementVisibilityObserver(mainTitle);
-    isMainTitleVisible.value = isVisible.value;
+      const { isVisible, tearDown: newTearDown } = createElementVisibilityObserver(mainTitle);
+      isMainTitleVisible.value = isVisible.value;
 
-    const stopWatch = watch(isVisible, (newVal) => (isMainTitleVisible.value = newVal));
-    tearDown = () => {
-      newTearDown();
-      stopWatch();
-    };
-  });
+      const stopWatch = watch(isVisible, (newVal) => (isMainTitleVisible.value = newVal));
+      tearDown = () => {
+        newTearDown();
+        stopWatch();
+      };
+    }
+  );
   onUnmounted(() => tearDown());
 
   /* Scroll position */
@@ -144,8 +147,9 @@
 
         <Dock ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
           <ManuscriptWrapper
+            v-if="doc.html"
             ref="manuscript-ref"
-            :html-string="htmlContent"
+            :html-string="doc.html || ''"
             :keys="true"
             :show-footer="true"
           />
