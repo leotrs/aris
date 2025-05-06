@@ -369,17 +369,21 @@ export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeigh
 };
 
 
-export function addIcons(totalHeightEl, newIcons) {
+export function makeIcons(newIcons, totalHeightEl) {
   // totalHeightEl must be an element whose height equals that of the entire manuscript,
   // e.g. the .manuscriptwrapper, .manuscrupt, or even .middle-column or
   // section.level-1.
-  if (!totalHeightEl || !newIcons) return;
-  const totalHeight = totalHeightEl.clientHeight;
-  console.log(totalHeight);
+  if (!totalHeightEl || !newIcons) return [];
+  const totalHeight = totalHeightEl.scrollHeight;
+  const containerTop = totalHeightEl.offsetTop;
 
-  for (const [key, obj] of Object.entries(newIcons)) {
-    const top = obj.element.parentElement.getBoundingClientRect().top + window.scrollY;
+  const data = [];
+  for (const obj of Object.values(newIcons)) {
+    const top = obj.element.parentElement.offsetTop - containerTop;
     const yPos = top / totalHeight;
-    console.log(top, totalHeight, yPos);
+    console.log(yPos);
+    data.push({ class: obj.class, pos: yPos });
   }
+
+  return data;
 }

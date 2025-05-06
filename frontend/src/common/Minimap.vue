@@ -1,7 +1,16 @@
 <script setup>
   import { ref, watch, inject, computed, onMounted, useTemplateRef, nextTick } from "vue";
   import { useElementSize } from "@vueuse/core";
-  import { makeMinimap, resizeMinimap, highlightScrollPos, addIcons } from "./MinimapUtils.js";
+  import {
+    IconBookmarkFilled,
+    IconStarFilled,
+    IconHeartFilled,
+    IconCircleCheckFilled,
+    IconAlertTriangleFilled,
+    IconHelpSquareRoundedFilled,
+    IconQuoteFilled,
+  } from "@tabler/icons-vue";
+  import { makeMinimap, resizeMinimap, highlightScrollPos, makeIcons } from "./MinimapUtils.js";
 
   const props = defineProps({
     doc: { type: Object, required: true },
@@ -17,6 +26,17 @@
   const html = ref("");
   const isHorizontal = computed(() => props.orientation === "horizontal");
   const visibility = ref("hidden");
+  const icons = ref([]);
+
+  const classToIconComponent = {
+    bookmark: IconBookmarkFilled,
+    star: IconStarFilled,
+    heart: IconHeartFilled,
+    check: IconCircleCheckFilled,
+    exclamation: IconAlertTriangleFilled,
+    question: IconHelpSquareRoundedFilled,
+    quote: IconQuoteFilled,
+  };
 
   onMounted(async () => {
     if (!props.doc) return;
@@ -70,12 +90,13 @@
     );
 
     // Include feedback icons
+
     watch(
       () => props.doc.icons,
       (newIcons) => {
-        console.log("hi");
         if (!wrapperRef.value || !newIcons || !props.doc.isMountedAt) return;
-        addIcons(props.doc.isMountedAt, newIcons);
+        icons.value = makeIcons(newIcons, props.doc.isMountedAt, wrapperRef.value);
+        console.log(icons.value);
       },
       { immediate: true }
     );
@@ -83,13 +104,18 @@
 </script>
 
 <template>
-  <div
-    ref="mm-wrapper"
-    class="mm-wrapper"
-    :class="[orientation, side]"
-    :style="{ visibility }"
-    v-html="html"
-  ></div>
+  <div ref="mm-wrapper" class="mm-wrapper" :class="[orientation, side]" :style="{ visibility }">
+    <div class="mm-main" v-html="html"></div>
+    <div class="mm-icons">
+      <component
+        :is="classToIconComponent[obj.class]"
+        v-for="obj in icons"
+        :key="obj.class"
+        :class="obj.class"
+        :style="{ top: `${obj.pos * 100}%` }"
+      />
+    </div>
+  </div>
 </template>
 
 <style scoped>
