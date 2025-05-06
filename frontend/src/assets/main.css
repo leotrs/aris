@@ -70,6 +70,18 @@
   stroke-width: 2px;
 
   &.icon-close { stroke-width: 1px; }
+  &.bookmark {fill: var(--information-500); }
+  &.check {fill: var(--green-500);}
+  &.success {fill: var(--success-500);}
+  &.alert {fill: var(--warning-500); }
+  &.exclamation {fill: var(--orange-500); }
+  &.question {fill: var(--purple-500);}
+  &.heart {fill: var(--red-500); }
+  &.star {fill: var(--yellow-500); }
+  &.quote {fill: var(--pink-500); }
+  &.collapse {stroke: var(--dark); }
+  &.error {fill: var(--error-500); }
+
 }
 
 /* Button reset */
