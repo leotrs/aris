@@ -37,9 +37,9 @@
     /* DockableClaims, */
   };
 
-  const leftColumnRef = useTemplateRef("leftColumnRef");
-  const middleColumnRef = useTemplateRef("middleColumnRef");
-  const rightColumnRef = useTemplateRef("rightColumnRef");
+  const lftColRef = useTemplateRef("leftColumnRef");
+  const midColRef = useTemplateRef("middleColumnRef");
+  const rgtColRef = useTemplateRef("rightColumnRef");
   const columnSizes = reactive({
     left: { width: 0, height: 0 },
     middle: { width: 0, height: 0 },
@@ -47,15 +47,15 @@
   });
   onMounted(async () => {
     await nextTick();
-    const leftSize = useElementSize(leftColumnRef);
-    const middleSize = useElementSize(middleColumnRef);
-    const rightSize = useElementSize(rightColumnRef);
-    watch(leftSize.width, (w) => (columnSizes.left.width = w));
-    watch(leftSize.height, (w) => (columnSizes.middle.width = w));
-    watch(rightSize.width, (w) => (columnSizes.right.width = w));
-    watch(rightSize.height, (h) => (columnSizes.left.height = h));
-    watch(middleSize.width, (h) => (columnSizes.middle.height = h));
-    watch(middleSize.height, (h) => (columnSizes.right.height = h));
+    const { width: lftColW, height: lftColH } = useElementSize(lftColRef);
+    const { width: midColW, height: midColH } = useElementSize(midColRef);
+    const { width: rgtColW, height: rgtColH } = useElementSize(rgtColRef);
+    watch(lftColW, (w) => (columnSizes.left.width = w));
+    watch(midColW, (w) => (columnSizes.middle.width = w));
+    watch(rgtColW, (w) => (columnSizes.right.width = w));
+    watch(lftColH, (h) => (columnSizes.left.height = h));
+    watch(midColH, (h) => (columnSizes.middle.height = h));
+    watch(rgtColH, (h) => (columnSizes.right.height = h));
   });
   provide("columnSizes", columnSizes);
 
@@ -91,9 +91,9 @@
   watch(
     () => doc.value.html,
     async () => {
-      if (!manuscriptRef.value) return;
       await nextTick(); // waits for ManuscriptWrapper to receive html
       await nextTick(); // waits for v-html DOM to update
+      if (!manuscriptRef.value) return;
       tearDown();
 
       const mainTitle = manuscriptRef.value.$el.querySelector("section.level-1 > .heading.hr");
