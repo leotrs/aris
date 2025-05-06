@@ -47,16 +47,15 @@
   });
   onMounted(async () => {
     await nextTick();
-    const { width: leftColumnWidth, height: leftColumnHeight } = useElementSize(leftColumnRef);
-    const { width: middleColumnWidth, height: middleColumnHeight } =
-      useElementSize(middleColumnRef);
-    const { width: rightColumnWidth, height: rightColumnHeight } = useElementSize(rightColumnRef);
-    watch(leftColumnWidth, (w) => (columnSizes.left.width = w));
-    watch(middleColumnWidth, (w) => (columnSizes.middle.width = w));
-    watch(rightColumnWidth, (w) => (columnSizes.right.width = w));
-    watch(leftColumnHeight, (h) => (columnSizes.left.height = h));
-    watch(middleColumnHeight, (h) => (columnSizes.middle.height = h));
-    watch(rightColumnHeight, (h) => (columnSizes.right.height = h));
+    const leftSize = useElementSize(leftColumnRef);
+    const middleSize = useElementSize(middleColumnRef);
+    const rightSize = useElementSize(rightColumnRef);
+    watch(leftSize.width, (w) => (columnSizes.left.width = w));
+    watch(leftSize.height, (w) => (columnSizes.middle.width = w));
+    watch(rightSize.width, (w) => (columnSizes.right.width = w));
+    watch(rightSize.height, (h) => (columnSizes.left.height = h));
+    watch(middleSize.width, (h) => (columnSizes.middle.height = h));
+    watch(middleSize.height, (h) => (columnSizes.right.height = h));
   });
   provide("columnSizes", columnSizes);
 
@@ -71,8 +70,6 @@
   provide("fileSettings", fileSettings);
 
   watch(fileSettings, () => console.log(fileSettings));
-
-  const minimapHeight = computed(() => `${columnSizes.left.height}px`);
 
   watch(doc, async () => {
     if (!doc.value || !doc.value.id) return;
@@ -121,6 +118,11 @@
     () => (yScroll.value / (manuscriptRef.value?.$el.clientHeight ?? 1)) * 100
   );
   provide("yScroll", yScrollPercent);
+
+  const minimapHeight = computed(() => {
+    const innerHeight = innerRef.value?.getBoundingClientRect().height;
+    return innerHeight ? `${innerHeight}px` : "100%";
+  });
 
   /* Keyboard shortcuts */
   registerAsFallback(manuscriptRef);
@@ -265,7 +267,7 @@
     position: fixed;
   }
 
-  :deep(.mm-wrapper > .mm-main > svg) {
+  :deep(.mm-wrapper > :is(.mm-main, .mm-icons)) {
     height: v-bind("minimapHeight");
   }
 

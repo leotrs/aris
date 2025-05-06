@@ -22,9 +22,9 @@
 
   const top = computed(() => {
     if (props.side == "left") {
-      return "calc(64px + 16px)";
+      return "calc(64px + 6px)";
     } else if (props.side == "right") {
-      return "calc(64px + 16px)";
+      return "calc(64px + 6px)";
     } else if (props.side == "top") {
       return "16px";
     } else {
