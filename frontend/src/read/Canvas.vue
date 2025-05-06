@@ -265,7 +265,7 @@
     position: fixed;
   }
 
-  :deep(.mm-wrapper .minimap svg) {
+  :deep(.mm-wrapper > .mm-main > svg) {
     height: v-bind("minimapHeight");
   }
 
