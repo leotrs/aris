@@ -7,6 +7,7 @@
   const props = defineProps({
     icon: { type: String, default: "Dots" },
     buttonSize: { type: String, default: "btn-sm" },
+    iconClass: { type: String, default: "" },
     placement: { type: String, default: "left-start" },
   });
 
@@ -82,6 +83,7 @@
         ref="btn-ref"
         v-model="show"
         :icon="icon"
+        :icon-class="iconClass"
         class="cm-btn"
         hover-color="var(--surface-hint)"
         :button-size="buttonSize"

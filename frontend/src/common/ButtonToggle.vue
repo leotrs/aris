@@ -3,8 +3,9 @@
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
-    icon: { type: String, default: "" },
     text: { type: String, default: "" },
+    icon: { type: String, default: "" },
+    iconClass: { type: String, default: "" },
     buttonSize: { type: String, default: "btn-md" },
     hoverColor: { type: String, default: "var(--gray-50)" },
     activeColor: { type: String, default: "var(--surface-hint)" },
@@ -22,7 +23,7 @@
     @click="active = !active"
   >
     <template v-if="icon">
-      <component :is="Icons['Icon' + props.icon]" class="btn-icon" />
+      <component :is="Icons['Icon' + props.icon]" class="btn-icon" :class="iconClass" />
     </template>
     <span v-if="text" class="btn-text">{{ text }}</span>
     <slot />

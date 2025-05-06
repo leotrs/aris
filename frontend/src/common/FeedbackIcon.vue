@@ -46,7 +46,7 @@
     <ContextMenu
       ref="menu-ref"
       :icon="activeObj?.icon || 'MoodPlus'"
-      :class="activeObj?.class || ''"
+      :icon-class="activeObj?.class || ''"
       placement="left-start"
     >
       <ContextMenuItem
@@ -54,7 +54,7 @@
         :key="obj"
         :icon="obj.icon"
         :caption="obj.caption"
-        :class="obj.class"
+        :icon-class="obj.class"
         @click="() => activate(obj)"
       />
       <Separator />

@@ -4,12 +4,13 @@
   const props = defineProps({
     icon: { type: String, required: true },
     caption: { type: String, required: true },
+    iconClass: { type: String, default: "" },
   });
 </script>
 
 <template>
   <button type="button" class="item" role="menuitem" tabindex="-1">
-    <component :is="Icons['Icon' + props.icon]" class="cmi-icon" />
+    <component :is="Icons['Icon' + props.icon]" class="cmi-icon" :class="iconClass" />
     <span class="cmi-caption">{{ caption }}</span>
   </button>
 </template>
