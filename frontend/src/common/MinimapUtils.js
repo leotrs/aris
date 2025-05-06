@@ -50,7 +50,10 @@ export function getSectionsFromHTML(doc) {
     const levelClass = [...s.classList].find((c) => c.startsWith("level-"));
     const level = levelClass ? parseInt(levelClass.split("-")[1], 10) : null;
 
-    return { percent, level };
+    const titleTag = s.querySelector(".heading.hr .hr-content-zone :is(h1, h2, h3, h4, h5, h6)");
+    const title = titleTag?.textContent || "";
+
+    return { percent, level, title };
   });
 
   return sections;
@@ -105,12 +108,13 @@ const createShapePath = (cx, cy, r, side, shape, offset = 4) => {
 
 const createShapesData = (sections, lineSize, isHorizontal, options) => {
   const { lineX, lineY, radiusDelta } = options;
-  return sections.map(({ percent, level }) => ({
+  return sections.map(({ percent, level, title }) => ({
     cx: isHorizontal ? percent * lineSize : lineX,
     cy: isHorizontal ? lineY : percent * lineSize,
     r: radiusDelta * (6 - level),
     percent,
     level,
+    title,
   }));
 };
 
@@ -209,31 +213,35 @@ export function _makeMinimap(
   const svg = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="${layout.viewBox}" preserveAspectRatio="xMidYMid meet">
       <line class="track"
-        x1="${layout.track.x1}"
-        y1="${layout.track.y1}"
-        x2="${layout.track.x2}"
-        y2="${layout.track.y2}"
-        stroke-width="${options.trackWidth}"
-        stroke-linecap="round"
+       x1="${layout.track.x1}"
+       y1="${layout.track.y1}"
+       x2="${layout.track.x2}"
+       y2="${layout.track.y2}"
+       stroke-width="${options.trackWidth}"
+       stroke-linecap="round"
       />
       ${shapes
       .map(
-        (s, idx) =>
-          `<path class="mm-shape" data-index="${idx}" data-percent="${s.percent}"
-  d="${createShapePath(s.cx, s.cy, s.r, options.side, options.shape, options.offset)}"
-   stroke-width="${options.strokeWidth - 1}"
-   stroke-linecap="round" />`
+        (s, idx) => `
+        <path class="mm-shape"
+         data-index="${idx}"
+         data-percent="${s.percent}"
+         data-title="${s.title}"
+         d="${createShapePath(s.cx, s.cy, s.r, options.side, options.shape, options.offset)}"
+         stroke-width="${options.strokeWidth - 1}"
+         stroke-linecap="round"
+        />`
       )
       .join("\n  ")}
       ${options.highlightScroll
       ? `<line class="scroll-indicator"
-   x1="${layout.scrollLine.x1}"
-   y1="${layout.scrollLine.y1}"
-   x2="${layout.scrollLine.x2}"
-   y2="${layout.scrollLine.y2}"
-   stroke-width="${options.strokeWidth}"
-   stroke-linecap="round"
-   />`
+          x1="${layout.scrollLine.x1}"
+          y1="${layout.scrollLine.y1}"
+          x2="${layout.scrollLine.x2}"
+          y2="${layout.scrollLine.y2}"
+          stroke-width="${options.strokeWidth}"
+          stroke-linecap="round"
+         />`
       : ""
     }
     </svg>`;
@@ -381,7 +389,6 @@ export function makeIcons(newIcons, totalHeightEl) {
   for (const obj of Object.values(newIcons)) {
     const top = obj.element.parentElement.offsetTop - containerTop;
     const yPos = top / totalHeight;
-    console.log(yPos);
     data.push({ class: obj.class, pos: yPos });
   }
 

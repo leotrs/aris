@@ -1,6 +1,7 @@
 <script setup>
   import { ref, watch, inject, computed, onMounted, useTemplateRef, nextTick } from "vue";
   import { useElementSize } from "@vueuse/core";
+  import { useFloating, autoUpdate, offset, shift } from "@floating-ui/vue";
   import {
     IconBookmarkFilled,
     IconStarFilled,
@@ -27,6 +28,14 @@
   const isHorizontal = computed(() => props.orientation === "horizontal");
   const visibility = ref("hidden");
   const icons = ref([]);
+  const tooltipReferenceRef = ref(null);
+  const tooltipRef = useTemplateRef("tooltip-ref");
+  const tooltipText = ref("");
+  const { floatingStyles } = useFloating(tooltipReferenceRef, tooltipRef, {
+    placement: "left",
+    middleware: [offset(6), shift()],
+    whileElementsMounted: autoUpdate,
+  });
 
   const classToIconComponent = {
     bookmark: IconBookmarkFilled,
@@ -90,7 +99,6 @@
     );
 
     // Include feedback icons
-
     watch(
       () => props.doc.icons,
       (newIcons) => {
@@ -99,6 +107,26 @@
         console.log(icons.value);
       },
       { immediate: true }
+    );
+
+    // Include tooltips
+    watch(
+      html,
+      async () => {
+        await nextTick();
+        if (!wrapperRef.value) return;
+
+        wrapperRef.value.querySelectorAll(".mm-shape").forEach((shape) => {
+          shape.addEventListener("mouseenter", (e) => {
+            tooltipReferenceRef.value = e.target;
+            tooltipText.value = e.target.dataset.title;
+          });
+          shape.addEventListener("mouseleave", (e) => {
+            tooltipText.value = "";
+          });
+        });
+      },
+      { immediate: true, flush: "post" }
     );
   });
 </script>
@@ -115,6 +143,7 @@
         :style="{ top: `${obj.pos * 100}%` }"
       />
     </div>
+    <div ref="tooltip-ref" class="mm-tooltip" :style="floatingStyles">{{ tooltipText }}</div>
   </div>
 </template>
 
