@@ -63,13 +63,13 @@
   .mm-wrapper.dock-left,
   .mm-wrapper.dock-right {
     height: calc(100% - 64px - 16px - 8px - 8px);
-    & :deep(> svg > line.track) {
+    & :deep(svg > line.track) {
       visibility: hidden;
     }
   }
 
   .mm-wrapper.dock-right {
-    & :deep(> svg > line.scroll-indicator) {
+    & :deep(svg > line.scroll-indicator) {
       visibility: hidden;
     }
   }

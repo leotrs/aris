@@ -108,7 +108,7 @@
 <style>
   .mm-wrapper {
     --mm-gray: var(--gray-200);
-    overflow: hidden;
+    position: relative;
 
     &.vertical {
       height: 75%;
@@ -130,7 +130,7 @@
     }
   }
 
-  .mm-wrapper svg {
+  .mm-wrapper > .mm-main > svg {
     width: 100%;
     height: 100%;
 
@@ -169,6 +169,19 @@
         fill: var(--surface-primary);
         stroke: var(--primary-500);
       }
+    }
+  }
+
+  .mm-icons {
+    position: absolute;
+    width: 32px;
+    height: 100%;
+    top: 0;
+    right: 40px;
+
+    & > svg.tabler-icon {
+      position: absolute;
+      transform: translateY(-100%);
     }
   }
 </style>

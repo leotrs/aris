@@ -63,39 +63,4 @@
   </div>
 </template>
 
-<style scoped>
-  .cm-wrapper.bookmark > :deep(button > svg),
-  .item.bookmark :deep(> svg) {
-    color: var(--blue-500);
-  }
-
-  .cm-wrapper.star > :deep(button > svg),
-  .item.star :deep(> svg) {
-    color: var(--yellow-500);
-  }
-
-  .cm-wrapper.heart > :deep(button > svg),
-  .item.heart :deep(> svg) {
-    color: var(--red-500);
-  }
-
-  .cm-wrapper.check > :deep(button > svg),
-  .item.check :deep(> svg) {
-    color: var(--green-500);
-  }
-
-  .cm-wrapper.exclamation > :deep(button > svg),
-  .item.exclamation :deep(> svg) {
-    color: var(--orange-500);
-  }
-
-  .cm-wrapper.question > :deep(button > svg),
-  .item.question :deep(> svg) {
-    color: var(--purple-500);
-  }
-
-  .cm-wrapper.quote > :deep(button > svg),
-  .item.quote :deep(> svg) {
-    color: var(--pink-500);
-  }
-</style>
+<style scoped></style>
