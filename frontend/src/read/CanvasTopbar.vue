@@ -66,6 +66,7 @@
 
   .left-column,
   .middle-column {
+    position: relative;
     background-color: v-bind("fileSettings.background");
     height: 100%;
     display: flex;
