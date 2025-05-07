@@ -84,6 +84,10 @@
               else if (attr.name === "class") {
                 data.class = attr.value.split(/\s+/).filter(Boolean);
               }
+              // Handle misc. attributes that need no processing
+              else if (["id", "href", "data-nodeid", "tabindex"].includes(attr.name)) {
+                data[attr.name] = attr.value;
+              }
               // For components, convert attributes to props
               else if (isReplacement) {
                 // Convert kebab-case to camelCase for component props
