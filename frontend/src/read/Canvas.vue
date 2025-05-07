@@ -37,6 +37,7 @@
     /* DockableClaims, */
   };
 
+  const innerRef = useTemplateRef("inner-ref");
   const lftColRef = useTemplateRef("leftColumnRef");
   const midColRef = useTemplateRef("middleColumnRef");
   const rgtColRef = useTemplateRef("rightColumnRef");
@@ -44,18 +45,24 @@
     left: { width: 0, height: 0 },
     middle: { width: 0, height: 0 },
     right: { width: 0, height: 0 },
+    inner: { width: 0, height: 0 },
   });
+
   onMounted(async () => {
     await nextTick();
     const { width: lftColW, height: lftColH } = useElementSize(lftColRef);
     const { width: midColW, height: midColH } = useElementSize(midColRef);
     const { width: rgtColW, height: rgtColH } = useElementSize(rgtColRef);
-    watch(lftColW, (w) => (columnSizes.left.width = w));
-    watch(midColW, (w) => (columnSizes.middle.width = w));
-    watch(rgtColW, (w) => (columnSizes.right.width = w));
-    watch(lftColH, (h) => (columnSizes.left.height = h));
-    watch(midColH, (h) => (columnSizes.middle.height = h));
-    watch(rgtColH, (h) => (columnSizes.right.height = h));
+    watch(lftColW, (w) => (columnSizes.left.width = w), { immediate: true });
+    watch(midColW, (w) => (columnSizes.middle.width = w), { immediate: true });
+    watch(rgtColW, (w) => (columnSizes.right.width = w), { immediate: true });
+    watch(lftColH, (h) => (columnSizes.left.height = h), { immediate: true });
+    watch(midColH, (h) => (columnSizes.middle.height = h), { immediate: true });
+    watch(rgtColH, (h) => (columnSizes.right.height = h), { immediate: true });
+
+    const { width: innerW, height: innerH } = useElementSize(innerRef);
+    watch(innerW, (w) => (columnSizes.inner.width = w));
+    watch(innerH, (h) => (columnSizes.inner.height = h));
   });
   provide("columnSizes", columnSizes);
 
@@ -68,8 +75,6 @@
     columns: 1,
   });
   provide("fileSettings", fileSettings);
-
-  watch(fileSettings, () => console.log(fileSettings));
 
   watch(doc, async () => {
     if (!doc.value || !doc.value.id) return;
@@ -112,17 +117,11 @@
   onUnmounted(() => tearDown());
 
   /* Scroll position */
-  const innerRef = useTemplateRef("inner-ref");
   const { y: yScroll } = useScroll(innerRef);
   const yScrollPercent = computed(
     () => (yScroll.value / (manuscriptRef.value?.$el.clientHeight ?? 1)) * 100
   );
   provide("yScroll", yScrollPercent);
-
-  const minimapHeight = computed(() => {
-    const innerHeight = innerRef.value?.getBoundingClientRect().height;
-    return innerHeight ? `${innerHeight}px` : "100%";
-  });
 
   /* Keyboard shortcuts */
   registerAsFallback(manuscriptRef);
@@ -268,7 +267,7 @@
   }
 
   :deep(.mm-wrapper > :is(.mm-main, .mm-icons)) {
-    height: v-bind("minimapHeight");
+    /* height: v-bind("minimapHeight"); */
   }
 
   :deep(.manuscriptwrapper) {

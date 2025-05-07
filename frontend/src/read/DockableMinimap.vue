@@ -1,17 +1,18 @@
 <script setup>
-  import { reactive, computed } from "vue";
+  import { inject, reactive, computed } from "vue";
 
   const props = defineProps({
     doc: { type: Object, required: true },
     side: { type: String, required: true },
   });
-
+  // The location of the shapes depends on which dock we're in
   const dockSideToShapeSide = {
     left: "right",
     right: "left",
     top: "bottom",
   };
 
+  // The props to be passed on to the minimap
   const minimapProps = reactive({
     doc: props.doc,
     orientation: props.side == "top" ? "horizontal" : "vertical",
@@ -21,13 +22,14 @@
     trackWidth: props.side == "right" ? 8 : 3,
   });
 
+  // Positioning, size, and other styles
   const top = computed(() => {
     if (props.side == "left") {
       return "calc(64px + 6px)";
     } else if (props.side == "right") {
       return "calc(64px + 6px)";
     } else if (props.side == "top") {
-      return "16px";
+      return "0px";
     } else {
       return "0";
     }
@@ -38,7 +40,7 @@
     } else if (props.side == "right") {
       return "";
     } else if (props.side == "top") {
-      return "64px";
+      return "0px";
     } else {
       return "0";
     }
@@ -51,6 +53,30 @@
     } else if (props.side == "top") {
       return "64px";
     } else {
+      return "0";
+    }
+  });
+  const sizes = inject("columnSizes");
+  const minimapHeight = computed(() => {
+    if (["left", "right"].includes(props.side)) {
+      const height = sizes.value?.inner.height;
+      return height ? `${height}px` : "100%";
+    } else if (props.side == "top") {
+      return "64px";
+    } else {
+      console.error(`Unknown side ${props.side}`);
+      return "0";
+    }
+  });
+  const minimapWidth = computed(() => {
+    if (["left", "right"].includes(props.side)) {
+      return "fit-content";
+    } else if (props.side == "top") {
+      const width = sizes.value?.middle.width;
+      console.log(width);
+      return width ? `${width}px` : "100%";
+    } else {
+      console.error(`Unknown side ${props.side}`);
       return "0";
     }
   });
@@ -73,5 +99,10 @@
     & :deep(svg > line.scroll-indicator) {
       visibility: hidden;
     }
+  }
+
+  .mm-wrapper > :deep(:is(.mm-main, .mm-icons)) {
+    height: v-bind("minimapHeight");
+    width: v-bind("minimapWidth");
   }
 </style>
