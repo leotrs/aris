@@ -176,19 +176,25 @@ let svgInitialData = [];
 let shapePositions = [];
 
 // Public interface
-export function makeMinimap(doc, isHorizontal, wrapperWidth, wrapperHeight) {
+export function makeMinimap(doc, isHorizontal, wrapperWidth, wrapperHeight, options = {}) {
+  const defaults = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 4, highlightScroll: true, side: 'left', shape: 'line' };
+  options = { ...defaults, ...options };
+
   // DO NOT use doc.minimap -- this is usually the one extracted from the HTMl, we want to make our own
   // if (doc.minimap) return doc.minimap;
   const currentSize = isHorizontal ? (wrapperWidth || 400) : (wrapperHeight || 400);
-  return _makeMinimap(getSections(doc), isHorizontal, currentSize);
+  return _makeMinimap(getSections(doc), isHorizontal, currentSize, options);
 }
 
 export function _makeMinimap(
   sections,
   isHorizontal,
   containerSize = 400,
-  options = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 4, highlightScroll: true, side: 'left', shape: 'line', offset: 4 }
+  options = {}
 ) {
+  const defaults = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 4, highlightScroll: true, side: 'left', shape: 'line' };
+  options = { ...defaults, ...options };
+
   // Leave some padding between the line and the container
   const lineSize = (containerSize || 400) - 8;
 
@@ -254,7 +260,9 @@ export function resizeMinimap(
   isHorizontal,
   wrapperWidth,
   wrapperHeight,
-  options = {
+  options = {}
+) {
+  const defaults = {
     lineX: 12,
     lineY: 12,
     strokeWidth: 3,
@@ -262,9 +270,11 @@ export function resizeMinimap(
     radiusDelta: 2,
     offset: 4,
     minSizeForSubsections: 250,
-    side: 'left'
-  }
-) {
+    side: 'left',
+    shape: 'line'
+  };
+  options = { ...defaults, ...options };
+
   if (!svg) return;
   const { initialHeight, initialWidth, initialShapes } = svgInitialData;
 
@@ -287,7 +297,7 @@ export function resizeMinimap(
     const shape = initialShapes[index];
     let newCx = isHorizontal ? shape.cx * scaleFactor : shape.cx;
     let newCy = isHorizontal ? shape.cy : shape.cy * scaleFactor;
-    path.setAttribute("d", createShapePath(newCx, newCy, shape.r, options.side));
+    path.setAttribute("d", createShapePath(newCx, newCy, shape.r, options.side, options.shape, options.offset));
 
     // Hide small subsections if container is too small
     const shouldHide = containerDimension < options.minSizeForSubsections && shape.level > 2;

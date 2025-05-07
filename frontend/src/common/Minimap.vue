@@ -61,7 +61,8 @@
           props.doc,
           isHorizontal.value,
           wrapperWidth.value,
-          wrapperHeight.value
+          wrapperHeight.value,
+          { side: props.side }
         );
       },
       { deep: true, immediate: true }
@@ -76,7 +77,8 @@
           wrapperRef.value.querySelector("svg"),
           wrapperWidth.value,
           wrapperHeight.value,
-          isHorizontal.value
+          isHorizontal.value,
+          { side: props.side }
         );
       },
       { immediate: true }

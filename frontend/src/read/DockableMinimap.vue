@@ -6,15 +6,16 @@
     side: { type: String, required: true },
   });
 
-  const dockSideToCircleSide = {
+  const dockSideToShapeSide = {
     left: "right",
     right: "left",
-    top: "top",
+    top: "bottom",
   };
+
   const minimapProps = reactive({
     doc: props.doc,
     orientation: props.side == "top" ? "horizontal" : "vertical",
-    side: dockSideToCircleSide[props.side],
+    side: dockSideToShapeSide[props.side],
     highlightScroll: true,
     shape: "line",
     trackWidth: props.side == "right" ? 8 : 3,
