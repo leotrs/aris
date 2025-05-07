@@ -68,6 +68,7 @@
     &.active {
       background-color: v-bind("activeColor");
       color: var(--almost-black);
+      box-shadow: var(--shadow-strong);
     }
   }
 
