@@ -1,5 +1,5 @@
 <script>
-  import { h, nextTick, useTemplateRef } from "vue";
+  import { h, ref, useTemplateRef, nextTick, onMounted } from "vue";
   import FeedbackIcon from "./FeedbackIcon.vue";
 
   export default {
@@ -18,7 +18,10 @@
 
     emits: ["mounted-at"],
 
-    setup(props) {
+    setup(props, { expose }) {
+      const mountPointRef = useTemplateRef("mountPointRef");
+      expose({ mountPoint: mountPointRef });
+
       const makeRenderFn = (htmlString) => {
         // Build a map for quick component lookup by class name
         const replacementMap = {};
@@ -135,15 +138,10 @@
           .filter((vnode) => vnode !== null && vnode !== "");
 
         // Attach a ref to the root node -- and remember to return a render function
-        return () => h("div", { ref: "manuscript-mount-point" }, bodyContent);
+        return () => h("div", { ref: "mountPointRef" }, bodyContent);
       };
 
       return () => makeRenderFn(props.htmlString)();
-    },
-
-    mounted() {
-      const mountPointRef = useTemplateRef("manuscript-mount-point");
-      nextTick(() => this.$emit("mounted-at", mountPointRef));
     },
   };
 </script>

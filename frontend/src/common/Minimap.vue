@@ -25,6 +25,7 @@
   const { width: wrapperWidth, height: wrapperHeight } = useElementSize(wrapperRef);
   const yScroll = inject("yScroll", ref(null));
   const html = ref("");
+  const svgInitialData = ref(null);
   const isHorizontal = computed(() => props.orientation === "horizontal");
   const visibility = ref("hidden");
   const icons = ref([]);
@@ -57,13 +58,15 @@
       () => [props.side, props.doc.id, props.orientation],
       () => {
         if (!wrapperRef.value) return;
-        html.value = makeMinimap(
+        const { svg: newSvg, svgInitialData: newData } = makeMinimap(
           props.doc,
           isHorizontal.value,
           wrapperWidth.value,
           wrapperHeight.value,
           { side: props.side }
         );
+        html.value = newSvg;
+        svgInitialData.value = newData;
       },
       { deep: true, immediate: true }
     );
@@ -78,6 +81,7 @@
           wrapperWidth.value,
           wrapperHeight.value,
           isHorizontal.value,
+          svgInitialData.value,
           { side: props.side }
         );
       },
