@@ -28,6 +28,10 @@
   });
   const doc = inject("doc");
 
+  const onManuscriptMountedAt = (mountedPoint) => {
+    doc.isMountedAt = mountedPoint;
+  };
+
   const validDockComponents = {
     /* DockableChat, */
     DockableSearch,
@@ -153,6 +157,7 @@
             :html-string="doc.html || ''"
             :keys="true"
             :show-footer="true"
+            @mounted-at="onManuscriptMountedAt"
           />
         </Dock>
 

@@ -1,9 +1,10 @@
 <script>
-  import { h, inject, onMounted, useTemplateRef } from "vue";
+  import { h, nextTick, useTemplateRef } from "vue";
   import FeedbackIcon from "./FeedbackIcon.vue";
 
   export default {
     name: "Manuscript",
+
     props: {
       htmlString: {
         type: String,
@@ -16,11 +17,9 @@
       },
     },
 
-    setup(props) {
-      const doc = inject("doc");
-      const mountPointRef = useTemplateRef("manuscript-mount-point");
-      onMounted(() => (doc.value.isMountedAt = mountPointRef));
+    emits: ["mounted-at"],
 
+    setup(props) {
       const makeRenderFn = (htmlString) => {
         // Build a map for quick component lookup by class name
         const replacementMap = {};
@@ -141,6 +140,11 @@
       };
 
       return () => makeRenderFn(props.htmlString)();
+    },
+
+    mounted() {
+      const mountPointRef = useTemplateRef("manuscript-mount-point");
+      nextTick(() => this.$emit("mounted-at", mountPointRef));
     },
   };
 </script>
