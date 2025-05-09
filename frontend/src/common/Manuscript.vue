@@ -13,7 +13,6 @@
       replacements: {
         type: Array,
         default: () => [{ className: "hr-info", component: FeedbackIcon }],
-        // Each item should have { className: "target-class", component: YourCustomComponent }
       },
     },
 
