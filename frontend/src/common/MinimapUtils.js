@@ -22,6 +22,7 @@ export function getSectionsFromSource(src) {
     .map((obj) => ({
       percent: obj.lineno / lines.length,
       level: countLeadingPounds(obj.line) + 1,
+      title: ""
     }));
 
   return sections;
