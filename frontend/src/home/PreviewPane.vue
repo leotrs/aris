@@ -20,7 +20,11 @@
 
   // Actions
   const router = useRouter();
-  const read = () => props.doc?.id && router.push(`/${props.doc.id}/read`);
+  const read = () => {
+    if (!props.doc || !("id" in props.doc)) return;
+    clearSelection();
+    router.push(`/${props.doc.id}/read`);
+  };
 
   // Keys
   const { activate, deactivate } = useKeyboardShortcuts({ enter: read });
