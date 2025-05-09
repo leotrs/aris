@@ -7,6 +7,7 @@
     keys: { type: Boolean, required: true },
     showFooter: { type: Boolean, default: false },
   });
+  const emit = defineEmits(["mounted-at"]);
 
   let onload = ref(null);
   onBeforeMount(async () => {
@@ -34,7 +35,7 @@
       />
     </div>
 
-    <Manuscript :html-string="htmlString" />
+    <Manuscript :html-string="htmlString" @mounted-at="(r) => emit('mounted-at', r)" />
 
     <div v-if="showFooter" class="middle-footer">
       <div class="footer-logo"><img src="../assets/logo-32px.svg" /></div>
