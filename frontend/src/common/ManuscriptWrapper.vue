@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, onBeforeMount, useTemplateRef, nextTick } from "vue";
+  import { ref, watch, computed, onBeforeMount, useTemplateRef, nextTick } from "vue";
   import Manuscript from "./Manuscript.vue";
 
   const props = defineProps({
@@ -24,6 +24,9 @@
     onload.value(selfRef.value, { keys: props.keys });
   };
   watch([onload, () => selfRef.value, () => props.htmlString], tryExecuteOnload);
+
+  const manuscriptRef = useTemplateRef("manuscript-ref");
+  defineExpose({ mountPoint: computed(() => manuscriptRef.value?.mountPoint) });
 </script>
 
 <template>
@@ -35,7 +38,7 @@
       />
     </div>
 
-    <Manuscript :html-string="htmlString" @mounted-at="(r) => emit('mounted-at', r)" />
+    <Manuscript ref="manuscript-ref" :html-string="htmlString" />
 
     <div v-if="showFooter" class="middle-footer">
       <div class="footer-logo"><img src="../assets/logo-32px.svg" /></div>

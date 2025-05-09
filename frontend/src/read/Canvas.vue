@@ -28,10 +28,6 @@
   });
   const doc = inject("doc");
 
-  const onManuscriptMountedAt = (mountedPoint) => {
-    doc.isMountedAt = mountedPoint;
-  };
-
   const validDockComponents = {
     /* DockableChat, */
     DockableSearch,
@@ -93,6 +89,15 @@
   });
 
   const manuscriptRef = useTemplateRef("manuscript-ref");
+  watch(
+    () => manuscriptRef.value?.mountPoint,
+    (newVal) => {
+      if (!newVal) return;
+      doc.value.isMountedAt = newVal;
+      console.log(doc.value);
+    },
+    { immediate: true }
+  );
   provide("manuscriptRef", manuscriptRef);
 
   const isMainTitleVisible = ref(true);
@@ -157,7 +162,6 @@
             :html-string="doc.html || ''"
             :keys="true"
             :show-footer="true"
-            @mounted-at="onManuscriptMountedAt"
           />
         </Dock>
 

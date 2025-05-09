@@ -173,7 +173,6 @@ export function getLayoutParametersVertical(lineSize, options) {
 };
 
 // Global state
-let svgInitialData = [];
 let shapePositions = [];
 
 // Public interface
@@ -203,7 +202,7 @@ export function _makeMinimap(
   let shapes = createShapesData(sections, lineSize, isHorizontal, options);
 
   // Store initial data for future resizing
-  svgInitialData = {
+  const svgInitialData = {
     initialHeight: isHorizontal ? 0 : lineSize,
     initialWidth: isHorizontal ? lineSize : 0,
     initialShapes: JSON.parse(JSON.stringify(shapes)),
@@ -253,7 +252,7 @@ export function _makeMinimap(
     }
     </svg>`;
 
-  return svg;
+  return { svg, svgInitialData };
 };
 
 export function resizeMinimap(
@@ -261,6 +260,7 @@ export function resizeMinimap(
   isHorizontal,
   wrapperWidth,
   wrapperHeight,
+  svgInitialData,
   options = {}
 ) {
   const defaults = {
