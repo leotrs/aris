@@ -136,7 +136,6 @@ const handleKeyDown = (ev) => {
       bubbles: true,
       cancelable: true
     });
-    fallbackComponent.value.$el.focus();
     fallbackComponent.value.$el.dispatchEvent(clonedEvent);
     if (clonedEvent.defaultPrevented) ev.preventDefault();
   } finally {
