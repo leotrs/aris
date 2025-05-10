@@ -61,7 +61,12 @@
           isHorizontal.value,
           wrapperWidth.value,
           wrapperHeight.value,
-          { side: props.side, highlightScroll: props.highlightScroll }
+          {
+            side: props.side,
+            highlightScroll: props.highlightScroll,
+            trackWidth: props.trackWidth,
+            shape: props.shape,
+          }
         );
         html.value = newSvg;
         svgInitialData.value = newData;
@@ -80,7 +85,11 @@
           wrapperHeight.value,
           isHorizontal.value,
           svgInitialData.value,
-          { side: props.side }
+          {
+            side: props.side,
+            trackWidth: props.trackWidth,
+            shape: props.shape,
+          }
         );
       },
       { immediate: true }
@@ -96,7 +105,8 @@
           isHorizontal.value,
           wrapperWidth.value,
           wrapperHeight.value,
-          wrapperRef.value.querySelector("svg")
+          wrapperRef.value.querySelector("svg"),
+          { trackWidth: props.trackWidth }
         );
       },
       { immediate: true }
