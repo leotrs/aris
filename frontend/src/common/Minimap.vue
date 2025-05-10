@@ -18,7 +18,7 @@
     orientation: { type: String, default: "vertical" },
     side: { type: String, default: "right" },
     highlightScroll: { type: Boolean, default: true },
-    shape: { type: String, default: "arc" },
+    shape: { type: String, default: "line" },
     trackWidth: { type: Number, default: 3 },
   });
   const wrapperRef = useTemplateRef("mm-wrapper");
