@@ -61,7 +61,7 @@
           isHorizontal.value,
           wrapperWidth.value,
           wrapperHeight.value,
-          { side: props.side }
+          { side: props.side, highlightScroll: props.highlightScroll }
         );
         html.value = newSvg;
         svgInitialData.value = newData;
