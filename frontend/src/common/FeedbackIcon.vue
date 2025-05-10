@@ -1,5 +1,5 @@
 <script setup>
-  import { reactive, computed, inject, useTemplateRef, useId } from "vue";
+  import { ref, reactive, computed, inject, useTemplateRef, useId, onMounted } from "vue";
 
   const icons = reactive([
     { icon: "BookmarkFilled", caption: "Notable", class: "bookmark", active: false },
@@ -39,10 +39,22 @@
     menuRef.value.toggle();
   };
   const activeObj = computed(() => icons.find((obj) => obj.active));
+
+  const visibility = ref("hidden");
+  onMounted(() => {
+    const hr = selfRef.value.closest(".hr");
+    if (!hr) return;
+    hr.addEventListener("mouseenter", () => {
+      visibility.value = "visible";
+    });
+    hr.addEventListener("mouseleave", () => {
+      visibility.value = activeObj.value ? "visible" : "hidden";
+    });
+  });
 </script>
 
 <template>
-  <div ref="self-ref" class="feedback">
+  <div ref="self-ref" class="feedback" :style="{ visibility }">
     <ContextMenu
       ref="menu-ref"
       :icon="activeObj?.icon || 'MoodPlus'"
