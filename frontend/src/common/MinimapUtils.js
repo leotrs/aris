@@ -10,19 +10,20 @@ export function getSectionsFromSource(src) {
   if (!src || lines.length < 1) return [];
 
   const regex1 = /:.*?section:/;
-  const regex2 = /^\s*?#{1,5}\s*?.*?$/;
+  const regex2 = /^\s*?#{1,5}\s*(.*?)$/;
 
   const sections = lines
     .map((line, idx) => ({
       lineno: idx,
       isSection: regex1.test(line) || regex2.test(line),
       line: line,
+      title: line.match(regex2)?.[1] ?? ""
     }))
     .filter((line) => line.isSection)
     .map((obj) => ({
       percent: obj.lineno / lines.length,
       level: countLeadingPounds(obj.line) + 1,
-      title: ""
+      title: obj.title
     }));
 
   return sections;
@@ -36,10 +37,10 @@ export function getSectionsFromHTMLString(html) {
 };
 
 export function getSectionsFromHTML(doc) {
-  // The following works by looking at the parent's height because there are only two
-  // cases: if the level is 1, then the parent is manuscript wrapper, and if the level
-  // is more than 1, the parent is actually the section of level-1. Both this section
-  // and its parent have the same height, both equaling the entire height of the
+  // The following works by looking at the parent element's height because there are
+  // only two cases: if the level is 1, then the parent is the manuscript wrapper, and
+  // if the level is more than 1, the parent is the section of level-1. Both this
+  // section and its parent have the same height, both equaling the entire height of the
   // manuscript.
   const el = doc.isMountedAt;
   const parentEl = el.parentElement;

@@ -59,13 +59,7 @@
 
         <div class="card-content">
           <Suspense>
-            <Minimap
-              :doc="doc"
-              orientation="horizontal"
-              side="top"
-              :highlight-scroll="false"
-              shape="line"
-            />
+            <Minimap :doc="doc" orientation="horizontal" side="top" :highlight-scroll="false" />
             <template #fallback><span class="loading">loading...</span></template>
           </Suspense>
           <Abstract :doc="doc" />
