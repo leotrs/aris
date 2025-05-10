@@ -81,9 +81,9 @@
         if (newDimension <= 0 || !wrapperRef.value) return;
         resizeMinimap(
           wrapperRef.value.querySelector("svg"),
+          isHorizontal.value,
           wrapperWidth.value,
           wrapperHeight.value,
-          isHorizontal.value,
           svgInitialData.value,
           {
             side: props.side,
