@@ -1,5 +1,5 @@
 <script>
-  import { h, ref, useTemplateRef, nextTick, onMounted } from "vue";
+  import { h, useTemplateRef } from "vue";
   import FeedbackIcon from "./FeedbackIcon.vue";
 
   export default {
@@ -149,6 +149,8 @@
 <style>
   /* Overwrite RSM's CSS but be CAREFUL!!! */
   .manuscriptwrapper {
+    overflow: visible;
+
     /* The background color comes from the user's choice within the settings overlay */
     background-color: transparent !important;
 
