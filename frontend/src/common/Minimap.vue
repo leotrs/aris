@@ -27,7 +27,6 @@
   const html = ref("");
   const svgInitialData = ref(null);
   const isHorizontal = computed(() => props.orientation === "horizontal");
-  const visibility = ref("hidden");
   const icons = ref([]);
   const tooltipReferenceRef = ref(null);
   const tooltipRef = useTemplateRef("tooltip-ref");
@@ -51,7 +50,6 @@
   onMounted(async () => {
     if (!props.doc) return;
     await nextTick();
-    visibility.value = "visible";
 
     // Remake when neccessary
     watch(
@@ -138,7 +136,7 @@
 </script>
 
 <template>
-  <div ref="mm-wrapper" class="mm-wrapper" :class="[orientation, side]" :style="{ visibility }">
+  <div ref="mm-wrapper" class="mm-wrapper" :class="[orientation, side]">
     <div class="mm-main" v-html="html"></div>
     <div class="mm-icons">
       <component

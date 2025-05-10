@@ -59,7 +59,7 @@
   const sizes = inject("columnSizes");
   const minimapHeight = computed(() => {
     if (["left", "right"].includes(props.side)) {
-      const height = sizes.value?.inner.height;
+      const height = sizes.inner.height;
       return height ? `${height}px` : "100%";
     } else if (props.side == "top") {
       return "64px";
@@ -72,8 +72,7 @@
     if (["left", "right"].includes(props.side)) {
       return "fit-content";
     } else if (props.side == "top") {
-      const width = sizes.value?.middle.width;
-      console.log(width);
+      const width = sizes.middle.width;
       return width ? `${width}px` : "100%";
     } else {
       console.error(`Unknown side ${props.side}`);

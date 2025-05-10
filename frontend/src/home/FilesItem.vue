@@ -156,6 +156,20 @@
     & .file-title {
       border-left: var(--border-med) solid transparent;
     }
+
+    & > .mm-wrapper {
+      width: 100%;
+
+      & :deep(.mm-main) {
+        width: 100%;
+        height: 100%;
+      }
+
+      & :deep(.mm-main svg) {
+        width: 100%;
+        height: 100%;
+      }
+    }
   }
 
   .item.list.active {

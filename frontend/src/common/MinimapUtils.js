@@ -294,6 +294,7 @@ export function resizeMinimap(
 
   // Update shape positions
   const paths = svg.querySelectorAll("path.mm-shape");
+  // console.log([...paths].map((s) => s.dataset), initialShapes);
   paths.forEach((path, index) => {
     const shape = initialShapes[index];
     let newCx = isHorizontal ? shape.cx * scaleFactor : shape.cx;
