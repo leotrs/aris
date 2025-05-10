@@ -23,6 +23,7 @@
   });
 
   // Positioning, size, and other styles
+  const sizes = inject("columnSizes");
   const top = computed(() => {
     if (props.side == "left") {
       return "calc(64px + 6px)";
@@ -40,7 +41,7 @@
     } else if (props.side == "right") {
       return "";
     } else if (props.side == "top") {
-      return "0px";
+      return `calc(${sizes.left.width}px + 32px)`;
     } else {
       return "0";
     }
@@ -56,7 +57,6 @@
       return "0";
     }
   });
-  const sizes = inject("columnSizes");
   const minimapHeight = computed(() => {
     if (["left", "right"].includes(props.side)) {
       const height = sizes.inner.height;
@@ -92,6 +92,10 @@
     & :deep(svg > line.track) {
       visibility: hidden;
     }
+  }
+
+  .mm-wrapper.dock-top {
+    width: v-bind("minimapWidth");
   }
 
   .mm-wrapper.dock-right {
