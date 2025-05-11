@@ -10,8 +10,6 @@
 
   /* Selected file */
   const filesRef = useTemplateRef("files-ref");
-
-  /* Keyboard shortcuts */
   const numDocs = computed(() => userDocs.value?.length || 0);
   const { activeIndex } = useListKeyboardNavigation(numDocs, filesRef, true);
   watch(activeIndex, (newVal) => {

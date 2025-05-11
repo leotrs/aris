@@ -291,7 +291,7 @@
       0.3s ease;
   }
 
-  :is(.item:hover, .item.active) .fm-wrapper :deep(.cm-btn) {
+  :is(.item:hover, .item.focused) .fm-wrapper :deep(.cm-btn) {
     opacity: 1;
   }
 </style>
