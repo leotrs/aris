@@ -1,7 +1,7 @@
 <script setup>
   import { ref } from "vue";
   const props = defineProps({
-    docId: { type: Number, required: true },
+    fileId: { type: Number, required: true },
   });
   const tags = defineModel({ type: Array });
 
@@ -19,7 +19,7 @@
         :tag="tags.at(-1) ?? {}"
         :active="true"
       />
-      <MultiSelectTags v-model="selectedTags" :doc-id="docId" />
+      <MultiSelectTags v-model="selectedTags" :file-id="fileId" />
     </div>
   </div>
 </template>

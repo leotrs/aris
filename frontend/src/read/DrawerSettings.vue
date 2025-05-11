@@ -2,7 +2,7 @@
   import { ref, inject, watch } from "vue";
   import { IconFileSettings } from "@tabler/icons-vue";
 
-  const props = defineProps({ doc: { type: Object, default: () => {} } });
+  const props = defineProps({ file: { type: Object, default: () => {} } });
 
   const colors = {
     white: "var(--surface-page)",

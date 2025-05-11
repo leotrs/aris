@@ -1,3 +1,3 @@
-from .document import *
+from .file import *
 from .tag import *
 from .user import *

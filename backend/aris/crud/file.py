@@ -4,22 +4,22 @@ from datetime import datetime
 import rsm
 from sqlalchemy.orm import Session
 
-from ..models import Document, DocumentStatus, Tag, document_tags
+from ..models import File, FileStatus, Tag, file_tags
 from .utils import extract_section, extract_title
 
 
-async def get_documents(db: Session):
-    docs = db.query(Document).filter(Document.deleted_at.is_(None)).all()
+async def get_files(db: Session):
+    docs = db.query(File).filter(File.deleted_at.is_(None)).all()
     titles = await asyncio.gather(*(extract_title(d) for d in docs))
     for doc, title in zip(docs, titles):
         doc.title = title
     return docs
 
 
-async def get_document(doc_id: int, db: Session):
+async def get_file(doc_id: int, db: Session):
     doc = (
-        db.query(Document)
-        .filter(Document.id == doc_id, Document.deleted_at.is_(None))
+        db.query(File)
+        .filter(File.id == doc_id, File.deleted_at.is_(None))
         .first()
     )
     if doc:
@@ -27,10 +27,10 @@ async def get_document(doc_id: int, db: Session):
     return doc
 
 
-async def get_document_html(doc_id: int, db: Session):
+async def get_file_html(doc_id: int, db: Session):
     result = (
-        db.query(Document.source)
-        .filter(Document.id == doc_id, Document.deleted_at.is_(None))
+        db.query(File.source)
+        .filter(File.id == doc_id, File.deleted_at.is_(None))
         .first()
     )
     if result:
@@ -41,19 +41,19 @@ async def get_document_html(doc_id: int, db: Session):
     return rsm.render(src, handrails=True)
 
 
-async def create_document(
+async def create_file(
     source: str,
     owner_id: int,
     title: str = "",
     abstract: str = "",
     db: Session = None,
 ):
-    doc = Document(
+    doc = File(
         title=title,
         abstract=abstract,
         owner_id=owner_id,
         source=source,
-        status=DocumentStatus.DRAFT,
+        status=FileStatus.DRAFT,
     )
     db.add(doc)
     db.commit()
@@ -61,14 +61,14 @@ async def create_document(
     return doc
 
 
-async def update_document(
+async def update_file(
     doc_id: int,
     title: str,
     abstract: str,
     status: str,
     db: Session,
 ):
-    doc = get_document(doc_id, db)
+    doc = get_file(doc_id, db)
     if not doc:
         return None
     doc.title = title
@@ -79,21 +79,21 @@ async def update_document(
     return doc
 
 
-async def soft_delete_document(doc_id: int, db: Session):
-    doc = await get_document(doc_id, db)
+async def soft_delete_file(doc_id: int, db: Session):
+    doc = await get_file(doc_id, db)
     if not doc:
         return None
     doc.deleted_at = datetime.utcnow()
     db.commit()
-    return {"message": f"Document {doc_id} soft deleted"}
+    return {"message": f"File {doc_id} soft deleted"}
 
 
-async def duplicate_document(doc_id: int, db: Session):
-    original = await get_document(doc_id, db)
+async def duplicate_file(doc_id: int, db: Session):
+    original = await get_file(doc_id, db)
     if not original or original.deleted_at:
-        raise ValueError("Document not found")
+        raise ValueError("File not found")
 
-    new_doc = Document(
+    new_doc = File(
         title=f"{original.title} (copy)",
         source=original.source,
         owner_id=original.owner_id,
@@ -103,20 +103,20 @@ async def duplicate_document(doc_id: int, db: Session):
     db.flush()
 
     tag_ids = db.execute(
-        document_tags.select().where(document_tags.c.document_id == doc_id)
+        file_tags.select().where(file_tags.c.file_id == doc_id)
     ).fetchall()
     db.execute(
-        document_tags.insert(),
-        [{"document_id": new_doc.id, "tag_id": tag.tag_id} for tag in tag_ids],
+        file_tags.insert(),
+        [{"file_id": new_doc.id, "tag_id": tag.tag_id} for tag in tag_ids],
     )
     db.commit()
 
     return new_doc
 
 
-async def get_document_section(doc_id: int, section_name: str, db: Session, handrails: bool = True):
-    doc = db.query(Document).filter(Document.id == doc_id).first()
+async def get_file_section(doc_id: int, section_name: str, db: Session, handrails: bool = True):
+    doc = db.query(File).filter(File.id == doc_id).first()
     if not doc:
-        raise ValueError(f"Document {doc_id} not found")
+        raise ValueError(f"File {doc_id} not found")
     html = await extract_section(doc, section_name, handrails)
     return html or ''

@@ -1,11 +1,11 @@
-from aris.models import Document, Tag, document_tags
+from aris.models import File, Tag, file_tags
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
 from .. import crud, get_db
-from ..models import Document, Tag, User
+from ..models import File, Tag, User
 
 router = APIRouter(prefix="/users", tags=["users", "tags"])
 
@@ -74,40 +74,40 @@ async def delete_tag(_id: int, user_id: int, db: Session = Depends(get_db)):
     return deleted_tag
 
 
-@router.get("/{user_id}/documents/{doc_id}/tags")
-async def get_user_document_tags(
+@router.get("/{user_id}/files/{doc_id}/tags")
+async def get_user_file_tags(
     user_id: int, doc_id: int, _id: int, db: Session = Depends(get_db)
 ):
-    """Get a user's tags assigned to the document."""
+    """Get a user's tags assigned to the file."""
     try:
-        result = await crud.get_user_document_tags(user_id, doc_id, db)
+        result = await crud.get_user_file_tags(user_id, doc_id, db)
     except ValueError as e:
         raise HTTPException(
             status_code=400,
-            detail=f"Error fetching tags for document {doc_id}: " + str(e),
+            detail=f"Error fetching tags for file {doc_id}: " + str(e),
         )
     return result
 
 
-@router.post("/{user_id}/documents/{doc_id}/tags/{_id}")
-async def add_tag_to_document(
+@router.post("/{user_id}/files/{doc_id}/tags/{_id}")
+async def add_tag_to_file(
     user_id: int, doc_id: int, _id: int, db: Session = Depends(get_db)
 ):
-    """Assign a tag to a document."""
+    """Assign a tag to a file."""
     try:
-        await crud.add_tag_to_document(user_id, doc_id, _id, db)
+        await crud.add_tag_to_file(user_id, doc_id, _id, db)
     except ValueError as e:
         raise HTTPException(status_code=400, detail="Error adding tag: " + str(e))
     return {"message": "Tag added successfully"}
 
 
-@router.delete("/{user_id}/documents/{doc_id}/tags/{_id}")
-async def remove_tag_from_document(
+@router.delete("/{user_id}/files/{doc_id}/tags/{_id}")
+async def remove_tag_from_file(
     user_id: int, doc_id: int, _id: int, db: Session = Depends(get_db)
 ):
-    """Remove a tag from a document."""
+    """Remove a tag from a file."""
     try:
-        await crud.remove_tag_from_document(user_id, doc_id, _id, db)
+        await crud.remove_tag_from_file(user_id, doc_id, _id, db)
     except ValueError as e:
         raise HTTPException(status_code=400, detail="Error removing tag: " + str(e))
     return {"message": "Tag removed successfully"}

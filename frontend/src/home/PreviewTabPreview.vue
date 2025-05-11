@@ -2,18 +2,18 @@
   import {} from "vue";
 
   const props = defineProps({
-    doc: { type: Object, required: true },
+    file: { type: Object, required: true },
   });
 </script>
 
 <template>
   <div class="preview">
     <div class="left">
-      <Minimap :doc="doc" :highlight-scroll="false" />
-      <Abstract :doc="doc" />
+      <Minimap :file="file" :highlight-scroll="false" />
+      <Abstract :file="file" />
     </div>
     <div class="right">
-      <TagRow v-model="doc.tags" :doc-id="doc.id" />
+      <TagRow v-model="file.tags" :file-id="file.id" />
     </div>
   </div>
 </template>

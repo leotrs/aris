@@ -9,7 +9,7 @@
 
   const showModal = ref(false);
   const isMobile = inject("isMobile");
-  const { selectedFile } = inject("userDocs");
+  const fileStore = inject("fileStore");
 
   /* Handle draggable border and pane height */
   const panesRef = useTemplateRef("panes-ref");
@@ -17,13 +17,13 @@
   const boxTopPixels = 16 + 48 + 16 + 40 + 56 + 6; // padding + topbar height + gap + pane header height + height of one item row + epsilon
   const borderPos = ref(0);
   const filesHeight = computed(() =>
-    selectedFile.value?.id ? `calc(${borderPos.value}%)` : "100%"
+    fileStore.selectedFile.value?.id ? `calc(${borderPos.value}%)` : "100%"
   );
   const previewHeight = computed(() =>
-    selectedFile.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
+    fileStore.selectedFile.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
   );
   watch(
-    () => !!selectedFile.value?.id,
+    () => !!fileStore.selectedFile.value?.id,
     (hasSelection, oldValue) => {
       // Make sure borderPos is correct when transitioning from no selection to having a selection
       if (hasSelection && !oldValue) borderPos.value = (boxTopPixels / panesHeight.value) * 100;
@@ -39,7 +39,7 @@
 
   /* Since the gap between panes is 8px but the outer padding is 16px, when the Preview
    * pane is inactive, its top edge peeks out by 8px. This hides it. */
-  const previewTop = computed(() => (selectedFile.value?.id ? "0" : "8px"));
+  const previewTop = computed(() => (fileStore.selectedFile.value?.id ? "0" : "8px"));
 </script>
 
 <template>
@@ -57,12 +57,15 @@
       <DragBorder
         ref="border-ref"
         v-model="borderPos"
-        :active="!!Object.keys(selectedFile).length"
+        :active="!!Object.keys(fileStore.selectedFile).length"
         :box-top="boxTopPixels"
         :parent-height="panesHeight"
       />
 
-      <PreviewPane :doc="selectedFile" :style="{ height: previewHeight, top: previewTop }" />
+      <PreviewPane
+        :file="fileStore.selectedFile"
+        :style="{ height: previewHeight, top: previewTop }"
+      />
     </div>
 
     <div v-if="showModal" class="modal">

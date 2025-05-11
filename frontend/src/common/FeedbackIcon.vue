@@ -12,7 +12,7 @@
   ]);
 
   const myId = useId();
-  const doc = inject("doc");
+  const file = inject("file");
   const selfRef = useTemplateRef("self-ref");
   const menuRef = useTemplateRef("menu-ref");
   const deactivateAll = () => {
@@ -31,8 +31,8 @@
       }
     }
 
-    const currentIcons = doc.value.icons || {};
-    doc.value.icons = {
+    const currentIcons = file.value.icons || {};
+    file.value.icons = {
       ...currentIcons,
       [myId]: { class: icons[i].class, element: selfRef.value.parentElement },
     };

@@ -26,7 +26,7 @@
     right: { type: Array, default: () => [] },
     top: { type: Array, default: () => [] },
   });
-  const doc = inject("doc");
+  const file = inject("file");
 
   const validDockComponents = {
     /* DockableChat, */
@@ -76,13 +76,13 @@
   });
   provide("fileSettings", fileSettings);
 
-  watch(doc, async () => {
-    if (!doc.value || !doc.value.id) return;
+  watch(file, async () => {
+    if (!file.value || !file.value.id) return;
 
     try {
-      const response = await axios.get(`http://localhost:8000/documents/${doc.value.id}/content`);
-      console.log("setting doc.value.html");
-      doc.value.html = response.data;
+      const response = await axios.get(`http://localhost:8000/files/${file.value.id}/content`);
+      console.log("setting file.value.html");
+      file.value.html = response.data;
     } catch (error) {
       console.error("Error fetching HTML:", error);
     }
@@ -93,8 +93,8 @@
     () => manuscriptRef.value?.mountPoint,
     (newVal) => {
       if (!newVal) return;
-      doc.value.isMountedAt = newVal;
-      console.log(doc.value);
+      file.value.isMountedAt = newVal;
+      console.log(file.value);
     },
     { immediate: true }
   );
@@ -103,7 +103,7 @@
   const isMainTitleVisible = ref(true);
   let tearDown = () => {};
   watch(
-    () => doc.value.html,
+    () => file.value.html,
     async () => {
       await nextTick(); // waits for ManuscriptWrapper to receive html
       await nextTick(); // waits for v-html DOM to update
@@ -150,16 +150,16 @@
             :is="validDockComponents[comp]"
             v-for="comp in left"
             :key="comp"
-            :doc="doc"
+            :file="file"
             side="left"
           />
         </Dock>
 
         <Dock ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
           <ManuscriptWrapper
-            v-if="doc.html"
+            v-if="file.html"
             ref="manuscript-ref"
-            :html-string="doc.html || ''"
+            :html-string="file.html || ''"
             :keys="true"
             :show-footer="true"
           />
@@ -170,7 +170,7 @@
             :is="validDockComponents[comp]"
             v-for="comp in right"
             :key="comp"
-            :doc="doc"
+            :file="file"
             side="right"
           />
         </Dock>

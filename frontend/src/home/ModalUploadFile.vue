@@ -17,7 +17,7 @@
     const reader = new FileReader();
     reader.onerror = () => console.log("Error reading the file. Please try again.");
     reader.onload = () => {
-      const url = "http://localhost:8000/documents/";
+      const url = "http://localhost:8000/files/";
       console.log(reader.result);
       fetch(url, {
         method: "POST",

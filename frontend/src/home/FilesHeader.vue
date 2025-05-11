@@ -5,7 +5,7 @@
   const props = defineProps({
     mode: { type: String, default: "list" },
   });
-  const { sortDocs, filterDocs, clearFilterDocs } = inject("userDocs");
+  const fileStore = inject("fileStore");
 
   const columnInfo = {
     Title: { sortable: true, filterable: false, sortKey: "title" },
@@ -27,9 +27,9 @@
   const handleColumnSortEvent = (columnName, mode) => {
     const sortKey = columnInfo[columnName]["sortKey"];
     if (mode == "asc") {
-      sortDocs((a, b) => a[sortKey].localeCompare(b[sortKey]));
+      fileStore.sortFiles((a, b) => a[sortKey].localeCompare(b[sortKey]));
     } else if (mode == "desc") {
-      sortDocs((a, b) => b[sortKey].localeCompare(a[sortKey]));
+      fileStore.sortFiles((a, b) => b[sortKey].localeCompare(a[sortKey]));
     }
     for (let name in columnState) {
       if (name == columnName) continue;
@@ -41,12 +41,12 @@
   const handleColumnFilterEvent = (columnName, tags) => {
     console.log(columnName, tags);
     if (tags.length == 0) {
-      clearFilterDocs();
+      fileStore.clearFilterFiles();
     } else {
-      filterDocs((doc) => {
+      fileStore.filterFiles((file) => {
         const filterTagIds = tags.map((t) => t.id);
-        const docTagIds = doc.tags.map((t) => t.id);
-        return filterTagIds.some((id) => !docTagIds.includes(id));
+        const fileTagIds = file.tags.map((t) => t.id);
+        return filterTagIds.some((id) => !fileTagIds.includes(id));
       });
     }
   };

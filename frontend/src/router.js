@@ -4,7 +4,7 @@ import ReadView from "./read/View.vue";
 
 const routes = [
   { path: "/", component: HomeView },
-  { path: "/:doc_id/read", component: ReadView },
+  { path: "/:file_id/read", component: ReadView },
 ];
 
 const router = createRouter({

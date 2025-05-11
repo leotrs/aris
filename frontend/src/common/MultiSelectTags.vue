@@ -2,11 +2,11 @@
   import { ref, reactive, inject, watch, watchEffect } from "vue";
 
   const props = defineProps({
-    docId: { type: Number, default: -1 },
+    fileId: { type: Number, default: -1 },
     icon: { type: String, default: "Tag" },
   });
   const tags = defineModel({ type: Array });
-  const { userTags, createTag, addOrRemoveTag } = inject("userTags");
+  const { tags: userTags } = inject("fileStore");
 
   const state = reactive({
     tagIsAssigned: userTags.value.map(() => false),
@@ -28,12 +28,12 @@
         const tag = userTags.value[idx];
 
         if (isNowAssigned && !wasAssigned) {
-          if (props.docID !== -1) addOrRemoveTag(tag.id, props.docID, "add");
+          if (props.fileId !== -1) addOrRemoveTag(tag.id, props.fileId, "add");
           if (!tags.value.some((t) => t.id === tag.id)) tags.value = tags.value.concat([tag]);
         }
 
         if (!isNowAssigned && wasAssigned) {
-          if (props.docID !== -1) addOrRemoveTag(tag.id, props.docID, "remove");
+          if (props.fileId !== -1) addOrRemoveTag(tag.id, props.fileId, "remove");
           tags.value = tags.value.filter((t) => t.id !== tag.id);
         }
       });

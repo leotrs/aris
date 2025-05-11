@@ -8,8 +8,8 @@
   import PreviewTabHistory from "./PreviewTabHistory.vue";
   import PreviewTabCitation from "./PreviewTabCitation.vue";
 
-  const props = defineProps({ doc: { type: Object, required: true } });
-  const { clearSelection } = inject("userDocs");
+  const props = defineProps({ file: { type: Object, required: true } });
+  const { clearSelection } = inject("fileStore");
 
   // Tabs
   const activeTabIndex = ref(0);
@@ -21,15 +21,15 @@
   // Actions
   const router = useRouter();
   const read = () => {
-    if (!props.doc || !("id" in props.doc)) return;
+    if (!props.file || !("id" in props.file)) return;
     clearSelection();
-    router.push(`/${props.doc.id}/read`);
+    router.push(`/${props.file.id}/read`);
   };
 
   // Keys
   const { activate, deactivate } = useKeyboardShortcuts({ enter: read });
   watch(
-    () => props.doc,
+    () => props.file,
     (newVal) => (newVal?.id ? activate() : deactivate()),
     { immediate: true, flush: "post" }
   );
@@ -44,21 +44,21 @@
 
       <div class="right"><ButtonClose @close="close" /></div>
     </Header>
-    <div v-if="doc && 'tags' in doc && 'id' in doc" class="pane-content">
+    <div v-if="file && 'tags' in file && 'id' in file" class="pane-content">
       <Tabs
         ref="tabs-ref"
         v-model="activeTabIndex"
         :labels="['Preview', 'Activity', 'History', 'Citation']"
         :icons="['Eye', 'Bolt', 'Clock', 'Quote']"
       >
-        <TabPage><PreviewTabPreview :doc="doc" /></TabPage>
+        <TabPage><PreviewTabPreview :file="file" /></TabPage>
         <TabPage><PreviewTabActivity /></TabPage>
         <TabPage><PreviewTabHistory /></TabPage>
-        <TabPage><PreviewTabCitation :doc="doc" /></TabPage>
+        <TabPage><PreviewTabCitation :file="file" /></TabPage>
       </Tabs>
     </div>
     <div class="pane-footer">
-      <span class="left text-caption">Last edited {{ doc.last_edited_at }}</span>
+      <span class="left text-caption">Last edited {{ file.last_edited_at }}</span>
       <div class="right">
         <Button kind="tertiary" size="sm" text="Write" icon="Pencil" />
         <Button kind="tertiary" size="sm" text="Review" icon="FileCheck" />

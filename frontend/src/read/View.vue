@@ -5,21 +5,21 @@
   import Sidebar from "./Sidebar.vue";
   import Canvas from "./Canvas.vue";
 
-  const docID = computed(() => `${useRoute().params.doc_id}`);
+  const fileId = computed(() => `${useRoute().params.file_id}`);
   const user = inject("user");
-  const doc = ref({ id: -1, tags: [] });
+  const file = ref({ id: -1, tags: [] });
   const api = inject("api");
 
-  // Load and provide document
+  // Load and provide file
   onBeforeMount(async () => {
     try {
-      const response = await api.get(`/users/${user.id}/documents/${docID.value}`);
-      doc.value = response.data;
+      const response = await api.get(`/users/${user.id}/files/${fileId.value}`);
+      file.value = response.data;
     } catch (error) {
-      console.error(`Failed to fetch document ${docID.value}`, error);
+      console.error(`Failed to fetch file ${fileId.value}`, error);
     }
   });
-  provide("doc", doc);
+  provide("file", file);
 
   // Panel component management
   const leftComponents = reactive([]);

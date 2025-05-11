@@ -1,4 +1,4 @@
-from .models import Document, DocumentStatus, Tag, User
+from .models import File, FileStatus, Tag, User
 
 MOCK_USERS = [
     User(
@@ -19,23 +19,23 @@ MOCK_USERS = [
 ]
 
 
-MOCK_DOCUMENTS = [
-    Document(
+MOCK_FILES = [
+    File(
         title="Just a title",
-        abstract="This is the abstract of sample document 1.",
+        abstract="This is the abstract of sample file 1.",
         keywords="sample, research, test",
-        status=DocumentStatus.DRAFT,
+        status=FileStatus.DRAFT,
         owner_id=1,
         source="""\
         :manuscript:
           :title: Just a title
         ::""",
     ),
-    Document(
+    File(
         title="Title and a paragraph",
-        abstract="This is the abstract of sample document 2.",
+        abstract="This is the abstract of sample file 2.",
         keywords="example, science, test",
-        status=DocumentStatus.UNDER_REVIEW,
+        status=FileStatus.UNDER_REVIEW,
         owner_id=2,
         source="""\
         :manuscript:
@@ -46,11 +46,11 @@ MOCK_DOCUMENTS = [
         ::
         """,
     ),
-    Document(
-        title="Title, Section, and ParagraphSample Document 3",
-        abstract="This is the abstract of sample document 3.",
+    File(
+        title="Title, Section, and ParagraphSample File 3",
+        abstract="This is the abstract of sample file 3.",
         keywords="research, test, study",
-        status=DocumentStatus.PUBLISHED,
+        status=FileStatus.PUBLISHED,
         owner_id=3,
         source="""\
         :manuscript:

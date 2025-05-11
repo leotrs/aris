@@ -5,10 +5,10 @@ from sqlalchemy.orm import Session
 
 from .. import crud, get_db
 
-router = APIRouter(prefix="/documents", tags=["documents"])
+router = APIRouter(prefix="/files", tags=["files"])
 
 
-class DocumentCreate(BaseModel):
+class FileCreate(BaseModel):
     title: str
     abstract: str
     owner_id: int
@@ -21,13 +21,13 @@ class DocumentCreate(BaseModel):
 
 
 @router.get("")
-async def get_documents(db: Session = Depends(get_db)):
-    return await crud.get_documents(db)
+async def get_files(db: Session = Depends(get_db)):
+    return await crud.get_files(db)
 
 
 @router.post("")
-async def create_document(
-    doc: DocumentCreate,
+async def create_file(
+    doc: FileCreate,
     db: Session = Depends(get_db),
 ):
     try:
@@ -35,17 +35,17 @@ async def create_document(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    result = await crud.create_document(
+    result = await crud.create_file(
         doc.source, doc.owner_id, doc.title, doc.abstract, db
     )
     return {"message": "Manuscript created", "id": result.id}
 
 
 @router.get("/{doc_id}")
-async def get_document(doc_id: int, db: Session = Depends(get_db)):
-    doc = await crud.get_document(doc_id, db)
+async def get_file(doc_id: int, db: Session = Depends(get_db)):
+    doc = await crud.get_file(doc_id, db)
     if not doc:
-        raise HTTPException(status_code=404, detail="Document not found")
+        raise HTTPException(status_code=404, detail="File not found")
     return {
         "id": doc_id,
         "title": doc.title,
@@ -57,50 +57,50 @@ async def get_document(doc_id: int, db: Session = Depends(get_db)):
 
 
 @router.put("/{doc_id}")
-async def update_document(
+async def update_file(
     doc_id: int,
     title: str,
     abstract: str,
     status: str,
     db: Session = Depends(get_db),
 ):
-    doc = await crud.update_document(doc_id, title, abstract, status, db)
+    doc = await crud.update_file(doc_id, title, abstract, status, db)
     if not doc:
-        raise HTTPException(status_code=404, detail="Document not found")
+        raise HTTPException(status_code=404, detail="File not found")
     return doc
 
 
 @router.delete("/{doc_id}")
-async def soft_delete_document(doc_id: int, db: Session = Depends(get_db)):
-    doc = await crud.soft_delete_document(doc_id, db)
+async def soft_delete_file(doc_id: int, db: Session = Depends(get_db)):
+    doc = await crud.soft_delete_file(doc_id, db)
     if not doc:
-        raise HTTPException(status_code=404, detail="Document not found")
-    return {"message": f"Document {doc_id} soft deleted"}
+        raise HTTPException(status_code=404, detail="File not found")
+    return {"message": f"File {doc_id} soft deleted"}
 
 
 @router.post("/{doc_id}/duplicate")
-async def duplicate_document(doc_id: int, db: Session = Depends(get_db)):
-    new_doc = await crud.duplicate_document(doc_id, db)
-    return {"id": new_doc.id, "message": "Document duplicated successfully"}
+async def duplicate_file(doc_id: int, db: Session = Depends(get_db)):
+    new_doc = await crud.duplicate_file(doc_id, db)
+    return {"id": new_doc.id, "message": "File duplicated successfully"}
 
 
 @router.get("/{doc_id}/content", response_class=HTMLResponse)
-async def get_document_html(doc_id: int, db: Session = Depends(get_db)):
-    doc = await crud.get_document_html(doc_id, db)
+async def get_file_html(doc_id: int, db: Session = Depends(get_db)):
+    doc = await crud.get_file_html(doc_id, db)
     if not doc:
-        raise HTTPException(status_code=404, detail="Document not found")
+        raise HTTPException(status_code=404, detail="File not found")
     return doc
 
 
 @router.get("/{doc_id}/content/{section_name}", response_class=HTMLResponse)
-async def get_document_section(
+async def get_file_section(
     doc_id: int,
     section_name: str,
     handrails: bool = True,
     db: Session = Depends(get_db),
 ):
     try:
-        html = await crud.get_document_section(doc_id, section_name, db, handrails)
+        html = await crud.get_file_section(doc_id, section_name, db, handrails)
     except ValueError:
         raise HTTPException(status_code=404, detail=f"Section {section_name} not found")
     return HTMLResponse(content=html)

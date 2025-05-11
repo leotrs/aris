@@ -13,10 +13,10 @@
   });
 
   /* Search */
-  const { filterDocs, clearFilterDocs } = inject("userDocs");
+  const fileStore = inject("fileStore");
   const onSearchSubmit = (searchString) => {
-    clearFilterDocs();
-    filterDocs((doc) => !doc.title.toLowerCase().includes(searchString.toLowerCase()));
+    fileStore.clearFilterFiles();
+    fileStore.filterFiles((file) => !file.title.toLowerCase().includes(searchString.toLowerCase()));
   };
   const searchBar = useTemplateRef("search-bar-ref");
   useKeyboardShortcuts({ "/": () => searchBar.value.focusInput() });

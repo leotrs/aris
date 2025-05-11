@@ -2,7 +2,7 @@
   import { inject, reactive, computed } from "vue";
 
   const props = defineProps({
-    doc: { type: Object, required: true },
+    file: { type: Object, required: true },
     side: { type: String, required: true },
   });
   // The location of the shapes depends on which dock we're in
@@ -14,7 +14,7 @@
 
   // The props to be passed on to the minimap
   const minimapProps = reactive({
-    doc: props.doc,
+    file: props.file,
     orientation: props.side == "top" ? "horizontal" : "vertical",
     side: dockSideToShapeSide[props.side],
     highlightScroll: true,

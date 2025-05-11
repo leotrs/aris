@@ -4,15 +4,15 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
   const props = defineProps({ mode: { type: String, default: "list" } });
-  const doc = defineModel({ type: Object, required: true });
-  const { selectFile } = inject("userDocs");
+  const file = defineModel({ type: Object, required: true });
+  const { selectFile } = inject("fileStore");
 
   // State
-  const selectThisFile = () => selectFile(doc.value);
+  const selectThisFile = () => selectFile(file.value);
   const router = useRouter();
   const readFile = () => {
-    selectFile(doc.value);
-    router.push(`/${doc.value.id}/read`);
+    selectFile(file.value);
+    router.push(`/${file.value.id}/read`);
   };
 
   // Breakpoints
@@ -32,7 +32,7 @@
     false
   );
   watch(
-    () => doc.value.focused,
+    () => file.value.focused,
     (newVal) => (newVal ? activate() : deactivate())
   );
 </script>
@@ -45,20 +45,20 @@
     :class="{
       list: mode == 'list',
       cards: mode == 'cards',
-      active: doc.selected,
-      focused: doc.focused,
+      active: file.selected,
+      focused: file.focused,
     }"
-    @mouseenter="doc.focused = true"
-    @mouseleave="doc.focused = false"
+    @mouseenter="file.focused = true"
+    @mouseleave="file.focused = false"
     @click="selectThisFile"
     @dblclick="readFile"
   >
-    <template v-if="!!doc">
+    <template v-if="!!file">
       <template v-if="mode == 'cards'">
         <div class="card-header">
           <FileTitle
             v-model="fileTitleActive"
-            :doc="doc"
+            :file="file"
             :class="mode == 'cards' ? 'text-label' : ''"
           />
           <FileMenu ref="menu-ref" />
@@ -66,18 +66,18 @@
 
         <div class="card-content">
           <Suspense>
-            <Minimap :doc="doc" orientation="horizontal" side="top" :highlight-scroll="false" />
+            <Minimap :file="file" orientation="horizontal" side="top" :highlight-scroll="false" />
             <template #fallback><span class="loading">loading...</span></template>
           </Suspense>
-          <Abstract :doc="doc" />
+          <Abstract :file="file" />
         </div>
 
         <div class="card-footer">
           <div class="card-footer-left">
-            <TagRow v-model="doc.tags" :doc-id="doc.id" />
+            <TagRow v-model="file.tags" :file-id="file.id" />
           </div>
           <div class="card-footer-right">
-            <div class="last-edited">{{ doc.last_edited_at }}</div>
+            <div class="last-edited">{{ file.last_edited_at }}</div>
             <Avatar />
           </div>
         </div>
@@ -86,14 +86,14 @@
       <template v-if="mode == 'list'">
         <FileTitle
           v-model="fileTitleActive"
-          :doc="doc"
+          :file="file"
           :class="mode == 'cards' ? 'text-label' : ''"
         />
 
         <template v-if="shouldShowColumn('Map', 'list')">
           <Suspense>
             <Minimap
-              :doc="doc"
+              :file="file"
               orientation="horizontal"
               side="top"
               :highlight-scroll="false"
@@ -103,13 +103,13 @@
           </Suspense>
         </template>
 
-        <TagRow v-model="doc.tags" :doc-id="doc.id" />
+        <TagRow v-model="file.tags" :file-id="file.id" />
         <!-- necessary because tags tend to overflow -->
         <div class="spacer"></div>
 
-        <div class="last-edited">{{ doc.last_edited_at }}</div>
+        <div class="last-edited">{{ file.last_edited_at }}</div>
 
-        <FileMenu v-if="!doc.selected" ref="menu-ref" />
+        <FileMenu v-if="!file.selected" ref="menu-ref" />
 
         <!-- to complete the grid -->
         <span class="spacer"></span>
