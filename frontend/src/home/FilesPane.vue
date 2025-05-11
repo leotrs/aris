@@ -6,7 +6,7 @@
   import FilesItem from "./FilesItem.vue";
 
   const props = defineProps({});
-  const { userDocs, selectFile, clearSelection } = inject("userDocs");
+  const { userDocs } = inject("userDocs");
 
   /* Selected file */
   const filesRef = useTemplateRef("files-ref");
@@ -15,8 +15,10 @@
   const numDocs = computed(() => userDocs.value?.length || 0);
   const { activeIndex } = useListKeyboardNavigation(numDocs, filesRef, true);
   watch(activeIndex, (newVal) => {
-    if (newVal === null) clearSelection();
-    else selectFile(userDocs.value[newVal]);
+    const currentFocused = userDocs.value.filter((d) => d.focused);
+    currentFocused.forEach((d) => (d.focused = false));
+    if (newVal === null) return;
+    userDocs.value[newVal].focused = true;
   });
 
   /* Breakpoints */

@@ -32,7 +32,7 @@
     false
   );
   watch(
-    () => doc.value?.selected,
+    () => doc.value.focused,
     (newVal) => (newVal ? activate() : deactivate())
   );
 </script>
@@ -42,7 +42,14 @@
     class="item"
     role="button"
     tabindex="0"
-    :class="[mode, doc.selected ? 'active' : '']"
+    :class="{
+      list: mode == 'list',
+      cards: mode == 'cards',
+      active: doc.selected,
+      focused: doc.focused,
+    }"
+    @mouseenter="doc.focused = true"
+    @mouseleave="doc.focused = false"
     @click="selectThisFile"
     @dblclick="readFile"
   >
@@ -135,7 +142,8 @@
       overflow-y: hidden;
     }
 
-    &:hover > * {
+    &:hover,
+    &.focused > * {
       background-color: var(--gray-75);
     }
 
