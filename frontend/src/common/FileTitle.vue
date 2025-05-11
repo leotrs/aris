@@ -1,11 +1,11 @@
 <script setup>
   const props = defineProps({
-    doc: { type: Object, required: true },
+    file: { type: Object, required: true },
   });
 </script>
 
 <template>
-  <span class="file-title">{{ doc?.title ?? "" }}</span>
+  <span class="file-title">{{ file?.title ?? "" }}</span>
 </template>
 
 <style scoped>

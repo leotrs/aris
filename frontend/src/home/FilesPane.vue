@@ -6,17 +6,16 @@
   import FilesItem from "./FilesItem.vue";
 
   const props = defineProps({});
-  const { userDocs } = inject("userDocs");
+  const fileStore = inject("fileStore");
 
   /* Selected file */
   const filesRef = useTemplateRef("files-ref");
-  const numDocs = computed(() => userDocs.value?.length || 0);
-  const { activeIndex } = useListKeyboardNavigation(numDocs, filesRef, true);
+  const { activeIndex } = useListKeyboardNavigation(fileStore.numFiles, filesRef, true);
   watch(activeIndex, (newVal) => {
-    const currentFocused = userDocs.value.filter((d) => d.focused);
+    const currentFocused = fileStore.files.value.filter((d) => d.focused);
     currentFocused.forEach((d) => (d.focused = false));
     if (newVal === null) return;
-    userDocs.value[newVal].focused = true;
+    fileStore.files.value[newVal].focused = true;
   });
 
   /* Breakpoints */
@@ -44,8 +43,13 @@
 
       <Suspense>
         <div ref="files-ref" class="files" :class="mode">
-          <template v-for="(doc, idx) in userDocs">
-            <FilesItem v-if="!doc.filtered" :key="doc" v-model="userDocs[idx]" :mode="mode" />
+          <template v-for="(file, idx) in fileStore.files.value">
+            <FilesItem
+              v-if="!file.filtered"
+              :key="file"
+              v-model="fileStore.files.value[idx]"
+              :mode="mode"
+            />
           </template>
         </div>
 

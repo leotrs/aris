@@ -4,7 +4,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.orm import Session
 
-from ..models import Document, Tag, User, document_tags
+from ..models import File, Tag, User, file_tags
 
 COLORS = iter(["red", "purple", "green", "orange"])
 
@@ -84,53 +84,53 @@ async def soft_delete_tag(_id: int, user_id: int, db: Session):
     return {"message": "Tag deleted successfully"}
 
 
-async def get_user_document_tags(user_id: int, doc_id: int, db: Session):
+async def get_user_file_tags(user_id: int, doc_id: int, db: Session):
     return (
         db.query(Tag)
         .filter(Tag.user_id == user_id, Tag.deleted_at.is_(None))
-        .join(document_tags, Tag.id == document_tags.c.tag_id)
-        .filter(document_tags.c.document_id == doc_id)
+        .join(file_tags, Tag.id == file_tags.c.tag_id)
+        .filter(file_tags.c.file_id == doc_id)
         .order_by(Tag.name.asc())
         .all()
     )
 
 
-async def add_tag_to_document(user_id: int, document_id: int, tag_id: str, db: Session):
+async def add_tag_to_file(user_id: int, file_id: int, tag_id: str, db: Session):
     with db.begin():
-        document = db.get(Document, document_id)
-        if not document or document.owner_id != user_id:
-            raise ValueError("Unauthorized or document not found")
+        file = db.get(File, file_id)
+        if not file or file.owner_id != user_id:
+            raise ValueError("Unauthorized or file not found")
         tag = db.get(Tag, tag_id)
         if not tag or tag.user_id != user_id:
             raise ValueError("Unauthorized or tag not found")
 
-        exists_stmt = select(document_tags).where(
-            (document_tags.c.document_id == document_id)
-            & (document_tags.c.tag_id == tag_id)
+        exists_stmt = select(file_tags).where(
+            (file_tags.c.file_id == file_id)
+            & (file_tags.c.tag_id == tag_id)
         )
         if db.execute(exists_stmt).first():
             raise ValueError("Tag already assigned")
 
         db.execute(
-            document_tags.insert().values(document_id=document_id, tag_id=tag_id)
+            file_tags.insert().values(file_id=file_id, tag_id=tag_id)
         )
 
 
-async def remove_tag_from_document(
-    user_id: int, document_id: int, tag_id: str, db: Session
+async def remove_tag_from_file(
+    user_id: int, file_id: int, tag_id: str, db: Session
 ):
     with db.begin():
-        document = db.get(Document, document_id)
-        if not document or document.owner_id != user_id:
-            raise ValueError("Unauthorized or document not found")
+        file = db.get(File, file_id)
+        if not file or file.owner_id != user_id:
+            raise ValueError("Unauthorized or file not found")
         tag = db.get(Tag, tag_id)
         if not tag or tag.user_id != user_id:
             raise ValueError("Unauthorized or tag not found")
 
-        delete_stmt = delete(document_tags).where(
-            (document_tags.c.document_id == document_id)
-            & (document_tags.c.tag_id == tag_id)
+        delete_stmt = delete(file_tags).where(
+            (file_tags.c.file_id == file_id)
+            & (file_tags.c.tag_id == tag_id)
         )
         result = db.execute(delete_stmt)
         if result.rowcount == 0:
-            raise ValueError("Tag not assigned to this document")
+            raise ValueError("Tag not assigned to this file")

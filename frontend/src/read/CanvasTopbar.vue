@@ -6,7 +6,7 @@
     showTitle: { type: Boolean, required: true },
     component: { type: Object, default: null },
   });
-  const doc = inject("doc");
+  const file = inject("file");
 
   const columnSizes = inject("columnSizes");
   const leftColumnWidth = computed(() => `${columnSizes.left.width}px`);
@@ -19,12 +19,12 @@
 <template>
   <div class="tb-wrapper" :class="{ 'with-border': showTitle, focus: focusMode }">
     <Dock class="left-column top">
-      <FileTitle v-if="showTitle && component" :doc="doc" class="text-h6" />
+      <FileTitle v-if="showTitle && component" :file="file" class="text-h6" />
     </Dock>
 
     <Dock class="middle-column top">
-      <FileTitle v-if="showTitle && !component" :doc="doc" class="text-h6" />
-      <component :is="component" ref="middle-comp" :doc="doc" side="top" />
+      <FileTitle v-if="showTitle && !component" :file="file" class="text-h6" />
+      <component :is="component" ref="middle-comp" :file="file" side="top" />
     </Dock>
   </div>
 </template>

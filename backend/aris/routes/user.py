@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from .. import crud, get_db
-from ..models import Document, User
+from ..models import File, User
 
 router = APIRouter(prefix="/users", tags=["users"])
 
@@ -45,22 +45,22 @@ async def soft_delete_user(user_id: int, db: Session = Depends(get_db)):
     return {"message": f"User {user_id} soft deleted"}
 
 
-@router.get("/{user_id}/documents")
-async def get_user_documents(
+@router.get("/{user_id}/files")
+async def get_user_files(
     user_id: int,
     with_tags: bool = True,
     with_minimap: bool = True,
     db: Session = Depends(get_db),
 ):
-    return await crud.get_user_documents(user_id, with_tags, with_minimap, db)
+    return await crud.get_user_files(user_id, with_tags, with_minimap, db)
 
 
-@router.get("/{user_id}/documents/{doc_id}")
-async def get_user_document(
+@router.get("/{user_id}/files/{doc_id}")
+async def get_user_file(
     user_id: int,
     doc_id: int,
     with_tags: bool = True,
     with_minimap: bool = True,
     db: Session = Depends(get_db),
 ):
-    return await crud.get_user_document(user_id, doc_id, with_tags, with_minimap, db)
+    return await crud.get_user_file(user_id, doc_id, with_tags, with_minimap, db)

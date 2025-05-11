@@ -36,13 +36,13 @@ export function getSectionsFromHTMLString(html) {
   return sections;
 };
 
-export function getSectionsFromHTML(doc) {
+export function getSectionsFromHTML(file) {
   // The following works by looking at the parent element's height because there are
   // only two cases: if the level is 1, then the parent is the manuscript wrapper, and
   // if the level is more than 1, the parent is the section of level-1. Both this
   // section and its parent have the same height, both equaling the entire height of the
   // manuscript.
-  const el = doc.isMountedAt;
+  const el = file.isMountedAt;
   const parentEl = el.parentElement;
   const sections = [...el.querySelectorAll("section")].map((s) => {
     const rect = s.getBoundingClientRect();
@@ -62,17 +62,17 @@ export function getSectionsFromHTML(doc) {
 }
 
 
-export function getSections(doc) {
+export function getSections(file) {
   let sections = [];
-  if (doc.isMountedAt) {
+  if (file.isMountedAt) {
     console.log('extracting from mounted html');
-    sections = getSectionsFromHTML(doc);
-  } else if (doc.html) {
+    sections = getSectionsFromHTML(file);
+  } else if (file.html) {
     console.log('extracting from html string');
-    sections = getSectionsFromHTMLString(doc.html);
-  } else if (doc.source) {
+    sections = getSectionsFromHTMLString(file.html);
+  } else if (file.source) {
     console.log('extracting from source');
-    sections = getSectionsFromSource(doc.source);
+    sections = getSectionsFromSource(file.source);
   }
   return [{ percent: 0, level: 1 }, ...sections, { percent: 1, level: 1 }];
 };
@@ -177,14 +177,14 @@ export function getLayoutParametersVertical(lineSize, options) {
 let shapePositions = [];
 
 // Public interface
-export function makeMinimap(doc, isHorizontal, wrapperWidth, wrapperHeight, options = {}) {
+export function makeMinimap(file, isHorizontal, wrapperWidth, wrapperHeight, options = {}) {
   const defaults = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 4, highlightScroll: true, side: 'left', shape: 'line' };
   options = { ...defaults, ...options };
 
-  // DO NOT use doc.minimap -- this is usually the one extracted from the HTMl, we want to make our own
-  // if (doc.minimap) return doc.minimap;
+  // DO NOT use file.minimap -- this is usually the one extracted from the HTMl, we want to make our own
+  // if (file.minimap) return file.minimap;
   const currentSize = isHorizontal ? (wrapperWidth || 400) : (wrapperHeight || 400);
-  return _makeMinimap(getSections(doc), isHorizontal, currentSize, options);
+  return _makeMinimap(getSections(file), isHorizontal, currentSize, options);
 }
 
 export function _makeMinimap(

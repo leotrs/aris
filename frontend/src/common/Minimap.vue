@@ -14,7 +14,7 @@
   import { makeMinimap, resizeMinimap, highlightScrollPos, makeIcons } from "./MinimapUtils.js";
 
   const props = defineProps({
-    doc: { type: Object, required: true },
+    file: { type: Object, required: true },
     orientation: { type: String, default: "vertical" },
     side: { type: String, default: "right" },
     highlightScroll: { type: Boolean, default: true },
@@ -48,16 +48,16 @@
   };
 
   onMounted(async () => {
-    if (!props.doc) return;
+    if (!props.file) return;
     await nextTick();
 
     // Remake when neccessary
     watch(
-      () => [props.side, props.doc.id, props.orientation],
+      () => [props.side, props.file.id, props.orientation],
       () => {
         if (!wrapperRef.value) return;
         const { svg: newSvg, svgInitialData: newData } = makeMinimap(
-          props.doc,
+          props.file,
           isHorizontal.value,
           wrapperWidth.value,
           wrapperHeight.value,
@@ -114,10 +114,10 @@
 
     // Include feedback icons
     watch(
-      () => props.doc.icons,
+      () => props.file.icons,
       (newIcons) => {
-        if (!wrapperRef.value || !newIcons || !props.doc.isMountedAt) return;
-        icons.value = makeIcons(newIcons, props.doc.isMountedAt, wrapperRef.value);
+        if (!wrapperRef.value || !newIcons || !props.file.isMountedAt) return;
+        icons.value = makeIcons(newIcons, props.file.isMountedAt, wrapperRef.value);
         console.log(icons.value);
       },
       { immediate: true }

@@ -3,9 +3,9 @@ from datetime import datetime
 
 from sqlalchemy.orm import Session
 
-from ..models import Document, User
-from .document import get_document, get_document_section
-from .tag import get_user_document_tags
+from ..models import File, User
+from .file import get_file, get_file_section
+from .tag import get_user_file_tags
 from .utils import extract_title
 
 
@@ -45,7 +45,7 @@ async def soft_delete_user(user_id: int, db: Session):
     return user
 
 
-async def get_user_documents(
+async def get_user_files(
     user_id: int, with_tags: bool, with_minimap: bool, db: Session
 ):
     user = await get_user(user_id, db)
@@ -53,8 +53,8 @@ async def get_user_documents(
         raise ValueError(f"User {user_id} not found")
 
     docs = (
-        db.query(Document)
-        .filter(Document.owner_id == user_id, Document.deleted_at.is_(None))
+        db.query(File)
+        .filter(File.owner_id == user_id, File.deleted_at.is_(None))
         .all()
     )
 
@@ -64,14 +64,14 @@ async def get_user_documents(
     tags = None
     if with_tags:
         tags = await asyncio.gather(
-            *(get_user_document_tags(user_id, d.id, db) for d in docs)
+            *(get_user_file_tags(user_id, d.id, db) for d in docs)
         )
         tags = dict(zip(docs, tags))
 
     minimaps = None
     if with_minimap:
         minimaps = await asyncio.gather(
-            *(get_document_section(d.id, "minimap", db) for d in docs)
+            *(get_file_section(d.id, "minimap", db) for d in docs)
         )
         minimaps = dict(zip(docs, minimaps))
 
@@ -88,21 +88,21 @@ async def get_user_documents(
     ]
 
 
-async def get_user_document(
+async def get_user_file(
     user_id: int, doc_id: int, with_tags: bool, with_minimap: bool, db: Session
 ):
     user = await get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")
 
-    doc = await get_document(doc_id, db)
+    doc = await get_file(doc_id, db)
     if not doc:
-        raise ValueError(f"Document {user_id} not found")
+        raise ValueError(f"File {user_id} not found")
 
     title = await extract_title(doc)
-    tags = (await get_user_document_tags(user_id, doc_id, db)) if with_tags else []
+    tags = (await get_user_file_tags(user_id, doc_id, db)) if with_tags else []
     minimap = (
-        (await get_document_section(doc_id, "minimap", db)) if with_minimap else ""
+        (await get_file_section(doc_id, "minimap", db)) if with_minimap else ""
     )
 
     return {

@@ -3,10 +3,10 @@ import asyncio
 import rsm
 from bs4 import BeautifulSoup
 
-from ..models import Document
+from ..models import File
 
 
-async def extract_title(doc: Document) -> str:
+async def extract_title(doc: File) -> str:
     if doc is None:
         return ""
     if doc.title:
@@ -17,7 +17,7 @@ async def extract_title(doc: Document) -> str:
     return app.transformer.tree.title
 
 
-async def extract_section(doc: Document, section_name: str, handrails: bool = True) -> str:
+async def extract_section(doc: File, section_name: str, handrails: bool = True) -> str:
     app = rsm.app.ProcessorApp(plain=doc.source, handrails=handrails)
     await asyncio.to_thread(app.run)
     html = app.translator.body

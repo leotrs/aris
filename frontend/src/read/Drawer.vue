@@ -5,7 +5,7 @@
   import DrawerSettings from "./DrawerSettings.vue";
 
   const active = defineModel({ type: Boolean, default: false });
-  const doc = inject("doc");
+  const file = inject("file");
 
   // State
   const activeTabIndex = ref(0);
@@ -34,7 +34,7 @@
         <TabPage>activity</TabPage>
         <TabPage>history</TabPage>
         <TabPage><DrawerCitation /></TabPage>
-        <TabPage><TagRow v-model="doc.tags" :doc-id="doc.id" /></TabPage>
+        <TabPage><TagRow v-model="file.tags" :file-id="file.id" /></TabPage>
         <TabPage><DrawerSettings /></TabPage>
       </Tabs>
     </div>
