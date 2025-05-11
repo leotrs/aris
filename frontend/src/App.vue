@@ -159,6 +159,6 @@
     font-size: 16px;
     line-height: 1.25;
     color: var(--extra-dark);
-    overflow: hidden;
+    overflow: clip;
   }
 </style>

@@ -1,4 +1,6 @@
 <script setup>
+  import {} from "vue";
+
   const props = defineProps({
     doc: { type: Object, required: true },
   });
@@ -7,7 +9,7 @@
 <template>
   <div class="preview">
     <div class="left">
-      <Minimap :doc="doc" />
+      <Minimap :doc="doc" :highlight-scroll="false" />
       <Abstract :doc="doc" />
     </div>
     <div class="right">
@@ -35,13 +37,19 @@
   .right {
     display: flex;
     position: absolute;
-    top: 7px;
     right: 0;
     align-items: center;
   }
 
+  .mm-wrapper {
+    position: relative;
+    left: 0;
+    width: 48px;
+  }
+
   :deep(h3) {
     margin-block: 8px;
+    font-weight: var(--weight-semi);
     border-bottom: var(--border-thin) solid var(--border-information);
   }
 </style>
