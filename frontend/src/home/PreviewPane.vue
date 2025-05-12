@@ -44,7 +44,7 @@
 
       <div class="right"><ButtonClose @close="close" /></div>
     </Header>
-    <div v-if="file && 'tags' in file && 'id' in file" class="pane-content">
+    <div v-if="!!Object.keys(file.value).length" class="pane-content">
       <Tabs
         ref="tabs-ref"
         v-model="activeTabIndex"
@@ -58,7 +58,9 @@
       </Tabs>
     </div>
     <div class="pane-footer">
-      <span class="left text-caption">Last edited {{ file?.getFormattedDate() || "" }}</span>
+      <span v-if="file.value" class="left text-caption"
+        >Last edited {{ file.value.getFormattedDate?.() || "" }}</span
+      >
       <div class="right">
         <Button kind="tertiary" size="sm" text="Write" icon="Pencil" />
         <Button kind="tertiary" size="sm" text="Review" icon="FileCheck" />
