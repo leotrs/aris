@@ -63,7 +63,7 @@
       />
 
       <PreviewPane
-        :file="fileStore.selectedFile.value"
+        :file="fileStore.selectedFile"
         :style="{ height: previewHeight, top: previewTop }"
       />
     </div>

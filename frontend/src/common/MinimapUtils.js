@@ -73,6 +73,8 @@ export function getSections(file) {
   } else if (file.source) {
     console.log('extracting from source');
     sections = getSectionsFromSource(file.source);
+  } else {
+    console.warn(`No way to get sections for file with id ${file.id}, skipping`);
   }
   return [{ percent: 0, level: 1 }, ...sections, { percent: 1, level: 1 }];
 };

@@ -9,11 +9,11 @@
 <template>
   <div class="preview">
     <div class="left">
-      <Minimap :file="file" :highlight-scroll="false" />
-      <Abstract :file="file" />
+      <Minimap :file="file.value" :highlight-scroll="false" />
+      <Abstract :file="file.value" />
     </div>
     <div class="right">
-      <TagRow v-model="file.tags" :file-id="file.id" />
+      <TagRow v-model="file.value.tags" :file-id="file.value.id" />
     </div>
   </div>
 </template>
