@@ -265,7 +265,7 @@ export function createFileStore(api, user) {
   const getTags = () => tags.value;
 
   // Computed properties
-  const selectedFile = computed(() => files.value.find(f => f.selected) || null);
+  const selectedFile = computed(() => files.value.find(f => f.selected) || {});
   const filteredFiles = computed(() => files.value.filter(f => !f.filtered));
 
   // Create the store object

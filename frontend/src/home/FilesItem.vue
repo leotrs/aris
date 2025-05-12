@@ -107,7 +107,7 @@
         <!-- necessary because tags tend to overflow -->
         <div class="spacer"></div>
 
-        <div class="last-edited">{{ file.last_edited_at }}</div>
+        <div class="last-edited">{{ file.getFormattedDate() }}</div>
 
         <FileMenu v-if="!file.selected" ref="menu-ref" />
 
