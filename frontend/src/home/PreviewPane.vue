@@ -58,7 +58,7 @@
       </Tabs>
     </div>
     <div class="pane-footer">
-      <span class="left text-caption">Last edited {{ file.last_edited_at }}</span>
+      <span class="left text-caption">Last edited {{ file?.getFormattedDate() || "" }}</span>
       <div class="right">
         <Button kind="tertiary" size="sm" text="Write" icon="Pencil" />
         <Button kind="tertiary" size="sm" text="Review" icon="FileCheck" />
