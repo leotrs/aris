@@ -15,14 +15,15 @@ export class File {
       // File metadata
       id: rawData.id || null,
       title: rawData.title || 'Untitled',
-      content: rawData.content || '',
+      source: rawData.source || '',
+      last_edited_at: rawData.last_edited_at || new Date().toISOString(),
       tags: rawData.tags || [],
       minimap: rawData.minimap || null,
-      last_edited_at: rawData.last_edited_at || new Date().toISOString(),
 
       // UI state
       selected: rawData.selected || false,
       filtered: rawData.filtered || false,
+      isMountedAt: rawData.isMountedAt || null,
 
       // Track if file has unsaved changes
       isDirty: false,

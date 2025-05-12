@@ -88,7 +88,6 @@ export function createFileStore(api, user) {
           selected: existingFile ? existingFile.selected : false,
           isMountedAt: existingFile ? existingFile.isMountedAt : false,
           html: existingFile ? existingFile.html : false,
-          source: existingFile ? existingFile.source : false,
         }, store);
       });
     } catch (error) {
