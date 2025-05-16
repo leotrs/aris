@@ -103,18 +103,12 @@ export function createFileStore(api, user) {
    * @returns {Object} The newly created file
    */
   const createFile = async (fileData = {}) => {
-    // Create a new file instance
     const newFile = new File({
       ...fileData,
       last_edited_at: new Date().toISOString(),
     }, store);
-
-    // Add to collection
     files.value.push(newFile);
-
-    // Save to server
     await File.save(newFile, api, user);
-
     return newFile;
   };
 

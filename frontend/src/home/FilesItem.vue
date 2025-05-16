@@ -2,6 +2,7 @@
   import { ref, inject, watch, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import { File } from "../File.js";
 
   const props = defineProps({ mode: { type: String, default: "list" } });
   const file = defineModel({ type: Object, required: true });
@@ -22,8 +23,17 @@
   // File menu callbacks
   const menuRef = useTemplateRef("menu-ref");
   const fileTitleRef = useTemplateRef("file-title-ref");
-  const onRename = () => {
-    fileTitleRef.value?.startEditing();
+  const fileStore = inject("fileStore");
+  const user = inject("user");
+  const onRename = () => fileTitleRef.value?.startEditing();
+  const onDuplicate = () => {
+    let fileData = {
+      ...File.toJSON(file.value),
+      id: null,
+      owner_id: user.id,
+      title: file.value.title + " (Copy)",
+    };
+    fileStore.createFile(fileData);
   };
 
   // Keys
@@ -70,7 +80,12 @@
 
         <div class="last-edited">{{ file.getFormattedDate() }}</div>
 
-        <FileMenu v-if="!file.selected" ref="menu-ref" @rename="onRename" />
+        <FileMenu
+          v-if="!file.selected"
+          ref="menu-ref"
+          @rename="onRename"
+          @duplicate="onDuplicate"
+        />
 
         <!-- to complete the grid -->
         <span class="spacer"></span>
