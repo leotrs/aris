@@ -1,9 +1,12 @@
 <script setup>
   import { computed, useTemplateRef } from "vue";
+
   const props = defineProps({
     icon: { type: String, default: "Dots" },
     mode: { type: String, default: "ContextMenu" },
   });
+  const emit = defineEmits(["rename"]);
+
   const comp = computed(() => (props.mode == "ContextMenu" ? "ContextMenuItem" : "Button"));
   const childProps = (icon, caption) => {
     if (props.mode == "ContextMenu") return { icon: icon, caption: caption };
@@ -29,7 +32,7 @@
       <component :is="comp" v-bind="childProps('Download', 'Download')" />
       <component :is="comp" v-bind="childProps('FileExport', 'Export')" />
       <Separator />
-      <component :is="comp" v-bind="childProps('Edit', 'Rename')" />
+      <component :is="comp" v-bind="childProps('Edit', 'Rename')" @click="emit('rename')" />
       <component :is="comp" v-bind="childProps('Copy', 'Duplicate')" />
       <component :is="comp" v-bind="childProps('TrashX', 'Delete')" class="danger" />
     </component>
