@@ -1,5 +1,6 @@
 <script setup>
   import { ref, watch, nextTick, useTemplateRef } from "vue";
+  import { useKeyboardShortcuts } from "../composables/useKeyboardShortcuts.js";
 
   const props = defineProps({
     inputClass: { type: [String, Object, Array], default: "" },
@@ -13,14 +14,13 @@
   const isEditing = ref(false);
   const inputRef = useTemplateRef("inputRef");
 
-  watch(inputValue, (newValue) => (text.value = newValue));
-
   const startEditing = () => {
     inputValue.value = text.value;
     isEditing.value = true;
     nextTick(() => {
       if (inputRef.value) {
         inputRef.value.focus();
+        activate();
         const length = inputRef.value.value.length;
         inputRef.value.setSelectionRange(length, length);
       }
@@ -28,6 +28,7 @@
   };
 
   const cancelEditing = () => {
+    deactivate();
     isEditing.value = false;
     inputValue.value = text.value;
     emit("cancel");
@@ -39,15 +40,13 @@
     emit("save", text.value);
   };
 
-  const handleKeydown = (event) => {
-    if (event.key === "Escape") {
-      cancelEditing();
-      event.preventDefault();
-    } else if (event.key === "Enter") {
-      saveChanges();
-      event.preventDefault();
-    }
-  };
+  const { activate, deactivate } = useKeyboardShortcuts(
+    {
+      escape: () => cancelEditing(),
+      enter: () => saveChanges(),
+    },
+    false
+  );
 
   defineExpose({ startEditing, cancelEditing });
 </script>
@@ -70,7 +69,7 @@
       v-else
       ref="inputRef"
       v-model="inputValue"
-      :class="inputClass"
+      :class="[inputClass, isEditing ? 'editing' : '']"
       @keydown="handleKeydown"
       @blur="saveChanges"
       @click.stop
@@ -90,6 +89,14 @@
     outline: none;
     width: 100%;
   }
+
+  input.editing {
+    border: var(--border-thin) solid var(--border-action);
+    border-radius: 16px;
+    padding: 8px;
+    background: var(--white);
+  }
+
   .editable:focus-visible {
     outline: var(--border-med) solid var(--border-action);
     outline-offset: var(--border-extrathin);
