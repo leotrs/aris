@@ -19,8 +19,11 @@
   const shouldShowColumn = inject("shouldShowColumn");
 
   // File menu callbacks
-  const fileTitleActive = ref(false);
   const menuRef = useTemplateRef("menu-ref");
+  const fileTitleRef = useTemplateRef("file-title-ref");
+  const onRename = () => {
+    fileTitleRef.value?.startEditing();
+  };
 
   // Keys
   const { activate, deactivate } = useKeyboardShortcuts(
@@ -96,7 +99,7 @@
 
         <div class="last-edited">{{ file.getFormattedDate() }}</div>
 
-        <FileMenu v-if="!file.selected" ref="menu-ref" />
+        <FileMenu v-if="!file.selected" ref="menu-ref" @rename="onRename" />
 
         <!-- to complete the grid -->
         <span class="spacer"></span>
