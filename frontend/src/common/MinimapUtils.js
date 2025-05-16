@@ -64,14 +64,15 @@ export function getSectionsFromHTML(file) {
 
 export function getSections(file) {
   let sections = [];
+
   if (file.isMountedAt) {
-    console.log('extracting from mounted html');
+    console.log('extracting sections from mounted html');
     sections = getSectionsFromHTML(file);
   } else if (file.html) {
-    console.log('extracting from html string');
+    console.log('extracting sections from html string');
     sections = getSectionsFromHTMLString(file.html);
   } else if (file.source) {
-    console.log('extracting from source');
+    console.log('extracting sections from source');
     sections = getSectionsFromSource(file.source);
   } else {
     console.warn(`No way to get sections for file with id ${file.id}, skipping`);

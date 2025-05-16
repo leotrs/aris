@@ -22,7 +22,7 @@
   const breakpoints = inject("breakpoints");
   const gridTemplateColumns = computed(() => {
     return breakpoints.isGreater("md")
-      ? "minmax(144px, 2fr) minmax(144px, 1.5fr) minmax(96px, 1.5fr) 8px 104px 16px 8px"
+      ? "minmax(144px, 2fr) minmax(96px, 1.5fr) 8px 104px 16px 8px"
       : "minmax(144px, 2fr) minmax(96px, 1.5fr) 8px 104px 16px 8px";
   });
   const shouldShowColumn = (columnName, mode) => {
@@ -83,9 +83,7 @@
   .pane-header.list,
   .files.list > .item {
     display: grid;
-    grid-template-columns:
-      minmax(144px, 2fr) minmax(144px, 1.5fr) minmax(48px, 1.25fr)
-      8px 104px 16px 8px;
+    grid-template-columns: minmax(144px, 2fr) minmax(48px, 1.25fr) 8px 104px 16px 8px;
   }
 
   .pane-header.list > *,

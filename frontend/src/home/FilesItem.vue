@@ -90,19 +90,6 @@
           :class="mode == 'cards' ? 'text-label' : ''"
         />
 
-        <template v-if="shouldShowColumn('Map', 'list')">
-          <Suspense>
-            <Minimap
-              :file="file"
-              orientation="horizontal"
-              side="top"
-              :highlight-scroll="false"
-              shape="line"
-            />
-            <template #fallback><span class="loading">loading...</span></template>
-          </Suspense>
-        </template>
-
         <TagRow v-model="file.tags" :file-id="file.id" />
         <!-- necessary because tags tend to overflow -->
         <div class="spacer"></div>
