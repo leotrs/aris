@@ -70,7 +70,6 @@
       ref="inputRef"
       v-model="inputValue"
       :class="[inputClass, isEditing ? 'editing' : '']"
-      @keydown="handleKeydown"
       @blur="saveChanges"
       @click.stop
       @dblclick.stop

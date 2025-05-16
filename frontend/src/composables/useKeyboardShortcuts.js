@@ -100,13 +100,13 @@ const tryHandleKeyEvent = (ev, componentRef, key) => {
 };
 
 const handleKeyDown = (ev) => {
-  if (isForwardingEvent
-    || ev.target.tagName === 'INPUT'
-    || ev.target.tagName === 'TEXTAREA'
-    || ev.target.isContentEditable
-    || hasModifiers(ev)) {
-    return;
-  }
+  const tag = ev.target.tagName?.toUpperCase();
+  const isEditableElement = tag === 'INPUT' || tag === 'TEXTAREA' || ev.target.isContentEditable;
+  const shouldIgnore =
+    isForwardingEvent ||
+    hasModifiers(ev) ||
+    (isEditableElement && !['Enter', 'Escape'].includes(ev.key));
+  if (shouldIgnore) return;
 
   const key = ev.key.toLowerCase();
   if (components.length === 0 && !fallbackComponent.value) return;
