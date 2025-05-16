@@ -57,41 +57,10 @@
     @dblclick="readFile"
   >
     <template v-if="!!file">
-      <template v-if="mode == 'cards'">
-        <div class="card-header">
-          <FileTitle
-            v-model="fileTitleActive"
-            :file="file"
-            :class="mode == 'cards' ? 'text-label' : ''"
-          />
-          <FileMenu ref="menu-ref" />
-        </div>
-
-        <div class="card-content">
-          <Suspense>
-            <Minimap :file="file" orientation="horizontal" side="top" :highlight-scroll="false" />
-            <template #fallback><span class="loading">loading...</span></template>
-          </Suspense>
-          <Abstract :file="file" />
-        </div>
-
-        <div class="card-footer">
-          <div class="card-footer-left">
-            <TagRow v-model="file.tags" :file-id="file.id" />
-          </div>
-          <div class="card-footer-right">
-            <div class="last-edited">{{ file.last_edited_at }}</div>
-            <Avatar />
-          </div>
-        </div>
-      </template>
+      <template v-if="mode == 'cards'"> </template>
 
       <template v-if="mode == 'list'">
-        <FileTitle
-          v-model="fileTitleActive"
-          :file="file"
-          :class="mode == 'cards' ? 'text-label' : ''"
-        />
+        <FileTitle ref="file-title-ref" :file="file" :class="mode == 'cards' ? 'text-label' : ''" />
 
         <TagRow v-model="file.tags" :file-id="file.id" />
         <!-- necessary because tags tend to overflow -->
