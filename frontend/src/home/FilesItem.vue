@@ -35,6 +35,7 @@
     };
     fileStore.createFile(fileData);
   };
+  const onDelete = () => fileStore.deleteFile(file.value);
 
   // Keys
   const { activate, deactivate } = useKeyboardShortcuts(
@@ -85,6 +86,7 @@
           ref="menu-ref"
           @rename="onRename"
           @duplicate="onDuplicate"
+          @delete="onDelete"
         />
 
         <!-- to complete the grid -->

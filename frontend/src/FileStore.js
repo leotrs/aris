@@ -117,23 +117,17 @@ export function createFileStore(api, user) {
    * @param {Number|String|Object} fileOrId - File or ID of file to delete
    */
   const deleteFile = async (fileOrId) => {
-    // Determine file ID
     const fileId = typeof fileOrId === 'object' ? fileOrId.id : fileOrId;
     const file = files.value.find(f => f.id === fileId);
-
     if (!file) return;
 
-    // Delete from server
+    // Delete from server, local collection, and queue (if present)
     const success = await File.delete(file, api, user);
-
     if (success) {
-      // Remove from local collection
       const index = files.value.findIndex(f => f.id === fileId);
       if (index !== -1) {
         files.value.splice(index, 1);
       }
-
-      // Remove from sync queue if present
       syncQueue.delete(fileId);
     }
   };

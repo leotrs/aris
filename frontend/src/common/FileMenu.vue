@@ -5,7 +5,7 @@
     icon: { type: String, default: "Dots" },
     mode: { type: String, default: "ContextMenu" },
   });
-  const emit_ = defineEmits(["rename"]);
+  const emit_ = defineEmits(["rename", "duplicate", "delete"]);
   const emit = (event) => {
     menuRef.value?.toggle();
     emit_(event);
@@ -38,7 +38,12 @@
       <Separator />
       <component :is="comp" v-bind="childProps('Edit', 'Rename')" @click="emit('rename')" />
       <component :is="comp" v-bind="childProps('Copy', 'Duplicate')" @click="emit('duplicate')" />
-      <component :is="comp" v-bind="childProps('TrashX', 'Delete')" class="danger" />
+      <component
+        :is="comp"
+        v-bind="childProps('TrashX', 'Delete')"
+        class="danger"
+        @click="emit('delete')"
+      />
     </component>
   </div>
 </template>

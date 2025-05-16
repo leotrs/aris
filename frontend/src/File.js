@@ -95,7 +95,7 @@ export class File {
     try {
       if (!file.id) return true; // Nothing to delete
 
-      await api.delete(`/users/${user.id}/files/${file.id}`);
+      await api.delete(`/files/${file.id}`);
       return true;
     } catch (error) {
       console.error(`Error deleting file:`, error);
