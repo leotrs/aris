@@ -8,6 +8,7 @@
   const { selectFile } = inject("fileStore");
 
   // State
+  const hovered = ref(false);
   const selectThisFile = () => selectFile(file.value);
   const router = useRouter();
   const readFile = () => {
@@ -50,9 +51,10 @@
       cards: mode == 'cards',
       active: file.selected,
       focused: file.focused,
+      hovered: hovered,
     }"
-    @mouseenter="file.focused = true"
-    @mouseleave="file.focused = false"
+    @mouseenter="hovered = true"
+    @mouseleave="hovered = false"
     @click="selectThisFile"
     @dblclick="readFile"
   >
@@ -250,7 +252,7 @@
       0.3s ease;
   }
 
-  :is(.item:hover, .item.focused) .fm-wrapper :deep(.cm-btn) {
+  :is(.item:hover, .item.focused, .item.hovered) .fm-wrapper :deep(.cm-btn) {
     opacity: 1;
   }
 </style>
