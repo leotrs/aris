@@ -12,9 +12,7 @@
       <Minimap :file="file.value" :highlight-scroll="false" />
       <Abstract :file="file.value" />
     </div>
-    <div class="right">
-      <TagRow v-model="file.value.tags" :file-id="file.value.id" />
-    </div>
+    <div class="right"></div>
   </div>
 </template>
 

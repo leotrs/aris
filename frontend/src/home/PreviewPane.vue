@@ -58,9 +58,7 @@
       </Tabs>
     </div>
     <div class="pane-footer">
-      <span v-if="file.value" class="left text-caption"
-        >Last edited {{ file.value.getFormattedDate?.() || "" }}</span
-      >
+      <div class="left"></div>
       <div class="right">
         <Button kind="tertiary" size="sm" text="Write" icon="Pencil" />
         <Button kind="tertiary" size="sm" text="Review" icon="FileCheck" />
