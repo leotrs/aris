@@ -11,7 +11,7 @@ router = APIRouter(prefix="/files", tags=["files"])
 def _validate_source(model):
     if not model.source or not model.source.strip().startswith(":manuscript:"):
         raise ValueError("Malformed RSM source.")
-    return self
+    return model
 
 
 class FileCreate(BaseModel):
@@ -21,8 +21,7 @@ class FileCreate(BaseModel):
     source: str
 
     def validate_source(self):
-        _validate_source(self)
-        return self
+        return _validate_source(self)
 
 
 class FileUpdate(BaseModel):
