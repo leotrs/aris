@@ -88,6 +88,8 @@ export function createFileStore(api, user) {
           selected: existingFile ? existingFile.selected : false,
           isMountedAt: existingFile ? existingFile.isMountedAt : false,
           html: existingFile ? existingFile.html : false,
+          ownerId: user.id,
+
         }, store);
       });
     } catch (error) {

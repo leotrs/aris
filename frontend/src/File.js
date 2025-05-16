@@ -19,6 +19,7 @@ export class File {
       last_edited_at: rawData.last_edited_at || new Date().toISOString(),
       tags: rawData.tags || [],
       minimap: rawData.minimap || null,
+      ownerId: rawData.owner_id || null,
 
       // UI state
       selected: rawData.selected || false,
@@ -61,9 +62,11 @@ export class File {
    * @param {Object} api - API instance
    * @param {Object} user - User information
    */
-  static async save(file, api, user) {
+  static async save(file, api) {
     try {
-      const fileData = File.toJSON(file);
+      let fileData = File.toJSON(file);
+      fileData.owner_id = fileData.ownerId;
+      delete fileData.ownerId;
 
       if (file.id) {
         // Update existing file
@@ -171,11 +174,12 @@ export class File {
    * @returns {Object} Plain JS object with file data
    */
   static toJSON(file) {
-    const { id, title, content, tags } = file;
+    const { id, title, source, tags, ownerId } = file;
     return {
       id,
       title,
-      content,
+      source,
+      ownerId,
       // Only send tag IDs to API
       tags: tags.map(tag => typeof tag === 'object' ? tag.id : tag)
     };
