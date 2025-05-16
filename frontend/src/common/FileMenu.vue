@@ -5,7 +5,11 @@
     icon: { type: String, default: "Dots" },
     mode: { type: String, default: "ContextMenu" },
   });
-  const emit = defineEmits(["rename"]);
+  const emit_ = defineEmits(["rename"]);
+  const emit = (event) => {
+    menuRef.value?.toggle();
+    emit_(event);
+  };
 
   const comp = computed(() => (props.mode == "ContextMenu" ? "ContextMenuItem" : "Button"));
   const childProps = (icon, caption) => {
