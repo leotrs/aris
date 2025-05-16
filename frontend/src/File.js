@@ -75,11 +75,10 @@ export class File {
 
       if (file.id) {
         // Update existing file
-        await api.put(`/users/${user.id}/files/${file.id}`, fileData);
+        await api.put(`/files/${file.id}`, fileData);
       } else {
         // Create new file
-        const response = await api.post(`/users/${user.id}/files`, fileData);
-        // Update with server-assigned ID and other properties
+        const response = await api.post(`/files/`, fileData);
         Object.assign(file, response.data);
       }
 

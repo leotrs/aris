@@ -8,15 +8,32 @@ from .. import crud, get_db
 router = APIRouter(prefix="/files", tags=["files"])
 
 
+def _validate_source(model):
+    if not model.source or not model.source.strip().startswith(":manuscript:"):
+        raise ValueError("Malformed RSM source.")
+    return self
+
+
 class FileCreate(BaseModel):
     title: str
-    abstract: str
+    abstract: str = ""
     owner_id: int
     source: str
 
     def validate_source(self):
-        if not self.source or not self.source.strip().startswith(":manuscript:"):
-            raise ValueError("Malformed RSM source.")
+        _validate_source(self)
+        return self
+
+
+class FileUpdate(BaseModel):
+    title: str = ""
+    abstract: str = ""
+    owner_id: int | None = None
+    source: str = ""
+
+    def validate_source(self):
+        if self.source:
+            _validate_source(self)
         return self
 
 
@@ -59,12 +76,10 @@ async def get_file(doc_id: int, db: Session = Depends(get_db)):
 @router.put("/{doc_id}")
 async def update_file(
     doc_id: int,
-    title: str,
-    abstract: str,
-    status: str,
+    file_data: FileUpdate,
     db: Session = Depends(get_db),
 ):
-    doc = await crud.update_file(doc_id, title, abstract, status, db)
+    doc = await crud.update_file(doc_id, file_data.title, db)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
     return doc
