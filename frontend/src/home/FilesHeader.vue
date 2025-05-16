@@ -9,7 +9,6 @@
 
   const columnInfo = {
     Title: { sortable: true, filterable: false, sortKey: "title" },
-    Map: { sortable: false, filterable: false, sortKey: "" },
     Tags: { sortable: false, filterable: true, sortKey: "" },
     Spacer: {},
     "Last edit": { sortable: true, filterable: false, sortKey: "last_edited_at" },
@@ -68,7 +67,6 @@
     </template>
     <!-- to complete the grid -->
     <span v-if="mode == 'list'" class="spacer spacer-1"></span>
-    <span v-if="mode == 'list'" class="spacer spacer-2"></span>
   </Header>
 </template>
 
