@@ -11,6 +11,11 @@
     { immediate: true }
   );
 
+  const saveTitle = () => {
+    if (currentTitle.value == props.file.title) return;
+    console.log("do the thing now");
+  };
+
   const editableRef = useTemplateRef("editable-ref");
   defineExpose({
     startEditing: () => editableRef.value?.startEditing(),
@@ -19,7 +24,12 @@
 </script>
 
 <template>
-  <EditableText ref="editable-ref" v-model="currentTitle" :edit-on-click="false" />
+  <EditableText
+    ref="editable-ref"
+    v-model="currentTitle"
+    :edit-on-click="false"
+    @save="saveTitle"
+  />
 </template>
 
 <style scoped>
