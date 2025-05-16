@@ -2,14 +2,8 @@
   import { ref, watch, nextTick, useTemplateRef } from "vue";
 
   const props = defineProps({
-    inputClass: {
-      type: [String, Object, Array],
-      default: "",
-    },
-    textClass: {
-      type: [String, Object, Array],
-      default: "",
-    },
+    inputClass: { type: [String, Object, Array], default: "" },
+    textClass: { type: [String, Object, Array], default: "" },
     editOnClick: { type: Boolean, default: true },
   });
   const emit = defineEmits(["save", "cancel"]);
@@ -22,7 +16,6 @@
   watch(inputValue, (newValue) => (text.value = newValue));
 
   const startEditing = () => {
-    console.log("starting");
     inputValue.value = text.value;
     isEditing.value = true;
     nextTick(() => {
@@ -60,7 +53,7 @@
 </script>
 
 <template>
-  <span>
+  <span class="file-title">
     <button
       v-if="!isEditing"
       type="button"
