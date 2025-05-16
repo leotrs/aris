@@ -8,23 +8,22 @@
     editOnClick: { type: Boolean, default: true },
   });
   const emit = defineEmits(["save", "cancel"]);
-  const inputValue = defineModel({ type: String, default: "" });
-
-  const text = ref(inputValue);
+  const text = defineModel({ type: String, default: "" });
   const isEditing = ref(false);
   const inputRef = useTemplateRef("inputRef");
+  const inputValue = ref("");
 
-  const startEditing = () => {
+  const startEditing = async () => {
     inputValue.value = text.value;
     isEditing.value = true;
-    nextTick(() => {
-      if (inputRef.value) {
-        inputRef.value.focus();
-        activate();
-        const length = inputRef.value.value.length;
-        inputRef.value.setSelectionRange(length, length);
-      }
-    });
+    console.log("starting");
+    await nextTick();
+    if (!inputRef.value) return;
+    inputRef.value.focus();
+    console.log("activating");
+    activate();
+    const length = inputRef.value.value.length;
+    inputRef.value.setSelectionRange(length, length);
   };
 
   const cancelEditing = () => {
