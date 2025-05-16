@@ -37,7 +37,7 @@
       <component :is="comp" v-bind="childProps('FileExport', 'Export')" />
       <Separator />
       <component :is="comp" v-bind="childProps('Edit', 'Rename')" @click="emit('rename')" />
-      <component :is="comp" v-bind="childProps('Copy', 'Duplicate')" />
+      <component :is="comp" v-bind="childProps('Copy', 'Duplicate')" @click="emit('duplicate')" />
       <component :is="comp" v-bind="childProps('TrashX', 'Delete')" class="danger" />
     </component>
   </div>
