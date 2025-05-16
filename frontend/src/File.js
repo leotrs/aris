@@ -47,19 +47,11 @@ export class File {
    * @param {Boolean} markDirty - Whether to mark file as needing sync
    */
   static update(file, changes, markDirty = true) {
-    // Update file properties
     Object.assign(file, changes);
-
-    // Mark file as dirty if needed
     if (markDirty) {
       file.isDirty = true;
-
-      // Trigger sync if file has store reference
-      if (file._store) {
-        file._store.queueSync(file);
-      }
+      file._store?.queueSync(file);
     }
-
     return file;
   }
 

@@ -1,5 +1,5 @@
 import { ref, computed, reactive } from 'vue';
-import { File } from './File';
+import { File } from './File.js';
 
 /**
  * Creates a file store for managing file state and synchronization

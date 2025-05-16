@@ -1,5 +1,6 @@
 <script setup>
   import { watch, useTemplateRef } from "vue";
+  import { File } from "../File.js";
 
   const props = defineProps({
     file: { type: Object, required: true },
@@ -13,7 +14,7 @@
 
   const saveTitle = () => {
     if (currentTitle.value == props.file.title) return;
-    console.log("do the thing now");
+    File.update(props.file, { title: currentTitle.value });
   };
 
   const editableRef = useTemplateRef("editable-ref");
