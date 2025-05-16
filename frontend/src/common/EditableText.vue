@@ -16,11 +16,9 @@
   const startEditing = async () => {
     inputValue.value = text.value;
     isEditing.value = true;
-    console.log("starting");
     await nextTick();
     if (!inputRef.value) return;
     inputRef.value.focus();
-    console.log("activating");
     activate();
     const length = inputRef.value.value.length;
     inputRef.value.setSelectionRange(length, length);
