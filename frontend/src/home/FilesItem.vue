@@ -153,14 +153,13 @@
   }
 
   .item.list.active {
-    & > :is(.mm-wrapper, .tag-row, .last-edited, .spacer) {
+    & > :is(.mm-wrapper) {
       display: none;
     }
 
     & > .file-title {
       font-size: 18px;
       font-weight: var(--weight-semi);
-      grid-column: 1 / 8;
       width: 100%;
     }
 
