@@ -1,12 +1,12 @@
 <script setup>
-  import { ref, inject } from "vue";
+  import { ref, inject, useTemplateRef } from "vue";
   import { IconMenu3 } from "@tabler/icons-vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
 
   const emit = defineEmits(["showFileUploadModal"]);
 
-  /* Collapsing */
+  // Collapsing
   const forceCollapsed = ref(false);
   const collapsed = ref(false);
   const toggleCollapsed = () => {
@@ -14,16 +14,20 @@
     forceCollapsed.value = !forceCollapsed.value;
   };
 
-  /* Breakpoints */
+  // Breakpoints
   const breakpoints = inject("breakpoints");
   const isMobile = inject("isMobile");
   const showMobileMenu = ref(false);
 
-  /* Keys */
+  // Keys
   useKeyboardShortcuts({
     n: () => emit("showFileUploadModal"),
     c: toggleCollapsed,
   });
+
+  // CTA
+  const menuRef = useTemplateRef("menu-ref");
+  const onCTAClick = () => menuRef.value.toggle();
 </script>
 
 <template>
@@ -44,8 +48,12 @@
         text="New File"
         :shadow="true"
         :class="{ collapsed }"
-        @click="emit('showFileUploadModal')"
+        @click="onCTAClick"
       />
+      <ContextMenu ref="menu-ref" icon="">
+        <ContextMenuItem icon="File" caption="Empty file" />
+        <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />
+      </ContextMenu>
     </div>
 
     <template v-if="isMobile">
