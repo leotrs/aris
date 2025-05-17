@@ -1,12 +1,25 @@
 <script setup>
   import {} from "vue";
-  const props = defineProps({});
+  const props = defineProps({
+    isSaving: { type: Boolean, required: true },
+    saveStatus: { type: String, required: true },
+  });
   const emit = defineEmits(["compile"]);
 </script>
 
 <template>
   <div class="topbar">
     <Button class="cta" kind="primary" text="compile" @click="emit('compile')" />
+    <span
+      class="save-status"
+      :class="{
+        saving: isSaving,
+        saved: saveStatus === 'Saved',
+        error: saveStatus === 'Save failed',
+      }"
+    >
+      {{ saveStatus }}
+    </span>
   </div>
 </template>
 
@@ -26,5 +39,21 @@
 
   .cta {
     padding-inline: 24px;
+  }
+
+  .save-status {
+    font-size: 0.8rem;
+    margin-left: 10px;
+    opacity: 0.8;
+    transition: all 0.3s ease;
+  }
+  .save-status.saving {
+    color: #f59e0b;
+  }
+  .save-status.saved {
+    color: #10b981;
+  }
+  .save-status.error {
+    color: #ef4444;
   }
 </style>

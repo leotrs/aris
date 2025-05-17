@@ -21,33 +21,6 @@
   });
   provide("file", file);
 
-  // Panel component management
-  const leftComponents = reactive([]);
-  const topComponents = reactive([]);
-  const rightComponents = reactive([]);
-  const sideRefMap = { left: leftComponents, top: topComponents, right: rightComponents };
-  const showComponent = (compName, side) => {
-    if (!sideRefMap[side]) {
-      console.warn(`Invalid side specified: ${side}`);
-      return;
-    }
-    if (!sideRefMap[side].includes(compName)) sideRefMap[side].push(compName);
-  };
-
-  const hideComponent = (compName, side) => {
-    if (!sideRefMap[side]) {
-      console.warn(`Invalid side specified: ${side}`);
-      return;
-    }
-    const index = sideRefMap[side].indexOf(compName);
-    if (index !== -1) sideRefMap[side].splice(index, 1);
-  };
-  provide("panelManager", {
-    showComponent,
-    hideComponent,
-    panels: sideRefMap,
-  });
-
   /* Focus Mode */
   const focusMode = ref(false);
   provide("focusMode", focusMode);
@@ -62,8 +35,8 @@
 
 <template>
   <div class="read-view" :class="{ focus: focusMode }">
-    <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
-    <Canvas :left="leftComponents" :right="rightComponents" :top="topComponents" />
+    <Sidebar />
+    <Canvas />
     <div class="menus" :class="{ focus: focusMode }">
       <FileMenu icon="Menu3" />
       <UserMenu />
