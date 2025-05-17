@@ -137,6 +137,10 @@
       border-left: var(--border-med) solid transparent;
     }
 
+    & .tag-row :deep(.cm-wrapper) {
+      visibility: hidden;
+    }
+
     & > .mm-wrapper {
       width: 100%;
 
@@ -161,6 +165,10 @@
       font-size: 18px;
       font-weight: var(--weight-semi);
       width: 100%;
+    }
+
+    & > .tag-row :deep(.cm-wrapper) {
+      visibility: visible;
     }
 
     & > * {
@@ -270,5 +278,9 @@
 
   :is(.item:hover, .item.focused, .item.hovered) .fm-wrapper :deep(.cm-btn) {
     opacity: 1;
+  }
+
+  :is(.item:hover, .item.focused, .item.hovered) .tag-row :deep(.cm-wrapper) {
+    visibility: visible;
   }
 </style>
