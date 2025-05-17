@@ -1,11 +1,13 @@
 <script setup>
   import {} from "vue";
   const props = defineProps({});
-  const file = defineModel({ type: Object, required: true });
+  const emit = defineEmits(["compile"]);
 </script>
 
 <template>
-  <div class="topbar"></div>
+  <div class="topbar">
+    <Button kind="primary" text="compile" @click="emit('compile')" />
+  </div>
 </template>
 
 <style scoped>
@@ -16,5 +18,7 @@
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
     width: calc(100% - var(--sidebar-width) - var(--outer-padding));
+    display: flex;
+    padding: 16px;
   }
 </style>

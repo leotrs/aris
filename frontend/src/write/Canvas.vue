@@ -13,7 +13,7 @@
   } from "vue";
   import { useElementSize, useScroll } from "@vueuse/core";
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
-  import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
+  import { useKeyboardShortcuts, registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
   import Topbar from "./Topbar.vue";
   import RSMEditor from "./RSMEditor.vue";
@@ -50,6 +50,10 @@
   );
   provide("manuscriptRef", manuscriptRef);
 
+  const onCompile = () => {
+    console.log("compiling...");
+  };
+
   /* Scroll position */
   const { y: yScroll } = useScroll(innerRef);
   const yScrollPercent = computed(
@@ -58,13 +62,14 @@
   provide("yScroll", yScrollPercent);
 
   /* Keyboard shortcuts */
+  useKeyboardShortcuts({ c: onCompile });
   registerAsFallback(manuscriptRef);
 </script>
 
 <template>
   <Suspense>
-    <div class="outer-wrapper" :class="{ focus: focusMode }">
-      <Topbar />
+    <div class="outer-wrapper">
+      <Topbar @compile="onCompile" />
 
       <div ref="inner-ref" class="inner-wrapper">
         <div ref="left-column-ref" class="left-column">
@@ -78,6 +83,7 @@
             :html-string="file.html || ''"
             :keys="true"
           />
+          <div v-else>compile your source...</div>
         </div>
       </div>
     </div>
