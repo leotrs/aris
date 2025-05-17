@@ -1,20 +1,7 @@
 <script setup>
-  import {
-    ref,
-    reactive,
-    computed,
-    watch,
-    inject,
-    provide,
-    useTemplateRef,
-    nextTick,
-    onMounted,
-    onUnmounted,
-  } from "vue";
-  import { useElementSize, useScroll } from "@vueuse/core";
-  import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
+  import { computed, watch, inject, provide, useTemplateRef } from "vue";
+  import { useScroll } from "@vueuse/core";
   import { useKeyboardShortcuts, registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
-  import axios from "axios";
   import Topbar from "./Topbar.vue";
   import RSMEditor from "./RSMEditor.vue";
 
@@ -39,6 +26,7 @@
   provide("manuscriptRef", manuscriptRef);
 
   const api = inject("api");
+  const editorRef = useTemplateRef("editor-ref");
   const onCompile = async () => {
     console.log("compiling...");
     try {
