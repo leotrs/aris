@@ -24,45 +24,7 @@
     top: { type: Array, default: () => [] },
   });
   const file = inject("file");
-
   const innerRef = useTemplateRef("inner-ref");
-  const lftColRef = useTemplateRef("leftColumnRef");
-  const midColRef = useTemplateRef("middleColumnRef");
-  const rgtColRef = useTemplateRef("rightColumnRef");
-  const columnSizes = reactive({
-    left: { width: 0, height: 0 },
-    middle: { width: 0, height: 0 },
-    right: { width: 0, height: 0 },
-    inner: { width: 0, height: 0 },
-  });
-
-  onMounted(async () => {
-    await nextTick();
-    const { width: lftColW, height: lftColH } = useElementSize(lftColRef);
-    const { width: midColW, height: midColH } = useElementSize(midColRef);
-    const { width: rgtColW, height: rgtColH } = useElementSize(rgtColRef);
-    watch(lftColW, (w) => (columnSizes.left.width = w), { immediate: true });
-    watch(midColW, (w) => (columnSizes.middle.width = w), { immediate: true });
-    watch(rgtColW, (w) => (columnSizes.right.width = w), { immediate: true });
-    watch(lftColH, (h) => (columnSizes.left.height = h), { immediate: true });
-    watch(midColH, (h) => (columnSizes.middle.height = h), { immediate: true });
-    watch(rgtColH, (h) => (columnSizes.right.height = h), { immediate: true });
-
-    const { width: innerW, height: innerH } = useElementSize(innerRef);
-    watch(innerW, (w) => (columnSizes.inner.width = w));
-    watch(innerH, (h) => (columnSizes.inner.height = h));
-  });
-  provide("columnSizes", columnSizes);
-
-  const fileSettings = reactive({
-    background: "var(--surface-page)",
-    fontSize: "16px",
-    lineHeight: "1.5",
-    fontFamily: "Source Sans 3",
-    margin: "M",
-    columns: 1,
-  });
-  provide("fileSettings", fileSettings);
 
   watch(file, async () => {
     if (!file.value || !file.value.id) return;
@@ -88,31 +50,6 @@
   );
   provide("manuscriptRef", manuscriptRef);
 
-  const isMainTitleVisible = ref(true);
-  let tearDown = () => {};
-  watch(
-    () => file.value.html,
-    async () => {
-      await nextTick(); // waits for ManuscriptWrapper to receive html
-      await nextTick(); // waits for v-html DOM to update
-      if (!manuscriptRef.value) return;
-      tearDown();
-
-      const mainTitle = manuscriptRef.value.$el.querySelector("section.level-1 > .heading.hr");
-      if (!mainTitle) return;
-
-      const { isVisible, tearDown: newTearDown } = createElementVisibilityObserver(mainTitle);
-      isMainTitleVisible.value = isVisible.value;
-
-      const stopWatch = watch(isVisible, (newVal) => (isMainTitleVisible.value = newVal));
-      tearDown = () => {
-        newTearDown();
-        stopWatch();
-      };
-    }
-  );
-  onUnmounted(() => tearDown());
-
   /* Scroll position */
   const { y: yScroll } = useScroll(innerRef);
   const yScrollPercent = computed(
@@ -122,9 +59,6 @@
 
   /* Keyboard shortcuts */
   registerAsFallback(manuscriptRef);
-
-  /* Focus mode */
-  const focusMode = inject("focusMode");
 </script>
 
 <template>
@@ -176,7 +110,7 @@
     height: calc(100% - var(--topbar-height));
     position: relative;
     top: v-bind(innerTop);
-    background-color: v-bind("fileSettings.background");
+    background-color: var(--surface-page);
     overflow-y: auto;
     justify-content: center;
     border-bottom-left-radius: 16px;
@@ -187,13 +121,6 @@
       border-radius var(--transition-duration) ease,
       height var(--transition-duration) ease,
       top var(--transition-duration) ease;
-  }
-
-  .inner-wrapper.focus {
-    top: 0;
-    height: 100%;
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
   }
 
   .left-column,
@@ -213,11 +140,5 @@
 
   :deep(.float-minimap-wrapper) {
     display: none !important;
-  }
-
-  :deep(.manuscriptwrapper) {
-    font-size: v-bind(fileSettings.fontSize) !important;
-    font-family: v-bind(` "${fileSettings.fontFamily}" `) !important;
-    line-height: v-bind(fileSettings.lineHeight) !important;
   }
 </style>
