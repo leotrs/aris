@@ -6,7 +6,7 @@
 
 <template>
   <div class="topbar">
-    <Button kind="primary" text="compile" @click="emit('compile')" />
+    <Button class="cta" kind="primary" text="compile" @click="emit('compile')" />
   </div>
 </template>
 
@@ -19,6 +19,12 @@
     border-top-right-radius: 16px;
     width: calc(100% - var(--sidebar-width) - var(--outer-padding));
     display: flex;
+    justify-content: center;
     padding: 16px;
+    border-bottom: var(--border-extrathin) solid var(--border-primary);
+  }
+
+  .cta {
+    padding-inline: 24px;
   }
 </style>
