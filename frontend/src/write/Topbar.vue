@@ -42,18 +42,18 @@
   }
 
   .save-status {
-    font-size: 0.8rem;
-    margin-left: 10px;
+    font-size: 14px;
     opacity: 0.8;
     transition: all 0.3s ease;
-  }
-  .save-status.saving {
-    color: #f59e0b;
-  }
-  .save-status.saved {
-    color: #10b981;
-  }
-  .save-status.error {
-    color: #ef4444;
+
+    &.saving {
+      color: var(--warning-500);
+    }
+    &.saved {
+      color: var(--success-500);
+    }
+    &.error {
+      color: var(--error-500);
+    }
   }
 </style>
