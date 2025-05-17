@@ -26,18 +26,6 @@
   const file = inject("file");
   const innerRef = useTemplateRef("inner-ref");
 
-  watch(file, async () => {
-    if (!file.value || !file.value.id) return;
-
-    try {
-      const response = await axios.get(`http://localhost:8000/files/${file.value.id}/content`);
-      console.log("setting file.value.html");
-      file.value.html = response.data;
-    } catch (error) {
-      console.error("Error fetching HTML:", error);
-    }
-  });
-
   const manuscriptRef = useTemplateRef("manuscript-ref");
   watch(
     () => manuscriptRef.value?.mountPoint,
@@ -50,8 +38,15 @@
   );
   provide("manuscriptRef", manuscriptRef);
 
-  const onCompile = () => {
+  const api = inject("api");
+  const onCompile = async () => {
     console.log("compiling...");
+    try {
+      const response = await api.post("render/", { source: file.value.source });
+      file.value.html = response.data;
+    } catch (error) {
+      console.error("Error compiling:", error);
+    }
   };
 
   /* Scroll position */
