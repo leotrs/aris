@@ -15,6 +15,7 @@
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
   import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
+  import RSMEditor from "./RSMEditor.vue";
 
   const props = defineProps({
     left: { type: Array, default: () => [] },
@@ -132,13 +133,7 @@
 
       <div ref="inner-ref" class="inner-wrapper">
         <div ref="left-column-ref" class="left-column">
-          <ManuscriptWrapper
-            v-if="file.html"
-            ref="manuscript-ref"
-            :html-string="file.html || ''"
-            :keys="true"
-            :show-footer="true"
-          />
+          <RSMEditor ref="editor-ref" v-model="file" />
         </div>
 
         <div ref="right-column-ref" class="right-column">
