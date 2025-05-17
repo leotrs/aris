@@ -98,9 +98,7 @@
     width: 100%;
     height: calc(100% - var(--topbar-height));
     position: relative;
-    top: v-bind(innerTop);
     background-color: var(--surface-page);
-    overflow-y: auto;
     justify-content: center;
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
@@ -120,7 +118,6 @@
     min-width: 360px;
     max-width: 720px;
     z-index: 1;
-    overflow-x: visible;
     height: fit-content;
     padding-top: 8px;
     will-change: padding-top;
