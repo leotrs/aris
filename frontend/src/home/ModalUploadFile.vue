@@ -42,7 +42,7 @@
 <template>
   <div class="md-wrapper">
     <div class="md-header">
-      <span class="text-h3">Upload New File</span>
+      <span class="text-h5">Upload New File</span>
       <ButtonClose @close="close" />
     </div>
     <div class="md-content">
@@ -73,7 +73,7 @@
     left: 50%;
     top: 50%;
     transform: translateX(-50%) translateY(-50%);
-    border: 2px solid var(--border-information);
+    border: 2px solid var(--border-primary);
     border-radius: 16px;
     padding: 16px;
     gap: 16px;
@@ -87,7 +87,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: var(--surface-information);
+    background-color: var(--surface-hover);
+    border: var(--border-thin) solid var(--border-primary);
     padding-inline: 8px;
     padding-block: 4px;
     border-radius: 8px;
@@ -109,5 +110,6 @@
     width: 100%;
     display: flex;
     justify-content: center;
+    margin-block: 8px;
   }
 </style>
