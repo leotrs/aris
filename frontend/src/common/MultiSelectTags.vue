@@ -6,14 +6,14 @@
     icon: { type: String, default: "Tag" },
   });
   const tags = defineModel({ type: Array });
-  const { tags: userTags } = inject("fileStore");
+  const fileStore = inject("fileStore");
 
   const state = reactive({
-    tagIsAssigned: userTags.value.map(() => false),
+    tagIsAssigned: fileStore.tags.value.map(() => false),
   });
   watchEffect(() => {
     const tagIds = tags.value.map((t) => t.id);
-    userTags.value.forEach((tag, idx) => {
+    fileStore.tags.value.forEach((tag, idx) => {
       state.tagIsAssigned[idx] = tagIds.includes(tag.id);
     });
   });
@@ -21,19 +21,19 @@
     () => [...state.tagIsAssigned],
     (newVal, oldVal) => {
       // On the first change, oldVal will be an empty array
-      if (oldVal.length == 0) oldVal = userTags.value.map(() => false);
+      if (oldVal.length == 0) oldVal = fileStore.tags.value.map(() => false);
 
       newVal.forEach((isNowAssigned, idx) => {
         const wasAssigned = oldVal[idx];
-        const tag = userTags.value[idx];
+        const tag = fileStore.tags.value[idx];
 
         if (isNowAssigned && !wasAssigned) {
-          if (props.fileId !== -1) addOrRemoveTag(tag.id, props.fileId, "add");
+          if (props.fileId !== -1) fileStore.toggleFileTag(tag.id, props.fileId, "add");
           if (!tags.value.some((t) => t.id === tag.id)) tags.value = tags.value.concat([tag]);
         }
 
         if (!isNowAssigned && wasAssigned) {
-          if (props.fileId !== -1) addOrRemoveTag(tag.id, props.fileId, "remove");
+          if (props.fileId !== -1) fileStore.toggleFileTag(tag.id, props.fileId, "remove");
           tags.value = tags.value.filter((t) => t.id !== tag.id);
         }
       });
@@ -52,7 +52,7 @@
 <template>
   <ContextMenu :icon="icon" placement="bottom-end">
     <TagControl
-      v-for="(tag, idx) in userTags"
+      v-for="(tag, idx) in fileStore.tags"
       :key="tag.id"
       v-model="state.tagIsAssigned[idx]"
       class="item"
@@ -61,6 +61,7 @@
     <div class="new-tag">
       <Tag
         v-model="renaming"
+        class="item"
         :tag="newTagPlaceholder"
         :active="false"
         @rename="(name) => createTag(name)"
