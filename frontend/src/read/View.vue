@@ -13,7 +13,7 @@
   // Load and provide file
   onBeforeMount(async () => {
     try {
-      const response = await api.get(`/users/${user.id}/files/${fileId.value}`);
+      const response = await api.get(`/files/${fileId.value}`);
       file.value = response.data;
     } catch (error) {
       console.error(`Failed to fetch file ${fileId.value}`, error);

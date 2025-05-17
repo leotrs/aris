@@ -21,9 +21,9 @@
   // Actions
   const router = useRouter();
   const read = () => {
-    if (!props.file || !("id" in props.file)) return;
+    if (!props.file.value || !("id" in props.file.value)) return;
+    router.push(`/${props.file.value.id}/read`);
     clearSelection();
-    router.push(`/${props.file.id}/read`);
   };
 
   // Keys
