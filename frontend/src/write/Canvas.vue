@@ -28,7 +28,7 @@
   const api = inject("api");
   const editorRef = useTemplateRef("editor-ref");
   const onCompile = async () => {
-    console.log("compiling...");
+    if (!file.value || !file.value.source) return;
     try {
       const response = await api.post("render/", { source: file.value.source });
       file.value.html = response.data;
@@ -36,6 +36,12 @@
       console.error("Error compiling:", error);
     }
   };
+  watch(
+    () => file.value?.source,
+    (newSource) => {
+      newSource && onCompile();
+    }
+  );
 
   /* Scroll position */
   const { y: yScroll } = useScroll(innerRef);
@@ -118,10 +124,9 @@
     min-width: 360px;
     max-width: 720px;
     z-index: 1;
-    height: fit-content;
-    padding-top: 8px;
-    will-change: padding-top;
-    transition: padding-top var(--transition-duration) ease;
+    height: 100%;
+    padding-top: 16px;
+    overflow-y: auto;
   }
 
   :deep(.float-minimap-wrapper) {

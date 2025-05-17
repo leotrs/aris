@@ -17,7 +17,7 @@
   pre.editor {
     position: fixed;
     width: calc((100% - 64px - 16px - 8px - 32px) * 0.5);
-    height: calc(100% - 64px - 16px - 8px - 16px);
+    height: calc(100% - 64px - 16px - 8px - 16px - 8px);
     font-family: "Source Code Pro", monospace;
     font-size: 14px;
     overflow: auto;
