@@ -25,6 +25,11 @@
     router.push(`/${props.file.value.id}/read`);
     clearSelection();
   };
+  const write = () => {
+    if (!props.file.value || !("id" in props.file.value)) return;
+    router.push(`/${props.file.value.id}/write`);
+    clearSelection();
+  };
 
   // Keys
   const { activate, deactivate } = useKeyboardShortcuts({ enter: read });
@@ -60,9 +65,9 @@
     <div class="pane-footer">
       <div class="left"></div>
       <div class="right">
-        <Button kind="tertiary" size="sm" text="Write" icon="Pencil" />
+        <Button kind="tertiary" size="sm" text="Write" icon="Pencil" @click="write" />
         <Button kind="tertiary" size="sm" text="Review" icon="FileCheck" />
-        <Button kind="primary" size="sm" text="Read" icon="Book" @click="read"></Button>
+        <Button kind="primary" size="sm" text="Read" icon="Book" @click="read" />
       </div>
     </div>
   </div>
