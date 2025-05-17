@@ -6,8 +6,7 @@
     tag: { type: Object, required: true },
   });
   const state = defineModel({ type: Boolean, default: false });
-  const { updateUserTag } = inject("userTags");
-
+  const fileStore = inject("fileStore");
   const tagRef = useTemplateRef("tagRef");
 
   const colors = {
@@ -20,17 +19,17 @@
   const setColor = (color) => {
     const newTag = JSON.parse(JSON.stringify(props.tag));
     newTag.color = color;
-    updateUserTag(props.tag, newTag);
+    fileStore.updateTag(props.tag, newTag);
   };
 
   const deleteTag = () => {
-    updateUserTag(props.tag, null);
+    fileStore.updateTag(props.tag, null);
   };
 
   const renameTag = (newName) => {
     const newTag = JSON.parse(JSON.stringify(props.tag));
     newTag.name = newName;
-    updateUserTag(props.tag, newTag);
+    fileStore.updateTag(props.tag, newTag);
   };
 </script>
 

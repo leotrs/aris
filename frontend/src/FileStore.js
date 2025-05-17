@@ -201,6 +201,20 @@ export function createFileStore(api, user) {
   };
 
   /**
+   * Add or remove a tag to/from a file
+   * @param {Object} file - The file object
+   * @param {Number|String} tagId - ID of tag to remove
+   */
+  const toggleFileTag = async (file, tagId) => {
+    if (file.tags.includes(tagId)) {
+      return await File.removeTag(file, tagId, api, user);
+    } else {
+      return await File.addTag(file, tagId, api, user);
+    }
+  };
+
+
+  /**
    * Load tags from the server
    */
   const loadTags = async () => {
@@ -287,7 +301,8 @@ export function createFileStore(api, user) {
     updateTag,
     getTags,
     addTagToFile,
-    removeTagFromFile
+    removeTagFromFile,
+    toggleFileTag
   };
 
   return store;
