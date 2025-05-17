@@ -64,12 +64,14 @@ async def create_file(
 async def update_file(
     doc_id: int,
     title: str,
+    source: str,
     db: Session,
 ):
     doc = await get_file(doc_id, db)
     if not doc:
         return None
     doc.title = title
+    doc.source = source
     db.commit()
     db.refresh(doc)
     return doc
