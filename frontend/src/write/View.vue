@@ -29,7 +29,7 @@
   const router = useRouter();
   useKeyboardShortcuts({
     "g,h": () => router.push("/"),
-    c: () => (focusMode.value = !focusMode.value),
+    /* c: () => (focusMode.value = !focusMode.value), */
   });
 </script>
 

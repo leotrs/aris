@@ -13,6 +13,7 @@
   import { useKeyboardShortcuts, registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import Topbar from "./Topbar.vue";
   import RSMEditor from "./RSMEditor.vue";
+  import { File } from "../File.js";
 
   const props = defineProps({});
   const file = inject("file");
@@ -24,7 +25,6 @@
     (newVal) => {
       if (!newVal) return;
       file.value.isMountedAt = newVal;
-      console.log(file.value);
     },
     { immediate: true }
   );
@@ -41,7 +41,8 @@
     try {
       isSaving.value = true;
       saveStatus.value = "Saving...";
-      await api.post("save/", { id: file.value.id, source: file.value.source });
+      /* await api.post("save/", { id: file.value.id, source: file.value.source }); */
+      File.update(file.value, { source: file.value.source });
       lastSaved.value = Date.now();
       saveStatus.value = "Saved";
 

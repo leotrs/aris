@@ -1,5 +1,6 @@
 <script setup>
-  import {} from "vue";
+  import { useTemplateRef } from "vue";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
   const props = defineProps({});
   const file = defineModel({ type: Object, required: true });
@@ -7,10 +8,22 @@
   function onInput(e) {
     file.value.source = e.target.textContent;
   }
+
+  // Keys
+  const editorRef = useTemplateRef("editor-ref");
+  useKeyboardShortcuts({
+    escape: () => editorRef.value === document.activeElement && editorRef.value.blur(),
+  });
 </script>
 
 <template>
-  <pre class="editor" contenteditable="true" :textContent="file.source" @input="onInput"></pre>
+  <pre
+    ref="editor-ref"
+    class="editor"
+    contenteditable="true"
+    :textContent="file.source"
+    @input="onInput"
+  ></pre>
 </template>
 
 <style scoped>
