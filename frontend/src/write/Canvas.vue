@@ -15,6 +15,7 @@
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
   import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import axios from "axios";
+  import Topbar from "./Topbar.vue";
   import RSMEditor from "./RSMEditor.vue";
 
   const props = defineProps({
@@ -129,7 +130,7 @@
 <template>
   <Suspense>
     <div class="outer-wrapper" :class="{ focus: focusMode }">
-      <!-- <Topbar /> -->
+      <Topbar />
 
       <div ref="inner-ref" class="inner-wrapper">
         <div ref="left-column-ref" class="left-column">
@@ -142,7 +143,6 @@
             ref="manuscript-ref"
             :html-string="file.html || ''"
             :keys="true"
-            :show-footer="true"
           />
         </div>
       </div>
