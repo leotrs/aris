@@ -4,7 +4,7 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
 
-  const emit = defineEmits(["showFileUploadModal"]);
+  const emit = defineEmits(["newEmptyFile", "showFileUploadModal"]);
 
   // Collapsing
   const forceCollapsed = ref(false);
@@ -28,6 +28,14 @@
   // CTA
   const menuRef = useTemplateRef("menu-ref");
   const onCTAClick = () => menuRef.value.toggle();
+  const onNewEmptyFile = () => {
+    menuRef.value.toggle();
+    emit("newEmptyFile");
+  };
+  const onUpload = () => {
+    menuRef.value.toggle();
+    emit("showFileUploadModal");
+  };
 </script>
 
 <template>
@@ -50,9 +58,9 @@
         :class="{ collapsed }"
         @click="onCTAClick"
       />
-      <ContextMenu ref="menu-ref" icon="">
-        <ContextMenuItem icon="File" caption="Empty file" />
-        <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />
+      <ContextMenu ref="menu-ref" icon="" placement="bottom-start">
+        <ContextMenuItem icon="File" caption="Empty file" @click="onNewEmptyFile" />
+        <ContextMenuItem icon="Upload" caption="Upload" @click="onUpload" />
       </ContextMenu>
     </div>
 

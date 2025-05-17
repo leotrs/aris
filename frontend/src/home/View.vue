@@ -11,7 +11,12 @@
   const isMobile = inject("isMobile");
   const fileStore = inject("fileStore");
 
-  /* Handle draggable border and pane height */
+  // New empty file
+  const newEmptyFile = () => {
+    console.log("new empty file");
+  };
+
+  // Handle draggable border and pane height
   const panesRef = useTemplateRef("panes-ref");
   const { height: panesHeight } = useElementSize(panesRef);
   const boxTopPixels = 16 + 48 + 16 + 40 + 56 + 6; // padding + topbar height + gap + pane header height + height of one item row + epsilon
@@ -30,7 +35,7 @@
     }
   );
 
-  /* Dragging should be instantaneous, thus we only want a transition when NOT dragging */
+  // Dragging should be instantaneous, thus we only want a transition when NOT dragging
   const borderRef = useTemplateRef("border-ref");
   const paneHeightTransition = computed(() => {
     if (!borderRef.value) return "";
@@ -44,7 +49,7 @@
 
 <template>
   <div :class="['view-wrapper', isMobile ? 'mobile' : '']">
-    <Sidebar @show-file-upload-modal="showModal = true" />
+    <Sidebar @new-empty-file="newEmptyFile" @show-file-upload-modal="showModal = true" />
 
     <div class="menus">
       <Button kind="tertiary" icon="Bell" />
