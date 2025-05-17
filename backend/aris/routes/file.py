@@ -78,7 +78,7 @@ async def update_file(
     file_data: FileUpdate,
     db: Session = Depends(get_db),
 ):
-    doc = await crud.update_file(doc_id, file_data.title, db)
+    doc = await crud.update_file(doc_id, file_data.title, file_data.source, db)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
     return doc

@@ -43,6 +43,7 @@
       saveStatus.value = "Saving...";
       /* await api.post("save/", { id: file.value.id, source: file.value.source }); */
       File.update(file.value, { source: file.value.source });
+      File.save(file.value, api);
       lastSaved.value = Date.now();
       saveStatus.value = "Saved";
 
