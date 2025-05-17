@@ -181,7 +181,7 @@ export class File {
       source,
       ownerId,
       // Only send tag IDs to API
-      tags: tags.map(tag => typeof tag === 'object' ? tag.id : tag)
+      tags: tags?.map(tag => typeof tag === 'object' ? tag.id : tag) ?? []
     };
   }
 }
