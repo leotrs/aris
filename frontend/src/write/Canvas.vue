@@ -1,15 +1,20 @@
 <script setup>
-  import { computed, watch, inject, provide, useTemplateRef } from "vue";
+  import {
+    ref,
+    computed,
+    watch,
+    inject,
+    provide,
+    onMounted,
+    onBeforeUnmount,
+    useTemplateRef,
+  } from "vue";
   import { useScroll } from "@vueuse/core";
   import { useKeyboardShortcuts, registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import Topbar from "./Topbar.vue";
   import RSMEditor from "./RSMEditor.vue";
 
-  const props = defineProps({
-    left: { type: Array, default: () => [] },
-    right: { type: Array, default: () => [] },
-    top: { type: Array, default: () => [] },
-  });
+  const props = defineProps({});
   const file = inject("file");
   const innerRef = useTemplateRef("inner-ref");
 
@@ -24,6 +29,61 @@
     { immediate: true }
   );
   provide("manuscriptRef", manuscriptRef);
+
+  // Auto-save
+  const autoSaveInterval = ref(30000);
+  const lastSaved = ref(Date.now());
+  const isSaving = ref(false);
+  const saveStatus = ref("");
+  const saveFile = async () => {
+    if (isSaving.value || !file.value?.source) return;
+
+    try {
+      isSaving.value = true;
+      saveStatus.value = "Saving...";
+      await api.post("save/", { id: file.value.id, source: file.value.source });
+      lastSaved.value = Date.now();
+      saveStatus.value = "Saved";
+
+      setTimeout(() => {
+        saveStatus.value === "Saved" && (saveStatus.value = "");
+      }, 3000);
+    } catch (error) {
+      console.error("Error saving file:", error);
+      saveStatus.value = "Save failed";
+    } finally {
+      isSaving.value = false;
+    }
+  };
+
+  // Watch for changes to file content
+  watch(
+    () => file.value?.source,
+    (newVal, oldVal) => {
+      if (!newVal || newVal == oldVal) return;
+      // Schedule a save after a short delay to avoid saving while typing
+      const debounceTime = 2000;
+      saveStatus.value = "Unsaved changes";
+      if (window._saveTimeout) clearTimeout(window._saveTimeout);
+      window._saveTimeout = setTimeout(() => saveFile(), debounceTime);
+    }
+  );
+
+  // Set up interval for periodic auto-save
+  let autoSaveTimer;
+  onMounted(() => {
+    autoSaveTimer = setInterval(() => {
+      // Only save if there are changes and it's been more than the interval since last save
+      const timeSinceLastSave = Date.now() - lastSaved.value;
+      if (timeSinceLastSave >= autoSaveInterval.value && file.value?.source) {
+        saveFile();
+      }
+    }, autoSaveInterval.value);
+  });
+  onBeforeUnmount(() => {
+    if (autoSaveTimer) clearInterval(autoSaveTimer);
+    if (window._saveTimeout) clearTimeout(window._saveTimeout);
+  });
 
   const api = inject("api");
   const editorRef = useTemplateRef("editor-ref");
@@ -51,14 +111,14 @@
   provide("yScroll", yScrollPercent);
 
   /* Keyboard shortcuts */
-  useKeyboardShortcuts({ c: onCompile });
+  useKeyboardShortcuts({ c: onCompile, s: saveFile });
   registerAsFallback(manuscriptRef);
 </script>
 
 <template>
   <Suspense>
     <div class="outer-wrapper">
-      <Topbar @compile="onCompile" />
+      <Topbar :save-status="saveStatus" :is-saving="isSaving" @compile="onCompile" />
 
       <div ref="inner-ref" class="inner-wrapper">
         <div ref="left-column-ref" class="left-column">
@@ -92,11 +152,6 @@
     width: calc(100% - 64px);
     left: 64px;
     border-radius: 16px;
-    will-change: width, left, border-radius;
-    transition:
-      width var(--transition-duration) ease,
-      left var(--transition-duration) ease,
-      border-radius var(--transition-duration) ease;
   }
 
   .inner-wrapper {
@@ -109,11 +164,6 @@
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
     top: var(--topbar-height);
-    will-change: border-radius, height, top;
-    transition:
-      border-radius var(--transition-duration) ease,
-      height var(--transition-duration) ease,
-      top var(--transition-duration) ease;
   }
 
   .left-column,
