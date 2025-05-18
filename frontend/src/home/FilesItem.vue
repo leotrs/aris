@@ -13,7 +13,7 @@
   const selectThisFile = () => selectFile(file.value);
   const router = useRouter();
   const readFile = () => {
-    selectFile(file.value);
+    /* selectFile(file.value); */
     router.push(`/${file.value.id}/read`);
   };
 
@@ -41,8 +41,8 @@
   const { activate, deactivate } = useKeyboardShortcuts(
     {
       ".": () => menuRef.value?.toggle(),
-      enter: selectThisFile,
-      " ": selectThisFile,
+      enter: readFile,
+      " ": readFile,
     },
     false
   );
@@ -66,7 +66,7 @@
     }"
     @mouseenter="hovered = true"
     @mouseleave="hovered = false"
-    @click="selectThisFile"
+    @click="readFile"
     @dblclick="readFile"
   >
     <template v-if="!!file">
