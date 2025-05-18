@@ -35,6 +35,8 @@
   const lastSaved = ref(Date.now());
   const isSaving = ref(false);
   const saveStatus = ref("");
+  const user = inject("user");
+
   const saveFile = async () => {
     if (isSaving.value || !file.value?.source) return;
 
@@ -43,7 +45,7 @@
       saveStatus.value = "Saving...";
       /* await api.post("save/", { id: file.value.id, source: file.value.source }); */
       File.update(file.value, { source: file.value.source });
-      File.save(file.value, api);
+      File.save(file.value, api, user);
       lastSaved.value = Date.now();
       saveStatus.value = "Saved";
 

@@ -1,5 +1,6 @@
 <script setup>
   import { ref, inject, computed, watch, useTemplateRef } from "vue";
+  import { useRouter } from "vue-router";
   import { useElementSize } from "@vueuse/core";
   import Sidebar from "./Sidebar.vue";
   import FilesPane from "./FilesPane.vue";
@@ -10,10 +11,17 @@
   const showModal = ref(false);
   const isMobile = inject("isMobile");
   const fileStore = inject("fileStore");
+  const user = inject("user");
 
   // New empty file
-  const newEmptyFile = () => {
-    console.log("new empty file");
+  const router = useRouter();
+  const newEmptyFile = async () => {
+    console.log("new empty file", user.id);
+    const newFile = await fileStore.createFile({
+      ownerId: user.id,
+      source: ":manuscript:\n  :title: New File\n\nThe possibilities are *endless*!\n\n::\n",
+    });
+    router.push(`/${newFile.id}/write`);
   };
 
   // Handle draggable border and pane height

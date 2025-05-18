@@ -62,10 +62,10 @@ export class File {
    * @param {Object} api - API instance
    * @param {Object} user - User information
    */
-  static async save(file, api) {
+  static async save(file, api, user) {
     try {
       let fileData = File.toJSON(file);
-      fileData.owner_id = fileData.ownerId;
+      fileData.owner_id = user.id;
       delete fileData.ownerId;
 
       if (file.id) {
