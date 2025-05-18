@@ -90,11 +90,11 @@
   });
 
   const api = inject("api");
-  const editorRef = useTemplateRef("editor-ref");
+
   const onCompile = async () => {
     if (!file.value || !file.value.source) return;
     try {
-      const response = await api.post("render/", { source: file.value.source });
+      const response = await api.post("render", { source: file.value.source });
       file.value.html = response.data;
     } catch (error) {
       console.error("Error compiling:", error);
@@ -102,9 +102,7 @@
   };
   watch(
     () => file.value?.source,
-    (newSource) => {
-      newSource && onCompile();
-    }
+    (newSource) => newSource && onCompile()
   );
 
   /* Scroll position */
@@ -115,7 +113,8 @@
   provide("yScroll", yScrollPercent);
 
   /* Keyboard shortcuts */
-  useKeyboardShortcuts({ c: onCompile, s: saveFile });
+  const editorRef = useTemplateRef("editor-ref");
+  useKeyboardShortcuts({ c: onCompile, s: saveFile, e: () => editorRef.value?.$el.focus() });
   registerAsFallback(manuscriptRef);
 </script>
 

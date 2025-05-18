@@ -6,7 +6,7 @@
   const file = defineModel({ type: Object, required: true });
 
   function onInput(e) {
-    file.value.source = e.target.textContent;
+    file.value.source = e.target.value;
   }
 
   // Keys
@@ -17,24 +17,26 @@
 </script>
 
 <template>
-  <pre
+  <textarea
     ref="editor-ref"
     class="editor"
-    contenteditable="true"
-    :textContent="file.source"
+    :value="file.source"
+    spellcheck="false"
+    autocomplete="off"
+    autocorrect="off"
+    autocapitalize="off"
     @input="onInput"
-  ></pre>
+  ></textarea>
 </template>
 
 <style scoped>
-  pre.editor {
+  textarea.editor {
     position: fixed;
     height: calc(100% - 64px - 16px - 8px - 16px - 8px);
     width: calc((100% - 64px - 16px - 8px - 32px) * 0.5);
     max-width: 720px;
     font-family: "Source Code Pro", monospace;
     font-size: 14px;
-    overflow: auto;
     padding: 8px;
     margin-inline: 16px 8px;
     border: var(--border-extrathin) solid var(--border-primary);
@@ -42,13 +44,14 @@
     box-shadow: inset var(--shadow-strong);
     resize: none;
     cursor: text;
-    scrollbar-gutter: stable;
     overflow-y: auto;
     white-space: pre-wrap;
     word-break: break-word;
+    background-color: var(--surface-page);
+    color: var(--text-primary);
   }
 
-  pre.editor:focus {
+  textarea.editor:focus {
     outline-color: var(--border-action);
   }
 </style>
