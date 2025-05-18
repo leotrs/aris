@@ -105,17 +105,17 @@
         @mouseenter="onMouseEnterButton"
         @mouseleave="onMouseLeaveButton"
       />
-      <SegmentedControl
-        v-if="withSideControl"
-        v-model="controlState"
-        :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']"
-        :class="visibilityClass"
-        :aria-orientation="'horizontal'"
-        role="tablist"
-        tabindex="0"
-        @mouseenter="onMouseEnterControl"
-        @mouseleave="onMouseLeaveControl"
-      />
+      <!-- <SegmentedControl
+           v-if="withSideControl"
+           v-model="controlState"
+           :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']"
+           :class="visibilityClass"
+           :aria-orientation="'horizontal'"
+           role="tablist"
+           tabindex="0"
+           @mouseenter="onMouseEnterControl"
+           @mouseleave="onMouseLeaveControl"
+           /> -->
     </div>
     <div class="sb-item-label text-default">{{ label }}</div>
   </div>

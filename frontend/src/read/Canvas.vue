@@ -18,6 +18,7 @@
   import Topbar from "./CanvasTopbar.vue";
   import Dock from "./Dock.vue";
   import Drawer from "./Drawer.vue";
+  import DockableEditor from "./DockableEditor.vue";
   import DockableSearch from "./DockableSearch.vue";
   import DockableMinimap from "./DockableMinimap.vue";
 
@@ -32,6 +33,7 @@
     /* DockableChat, */
     DockableSearch,
     DockableMinimap,
+    DockableEditor,
     /* DockableComments, */
     /* DockableSymbols, */
     /* DockableClaims, */
@@ -146,13 +148,7 @@
 
       <div ref="inner-ref" class="inner-wrapper" :class="{ focus: focusMode }">
         <Dock ref="leftColumnRef" class="left-column">
-          <component
-            :is="validDockComponents[comp]"
-            v-for="comp in left"
-            :key="comp"
-            :file="file"
-            side="left"
-          />
+          <DockableEditor v-if="left.length > 0" ref="editor-ref" v-model="file" />
         </Dock>
 
         <Dock ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">

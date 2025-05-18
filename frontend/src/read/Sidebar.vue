@@ -8,6 +8,13 @@
   const emit = defineEmits(["showComponent", "hideComponent"]);
   const panelComponents = reactive({
     /* PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a", state: false }, */
+    DockableEditor: {
+      icon: "Code",
+      label: "source",
+      preferredSide: "left",
+      key: "e",
+      state: false,
+    },
     DockableSearch: {
       icon: "Search",
       label: "search",
