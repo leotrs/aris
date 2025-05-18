@@ -7,7 +7,7 @@
   const router = useRouter();
   const emit = defineEmits(["showComponent", "hideComponent"]);
   const panelComponents = reactive({
-    PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a", state: false },
+    /* PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a", state: false }, */
     DockableSearch: {
       icon: "Search",
       label: "search",
@@ -23,14 +23,14 @@
       state: false,
     },
     Comments: { icon: "Message", label: "comments", preferredSide: "left", key: "c", state: false },
-    PanelSymbols: {
-      icon: "Variable",
-      label: "symbols",
-      preferredSide: "left",
-      key: "x",
-      state: false,
-    },
-    PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t", state: false },
+    /* PanelSymbols: {
+     *   icon: "Variable",
+     *   label: "symbols",
+     *   preferredSide: "left",
+     *   key: "x",
+     *   state: false,
+     * }, */
+    /* PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t", state: false }, */
   });
 
   // Keys

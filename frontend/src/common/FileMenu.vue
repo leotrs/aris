@@ -26,15 +26,15 @@
   <div class="fm-wrapper" :class="mode">
     <component :is="mode" ref="menu-ref" :icon="icon" button-size="btn-md">
       <template v-if="mode == 'ContextMenu'">
-        <component :is="comp" v-bind="childProps('Bolt', 'Activity')" />
-        <component :is="comp" v-bind="childProps('Clock', 'History')" />
+        <!-- <component :is="comp" v-bind="childProps('Bolt', 'Activity')" /> -->
+        <!-- <component :is="comp" v-bind="childProps('Clock', 'History')" /> -->
       </template>
-      <Separator />
+      <!-- <Separator /> -->
       <component :is="comp" v-bind="childProps('Share3', 'Share')" />
-      <component :is="comp" v-bind="childProps('UserPlus', 'Collaborate')" />
-      <Separator />
+      <!-- <component :is="comp" v-bind="childProps('UserPlus', 'Collaborate')" /> -->
+      <!-- <Separator /> -->
       <component :is="comp" v-bind="childProps('Download', 'Download')" />
-      <component :is="comp" v-bind="childProps('FileExport', 'Export')" />
+      <!-- <component :is="comp" v-bind="childProps('FileExport', 'Export')" /> -->
       <Separator />
       <component :is="comp" v-bind="childProps('Edit', 'Rename')" @click="emit('rename')" />
       <component :is="comp" v-bind="childProps('Copy', 'Duplicate')" @click="emit('duplicate')" />

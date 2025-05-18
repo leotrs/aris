@@ -69,7 +69,7 @@
 <style scoped>
   .s-wrapper {
     color: var(--extra-dark);
-    background-color: var(--surface-page);
+    background-color: transparent;
     border: 2px solid var(--border-primary);
     border-radius: 16px;
     height: 48px;
