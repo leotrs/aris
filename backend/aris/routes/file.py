@@ -15,7 +15,7 @@ def _validate_source(model):
 
 
 class FileCreate(BaseModel):
-    title: str
+    title: str = ""
     abstract: str = ""
     owner_id: int
     source: str
