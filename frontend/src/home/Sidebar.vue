@@ -86,12 +86,12 @@
     <template v-else>
       <div class="sb-menu">
         <SidebarItem :collapsed="collapsed" text="Home" />
-        <SidebarItem :collapsed="collapsed" text="Feedback" />
-        <SidebarItem :collapsed="collapsed" text="References" />
-        <Separator />
-        <SidebarItem :collapsed="collapsed" text="Read" />
-        <SidebarItem :collapsed="collapsed" text="Write" />
-        <SidebarItem :collapsed="collapsed" text="Review" />
+        <!-- <SidebarItem :collapsed="collapsed" text="Feedback" /> -->
+        <!-- <SidebarItem :collapsed="collapsed" text="References" /> -->
+        <!-- <Separator /> -->
+        <!-- <SidebarItem :collapsed="collapsed" text="Read" /> -->
+        <!-- <SidebarItem :collapsed="collapsed" text="Write" /> -->
+        <!-- <SidebarItem :collapsed="collapsed" text="Review" /> -->
         <SidebarItem :collapsed="collapsed" text="All Files" active />
         <Separator />
         <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />

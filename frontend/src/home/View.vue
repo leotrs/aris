@@ -65,20 +65,20 @@
     </div>
 
     <div ref="panes-ref" class="panes">
-      <FilesPane :style="{ height: filesHeight }" />
+      <FilesPane :style="{ height: '100%' }" />
 
-      <DragBorder
-        ref="border-ref"
-        v-model="borderPos"
-        :active="!!Object.keys(fileStore.selectedFile).length"
-        :box-top="boxTopPixels"
-        :parent-height="panesHeight"
-      />
+      <!-- <DragBorder
+           ref="border-ref"
+           v-model="borderPos"
+           :active="!!Object.keys(fileStore.selectedFile).length"
+           :box-top="boxTopPixels"
+           :parent-height="panesHeight"
+           />
 
-      <PreviewPane
-        :file="fileStore.selectedFile"
-        :style="{ height: previewHeight, top: previewTop }"
-      />
+           <PreviewPane
+           :file="fileStore.selectedFile"
+           :style="{ height: previewHeight, top: previewTop }"
+           /> -->
     </div>
 
     <div v-if="showModal" class="modal">

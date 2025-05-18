@@ -30,9 +30,9 @@
 
 <template>
   <div class="tb-wrapper" :class="{ mobile: isMobile }">
-    <div class="tb-control">
-      <SegmentedControl v-model="controlState" :icons="segmentedControlIcons" :default-active="0" />
-    </div>
+    <!-- <div class="tb-control">
+         <SegmentedControl v-model="controlState" :icons="segmentedControlIcons" :default-active="0" />
+         </div> -->
     <div class="tb-search">
       <SearchBar ref="search-bar-ref" @submit="onSearchSubmit" />
     </div>
@@ -60,5 +60,9 @@
   .tb-control {
     align-content: center;
     flex: 0;
+  }
+
+  .tb-search {
+    max-width: 500px;
   }
 </style>
