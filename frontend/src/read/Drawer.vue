@@ -28,11 +28,11 @@
       <Tabs
         ref="tabs-ref"
         v-model="activeTabIndex"
-        :labels="['Activity', 'History', 'Citation', 'Tags', 'Settings']"
-        :icons="['Bolt', 'Clock', 'Quote', 'Tag', 'FileSettings']"
+        :labels="['Citation', 'Tags', 'Settings']"
+        :icons="['Quote', 'Tag', 'FileSettings']"
       >
-        <TabPage>activity</TabPage>
-        <TabPage>history</TabPage>
+        <!-- <TabPage>activity</TabPage> -->
+        <!-- <TabPage>history</TabPage> -->
         <TabPage><DrawerCitation /></TabPage>
         <TabPage><TagRow v-model="file.tags" :file-id="file.id" /></TabPage>
         <TabPage><DrawerSettings /></TabPage>
@@ -85,7 +85,7 @@
     padding: var(--padding);
     pointer-events: none;
     box-shadow: var(--shadow-strong), var(--shadow-soft);
-    width: calc(64px * 5 + + 4px * 4 + 2 * var(--padding));
+    width: calc(64px * 3 + + 4px * 2 + 2 * var(--padding));
     height: fit-content;
     max-height: 100%;
 
