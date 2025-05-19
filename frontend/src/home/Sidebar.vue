@@ -28,14 +28,6 @@
   // CTA
   const menuRef = useTemplateRef("menu-ref");
   const onCTAClick = () => menuRef.value.toggle();
-  const onNewEmptyFile = () => {
-    menuRef.value.toggle();
-    emit("newEmptyFile");
-  };
-  const onUpload = () => {
-    menuRef.value.toggle();
-    emit("showFileUploadModal");
-  };
 </script>
 
 <template>
@@ -59,8 +51,8 @@
         @click="onCTAClick"
       />
       <ContextMenu ref="menu-ref" icon="" placement="bottom-start">
-        <ContextMenuItem icon="File" caption="Empty file" @click="onNewEmptyFile" />
-        <ContextMenuItem icon="Upload" caption="Upload" @click="onUpload" />
+        <ContextMenuItem icon="File" caption="Empty file" @click="emit('newEmptyFile')" />
+        <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />
       </ContextMenu>
     </div>
 
