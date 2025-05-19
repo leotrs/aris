@@ -1,4 +1,5 @@
 <script setup>
+  import { inject, useTemplateRef } from "vue";
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
@@ -6,10 +7,19 @@
     caption: { type: String, required: true },
     iconClass: { type: String, default: "" },
   });
+
+  const closeMenu = inject("closeMenu");
 </script>
 
 <template>
-  <button type="button" class="item" role="menuitem" tabindex="-1">
+  <button
+    ref="self-ref"
+    type="button"
+    class="item"
+    role="menuitem"
+    tabindex="-1"
+    @click="closeMenu"
+  >
     <component :is="Icons['Icon' + props.icon]" class="cmi-icon" :class="iconClass" />
     <span class="cmi-caption">{{ caption }}</span>
   </button>
