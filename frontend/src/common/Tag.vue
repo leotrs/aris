@@ -7,7 +7,7 @@
     editOnClick: { type: Boolean, default: false },
     clearOnStartRenaming: { type: Boolean, default: false },
   });
-  const emit = defineEmits(["start-renaming", "done-renaming"]);
+  const emit = defineEmits(["rename"]);
 
   const editableTextRef = useTemplateRef("editableTextRef");
   defineExpose({
@@ -32,8 +32,7 @@
       v-model="tag.name"
       :edit-on-click="editOnClick"
       :clear-on-start="clearOnStartRenaming"
-      @start="emit('start-renaming')"
-      @save="emit('done-renaming')"
+      @save="emit('rename')"
     />
     <span v-else>{{ tag.name }}</span>
   </button>
