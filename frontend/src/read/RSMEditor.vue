@@ -18,7 +18,9 @@
 
 <template>
   <div class="editor-wrapper">
-    <div class="toolbar">tools go here</div>
+    <div class="toolbar">
+      <Button kind="primary" text="compile" class="cta" />
+    </div>
     <textarea
       ref="editor-ref"
       class="editor"
@@ -34,7 +36,7 @@
 
 <style scoped>
   .editor-wrapper {
-    --toolbar-height: 32px;
+    --toolbar-height: 48px;
 
     height: calc(100% - 16px);
     margin-inline: 16px;
@@ -49,11 +51,16 @@
   }
 
   .toolbar {
+    display: flex;
     height: var(--toolbar-height);
     border-radius: 8px 8px 0 0;
     padding: 8px;
     background-color: var(--surface-hover);
     box-shadow: var(--shadow-strong);
+  }
+
+  button.cta {
+    padding-inline: 16px;
   }
 
   textarea.editor {
