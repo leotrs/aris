@@ -206,7 +206,7 @@ export function createFileStore(api, user) {
    * @param {Number|String} tagId - ID of tag to remove
    */
   const toggleFileTag = async (file, tagId) => {
-    if (file.tags.includes(tagId)) {
+    if (file.tags.map((t) => t.id).includes(tagId)) {
       return await File.removeTag(file, tagId, api, user);
     } else {
       return await File.addTag(file, tagId, api, user);
