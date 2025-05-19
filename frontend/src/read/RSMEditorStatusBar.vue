@@ -20,7 +20,7 @@
 <template>
   <div class="statusbar">
     <div class="left"><IconFiles /></div>
-    <div class="middle"><IconCode /><span>main.rsm > 1.3 > Figure 1.1</span></div>
+    <div class="middle"><IconCode /><span>main.rsm > Subsubsec. 1.3.1 > Fig. 1.3.1</span></div>
     <div class="right">
       <IconClock v-if="saveStatus === 'pending'" class="icon-pending" />
       <IconDeviceFloppy v-if="saveStatus === 'saving'" class="icon-saving" />

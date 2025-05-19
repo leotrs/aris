@@ -10,16 +10,16 @@
   const user = inject("user");
   const api = inject("api");
 
+  // File saving
   const saveFile = async (fileToSave) => {
     return await File.save(fileToSave, api, user);
   };
-
-  // Use our autoSave composable
   const { saveStatus, onInput, manualSave } = useAutoSave({
     file,
     saveFunction: saveFile,
   });
 
+  // Toolbar functions
   const onCompile = async () => {
     const response = await api.post("render", { source: file.value.source });
     file.value.html = response.data;
