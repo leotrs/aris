@@ -57,10 +57,10 @@
       class="item"
       :tag="tag"
     />
-    <div class="new-tag">
+    <Separator />
+    <div class="new-tag item">
       <Tag
         v-model="renaming"
-        class="item"
         :tag="newTagPlaceholder"
         :active="false"
         @rename="(name) => createTag(name)"
@@ -72,17 +72,8 @@
 </template>
 
 <style scoped>
-  .tag {
-    margin-right: 4px;
-    border-radius: 16px;
-    padding-inline: 8px;
-    padding-block: 4px;
-    text-wrap: nowrap;
-  }
-
   .cm-wrapper > :deep(.cm-menu > .item) {
     padding-inline: 8px;
-    gap: 8px;
   }
 
   :deep(.cm-btn svg) {
@@ -95,7 +86,7 @@
 
   .new-tag {
     &:hover {
-      background-color: var(--surface-hint);
+      background-color: var(--surface-hover);
     }
   }
 </style>

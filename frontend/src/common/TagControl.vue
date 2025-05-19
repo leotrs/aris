@@ -68,8 +68,10 @@
 <style scoped>
   .tag-control {
     display: flex;
+    gap: 4px;
+    align-items: center;
     justify-content: space-between;
-    /* highlight when child tag is focused */
+
     &:focus-within {
       background-color: var(--surface-hover);
     }

@@ -103,6 +103,7 @@
       color: var(--gray-400);
     }
   }
+
   .tag:focus-visible {
     outline: var(--border-med) solid var(--border-action);
     outline-offset: var(--border-extrathin);
