@@ -47,7 +47,7 @@
   };
 
   const createTag = () => {
-    console.log("create!");
+    fileStore.createTag(newTagPlaceholder.name);
   };
 </script>
 
