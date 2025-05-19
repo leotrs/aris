@@ -48,10 +48,7 @@
       <ContextMenuItem
         icon="Edit"
         caption="Rename"
-        @click="
-          console.log('here');
-          tagRef?.startEditing();
-        "
+        @click="tagRef?.startEditing()"
         @dblclick.stop
       />
       <ContextMenuItem
