@@ -1,7 +1,14 @@
 <script setup>
   import { inject, useTemplateRef, ref, onMounted, onBeforeUnmount } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import { IconCheck, IconClock, IconDeviceFloppy, IconX } from "@tabler/icons-vue";
+  import {
+    IconFiles,
+    IconCode,
+    IconCheck,
+    IconClock,
+    IconDeviceFloppy,
+    IconX,
+  } from "@tabler/icons-vue";
   import { File } from "../File.js";
 
   const props = defineProps({});
@@ -52,19 +59,21 @@
     }
   }
 
-  // Manual save shortcut
-  function onSaveShortcut() {
+  // Keys
+  const onSaveShortcut = () => {
     if (debounceTimeout.value) {
       clearTimeout(debounceTimeout.value);
       debounceTimeout.value = null;
     }
     saveFile();
-  }
+  };
+  const onEscape = () => {
+    editorRef.value === document.activeElement && editorRef.value.blur();
+  };
 
-  // Keys
   const editorRef = useTemplateRef("editor-ref");
   useKeyboardShortcuts({
-    escape: () => editorRef.value === document.activeElement && editorRef.value.blur(),
+    escape: onEscape,
     s: onSaveShortcut,
   });
 
@@ -115,10 +124,10 @@
       autocapitalize="off"
       @input="onInput"
     ></textarea>
-    <div class="echo">
-      <div class="left"><span>1.3 > Figure 1.1</span></div>
+    <div class="statusbar">
+      <div class="left"><IconFiles /></div>
+      <div class="middle"><IconCode /><span>main.rsm > 1.3 > Figure 1.1</span></div>
       <div class="right">
-        <!-- Status icons -->
         <IconClock v-if="saveStatus === 'pending'" class="icon-pending" />
         <IconDeviceFloppy v-if="saveStatus === 'saving'" class="icon-saving" />
         <IconCheck
@@ -195,33 +204,49 @@
     outline: none;
   }
 
-  .echo {
+  .statusbar {
     flex: 0;
     border-top: var(--border-extrathin) solid var(--border-primary);
     display: flex;
     width: 100%;
     justify-content: space-between;
-    padding-block: 2px;
     padding-inline: 8px;
   }
 
-  .echo > :is(.left, .right) {
+  .statusbar > * {
     font-size: 12px;
     line-height: 18px;
     display: flex;
     align-items: center;
     color: var(--dark);
+    padding-block: 2px;
   }
 
-  .echo > .left {
+  .statusbar > .left {
+    padding-right: 8px;
+  }
+
+  .statusbar > :is(.left, .middle) > :deep(svg) {
+    color: var(--dark);
+  }
+
+  .statusbar > .middle > :deep(svg) {
+    margin-right: 4px;
+  }
+
+  .statusbar > .middle {
     flex: 1;
   }
 
-  .echo > .right {
+  .statusbar > .middle:hover {
+    background-color: var(--surface-hint);
+  }
+
+  .statusbar > :is(.left, .right) {
     flex: 0;
   }
 
-  .echo > .right :deep(svg) {
+  .statusbar > * > :deep(svg) {
     margin: 0;
     transition: color 0.3s ease;
   }
