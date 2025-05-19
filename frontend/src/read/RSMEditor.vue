@@ -31,10 +31,9 @@
 
 <style scoped>
   textarea.editor {
-    position: fixed;
-    height: calc(100% - 64px - 16px - 8px - 16px - 8px);
-    width: calc((100% - 64px - 16px - 8px - 32px) * 0.5);
-    max-width: 720px;
+    position: relative;
+    height: calc(100% - 16px);
+    width: 100%;
     font-family: "Source Code Pro", monospace;
     font-size: 14px;
     padding: 8px;

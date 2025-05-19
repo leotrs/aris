@@ -188,7 +188,7 @@
     box-shadow: var(--shadow-soft);
 
     width: calc(100% - 64px);
-    left: 64px;
+    left: var(--sidebar-width);
     border-radius: 16px;
     will-change: width, left, border-radius;
     transition:
@@ -205,16 +205,15 @@
 
   .inner-wrapper {
     display: flex;
+    gap: 32px;
     width: 100%;
     height: calc(100% - var(--topbar-height));
     position: relative;
-    top: v-bind(innerTop);
+    top: var(--topbar-height);
     background-color: v-bind("fileSettings.background");
-    overflow-y: auto;
     justify-content: center;
     border-bottom-left-radius: 16px;
     border-bottom-right-radius: 16px;
-    top: var(--topbar-height);
     will-change: border-radius, height, top;
     transition:
       border-radius var(--transition-duration) ease,
@@ -229,30 +228,36 @@
     border-bottom-right-radius: 0;
   }
 
+  .left-column,
   .middle-column {
     flex-basis: 720px;
     flex-shrink: 1;
     flex-grow: 1;
-    min-width: 450px;
+    min-width: 250px;
     max-width: 720px;
     z-index: 1;
     overflow-x: visible;
     height: fit-content;
     padding-top: 8px;
     will-change: padding-top;
+    height: 100%;
     transition: padding-top var(--transition-duration) ease;
+  }
+
+  .middle-column {
+    overflow-y: auto;
   }
 
   .middle-column.focus {
     padding-top: 48px;
   }
 
-  .left-column,
   .right-column {
-    min-width: 100px;
-    flex-basis: 200px;
-    flex-shrink: 1;
-    flex-grow: 2;
+    position: absolute;
+    min-width: 48px;
+    flex-basis: 48px;
+    flex-shrink: 0;
+    flex-grow: 0;
     padding-inline: 16px;
     padding-block: 16px;
     height: 100%;
@@ -269,10 +274,6 @@
 
   :deep(.mm-wrapper) {
     position: fixed;
-  }
-
-  :deep(.mm-wrapper > :is(.mm-main, .mm-icons)) {
-    /* height: v-bind("minimapHeight"); */
   }
 
   :deep(.manuscriptwrapper) {
