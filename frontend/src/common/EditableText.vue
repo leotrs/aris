@@ -15,10 +15,7 @@
   const inputValue = ref("");
 
   const startEditing = async () => {
-    console.log(props.clearOnStart, text.value);
-    if (props.clearOnStart) {
-      text.value = "";
-    }
+    if (props.clearOnStart) text.value = "";
     console.log(props.clearOnStart, text.value);
 
     setTimeout(() => {
