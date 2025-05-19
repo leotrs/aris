@@ -1,15 +1,15 @@
 <script setup>
-  import { ref, useTemplateRef } from "vue";
+  import { useTemplateRef } from "vue";
   const props = defineProps({
     tag: { type: Object, required: true },
     active: { type: Boolean, default: false },
     editable: { type: Boolean, default: false },
+    editOnClick: { type: Boolean, default: false },
+    clearOnStartRenaming: { type: Boolean, default: false },
   });
-  const emit = defineEmits(["doneEditing"]);
+  const emit = defineEmits(["start-renaming", "done-renaming"]);
 
-  const shownName = ref(props.tag.name);
   const editableTextRef = useTemplateRef("editableTextRef");
-
   defineExpose({
     startEditing: () => {
       props.editable && editableTextRef.value?.startEditing();
@@ -21,18 +21,19 @@
   <button
     type="button"
     class="tag"
-    :class="[active ? 'on' : 'off', tag.color]"
+    :class="[active ? 'on' : 'off', tag?.color]"
     role="checkbox"
     :aria-checked="active"
     tabindex="0"
-    @click="$emit('click')"
   >
     <EditableText
       v-if="editable"
       ref="editableTextRef"
-      v-model="shownName"
-      :edit-on-click="false"
-      @save="(newName) => emit('doneEditing', newName)"
+      v-model="tag.name"
+      :edit-on-click="editOnClick"
+      :clear-on-start="clearOnStartRenaming"
+      @start="emit('start-renaming')"
+      @save="emit('done-renaming')"
     />
     <span v-else>{{ tag.name }}</span>
   </button>
@@ -53,6 +54,7 @@
     text-wrap: nowrap;
     height: 24px;
     text-align: center;
+    border: var(--border-thin) solid transparent;
   }
 
   .tag.on {

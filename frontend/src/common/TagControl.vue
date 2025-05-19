@@ -40,7 +40,7 @@
       :tag="tag"
       :active="state"
       :editable="true"
-      @click="state = !state"
+      @click.stop="state = !state"
       @done-editing="(newName) => renameTag(newName)"
     />
     <ContextMenu placement="right-start">

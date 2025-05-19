@@ -1,19 +1,30 @@
 <script setup>
-  import { ref, watch, nextTick, useTemplateRef } from "vue";
+  import { ref, nextTick, useTemplateRef } from "vue";
   import { useKeyboardShortcuts } from "../composables/useKeyboardShortcuts.js";
 
   const props = defineProps({
     inputClass: { type: [String, Object, Array], default: "" },
     textClass: { type: [String, Object, Array], default: "" },
     editOnClick: { type: Boolean, default: true },
+    clearOnStart: { type: Boolean, default: false },
   });
-  const emit = defineEmits(["save", "cancel"]);
   const text = defineModel({ type: String, default: "" });
+  const emit = defineEmits(["save", "cancel"]);
   const isEditing = ref(false);
   const inputRef = useTemplateRef("inputRef");
   const inputValue = ref("");
 
   const startEditing = async () => {
+    console.log(props.clearOnStart, text.value);
+    if (props.clearOnStart) {
+      text.value = "";
+    }
+    console.log(props.clearOnStart, text.value);
+
+    setTimeout(() => {
+      console.log("After 0ms timeout:", text.value);
+    });
+
     inputValue.value = text.value;
     isEditing.value = true;
     await nextTick();
