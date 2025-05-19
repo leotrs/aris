@@ -1,12 +1,20 @@
 <script setup>
-  import { inject, useTemplateRef } from "vue";
+  import { inject, useTemplateRef, ref, onMounted, onBeforeUnmount } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import { IconCheck } from "@tabler/icons-vue";
+  import { IconCheck, IconClock, IconDeviceFloppy, IconX } from "@tabler/icons-vue";
+  import { File } from "../File.js";
 
   const props = defineProps({});
   const file = defineModel({ type: Object, required: true });
-
+  const user = inject("user");
   const api = inject("api");
+
+  // Auto-save related variables
+  const saveStatus = ref("idle");
+  const lastSaved = ref(Date.now());
+  const debounceTimeout = ref(null);
+  const autoSaveInterval = 30000;
+
   const onCompile = async () => {
     const response = await api.post("render", { source: file.value.source });
     file.value.html = response.data;
@@ -14,15 +22,70 @@
 
   function onInput(e) {
     file.value.source = e.target.value;
+    saveStatus.value = "pending";
+    if (debounceTimeout.value) clearTimeout(debounceTimeout.value);
+    debounceTimeout.value = setTimeout(() => saveFile(), 2000);
+  }
+
+  async function saveFile() {
+    if (!file.value?.source) return;
+
+    try {
+      saveStatus.value = "saving";
+      await File.save(file.value, api, user);
+      lastSaved.value = Date.now();
+      saveStatus.value = "saved";
+
+      setTimeout(() => {
+        if (saveStatus.value === "saved") {
+          saveStatus.value = "idle";
+        }
+      }, 3000);
+    } catch (error) {
+      console.error("Error saving file:", error);
+      saveStatus.value = "error";
+      setTimeout(() => {
+        if (saveStatus.value === "error") {
+          saveStatus.value = "pending";
+        }
+      }, 5000);
+    }
+  }
+
+  // Manual save shortcut
+  function onSaveShortcut() {
+    if (debounceTimeout.value) {
+      clearTimeout(debounceTimeout.value);
+      debounceTimeout.value = null;
+    }
+    saveFile();
   }
 
   // Keys
   const editorRef = useTemplateRef("editor-ref");
   useKeyboardShortcuts({
     escape: () => editorRef.value === document.activeElement && editorRef.value.blur(),
+    s: onSaveShortcut,
+  });
+
+  // Set up auto-save interval
+  let autoSaveTimer;
+  onMounted(() => {
+    autoSaveTimer = setInterval(() => {
+      if (
+        saveStatus.value === "pending" ||
+        (Date.now() - lastSaved.value >= autoSaveInterval && file.value?.source)
+      ) {
+        saveFile();
+      }
+    }, autoSaveInterval);
+  });
+
+  onBeforeUnmount(() => {
+    clearInterval(autoSaveTimer);
+    clearTimeout(debounceTimeout.value);
   });
 </script>
-
 <template>
   <div class="editor-wrapper text-mono">
     <div class="toolbar">
@@ -54,15 +117,22 @@
     ></textarea>
     <div class="echo">
       <div class="left"><span>1.3 > Figure 1.1</span></div>
-      <div class="right"><IconCheck /></div>
+      <div class="right">
+        <!-- Status icons -->
+        <IconClock v-if="saveStatus === 'pending'" class="icon-pending" />
+        <IconDeviceFloppy v-if="saveStatus === 'saving'" class="icon-saving" />
+        <IconCheck
+          v-if="saveStatus === 'saved' || saveStatus === 'idle'"
+          :class="{ 'icon-idle': saveStatus === 'idle', 'icon-saved': saveStatus === 'saved' }"
+        />
+        <IconX v-if="saveStatus === 'error'" class="icon-error" />
+      </div>
     </div>
   </div>
 </template>
-
 <style scoped>
   .editor-wrapper {
     --toolbar-height: 48px;
-
     display: flex;
     flex-direction: column;
     height: calc(100% - 16px);
@@ -152,7 +222,28 @@
   }
 
   .echo > .right :deep(svg) {
-    color: var(--success-500);
     margin: 0;
+    transition: color 0.3s ease;
+  }
+
+  .icon-idle {
+    color: var(--text-tertiary);
+    opacity: 0.5;
+  }
+
+  .icon-pending {
+    color: var(--warning-500);
+  }
+
+  .icon-saving {
+    color: var(--primary-500);
+  }
+
+  .icon-saved {
+    color: var(--success-500);
+  }
+
+  .icon-error {
+    color: var(--error-500);
   }
 </style>
