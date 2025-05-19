@@ -108,4 +108,14 @@
     outline: var(--border-med) solid var(--border-action);
     outline-offset: var(--border-extrathin);
   }
+
+  .tag:has(> .editable-text > input) {
+    padding-inline: 0;
+  }
+
+  .tag > .editable-text > :deep(input) {
+    padding-block: 0;
+    background-color: transparent;
+    width: inherit;
+  }
 </style>
