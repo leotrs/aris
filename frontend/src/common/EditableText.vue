@@ -16,12 +16,6 @@
 
   const startEditing = async () => {
     if (props.clearOnStart) text.value = "";
-    console.log(props.clearOnStart, text.value);
-
-    setTimeout(() => {
-      console.log("After 0ms timeout:", text.value);
-    });
-
     inputValue.value = text.value;
     isEditing.value = true;
     await nextTick();
