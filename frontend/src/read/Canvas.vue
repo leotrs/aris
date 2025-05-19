@@ -209,7 +209,6 @@
 
   .inner-wrapper {
     display: flex;
-    gap: 32px;
     width: 100%;
     height: calc(100% - var(--topbar-height));
     position: relative;
