@@ -147,7 +147,11 @@
       <Topbar :show-title="!isMainTitleVisible" :component="validDockComponents[top.at(-1)]" />
 
       <div ref="inner-ref" class="inner-wrapper" :class="{ focus: focusMode }">
-        <Dock ref="leftColumnRef" class="left-column">
+        <Dock
+          ref="leftColumnRef"
+          class="left-column"
+          :style="{ flex: left.length > 0 ? '1' : '0' }"
+        >
           <DockableEditor v-if="left.length > 0" ref="editor-ref" v-model="file" />
         </Dock>
 
@@ -229,15 +233,14 @@
   }
 
   .left-column {
+    /* flex: 0 or 1; decided via inline component style */
   }
 
   .left-column,
   .middle-column {
-    flex: 1;
     max-width: 720px;
     z-index: 1;
     overflow-x: visible;
-    height: fit-content;
     padding-top: 16px;
     will-change: padding-top;
     height: 100%;
@@ -245,6 +248,7 @@
   }
 
   .middle-column {
+    flex: 1;
     overflow-y: auto;
   }
 
