@@ -54,7 +54,7 @@
 </script>
 
 <template>
-  <span class="file-title">
+  <span class="editable-text">
     <button
       v-if="!isEditing"
       type="button"

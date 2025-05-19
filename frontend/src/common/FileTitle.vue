@@ -28,6 +28,7 @@
   <EditableText
     ref="editable-ref"
     v-model="currentTitle"
+    class="file-title"
     :edit-on-click="false"
     @save="saveTitle"
   />
