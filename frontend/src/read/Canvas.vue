@@ -228,17 +228,17 @@
     border-bottom-right-radius: 0;
   }
 
+  .left-column {
+  }
+
   .left-column,
   .middle-column {
-    flex-basis: 720px;
-    flex-shrink: 1;
-    flex-grow: 1;
-    min-width: 250px;
+    flex: 1;
     max-width: 720px;
     z-index: 1;
     overflow-x: visible;
     height: fit-content;
-    padding-top: 8px;
+    padding-top: 16px;
     will-change: padding-top;
     height: 100%;
     transition: padding-top var(--transition-duration) ease;
@@ -246,6 +246,10 @@
 
   .middle-column {
     overflow-y: auto;
+  }
+
+  .left-column.focus {
+    padding-top: 16px;
   }
 
   .middle-column.focus {

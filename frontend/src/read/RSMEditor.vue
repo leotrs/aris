@@ -37,7 +37,7 @@
     font-family: "Source Code Pro", monospace;
     font-size: 14px;
     padding: 8px;
-    margin-inline: 16px 8px;
+    margin-inline: 16px;
     border: var(--border-extrathin) solid var(--border-primary);
     border-radius: 8px;
     box-shadow: inset var(--shadow-strong);
