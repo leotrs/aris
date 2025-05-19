@@ -2,7 +2,7 @@
   import { ref, reactive, inject, watch, watchEffect } from "vue";
 
   const props = defineProps({
-    fileId: { type: Number, default: -1 },
+    file: { type: Object, default: null },
     icon: { type: String, default: "Tag" },
   });
   const tags = defineModel({ type: Array });
@@ -23,17 +23,16 @@
       // On the first change, oldVal will be an empty array
       if (oldVal.length == 0) oldVal = fileStore.tags.value.map(() => false);
 
+      if (!props.file) return;
       newVal.forEach((isNowAssigned, idx) => {
         const wasAssigned = oldVal[idx];
         const tag = fileStore.tags.value[idx];
 
         if (isNowAssigned && !wasAssigned) {
-          if (props.fileId !== -1) fileStore.toggleFileTag(tag.id, props.fileId, "add");
+          fileStore.toggleFileTag(props.file, tag.id);
           if (!tags.value.some((t) => t.id === tag.id)) tags.value = tags.value.concat([tag]);
-        }
-
-        if (!isNowAssigned && wasAssigned) {
-          if (props.fileId !== -1) fileStore.toggleFileTag(tag.id, props.fileId, "remove");
+        } else if (!isNowAssigned && wasAssigned) {
+          fileStore.toggleFileTag(props.file, tag.id);
           tags.value = tags.value.filter((t) => t.id !== tag.id);
         }
       });
@@ -52,7 +51,7 @@
 <template>
   <ContextMenu :icon="icon" placement="bottom-end">
     <TagControl
-      v-for="(tag, idx) in fileStore.tags"
+      v-for="(tag, idx) in fileStore.tags.value"
       :key="tag.id"
       v-model="state.tagIsAssigned[idx]"
       class="item"

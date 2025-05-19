@@ -75,7 +75,7 @@
       <template v-if="mode == 'list'">
         <FileTitle ref="file-title-ref" :file="file" :class="mode == 'cards' ? 'text-label' : ''" />
 
-        <TagRow v-model="file.tags" :file-id="file.id" />
+        <TagRow v-model="file.tags" :file="file" />
         <!-- necessary because tags tend to overflow -->
         <div class="spacer"></div>
 
