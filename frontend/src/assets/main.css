@@ -60,6 +60,13 @@
   line-height: 20px;
 }
 
+.text-mono {
+  font-family: "Source Code Pro", monospace;
+  font-weight: var(--weight-regular);
+  font-size: 14px;
+  line-height: 20px;
+}
+
 
 /* Icon default state */
 .tabler-icon {
