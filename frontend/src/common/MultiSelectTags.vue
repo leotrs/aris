@@ -45,7 +45,10 @@
     name: "new tag...",
     color: "new-tag-color",
   };
-  const renaming = ref(false);
+
+  const createTag = () => {
+    console.log("create!");
+  };
 </script>
 
 <template>
@@ -60,12 +63,12 @@
     <Separator />
     <div class="new-tag item">
       <Tag
-        v-model="renaming"
         :tag="newTagPlaceholder"
         :active="false"
-        @rename="(name) => createTag(name)"
-        @click.stop="renaming = true"
-        @dblclick.stop
+        :editable="true"
+        :edit-on-click="true"
+        :clear-on-start-renaming="true"
+        @rename="createTag"
       />
     </div>
   </ContextMenu>
