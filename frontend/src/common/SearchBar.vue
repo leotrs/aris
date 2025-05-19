@@ -50,6 +50,7 @@
       @dblclick.stop
     />
     <div v-if="withButtons" class="buttons">
+      <Button kind="tertiary" icon="Regex" :disabled="buttonsDisabled" @click.stop="emit('next')" />
       <Button
         kind="tertiary"
         icon="ChevronDown"
