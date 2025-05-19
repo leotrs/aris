@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, computed, useTemplateRef } from "vue";
+  import { ref, watch, computed, provide, useTemplateRef } from "vue";
   import { useFloating, autoUpdate, offset, shift } from "@floating-ui/vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
@@ -48,6 +48,7 @@
     closeOnCloseButton: false,
     autoActivate: false,
   });
+  provide("closeMenu", close);
 
   watch(
     show,
