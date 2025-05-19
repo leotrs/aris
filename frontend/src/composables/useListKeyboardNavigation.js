@@ -56,7 +56,7 @@ export function useListKeyboardNavigation(listLengthRef, rootElementRef, useEsca
   };
 
   const clearSelection = (ev) => {
-    ev.preventDefault();
+    ev && ev.preventDefault();
     activeIndex.value = null;
   };
 
