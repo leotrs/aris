@@ -19,15 +19,15 @@
   const isMobile = inject("isMobile");
   const showMobileMenu = ref(false);
 
-  // Keys
-  useKeyboardShortcuts({
-    n: () => emit("showFileUploadModal"),
-    c: toggleCollapsed,
-  });
-
   // CTA
   const menuRef = useTemplateRef("menu-ref");
   const onCTAClick = () => menuRef.value.toggle();
+
+  // Keys
+  useKeyboardShortcuts({
+    n: onCTAClick,
+    c: toggleCollapsed,
+  });
 </script>
 
 <template>
