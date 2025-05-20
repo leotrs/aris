@@ -109,7 +109,6 @@
   }
 
   .sb-wrapper.focus {
-    opacity: 0;
     transform: translateX(-100%);
   }
 
@@ -163,5 +162,6 @@
     position: fixed;
     bottom: 21px;
     margin: 8px;
+    left: 64px;
   }
 </style>
