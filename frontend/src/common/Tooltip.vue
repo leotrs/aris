@@ -24,7 +24,6 @@
           floatingStyles.left = newStyles.left;
           floatingStyles.top = newStyles.top;
           floatingStyles.transform = newStyles.transform;
-          console.log(newStyles, floatingStyles);
         });
       }
     }
