@@ -9,15 +9,14 @@
   });
 
   const selfRef = ref(null);
-  const floatingStyles = reactive({ left: "", top: "", transform: "" });
   const isVisible = ref(false);
-
+  const floatingStyles = reactive({ left: "", top: "", transform: "" });
   watch(
     () => props.anchor,
     (newVal, oldVal) => {
       if (oldVal == null && !!newVal) {
         const { floatingStyles: styles } = useFloating(toRef(props.anchor), selfRef, {
-          middleware: [offset(8), flip(), shift()],
+          middleware: [offset(4), flip(), shift()],
           placement: props.placement,
           strategy: "fixed",
         });
@@ -46,9 +45,7 @@
     ref="selfRef"
     class="tooltip"
     :style="{
-      left: floatingStyles.left,
-      top: floatingStyles.top,
-      transform: floatingStyles.transform,
+      ...floatingStyles,
       opacity: isVisible ? 1 : 0,
       visibility: isVisible ? 'visible' : 'hidden',
     }"
