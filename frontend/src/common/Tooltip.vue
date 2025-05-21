@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive, watch, watchEffect } from "vue";
+  import { toRef, ref, reactive, watch, watchEffect } from "vue";
   import { useFloating, offset, flip, shift } from "@floating-ui/vue";
 
   const props = defineProps({
@@ -9,23 +9,23 @@
   });
 
   const selfRef = ref(null);
-  const floatingStyles = reactive({ left: "", top: "" });
+  const floatingStyles = reactive({ left: "", top: "", transform: "" });
   const isVisible = ref(false);
 
   watch(
     () => props.anchor,
     (newVal, oldVal) => {
       if (oldVal == null && !!newVal) {
-        console.log("here", props.anchor);
-        const { floatingStyles: styles } = useFloating(props.anchor, selfRef, {
-          /* middleware: [offset(8), flip(), shift()], */
+        const { floatingStyles: styles } = useFloating(toRef(props.anchor), selfRef, {
+          middleware: [offset(8), flip(), shift()],
           placement: props.placement,
-          strategy: "absolute",
+          strategy: "fixed",
         });
         watch(styles, (newStyles) => {
-          console.log("inner", newStyles);
-          floatingStyles.left = newStyles.x;
-          floatingStyles.top = newStyles.y;
+          floatingStyles.left = newStyles.left;
+          floatingStyles.top = newStyles.top;
+          floatingStyles.transform = newStyles.transform;
+          console.log(newStyles, floatingStyles);
         });
       }
     }
@@ -48,6 +48,7 @@
     :style="{
       left: floatingStyles.left,
       top: floatingStyles.top,
+      transform: floatingStyles.transform,
       opacity: isVisible ? 1 : 0,
       visibility: isVisible ? 'visible' : 'hidden',
     }"
@@ -58,7 +59,7 @@
 
 <style scoped>
   .tooltip {
-    position: absolute;
+    position: fixed;
     z-index: 1000;
     background-color: var(--gray-800);
     color: var(--extra-light);
