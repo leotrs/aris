@@ -3,6 +3,7 @@
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { File } from "../File.js";
+  import Date from "./FilesItemDate.vue";
 
   const props = defineProps({ mode: { type: String, default: "list" } });
   const file = defineModel({ type: Object, required: true });
@@ -79,7 +80,7 @@
         <!-- necessary because tags tend to overflow -->
         <div class="spacer"></div>
 
-        <div class="last-edited">{{ file.getFormattedDate() }}</div>
+        <Date :file="file" />
 
         <FileMenu
           v-if="!file.selected"
