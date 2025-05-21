@@ -1,5 +1,5 @@
 <script setup>
-  import { toRef, ref, reactive, watch, watchEffect } from "vue";
+  import { toRef, ref, watchEffect } from "vue";
   import { useFloating, offset, flip, shift, autoUpdate } from "@floating-ui/vue";
 
   const props = defineProps({
@@ -10,28 +10,15 @@
 
   const selfRef = ref(null);
   const isVisible = ref(false);
-  const floatingStyles = reactive({});
 
-  watch(
-    () => props.anchor,
-    (newVal, oldVal) => {
-      if (oldVal == null && !!newVal) {
-        const { floatingStyles: styles } = useFloating(
-          toRef(() => props.anchor),
-          selfRef,
-          {
-            middleware: [offset(4), flip(), shift()],
-            placement: props.placement,
-            strategy: "fixed",
-            whileElementsMounted: autoUpdate,
-          }
-        );
-        watch(styles, (newStyles) => {
-          floatingStyles.left = newStyles.left;
-          floatingStyles.top = newStyles.top;
-          floatingStyles.transform = newStyles.transform;
-        });
-      }
+  const { floatingStyles } = useFloating(
+    toRef(() => props.anchor),
+    selfRef,
+    {
+      middleware: [offset(4), flip(), shift()],
+      placement: props.placement,
+      strategy: "fixed",
+      whileElementsMounted: autoUpdate,
     }
   );
 
@@ -45,18 +32,20 @@
 </script>
 
 <template>
-  <div
-    v-if="anchor"
-    ref="selfRef"
-    class="tooltip"
-    :style="{
-      ...floatingStyles,
-      opacity: isVisible ? 1 : 0,
-      visibility: isVisible ? 'visible' : 'hidden',
-    }"
-  >
-    <slot>{{ content }}</slot>
-  </div>
+  <Teleport to="#app">
+    <div
+      v-if="anchor"
+      ref="selfRef"
+      class="tooltip"
+      :style="{
+        ...floatingStyles,
+        opacity: isVisible ? 1 : 0,
+        visibility: isVisible ? 'visible' : 'hidden',
+      }"
+    >
+      <slot>{{ content }}</slot>
+    </div>
+  </Teleport>
 </template>
 
 <style scoped>
