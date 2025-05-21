@@ -32,9 +32,19 @@ export class File {
       // Reference to parent store for sync operations
       _store: store,
 
-      // Method to format the timestamp for display
+      // Date methods
       getFormattedDate() {
         return relativeTime.from(new Date(this.last_edited_at));
+      },
+      getFullDateTime() {
+        return new Date(this.last_edited_at).toLocaleString(undefined, {
+          year: 'numeric',
+          month: 'long',
+          day: 'numeric',
+          hour: 'numeric',
+          minute: 'numeric',
+          second: 'numeric'
+        });
       }
     });
 
