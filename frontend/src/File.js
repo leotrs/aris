@@ -14,7 +14,7 @@ export class File {
     const reactiveFile = reactive({
       // File metadata
       id: rawData.id || null,
-      title: rawData.title || 'Untitled',
+      title: rawData.title,
       source: rawData.source || '',
       last_edited_at: rawData.last_edited_at || new Date().toISOString(),
       tags: rawData.tags || [],
@@ -34,10 +34,13 @@ export class File {
 
       // Date methods
       getFormattedDate() {
-        return relativeTime.from(new Date(this.last_edited_at));
+        const utcDate = new Date(this.last_edited_at);
+        return relativeTime.from(utcDate, Date.now());
       },
       getFullDateTime() {
-        return new Date(this.last_edited_at).toLocaleString(undefined, {
+        const date = new Date(this.last_edited_at);
+        return date.toLocaleString(undefined, {
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // ensures user’s local tz
           year: 'numeric',
           month: 'long',
           day: 'numeric',

@@ -72,6 +72,7 @@ async def update_file(
         return None
     doc.title = title
     doc.source = source
+    doc.last_edited_at = datetime.utcnow()
     db.commit()
     db.refresh(doc)
     return doc

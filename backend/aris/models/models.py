@@ -3,6 +3,7 @@ from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship, sessionmaker
 
 Base = declarative_base()
@@ -50,7 +51,8 @@ class File(Base):
     abstract = Column(Text, nullable=True)
     keywords = Column(String, nullable=True)  # comma-separated
     status = Column(Enum(FileStatus), nullable=False, default=FileStatus.DRAFT)
-    last_edited_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    last_edited_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    # created_at = Column(DateTime(timezone=True), server_default=func.now())
     doi = Column(String, unique=True, nullable=True)
     source = Column(Text, nullable=True)
     deleted_at = Column(DateTime, nullable=True)
