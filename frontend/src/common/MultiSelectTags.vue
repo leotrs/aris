@@ -75,7 +75,7 @@
 </template>
 
 <style scoped>
-  .cm-wrapper > :deep(.cm-menu > .item) {
+  .cm-menu > .item {
     padding-inline: 8px;
   }
 

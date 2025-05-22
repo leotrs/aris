@@ -19,7 +19,7 @@
   const btnRef = useTemplateRef("btn-ref");
   const menuRef = useTemplateRef("menu-ref");
   const { floatingStyles } = useFloating(btnRef, menuRef, {
-    strategy: "absolute",
+    strategy: "fixed",
     placement: props.placement,
     middleware: [offset({ mainAxis: 0, crossAxis: props.icon == "Dots" ? -8 : 0 }), shift()],
     whileElementsMounted: autoUpdate,
@@ -91,9 +91,11 @@
       />
     </template>
 
-    <div v-if="show" ref="menu-ref" class="cm-menu" role="menu" :style="floatingStyles">
-      <slot />
-    </div>
+    <Teleport to="body">
+      <div v-if="show" ref="menu-ref" class="cm-menu" role="menu" :style="floatingStyles">
+        <slot />
+      </div>
+    </Teleport>
   </div>
 </template>
 
@@ -101,21 +103,20 @@
   .cm-wrapper {
     width: fit-content;
     overflow: visible;
+  }
 
-    & > .cm-menu {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: 999;
-      background-color: var(--surface-primary);
-      padding-block: 8px;
-      border-radius: 16px;
-      min-width: fit-content;
-      box-shadow: var(--shadow-strong), var(--shadow-soft);
+  .cm-menu {
+    position: fixed;
+    overflow: hidden;
+    z-index: 999;
+    background-color: var(--surface-primary);
+    padding-block: 8px;
+    border-radius: 16px;
+    min-width: fit-content;
+    box-shadow: var(--shadow-strong), var(--shadow-soft);
 
-      & > *:not(:last-child) {
-        margin-bottom: 8px;
-      }
+    & > *:not(:last-child) {
+      margin-bottom: 8px;
     }
   }
 </style>
