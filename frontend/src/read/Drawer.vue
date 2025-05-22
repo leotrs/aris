@@ -34,7 +34,7 @@
         <!-- <TabPage>activity</TabPage> -->
         <!-- <TabPage>history</TabPage> -->
         <TabPage><DrawerCitation /></TabPage>
-        <TabPage><TagRow v-model="file.tags" :file-id="file.id" /></TabPage>
+        <TabPage><TagRow v-model="file.tags" :file="file" /></TabPage>
         <TabPage><DrawerSettings /></TabPage>
       </Tabs>
     </div>

@@ -32,7 +32,7 @@
 </script>
 
 <template>
-  <Teleport to="#app">
+  <Teleport to="body">
     <div
       v-if="anchor"
       ref="selfRef"

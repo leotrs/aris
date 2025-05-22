@@ -83,7 +83,6 @@
 
     try {
       const response = await axios.get(`http://localhost:8000/files/${file.value.id}/content`);
-      console.log("setting file.value.html");
       file.value.html = response.data;
     } catch (error) {
       console.error("Error fetching HTML:", error);
@@ -96,7 +95,6 @@
     (newVal) => {
       if (!newVal) return;
       file.value.isMountedAt = newVal;
-      console.log(file.value);
     },
     { immediate: true }
   );

@@ -125,6 +125,16 @@ html, body {
   height: 100%;
   width: 100%;
 }
+
+/* General styles */
+body {
+  font-family: "Source Sans 3", sans-serif;
+  font-weight: var(--weight-regular);
+  font-size: 16px;
+  line-height: 1.25;
+  color: var(--extra-dark);
+}
+
 /* Interactive focus/hover states */
 /* Transient hover or keyboard focus highlight */
 .item:hover,
