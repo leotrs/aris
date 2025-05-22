@@ -16,7 +16,7 @@
   };
   const columnState = reactive({
     Title: null,
-    Progress: null,
+    /* Progress: null, */
     Tags: null,
     "Last edit": null,
     /* Owner: null */
