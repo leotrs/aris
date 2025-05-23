@@ -10,10 +10,6 @@
         type: String,
         required: true,
       },
-      replacements: {
-        type: Object,
-        default: () => ({ "hr-info": FeedbackIcon }),
-      },
     },
 
     emits: ["mounted-at"],
@@ -23,7 +19,6 @@
       expose({ mountPoint: mountPointRef });
 
       const makeRenderFn = (htmlString) => {
-        // Function to convert DOM nodes to VNodes
         const createVNode = (node) => {
           // Handle text nodes
           if (node.nodeType === Node.TEXT_NODE) {
@@ -38,17 +33,15 @@
             const compProps = {};
 
             // Check if this is a div with a class that should be replaced
-            let isReplacement = false;
             let replacementComponent = null;
+            let isHrInfo = false;
 
             if (node.tagName.toLowerCase() === "div" && node.hasAttribute("class")) {
               const classNames = node.getAttribute("class").split(/\s+/).filter(Boolean);
-              for (const className of classNames) {
-                if (props.replacements?.[className]) {
-                  isReplacement = true;
-                  replacementComponent = props.replacements[className];
-                  break;
-                }
+
+              // Check for hr-info class
+              if (classNames.includes("hr-info")) {
+                isHrInfo = true;
               }
             }
 
@@ -81,14 +74,6 @@
               else if (["id", "href", "data-nodeid", "tabindex"].includes(attr.name)) {
                 data[attr.name] = attr.value;
               }
-              // For components, convert attributes to props
-              else if (isReplacement) {
-                // Convert kebab-case to camelCase for component props
-                const camelProp = attr.name.replace(/-([a-z])/g, (_, letter) =>
-                  letter.toUpperCase()
-                );
-                compProps[camelProp] = attr.value;
-              }
               // Handle other attributes
               else {
                 attrs[attr.name] = attr.value;
@@ -104,17 +89,11 @@
               .map(createVNode)
               .filter((vnode) => vnode !== null && vnode !== "");
 
-            // If this is a replacement component, pass children as slot
-            if (isReplacement) {
-              // For a component, we should pass props directly
-              return h(
-                replacementComponent,
-                { ...compProps, ...data }, // Combine props and other data
-                { default: () => (children.length ? children : undefined) }
-              );
+            // If this is hr-info, append FeedbackIcon to children
+            if (isHrInfo) {
+              children.push(h(FeedbackIcon));
             }
 
-            // Otherwise create regular VNode
             return h(node.tagName.toLowerCase(), data, children.length ? children : undefined);
           }
 
