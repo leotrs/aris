@@ -11,8 +11,8 @@
         required: true,
       },
       replacements: {
-        type: Array,
-        default: () => [{ className: "hr-info", component: FeedbackIcon }],
+        type: Object,
+        default: () => ({ "hr-info": FeedbackIcon }),
       },
     },
 
@@ -23,14 +23,6 @@
       expose({ mountPoint: mountPointRef });
 
       const makeRenderFn = (htmlString) => {
-        // Build a map for quick component lookup by class name
-        const replacementMap = {};
-        props.replacements.forEach((item) => {
-          if (item.className && item.component) {
-            replacementMap[item.className] = item.component;
-          }
-        });
-
         // Function to convert DOM nodes to VNodes
         const createVNode = (node) => {
           // Handle text nodes
@@ -43,7 +35,7 @@
             // Extract attributes
             const data = {};
             const attrs = {};
-            const props = {}; // For component props
+            const compProps = {};
 
             // Check if this is a div with a class that should be replaced
             let isReplacement = false;
@@ -52,9 +44,9 @@
             if (node.tagName.toLowerCase() === "div" && node.hasAttribute("class")) {
               const classNames = node.getAttribute("class").split(/\s+/).filter(Boolean);
               for (const className of classNames) {
-                if (replacementMap[className]) {
+                if (props.replacements?.[className]) {
                   isReplacement = true;
-                  replacementComponent = replacementMap[className];
+                  replacementComponent = props.replacements[className];
                   break;
                 }
               }
@@ -95,7 +87,7 @@
                 const camelProp = attr.name.replace(/-([a-z])/g, (_, letter) =>
                   letter.toUpperCase()
                 );
-                props[camelProp] = attr.value;
+                compProps[camelProp] = attr.value;
               }
               // Handle other attributes
               else {
@@ -117,7 +109,7 @@
               // For a component, we should pass props directly
               return h(
                 replacementComponent,
-                { ...props, ...data }, // Combine props and other data
+                { ...compProps, ...data }, // Combine props and other data
                 { default: () => (children.length ? children : undefined) }
               );
             }
