@@ -21,11 +21,15 @@
     <div class="right">
       <div class="wrapper">
         <div class="top">
-          <label>Email</label>
-          <input type="text" />
-          <label>Password</label>
-          <input type="password" />
-          <div class="forgot"><p>Forgot password?</p></div>
+          <div class="text-input">
+            <label class="text-label">Email</label>
+            <input type="text" />
+          </div>
+          <div class="text-input">
+            <label class="text-label">Password</label>
+            <input type="password" />
+            <div class="footer text-caption"><p>Forgot password?</p></div>
+          </div>
         </div>
         <div class="bottom">
           <Button kind="primary" text="Login" @click="onLogin" />
@@ -56,22 +60,65 @@
     background-color: var(--surface-primary);
     height: 100%;
     width: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 48px;
   }
 
   .right .wrapper {
     width: 60%;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+
+    & > * {
+      width: 100%;
+    }
   }
 
   .right .wrapper .top {
     display: flex;
     flex-direction: column;
+    gap: 16px;
+  }
+
+  .right .bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
   }
 
   .right .bottom button {
     width: 100%;
+
+    & :deep(.btn-text) {
+      margin: 0 auto;
+    }
+  }
+
+  .text-input {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .text-input label {
+    padding-left: 8px;
+  }
+
+  .text-input input {
+    height: 36px;
+    background-color: transparent;
+    border-radius: 12px;
+    border: var(--border-thin) solid var(--border-primary);
+    padding-inline: 8px;
+  }
+
+  .text-input input:focus-visible {
+    background-color: var(--white);
+    border-color: var(--border-action);
+  }
+
+  .text-input .footer {
+    margin-top: 4px;
+    padding-left: 8px;
   }
 </style>
