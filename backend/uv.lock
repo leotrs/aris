@@ -59,6 +59,7 @@ dependencies = [
     { name = "psycopg2" },
     { name = "rsm-markup" },
     { name = "sqlalchemy" },
+    { name = "tree-sitter-rsm" },
     { name = "ujson" },
     { name = "uvicorn" },
 ]
@@ -70,8 +71,9 @@ requires-dist = [
     { name = "fastapi", specifier = ">=0.115.11" },
     { name = "lxml", specifier = ">=5.3.2" },
     { name = "psycopg2", specifier = ">=2.9.10" },
-    { name = "rsm-markup", specifier = ">=0.2.6" },
+    { name = "rsm-markup", specifier = ">=0.2.10" },
     { name = "sqlalchemy", specifier = ">=2.0.39" },
+    { name = "tree-sitter-rsm", specifier = ">=0.1.12" },
     { name = "ujson", specifier = ">=5.10.0" },
     { name = "uvicorn", specifier = ">=0.34.0" },
 ]
@@ -462,7 +464,7 @@ wheels = [
 
 [[package]]
 name = "rsm-markup"
-version = "0.2.9"
+version = "0.2.10"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "fs" },
@@ -476,9 +478,9 @@ dependencies = [
     { name = "types-ujson" },
     { name = "ujson" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/b1/15/66906424bd102cfad80f32b9f74ac7a62dda01f38f5bb9a9799247c7bb15/rsm_markup-0.2.9.tar.gz", hash = "sha256:6f40ae006508d23442251ba5d7a18a4e692f57356b3066ede76682d5c4715139", size = 216308 }
+sdist = { url = "https://files.pythonhosted.org/packages/44/b3/2c98fd915902647e3584270d0436c62ec50061f9d67a520fc8335f4cf90e/rsm_markup-0.2.10.tar.gz", hash = "sha256:a9d64df7fab5067e7940e670b70993e9efe5ba128d57d659099d0eb7a8db6f29", size = 217877 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/0f/fb/922885e89e38cc6f73403dde83ed2926bcea039b89550e9a5561fb8b1729/rsm_markup-0.2.9-py3-none-any.whl", hash = "sha256:182ed8347e91794893a32b2fa2be3b1dfbd0119abcc0da498ef70f46698cd918", size = 243401 },
+    { url = "https://files.pythonhosted.org/packages/f5/71/715f39cafedb0fb747501953084b2e4e8021e8c4cd3b3e5c6579353a9be9/rsm_markup-0.2.10-py3-none-any.whl", hash = "sha256:d03fafba3c824970c8c9529781809ed14b2cdbcbc850eff1ec67fcf42c6cc358", size = 245353 },
 ]
 
 [[package]]
@@ -585,17 +587,17 @@ wheels = [
 
 [[package]]
 name = "tree-sitter-rsm"
-version = "0.1.6"
+version = "0.1.12"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/82/d3/e357d314fa8e0da4efa6410351f4947b29982cb2624ae2500aba3a7e3dd3/tree_sitter_rsm-0.1.6.tar.gz", hash = "sha256:31b9056d42801ffd8c6dd7df7e0f9fa8669d5fa774f3ff8a42a31cd583406e9b", size = 57554 }
+sdist = { url = "https://files.pythonhosted.org/packages/cd/25/fc30b095bd302580329ac57d2ba7b028bedd1fc625561eb65286edc8d01b/tree_sitter_rsm-0.1.12.tar.gz", hash = "sha256:cd11922ab6538b874f65f88e8ec3ef544b7a53e437ec247f64258b5cbb1f5275", size = 60988 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a8/9d/dc972dd5165c6bf2bb02fb9f856ebe913b0f56e47edcc76b28425bf309a6/tree_sitter_rsm-0.1.6-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:73da4866e91f39b2658b151d281df598132c68d8f657d1a789b0a888b19a2065", size = 29407 },
-    { url = "https://files.pythonhosted.org/packages/db/b7/bf4d2d947e3e021dd399134393bb35c25839470cad6fc0bdc02f6475cc2d/tree_sitter_rsm-0.1.6-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:72e38bc2a9203448e368bb477faf828dfe037b63b5ef238992822a5dbe3ce4c3", size = 31039 },
-    { url = "https://files.pythonhosted.org/packages/89/5f/9794b5560e3d6e313d03a106a17e3f83589445134166a3e13c210a7cc435/tree_sitter_rsm-0.1.6-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:2c5541418762bbab836dcc24b13ba48bbb6d191296818247fcffa156649ef60a", size = 53459 },
-    { url = "https://files.pythonhosted.org/packages/30/b1/3cce09166892621bb4a665121bf53555350e910bb87db2093958b98aabe4/tree_sitter_rsm-0.1.6-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:56503445ac61fa334a025aaac43b414f0f480f710a7a7f3c1ac9f6ebb972b94d", size = 46648 },
-    { url = "https://files.pythonhosted.org/packages/ab/88/3a2f003ba7a14b85d34a432e218bc6c96905087db7970191b922aad232c9/tree_sitter_rsm-0.1.6-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:cc3803edcab6724d5bcb993f7be18211627d498ff2a3fdb53bb6bc776c9a149b", size = 43694 },
-    { url = "https://files.pythonhosted.org/packages/4a/d0/3470c3895f082bfa673b530ad5e627e9b8961214309096e2b73c002bbf41/tree_sitter_rsm-0.1.6-cp38-abi3-win_amd64.whl", hash = "sha256:04a47272eca76bcc0bd8e5197fc2fd680c316c4d4ecf0c6e2391eda9f6eea7e3", size = 32352 },
-    { url = "https://files.pythonhosted.org/packages/84/82/8a8556a68043938fbc8d0b73dbb617dfe79a93265a00975f399ad182dc75/tree_sitter_rsm-0.1.6-cp38-abi3-win_arm64.whl", hash = "sha256:9f5acc06c9d41e2d7709a7d70bcff05491cd7fe6f57e9ac2e246d88c07bae705", size = 30646 },
+    { url = "https://files.pythonhosted.org/packages/b0/52/4ab1ec7f9acbf3d708c1594e14b57ff3d625f827d33766c97b5461061940/tree_sitter_rsm-0.1.12-cp38-abi3-macosx_10_9_x86_64.whl", hash = "sha256:ed038e1ad656a6255b7d553bf17208b174c49dadc26536e52e089efba73aa6ee", size = 30770 },
+    { url = "https://files.pythonhosted.org/packages/86/1c/9e1a3c3d5908f062fd9748d065e2f6d7d1574b321739412d3a930b14e3f8/tree_sitter_rsm-0.1.12-cp38-abi3-macosx_11_0_arm64.whl", hash = "sha256:8869d5188003a66b0c8b9d785c67bf07a458fb2520cb7cc62de743ee28e945cb", size = 32602 },
+    { url = "https://files.pythonhosted.org/packages/34/6f/7b1767115356c45e1f09972679d259cba74d1d11c37010320d3f3de37476/tree_sitter_rsm-0.1.12-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f814fbff6980cba02ee2a7cb48e9bc024f52ea9bc1ddc58b8a48fd5dfae9cf82", size = 55199 },
+    { url = "https://files.pythonhosted.org/packages/55/cc/ab2f2318f5a7ac044bb2420e58c8f3c2d6148726b1bacc2ff2a0a1524568/tree_sitter_rsm-0.1.12-cp38-abi3-manylinux_2_5_x86_64.manylinux1_x86_64.manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:672a782b3bea1dbdc389cd8a22d456d8c0c02ddb7f60238d3005274ab44f415d", size = 48151 },
+    { url = "https://files.pythonhosted.org/packages/78/35/428dc3dbf7a27792b29dd25f5f2fe34e8ee2fe3816b563e143a702acdb41/tree_sitter_rsm-0.1.12-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:52fe1c8a4360e1f94b928b1a06f9ee1261400cb26ff224a2cb0710d75ef48b2d", size = 45174 },
+    { url = "https://files.pythonhosted.org/packages/c7/7b/2e939cf73056adb7db7b1b5bea80bc22b55707001eb519d77cebb4d79c3f/tree_sitter_rsm-0.1.12-cp38-abi3-win_amd64.whl", hash = "sha256:24de9dbc548f426d2371c62dd17e8c7dcc45fb3aea4f1a408f25a7090472bd1a", size = 33825 },
+    { url = "https://files.pythonhosted.org/packages/85/d3/646c868b4c127b013d7475718282a41c8ccb80a136e1822fc97726836bcb/tree_sitter_rsm-0.1.12-cp38-abi3-win_arm64.whl", hash = "sha256:7ac5ff35d824e45c09787848e1b0b77ba2b5049ec17caca8767128647cd5f71d", size = 32196 },
 ]
 
 [[package]]

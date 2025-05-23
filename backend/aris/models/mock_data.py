@@ -27,8 +27,8 @@ MOCK_FILES = [
         status=FileStatus.DRAFT,
         owner_id=1,
         source="""\
-        :manuscript:
-          :title: Just a title
+        :rsm:
+        # Just a title
         ::""",
     ),
     File(
@@ -38,8 +38,8 @@ MOCK_FILES = [
         status=FileStatus.UNDER_REVIEW,
         owner_id=2,
         source="""\
-        :manuscript:
-          :title: My Title
+        :rsm:
+        # My Title
 
         Lorem ipsum.
 
@@ -53,12 +53,11 @@ MOCK_FILES = [
         status=FileStatus.PUBLISHED,
         owner_id=3,
         source="""\
-        :manuscript:
+        :rsm:
 
         Lorem ipsum.
 
-        :section:
-          :title: section title
+        ## Section title
 
         Lorem ipsum.
 
