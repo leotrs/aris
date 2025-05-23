@@ -39,9 +39,10 @@
   <div class="editor-wrapper text-mono">
     <div class="toolbar">
       <div class="left">
+        <!-- This should be tabs NOT segmented control... -->
+        <!-- <SegmentedControl :icons="['Code', 'Files']" :default-active="0" />
+             <HSeparator /> -->
         <Button kind="tertiary" size="sm" icon="Heading" />
-        <Button kind="tertiary" size="sm" icon="Bold" />
-        <Button kind="tertiary" size="sm" icon="Italic" />
         <Button kind="tertiary" size="sm" icon="List" />
         <Button kind="tertiary" size="sm" icon="ListNumbers" />
         <Button kind="tertiary" size="sm" icon="Math" />
@@ -86,13 +87,18 @@
   .toolbar {
     flex: 0;
     display: flex;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
     justify-content: space-between;
     min-height: var(--toolbar-height);
     max-height: calc(var(--toolbar-height) * 2 + 8px);
     border-radius: 8px 8px 0 0;
     padding: 8px;
+    gap: 16px;
     background-color: var(--surface-hover);
+  }
+
+  .toolbar .h-sep {
+    margin-inline: 8px;
   }
 
   .toolbar > .left {

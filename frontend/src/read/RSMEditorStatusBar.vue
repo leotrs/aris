@@ -1,12 +1,5 @@
 <script setup>
-  import {
-    IconFiles,
-    IconCode,
-    IconCheck,
-    IconClock,
-    IconDeviceFloppy,
-    IconX,
-  } from "@tabler/icons-vue";
+  import { IconCode, IconCheck, IconClock, IconDeviceFloppy, IconX } from "@tabler/icons-vue";
 
   defineProps({
     saveStatus: {
@@ -19,7 +12,6 @@
 
 <template>
   <div class="statusbar">
-    <div class="left"><IconFiles /></div>
     <div class="middle"><IconCode /><span>main.rsm > Subsubsec. 1.3.1 > Fig. 1.3.1</span></div>
     <div class="right">
       <IconClock v-if="saveStatus === 'pending'" class="icon-pending" />
