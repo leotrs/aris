@@ -2,7 +2,7 @@
   import { inject, reactive } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import SidebarItem from "@/read/SidebarItem.vue";
+  import SidebarItem from "./SidebarItem.vue";
 
   const router = useRouter();
   const emit = defineEmits(["showComponent", "hideComponent"]);
