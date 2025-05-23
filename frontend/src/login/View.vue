@@ -60,6 +60,9 @@
     background-color: var(--surface-primary);
     height: 100%;
     width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
   }
 
   .right .wrapper {
@@ -120,5 +123,6 @@
   .text-input .footer {
     margin-top: 4px;
     padding-left: 8px;
+    font-size: 12px;
   }
 </style>
