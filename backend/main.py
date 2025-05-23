@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from aris.routes import file_router, tag_router, user_router, render_router
+from aris.routes import file_router, tag_router, user_router, render_router, auth_router
 
 app = FastAPI()
 
@@ -21,6 +21,8 @@ app.include_router(user_router)
 app.include_router(file_router)
 app.include_router(tag_router)
 app.include_router(render_router)
+app.include_router(auth_router)
+
 
 @app.middleware("http")
 async def add_no_cache_headers(request, call_next):

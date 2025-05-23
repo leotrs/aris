@@ -1,38 +1,69 @@
 <script setup>
-  import {} from "vue";
+  import { ref, inject } from "vue";
   import { useRouter } from "vue-router";
 
   const router = useRouter();
+  const email = ref("");
+  const password = ref("");
+  const isLoading = ref(false);
+  const error = ref("");
+  const api = inject("api");
 
-  const onLogin = () => {
-    router.push("/");
+  const onLogin = async () => {
+    if (!email.value || !password.value) {
+      error.value = "Please fill in all fields";
+      return;
+    }
+
+    isLoading.value = true;
+    error.value = "";
+    try {
+      const response = await api.post("/login", {
+        email: email.value,
+        password: password.value,
+      });
+      localStorage.setItem("accessToken", response.data.access_token);
+      localStorage.setItem("refreshToken", response.data.refresh_token);
+
+      router.push("/");
+    } catch (err) {
+      error.value = err.response?.data?.detail || err.message || "Login failed";
+    } finally {
+      isLoading.value = false;
+    }
   };
 </script>
 
 <template>
   <div class="view">
-    <div class="left">
-      <div class="logo"></div>
-      <div class="tagline">
-        <p>Scientific publishing.</p>
-        <p>Web-native. Human-first</p>
-      </div>
-    </div>
+    <!-- <div class="left">
+         <div class="logo"></div>
+         <div class="tagline">
+         <p>Scientific publishing.</p>
+         <p>Web-native. Human-first</p>
+         </div>
+         </div> -->
     <div class="right">
       <div class="wrapper">
         <div class="top">
           <div class="text-input">
             <label class="text-label">Email</label>
-            <input type="text" />
+            <input v-model="email" type="text" />
           </div>
           <div class="text-input">
             <label class="text-label">Password</label>
-            <input type="password" />
+            <input v-model="password" type="password" />
             <div class="footer text-caption"><p>Forgot password?</p></div>
           </div>
         </div>
         <div class="bottom">
-          <Button kind="primary" text="Login" @click="onLogin" />
+          <div v-if="error" class="error-message">{{ error }}</div>
+          <Button
+            kind="primary"
+            :text="isLoading ? 'Logging in...' : 'Login'"
+            :disabled="isLoading"
+            @click="onLogin"
+          />
           <Button kind="secondary" text="Register" />
         </div>
       </div>
@@ -59,7 +90,8 @@
   .right {
     background-color: var(--surface-primary);
     height: 100%;
-    width: 50%;
+    /* width: 50%; */
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -123,6 +155,5 @@
   .text-input .footer {
     margin-top: 4px;
     padding-left: 8px;
-    font-size: 12px;
   }
 </style>
