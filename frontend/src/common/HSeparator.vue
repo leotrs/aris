@@ -3,11 +3,11 @@
 </script>
 
 <template>
-  <div class="sep"></div>
+  <div class="h-sep"></div>
 </template>
 
 <style scoped>
-  .sep {
-    border-bottom: var(--border-thin) solid var(--gray-200);
+  .h-sep {
+    border-right: var(--border-thin) solid var(--gray-200);
   }
 </style>
