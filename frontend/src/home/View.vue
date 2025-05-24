@@ -20,9 +20,9 @@
     console.log("new empty file", user.id);
     const newFile = await fileStore.value.createFile({
       ownerId: user.id,
-      source: ":manuscript:\n  :title: New File\n\nThe possibilities are *endless*!\n\n::\n",
+      source: ":rsm:\n# New File\n\nThe possibilities are *endless*!\n\n::\n",
     });
-    router.push(`/${newFile.id}/write`);
+    router.push(`/file/${newFile.id}`);
   };
 
   // Handle draggable border and pane height
