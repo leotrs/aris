@@ -1,8 +1,16 @@
 <script setup>
   import { useTemplateRef } from "vue";
+  import { useRouter } from "vue-router";
 
   const menuRef = useTemplateRef("menu-ref");
   const onClick = () => menuRef.value.toggle();
+
+  const router = useRouter();
+  const onLogout = () => {
+    localStorage.removeItem("accessToken");
+    localStorage.removeItem("refreshToken");
+    router.push("/login");
+  };
 </script>
 
 <template>
@@ -16,7 +24,7 @@
       <ContextMenuItem icon="Lifebuoy" caption="Help" />
       <ContextMenuItem icon="MessageChatbot" caption="Feedback" />
       <Separator />
-      <ContextMenuItem icon="Logout" caption="Logout" />
+      <ContextMenuItem icon="Logout" caption="Logout" @click="onLogout" />
     </ContextMenu>
   </div>
 </template>
