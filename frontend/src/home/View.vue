@@ -18,11 +18,15 @@
   const router = useRouter();
   const newEmptyFile = async () => {
     console.log("new empty file", user.id);
-    const newFile = await fileStore.value.createFile({
-      ownerId: user.id,
-      source: ":rsm:\n# New File\n\nThe possibilities are *endless*!\n\n::\n",
-    });
-    router.push(`/file/${newFile.id}`);
+    try {
+      const newFile = await fileStore.value.createFile({
+        ownerId: user.id,
+        source: ":rsm:\n# New File\n\nThe possibilities are *endless*!\n\n::\n",
+      });
+      router.push(`/file/${newFile.id}`);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   // Handle draggable border and pane height

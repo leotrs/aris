@@ -86,7 +86,7 @@ export class File {
         await api.put(`/files/${file.id}`, fileData);
       } else {
         // Create new file
-        const response = await api.post(`/files/`, fileData);
+        const response = await api.post(`/files`, fileData);
         Object.assign(file, response.data);
       }
 
