@@ -34,9 +34,9 @@
       owner_id: user.id,
       title: file.value.title + " (Copy)",
     };
-    fileStore.createFile(fileData);
+    fileStore.value.createFile(fileData);
   };
-  const onDelete = () => fileStore.deleteFile(file.value);
+  const onDelete = () => fileStore.value.deleteFile(file.value);
 
   // Keys
   const { activate, deactivate } = useKeyboardShortcuts(

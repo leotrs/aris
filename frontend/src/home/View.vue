@@ -18,7 +18,7 @@
   const router = useRouter();
   const newEmptyFile = async () => {
     console.log("new empty file", user.id);
-    const newFile = await fileStore.createFile({
+    const newFile = await fileStore.value.createFile({
       ownerId: user.id,
       source: ":manuscript:\n  :title: New File\n\nThe possibilities are *endless*!\n\n::\n",
     });
@@ -31,13 +31,13 @@
   const boxTopPixels = 16 + 48 + 16 + 40 + 56 + 6; // padding + topbar height + gap + pane header height + height of one item row + epsilon
   const borderPos = ref(0);
   const filesHeight = computed(() =>
-    fileStore.selectedFile.value?.id ? `calc(${borderPos.value}%)` : "100%"
+    fileStore.value?.selectedFile.value?.id ? `calc(${borderPos.value}%)` : "100%"
   );
   const previewHeight = computed(() =>
-    fileStore.selectedFile.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
+    fileStore.value?.selectedFile.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
   );
   watch(
-    () => !!fileStore.selectedFile.value?.id,
+    () => !!fileStore.value?.selectedFile.value?.id,
     (hasSelection, oldValue) => {
       // Make sure borderPos is correct when transitioning from no selection to having a selection
       if (hasSelection && !oldValue) borderPos.value = (boxTopPixels / panesHeight.value) * 100;
@@ -75,13 +75,13 @@
       <!-- <DragBorder
            ref="border-ref"
            v-model="borderPos"
-           :active="!!Object.keys(fileStore.selectedFile).length"
+           :active="!!Object.keys(fileStore.value.selectedFile).length"
            :box-top="boxTopPixels"
            :parent-height="panesHeight"
            />
 
            <PreviewPane
-           :file="fileStore.selectedFile"
+           :file="fileStore.value.selectedFile"
            :style="{ height: previewHeight, top: previewTop }"
            /> -->
     </div>

@@ -5,7 +5,7 @@
 
 <template>
   <div class="av-wrapper">
-    <span class="av-name">{{ user.name }}</span>
+    <span class="av-name">{{ user?.value?.name || "" }}</span>
   </div>
 </template>
 
