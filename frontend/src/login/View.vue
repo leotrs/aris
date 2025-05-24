@@ -7,6 +7,8 @@
   const password = ref("");
   const isLoading = ref(false);
   const error = ref("");
+
+  const fileStore = inject("fileStore");
   const api = inject("api");
 
   const onLogin = async () => {
@@ -24,6 +26,9 @@
       });
       localStorage.setItem("accessToken", response.data.access_token);
       localStorage.setItem("refreshToken", response.data.refresh_token);
+
+      fileStore.loadFiles();
+      fileStore.loadTags();
 
       router.push("/");
     } catch (err) {
