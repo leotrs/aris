@@ -11,7 +11,11 @@ router = APIRouter(
 
 
 def _validate_source(model):
-    if not model.source or not model.source.strip().startswith(":manuscript:"):
+    if not model.source:
+        return model
+    if not model.source.strip().startswith(":rsm:"):
+        raise ValueError("Malformed RSM source.")
+    if not model.source.strip().endswith("::"):
         raise ValueError("Malformed RSM source.")
     return model
 
@@ -56,7 +60,7 @@ async def create_file(
     result = await crud.create_file(
         doc.source, doc.owner_id, doc.title, doc.abstract, db
     )
-    return {"message": "Manuscript created", "id": result.id}
+    return {"id": result.id}
 
 
 @router.get("/{doc_id}")
