@@ -24,3 +24,7 @@ dependencies = [
 
 [tool.setuptools]
 package-dir = {"" = "."}
+
+
+[tool.ruff]
+extend-select = ["I"]    # Enable import sorting

@@ -5,7 +5,7 @@ import LoginView from "./login/View.vue";
 
 const routes = [
   { path: "/", component: HomeView },
-  { path: "/:file_id/read", component: MainView },
+  { path: "/file/:file_id", component: MainView },
   { path: "/login", component: LoginView },
 ];
 
