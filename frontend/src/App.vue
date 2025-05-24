@@ -85,12 +85,6 @@
   const fileStore = createFileStore(api, user);
   provide("fileStore", fileStore);
 
-  // Initialize files and tags
-  onMounted(() => {
-    fileStore.loadFiles();
-    fileStore.loadTags();
-  });
-
   // Provide viewport info
   const breakpoints = useBreakpoints(breakpointsTailwind);
   provide("breakpoints", breakpoints);
