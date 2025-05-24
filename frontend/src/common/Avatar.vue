@@ -1,11 +1,12 @@
 <script setup>
-  import { inject } from "vue";
+  import { inject, computed } from "vue";
   const user = inject("user");
+  const name = computed(() => user.value?.initials || "");
 </script>
 
 <template>
   <div class="av-wrapper">
-    <span class="av-name">{{ user?.value?.name || "" }}</span>
+    <span class="av-name">{{ name }}</span>
   </div>
 </template>
 

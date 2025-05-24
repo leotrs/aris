@@ -23,6 +23,7 @@ class User(Base):
     email = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
     deleted_at = Column(DateTime, nullable=True)
+    initials = Column(String, nullable=True)
 
     files = relationship("File", backref="owner")
     tags = relationship("Tag", back_populates="owner", cascade="all, delete-orphan")
@@ -51,7 +52,9 @@ class File(Base):
     abstract = Column(Text, nullable=True)
     keywords = Column(String, nullable=True)  # comma-separated
     status = Column(Enum(FileStatus), nullable=False, default=FileStatus.DRAFT)
-    last_edited_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    last_edited_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
     # created_at = Column(DateTime(timezone=True), server_default=func.now())
     doi = Column(String, unique=True, nullable=True)
     source = Column(Text, nullable=True)
