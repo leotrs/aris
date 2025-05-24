@@ -2,10 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
 
-from .. import get_db, jwt
+from .. import get_db, current_user, jwt
 from ..models import User
 from ..security import verify_password
-from ..deps import get_current_user
 
 
 class UserLogin(BaseModel):
@@ -29,7 +28,7 @@ router = APIRouter()
 
 
 @router.get("/me")
-def read_current_user(user: User = Depends(get_current_user)):
+def me(user: User = Depends(current_user)):
     return {"email": user.email, "id": user.id}
 
 

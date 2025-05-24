@@ -3,9 +3,9 @@ from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 
-from .. import crud, get_db
+from .. import crud, get_db, current_user
 
-router = APIRouter(prefix="/files", tags=["files"])
+router = APIRouter(prefix="/files", tags=["files"], dependencies=[Depends(current_user)])
 
 
 def _validate_source(model):
