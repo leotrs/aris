@@ -1,8 +1,9 @@
 <script setup>
-  import { computed, provide, onMounted } from "vue";
+  import { ref, computed, provide, onMounted } from "vue";
+  import { useRouter } from "vue-router";
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-  import axios from "axios";
   import { createFileStore } from "./FileStore.js";
+  import axios from "axios";
 
   // Create API instance with base URL and error handling
   const api = axios.create({
@@ -41,7 +42,7 @@
           isRefreshing = true;
           try {
             const refreshToken = localStorage.getItem("refreshToken");
-            const response = await axios.post("http://localhost:8000/refresh", {
+            const response = await api.post("/refresh", {
               refresh_token: refreshToken,
             });
 
@@ -77,12 +78,31 @@
   );
   provide("api", api);
 
-  // Provide user info
-  const user = { id: 1, name: "TER" };
+  // Must create these here as they will be populated by the login view but need to be
+  // available to other views.
+  const user = ref(null);
+  const fileStore = ref(null);
+  const router = useRouter();
+  onMounted(async () => {
+    const token = localStorage.getItem("accessToken");
+    if (token) {
+      try {
+        const response = await api.get("/me");
+        user.value = response.data;
+        fileStore.value = createFileStore(api, user.value);
+        await fileStore.value.loadFiles();
+        await fileStore.value.loadTags();
+      } catch (err) {
+        console.error("Failed to load user:", err);
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        router.push("/login");
+      }
+    } else {
+      router.push("/login");
+    }
+  });
   provide("user", user);
-
-  // Create and provide file store
-  const fileStore = createFileStore(api, user);
   provide("fileStore", fileStore);
 
   // Provide viewport info
