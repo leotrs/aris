@@ -3,7 +3,12 @@ from sqlalchemy.orm import sessionmaker
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from .models import User
+from jose import JWTError, jwt
+from pydantic import BaseModel, EmailStr
+from uuid import UUID
+
+from .config import settings
+from . import crud
 
 
 DB_URL = "postgresql://leo.torres@localhost:5432/aris"
@@ -22,13 +27,31 @@ def get_db():
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)) -> User:
-    payload = decode_token(token)
-    if payload is None or "sub" not in payload:
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
+class UserRead(BaseModel):
+    id: UUID
+    email: EmailStr
+    full_name: str
 
-    user = db.query(User).get(int(payload["sub"]))
+    class Config:
+        orm_mode = True
+
+
+def current_user(token: str = Depends(oauth2_scheme)) -> UserRead:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Invalid authentication credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    try:
+        payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        user_id: str = payload.get("sub")
+        if user_id is None:
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+
+    user = crud.get_user(user_id, get_db())
     if user is None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
-
+        raise credentials_exception
     return user

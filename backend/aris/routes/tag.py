@@ -4,10 +4,10 @@ from pydantic import BaseModel
 from sqlalchemy import delete, select
 from sqlalchemy.orm import Session
 
-from .. import crud, get_db
+from .. import crud, get_db, current_user
 from ..models import File, Tag, User
 
-router = APIRouter(prefix="/users", tags=["users", "tags"])
+router = APIRouter(prefix="/users", tags=["users", "tags"], dependencies=[Depends(current_user)])
 
 
 class TagRetrieveOrUpdate(BaseModel):
