@@ -11,6 +11,8 @@
     localStorage.removeItem("refreshToken");
     router.push("/login");
   };
+
+  defineExpose({ toggle: () => menuRef.value.toggle() });
 </script>
 
 <template>
