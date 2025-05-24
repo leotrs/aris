@@ -12,7 +12,8 @@
 
   // File saving
   const saveFile = async (fileToSave) => {
-    return await File.save(fileToSave, api, user);
+    await File.update(fileToSave, { source: file.value.source });
+    await File.save(fileToSave, api, user);
   };
   const { saveStatus, onInput, manualSave } = useAutoSave({
     file,

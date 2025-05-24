@@ -53,9 +53,7 @@ async def get_user_files(
         raise ValueError(f"User {user_id} not found")
 
     docs = (
-        db.query(File)
-        .filter(File.owner_id == user_id, File.deleted_at.is_(None))
-        .all()
+        db.query(File).filter(File.owner_id == user_id, File.deleted_at.is_(None)).all()
     )
 
     titles = await asyncio.gather(*(extract_title(d) for d in docs))
@@ -101,9 +99,7 @@ async def get_user_file(
 
     title = await extract_title(doc)
     tags = (await get_user_file_tags(user_id, doc_id, db)) if with_tags else []
-    minimap = (
-        (await get_file_section(doc_id, "minimap", db)) if with_minimap else ""
-    )
+    minimap = (await get_file_section(doc_id, "minimap", db)) if with_minimap else ""
 
     return {
         "id": doc.id,

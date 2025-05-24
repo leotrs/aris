@@ -43,11 +43,11 @@
 
       <Suspense>
         <div ref="files-ref" class="files" :class="mode">
-          <template v-for="(file, idx) in fileStore?.value?.files.value">
+          <template v-for="(file, idx) in fileStore?.files">
             <FilesItem
               v-if="!file.filtered"
               :key="file"
-              v-model="fileStore.value.files.value[idx]"
+              v-model="fileStore.files[idx]"
               :mode="mode"
             />
           </template>
