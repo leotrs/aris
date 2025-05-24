@@ -9,30 +9,30 @@
   const fileStore = inject("fileStore");
 
   const state = reactive({
-    tagIsAssigned: fileStore.tags.value.map(() => false),
+    tagIsAssigned: fileStore?.value?.tags.value?.map(() => false) ?? [],
   });
   watchEffect(() => {
     const tagIds = tags.value.map((t) => t.id);
-    fileStore.tags.value.forEach((tag, idx) => {
+    fileStore?.value?.tags.value?.forEach((tag, idx) => {
       state.tagIsAssigned[idx] = tagIds.includes(tag.id);
     });
   });
   watch(
-    () => [...state.tagIsAssigned],
+    () => [...(state.tagIsAssigned || [])],
     (newVal, oldVal) => {
       // On the first change, oldVal will be an empty array
-      if (oldVal.length == 0) oldVal = fileStore.tags.value.map(() => false);
+      if (oldVal.length == 0) oldVal = fileStore.value.tags.value.map(() => false);
 
       if (!props.file) return;
       newVal.forEach((isNowAssigned, idx) => {
         const wasAssigned = oldVal[idx];
-        const tag = fileStore.tags.value[idx];
+        const tag = fileStore.value.tags.value[idx];
 
         if (isNowAssigned && !wasAssigned) {
-          fileStore.toggleFileTag(props.file, tag.id);
+          fileStore.value.toggleFileTag(props.file, tag.id);
           if (!tags.value.some((t) => t.id === tag.id)) tags.value = tags.value.concat([tag]);
         } else if (!isNowAssigned && wasAssigned) {
-          fileStore.toggleFileTag(props.file, tag.id);
+          fileStore.value.toggleFileTag(props.file, tag.id);
           tags.value = tags.value.filter((t) => t.id !== tag.id);
         }
       });
@@ -47,14 +47,14 @@
   };
 
   const createTag = () => {
-    fileStore.createTag(newTagPlaceholder.name);
+    fileStore.value.createTag(newTagPlaceholder.name);
   };
 </script>
 
 <template>
   <ContextMenu :icon="icon" placement="bottom-end">
     <TagControl
-      v-for="(tag, idx) in fileStore.tags.value"
+      v-for="(tag, idx) in fileStore.value.tags.value"
       :key="tag.id"
       v-model="state.tagIsAssigned[idx]"
       class="item"

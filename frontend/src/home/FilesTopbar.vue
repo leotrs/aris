@@ -15,8 +15,10 @@
   /* Search */
   const fileStore = inject("fileStore");
   const onSearchSubmit = (searchString) => {
-    fileStore.clearFilterFiles();
-    fileStore.filterFiles((file) => !file.title.toLowerCase().includes(searchString.toLowerCase()));
+    fileStore.value.clearFilterFiles();
+    fileStore.value.filterFiles(
+      (file) => !file.title.toLowerCase().includes(searchString.toLowerCase())
+    );
   };
   const searchBar = useTemplateRef("search-bar-ref");
   useKeyboardShortcuts({ "/": () => searchBar.value.focusInput() });

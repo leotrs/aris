@@ -19,17 +19,17 @@
   const setColor = (color) => {
     const newTag = JSON.parse(JSON.stringify(props.tag));
     newTag.color = color;
-    fileStore.updateTag(props.tag, newTag);
+    fileStore.value.updateTag(props.tag, newTag);
   };
 
   const deleteTag = () => {
-    fileStore.updateTag(props.tag, null);
+    fileStore.value.updateTag(props.tag, null);
   };
 
   const renameTag = (newName) => {
     const newTag = JSON.parse(JSON.stringify(props.tag));
     newTag.name = newName;
-    fileStore.updateTag(props.tag, newTag);
+    fileStore.value.updateTag(props.tag, newTag);
   };
 </script>
 

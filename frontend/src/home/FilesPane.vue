@@ -10,12 +10,12 @@
 
   /* Selected file */
   const filesRef = useTemplateRef("files-ref");
-  const { activeIndex } = useListKeyboardNavigation(fileStore.numFiles, filesRef, true);
+  const { activeIndex } = useListKeyboardNavigation(fileStore.value?.numFiles, filesRef, true);
   watch(activeIndex, (newVal) => {
-    const currentFocused = fileStore.files.value.filter((d) => d.focused);
+    const currentFocused = fileStore.value.files.value.filter((d) => d.focused);
     currentFocused.forEach((d) => (d.focused = false));
     if (newVal === null) return;
-    fileStore.files.value[newVal].focused = true;
+    fileStore.value.files.value[newVal].focused = true;
   });
 
   /* Breakpoints */
@@ -43,11 +43,11 @@
 
       <Suspense>
         <div ref="files-ref" class="files" :class="mode">
-          <template v-for="(file, idx) in fileStore.files.value">
+          <template v-for="(file, idx) in fileStore?.value?.files.value">
             <FilesItem
               v-if="!file.filtered"
               :key="file"
-              v-model="fileStore.files.value[idx]"
+              v-model="fileStore.value.files.value[idx]"
               :mode="mode"
             />
           </template>
