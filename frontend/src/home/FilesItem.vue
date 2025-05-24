@@ -15,7 +15,7 @@
   const router = useRouter();
   const readFile = () => {
     /* selectFile(file.value); */
-    router.push(`/${file.value.id}/read`);
+    router.push(`/file/${file.value.id}`);
   };
 
   // Breakpoints

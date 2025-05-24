@@ -78,11 +78,12 @@
   });
   provide("fileSettings", fileSettings);
 
+  const api = inject("api");
   watch(file, async () => {
     if (!file.value || !file.value.id) return;
 
     try {
-      const response = await axios.get(`http://localhost:8000/files/${file.value.id}/content`);
+      const response = await api.get(`/files/${file.value.id}/content`);
       file.value.html = response.data;
     } catch (error) {
       console.error("Error fetching HTML:", error);

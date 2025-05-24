@@ -5,7 +5,9 @@ from sqlalchemy.orm import Session
 
 from .. import crud, get_db, current_user
 
-router = APIRouter(prefix="/files", tags=["files"], dependencies=[Depends(current_user)])
+router = APIRouter(
+    prefix="/files", tags=["files"], dependencies=[Depends(current_user)]
+)
 
 
 def _validate_source(model):
