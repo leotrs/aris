@@ -1,8 +1,7 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm import sessionmaker, Session
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
-from sqlalchemy.orm import Session
 from jose import JWTError, jwt
 from pydantic import BaseModel, EmailStr
 from uuid import UUID
@@ -36,7 +35,9 @@ class UserRead(BaseModel):
         orm_mode = True
 
 
-def current_user(token: str = Depends(oauth2_scheme)) -> UserRead:
+async def current_user(
+    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+) -> UserRead:
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid authentication credentials",
@@ -44,14 +45,16 @@ def current_user(token: str = Depends(oauth2_scheme)) -> UserRead:
     )
 
     try:
-        payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+        payload = jwt.decode(
+            token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+        )
         user_id: str = payload.get("sub")
         if user_id is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
 
-    user = crud.get_user(user_id, get_db())
+    user = await crud.get_user(user_id, db)
     if user is None:
         raise credentials_exception
     return user
