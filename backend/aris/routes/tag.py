@@ -7,7 +7,9 @@ from sqlalchemy.orm import Session
 from .. import crud, get_db, current_user
 from ..models import File, Tag, User
 
-router = APIRouter(prefix="/users", tags=["users", "tags"], dependencies=[Depends(current_user)])
+router = APIRouter(
+    prefix="/users", tags=["users", "tags"], dependencies=[Depends(current_user)]
+)
 
 
 class TagRetrieveOrUpdate(BaseModel):
@@ -43,8 +45,6 @@ async def create_tag(user_id: int, tag: TagCreate, db: Session = Depends(get_db)
 async def get_user_tags(user_id: int, db: Session = Depends(get_db)):
     """Get all tags for a user."""
     tags = await crud.get_user_tags(user_id, db)
-    if not tags:
-        raise HTTPException(status_code=404, detail="No tags found")
     return tags
 
 

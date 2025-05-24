@@ -29,7 +29,7 @@ router = APIRouter()
 
 @router.get("/me")
 async def me(user: User = Depends(current_user)):
-    return {"email": user.email, "id": user.id}
+    return {"email": user.email, "id": user.id, "name": user.name}
 
 
 @router.post("/login", response_model=Token)
