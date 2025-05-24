@@ -1,16 +1,17 @@
 <script setup>
   import { ref, inject } from "vue";
   import { useRouter } from "vue-router";
+  import { createFileStore } from "../FileStore.js";
 
   const router = useRouter();
   const email = ref("");
   const password = ref("");
   const isLoading = ref(false);
   const error = ref("");
-
-  const fileStore = inject("fileStore");
   const api = inject("api");
 
+  const user = inject("user");
+  const fileStore = inject("fileStore");
   const onLogin = async () => {
     if (!email.value || !password.value) {
       error.value = "Please fill in all fields";
@@ -27,8 +28,12 @@
       localStorage.setItem("accessToken", response.data.access_token);
       localStorage.setItem("refreshToken", response.data.refresh_token);
 
-      fileStore.loadFiles();
-      fileStore.loadTags();
+      const userData = await api.get("/me");
+      user.value = userData.data;
+
+      fileStore.value = createFileStore(api, user.value);
+      await fileStore.value.loadFiles();
+      await fileStore.value.loadTags();
 
       router.push("/");
     } catch (err) {
