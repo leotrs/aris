@@ -7,14 +7,13 @@
 
   const props = defineProps({ mode: { type: String, default: "list" } });
   const file = defineModel({ type: Object, required: true });
-  const { selectFile } = inject("fileStore");
+  const fileStore = inject("fileStore");
 
   // State
   const hovered = ref(false);
-  const selectThisFile = () => selectFile(file.value);
   const router = useRouter();
   const readFile = () => {
-    /* selectFile(file.value); */
+    /* fileStore.value.selectFile(file.value); */
     router.push(`/file/${file.value.id}`);
   };
 
@@ -24,7 +23,6 @@
   // File menu callbacks
   const menuRef = useTemplateRef("menu-ref");
   const fileTitleRef = useTemplateRef("file-title-ref");
-  const fileStore = inject("fileStore");
   const user = inject("user");
   const onRename = () => fileTitleRef.value?.startEditing();
   const onDuplicate = () => {

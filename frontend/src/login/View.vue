@@ -30,7 +30,6 @@
 
       const userData = await api.get("/me");
       user.value = userData.data;
-
       fileStore.value = createFileStore(api, user.value);
       await fileStore.value.loadFiles();
       await fileStore.value.loadTags();

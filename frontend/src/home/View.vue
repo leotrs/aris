@@ -17,10 +17,10 @@
   // New empty file
   const router = useRouter();
   const newEmptyFile = async () => {
-    console.log("new empty file", user.id);
+    console.log("new empty file for user with id", user.value.id);
     try {
       const newFile = await fileStore.value.createFile({
-        ownerId: user.id,
+        ownerId: user.value.id,
         source: ":rsm:\n# New File\n\nThe possibilities are *endless*!\n\n::\n",
       });
       router.push(`/file/${newFile.id}`);
