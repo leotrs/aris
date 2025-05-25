@@ -7,13 +7,11 @@
 
   const props = defineProps({});
   const file = defineModel({ type: Object, required: true });
-  const user = inject("user");
   const api = inject("api");
 
   // File saving
   const saveFile = async (fileToSave) => {
     await File.update(fileToSave, { source: file.value.source });
-    await File.save(fileToSave, api, user);
   };
   const { saveStatus, onInput, manualSave } = useAutoSave({
     file,

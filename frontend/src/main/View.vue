@@ -1,22 +1,22 @@
 <script setup>
-  import { ref, reactive, computed, inject, provide, onBeforeMount } from "vue";
+  import { ref, reactive, computed, inject, provide, watchEffect, onMounted } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import Sidebar from "./Sidebar.vue";
   import Canvas from "./Canvas.vue";
 
-  const fileId = computed(() => `${useRoute().params.file_id}`);
-  const user = inject("user");
-  const file = ref({ id: -1, tags: [] });
-  const api = inject("api");
-
   // Load and provide file
-  onBeforeMount(async () => {
-    try {
-      const response = await api.get(`/files/${fileId.value}`);
-      file.value = response.data;
-    } catch (error) {
-      console.error(`Failed to fetch file ${fileId.value}`, error);
+  const fileStore = inject("fileStore");
+  const file = ref({});
+  const route = useRoute();
+  watchEffect(() => {
+    if (!fileStore?.value || !fileStore.value.files || !route) return;
+    const fileId = computed(() => `${route.params.file_id}`);
+    file.value = fileStore.value.files.find((f) => f.id == fileId.value);
+    if (!file.value) {
+      console.error("Could not find file with ID", fileId.value);
+    } else {
+      console.log("found file with id", file.value.id);
     }
   });
   provide("file", file);
@@ -63,7 +63,13 @@
 <template>
   <div class="read-view" :class="{ focus: focusMode }">
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
-    <Canvas :left="leftComponents" :right="rightComponents" :top="topComponents" />
+    <Canvas
+      v-if="file"
+      v-model="file"
+      :left="leftComponents"
+      :right="rightComponents"
+      :top="topComponents"
+    />
     <div class="menus" :class="{ focus: focusMode }">
       <FileMenu icon="Menu3" />
       <UserMenu />
