@@ -19,8 +19,9 @@ export function createFileStore(api, user) {
    * Queue a file for synchronization
    * @param {Object} file - File to synchronize
    */
-  const queueSync = (file) => {
-    syncQueue.add(file.id);
+  const queueSync = async (fileOrFileId) => {
+    const fileId = (typeof fileOrFileId == 'number') ? fileOrFileId : fileOrFileId.id;
+    syncQueue.add(fileId);
     scheduleSyncProcess();
   };
 
