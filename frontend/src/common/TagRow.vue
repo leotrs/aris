@@ -5,7 +5,7 @@
   });
   const tags = defineModel({ type: Array });
 
-  const selectedTags = ref([...tags.value]);
+  const selectedTags = ref([...(tags.value || [])]);
 </script>
 
 <template>
