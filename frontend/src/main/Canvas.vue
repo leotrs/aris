@@ -27,7 +27,7 @@
     right: { type: Array, default: () => [] },
     top: { type: Array, default: () => [] },
   });
-  const file = inject("file");
+  const file = defineModel({ type: Object });
 
   const validDockComponents = {
     /* DockableChat, */
@@ -79,16 +79,20 @@
   provide("fileSettings", fileSettings);
 
   const api = inject("api");
-  watch(file, async () => {
-    if (!file.value || !file.value.id) return;
+  watch(
+    file,
+    async () => {
+      if (!file.value || file.value.html) return;
 
-    try {
-      const response = await api.get(`/files/${file.value.id}/content`);
-      file.value.html = response.data;
-    } catch (error) {
-      console.error("Error fetching HTML:", error);
-    }
-  });
+      try {
+        const response = await api.get(`/files/${file.value.id}/content`);
+        file.value.html = response.data;
+      } catch (error) {
+        console.error("Error fetching HTML:", error);
+      }
+    },
+    { immediate: true }
+  );
 
   const manuscriptRef = useTemplateRef("manuscript-ref");
   watch(
