@@ -42,13 +42,17 @@
         <!-- This should be tabs NOT segmented control... -->
         <!-- <SegmentedControl :icons="['Code', 'Files']" :default-active="0" />
              <HSeparator /> -->
-        <Button kind="tertiary" size="sm" icon="Heading" />
+        <Button kind="tertiary" size="sm" text=":b:" />
+        <Button kind="tertiary" size="sm" text=":i:" />
         <Button kind="tertiary" size="sm" icon="List" />
         <Button kind="tertiary" size="sm" icon="ListNumbers" />
-        <Button kind="tertiary" size="sm" icon="Math" />
+        <Button kind="tertiary" size="sm" text="$B" />
+        <Button kind="tertiary" size="sm" text="$I" />
         <Button kind="tertiary" size="sm" icon="Photo" />
         <Button kind="tertiary" size="sm" icon="Table" />
+        <Button kind="tertiary" size="sm" icon="FileSymlink" />
         <Button kind="tertiary" size="sm" icon="Quote" />
+        <Button kind="tertiary" size="sm" icon="Quotes" />
       </div>
       <div class="right">
         <Button kind="primary" size="sm" text="compile" class="cta" @click="onCompile" />
@@ -103,6 +107,16 @@
 
   .toolbar > .left {
     display: flex;
+  }
+
+  .toolbar > .left > :deep(button:has(> .btn-text)) {
+    padding-inline: 0px !important;
+    width: 32px !important;
+  }
+
+  .toolbar > .left > :deep(button > .btn-text) {
+    margin: 0 auto;
+    font-family: "Source Code Pro", monospace !important;
   }
 
   .toolbar > .right {
