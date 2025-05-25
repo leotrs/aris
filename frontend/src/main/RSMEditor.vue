@@ -9,6 +9,12 @@
   const file = defineModel({ type: Object, required: true });
   const api = inject("api");
 
+  // Toolbar functions
+  const onCompile = async () => {
+    const response = await api.post("render", { source: file.value.source });
+    file.value.html = response.data;
+  };
+
   // File saving
   const saveFile = async (fileToSave) => {
     await File.update(fileToSave, { source: file.value.source });
@@ -16,13 +22,8 @@
   const { saveStatus, onInput, manualSave } = useAutoSave({
     file,
     saveFunction: saveFile,
+    compileFunction: onCompile,
   });
-
-  // Toolbar functions
-  const onCompile = async () => {
-    const response = await api.post("render", { source: file.value.source });
-    file.value.html = response.data;
-  };
 
   // Keys
   const editorRef = useTemplateRef("editor-ref");

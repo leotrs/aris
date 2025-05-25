@@ -4,6 +4,7 @@ import { ref, onMounted, onBeforeUnmount } from "vue";
 export function useAutoSave({
   file,
   saveFunction,
+  compileFunction = null,
   debounceTime = 2000,
   autoSaveInterval = 30000
 }) {
@@ -42,7 +43,7 @@ export function useAutoSave({
     file.value.source = e.target.value;
     saveStatus.value = "pending";
     if (debounceTimeout.value) clearTimeout(debounceTimeout.value);
-    debounceTimeout.value = setTimeout(() => saveFile(), debounceTime);
+    debounceTimeout.value = setTimeout(() => { saveFile(); compileFunction(); }, debounceTime);
   }
 
   // Manual save (for keyboard shortcuts)
