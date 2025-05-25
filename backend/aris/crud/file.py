@@ -17,11 +17,7 @@ async def get_files(db: Session):
 
 
 async def get_file(doc_id: int, db: Session):
-    doc = (
-        db.query(File)
-        .filter(File.id == doc_id, File.deleted_at.is_(None))
-        .first()
-    )
+    doc = db.query(File).filter(File.id == doc_id, File.deleted_at.is_(None)).first()
     if doc:
         doc.title = await extract_title(doc)
     return doc
@@ -55,6 +51,7 @@ async def create_file(
         source=source,
         status=FileStatus.DRAFT,
     )
+    doc.last_edited_at = datetime.utcnow()
     db.add(doc)
     db.commit()
     db.refresh(doc)
@@ -70,6 +67,7 @@ async def update_file(
     doc = await get_file(doc_id, db)
     if not doc:
         return None
+
     doc.title = title
     doc.source = source
     doc.last_edited_at = datetime.utcnow()
@@ -113,9 +111,11 @@ async def duplicate_file(doc_id: int, db: Session):
     return new_doc
 
 
-async def get_file_section(doc_id: int, section_name: str, db: Session, handrails: bool = True):
+async def get_file_section(
+    doc_id: int, section_name: str, db: Session, handrails: bool = True
+):
     doc = db.query(File).filter(File.id == doc_id).first()
     if not doc:
         raise ValueError(f"File {doc_id} not found")
     html = await extract_section(doc, section_name, handrails)
-    return html or ''
+    return html or ""
