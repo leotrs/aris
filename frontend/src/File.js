@@ -5,11 +5,15 @@ import RelativeTime from "@yaireo/relative-Time";
 // Singleton for date formatting
 const relativeTime = new RelativeTime({ locale: "en" });
 
+// Global reference to the fileStore
+let fileStore = null;
+
 /**
  * File class encapsulating a single file's data and operations
  */
 export class File {
   constructor(rawData = {}, store = null) {
+    if (store && !fileStore) fileStore = store;
     // Create a reactive object with all file properties
     const reactiveFile = reactive({
       // File metadata
@@ -28,9 +32,6 @@ export class File {
 
       // Track if file has unsaved changes
       isDirty: false,
-
-      // Reference to parent store for sync operations
-      _store: store,
 
       // Date methods
       getFormattedDate() {
@@ -64,7 +65,7 @@ export class File {
     Object.assign(file, changes);
     if (markDirty) {
       file.isDirty = true;
-      file._store?.queueSync(file);
+      fileStore?.queueSync(file);
     }
     return file;
   }
@@ -121,11 +122,7 @@ export class File {
    * @param {Object} file - The file to select
    */
   static select(file) {
-    if (file._store) {
-      file._store.selectFile(file);
-    } else if (!file.selected) {
-      file.selected = true;
-    }
+    if (!file.selected) file.selected = true;
   }
 
   /**
@@ -136,25 +133,7 @@ export class File {
    * @param {Object} user - User information
    */
   static async addTag(file, tagId, api, user) {
-    try {
-      await api.post(`/users/${user.id}/files/${file.id}/tags/${tagId}`);
-
-      // Add tag to local file if not already present
-      if (!file.tags.some(tag => tag.id === tagId)) {
-        // If the store has tag info, use it
-        if (file._store && file._store.getTags) {
-          const tag = file._store.getTags().find(t => t.id === tagId);
-          if (tag) {
-            file.tags.push({ ...tag });
-          }
-        }
-      }
-
-      return true;
-    } catch (error) {
-      console.error(`Error adding tag to file:`, error);
-      return false;
-    }
+    console.log("NOT IMPLEMENTED");
   }
 
   /**

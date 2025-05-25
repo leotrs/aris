@@ -32,17 +32,11 @@ export function createFileStore(api, user) {
 
     try {
       syncInProgress.value = true;
-
-      // Process each file in the queue
       for (const fileId of syncQueue) {
         const file = files.value.find(f => f.id === fileId);
         if (!file || !file.isDirty) continue;
-
-        // Use the File class to save to server
         await File.save(file, api, user);
       }
-
-      // Clear the sync queue
       syncQueue.clear();
     } catch (error) {
       console.error('Error during file sync:', error);
@@ -61,10 +55,7 @@ export function createFileStore(api, user) {
    */
   let syncTimeout = null;
   const scheduleSyncProcess = () => {
-    // Clear existing timeout to debounce
-    if (syncTimeout) clearTimeout(syncTimeout);
-
-    // Schedule sync after a short delay
+    if (syncTimeout) clearTimeout(syncTimeout);    // debounce
     syncTimeout = setTimeout(syncProcess, 800);
   };
 
@@ -81,7 +72,7 @@ export function createFileStore(api, user) {
       files.value = response.data.map((newFile) => {
         const existingFile = files.value.find((f) => f.id === newFile.id);
 
-        // Create a File instance with the store reference
+        // DONT use createFile - that will create a new file in the DB!
         return new File({
           ...newFile,
           filtered: existingFile ? existingFile.filtered : false,
@@ -89,7 +80,6 @@ export function createFileStore(api, user) {
           isMountedAt: existingFile ? existingFile.isMountedAt : false,
           html: existingFile ? existingFile.html : false,
           ownerId: user.id,
-
         }, store);
       });
     } catch (error) {
@@ -98,7 +88,7 @@ export function createFileStore(api, user) {
   };
 
   /**
-   * Create a new file
+   * Create a new file in the DB
    * @param {Object} fileData - Initial file data
    * @returns {Object} The newly created file
    */
