@@ -18,13 +18,9 @@
 
 <template>
   <div class="tb-wrapper" :class="{ 'with-shadow': showTitle, focus: focusMode }">
-    <Dock class="left-column top">
-      <FileTitle v-if="showTitle && component" :file="file" class="text-h6" />
-    </Dock>
-
     <Dock class="middle-column top">
-      <FileTitle v-if="showTitle && !component" :file="file" class="text-h6" />
-      <component :is="component" ref="middle-comp" :file="file" side="top" />
+      <FileTitle v-if="!component && showTitle" :file="file" class="text-h6" />
+      <component :is="component" v-if="component" ref="middle-comp" :file="file" side="top" />
     </Dock>
   </div>
 </template>
@@ -42,7 +38,7 @@
     z-index: 2;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    padding-right: var(--links-width);
+    padding-inline: var(--links-width);
 
     opacity: 1;
     transform: translateY(0);
@@ -94,7 +90,6 @@
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding-inline: 48px;
     text-align: center;
     width: v-bind("middleColumnWidth");
   }
