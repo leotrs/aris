@@ -82,7 +82,7 @@
   watch(
     file,
     async () => {
-      if (!file.value || file.value.html) return;
+      if (!file.value || file.value.html || !file.value.id) return;
 
       try {
         const response = await api.get(`/files/${file.value.id}/content`);
