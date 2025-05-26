@@ -172,7 +172,7 @@
         </div>
       </div>
 
-      <Drawer :class="{ focus: focusMode }" />
+      <!-- <Drawer :class="{ focus: focusMode }" /> -->
     </div>
   </Suspense>
 </template>
@@ -222,11 +222,14 @@
     &.left {
       border-top-left-radius: 16px;
       border-bottom-left-radius: 16px;
+      flex: 1;
+      max-width: 720px;
     }
 
     &.right {
       border-top-right-radius: 16px;
       border-bottom-right-radius: 16px;
+      flex: 1;
     }
   }
 
@@ -240,6 +243,12 @@
   .inner .main {
     position: relative;
     height: calc(100% - 64px);
+  }
+
+  .inner.right .main {
+    display: flex;
+    justify-content: center;
+    overflow-y: auto;
   }
 
   .inner.right .main :is(.left-column, .right-column) {
@@ -258,7 +267,6 @@
 
   .inner.right .main .middle-column {
     flex: 1;
-    overflow-y: auto;
   }
 
   .inner.right .main .left-column.focus {
