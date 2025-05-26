@@ -1,13 +1,7 @@
 <script setup>
-  import { ref, reactive, nextTick, onMounted, toRaw } from "vue";
+  import { ref, reactive, nextTick, onMounted, onUnmounted, computed } from "vue";
 
   const emit = defineEmits(["insert", "compile"]);
-
-  // tabs and compile at the top - just make tabs with empty content?
-  // tabs and compile at the top - just make tabs with empty content?
-  // tabs and compile at the top - just make tabs with empty content?
-  // tabs and compile at the top - just make tabs with empty content?
-  // tabs and compile at the top - just make tabs with empty content?
 
   const btnInfo = [
     { text: "", icon: "Heading", str: "# \n:label: my-lbl\n\n::", tooltip: "Heading" },
@@ -74,21 +68,80 @@
   ];
 
   const btnEls = reactive({});
+  const toolbarRef = ref(null);
+  const leftRef = ref(null);
+  const contextMenuRef = ref(null);
+  const visibleItems = ref([]);
+  const overflowItems = ref([]);
+
   const getRefKey = (obj) => obj.text || obj.icon;
   const setRef = (el, obj) => {
     if (!el) return;
     btnEls[getRefKey(obj)] = el.btn;
   };
   const getBtnEl = (obj) => btnEls[getRefKey(obj)] || null;
+
+  const calculateOverflow = () => {
+    if (!leftRef.value || !toolbarRef.value) return;
+
+    const containerWidth = leftRef.value.clientWidth;
+    const overflowBtnWidth = 32; // Match button width
+    const availableWidth = containerWidth - overflowBtnWidth;
+
+    let currentWidth = 0;
+    const visible = [];
+    const overflow = [];
+
+    for (const item of btnInfo) {
+      if (item.text === "sep") {
+        const sepWidth = 18;
+        if (currentWidth + sepWidth <= availableWidth) {
+          currentWidth += sepWidth;
+          visible.push(item);
+        } else {
+          overflow.push(item);
+        }
+      } else {
+        const btnWidth = 32;
+        if (currentWidth + btnWidth <= availableWidth) {
+          currentWidth += btnWidth;
+          visible.push(item);
+        } else {
+          overflow.push(item);
+        }
+      }
+    }
+
+    visibleItems.value = visible;
+    overflowItems.value = overflow;
+  };
+
+  const handleResize = () => {
+    nextTick(() => calculateOverflow());
+  };
+
+  const handleOverflowItemClick = (str) => {
+    emit("insert", str);
+  };
+
+  onMounted(() => {
+    nextTick(() => {
+      calculateOverflow();
+      window.addEventListener("resize", handleResize);
+    });
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener("resize", handleResize);
+  });
+
+  const hasOverflow = computed(() => overflowItems.value.length > 0);
 </script>
 
 <template>
-  <div class="toolbar">
-    <div class="left">
-      <!-- This should be tabs NOT segmented control... -->
-      <!-- <SegmentedControl :icons="['Code', 'Files']" :default-active="0" />
-             <HSeparator /> -->
-      <template v-for="obj in btnInfo" :key="obj.text || obj.icon">
+  <div ref="toolbarRef" class="toolbar">
+    <div ref="leftRef" class="left">
+      <template v-for="obj in visibleItems" :key="obj.text || obj.icon">
         <HSeparator v-if="obj.text == 'sep'" />
         <Button
           v-else
@@ -104,6 +157,28 @@
         </Tooltip>
       </template>
     </div>
+
+    <div class="right">
+      <ContextMenu
+        v-if="hasOverflow"
+        ref="contextMenuRef"
+        icon="Dots"
+        button-size="btn-sm"
+        placement="bottom-end"
+      >
+        <template v-for="obj in overflowItems" :key="obj.text || obj.icon">
+          <div v-if="obj.text == 'sep'" class="menu-separator" />
+          <ContextMenuItem
+            v-else
+            :icon="obj.icon || ''"
+            :caption="`${obj.text} ${obj.tooltip}`"
+            @click="() => handleOverflowItemClick(obj.str)"
+          >
+            <Tooltip :content="obj.tooltip" />
+          </ContextMenuItem>
+        </template>
+      </ContextMenu>
+    </div>
   </div>
 </template>
 
@@ -111,7 +186,6 @@
   .toolbar {
     flex: 0;
     display: flex;
-    /* flex-wrap: wrap; */
     justify-content: space-between;
     min-height: var(--toolbar-height);
     max-height: calc(var(--toolbar-height) * 2 + 8px);
@@ -127,7 +201,9 @@
 
   .toolbar > .left {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow: hidden;
+    flex: 1;
   }
 
   .toolbar > .left > :deep(button:has(> .btn-text)) {
@@ -146,5 +222,10 @@
 
   .toolbar > .left :deep(.sc-btn) {
     padding: 0;
+  }
+
+  .cm-menu {
+    max-height: 400px;
+    overflow-y: auto;
   }
 </style>

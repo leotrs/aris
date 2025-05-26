@@ -60,7 +60,7 @@
     position: absolute;
     right: -16px;
     bottom: calc(-1 * var(--thickness));
-    width: calc(200% + 32px + 32px);
+    width: calc(200% + 32px + 32px + 1px);
     height: var(--thickness);
     box-shadow: inset 0 var(--thickness) var(--thickness) calc(-1 * var(--thickness))
       rgba(0, 0, 0, 0.3);
