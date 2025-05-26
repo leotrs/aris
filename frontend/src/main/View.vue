@@ -12,11 +12,12 @@
   watchEffect(() => {
     if (!fileStore?.value || !fileStore.value.files || !route) return;
     const fileId = computed(() => `${route.params.file_id}`);
+    if (!fileId.value) return;
     file.value = fileStore.value.files.find((f) => f.id == fileId.value);
     if (!file.value) {
       console.error("Could not find file with ID", fileId.value);
     } else {
-      console.log("found file with id", file.value.id);
+      console.log("found file with ID", file.value.id);
     }
   });
   provide("file", file);

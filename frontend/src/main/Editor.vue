@@ -2,14 +2,31 @@
   import { inject, useTemplateRef } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { useAutoSave } from "@/composables/useAutoSave.js";
-  import StatusBar from "./RSMEditorStatusBar.vue";
   import { File } from "../File.js";
+  import Toolbar from "./EditorToolbar.vue";
+  import StatusBar from "./EditorStatusBar.vue";
 
   const props = defineProps({});
   const file = defineModel({ type: Object, required: true });
+  const editorRef = useTemplateRef("editor-ref");
   const api = inject("api");
 
   // Toolbar functions
+  const onInsert = (text) => {
+    if (!editorRef.value) return;
+    console.log("insert", text);
+    const textarea = editorRef.value;
+
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const before = textarea.value.substring(0, start);
+    const after = textarea.value.substring(end);
+    textarea.value = before + text + after;
+
+    const cursor = start + text.length;
+    textarea.selectionStart = textarea.selectionEnd = cursor;
+    textarea.focus();
+  };
   const onCompile = async () => {
     const response = await api.post("render", { source: file.value.source });
     file.value.html = response.data;
@@ -26,7 +43,6 @@
   });
 
   // Keys
-  const editorRef = useTemplateRef("editor-ref");
   const onEscape = () => editorRef.value === document.activeElement && editorRef.value.blur();
   const onSaveShortcut = () => manualSave();
   useKeyboardShortcuts({
@@ -37,27 +53,8 @@
 
 <template>
   <div class="editor-wrapper text-mono">
-    <div class="toolbar">
-      <div class="left">
-        <!-- This should be tabs NOT segmented control... -->
-        <!-- <SegmentedControl :icons="['Code', 'Files']" :default-active="0" />
-             <HSeparator /> -->
-        <Button kind="tertiary" size="sm" text=":b:" />
-        <Button kind="tertiary" size="sm" text=":i:" />
-        <Button kind="tertiary" size="sm" icon="List" />
-        <Button kind="tertiary" size="sm" icon="ListNumbers" />
-        <Button kind="tertiary" size="sm" text="$B" />
-        <Button kind="tertiary" size="sm" text="$I" />
-        <Button kind="tertiary" size="sm" icon="Photo" />
-        <Button kind="tertiary" size="sm" icon="Table" />
-        <Button kind="tertiary" size="sm" icon="FileSymlink" />
-        <Button kind="tertiary" size="sm" icon="Quote" />
-        <Button kind="tertiary" size="sm" icon="Quotes" />
-      </div>
-      <div class="right">
-        <Button kind="primary" size="sm" text="compile" class="cta" @click="onCompile" />
-      </div>
-    </div>
+    <Toolbar @compile="onCompile" @insert="onInsert" />
+
     <textarea
       ref="editor-ref"
       class="editor"
@@ -86,45 +83,6 @@
 
   .editor-wrapper:has(> textarea.editor:focus) {
     border-color: var(--border-action);
-  }
-
-  .toolbar {
-    flex: 0;
-    display: flex;
-    /* flex-wrap: wrap; */
-    justify-content: space-between;
-    min-height: var(--toolbar-height);
-    max-height: calc(var(--toolbar-height) * 2 + 8px);
-    border-radius: 8px 8px 0 0;
-    padding: 8px;
-    gap: 16px;
-    background-color: var(--surface-hover);
-  }
-
-  .toolbar .h-sep {
-    margin-inline: 8px;
-  }
-
-  .toolbar > .left {
-    display: flex;
-  }
-
-  .toolbar > .left > :deep(button:has(> .btn-text)) {
-    padding-inline: 0px !important;
-    width: 32px !important;
-  }
-
-  .toolbar > .left > :deep(button > .btn-text) {
-    margin: 0 auto;
-    font-family: "Source Code Pro", monospace !important;
-  }
-
-  .toolbar > .right {
-    display: flex;
-  }
-
-  .toolbar > .left :deep(.sc-btn) {
-    padding: 0;
   }
 
   button.primary.cta {
