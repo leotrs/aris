@@ -27,9 +27,8 @@
 
 <style scoped>
   .tb-wrapper {
-    --outer-padding: 8px;
     --sidebar-width: 64px;
-    --links-width: 151px;
+    --links-width: 121px;
 
     display: flex;
     height: 64px;
@@ -38,7 +37,7 @@
     z-index: 2;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    padding-inline: var(--links-width);
+    padding-inline: calc(var(--links-width) - 16px);
 
     opacity: 1;
     transform: translateY(0);
