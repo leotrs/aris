@@ -28,17 +28,15 @@
 <style scoped>
   .tb-wrapper {
     --sidebar-width: 64px;
-    --links-width: 121px;
+    --links-width: 120px;
 
     display: flex;
     height: 64px;
     position: relative;
-    background-color: v-bind("fileSettings.background");
-    z-index: 2;
+    background-color: transparent;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    padding-inline: calc(var(--links-width) - 16px);
-
+    padding-inline: calc(var(--links-width) - 16px - 8px + 1px);
     opacity: 1;
     transform: translateY(0);
     width: 100%;
@@ -49,17 +47,24 @@
       width var(--transition-duration) ease;
   }
 
-  .tb-wrapper.with-shadow::after {
+  .tb-wrapper .middle-column::after {
     --thickness: 4px;
     content: "";
     position: absolute;
-    right: -16px;
     bottom: calc(-1 * var(--thickness));
-    width: calc(200% + 32px + 32px + 1px);
+    width: 100%;
     height: var(--thickness);
+    pointer-events: none;
+  }
+
+  .tb-wrapper:not(.with-shadow) .middle-column::after {
+    box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.1);
+    bottom: -4px;
+  }
+
+  .tb-wrapper.with-shadow .middle-column::after {
     box-shadow: inset 0 var(--thickness) var(--thickness) calc(-1 * var(--thickness))
       rgba(0, 0, 0, 0.3);
-    pointer-events: none;
   }
 
   .tb-wrapper.focus {
@@ -82,15 +87,24 @@
   .left-column {
     margin-inline: 16px;
     border-top-left-radius: 16px;
-    width: v-bind("leftColumnWidth");
   }
 
   .middle-column {
+    background-color: transparent;
+    width: v-bind("middleColumnWidth");
     display: flex;
     flex-direction: row;
     align-items: center;
     text-align: center;
-    width: v-bind("middleColumnWidth");
+    border-radius: 8px 8px 0 0;
+  }
+
+  .tb-wrapper.with-shadow .middle-column {
+    background-color: var(--surface-page);
+    /* margin-top: 16px;
+       height: calc(64px - 16px); */
+    /* border-top-left-radius: 8px;
+       border-top-right-radius: 8px; */
   }
 
   .file-title {

@@ -163,6 +163,7 @@
             <ManuscriptWrapper
               v-if="file.html"
               ref="manuscript-ref"
+              :class="{ 'title-visible': isMainTitleVisible }"
               :html-string="file.html || ''"
               :keys="true"
               :show-footer="true"
@@ -259,9 +260,8 @@
     max-width: 720px;
     z-index: 1;
     overflow-x: visible;
-    padding-top: 16px;
     will-change: padding-top;
-    height: 100%;
+    height: fit-content;
     transition: padding-top var(--transition-duration) ease;
   }
 
@@ -280,6 +280,16 @@
   .d-wrapper.focus {
     opacity: 0;
     transition: opacity var(--transition-duration) ease;
+  }
+
+  .rsm-manuscript {
+    padding: 16px 16px 0 16px;
+    margin-bottom: 16px;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+    border: var(--border-extrathin) solid var(--border-primary);
+    border-top: none;
+    box-shadow: var(--shadow-soft);
   }
 
   :deep(.float-minimap-wrapper) {
