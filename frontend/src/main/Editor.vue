@@ -75,9 +75,8 @@
     display: flex;
     flex-direction: column;
     height: calc(100% - 16px);
-    margin-inline: 16px;
     border: var(--border-extrathin) solid var(--border-primary);
-    border-radius: 8px;
+    border-radius: 0 8px 8px 8px;
     background-color: var(--surface-page);
   }
 
