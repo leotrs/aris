@@ -224,7 +224,7 @@
       border-top-left-radius: 16px;
       border-bottom-left-radius: 16px;
       flex: 1;
-      max-width: 720px;
+      max-width: 600px;
     }
 
     &.right {

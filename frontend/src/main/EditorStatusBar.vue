@@ -23,7 +23,6 @@
       <Button kind="tertiary" size="sm" icon="MapPin" text="Go to" />
     </div>
     <div class="middle">
-      <IconCode />
       <span class="crumb">main.rsm</span>
       <span class="crumb-sep">></span>
       <span class="crumb">Sec. 1</span>
@@ -92,7 +91,11 @@
     height: 24px;
   }
 
-  .statusbar > .middle > .crumb:hover {
+  .crumb {
+    text-wrap: nowrap;
+  }
+
+  .crumb:hover {
     background-color: var(--surface-hint);
   }
 

@@ -31,12 +31,13 @@
     --links-width: 120px;
 
     display: flex;
+    justify-content: center;
     height: 64px;
     position: relative;
     background-color: transparent;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    padding-inline: calc(var(--links-width) - 16px - 8px + 1px);
+    padding-inline: calc(var(--links-width) - 16px - 8px);
     opacity: 1;
     transform: translateY(0);
     width: 100%;
@@ -53,6 +54,7 @@
     position: absolute;
     bottom: calc(-1 * var(--thickness));
     width: 100%;
+    min-width: v-bind("middleColumnWidth");
     height: var(--thickness);
     pointer-events: none;
   }
