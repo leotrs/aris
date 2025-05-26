@@ -14,8 +14,8 @@
   import { useElementSize, useScroll } from "@vueuse/core";
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
   import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
-  import axios from "axios";
-  import Topbar from "./CanvasTopbar.vue";
+  import ReaderTopbar from "./ReaderTopbar.vue";
+  import EditorTopbar from "./EditorTopbar.vue";
   import Dock from "./Dock.vue";
   import Drawer from "./Drawer.vue";
   import DockableEditor from "./DockableEditor.vue";
@@ -146,50 +146,44 @@
 
 <template>
   <Suspense>
-    <div class="outer-wrapper" :class="{ focus: focusMode }">
-      <Topbar :show-title="!isMainTitleVisible" :component="validDockComponents[top.at(-1)]" />
-
-      <div ref="inner-ref" class="inner-wrapper" :class="{ focus: focusMode }">
-        <Dock
-          ref="leftColumnRef"
-          class="left-column"
-          :style="{ flex: left.length > 0 ? '1' : '0' }"
-        >
-          <DockableEditor v-if="left.length > 0" ref="editor-ref" v-model="file" />
-        </Dock>
-
-        <Dock ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
-          <ManuscriptWrapper
-            v-if="file.html"
-            ref="manuscript-ref"
-            :html-string="file.html || ''"
-            :keys="true"
-            :show-footer="true"
-          />
-        </Dock>
-
-        <Dock ref="rightColumnRef" class="right-column">
-          <component
-            :is="validDockComponents[comp]"
-            v-for="comp in right"
-            :key="comp"
-            :file="file"
-            side="right"
-          />
-        </Dock>
-
-        <Drawer :class="{ focus: focusMode }" />
+    <div class="outer" :class="{ focus: focusMode }">
+      <div class="inner left">
+        <EditorTopbar />
+        <div class="main"><DockableEditor v-model="file" /></div>
       </div>
+
+      <div class="inner right">
+        <ReaderTopbar
+          :show-title="!isMainTitleVisible"
+          :component="validDockComponents[top.at(-1)]"
+        />
+        <div class="main">
+          <Dock ref="leftColumnRef" class="left-column"> </Dock>
+          <Dock ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
+            <ManuscriptWrapper
+              v-if="file.html"
+              ref="manuscript-ref"
+              :html-string="file.html || ''"
+              :keys="true"
+              :show-footer="true"
+            />
+          </Dock>
+          <Dock ref="rightColumnRef" class="right-column"> </Dock>
+        </div>
+      </div>
+
+      <Drawer :class="{ focus: focusMode }" />
     </div>
   </Suspense>
 </template>
 
 <style scoped>
-  .outer-wrapper {
+  .outer {
     --outer-padding: 8px;
     --sidebar-width: 64px;
     --topbar-height: 64px;
 
+    display: flex;
     position: relative;
     z-index: 1;
     box-shadow: var(--shadow-soft);
@@ -204,42 +198,55 @@
       border-radius var(--transition-duration) ease;
   }
 
-  .outer-wrapper.focus {
+  .outer.focus {
     width: 100%;
     left: 0;
     border-radius: 0;
   }
 
-  .inner-wrapper {
-    display: flex;
-    width: 100%;
-    height: calc(100% - var(--topbar-height));
+  .inner {
     position: relative;
-    top: var(--topbar-height);
+    display: flex;
+    flex-direction: column;
+    width: 50%;
+    padding-inline: 16px;
+    height: 100%;
     background-color: v-bind("fileSettings.background");
     justify-content: center;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
     will-change: border-radius, height, top;
     transition:
       border-radius var(--transition-duration) ease,
       height var(--transition-duration) ease,
       top var(--transition-duration) ease;
+
+    &.left {
+      border-top-left-radius: 16px;
+      border-bottom-left-radius: 16px;
+    }
+
+    &.right {
+      border-top-right-radius: 16px;
+      border-bottom-right-radius: 16px;
+    }
   }
 
-  .inner-wrapper.focus {
+  .inner.focus {
     top: 0;
     height: 100%;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
   }
 
-  .left-column {
-    /* flex: 0 or 1; decided via inline component style */
+  .inner .main {
+    position: relative;
+    height: calc(100% - 64px);
   }
 
-  .left-column,
-  .middle-column {
+  .inner.right .main :is(.left-column, .right-column) {
+    width: 0px;
+  }
+
+  .inner.right .main .middle-column {
     max-width: 720px;
     z-index: 1;
     overflow-x: visible;
@@ -249,28 +256,17 @@
     transition: padding-top var(--transition-duration) ease;
   }
 
-  .middle-column {
+  .inner.right .main .middle-column {
     flex: 1;
     overflow-y: auto;
   }
 
-  .left-column.focus {
+  .inner.right .main .left-column.focus {
     padding-top: 16px;
   }
 
-  .middle-column.focus {
+  .inner.right .main .middle-column.focus {
     padding-top: 48px;
-  }
-
-  .right-column {
-    position: absolute;
-    min-width: 48px;
-    flex-basis: 48px;
-    flex-shrink: 0;
-    flex-grow: 0;
-    padding-inline: 16px;
-    padding-block: 16px;
-    height: 100%;
   }
 
   .d-wrapper.focus {

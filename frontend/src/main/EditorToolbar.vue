@@ -35,6 +35,7 @@
       tooltip: "Author",
     },
     { text: "ABS", icon: "", str: ":abstract:\n\n::", tooltip: "Abstract" },
+    { text: "TOC", icon: "", str: ":toc:", tooltip: "Toable of Contents" },
     { text: "BIB", icon: "", str: ":bibliography: ::", tooltip: "Insert References" },
     { text: "APP", icon: "", str: ":appendix:", tooltip: "Start Appendix" },
     { text: "sep" },
@@ -83,11 +84,6 @@
 
 <template>
   <div class="toolbar">
-    <Tabs :labels="['Source', 'Files']" :icons="['Code', 'Files']">
-      <TabPage />
-      <TabPage />
-    </Tabs>
-
     <div class="left">
       <!-- This should be tabs NOT segmented control... -->
       <!-- <SegmentedControl :icons="['Code', 'Files']" :default-active="0" />
@@ -108,9 +104,6 @@
         </Tooltip>
       </template>
     </div>
-    <div class="right">
-      <Button kind="primary" size="sm" text="compile" class="cta" @click="emit('compile')" />
-    </div>
   </div>
 </template>
 
@@ -122,7 +115,7 @@
     justify-content: space-between;
     min-height: var(--toolbar-height);
     max-height: calc(var(--toolbar-height) * 2 + 8px);
-    border-radius: 8px 8px 0 0;
+    border-radius: 0 8px 0 0;
     padding: 8px;
     gap: 16px;
     background-color: var(--surface-hover);

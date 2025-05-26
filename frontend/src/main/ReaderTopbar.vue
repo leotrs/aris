@@ -17,7 +17,7 @@
 </script>
 
 <template>
-  <div class="tb-wrapper" :class="{ 'with-border': showTitle, focus: focusMode }">
+  <div class="tb-wrapper" :class="{ 'with-shadow': showTitle, focus: focusMode }">
     <Dock class="left-column top">
       <FileTitle v-if="showTitle && component" :file="file" class="text-h6" />
     </Dock>
@@ -37,7 +37,7 @@
 
     display: flex;
     height: 64px;
-    position: fixed;
+    position: relative;
     background-color: v-bind("fileSettings.background");
     z-index: 2;
     border-top-left-radius: 16px;
@@ -46,16 +46,25 @@
 
     opacity: 1;
     transform: translateY(0);
-    width: calc(100% - var(--sidebar-width) - var(--outer-padding));
+    width: 100%;
     will-change: opacity, transform, width;
     transition:
       opacity var(--transition-duration) ease,
       transform var(--transition-duration) ease,
       width var(--transition-duration) ease;
+  }
 
-    &.with-border {
-      box-shadow: var(--shadow-soft);
-    }
+  .tb-wrapper.with-shadow::after {
+    --thickness: 4px;
+    content: "";
+    position: absolute;
+    right: -16px;
+    bottom: calc(-1 * var(--thickness));
+    width: calc(200% + 32px + 32px);
+    height: var(--thickness);
+    box-shadow: inset 0 var(--thickness) var(--thickness) calc(-1 * var(--thickness))
+      rgba(0, 0, 0, 0.3);
+    pointer-events: none;
   }
 
   .tb-wrapper.focus {
