@@ -47,6 +47,7 @@
     border: unset;
     border-radius: 16px;
     gap: 2px;
+    text-wrap: nowrap;
     padding-block: 6px;
     outline: none;
     border-width: var(--border-width);

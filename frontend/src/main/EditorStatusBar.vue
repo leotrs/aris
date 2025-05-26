@@ -1,5 +1,12 @@
 <script setup>
-  import { IconCode, IconCheck, IconClock, IconDeviceFloppy, IconX } from "@tabler/icons-vue";
+  import {
+    IconCode,
+    IconCheck,
+    IconClock,
+    IconDeviceFloppy,
+    IconX,
+    IconMapPin,
+  } from "@tabler/icons-vue";
 
   defineProps({
     saveStatus: {
@@ -12,7 +19,23 @@
 
 <template>
   <div class="statusbar">
-    <div class="middle"><IconCode /><span>main.rsm > Subsubsec. 1.3.1 > Fig. 1.3.1</span></div>
+    <div class="left">
+      <Button kind="tertiary" size="sm" icon="MapPin" text="Go to" />
+    </div>
+    <div class="middle">
+      <IconCode />
+      <span class="crumb">main.rsm</span>
+      <span class="crumb-sep">></span>
+      <span class="crumb">Sec. 1</span>
+      <span class="crumb-sep">></span>
+      <span class="crumb">Sub. 1.3</span>
+      <span class="crumb-sep">></span>
+      <span class="crumb">Subsub. 1.3.1</span>
+      <span class="crumb-sep">></span>
+      <span class="crumb">Paragraph</span>
+      <span class="crumb-sep">></span>
+      <span class="crumb">:span:</span>
+    </div>
     <div class="right">
       <IconClock v-if="saveStatus === 'pending'" class="icon-pending" />
       <IconDeviceFloppy v-if="saveStatus === 'saving'" class="icon-saving" />
@@ -35,32 +58,41 @@
     padding-inline: 8px;
   }
 
-  .statusbar > * {
-    font-size: 12px;
+  .statusbar * {
+    font-size: 12px !important;
     line-height: 18px;
     display: flex;
     align-items: center;
     color: var(--dark);
-    padding-block: 2px;
   }
 
-  .statusbar > .left {
+  .statusbar > .middle {
     padding-right: 8px;
+    width: 100%;
   }
 
   .statusbar > :is(.left, .middle) > :deep(svg) {
     color: var(--dark);
   }
 
+  .statusbar > .middle {
+    padding-inline: 8px;
+    gap: 4px;
+  }
+
   .statusbar > .middle > :deep(svg) {
     margin-right: 8px;
   }
 
-  .statusbar > .middle {
+  .statusbar > .left {
     flex: 1;
   }
 
-  .statusbar > .middle:hover {
+  .statusbar > .left > button {
+    height: 24px;
+  }
+
+  .statusbar > .middle > .crumb:hover {
     background-color: var(--surface-hint);
   }
 

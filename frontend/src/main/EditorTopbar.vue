@@ -12,8 +12,15 @@
         <TabPage />
       </Tabs>
     </div>
-    <div class="middle">Go to...</div>
+    <!-- <div class="middle">Go to...</div> -->
     <div class="right">
+      <div class="version">
+        <span class="text-default">v2</span>
+        <Button kind="tertiary" size="sm" icon="CaretDownFilled" />
+      </div>
+      <Button kind="tertiary" size="sm" icon="ArrowBack" />
+      <Button kind="tertiary" size="sm" icon="Help" />
+      <Button kind="tertiary" size="sm" icon="Settings" />
       <Button kind="primary" size="sm" text="compile" class="cta" @click="emit('compile')" />
     </div>
   </div>
@@ -51,5 +58,15 @@
     display: none !important;
     padding: 0px !important;
     margin: 0px !important;
+  }
+
+  .right {
+    display: flex;
+    gap: 8px;
+  }
+
+  .right .version {
+    display: flex;
+    align-items: center;
   }
 </style>
