@@ -1,5 +1,5 @@
 <script setup>
-  import {} from "vue";
+  import { useTemplateRef } from "vue";
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
@@ -11,10 +11,13 @@
     disabled: { type: Boolean, default: false },
     shadow: { type: Boolean, default: false },
   });
+  const btnRef = useTemplateRef("btn-ref");
+  defineExpose({ btn: btnRef });
 </script>
 
 <template>
   <button
+    ref="btn-ref"
     :class="[
       kind,
       `btn-${size}`,
