@@ -9,19 +9,16 @@
   const file = inject("file");
 
   const columnSizes = inject("columnSizes");
-  const leftColumnWidth = computed(() => `${columnSizes.left.width}px`);
-  const middleColumnWidth = computed(() => `${columnSizes.middle.width}px`);
-
   const fileSettings = inject("fileSettings");
   const focusMode = inject("focusMode");
 </script>
 
 <template>
   <div class="tb-wrapper" :class="{ 'with-shadow': showTitle, focus: focusMode }">
-    <Dock class="middle-column top">
+    <template v-if="showTitle">
       <FileTitle v-if="!component && showTitle" :file="file" class="text-h6" />
       <component :is="component" v-if="component" ref="middle-comp" :file="file" side="top" />
-    </Dock>
+    </template>
   </div>
 </template>
 
