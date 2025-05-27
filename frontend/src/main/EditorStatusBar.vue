@@ -25,10 +25,6 @@
     <div class="middle">
       <span class="crumb">main.rsm</span>
       <span class="crumb-sep">></span>
-      <span class="crumb">Sec. 1</span>
-      <span class="crumb-sep">></span>
-      <span class="crumb">Sub. 1.3</span>
-      <span class="crumb-sep">></span>
       <span class="crumb">Subsub. 1.3.1</span>
       <span class="crumb-sep">></span>
       <span class="crumb">Paragraph</span>
