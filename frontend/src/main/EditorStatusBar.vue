@@ -62,6 +62,10 @@
     color: var(--dark);
   }
 
+  .statusbar > .left > .button {
+    height: 100%;
+  }
+
   .statusbar :deep(.btn-text) {
     font-size: 11px !important;
   }
@@ -84,6 +88,7 @@
     white-space: nowrap;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    height: 100%;
   }
 
   .statusbar .middle::-webkit-scrollbar {
@@ -99,13 +104,10 @@
     flex: 1;
   }
 
-  .statusbar > .left > button {
-    height: 24px;
-  }
-
   .crumb {
     text-wrap: nowrap;
     flex-shrink: 0;
+    height: 100%;
   }
 
   .crumb:hover {
