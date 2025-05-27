@@ -71,7 +71,7 @@
 </script>
 
 <template>
-  <div class="read-view" :class="{ focus: focusMode }">
+  <div class="view" :class="{ focus: focusMode }">
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
     <Canvas
       v-if="file"
@@ -89,7 +89,7 @@
 </template>
 
 <style scoped>
-  .read-view {
+  .view {
     --transition-duration: 0.3s;
     display: flex;
     width: 100%;
@@ -99,7 +99,7 @@
     position: relative;
   }
 
-  .read-view.focus {
+  .view.focus {
     padding: 0;
   }
 
