@@ -258,6 +258,7 @@
   .inner.right .middle-column {
     max-width: 720px;
     height: fit-content;
+    min-height: 100%;
   }
 
   .inner.right .dock.top.middle {
