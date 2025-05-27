@@ -52,7 +52,6 @@
     display: flex;
     width: 100%;
     justify-content: space-between;
-    padding-inline: 8px;
   }
 
   .statusbar * {
@@ -119,6 +118,10 @@
 
   .statusbar > :is(.left, .right) {
     flex: 0;
+  }
+
+  .statusbar > .right {
+    padding-inline: 8px;
   }
 
   .statusbar > * > :deep(svg) {
