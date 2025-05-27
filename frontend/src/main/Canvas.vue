@@ -260,8 +260,8 @@
   }
 
   .inner.right .dock.top.middle {
-    position: fixed;
-    top: 8px;
+    position: sticky;
+    top: -16px;
     z-index: 2;
   }
 
