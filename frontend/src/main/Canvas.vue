@@ -256,6 +256,7 @@
 
   .inner.right .middle-column {
     max-width: 720px;
+    height: fit-content;
   }
 
   .inner.right .dock.main {
@@ -271,7 +272,8 @@
   }
 
   .rsm-manuscript {
-    padding: 16px;
+    padding-inline: 16px;
+    padding-block: 32px;
     border-radius: 8px;
     border: var(--border-extrathin) solid var(--border-primary);
     border-top: none;
