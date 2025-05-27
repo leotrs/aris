@@ -78,10 +78,12 @@
     border: var(--border-extrathin) solid var(--border-primary);
     border-radius: 0 8px 8px 8px;
     background-color: var(--surface-page);
+    z-index: 1;
   }
 
   .editor-wrapper:has(> textarea.editor:focus) {
     border-color: var(--border-action);
+    outline: var(--border-extrathin) solid var(--border-action);
   }
 
   button.primary.cta {

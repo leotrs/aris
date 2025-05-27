@@ -34,14 +34,11 @@
 
     position: relative;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     justify-content: space-between;
-    height: 64px;
-    background-color: var(--surface-page);
-    z-index: 2;
+    height: 48px;
     border-top-left-radius: 16px;
     opacity: 1;
-    padding-top: 16px;
     transform: translateY(0);
     will-change: opacity, transform, width;
     transition:
@@ -63,6 +60,8 @@
   .right {
     display: flex;
     gap: 8px;
+    height: 100%;
+    padding-block: 8px;
   }
 
   .right .version {

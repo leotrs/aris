@@ -18,7 +18,7 @@
   import EditorTopbar from "./EditorTopbar.vue";
   import Dock from "./Dock.vue";
   import Drawer from "./Drawer.vue";
-  import DockableEditor from "./DockableEditor.vue";
+  import Editor from "./Editor.vue";
   import DockableSearch from "./DockableSearch.vue";
   import DockableMinimap from "./DockableMinimap.vue";
 
@@ -33,7 +33,7 @@
     /* DockableChat, */
     DockableSearch,
     DockableMinimap,
-    DockableEditor,
+    /* DockableEditor, */
     /* DockableComments, */
     /* DockableSymbols, */
     /* DockableClaims, */
@@ -149,17 +149,22 @@
     <div class="outer" :class="{ focus: focusMode }">
       <div class="inner left">
         <EditorTopbar />
-        <div class="main"><DockableEditor v-model="file" /></div>
+        <Editor v-model="file" />
       </div>
 
       <div class="inner right">
-        <ReaderTopbar
-          :show-title="!isMainTitleVisible"
-          :component="validDockComponents[top.at(-1)]"
-        />
-        <div class="main">
-          <Dock ref="leftColumnRef" class="left-column"> </Dock>
-          <Dock ref="middleColumnRef" class="middle-column" :class="{ focus: focusMode }">
+        <div class="left-column">
+          <Dock class="dock left top"> </Dock>
+          <Dock class="dock left main"> </Dock>
+        </div>
+        <div class="middle-column">
+          <Dock class="dock middle top">
+            <!-- <ReaderTopbar
+                 :show-title="!isMainTitleVisible"
+                 :component="validDockComponents[top.at(-1)]"
+                 /> -->
+          </Dock>
+          <Dock class="dock middle main">
             <ManuscriptWrapper
               v-if="file.html"
               ref="manuscript-ref"
@@ -169,7 +174,10 @@
               :show-footer="true"
             />
           </Dock>
-          <Dock ref="rightColumnRef" class="right-column"> </Dock>
+        </div>
+        <div class="right-column">
+          <Dock class="dock right top"> </Dock>
+          <Dock class="dock right main"> </Dock>
         </div>
       </div>
 
@@ -208,9 +216,8 @@
   .inner {
     position: relative;
     display: flex;
-    flex-direction: column;
     width: 50%;
-    padding-inline: 16px;
+    padding: 16px;
     height: 100%;
     background-color: v-bind("fileSettings.background");
     justify-content: center;
@@ -221,6 +228,7 @@
       top var(--transition-duration) ease;
 
     &.left {
+      flex-direction: column;
       border-top-left-radius: 16px;
       border-bottom-left-radius: 16px;
       flex: 1;
@@ -231,6 +239,7 @@
       border-top-right-radius: 16px;
       border-bottom-right-radius: 16px;
       flex: 1;
+      overflow-y: auto;
     }
   }
 
@@ -241,55 +250,37 @@
     border-bottom-right-radius: 0;
   }
 
-  .inner .main {
-    position: relative;
-    height: calc(100% - 64px);
+  .inner.left .editor-wrapper {
+    height: calc(100% - 48px);
   }
 
-  .inner.right .main {
-    display: flex;
-    justify-content: center;
-    overflow-y: auto;
-  }
-
-  .inner.right .main :is(.left-column, .right-column) {
-    width: 0px;
-  }
-
-  .inner.right .main .middle-column {
+  .inner.right .middle-column {
     max-width: 720px;
-    z-index: 1;
+  }
+
+  .inner.right .dock.main {
     overflow-x: visible;
     will-change: padding-top;
     height: fit-content;
     transition: padding-top var(--transition-duration) ease;
+
+    &.middle {
+      min-height: 100%;
+      max-width: 720px;
+    }
   }
 
-  .inner.right .main .middle-column {
-    flex: 1;
-  }
-
-  .inner.right .main .left-column.focus {
-    padding-top: 16px;
-  }
-
-  .inner.right .main .middle-column.focus {
-    padding-top: 48px;
+  .rsm-manuscript {
+    padding: 16px;
+    border-radius: 8px;
+    border: var(--border-extrathin) solid var(--border-primary);
+    border-top: none;
+    box-shadow: var(--shadow-soft);
   }
 
   .d-wrapper.focus {
     opacity: 0;
     transition: opacity var(--transition-duration) ease;
-  }
-
-  .rsm-manuscript {
-    padding: 16px 16px 0 16px;
-    margin-bottom: 16px;
-    border-bottom-left-radius: 8px;
-    border-bottom-right-radius: 8px;
-    border: var(--border-extrathin) solid var(--border-primary);
-    border-top: none;
-    box-shadow: var(--shadow-soft);
   }
 
   :deep(.float-minimap-wrapper) {
