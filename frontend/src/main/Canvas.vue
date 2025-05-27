@@ -153,16 +153,16 @@
       </div>
 
       <div class="inner right">
-        <div class="left-column">
+        <div ref="left-column-ref" class="left-column">
           <Dock class="dock left top"> </Dock>
           <Dock class="dock left main"> </Dock>
         </div>
-        <div class="middle-column">
+        <div ref="middle-column-ref" class="middle-column">
           <Dock class="dock middle top">
-            <!-- <ReaderTopbar
-                 :show-title="!isMainTitleVisible"
-                 :component="validDockComponents[top.at(-1)]"
-                 /> -->
+            <ReaderTopbar
+              :show-title="!isMainTitleVisible"
+              :component="validDockComponents[top.at(-1)]"
+            />
           </Dock>
           <Dock class="dock middle main">
             <ManuscriptWrapper
@@ -175,7 +175,7 @@
             />
           </Dock>
         </div>
-        <div class="right-column">
+        <div ref="right-column-ref" class="right-column">
           <Dock class="dock right top"> </Dock>
           <Dock class="dock right main"> </Dock>
         </div>
@@ -257,6 +257,12 @@
   .inner.right .middle-column {
     max-width: 720px;
     height: fit-content;
+  }
+
+  .inner.right .dock.top.middle {
+    position: fixed;
+    top: 8px;
+    z-index: 2;
   }
 
   .inner.right .dock.main {

@@ -9,62 +9,62 @@
     { text: "", icon: "Italic", str: "//", tooltip: "Italic" },
     { text: ":B:", icon: "", str: ":block:\n\n::", tooltip: "Block Tag" },
     { text: ":I:", icon: "", str: ":inline: ::", tooltip: "Inline Tag" },
-    { text: "", icon: "MessageCode", str: "% ", tooltip: "Comment" },
-    { text: "sep" },
-    { text: "", icon: "List", str: ":itemize:\n\n:item:\n\n::", tooltip: "List" },
-    { text: "", icon: "ListNumbers", str: ":enumerate:\n\n:item:\n\n::", tooltip: "Numbered List" },
-    { text: "", icon: "Photo", str: ":figure:\n:path:filepath.jpg\n\n::", tooltip: "Figure" },
-    { text: "", icon: "Table", str: ":table:\n::", tooltip: "Table" },
-    { text: "", icon: "Code", str: "``", tooltip: "Code" },
-    { text: "", icon: "SourceCode", str: "```\n\n```", tooltip: "Code Block" },
-    { text: "sep" },
-    { text: "", icon: "FileSymlink", str: ":ref:my-lbl::", tooltip: "Internal Cross-Reference" },
-    { text: "", icon: "Quote", str: ":cite:my-lbl::", tooltip: "Citation" },
-    { text: "", icon: "Link", str: ":url:foo,bar::", tooltip: "URL" },
-    { text: "sep" },
-    {
-      text: "AUT",
-      icon: "",
-      str: ":author:\n:name:\n:email:\n:affiliation:\n::",
-      tooltip: "Author",
-    },
-    { text: "ABS", icon: "", str: ":abstract:\n\n::", tooltip: "Abstract" },
-    { text: "TOC", icon: "", str: ":toc:", tooltip: "Toable of Contents" },
-    { text: "BIB", icon: "", str: ":bibliography: ::", tooltip: "Insert References" },
-    { text: "APP", icon: "", str: ":appendix:", tooltip: "Start Appendix" },
-    { text: "sep" },
-    { text: "", icon: "Books", str: ":bibtex: ::", tooltip: "Bibliography" },
-    {
-      text: "",
-      icon: "Book2",
-      str: "@article{my-lbl\ntitle={},\nauthor={}\nyear={},\njournal={},\ndoi={},\n}\n}",
-      tooltip: "Bibliography Item",
-    },
-    { text: "sep" },
-    { text: "$B", icon: "", str: "${:label: my-lbl }  $", tooltip: "Math Block" },
-    { text: "$I", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Math Inline" },
-    { text: "THM", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Theorem" },
-    { text: "PRP", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Proposition" },
-    { text: "LEM", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Lemma" },
-    { text: "COR", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Corollary" },
-    { text: "PRF", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Proof" },
-    { text: "STP", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Proof Step" },
-    { text: ":P:", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Sub-Proof" },
-    { text: "sep" },
-    { text: ":assume:", icon: "", tooltip: "Heading" },
-    { text: ":case:", icon: "", tooltip: "Heading" },
-    { text: ":claim:", icon: "", tooltip: "Heading" },
-    { text: ":define:", icon: "", tooltip: "Heading" },
-    { text: ":let:", icon: "", tooltip: "Heading" },
-    { text: ":new:", icon: "", tooltip: "Heading" },
-    { text: ":pick:", icon: "", tooltip: "Heading" },
-    { text: ":prove:", icon: "", tooltip: "Heading" },
-    { text: ":st:", icon: "", tooltip: "Heading" },
-    { text: ":suffices:", icon: "", tooltip: "Heading" },
-    { text: ":suppose:", icon: "", tooltip: "Heading" },
-    { text: ":then:", icon: "", tooltip: "Heading" },
-    { text: ":wlog:", icon: "", tooltip: "Heading" },
-    { text: ":write:", icon: "", tooltip: "Heading" },
+    /* { text: "", icon: "MessageCode", str: "% ", tooltip: "Comment" },
+     * { text: "sep" }, */
+    /* { text: "", icon: "List", str: ":itemize:\n\n:item:\n\n::", tooltip: "List" },
+     * { text: "", icon: "ListNumbers", str: ":enumerate:\n\n:item:\n\n::", tooltip: "Numbered List" },
+     * { text: "", icon: "Photo", str: ":figure:\n:path:filepath.jpg\n\n::", tooltip: "Figure" },
+     * { text: "", icon: "Table", str: ":table:\n::", tooltip: "Table" },
+     * { text: "", icon: "Code", str: "``", tooltip: "Code" },
+     * { text: "", icon: "SourceCode", str: "```\n\n```", tooltip: "Code Block" }, */
+    /* { text: "sep" },
+     * { text: "", icon: "FileSymlink", str: ":ref:my-lbl::", tooltip: "Internal Cross-Reference" },
+     * { text: "", icon: "Quote", str: ":cite:my-lbl::", tooltip: "Citation" },
+     * { text: "", icon: "Link", str: ":url:foo,bar::", tooltip: "URL" }, */
+    /* { text: "sep" },
+     * {
+     *   text: "AUT",
+     *   icon: "",
+     *   str: ":author:\n:name:\n:email:\n:affiliation:\n::",
+     *   tooltip: "Author",
+     * },
+     * { text: "ABS", icon: "", str: ":abstract:\n\n::", tooltip: "Abstract" },
+     * { text: "TOC", icon: "", str: ":toc:", tooltip: "Toable of Contents" },
+     * { text: "BIB", icon: "", str: ":bibliography: ::", tooltip: "Insert References" },
+     * { text: "APP", icon: "", str: ":appendix:", tooltip: "Start Appendix" },
+     * { text: "sep" },
+     * { text: "", icon: "Books", str: ":bibtex: ::", tooltip: "Bibliography" },
+     * {
+     *   text: "",
+     *   icon: "Book2",
+     *   str: "@article{my-lbl\ntitle={},\nauthor={}\nyear={},\njournal={},\ndoi={},\n}\n}",
+     *   tooltip: "Bibliography Item",
+     * }, */
+    /* { text: "sep" },
+     * { text: "$B", icon: "", str: "${:label: my-lbl }  $", tooltip: "Math Block" },
+     * { text: "$I", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Math Inline" },
+     * { text: "THM", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Theorem" },
+     * { text: "PRP", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Proposition" },
+     * { text: "LEM", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Lemma" },
+     * { text: "COR", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Corollary" },
+     * { text: "PRF", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Proof" },
+     * { text: "STP", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Proof Step" },
+     * { text: ":P:", icon: "", str: "$$\n:label: my-lbl\n\n$$", tooltip: "Sub-Proof" },
+     * { text: "sep" },
+     * { text: ":assume:", icon: "", tooltip: "Heading" },
+     * { text: ":case:", icon: "", tooltip: "Heading" },
+     * { text: ":claim:", icon: "", tooltip: "Heading" },
+     * { text: ":define:", icon: "", tooltip: "Heading" },
+     * { text: ":let:", icon: "", tooltip: "Heading" },
+     * { text: ":new:", icon: "", tooltip: "Heading" },
+     * { text: ":pick:", icon: "", tooltip: "Heading" },
+     * { text: ":prove:", icon: "", tooltip: "Heading" },
+     * { text: ":st:", icon: "", tooltip: "Heading" },
+     * { text: ":suffices:", icon: "", tooltip: "Heading" },
+     * { text: ":suppose:", icon: "", tooltip: "Heading" },
+     * { text: ":then:", icon: "", tooltip: "Heading" },
+     * { text: ":wlog:", icon: "", tooltip: "Heading" },
+     * { text: ":write:", icon: "", tooltip: "Heading" }, */
   ];
 
   const btnEls = reactive({});
@@ -156,6 +156,55 @@
           {{ obj.tooltip }}
         </Tooltip>
       </template>
+      <HSeparator />
+      <ContextMenu icon="" text="Insert">
+        <ContextMenuItem caption="List" icon="List" />
+        <ContextMenuItem caption="Numbered List" icon="ListNumbers" />
+        <ContextMenuItem caption="Figure" icon="Photo" />
+        <ContextMenuItem caption="Table" icon="Table" />
+        <ContextMenuItem caption="Code Inline" icon="Code" />
+        <ContextMenuItem caption="Code Block" icon="SourceCode" />
+        <ContextMenuItem caption="Comment" icon="MessageCode" />
+      </ContextMenu>
+      <ContextMenu icon="" text="Link">
+        <ContextMenuItem caption="Cross-Reference" icon="FileSymlink" />
+        <ContextMenuItem caption="Citation" icon="Quote" />
+        <ContextMenuItem caption="URL" icon="Link" />
+      </ContextMenu>
+      <ContextMenu icon="" text="Sections">
+        <ContextMenuItem caption="Heading" icon="Heading" />
+        <ContextMenuItem caption="Author" icon="UserEdit" />
+        <ContextMenuItem caption="References" icon="List" />
+        <ContextMenuItem caption="Bibliography" icon="Books" />
+        <ContextMenuItem caption="Bibliography Item" icon="Book2" />
+        <ContextMenuItem caption="Abstract" icon="SectionSign" />
+        <ContextMenuItem caption="Appendix" icon="SectionSign" />
+      </ContextMenu>
+      <ContextMenu icon="" text="Math">
+        <ContextMenuItem caption="Math Block" icon="" />
+        <ContextMenuItem caption="Math Inline" icon="" />
+        <ContextMenuItem caption="Theorem" icon="" />
+        <ContextMenuItem caption="Proposition" icon="" />
+        <ContextMenuItem caption="Lemma" icon="" />
+        <ContextMenuItem caption="Corollary" icon="" />
+        <ContextMenuItem caption="Proof" icon="" />
+        <ContextMenuItem caption="Proof Step" icon="" />
+        <ContextMenuItem caption="Subproof" icon="" />
+        <ContextMenuItem caption="Assumption" icon="" />
+        <ContextMenuItem caption="Case" icon="" />
+        <ContextMenuItem caption="Claim" icon="" />
+        <ContextMenuItem caption="Definition" icon="" />
+        <ContextMenuItem caption="Let" icon="" />
+        <ContextMenuItem caption="New" icon="" />
+        <ContextMenuItem caption="Pick" icon="" />
+        <ContextMenuItem caption="Prove" icon="" />
+        <ContextMenuItem caption="Such That" icon="" />
+        <ContextMenuItem caption="Suffices" icon="" />
+        <ContextMenuItem caption="Suppose" icon="" />
+        <ContextMenuItem caption="Then" icon="" />
+        <ContextMenuItem caption="WLOG" icon="" />
+        <ContextMenuItem caption="Write" icon="" />
+      </ContextMenu>
     </div>
 
     <div class="right">
