@@ -240,6 +240,8 @@
       border-radius: 16px;
       flex: 1;
       overflow-y: auto;
+      scrollbar-gutter: stable;
+      padding-right: 8px; /* due to the scrollbar gutter */
     }
   }
 
