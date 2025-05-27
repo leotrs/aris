@@ -11,6 +11,8 @@
   const columnSizes = inject("columnSizes");
   const fileSettings = inject("fileSettings");
   const focusMode = inject("focusMode");
+
+  const width = computed(() => columnSizes.middle.width || "0px");
 </script>
 
 <template>
@@ -29,73 +31,30 @@
 
     display: flex;
     justify-content: center;
-    height: 64px;
     position: relative;
     background-color: transparent;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
-    padding-inline: calc(var(--links-width) - 16px - 8px);
+    border-bottom: var(--border-thin) solid transparent;
     opacity: 1;
     transform: translateY(0);
-    width: 100%;
+    width: v-bind(width);
     will-change: opacity, transform, width;
+    background-color: var(--surface-page);
     transition:
       opacity var(--transition-duration) ease,
       transform var(--transition-duration) ease,
       width var(--transition-duration) ease;
   }
 
-  .tb-wrapper .middle-column::after {
-    --thickness: 4px;
-    content: "";
-    position: absolute;
-    bottom: calc(-1 * var(--thickness));
-    width: 100%;
-    min-width: v-bind("middleColumnWidth");
-    height: var(--thickness);
-    pointer-events: none;
-  }
-
-  .tb-wrapper:not(.with-shadow) .middle-column::after {
-    box-shadow: 0 -4px 4px rgba(0, 0, 0, 0.1);
-    bottom: -4px;
-  }
-
-  .tb-wrapper.with-shadow .middle-column::after {
-    box-shadow: inset 0 var(--thickness) var(--thickness) calc(-1 * var(--thickness))
-      rgba(0, 0, 0, 0.3);
+  .tb-wrapper.with-shadow {
+    height: 64px;
+    border-bottom-color: var(--border-primary);
   }
 
   .tb-wrapper.focus {
     opacity: 0;
     transform: translateY(-100%);
-    width: 100%;
-  }
-
-  .left-column,
-  .middle-column {
-    position: relative;
-    background-color: v-bind("fileSettings.background");
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    transition: opacity var(--transition-duration) ease;
-  }
-
-  .left-column {
-    margin-inline: 16px;
-    border-top-left-radius: 16px;
-  }
-
-  .middle-column {
-    background-color: transparent;
-    width: v-bind("middleColumnWidth");
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    text-align: center;
-    border-radius: 8px 8px 0 0;
   }
 
   .tb-wrapper.with-shadow .middle-column {
@@ -104,9 +63,5 @@
        height: calc(64px - 16px); */
     /* border-top-left-radius: 8px;
        border-top-right-radius: 8px; */
-  }
-
-  .file-title {
-    text-align: right;
   }
 </style>

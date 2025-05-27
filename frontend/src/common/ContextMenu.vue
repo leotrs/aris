@@ -6,6 +6,7 @@
 
   const props = defineProps({
     icon: { type: String, default: "Dots" },
+    text: { type: String, default: "" },
     buttonSize: { type: String, default: "btn-sm" },
     iconClass: { type: String, default: "" },
     placement: { type: String, default: "left-start" },
@@ -90,7 +91,16 @@
         :button-size="buttonSize"
       />
     </template>
-
+    <template v-else-if="text">
+      <ButtonToggle
+        ref="btn-ref"
+        v-model="show"
+        :text="text"
+        class="cm-btn"
+        hover-color="var(--surface-hint)"
+        :button-size="buttonSize"
+      />
+    </template>
     <Teleport to="body">
       <div v-if="show" ref="menu-ref" class="cm-menu" role="menu" :style="floatingStyles">
         <slot />
