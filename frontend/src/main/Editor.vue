@@ -71,7 +71,7 @@
 
 <style scoped>
   .editor-wrapper {
-    --toolbar-height: 48px;
+    --toolbar-height: 40px;
     display: flex;
     flex-direction: column;
     height: calc(100% - 16px);

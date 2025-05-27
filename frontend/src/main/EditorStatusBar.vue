@@ -1,12 +1,5 @@
 <script setup>
-  import {
-    IconCode,
-    IconCheck,
-    IconClock,
-    IconDeviceFloppy,
-    IconX,
-    IconMapPin,
-  } from "@tabler/icons-vue";
+  import { IconCheck, IconClock, IconDeviceFloppy, IconX, IconMapPin } from "@tabler/icons-vue";
 
   defineProps({
     saveStatus: {
@@ -20,16 +13,17 @@
 <template>
   <div class="statusbar">
     <div class="left">
-      <Button kind="tertiary" size="sm" icon="MapPin" text="Go to" />
+      <Button kind="tertiary" size="sm" icon="ArrowUpRight" text="Go to" />
     </div>
     <div class="middle">
+      <IconMapPin />
       <span class="crumb">main.rsm</span>
       <span class="crumb-sep">></span>
-      <span class="crumb">Subsub. 1.3.1</span>
+      <span class="crumb">sec. 1.3.1</span>
       <span class="crumb-sep">></span>
-      <span class="crumb">Paragraph</span>
+      <span class="crumb">para.</span>
       <span class="crumb-sep">></span>
-      <span class="crumb">:span:</span>
+      <span class="crumb">span</span>
     </div>
     <div class="right">
       <IconClock v-if="saveStatus === 'pending'" class="icon-pending" />
@@ -59,6 +53,10 @@
     display: flex;
     align-items: center;
     color: var(--dark);
+  }
+
+  .statusbar :deep(.btn-text) {
+    font-size: 11px !important;
   }
 
   .statusbar > .middle {

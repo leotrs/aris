@@ -208,25 +208,25 @@
     </div>
 
     <div class="right">
-      <ContextMenu
-        v-if="hasOverflow"
-        ref="contextMenuRef"
-        icon="Dots"
-        button-size="btn-sm"
-        placement="bottom-end"
-      >
-        <template v-for="obj in overflowItems" :key="obj.text || obj.icon">
-          <div v-if="obj.text == 'sep'" class="menu-separator" />
-          <ContextMenuItem
-            v-else
-            :icon="obj.icon || ''"
-            :caption="`${obj.text} ${obj.tooltip}`"
-            @click="() => handleOverflowItemClick(obj.str)"
-          >
-            <Tooltip :content="obj.tooltip" />
-          </ContextMenuItem>
-        </template>
-      </ContextMenu>
+      <!-- <ContextMenu
+           v-if="hasOverflow"
+           ref="contextMenuRef"
+           icon="Dots"
+           button-size="btn-sm"
+           placement="bottom-end"
+           >
+           <template v-for="obj in overflowItems" :key="obj.text || obj.icon">
+           <div v-if="obj.text == 'sep'" class="menu-separator" />
+           <ContextMenuItem
+           v-else
+           :icon="obj.icon || ''"
+           :caption="`${obj.text} ${obj.tooltip}`"
+           @click="() => handleOverflowItemClick(obj.str)"
+           >
+           <Tooltip :content="obj.tooltip" />
+           </ContextMenuItem>
+           </template>
+           </ContextMenu> -->
     </div>
   </div>
 </template>
@@ -239,19 +239,20 @@
     min-height: var(--toolbar-height);
     max-height: calc(var(--toolbar-height) * 2 + 8px);
     border-radius: 0 8px 0 0;
-    padding: 8px;
+    padding: 4px;
     gap: 16px;
     background-color: var(--surface-hover);
   }
 
   .toolbar .h-sep {
-    margin-inline: 8px;
+    margin: 4px;
+    height: 24px;
   }
 
   .toolbar > .left {
     display: flex;
+    gap: 2px;
     flex-wrap: nowrap;
-    overflow: hidden;
     flex: 1;
   }
 
@@ -260,17 +261,30 @@
     width: 32px !important;
   }
 
-  .toolbar > .left > :deep(button > .btn-text) {
+  .toolbar > .left > button > :deep(.btn-text) {
     margin: 0 auto;
     font-family: "Source Code Pro", monospace !important;
+    font-size: 16px;
+  }
+
+  .toolbar > .left > .cm-wrapper > :deep(.cm-btn) {
+    padding-inline: 6px;
+    font-size: 16px;
+    font-weight: var(--weight-regular);
+    font-family: "Source Sans 3", sans-serif;
+    text-transform: none;
   }
 
   .toolbar > .right {
     display: flex;
   }
 
-  .toolbar > .left :deep(.sc-btn) {
-    padding: 0;
+  .toolbar > .left > .cm-wrapper {
+    align-content: center;
+  }
+
+  .toolbar > .left > .cm-wrapper :deep(> button) {
+    color: var(--extra-dark);
   }
 
   .cm-menu {
