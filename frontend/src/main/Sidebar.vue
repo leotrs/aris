@@ -101,7 +101,7 @@
     top: 0;
 
     transform: translateX(0);
-    will-change: opacity, transform;
+    will-change: transform;
     transition:
       opacity var(--transition-duration) ease,
       transform var(--transition-duration) ease;

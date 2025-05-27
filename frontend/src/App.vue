@@ -119,24 +119,19 @@
 
 <style>
   body {
-    background-color: var(--almost-white);
+    background-color: var(--gray-75);
   }
 
   #app {
     background-color: var(--extra-light);
     display: flex;
     height: 100%;
-    max-width: 1280px; /* Tailwind xl */
     margin: 0 auto;
+    border-radius: 24px;
     font-family: "Source Sans 3", sans-serif;
     font-weight: var(--weight-regular);
     font-size: 16px;
     line-height: 1.25;
     color: var(--extra-dark);
-  }
-
-  #app:has(> .view.bp-xl),
-  #app:has(> .view.bp-2xl) {
-    border-radius: 24px;
   }
 </style>
