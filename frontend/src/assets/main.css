@@ -120,6 +120,32 @@ button {
   background: var(--gray-700);
 }
 
+/* Show shadows when there is overflow */
+.shadow-overlay {
+  position: absolute;
+  top: 0;
+  width: 20px;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+}
+
+.shadow-overlay.active {
+  opacity: 1;
+}
+
+.shadow-left {
+  left: 0;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.15), transparent);
+}
+
+.shadow-right {
+  right: 0;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.15), transparent);
+}
+
 /* So the app can take the entire screen */
 html, body {
   height: 100%;

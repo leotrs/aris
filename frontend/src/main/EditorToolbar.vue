@@ -1,55 +1,9 @@
 <script setup>
-  import { ref, onMounted, onUnmounted } from "vue";
+  import { useScrollShadows } from "@/composables/useScrollShadows.js";
 
   const emit = defineEmits(["insert", "compile"]);
 
-  const toolbarRef = ref(null);
-  const showLeftShadow = ref(false);
-  const showRightShadow = ref(false);
-
-  const updateShadows = () => {
-    if (!toolbarRef.value) return;
-
-    const element = toolbarRef.value;
-    const { scrollLeft, scrollWidth, clientWidth } = element;
-
-    // Show left shadow when scrolled right (content hidden on left)
-    showLeftShadow.value = scrollLeft > 0;
-
-    // Show right shadow when there's more content to scroll right
-    showRightShadow.value = scrollLeft < scrollWidth - clientWidth;
-  };
-
-  onMounted(() => {
-    if (toolbarRef.value) {
-      // Initial check
-      updateShadows();
-
-      // Listen for scroll events
-      toolbarRef.value.addEventListener("scroll", updateShadows);
-
-      // Listen for resize events to handle dynamic content changes
-      window.addEventListener("resize", updateShadows);
-
-      // Use ResizeObserver to detect toolbar size changes
-      const resizeObserver = new ResizeObserver(updateShadows);
-      resizeObserver.observe(toolbarRef.value);
-
-      // Store observer for cleanup
-      toolbarRef.value._resizeObserver = resizeObserver;
-    }
-  });
-
-  onUnmounted(() => {
-    if (toolbarRef.value) {
-      toolbarRef.value.removeEventListener("scroll", updateShadows);
-      window.removeEventListener("resize", updateShadows);
-
-      if (toolbarRef.value._resizeObserver) {
-        toolbarRef.value._resizeObserver.disconnect();
-      }
-    }
-  });
+  const { scrollElementRef: toolbarRef, showLeftShadow, showRightShadow } = useScrollShadows();
 </script>
 
 <template>
@@ -111,7 +65,6 @@
       </ContextMenu>
     </div>
 
-    <!-- Dynamic shadow overlays - positioned outside the scrolling container -->
     <div class="shadow-overlay shadow-left" :class="{ active: showLeftShadow }"></div>
     <div class="shadow-overlay shadow-right" :class="{ active: showRightShadow }"></div>
   </div>
@@ -150,21 +103,6 @@
     height: 24px;
   }
 
-  /* Remove the old static shadow */
-  /*
-     .toolbar::after {
-     content: "";
-     position: absolute;
-     top: 0;
-     right: 0;
-     width: 20px;
-     height: 100%;
-     pointer-events: none;
-     background: linear-gradient(to left, rgba(0, 0, 0, 0.15), transparent);
-     z-index: 1;
-     }
-   */
-
   .toolbar > :deep(button:has(> .btn-text)) {
     padding-inline: 0px !important;
     width: 32px !important;
@@ -195,31 +133,5 @@
   .cm-menu {
     max-height: 400px;
     overflow-y: auto;
-  }
-
-  /* Dynamic shadow overlays */
-  .shadow-overlay {
-    position: absolute;
-    top: 0;
-    width: 20px;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
-  }
-
-  .shadow-overlay.active {
-    opacity: 1;
-  }
-
-  .shadow-left {
-    left: 0;
-    background: linear-gradient(to right, rgba(0, 0, 0, 0.15), transparent);
-  }
-
-  .shadow-right {
-    right: 0;
-    background: linear-gradient(to left, rgba(0, 0, 0, 0.15), transparent);
   }
 </style>
