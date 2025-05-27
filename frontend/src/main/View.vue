@@ -27,7 +27,12 @@
   const topComponents = reactive([]);
   const rightComponents = reactive([]);
   const sideRefMap = { left: leftComponents, top: topComponents, right: rightComponents };
+  const showEditor = ref(false);
   const showComponent = (compName, side) => {
+    if (compName == "DockableEditor") {
+      showEditor.value = true;
+      return;
+    }
     if (!sideRefMap[side]) {
       console.warn(`Invalid side specified: ${side}`);
       return;
@@ -36,6 +41,10 @@
   };
 
   const hideComponent = (compName, side) => {
+    if (compName == "DockableEditor") {
+      showEditor.value = false;
+      return;
+    }
     if (!sideRefMap[side]) {
       console.warn(`Invalid side specified: ${side}`);
       return;
@@ -67,6 +76,7 @@
     <Canvas
       v-if="file"
       v-model="file"
+      :show-editor="showEditor"
       :left="leftComponents"
       :right="rightComponents"
       :top="topComponents"
@@ -95,8 +105,8 @@
 
   .menus {
     position: absolute;
-    right: 8px;
-    top: 8px;
+    right: 16px;
+    top: 12px;
     height: calc(64px - var(--border-extrathin));
     display: flex;
     align-items: center;

@@ -26,6 +26,7 @@
     left: { type: Array, default: () => [] },
     right: { type: Array, default: () => [] },
     top: { type: Array, default: () => [] },
+    showEditor: { type: Boolean, default: false },
   });
   const file = defineModel({ type: Object });
 
@@ -147,7 +148,7 @@
 <template>
   <Suspense>
     <div class="outer" :class="{ focus: focusMode }">
-      <div class="inner left">
+      <div v-if="showEditor" class="inner left">
         <EditorTopbar />
         <Editor v-model="file" />
       </div>
