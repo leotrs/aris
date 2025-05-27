@@ -57,18 +57,19 @@
 
 <template>
   <span class="editable-text">
-    <button
+    <div
       v-if="!isEditing"
       type="button"
       class="editable"
       :class="textClass"
+      role="button"
       tabindex="0"
       @click="() => editOnClick && startEditing()"
       @keydown.enter.prevent="startEditing()"
       @keydown.space.prevent="startEditing()"
     >
       {{ text }}
-    </button>
+    </div>
     <input
       v-else
       ref="inputRef"
@@ -98,6 +99,18 @@
     border-radius: 16px;
     padding: 8px;
     background: var(--white);
+  }
+
+  .editable {
+    text-align: left;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-height: 56px;
+    line-height: 20px;
+    white-space: normal;
   }
 
   .editable:focus-visible {
