@@ -52,7 +52,6 @@
   }
 
   .tabs-wrapper :deep(.tab-wrapper) {
-    width: 56px;
   }
 
   .tabs-wrapper :deep(.tabs-content) {
