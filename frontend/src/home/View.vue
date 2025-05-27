@@ -65,7 +65,7 @@
 </script>
 
 <template>
-  <div :class="['view-wrapper', isMobile ? 'mobile' : '']">
+  <div :class="['view', isMobile ? 'mobile' : '']">
     <Sidebar @new-empty-file="newEmptyFile" @show-file-upload-modal="showModal = true" />
 
     <div class="menus">
@@ -97,7 +97,7 @@
 </template>
 
 <style scoped>
-  .view-wrapper {
+  .view {
     --transition-duration: 0.3s;
 
     position: relative;
@@ -107,7 +107,7 @@
     height: 100%;
   }
 
-  .view-wrapper.mobile {
+  .view.mobile {
     padding: 0;
 
     & :deep(.pane) {

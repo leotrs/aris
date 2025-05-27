@@ -197,7 +197,7 @@
     position: relative;
     z-index: 1;
     box-shadow: var(--shadow-soft);
-
+    background-color: v-bind("fileSettings.background");
     width: calc(100% - 64px);
     left: var(--sidebar-width);
     border-radius: 16px;
@@ -237,8 +237,7 @@
     }
 
     &.right {
-      border-top-right-radius: 16px;
-      border-bottom-right-radius: 16px;
+      border-radius: 16px;
       flex: 1;
       overflow-y: auto;
     }
