@@ -42,7 +42,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-inline: 8px;
+    margin: 0 auto;
     color: var(--gray-800);
     border-top-left-radius: 8px;
     border-top-right-radius: 8px;
