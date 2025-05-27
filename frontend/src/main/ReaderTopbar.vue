@@ -19,7 +19,7 @@
 </script>
 
 <template>
-  <div class="tb-wrapper" :class="{ 'with-shadow': showTitle, focus: focusMode }">
+  <div class="tb-wrapper" :class="{ 'show-title': showTitle, focus: focusMode }">
     <template v-if="showTitle">
       <FileTitle v-if="!component && showTitle" :file="file" class="text-h6" />
       <component :is="component" v-if="component" ref="middle-comp" :file="file" side="top" />
@@ -48,7 +48,7 @@
       width var(--transition-duration) ease;
   }
 
-  .tb-wrapper.with-shadow {
+  .tb-wrapper.show-title {
     height: 64px;
     border-color: var(--border-primary);
     background-color: var(--surface-page);
