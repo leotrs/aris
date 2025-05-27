@@ -14,11 +14,11 @@
     </div>
     <!-- <div class="middle">Go to...</div> -->
     <div class="right">
-      <div class="version">
-        <span class="text-default">v2</span>
-        <Button kind="tertiary" size="sm" icon="CaretDownFilled" />
-      </div>
-      <Button kind="tertiary" size="sm" icon="ArrowBack" />
+      <!-- <div class="version">
+           <span class="text-default">v2</span>
+           <Button kind="tertiary" size="sm" icon="CaretDownFilled" />
+           </div> -->
+      <Button kind="tertiary" size="sm" icon="Versions" />
       <Button kind="tertiary" size="sm" icon="Help" />
       <Button kind="tertiary" size="sm" icon="Settings" />
       <Button kind="primary" size="sm" text="compile" class="cta" @click="emit('compile')" />
@@ -51,6 +51,10 @@
     border-radius: 8px 8px 0 0 !important;
   }
 
+  .tabs-wrapper :deep(.tab-wrapper) {
+    width: 56px;
+  }
+
   .tabs-wrapper :deep(.tabs-content) {
     display: none !important;
     padding: 0px !important;
@@ -59,7 +63,7 @@
 
   .right {
     display: flex;
-    gap: 8px;
+    gap: 4px;
     height: 100%;
     padding-block: 8px;
   }

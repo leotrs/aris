@@ -207,32 +207,33 @@
       </ContextMenu>
     </div>
 
-    <div class="right">
-      <!-- <ContextMenu
-           v-if="hasOverflow"
-           ref="contextMenuRef"
-           icon="Dots"
-           button-size="btn-sm"
-           placement="bottom-end"
-           >
-           <template v-for="obj in overflowItems" :key="obj.text || obj.icon">
-           <div v-if="obj.text == 'sep'" class="menu-separator" />
-           <ContextMenuItem
-           v-else
-           :icon="obj.icon || ''"
-           :caption="`${obj.text} ${obj.tooltip}`"
-           @click="() => handleOverflowItemClick(obj.str)"
-           >
-           <Tooltip :content="obj.tooltip" />
-           </ContextMenuItem>
-           </template>
-           </ContextMenu> -->
-    </div>
+    <!-- <div class="right">
+         <ContextMenu
+         v-if="hasOverflow"
+         ref="contextMenuRef"
+         icon="Dots"
+         button-size="btn-sm"
+         placement="bottom-end"
+         >
+         <template v-for="obj in overflowItems" :key="obj.text || obj.icon">
+         <div v-if="obj.text == 'sep'" class="menu-separator" />
+         <ContextMenuItem
+         v-else
+         :icon="obj.icon || ''"
+         :caption="`${obj.text} ${obj.tooltip}`"
+         @click="() => handleOverflowItemClick(obj.str)"
+         >
+         <Tooltip :content="obj.tooltip" />
+         </ContextMenuItem>
+         </template>
+         </ContextMenu>
+         </div> -->
   </div>
 </template>
 
 <style scoped>
   .toolbar {
+    position: relative;
     flex: 0;
     display: flex;
     justify-content: space-between;
@@ -240,8 +241,8 @@
     max-height: calc(var(--toolbar-height) * 2 + 8px);
     border-radius: 0 8px 0 0;
     padding: 4px;
-    gap: 16px;
     background-color: var(--surface-hover);
+    overflow: hidden;
   }
 
   .toolbar .h-sep {
@@ -254,6 +255,25 @@
     gap: 2px;
     flex-wrap: nowrap;
     flex: 1;
+    overflow-x: auto;
+    white-space: nowrap;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .toolbar::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 20px;
+    height: 100%;
+    pointer-events: none;
+    background: linear-gradient(to left, rgba(0, 0, 0, 0.15), transparent);
+    z-index: 1;
   }
 
   .toolbar > .left > :deep(button:has(> .btn-text)) {
@@ -273,10 +293,6 @@
     font-weight: var(--weight-regular);
     font-family: "Source Sans 3", sans-serif;
     text-transform: none;
-  }
-
-  .toolbar > .right {
-    display: flex;
   }
 
   .toolbar > .left > .cm-wrapper {
