@@ -100,7 +100,6 @@
     width: 64px;
     top: 0;
 
-    opacity: 1;
     transform: translateX(0);
     will-change: opacity, transform;
     transition:
@@ -112,10 +111,21 @@
     transform: translateX(-100%);
   }
 
+  .sb-wrapper > :is(#logo, .sb-menu) {
+    opacity: 1;
+    will-change: opacity;
+    transition: opacity var(--transition-duration) ease;
+  }
+
+  .sb-wrapper.focus > :is(#logo, .sb-menu) {
+    opacity: 0;
+  }
+
   #logo {
     height: 64px;
     padding: 25px 17px 9px 17px;
     width: 64px;
+    opacity: 1;
     &:hover {
       cursor: pointer;
     }
@@ -133,6 +143,8 @@
     max-width: 64px;
     left: 0;
     width: 64px;
+    opacity: 1;
+    will-change: opacity;
   }
 
   .sb-menu > .sb-item:last-child {
