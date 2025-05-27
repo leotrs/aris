@@ -12,7 +12,10 @@
   const fileSettings = inject("fileSettings");
   const focusMode = inject("focusMode");
 
-  const width = computed(() => columnSizes.middle.width || "0px");
+  const width = computed(() => {
+    console.log(columnSizes);
+    return columnSizes.middle.width || "0px";
+  });
 </script>
 
 <template>
@@ -31,16 +34,14 @@
 
     display: flex;
     justify-content: center;
+    align-items: center;
     position: relative;
-    background-color: transparent;
-    border-top-left-radius: 16px;
-    border-top-right-radius: 16px;
-    border-bottom: var(--border-thin) solid transparent;
+    border: var(--border-extrathin) solid transparent;
+    border-radius: 8px 8px 0 0;
     opacity: 1;
     transform: translateY(0);
-    width: v-bind(width);
     will-change: opacity, transform, width;
-    background-color: var(--surface-page);
+    background-color: transparent;
     transition:
       opacity var(--transition-duration) ease,
       transform var(--transition-duration) ease,
@@ -49,19 +50,12 @@
 
   .tb-wrapper.with-shadow {
     height: 64px;
-    border-bottom-color: var(--border-primary);
+    border-color: var(--border-primary);
+    background-color: var(--surface-page);
   }
 
   .tb-wrapper.focus {
     opacity: 0;
     transform: translateY(-100%);
-  }
-
-  .tb-wrapper.with-shadow .middle-column {
-    background-color: var(--surface-page);
-    /* margin-top: 16px;
-       height: calc(64px - 16px); */
-    /* border-top-left-radius: 8px;
-       border-top-right-radius: 8px; */
   }
 </style>
