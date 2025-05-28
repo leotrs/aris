@@ -17,8 +17,10 @@
 
 <template>
   <div class="um-wrapper" @click.stop="onClick">
-    <Button kind="tertiary"><Avatar /></Button>
     <ContextMenu ref="menu-ref" icon="">
+      <template #trigger>
+        <Avatar />
+      </template>
       <ContextMenuItem icon="User" caption="Account" />
       <ContextMenuItem icon="Settings" caption="Settings" />
       <Separator />
