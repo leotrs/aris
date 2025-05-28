@@ -16,7 +16,6 @@
 
   // Breakpoints
   const mobileMode = inject("mobileMode");
-  const showMobileMenu = ref(false);
 
   // CTA
   const menuRef = useTemplateRef("menu-ref");
@@ -41,15 +40,17 @@
     </template>
 
     <div class="cta" :class="{ fab: mobileMode }">
-      <Button
-        kind="secondary"
+      <ContextMenu
+        ref="menu-ref"
         icon="CirclePlus"
         :text="mobileMode ? '' : 'New File'"
         :shadow="true"
+        placement="bottom"
+        btn-component="Button"
+        kind="secondary"
         :class="{ collapsed }"
         @click="onCTAClick"
-      />
-      <ContextMenu ref="menu-ref" icon="" placement="bottom-start">
+      >
         <ContextMenuItem icon="File" caption="Empty file" @click="emit('newEmptyFile')" />
         <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />
       </ContextMenu>
