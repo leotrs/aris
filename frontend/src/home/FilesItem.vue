@@ -8,6 +8,7 @@
   const props = defineProps({ mode: { type: String, default: "list" } });
   const file = defineModel({ type: Object, required: true });
   const fileStore = inject("fileStore");
+  const xsMode = inject("xsMode");
 
   // State
   const hovered = ref(false);
@@ -74,9 +75,11 @@
       <template v-if="mode == 'list'">
         <FileTitle ref="file-title-ref" :file="file" :class="mode == 'cards' ? 'text-label' : ''" />
 
-        <TagRow v-model="file.tags" :file="file" />
-        <!-- necessary because tags tend to overflow -->
-        <div class="spacer"></div>
+        <template v-if="!xsMode">
+          <TagRow v-model="file.tags" :file="file" />
+          <!-- necessary because tags tend to overflow -->
+          <div class="spacer"></div>
+        </template>
 
         <Date :file="file" />
 

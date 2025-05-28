@@ -65,6 +65,7 @@
   }
 
   .tb-search {
+    min-width: 192px;
     max-width: 500px;
   }
 </style>

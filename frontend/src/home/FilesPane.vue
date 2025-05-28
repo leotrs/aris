@@ -19,13 +19,14 @@
   });
 
   /* Breakpoints */
-  const breakpoints = inject("breakpoints");
+  const xsMode = inject("xsMode");
   const gridTemplateColumns = computed(() => {
-    return breakpoints.isGreater("md")
-      ? "minmax(144px, 2fr) minmax(96px, 1.5fr) 8px 104px 16px 8px"
+    return xsMode.value
+      ? "minmax(144px, 2fr) 104px 16px 8px"
       : "minmax(144px, 2fr) minmax(96px, 1.5fr) 8px 104px 16px 8px";
   });
   const shouldShowColumn = (columnName, mode) => {
+    if (["Tags", "Spacer"].includes(columnName) && xsMode.value) return false;
     return true;
   };
   provide("shouldShowColumn", shouldShowColumn);
@@ -83,7 +84,8 @@
   .pane-header.list,
   .files.list > .item {
     display: grid;
-    grid-template-columns: minmax(144px, 2fr) minmax(48px, 1.25fr) 8px 104px 16px 8px;
+    /* grid-template-columns: minmax(144px, 2fr) minmax(48px, 1.25fr) 8px 104px 16px 8px; */
+    grid-template-columns: v-bind("gridTemplateColumns");
   }
 
   .pane-header.list > *,

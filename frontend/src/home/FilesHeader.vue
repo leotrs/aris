@@ -6,6 +6,7 @@
     mode: { type: String, default: "list" },
   });
   const fileStore = inject("fileStore");
+  const xsMode = inject("xsMode");
 
   const columnInfo = {
     Title: { sortable: true, filterable: false, sortKey: "title" },
@@ -54,16 +55,18 @@
 <template>
   <Header :class="mode">
     <template v-for="name in Object.keys(columnInfo)">
-      <div v-if="name == 'Spacer'" class="spacer"></div>
-      <HeaderLabel
-        v-if="name !== 'Spacer' && shouldShowColumn(name, mode)"
-        v-model="columnState[name]"
-        :name="name"
-        :sortable="columnInfo[name]['sortable']"
-        :filterable="columnInfo[name]['filterable']"
-        @sort="(mode) => handleColumnSortEvent(name, mode)"
-        @filter="(tags) => handleColumnFilterEvent(name, tags)"
-      />
+      <template v-if="shouldShowColumn(name, mode)">
+        <div v-if="name == 'Spacer'" class="spacer"></div>
+        <HeaderLabel
+          v-else
+          v-model="columnState[name]"
+          :name="name"
+          :sortable="columnInfo[name]['sortable']"
+          :filterable="columnInfo[name]['filterable']"
+          @sort="(mode) => handleColumnSortEvent(name, mode)"
+          @filter="(tags) => handleColumnFilterEvent(name, tags)"
+        />
+      </template>
     </template>
     <!-- to complete the grid -->
     <span v-if="mode == 'list'" class="spacer spacer-1"></span>
