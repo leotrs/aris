@@ -24,14 +24,13 @@
   useKeyboardShortcuts({ "/": () => searchBar.value.focusInput() });
 
   /* Breakpoints */
-  const isMobile = inject("isMobile");
-  const segmentedControlIcons = computed(() =>
-    isMobile.value ? ["LayoutList", "LayoutCards", "CropPortrait"] : ["LayoutList", "LayoutCards"]
-  );
+  /* const segmentedControlIcons = computed(() =>
+   *   isMobile.value ? ["LayoutList", "LayoutCards", "CropPortrait"] : ["LayoutList", "LayoutCards"]
+   * ); */
 </script>
 
 <template>
-  <div class="tb-wrapper" :class="{ mobile: isMobile }">
+  <div class="tb-wrapper">
     <!-- <div class="tb-control">
          <SegmentedControl v-model="controlState" :icons="segmentedControlIcons" :default-active="0" />
          </div> -->
