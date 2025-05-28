@@ -52,10 +52,13 @@
 
   // Focus mode
   const focusMode = inject("focusMode");
+
+  // Responsiveness
+  const mobileMode = inject("mobileMode");
 </script>
 
 <template>
-  <div ref="sidebar-ref" class="sb-wrapper" :class="{ focus: focusMode }">
+  <div ref="sidebar-ref" class="sb-wrapper" :class="{ focus: focusMode, mobile: mobileMode }">
     <Button
       v-show="focusMode"
       class="layout-on"
@@ -105,6 +108,10 @@
     transition:
       opacity var(--transition-duration) ease,
       transform var(--transition-duration) ease;
+  }
+
+  .sb-wrapper.mobile {
+    display: none;
   }
 
   .sb-wrapper.focus {
