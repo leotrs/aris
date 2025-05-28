@@ -143,11 +143,14 @@
 
   /* Focus mode */
   const focusMode = inject("focusMode");
+
+  // Responsiveness
+  const mobileMode = inject("mobileMode");
 </script>
 
 <template>
   <Suspense>
-    <div class="outer" :class="{ focus: focusMode }">
+    <div class="outer" :class="{ focus: focusMode, mobile: mobileMode }">
       <div v-if="showEditor" class="inner left">
         <EditorTopbar />
         <Editor v-model="file" />
@@ -194,12 +197,9 @@
     --topbar-height: 64px;
 
     display: flex;
-    position: relative;
     z-index: 1;
     box-shadow: var(--shadow-soft);
     background-color: v-bind("fileSettings.background");
-    width: calc(100% - 64px);
-    left: var(--sidebar-width);
     border-radius: 16px;
     will-change: width, left, border-radius;
     transition:
@@ -243,6 +243,10 @@
       scrollbar-gutter: stable;
       padding-right: 8px; /* due to the scrollbar gutter */
     }
+  }
+
+  .outer.mobile > .inner {
+    padding: 0px;
   }
 
   .inner.focus {

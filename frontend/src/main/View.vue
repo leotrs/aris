@@ -62,6 +62,9 @@
   const focusMode = ref(false);
   provide("focusMode", focusMode);
 
+  /* Responsiveness */
+  const mobileMode = inject("mobileMode");
+
   /* Keyboard shortcuts */
   const router = useRouter();
   useKeyboardShortcuts({
@@ -71,7 +74,7 @@
 </script>
 
 <template>
-  <div class="view" :class="{ focus: focusMode }">
+  <div class="view" :class="{ focus: focusMode, mobile: mobileMode }">
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
     <Canvas
       v-if="file"
@@ -99,8 +102,23 @@
     position: relative;
   }
 
+  .view.mobile {
+    padding: 0;
+  }
+
   .view.focus {
     padding: 0;
+  }
+
+  .outer {
+    width: calc(100% - 64px);
+    position: relative;
+    left: var(--sidebar-width);
+  }
+
+  .view.mobile > .outer {
+    width: 100%;
+    left: 0;
   }
 
   .menus {
@@ -121,6 +139,11 @@
     transition:
       opacity var(--transition-duration) ease,
       transform var(--transition-duration) ease;
+  }
+
+  .view.mobile > .menus {
+    right: 8px;
+    top: 8px;
   }
 
   .menus.focus {
