@@ -45,7 +45,7 @@
         icon="CirclePlus"
         :text="mobileMode ? '' : 'New File'"
         :shadow="true"
-        placement="bottom"
+        :placement="mobileMode ? 'top-end' : 'bottom'"
         btn-component="Button"
         kind="secondary"
         :class="{ collapsed }"
@@ -101,7 +101,9 @@
       padding-inline: 16px;
     }
 
-    & .cta > button {
+    & .cta > .cm-wrapper > :deep(button) {
+      padding-left: 18px !important;
+      padding-right: 24px !important;
       justify-content: center;
       margin: 0 auto;
       width: 100%;
@@ -142,7 +144,7 @@
       padding-inline: 8px;
     }
 
-    & > .cta > button {
+    & > .cta > .cm-wrapper > :deep(button) {
       width: 48px;
     }
   }
@@ -207,7 +209,7 @@
   }
 
   .sb-menu > *,
-  .cta > button {
+  .cta > .cm-wrapper > :deep(button) {
     gap: 4px;
     text-wrap: nowrap;
     white-space: nowrap;
@@ -223,16 +225,17 @@
     transition: padding-inline 0.2s ease 0.1s;
   }
 
-  .cta > button {
-    justify-content: unset !important;
-    padding-left: 24px !important;
+  .cta:not(.mobile) > .cm-wrapper > :deep(button:has(> .btn-text)) {
+  }
+
+  .cta > .cm-wrapper > :deep(button) {
     overflow-x: hidden;
     transition:
       width var(--transition-duration) ease,
       padding var(--transition-duration) ease;
   }
 
-  .cta > button > :deep(.btn-text) {
+  .cta > .cm-wrapper > :deep(button > .btn-text) {
     max-width: calc(var(--sidebar-width) - 16px - 32px);
     opacity: 1;
     transition:
@@ -241,14 +244,14 @@
       max-width var(--transition-duration) ease;
   }
 
-  .cta > button.collapsed > :deep(.btn-text) {
+  .cta > .cm-wrapper > :deep(button.collapsed > .btn-text) {
     width: 0;
     opacity: 0;
     max-width: 0;
   }
 
   /* Overwrite Button padding so collapsing transition works well */
-  .cta > button.collapsed {
+  .cta > .cm-wrapper > :deep(button.collapsed) {
     padding: calc(8px - var(--border-thin)) !important;
     gap: 0px;
   }
