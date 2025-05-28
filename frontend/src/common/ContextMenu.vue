@@ -7,10 +7,11 @@
   const props = defineProps({
     icon: { type: String, default: "Dots" },
     text: { type: String, default: "" },
-    buttonSize: { type: String, default: "btn-sm" },
+    btnComponent: { type: String, default: "ButtonToggle" },
     iconClass: { type: String, default: "" },
     placement: { type: String, default: "left-start" },
   });
+  defineOptions({ inheritAttrs: false });
 
   /* State */
   const show = ref(false);
@@ -20,18 +21,15 @@
   const slots = useSlots();
   const slotRef = useTemplateRef("slot-ref");
   const dotsRef = useTemplateRef("dots-ref");
-  const iconRef = useTemplateRef("icon-ref");
-  const textRef = useTemplateRef("text-ref");
+  const compRef = useTemplateRef("comp-ref");
   const btnRef = computed(() => {
     let element = null;
     if (slots.trigger) {
       element = slotRef.value?.$el || slotRef.value;
     } else if (props.icon == "Dots") {
       element = dotsRef.value?.$el || dotsRef.value;
-    } else if (props.icon) {
-      element = iconRef.value?.$el || iconRef.value;
     } else {
-      element = textRef.value?.$el || textRef.value;
+      element = compRef.value?.$el || compRef.value;
     }
     return element;
   });
@@ -102,25 +100,16 @@
     <template v-else-if="icon == 'Dots'">
       <ButtonDots ref="dots-ref" v-model="show" class="cm-btn" />
     </template>
-    <template v-else-if="icon">
-      <ButtonToggle
-        ref="icon-ref"
+    <template v-else>
+      <component
+        :is="btnComponent"
+        ref="comp-ref"
         v-model="show"
         :icon="icon"
-        :icon-class="iconClass"
-        class="cm-btn"
-        hover-color="var(--surface-hint)"
-        :button-size="buttonSize"
-      />
-    </template>
-    <template v-else-if="text">
-      <ButtonToggle
-        ref="text-ref"
-        v-model="show"
         :text="text"
         class="cm-btn"
         hover-color="var(--surface-hint)"
-        :button-size="buttonSize"
+        v-bind="$attrs"
       />
     </template>
     <Teleport to="body">
