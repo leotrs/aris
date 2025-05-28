@@ -246,7 +246,8 @@
   }
 
   .outer.mobile > .inner {
-    padding: 0px;
+    padding: 0;
+    border-radius: 0px;
   }
 
   .inner.focus {
@@ -282,6 +283,14 @@
       min-height: 100%;
       max-width: 720px;
     }
+  }
+
+  .outer.mobile .inner.right .dock.main.middle {
+    padding-top: 16px;
+  }
+
+  .outer.mobile .inner.right .dock.main.middle .rsm-manuscript {
+    box-shadow: none;
   }
 
   .rsm-manuscript {
