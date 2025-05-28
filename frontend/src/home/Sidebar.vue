@@ -15,8 +15,7 @@
   };
 
   // Breakpoints
-  const breakpoints = inject("breakpoints");
-  const isMobile = inject("isMobile");
+  const mobileMode = inject("mobileMode");
   const showMobileMenu = ref(false);
 
   // CTA
@@ -31,21 +30,21 @@
 </script>
 
 <template>
-  <div :class="['sb-wrapper', isMobile ? 'mobile' : '', !isMobile && collapsed ? 'collapsed' : '']">
-    <template v-if="!isMobile">
+  <div
+    :class="['sb-wrapper', mobileMode ? 'mobile' : '', !mobileMode && collapsed ? 'collapsed' : '']"
+  >
+    <template v-if="!mobileMode">
       <div id="logo">
         <img v-if="collapsed" src="../assets/logo-32px.svg" />
         <img v-else src="../assets/logotype.svg" />
       </div>
     </template>
 
-    <!-- {{ breakpoints.active() }} -->
-
-    <div class="cta" :class="{ fab: isMobile }">
+    <div class="cta" :class="{ fab: mobileMode }">
       <Button
         kind="secondary"
         icon="CirclePlus"
-        text="New File"
+        :text="mobileMode ? '' : 'New File'"
         :shadow="true"
         :class="{ collapsed }"
         @click="onCTAClick"
@@ -56,26 +55,7 @@
       </ContextMenu>
     </div>
 
-    <template v-if="isMobile">
-      <div class="sb-btn mobile" @click.stop="showMobileMenu = !showMobileMenu">
-        <IconMenu3 />
-      </div>
-      <div v-if="showMobileMenu" class="sb-menu mobile">
-        <SidebarItem :collapsed="false" text="Home" />
-        <SidebarItem :collapsed="false" text="Feedback" />
-        <SidebarItem :collapsed="false" text="References" />
-        <Separator />
-        <SidebarItem :collapsed="false" text="Read" />
-        <SidebarItem :collapsed="false" text="Write" />
-        <SidebarItem :collapsed="false" text="Review" />
-        <SidebarItem :collapsed="false" text="All Files" active />
-        <Separator />
-        <SidebarItem :collapsed="false" text="Settings" />
-        <SidebarItem :collapsed="false" text="Account" />
-      </div>
-    </template>
-
-    <template v-else>
+    <template v-if="!mobileMode">
       <div class="sb-menu">
         <SidebarItem :collapsed="collapsed" text="Home" />
         <!-- <SidebarItem :collapsed="collapsed" text="Feedback" /> -->
@@ -175,7 +155,11 @@
     }
   }
 
-  .sb-wrapper.mobile.collapsed {
+  .sb-wrapper.mobile {
+    width: 0;
+    height: 0;
+    position: fixed;
+    z-index: 999;
   }
 
   #logo {
@@ -226,6 +210,12 @@
     gap: 4px;
     text-wrap: nowrap;
     white-space: nowrap;
+  }
+
+  .cta.fab {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
   }
 
   .cta {

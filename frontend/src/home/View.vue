@@ -10,9 +10,9 @@
   import DragBorder from "./DragBorder.vue";
 
   const showModal = ref(false);
-  const isMobile = inject("isMobile");
   const fileStore = inject("fileStore");
   const user = inject("user");
+  const mobileMode = inject("mobileMode");
 
   // New empty file
   const router = useRouter();
@@ -65,10 +65,10 @@
 </script>
 
 <template>
-  <div :class="['view', isMobile ? 'mobile' : '']">
+  <div class="view" :class="{ mobile: mobileMode }">
     <Sidebar @new-empty-file="newEmptyFile" @show-file-upload-modal="showModal = true" />
 
-    <div class="menus">
+    <div class="menus" :class="{ mobile: mobileMode }">
       <Button kind="tertiary" icon="Bell" />
       <UserMenu ref="user-menu" />
     </div>
@@ -109,15 +109,6 @@
 
   .view.mobile {
     padding: 0;
-
-    & :deep(.pane) {
-      padding: 0;
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      border-radius: 16px;
-    }
   }
 
   .menus {
@@ -128,6 +119,11 @@
     display: flex;
     align-items: center;
     gap: 8px;
+  }
+
+  .menus.mobile {
+    top: 16px;
+    right: 16px;
   }
 
   .panes {

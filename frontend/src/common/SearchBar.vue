@@ -74,7 +74,7 @@
     border: 2px solid var(--border-primary);
     border-radius: 16px;
     height: 48px;
-    min-width: 280px;
+    min-width: 192px;
     display: flex;
     align-items: center;
     padding-inline: 12px;

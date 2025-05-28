@@ -106,11 +106,13 @@
   provide("fileStore", fileStore);
 
   // Provide viewport info
-  const breakpoints = useBreakpoints(breakpointsTailwind);
+  const breakpoints = useBreakpoints({ xs: 425, ...breakpointsTailwind });
   provide("breakpoints", breakpoints);
-  /* const isMobile = computed(() => breakpoints.smaller("md")); */
-  const isMobile = computed(() => false);
-  provide("isMobile", isMobile);
+
+  const xsMode = computed(() => breakpoints.smallerOrEqual("xs").value);
+  provide("xsMode", xsMode);
+  const mobileMode = computed(() => breakpoints.smallerOrEqual("sm").value);
+  provide("mobileMode", mobileMode);
 </script>
 
 <template>
