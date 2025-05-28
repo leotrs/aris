@@ -66,9 +66,10 @@
   const mobileMode = inject("mobileMode");
 
   /* Keyboard shortcuts */
+  const goHome = () => router.push("/");
   const router = useRouter();
   useKeyboardShortcuts({
-    "g,h": () => router.push("/"),
+    "g,h": goHome,
     c: () => (focusMode.value = !focusMode.value),
   });
 </script>
@@ -85,6 +86,7 @@
       :top="topComponents"
     />
     <div class="menus" :class="{ focus: focusMode }">
+      <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
       <FileMenu icon="Menu3" />
       <UserMenu />
     </div>
@@ -143,7 +145,7 @@
 
   .view.mobile > .menus {
     right: 8px;
-    top: 8px;
+    top: 0px;
   }
 
   .menus.focus {
