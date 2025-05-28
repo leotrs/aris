@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, computed, provide, useTemplateRef } from "vue";
+  import { ref, computed, watch, provide, useTemplateRef, useSlots } from "vue";
   import { useFloating, autoUpdate, offset, shift } from "@floating-ui/vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
@@ -16,8 +16,25 @@
   const show = ref(false);
   defineExpose({ toggle: () => (show.value = !show.value) });
 
-  /* Floating-UI config */
-  const btnRef = useTemplateRef("btn-ref");
+  // Floating styles
+  const slots = useSlots();
+  const slotRef = useTemplateRef("slot-ref");
+  const dotsRef = useTemplateRef("dots-ref");
+  const iconRef = useTemplateRef("icon-ref");
+  const textRef = useTemplateRef("text-ref");
+  const btnRef = computed(() => {
+    let element = null;
+    if (slots.trigger) {
+      element = slotRef.value?.$el || slotRef.value;
+    } else if (props.icon == "Dots") {
+      element = dotsRef.value?.$el || dotsRef.value;
+    } else if (props.icon) {
+      element = iconRef.value?.$el || iconRef.value;
+    } else {
+      element = textRef.value?.$el || textRef.value;
+    }
+    return element;
+  });
   const menuRef = useTemplateRef("menu-ref");
   const { floatingStyles } = useFloating(btnRef, menuRef, {
     strategy: "fixed",
@@ -77,12 +94,17 @@
 
 <template>
   <div class="cm-wrapper" @click.stop @dblclick.stop>
-    <template v-if="icon == 'Dots'">
-      <ButtonDots ref="btn-ref" v-model="show" class="cm-btn" />
+    <template v-if="$slots.trigger">
+      <Button ref="slot-ref" kind="tertiary" @click="show = !show">
+        <slot name="trigger" />
+      </Button>
+    </template>
+    <template v-else-if="icon == 'Dots'">
+      <ButtonDots ref="dots-ref" v-model="show" class="cm-btn" />
     </template>
     <template v-else-if="icon">
       <ButtonToggle
-        ref="btn-ref"
+        ref="icon-ref"
         v-model="show"
         :icon="icon"
         :icon-class="iconClass"
@@ -93,7 +115,7 @@
     </template>
     <template v-else-if="text">
       <ButtonToggle
-        ref="btn-ref"
+        ref="text-ref"
         v-model="show"
         :text="text"
         class="cm-btn"
