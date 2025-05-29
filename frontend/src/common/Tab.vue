@@ -16,7 +16,7 @@
     :aria-selected="active"
     class="tab-wrapper"
     :class="{ active }"
-    tabindex="-1"
+    tabindex="0"
     @click="active = true"
     @keydown.enter.prevent="active = true"
     @keydown.space.prevent="active = true"

@@ -67,7 +67,7 @@
       @click="focusMode = false"
     />
 
-    <div id="logo" @click="router?.push('/')">
+    <div id="logo" role="button" tabindex="0" @click="router?.push('/')">
       <img src="../assets/logo-32px.svg" />
     </div>
 
@@ -129,9 +129,12 @@
   }
 
   #logo {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     height: 64px;
-    padding: 33px 17px 9px 17px;
     width: 64px;
+    margin-top: 16px;
     opacity: 1;
     &:hover {
       cursor: pointer;
