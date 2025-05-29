@@ -15,15 +15,16 @@
 <style scoped>
   .section {
     margin-bottom: 32px;
+    border: var(--border-thin) solid transparent;
+  }
+
+  .section > * {
+    padding-inline: 8px;
   }
 
   .section.danger {
-    border: var(--border-thin) solid var(--border-error);
+    border-color: var(--border-error);
     border-radius: 8px;
-  }
-
-  .section.danger > * {
-    padding: 4px;
   }
 
   .section.danger .title {

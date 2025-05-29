@@ -101,7 +101,6 @@
       fileStore.value = createFileStore(api, user.value);
       await fileStore.value.loadFiles();
       await fileStore.value.loadTags();
-      router.push("/");
     } else {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
