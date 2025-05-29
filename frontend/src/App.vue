@@ -98,7 +98,6 @@
 
     if (token && storedUser) {
       user.value = storedUser;
-      console.log(user.value);
       fileStore.value = createFileStore(api, user.value);
       await fileStore.value.loadFiles();
       await fileStore.value.loadTags();
