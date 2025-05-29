@@ -83,7 +83,7 @@
 
   .toolbar {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     min-height: var(--toolbar-height);
     max-height: calc(var(--toolbar-height) * 2 + 8px);
     padding: 4px;
@@ -101,6 +101,11 @@
   .toolbar .h-sep {
     margin: 4px;
     height: 24px;
+  }
+
+  .toolbar > button.tertiary,
+  .toolbar > .cm-wrapper > :deep(button.cm-btn) {
+    height: 32px;
   }
 
   .toolbar > :deep(button:has(> .btn-text)) {
