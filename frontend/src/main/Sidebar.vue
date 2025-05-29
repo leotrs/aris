@@ -130,7 +130,7 @@
 
   #logo {
     height: 64px;
-    padding: 25px 17px 9px 17px;
+    padding: 33px 17px 9px 17px;
     width: 64px;
     opacity: 1;
     &:hover {
