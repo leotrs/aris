@@ -78,33 +78,6 @@
   );
   provide("api", api);
 
-  // Must create these here as they will be populated by the login view but need to be
-  // available to other views.
-  const user = ref(null);
-  const fileStore = ref(null);
-  const router = useRouter();
-  onMounted(async () => {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
-      try {
-        const response = await api.get("/me");
-        user.value = response.data;
-        fileStore.value = createFileStore(api, user.value);
-        await fileStore.value.loadFiles();
-        await fileStore.value.loadTags();
-      } catch (err) {
-        console.error("Failed to load user:", err);
-        localStorage.removeItem("accessToken");
-        localStorage.removeItem("refreshToken");
-        router.push("/login");
-      }
-    } else {
-      router.push("/login");
-    }
-  });
-  provide("user", user);
-  provide("fileStore", fileStore);
-
   // Provide viewport info
   const breakpoints = useBreakpoints({ xs: 425, ...breakpointsTailwind });
   provide("breakpoints", breakpoints);
@@ -113,6 +86,32 @@
   provide("xsMode", xsMode);
   const mobileMode = computed(() => breakpoints.smallerOrEqual("sm").value);
   provide("mobileMode", mobileMode);
+
+  // Must create these here as they will be populated by the login view but need to be
+  // available to other views.
+  const user = ref(null);
+  const fileStore = ref(null);
+  const router = useRouter();
+  onMounted(async () => {
+    const token = localStorage.getItem("accessToken");
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+
+    if (token && storedUser) {
+      user.value = storedUser;
+      console.log(user.value);
+      fileStore.value = createFileStore(api, user.value);
+      await fileStore.value.loadFiles();
+      await fileStore.value.loadTags();
+      router.push("/");
+    } else {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+      localStorage.removeItem("user");
+      router.push("/login");
+    }
+  });
+  provide("user", user);
+  provide("fileStore", fileStore);
 </script>
 
 <template>
