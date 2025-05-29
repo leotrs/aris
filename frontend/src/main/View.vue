@@ -127,7 +127,7 @@
     position: absolute;
     right: 16px;
     top: 16px;
-    height: calc(64px - var(--border-extrathin));
+    height: 64px;
     display: flex;
     align-items: center;
     z-index: 2;
