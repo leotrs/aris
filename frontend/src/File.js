@@ -1,6 +1,6 @@
 // File.js
 import { reactive } from 'vue';
-import RelativeTime from "@yaireo/relative-Time";
+import RelativeTime from "@yaireo/relative-time";
 
 // Singleton for date formatting
 const relativeTime = new RelativeTime({ locale: "en" });
