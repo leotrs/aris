@@ -52,7 +52,7 @@
 </script>
 
 <template>
-  <ContextMenu :icon="icon" placement="bottom-end">
+  <ContextMenu :icon="icon" placement="bottom-end" button-size="btn-sm">
     <TagControl
       v-for="(tag, idx) in fileStore.value.tags.value"
       :key="tag.id"
