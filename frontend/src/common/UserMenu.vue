@@ -21,7 +21,7 @@
       <template #trigger>
         <Avatar />
       </template>
-      <ContextMenuItem icon="User" caption="Account" />
+      <ContextMenuItem icon="User" caption="Account" @click="router.push('/account')" />
       <ContextMenuItem icon="Settings" caption="Settings" />
       <Separator />
       <ContextMenuItem icon="Keyboard" caption="Shortcuts" />
