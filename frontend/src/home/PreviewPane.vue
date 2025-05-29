@@ -41,7 +41,7 @@
 </script>
 
 <template>
-  <div id="preview" class="pane">
+  <Pane id="preview">
     <Header>
       <div class="left"></div>
 
@@ -70,7 +70,7 @@
         <Button kind="primary" size="sm" text="Read" icon="Book" @click="read" />
       </div>
     </div>
-  </div>
+  </Pane>
 </template>
 
 <style scoped>

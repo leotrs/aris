@@ -6,6 +6,9 @@
   const onClick = () => menuRef.value.toggle();
 
   const router = useRouter();
+  const onAccount = () => {
+    router.push("/account");
+  };
   const onLogout = () => {
     localStorage.removeItem("accessToken");
     localStorage.removeItem("refreshToken");
@@ -21,7 +24,7 @@
       <template #trigger>
         <Avatar />
       </template>
-      <ContextMenuItem icon="User" caption="Account" @click="router.push('/account')" />
+      <ContextMenuItem icon="User" caption="Account" @click="onAccount" />
       <ContextMenuItem icon="Settings" caption="Settings" />
       <Separator />
       <ContextMenuItem icon="Keyboard" caption="Shortcuts" />
