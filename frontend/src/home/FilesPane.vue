@@ -10,9 +10,10 @@
 
   /* Selected file */
   const filesRef = useTemplateRef("files-ref");
-  const { activeIndex } = useListKeyboardNavigation(fileStore.value?.numFiles, filesRef, true);
+  const numFiles = computed(() => fileStore.value?.numFiles?.value ?? 0);
+  const { activeIndex } = useListKeyboardNavigation(numFiles, filesRef, true);
   watch(activeIndex, (newVal) => {
-    const currentFocused = fileStore.value.files.value.filter((d) => d.focused);
+    const currentFocused = fileStore.value.files.filter((d) => d.focused);
     currentFocused.forEach((d) => (d.focused = false));
     if (newVal === null) return;
     fileStore.value.files.value[newVal].focused = true;

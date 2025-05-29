@@ -2,29 +2,13 @@ import { ref, watch, nextTick } from "vue";
 import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
 export function useListKeyboardNavigation(listLengthRef, rootElementRef, useEscape = false, autoActivate = true) {
-  // console.log("Composable init:", {
-  //   listLengthRefValue: listLengthRef?.value,
-  //   rootElementRefValue: rootElementRef?.value
-  // });
   const activeIndex = ref(null);
-
-  watch(listLengthRef, (newVal) => {
-    // console.log("List length changed in composable:", newVal);
-  }, { immediate: true });
-  watch(activeIndex, (newVal) => {
-    // console.log("Active index changed in composable:", newVal);
-  }, { immediate: true });
 
   const nextItem = (ev) => {
     ev.preventDefault();
-    // console.log("next", {
-    //   listLength: listLengthRef?.value,
-    //   currentIndex: activeIndex.value,
-    //   rootElement: rootElementRef?.value,
-    //   type: typeof listLengthRef?.value
-    // });
     if (!listLengthRef?.value || listLengthRef.value < 1) {
       console.warn("List length is invalid:", listLengthRef?.value);
+      console.log(listLengthRef, listLengthRef.value);
       return;
     }
 

@@ -15,7 +15,6 @@
   onMounted(() => {
     const token = localStorage.getItem("accessToken");
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    console.log(user.value);
     if (token && storedUser) {
       if (!user.value) user.value = storedUser;
       router.push("/");
@@ -40,7 +39,6 @@
 
       const userData = await api.get("/me");
       user.value = userData.data;
-      console.log(userData);
       localStorage.setItem("user", JSON.stringify(userData.data));
       fileStore.value = createFileStore(api, user.value);
       await fileStore.value.loadFiles();
@@ -120,6 +118,8 @@
 
   .right .wrapper {
     width: 60%;
+    min-width: 192px;
+    max-width: 480px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;
