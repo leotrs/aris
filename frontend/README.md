@@ -1,35 +1,47 @@
-# .
+# Aris Frontend
 
-This template should help get you started developing with Vue 3 in Vite.
+This is the frontend for **Aris**, a web-native scientific publishing platform. Built
+with **Vue 3** and the **Composition API**, it enables researchers to write, read, and
+review manuscripts as responsive, interactive web documents.
 
-## Recommended IDE Setup
+## Tech Stack
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+- **Vue 3** – core framework
+- **Vue Router** – client-side routing
+- **@vueuse/core** – utilities for reactivity and responsiveness
+- **Vite** – lightning-fast dev server and bundler
+- **Axios** – API requests
 
-## Customize configuration
+## Features
 
-See [Vite Configuration Reference](https://vite.dev/config/).
+- JWT-based login and token refresh
+- Dynamic manuscript views with responsive layout
+- Reponsive UI based on Tailwind breakpoints
+- Soft-deleted resource handling
+- Centralized file store abstraction (`FileStore.js`)
 
 ## Project Setup
 
-```sh
-npm install
-```
+1. **Install dependencies**
 
-### Compile and Hot-Reload for Development
+   ```bash
+   npm install
+   ```
 
-```sh
-npm run dev
-```
+2. **Run in development**
 
-### Compile and Minify for Production
+   ```bash
+   npm run dev
+   ```
 
-```sh
-npm run build
-```
+3. **Build for production**
 
-### Lint with [ESLint](https://eslint.org/)
+   ```bash
+   npm run build
+   ```
 
-```sh
-npm run lint
-```
+4. **Development Notes**
+
+   + API instance is created and injected in App.vue and reused throughout.
+   + Tokens are stored in localStorage and refreshed transparently.
+   + Responsive design adapts to mobile via VueUse breakpoints.
