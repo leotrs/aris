@@ -1,12 +1,16 @@
-import asyncio
-from datetime import datetime
-
-import rsm
+import logging
 from sqlalchemy.orm import Session
 
-from ..models import File, FileStatus, Tag, file_tags
-from .utils import extract_section, extract_title
+import rsm
+
+
+logger = logging.getLogger("RSM")
 
 
 async def render(src: str, db: Session):
-    return rsm.render(src, handrails=True)
+    try:
+        result = rsm.render(src, handrails=True)
+    except rsm.RSMApplicationError as e:
+        logger.error(f"There was an error rendering the code: {e}")
+        result = ""
+    return result
