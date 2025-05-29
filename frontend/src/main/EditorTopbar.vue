@@ -20,7 +20,7 @@
            <Button kind="tertiary" size="sm" icon="CaretDownFilled" />
            </div> -->
       <Button kind="tertiary" size="sm" icon="Versions" />
-      <Button kind="tertiary" size="sm" icon="Help" />
+      <Button kind="tertiary" size="sm" icon="Lifebuoy" />
       <Button kind="tertiary" size="sm" icon="Settings" />
       <Button kind="primary" size="sm" text="compile" class="cta" @click="emit('compile')" />
     </div>
