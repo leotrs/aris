@@ -1,8 +1,7 @@
 <script setup>
   import { ref, inject, useTemplateRef } from "vue";
-  import { IconMenu3 } from "@tabler/icons-vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import SidebarItem from "./SidebarItem.vue";
+  import SidebarItem from "./MainSidebarItem.vue";
 
   const emit = defineEmits(["newEmptyFile", "showFileUploadModal"]);
 

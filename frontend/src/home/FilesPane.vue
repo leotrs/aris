@@ -37,7 +37,7 @@
 </script>
 
 <template>
-  <div class="pane">
+  <Pane>
     <Topbar @list="mode = 'list'" @cards="mode = 'cards'" />
 
     <div class="files-wrapper" :class="mode">
@@ -58,7 +58,7 @@
         <template #fallback><div class="loading">loading files...</div></template>
       </Suspense>
     </div>
-  </div>
+  </Pane>
 </template>
 
 <style scoped>
