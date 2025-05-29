@@ -1,14 +1,12 @@
-FROM python:3.13 AS builder
-
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1
-WORKDIR /app
-
-RUN python -m venv .venv
-COPY pyproject.toml ./
-RUN .venv/bin/pip install .
 FROM python:3.13-slim
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
+
 WORKDIR /app
-COPY --from=builder /app/.venv .venv/
+
 COPY . .
+
+RUN python3 -m uv install fastapi uvicorn
+RUN uv sync --locked
+
+EXPOSE 8080
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8080"]
