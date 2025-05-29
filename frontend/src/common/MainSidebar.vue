@@ -1,5 +1,6 @@
 <script setup>
   import { ref, inject, useTemplateRef } from "vue";
+  import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./MainSidebarItem.vue";
 
@@ -20,8 +21,14 @@
   const menuRef = useTemplateRef("menu-ref");
   const onCTAClick = () => menuRef.value.toggle();
 
+  const router = useRouter();
+  const goHome = () => {
+    router.push("/");
+  };
+
   // Keys
   useKeyboardShortcuts({
+    "g,h": goHome,
     n: onCTAClick,
     c: toggleCollapsed,
   });
@@ -57,14 +64,14 @@
 
     <template v-if="!mobileMode">
       <div class="sb-menu">
-        <SidebarItem :collapsed="collapsed" text="Home" />
+        <SidebarItem :collapsed="collapsed" text="Home" @click="goHome" />
         <!-- <SidebarItem :collapsed="collapsed" text="Feedback" /> -->
         <!-- <SidebarItem :collapsed="collapsed" text="References" /> -->
         <!-- <Separator /> -->
         <!-- <SidebarItem :collapsed="collapsed" text="Read" /> -->
         <!-- <SidebarItem :collapsed="collapsed" text="Write" /> -->
         <!-- <SidebarItem :collapsed="collapsed" text="Review" /> -->
-        <SidebarItem :collapsed="collapsed" text="All Files" active />
+        <SidebarItem :collapsed="collapsed" text="All Files" active @click="goHome" />
         <Separator />
         <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />
         <ThemeSwitch />
