@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject } from "vue";
+  import { ref, inject, onMounted } from "vue";
   import { useRouter } from "vue-router";
   import { createFileStore } from "../FileStore.js";
 
@@ -9,9 +9,19 @@
   const isLoading = ref(false);
   const error = ref("");
   const api = inject("api");
-
   const user = inject("user");
   const fileStore = inject("fileStore");
+
+  onMounted(() => {
+    const token = localStorage.getItem("accessToken");
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    console.log(user.value);
+    if (token && storedUser) {
+      if (!user.value) user.value = storedUser;
+      router.push("/");
+    }
+  });
+
   const onLogin = async () => {
     if (!email.value || !password.value) {
       error.value = "Please fill in all fields";
@@ -30,6 +40,8 @@
 
       const userData = await api.get("/me");
       user.value = userData.data;
+      console.log(userData);
+      localStorage.setItem("user", JSON.stringify(userData.data));
       fileStore.value = createFileStore(api, user.value);
       await fileStore.value.loadFiles();
       await fileStore.value.loadTags();

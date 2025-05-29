@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, inject, provide, watch, useTemplateRef, onMounted } from "vue";
+  import { ref, toRef, computed, inject, provide, watch, useTemplateRef, onMounted } from "vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import Topbar from "./FilesTopbar.vue";
   import FilesHeader from "./FilesHeader.vue";
