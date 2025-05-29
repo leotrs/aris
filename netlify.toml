@@ -1,6 +1,6 @@
 [build]
   base    = "frontend"
-  publish = "frontend/public"
+  publish = "public"
   command = "npm run build"
 
 [dev]
