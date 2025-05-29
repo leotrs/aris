@@ -247,6 +247,7 @@
 
   .outer.mobile > .inner {
     padding: 0;
+    padding-left: 8px; /* match the scrollbart gutter */
     border-radius: 0px;
   }
 
