@@ -66,7 +66,7 @@
   }
 
   .pane-header {
-    height: 48px;
+    height: 48px !important;
     display: flex;
     justify-content: flex-start;
     align-items: center;
