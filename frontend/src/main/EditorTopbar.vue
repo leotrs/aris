@@ -1,6 +1,7 @@
 <script setup>
   import { inject } from "vue";
 
+  const emit = defineEmits(["compile"]);
   const focusMode = inject("focusMode");
 </script>
 
