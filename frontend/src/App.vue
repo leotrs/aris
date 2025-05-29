@@ -7,7 +7,7 @@
 
   // Create API instance with base URL and error handling
   const api = axios.create({
-    baseURL: "http://localhost:8000",
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     timeout: 10000,
   });
 
@@ -77,6 +77,11 @@
     }
   );
   provide("api", api);
+
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = `${api.getUri()}/static/rsm.css`;
+  document.head.appendChild(link);
 
   // Provide viewport info
   const breakpoints = useBreakpoints({ xs: 425, ...breakpointsTailwind });

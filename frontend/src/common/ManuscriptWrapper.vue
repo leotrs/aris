@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, computed, onBeforeMount, useTemplateRef, nextTick } from "vue";
+  import { ref, watch, computed, inject, onBeforeMount, useTemplateRef, nextTick } from "vue";
   import Manuscript from "./Manuscript.vue";
 
   const props = defineProps({
@@ -9,11 +9,12 @@
   });
   const emit = defineEmits(["mounted-at"]);
 
+  const api = inject("api");
   let onload = ref(null);
   onBeforeMount(async () => {
-    await import("http://localhost:8000/static/jquery-3.6.0.js");
-    await import("http://localhost:8000/static/tooltipster.bundle.js");
-    const module = await import("http://localhost:8000/static/onload.js");
+    await import(`${api.getUri()}/static/jquery-3.6.0.js`);
+    await import(`${api.getUri()}/static/tooltipster.bundle.js`);
+    const module = await import(`${api.getUri()}/static/onload.js`);
     onload.value = module.onload;
   });
 
