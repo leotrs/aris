@@ -1,13 +1,22 @@
 <script setup>
   import {} from "vue";
+
+  const props = defineProps({
+    customHeader: { type: Boolean, default: false },
+  });
 </script>
 
 <template>
   <div class="pane">
     <div v-if="$slots.header">
-      <Header class="text-h4">
+      <template v-if="customHeader">
         <slot name="header" />
-      </Header>
+      </template>
+      <template v-else>
+        <Header class="text-h4">
+          <slot name="header" />
+        </Header>
+      </template>
     </div>
     <div class="content">
       <slot />
