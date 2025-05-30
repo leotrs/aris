@@ -37,8 +37,10 @@
 </script>
 
 <template>
-  <Pane>
-    <Topbar @list="mode = 'list'" @cards="mode = 'cards'" />
+  <Pane :custom-header="true">
+    <template #header>
+      <Topbar @list="mode = 'list'" @cards="mode = 'cards'" />
+    </template>
 
     <div class="files-wrapper" :class="mode">
       <FilesHeader :mode="mode" />
