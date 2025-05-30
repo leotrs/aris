@@ -13,22 +13,22 @@
         <span class="title">Account</span>
       </template>
 
-      <Section class="profile-card">
-        <template #content>
-          <div class="pic"></div>
-          <div class="info">
-            <div class="text-h6">{{ user.name }}</div>
-            <div>{{ user.email }}</div>
-            <div>Prestigious University or Institute</div>
-            <div>
-              <em>Aris user since{{ user.created_at }}</em>
-            </div>
-          </div>
-        </template>
-      </Section>
-
       <div class="main">
         <div class="left">
+          <Section class="profile-card">
+            <template #content>
+              <div class="pic"></div>
+              <div class="info">
+                <div class="text-h6">{{ user.name }}</div>
+                <div>{{ user.email }}</div>
+                <div>Prestigious University or Institute</div>
+                <div>
+                  <em>Aris user since{{ user.created_at }}</em>
+                </div>
+              </div>
+            </template>
+          </Section>
+
           <Section>
             <template #title>Profile</template>
             <template #content>
@@ -69,10 +69,10 @@
           </Section>
         </div>
         <div class="right">
-          <Button class="logout" kind="secondary" icon="Logout" text="log out" />
-          <Button kind="tertiary" size="sm" icon="BrandGit" text="Contribute" />
           <Button kind="tertiary" size="sm" icon="Lifebuoy" text="Help" />
+          <Button kind="tertiary" size="sm" icon="BrandGit" text="Contribute" />
           <Button kind="tertiary" size="sm" icon="Heart" text="Donate" />
+          <Button class="logout" kind="secondary" icon="Logout" text="log out" />
         </div>
       </div>
     </Pane>
@@ -91,7 +91,7 @@
 
   .profile-card {
     display: flex;
-    justify-content: center;
+    justify-content: flex-start;
   }
 
   .profile-card > :deep(.content) {
@@ -106,7 +106,7 @@
   .profile-card > .content > .pic {
     height: 150px;
     width: 150px;
-    border-radius: 16px;
+    border-radius: calc(16px - var(--border-thin));
     background-color: var(--gray-200);
   }
 
@@ -123,11 +123,9 @@
 
   .main {
     display: flex;
-    gap: 32px;
   }
 
   .main > .left {
-    flex: 4;
   }
 
   .main .section.cta :deep(.content) {
@@ -137,14 +135,22 @@
   }
 
   .main > .right {
-    flex: 1;
+    position: absolute;
+    right: calc(32px);
+    padding-inline: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    height: calc(100% - 48px - 16px - 16px - 16px - 16px);
+    gap: 8px;
+    padding: 16px;
+    padding-bottom: 32px;
+  }
+
+  .main > .right > :deep(button) {
+    width: 100%;
   }
 
   .main > .right > button.logout {
-  }
-
-  .main > .right > button {
-    width: 100%;
-    margin-bottom: 8px;
   }
 </style>
