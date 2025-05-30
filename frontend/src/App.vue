@@ -123,6 +123,9 @@
   const isDev = import.meta.env.VITE_ENV === "DEV";
 
   // Shortcuts modal
+  const showShortcutsModal = ref(false);
+  const shortcuts = ref({});
+
   const shortcutsModal = () => {
     const comps = getRegisteredComponents();
 
@@ -148,14 +151,36 @@
       })
     );
 
-    console.log(deduped);
+    shortcuts.value = deduped;
+    showShortcutsModal.value = true;
   };
+
   useKeyboardShortcuts({ "?": shortcutsModal }, true);
 </script>
 
 <template>
   <RouterView :class="`bp-${breakpoints.active().value}`" />
   <div v-if="isDev" id="env">DEV/LOCAL</div>
+
+  <Modal v-if="showShortcutsModal" @close="showShortcutsModal = false">
+    <template #header>
+      <div>Keyboard Shortcuts</div>
+      <ButtonClose />
+    </template>
+    <div
+      v-for="(shortcutMap, componentName) in shortcuts"
+      :key="componentName"
+      class="component-section"
+    >
+      <h4 class="text-h4">{{ componentName }}</h4>
+      <div class="shortcuts-grid">
+        <div v-for="(fn, key) in shortcutMap" :key="key" class="shortcut-item">
+          <kbd class="key">{{ key }}</kbd>
+          <span class="description">{{ fn.name || "Function" }}</span>
+        </div>
+      </div>
+    </div>
+  </Modal>
 </template>
 
 <style>
@@ -185,5 +210,41 @@
     padding: 4px;
     border-radius: 16px;
     z-index: 999;
+  }
+
+  .component-section {
+    margin-bottom: 32px;
+  }
+
+  .component-section:last-child {
+    margin-bottom: 0;
+  }
+
+  .shortcuts-grid {
+    display: grid;
+    gap: 12px;
+  }
+
+  .shortcut-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+  }
+
+  .key {
+    background-color: #f3f4f6;
+    border: var(--border-extrathin) solid var(--gray-200);
+    border-radius: 4px;
+    padding: 4px 8px;
+    color: var(--extra-dark);
+    min-width: 32px;
+    text-align: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  .description {
+    color: #6b7280;
+    font-size: 0.875rem;
   }
 </style>
