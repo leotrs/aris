@@ -2,6 +2,10 @@
   import { ref, computed, provide, onMounted } from "vue";
   import { useRouter } from "vue-router";
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
+  import {
+    getRegisteredComponents,
+    useKeyboardShortcuts,
+  } from "@/composables/useKeyboardShortcuts.js";
   import { createFileStore } from "./FileStore.js";
   import axios from "axios";
 
@@ -117,6 +121,36 @@
   provide("fileStore", fileStore);
 
   const isDev = import.meta.env.VITE_ENV === "DEV";
+
+  // Shortcuts modal
+  const shortcutsModal = () => {
+    const comps = getRegisteredComponents();
+
+    const excludedKeys = new Set(["escape", "enter", "arrowdown", "arrowup", "j", "k", "?"]);
+    const hasShortcuts = (shortcuts) => Object.keys(shortcuts).length > 0;
+    const filterShortcuts = (shortcuts) =>
+      Object.fromEntries(Object.entries(shortcuts).filter(([key]) => !excludedKeys.has(key)));
+
+    const filteredComps = Object.fromEntries(
+      Object.entries(comps)
+        .map(([name, shortcuts]) => [name, filterShortcuts(shortcuts)])
+        .filter(([, shortcuts]) => hasShortcuts(shortcuts))
+    );
+
+    // Remove duplicates - keep first occurrence of each unique shortcut set
+    const seenShortcuts = new Set();
+    const deduped = Object.fromEntries(
+      Object.entries(filteredComps).filter(([name, shortcuts]) => {
+        const shortcutKey = JSON.stringify(Object.keys(shortcuts).sort());
+        if (seenShortcuts.has(shortcutKey)) return false;
+        seenShortcuts.add(shortcutKey);
+        return true;
+      })
+    );
+
+    console.log(deduped);
+  };
+  useKeyboardShortcuts({ "?": shortcutsModal }, true);
 </script>
 
 <template>

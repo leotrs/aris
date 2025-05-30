@@ -12,8 +12,10 @@ import {
 // Use a string rather than a ref because string keys are much simpler
 const refToKey = (ref) => (ref ? `${ref.uid || ref.value?.uid}` : null);
 
-const hasModifiers = (ev) => {
-  return ev.ctrlKey || ev.altKey || ev.shiftKey || ev.metaKey;
+const hasModifiersAndNotQuestionMark = (ev) => {
+  const notQuestionMark = ev.key !== '?';
+  const hasModifiers = ev.ctrlKey || ev.altKey || ev.shiftKey || ev.metaKey;
+  return notQuestionMark && hasModifiers;
 };
 
 
@@ -29,7 +31,7 @@ let fallbackComponent = computed(() => null);
 
 /* Event dispatching */
 const dispatchSequenceKey = (ev, shortcuts, key) => {
-  if (hasModifiers(ev)) return false;
+  if (hasModifiersAndNotQuestionMark(ev)) return false;
 
   if (!lastKeyPressed.value) return false;
   const sequenceKey = `${lastKeyPressed.value},${key}`;
@@ -49,7 +51,7 @@ const dispatchSequenceKey = (ev, shortcuts, key) => {
 };
 
 const dispatchSingleKey = (ev, shortcuts, key) => {
-  if (hasModifiers(ev)) return false;
+  if (hasModifiersAndNotQuestionMark(ev)) return false;
   const isFirstKeyInSequence = Object.keys(shortcuts).some(k => k.startsWith(`${key},`));
 
   if (isFirstKeyInSequence) {
@@ -91,7 +93,7 @@ const dispatchSingleKey = (ev, shortcuts, key) => {
 };
 
 const tryHandleKeyEvent = (ev, componentRef, key) => {
-  if (hasModifiers(ev)) return false;
+  if (hasModifiersAndNotQuestionMark(ev)) return false;
   const componentId = refToKey(componentRef);
   const componentShortcuts = listeners.value[componentId];
   if (!componentShortcuts) return false;
@@ -100,19 +102,17 @@ const tryHandleKeyEvent = (ev, componentRef, key) => {
 };
 
 const handleKeyDown = (ev) => {
-  if (key == '?') return showShortcutsModal();
-
   const tag = ev.target.tagName?.toUpperCase();
   const isEditableElement = tag === 'INPUT' || tag === 'TEXTAREA' || ev.target.isContentEditable;
   const shouldIgnore =
     isForwardingEvent ||
-    hasModifiers(ev) ||
+    hasModifiersAndNotQuestionMark(ev) ||
     (isEditableElement && !['Enter', 'Escape'].includes(ev.key));
   if (shouldIgnore) return;
 
   const key = ev.key.toLowerCase();
   if (components.length === 0 && !fallbackComponent.value) return;
-  // console.log('Key pressed:', key, '. Last key:', lastKeyPressed.value);
+  console.log('Key pressed:', key, '. Last key:', lastKeyPressed.value);
 
   // Try components in reverse order (most recently activated first)
   for (let i = components.length - 1; i >= 0; i--) {
@@ -221,11 +221,4 @@ export function registerAsFallback(component) {
     if (refToKey(fallbackComponent.value) === refToKey(component.value))
       fallbackComponent = computed(() => null);
   });
-}
-
-
-export function showShortcutsModal() {
-  const comps = getRegisteredComponents();
-  const allKeys = Object.values(comps).flatMap((c) => Object.keys(c));
-  console.log(allKeys);
 }

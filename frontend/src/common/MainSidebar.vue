@@ -32,6 +32,8 @@
   // Keys
   useKeyboardShortcuts({
     "g,h": goHome,
+    "g,a": () => router.push("/account"),
+    "g,s": () => router.push("/settings"),
     n: onCTAClick,
     c: toggleCollapsed,
   });
