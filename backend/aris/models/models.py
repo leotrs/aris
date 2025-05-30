@@ -1,18 +1,27 @@
 import enum
-from datetime import datetime
 
 from sqlalchemy import Column, DateTime, Enum, ForeignKey, Integer, String, Table, Text
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship
 
 Base = declarative_base()
 
 
-class FileStatus(enum.Enum):
-    DRAFT = "Draft"
-    UNDER_REVIEW = "Under Review"
-    PUBLISHED = "Published"
+class AvatarColor(enum.Enum):
+    BLUE = "#0E9AE9"
+    RED = "#EF4B4C"
+    GREEN = "#1FB5A2"
+    PURPLE = "#AD71F2"
+    ORANGE = "#F5862B"
+    PINK = "#EC4899"
+    YELLOW = "#F5AB00"
+
+    @classmethod
+    def random(cls):
+        import random
+
+        return random.choice(list(cls))
 
 
 class User(Base):
@@ -24,6 +33,9 @@ class User(Base):
     password_hash = Column(String, nullable=False)
     deleted_at = Column(DateTime, nullable=True)
     initials = Column(String, nullable=True)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    last_login = Column(DateTime(timezone=True), nullable=True)
+    avatar_color = Column(Enum(AvatarColor), nullable=True, default=AvatarColor.BLUE)
 
     files = relationship("File", backref="owner")
     tags = relationship("Tag", back_populates="owner", cascade="all, delete-orphan")
@@ -44,6 +56,12 @@ file_tags = Table(
 )
 
 
+class FileStatus(enum.Enum):
+    DRAFT = "Draft"
+    UNDER_REVIEW = "Under Review"
+    PUBLISHED = "Published"
+
+
 class File(Base):
     __tablename__ = "files"
 
@@ -55,10 +73,10 @@ class File(Base):
     last_edited_at = Column(
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
-    # created_at = Column(DateTime(timezone=True), server_default=func.now())
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     doi = Column(String, unique=True, nullable=True)
     source = Column(Text, nullable=True)
-    deleted_at = Column(DateTime, nullable=True)
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
     tags = relationship("Tag", secondary=file_tags, back_populates="files")
@@ -73,6 +91,7 @@ class Tag(Base):
     )
     name = Column(String, nullable=False, unique=False)
     color = Column(String, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
     deleted_at = Column(DateTime, nullable=True)
 
     files = relationship("File", secondary=file_tags, back_populates="tags")
