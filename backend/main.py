@@ -8,7 +8,9 @@ app = FastAPI()
 
 origins = [
     "http://localhost:5173",  # local Vue app
+    "https://aris-frontend.netlify.app",  # Netlify frontend
 ]
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
@@ -30,6 +32,7 @@ async def add_no_cache_headers(request, call_next):
     if request.url.path.startswith("/static"):
         response.headers["Cache-Control"] = "no-store"
     return response
+
 
 app.mount(
     "/static",

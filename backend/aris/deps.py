@@ -1,3 +1,4 @@
+import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
 from fastapi import Depends, HTTPException, status
@@ -11,6 +12,7 @@ from . import crud
 
 
 DB_URL = "postgresql://leo.torres@localhost:5432/aris"
+DB_URL_PROD = os.getenv("DB_URL_PROD")
 ENGINE = create_engine(DB_URL)
 ArisSession = sessionmaker(autocommit=False, autoflush=False, bind=ENGINE)
 
