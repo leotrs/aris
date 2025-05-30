@@ -1,0 +1,129 @@
+<script setup>
+  import { ref, inject, onMounted } from "vue";
+  import { useRouter } from "vue-router";
+
+  const router = useRouter();
+  const name = ref("");
+  const email = ref("");
+  const pwd = ref("");
+  const pwdAgain = ref("");
+
+  const error = ref("");
+  const api = inject("api");
+
+  onMounted(() => {
+    const user = inject("user");
+    const token = localStorage.getItem("accessToken");
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    if (token && storedUser) {
+      if (!user.value) user.value = storedUser;
+      router.push("/");
+    }
+  });
+
+  const onRegister = async () => {
+    console.log(name, email, pwd, pwdAgain);
+  };
+</script>
+
+<template>
+  <div class="view">
+    <!-- <div class="left">
+         <div class="logo"></div>
+         <div class="tagline">
+         <p>Scientific publishing.</p>
+         <p>Web-native. Human-first</p>
+         </div>
+         </div> -->
+    <div class="right">
+      <div class="wrapper">
+        <div class="top">
+          <InputText v-model="name" direction="column" label="Full name" />
+          <InputText v-model="email" direction="column" label="Email" />
+          <InputText v-model="pwd" direction="column" label="Password" type="password" />
+          <InputText
+            v-model="pwdAgain"
+            direction="column"
+            label="Confirm password"
+            type="password"
+          />
+        </div>
+        <div class="bottom">
+          <div v-if="error" class="error-message">{{ error }}</div>
+          <Button kind="primary" text="Register" @click="onRegister" />
+          <div class="footer text-caption"><p>Already registered? Login here.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<style scoped>
+  .view {
+    --transition-duration: 0.3s;
+
+    display: flex;
+    flex-grow: 2;
+    height: 100%;
+    width: 100%;
+  }
+
+  .left {
+    background-color: var(--information-50);
+    height: 100%;
+    width: 50%;
+  }
+
+  .right {
+    background-color: var(--surface-primary);
+    height: 100%;
+    /* width: 50%; */
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .right .wrapper {
+    width: 60%;
+    min-width: 192px;
+    max-width: 384px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+
+    & > * {
+      width: 100%;
+    }
+  }
+
+  .right .wrapper .top {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .right .bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .right .bottom button {
+    width: 100%;
+
+    & :deep(.btn-text) {
+      margin: 0 auto;
+    }
+  }
+
+  .input-text :deep(label) {
+    padding-left: 8px;
+  }
+
+  .input-text :deep(input) {
+    width: 100%;
+  }
+</style>

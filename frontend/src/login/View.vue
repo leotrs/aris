@@ -83,7 +83,7 @@
             :disabled="isLoading"
             @click="onLogin"
           />
-          <Button kind="secondary" text="Register" />
+          <Button kind="secondary" text="Register" @click="router.push('/register')" />
         </div>
       </div>
     </div>
@@ -119,7 +119,7 @@
   .right .wrapper {
     width: 60%;
     min-width: 192px;
-    max-width: 480px;
+    max-width: 384px;
     margin: 0 auto;
     display: flex;
     flex-direction: column;

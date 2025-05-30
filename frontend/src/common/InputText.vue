@@ -4,14 +4,17 @@
   const props = defineProps({
     label: { type: String, default: "" },
     type: { type: String, default: "text" },
+    direction: { type: String, default: "row" },
   });
   const value = defineModel({ type: String });
   defineOptions({ inheritAttrs: false });
 </script>
 
 <template>
-  <div class="input-text">
-    <label v-if="label">{{ label }}:</label>
+  <div class="input-text" :class="direction">
+    <label v-if="label" class="text-label"
+      >{{ label }}<template v-if="direction == 'row'">:</template></label
+    >
     <input v-bind="$attrs" v-model="value" :type="type" />
   </div>
 </template>
@@ -19,8 +22,17 @@
 <style scoped>
   .input-text {
     display: flex;
+  }
+
+  .input-text.row {
+    flex-direction: row;
     align-items: center;
     gap: 8px;
+  }
+
+  .input-text.column {
+    flex-direction: column;
+    gap: 2px;
   }
 
   input {
