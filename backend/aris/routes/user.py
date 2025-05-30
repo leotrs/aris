@@ -15,13 +15,6 @@ router = APIRouter(
 #     return await crud.get_users(db)
 
 
-@router.post("")
-async def create_user(
-    full_name: str, email: str, password_hash: str, db: Session = Depends(get_db)
-):
-    return await crud.create_user(full_name, email, password_hash, db)
-
-
 @router.get("/{user_id}")
 async def get_user(user_id: int, db: Session = Depends(get_db)):
     user = await crud.get_user(user_id, db)

@@ -17,8 +17,12 @@ async def get_user(user_id: int, db: Session):
     return db.query(User).filter(User.id == user_id, User.deleted_at.is_(None)).first()
 
 
-async def create_user(name: str, email: str, password_hash: str, db: Session):
-    user = User(name=name, email=email, password_hash=password_hash)
+async def create_user(
+    name: str, initials: str, email: str, password_hash: str, db: Session
+):
+    if not initials:
+        initials = "".join([w[0].upper() for w in name.split()])
+    user = User(name=name, initials=initials, email=email, password_hash=password_hash)
     db.add(user)
     db.commit()
     db.refresh(user)

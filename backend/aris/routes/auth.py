@@ -2,9 +2,9 @@ from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, EmailStr
 
-from .. import get_db, current_user, jwt
+from .. import get_db, current_user, jwt, crud
 from ..models import User
-from ..security import verify_password
+from ..security import verify_password, hash_password
 
 
 class UserLogin(BaseModel):
@@ -14,7 +14,8 @@ class UserLogin(BaseModel):
 
 class UserCreate(BaseModel):
     email: EmailStr
-    full_name: str
+    name: str
+    initials: str = ""
     password: str
 
 
@@ -47,3 +48,31 @@ async def login(user_data: UserLogin, db: Session = Depends(get_db)):
     access = jwt.create_access_token(data={"sub": str(user.id)})
     refresh = jwt.create_refresh_token(data={"sub": str(user.id)})
     return {"token_type": "bearer", "access_token": access, "refresh_token": refresh}
+
+
+@router.post("/register")
+async def register(user_data: UserCreate, db: Session = Depends(get_db)):
+    existing_user = db.query(User).filter(User.email == user_data.email).first()
+    if existing_user:
+        raise HTTPException(status_code=409, detail="Email already registered.")
+
+    password_hash = hash_password(user_data.password)
+    new_user = await crud.create_user(
+        user_data.name, user_data.initials, user_data.email, password_hash, db
+    )
+
+    access_token = jwt.create_access_token(data={"sub": str(new_user.id)})
+    refresh_token = jwt.create_refresh_token(data={"sub": str(new_user.id)})
+
+    return {
+        "token_type": "bearer",
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "user": {
+            "id": new_user.id,
+            "email": new_user.email,
+            "name": new_user.name,
+            "initials": new_user.initials,
+            "created_at": new_user.created_at,
+        },
+    }
