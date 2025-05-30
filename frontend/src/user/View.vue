@@ -2,6 +2,7 @@
   import { ref, inject } from "vue";
   import { IconUserCircle } from "@tabler/icons-vue";
 
+  const xsMode = inject("xsMode");
   const mobileMode = inject("mobileMode");
   const user = inject("user");
   const api = inject("api");
@@ -38,17 +39,20 @@
         <span class="title">Account</span>
       </template>
 
-      <div class="main">
+      <div class="main" :class="{ mobile: mobileMode, xs: xsMode }">
         <div class="left">
           <Section class="profile-card">
             <template #content>
-              <div class="pic" :class="{ mobile: mobileMode }"></div>
+              <div id="pic"></div>
               <div class="info">
-                <div class="text-h6">{{ user.name }}</div>
+                <div id="username" class="text-h6">{{ user.name }}</div>
                 <div>{{ user.email }}</div>
                 <div>Prestigious University or Institute</div>
-                <div>
-                  <em>Aris user since{{ user.created_at }}</em>
+                <div id="since">
+                  <em
+                    >Aris user since
+                    {{ new Date(user.created_at).toLocaleString(undefined, {}) }}</em
+                  >
                 </div>
               </div>
             </template>
@@ -116,6 +120,7 @@
 
 <style scoped>
   .view {
+    --right-width: 168px;
     --transition-duration: 0.3s;
     display: flex;
     width: 100%;
@@ -125,6 +130,7 @@
   }
 
   .profile-card {
+    width: max-content;
     display: flex;
     justify-content: flex-start;
   }
@@ -132,23 +138,32 @@
   .profile-card > :deep(.content) {
     padding: 0px;
     border-radius: 16px;
-    width: 100%;
     display: flex;
     border: var(--border-thin) solid var(--primary-300);
     box-shadow: var(--shadow-soft);
   }
 
-  .profile-card > .content > .pic {
+  #username {
+    font-weight: var(--weight-semi);
+    padding-bottom: 4px;
+  }
+
+  #pic {
     height: 150px;
-    width: 150px;
+    aspect-ratio: 1/1;
     flex-shrink: 0;
     border-radius: calc(16px - var(--border-thin));
     background-color: var(--gray-200);
   }
 
-  .profile-card > .content > .pic.mobile {
-    height: 100px;
-    width: 100px;
+  #since {
+    font-size: 14px;
+  }
+
+  .main.mobile #pic {
+    min-height: 100px;
+    height: 100%;
+    aspect-ratio: 1/1;
   }
 
   .profile-card > .content > .info {
@@ -156,11 +171,25 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    width: 100%;
 
     & > * {
       margin-bottom: 4px;
+      white-space: nowrap;
     }
+  }
+
+  .main.xs .profile-card > :deep(.content) {
+    flex-direction: column;
+  }
+
+  .main.xs #pic {
+    margin-inline: 32px;
+    height: 100px;
+    width: 100px;
+  }
+
+  .main.xs .profile-card > .content > .info > * {
+    white-space: wrap;
   }
 
   .main {
@@ -168,6 +197,10 @@
   }
 
   .main > .left {
+    width: calc(100% - var(--right-width));
+  }
+
+  .main.mobile > .left {
     width: 100%;
   }
 
@@ -183,6 +216,7 @@
   }
 
   .main > .right {
+    width: var(--right-width);
     position: absolute;
     right: calc(32px);
     padding-inline: 16px;
