@@ -37,76 +37,43 @@
 </script>
 
 <template>
-  <div class="md-wrapper">
-    <div class="md-header">
+  <Modal>
+    <template #header>
       <span class="text-h5">Upload New File</span>
-      <ButtonClose @close="close" />
-    </div>
-    <div class="md-content">
-      <span>Select a .rsm file from your computer:</span>
-      <input id="file-upload" ref="fileUpload" type="file" hidden />
-      <label for="file-upload">
-        <Button
-          id="file-upload-cta"
-          kind="secondary"
-          text="Choose file"
-          icon="Upload"
-          class="btn-md"
-          @click="triggerFileUpload"
-        />
-        <span class="file-upload-echo text-caption">No file chosen.</span>
-      </label>
-    </div>
-    <div class="md-footer">
+      <ButtonClose />
+    </template>
+    <span>Select a .rsm file from your computer</span>
+    <input id="file-upload" ref="fileUpload" type="file" hidden />
+    <label for="file-upload">
+      <Button
+        id="file-upload-cta"
+        kind="secondary"
+        text="Choose file"
+        icon="Upload"
+        class="btn-md"
+        @click="triggerFileUpload"
+      />
+      <!-- <span class="file-upload-echo text-caption">No file chosen.</span> -->
+    </label>
+    <div class="cta">
       <Button kind="tertiary" text="cancel" class="btn-md" @click="close" />
       <Button kind="primary" text="upload" class="btn-md" @click="upload" />
     </div>
-  </div>
+  </Modal>
 </template>
 
 <style scoped>
-  .md-wrapper {
-    position: absolute;
-    left: 50%;
-    top: 50%;
-    transform: translateX(-50%) translateY(-50%);
-    border: 2px solid var(--border-primary);
-    border-radius: 16px;
-    padding: 16px;
-    gap: 16px;
-    display: flex;
-    flex-direction: column;
-    min-width: 500px;
-    background-color: var(--surface-primary);
-  }
-
-  .md-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: var(--surface-hover);
-    border: var(--border-thin) solid var(--border-primary);
-    padding-inline: 8px;
-    padding-block: 4px;
-    border-radius: 8px;
-  }
-
-  .md-content {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-
-  .md-footer {
-    display: flex;
-    gap: 8px;
-    justify-content: flex-end;
-  }
-
   #file-upload-cta {
-    width: 100%;
+    margin: 0 auto;
+    width: 50%;
     display: flex;
     justify-content: center;
     margin-block: 8px;
+  }
+
+  .cta {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
   }
 </style>
