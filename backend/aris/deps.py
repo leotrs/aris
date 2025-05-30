@@ -5,15 +5,19 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel, EmailStr
+from dotenv import load_dotenv
 from uuid import UUID
 
 from .config import settings
 from . import crud
 
 
-DB_URL = "postgresql://leo.torres@localhost:5432/aris"
+load_dotenv()
+
+
+DB_URL_LOCAL = os.getenv("DB_URL_LOCAL")
 DB_URL_PROD = os.getenv("DB_URL_PROD")
-ENGINE = create_engine(DB_URL)
+ENGINE = create_engine(DB_URL_PROD if os.getenv("ENV") == "PROD" else DB_URL_LOCAL)
 ArisSession = sessionmaker(autocommit=False, autoflush=False, bind=ENGINE)
 
 
