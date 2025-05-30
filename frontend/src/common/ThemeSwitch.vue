@@ -1,6 +1,9 @@
 <script setup>
   import { watch, onMounted, onUnmounted } from "vue";
 
+  const props = defineProps({
+    labels: { type: Boolean, default: false },
+  });
   const mode = defineModel({ type: Number, default: -1 });
   const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
 
@@ -35,7 +38,12 @@
 </script>
 
 <template>
-  <SegmentedControl v-model="mode" :icons="['Sun', 'SunMoon', 'Moon']" :default-active="1" />
+  <SegmentedControl
+    v-model="mode"
+    :icons="['Sun', 'SunMoon', 'Moon']"
+    :labels="labels ? ['Light', 'System', 'Dark'] : null"
+    :default-active="1"
+  />
 </template>
 
 <style>

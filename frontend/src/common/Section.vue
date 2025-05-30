@@ -22,6 +22,10 @@
     padding-inline: 8px;
   }
 
+  .section > .title {
+    margin-bottom: 8px;
+  }
+
   .section.danger {
     border-color: var(--border-error);
     border-radius: 8px;
