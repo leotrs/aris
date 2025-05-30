@@ -48,7 +48,7 @@
       </div>
     </template>
 
-    <div v-if="mobileMode && fab" class="cta" :class="{ fab: mobileMode }">
+    <div v-if="!mobileMode || (mobileMode && fab)" class="cta" :class="{ fab: mobileMode }">
       <ContextMenu
         ref="menu-ref"
         icon="CirclePlus"
