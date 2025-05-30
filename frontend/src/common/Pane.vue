@@ -1,13 +1,14 @@
 <script setup>
-  import {} from "vue";
+  import { inject } from "vue";
 
   const props = defineProps({
     customHeader: { type: Boolean, default: false },
   });
+  const mobileMode = inject("mobileMode");
 </script>
 
 <template>
-  <div class="pane">
+  <div class="pane" :class="{ mobile: mobileMode }">
     <div v-if="$slots.header">
       <template v-if="customHeader">
         <slot name="header" />
@@ -33,6 +34,10 @@
     flex-direction: column;
     border-radius: 16px;
     box-shadow: var(--shadow-soft);
+  }
+
+  .pane.mobile {
+    border-radius: 0px;
   }
 
   .pane > * {
