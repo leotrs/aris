@@ -7,12 +7,12 @@
   const email = ref("");
   const pwd = ref("");
   const pwdAgain = ref("");
-
   const error = ref("");
+
   const api = inject("api");
+  const user = inject("user");
 
   onMounted(() => {
-    const user = inject("user");
     const token = localStorage.getItem("accessToken");
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (token && storedUser) {
@@ -22,7 +22,35 @@
   });
 
   const onRegister = async () => {
-    console.log(name, email, pwd, pwdAgain);
+    error.value = "";
+    if (!name.value || !email.value || !pwd.value || !pwdAgain.value) {
+      error.value = "Please fill in all fields.";
+      return;
+    }
+    if (pwd.value !== pwdAgain.value) {
+      error.value = "Passwords do not match.";
+      return;
+    }
+
+    try {
+      const response = await api.post("/register", {
+        name: name.value,
+        email: email.value,
+        password: pwd.value,
+      });
+
+      const { accessToken, user: registeredUser } = response.data;
+      localStorage.setItem("accessToken", accessToken);
+      localStorage.setItem("user", JSON.stringify(registeredUser));
+      user.value = registeredUser;
+      router.push("/");
+    } catch (err) {
+      if (err.response?.data?.message) {
+        error.value = err.response.data.message;
+      } else {
+        error.value = "Registration failed. Please try again.";
+      }
+    }
   };
 </script>
 
