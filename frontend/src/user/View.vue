@@ -32,25 +32,25 @@
           <Section>
             <template #title>Profile</template>
             <template #content>
-              <div><label>Name</label>{{ user.name }}</div>
-              <div><label>Email</label>{{ user.email }}</div>
-              <div><label>Affiliation</label></div>
+              <InputText label="Name" :placeholder="user.name" />
+              <InputText label="Initials" :placeholder="user.initials" />
+              <InputText label="Email" :placeholder="user.email" disabled="true" />
             </template>
           </Section>
 
           <Section>
             <template #title>Password</template>
             <template #content>
-              <div>current pwd</div>
-              <div>new pwd</div>
-              <div>confirm</div>
+              <InputText label="Current password" type="password" />
+              <InputText label="New password" type="password" />
+              <InputText label="Confirm new password" type="password" />
             </template>
           </Section>
 
           <Section class="cta">
             <template #content>
               <Button kind="tertiary">Discard changes</Button>
-              <Button kind="primary">Save settings</Button>
+              <Button kind="primary">Save</Button>
             </template>
           </Section>
 
@@ -64,6 +64,8 @@
                 </p>
                 <p>This is an irreversible action.</p>
               </div>
+            </template>
+            <template #footer>
               <Button kind="primary danger">Delete account</Button>
             </template>
           </Section>
@@ -97,15 +99,16 @@
   .profile-card > :deep(.content) {
     padding: 0px;
     border-radius: 16px;
-    width: fit-content;
+    width: 100%;
     display: flex;
-    justify-content: center;
     border: var(--border-thin) solid var(--primary-300);
+    box-shadow: var(--shadow-soft);
   }
 
   .profile-card > .content > .pic {
     height: 150px;
     width: 150px;
+    flex-shrink: 0;
     border-radius: calc(16px - var(--border-thin));
     background-color: var(--gray-200);
   }
@@ -115,6 +118,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    width: 100%;
 
     & > * {
       margin-bottom: 4px;
@@ -128,10 +132,15 @@
   .main > .left {
   }
 
-  .main .section.cta :deep(.content) {
+  .section.cta :deep(.content) {
     display: flex;
     justify-content: flex-end;
     gap: 16px;
+  }
+
+  .section.danger :deep(.footer) {
+    display: flex;
+    justify-content: flex-end;
   }
 
   .main > .right {
@@ -144,13 +153,6 @@
     height: calc(100% - 48px - 16px - 16px - 16px - 16px);
     gap: 8px;
     padding: 16px;
-    padding-bottom: 32px;
-  }
-
-  .main > .right > :deep(button) {
-    width: 100%;
-  }
-
-  .main > .right > button.logout {
+    padding-bottom: 16px;
   }
 </style>

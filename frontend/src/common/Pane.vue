@@ -41,4 +41,8 @@
     padding-top: 16px;
     overflow-x: auto;
   }
+
+  .content :deep(.section:last-child) {
+    margin-bottom: 16px;
+  }
 </style>
