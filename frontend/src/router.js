@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from "vue-router";
 import LoginView from "./login/View.vue";
+import RegisterView from "./register/View.vue";
 import HomeView from "./home/View.vue";
 import MainView from "./main/View.vue";
 import UserView from "./user/View.vue";
@@ -9,6 +10,7 @@ import NotFoundView from "./notfound/View.vue";
 
 const routes = [
   { path: "/login", component: LoginView },
+  { path: "/register", component: RegisterView },
   { path: "/", component: HomeView },
   { path: "/file/:file_id", component: MainView },
   { path: "/account", component: UserView },
