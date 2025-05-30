@@ -8,18 +8,22 @@
       <slot name="title" />
     </div>
     <div class="content"><slot name="content" /></div>
-    <div class="footer"><slot name="footer" /></div>
+    <div v-if="$slots.footer" class="footer"><slot name="footer" /></div>
   </div>
 </template>
 
 <style scoped>
   .section {
-    margin-bottom: 32px;
+    margin-bottom: 16px;
     border: var(--border-thin) solid transparent;
   }
 
   .section > * {
     padding-inline: 8px;
+  }
+
+  .section > :is(.content, .footer) {
+    padding-bottom: 16px;
   }
 
   .section > .title {
