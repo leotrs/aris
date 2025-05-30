@@ -14,7 +14,7 @@
     justify-content: space-between;
     border: var(--border-extrathin) solid var(--border-primary);
     background-color: var(--surface-hover);
-    min-height: 40px;
+    height: 48px;
     border-radius: 8px;
     padding-inline: 8px;
   }
