@@ -3,18 +3,24 @@ import LoginView from "./login/View.vue";
 import HomeView from "./home/View.vue";
 import MainView from "./main/View.vue";
 import UserView from "./user/View.vue";
+import NotFoundView from "./notfound/View.vue";
+
 
 const routes = [
   { path: "/login", component: LoginView },
   { path: "/", component: HomeView },
   { path: "/file/:file_id", component: MainView },
   { path: "/account", component: UserView },
+  // catch-all route: 404
+  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundView },
 ];
+
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
 });
+
 
 router.beforeEach((to, from, next) => {
   const publicPages = ["/login", "/register"];
@@ -22,5 +28,6 @@ router.beforeEach((to, from, next) => {
   const token = localStorage.getItem("accessToken");
   return (authRequired && !token) ? next("/login") : next();
 });
+
 
 export default router;
