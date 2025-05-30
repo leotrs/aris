@@ -78,8 +78,8 @@
   }
 
   .menus.mobile {
-    top: 16px;
-    right: 16px;
+    top: 8px;
+    right: 8px;
   }
 
   .modal {

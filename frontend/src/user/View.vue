@@ -42,7 +42,7 @@
         <div class="left">
           <Section class="profile-card">
             <template #content>
-              <div class="pic"></div>
+              <div class="pic" :class="{ mobile: mobileMode }"></div>
               <div class="info">
                 <div class="text-h6">{{ user.name }}</div>
                 <div>{{ user.email }}</div>
@@ -146,6 +146,11 @@
     background-color: var(--gray-200);
   }
 
+  .profile-card > .content > .pic.mobile {
+    height: 100px;
+    width: 100px;
+  }
+
   .profile-card > .content > .info {
     padding-inline: 32px;
     display: flex;
@@ -163,6 +168,7 @@
   }
 
   .main > .left {
+    width: 100%;
   }
 
   .section.cta :deep(.content) {
