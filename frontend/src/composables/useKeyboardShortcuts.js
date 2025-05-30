@@ -100,6 +100,8 @@ const tryHandleKeyEvent = (ev, componentRef, key) => {
 };
 
 const handleKeyDown = (ev) => {
+  if (key == '?') return showShortcutsModal();
+
   const tag = ev.target.tagName?.toUpperCase();
   const isEditableElement = tag === 'INPUT' || tag === 'TEXTAREA' || ev.target.isContentEditable;
   const shouldIgnore =
@@ -219,4 +221,11 @@ export function registerAsFallback(component) {
     if (refToKey(fallbackComponent.value) === refToKey(component.value))
       fallbackComponent = computed(() => null);
   });
+}
+
+
+export function showShortcutsModal() {
+  const comps = getRegisteredComponents();
+  const allKeys = Object.values(comps).flatMap((c) => Object.keys(c));
+  console.log(allKeys);
 }
