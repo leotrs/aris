@@ -12,9 +12,10 @@
   const api = inject("api");
   let onload = ref(null);
   onBeforeMount(async () => {
-    await import(`${api.getUri()}/static/jquery-3.6.0.js`);
-    await import(`${api.getUri()}/static/tooltipster.bundle.js`);
-    const module = await import(`${api.getUri()}/static/onload.js`);
+    const base = api.getUri();
+    await import(/* @vite-ignore */ `${base}/static/jquery-3.6.0.js`);
+    await import(/* @vite-ignore */ `${base}/static/tooltipster.bundle.js`);
+    const module = await import(/* @vite-ignore */ `${base}/static/onload.js`);
     onload.value = module.onload;
   });
 
