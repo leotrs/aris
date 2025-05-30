@@ -45,3 +45,9 @@ review manuscripts as responsive, interactive web documents.
    + API instance is created and injected in App.vue and reused throughout.
    + Tokens are stored in localStorage and refreshed transparently.
    + Responsive design adapts to mobile via VueUse breakpoints.
+
+## Deployment
+
+This app is hosted on Netlify, which is setup to rebuild on every push to main. For the
+production environment, make sure the `VITE_ENV` envrionment variable is NOT set (it
+should be set to `DEV` in the dev or local environments).

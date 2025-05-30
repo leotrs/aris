@@ -46,3 +46,11 @@ authentication, and metadata.
 3. **API**
 
 Once running, the API docs are available at `http://localhost:8000/docs`.
+
+
+## Deployment
+
+The FastAPI app is deployed on fly.io via the command `fly deploy`, which uses the
+`Dockerfile` in this directory. Use `fly logs` to stream the live logs.
+
+The database is hosted on Supabase, and `alembic` is used to control its schema.

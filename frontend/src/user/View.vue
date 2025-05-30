@@ -45,7 +45,7 @@
           </Section>
         </div>
         <div class="right">
-          <Button :class="logout" kind="secondary" icon="Logout" text="log out" />
+          <Button class="logout" kind="secondary" icon="Logout" text="log out" />
           <Button kind="tertiary" size="sm" icon="BrandGit" text="Contribute" />
           <Button kind="tertiary" size="sm" icon="Lifebuoy" text="Help" />
           <Button kind="tertiary" size="sm" icon="Heart" text="Donate" />
