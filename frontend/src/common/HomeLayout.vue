@@ -1,8 +1,11 @@
 <script setup>
-  import { ref, inject } from "vue";
-  import { useRouter } from "vue-router";
+  import { ref, inject, computed } from "vue";
+  import { useRoute, useRouter } from "vue-router";
   import UploadFile from "../home/ModalUploadFile.vue";
 
+  const props = defineProps({
+    fab: { type: Boolean, default: true },
+  });
   const mobileMode = inject("mobileMode");
   const fileStore = inject("fileStore");
   const user = inject("user");
@@ -23,13 +26,20 @@
   };
 
   const showModal = ref(false);
+  const route = useRoute();
+  const isHome = computed(() => route.fullPath === "/");
 </script>
 
 <template>
   <div class="view" :class="{ mobile: mobileMode }">
-    <MainSidebar @new-empty-file="newEmptyFile" @show-file-upload-modal="showModal = true" />
+    <MainSidebar
+      :fab="fab"
+      @new-empty-file="newEmptyFile"
+      @show-file-upload-modal="showModal = true"
+    />
 
     <div class="menus" :class="{ mobile: mobileMode }">
+      <Button v-if="mobileMode && !isHome" kind="tertiary" icon="Home" @click="router.push('/')" />
       <Button kind="tertiary" icon="Bell" />
       <UserMenu ref="user-menu" />
     </div>

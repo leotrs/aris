@@ -2,6 +2,7 @@
   import { ref, inject } from "vue";
   import { IconUserCircle } from "@tabler/icons-vue";
 
+  const mobileMode = inject("mobileMode");
   const user = inject("user");
   const api = inject("api");
 
@@ -30,7 +31,7 @@
 </script>
 
 <template>
-  <HomeLayout>
+  <HomeLayout :fab="false">
     <Pane>
       <template #header>
         <IconUserCircle />
@@ -78,6 +79,15 @@
             </template>
           </Section>
 
+          <Section v-if="mobileMode">
+            <template #title>Useful Links</template>
+            <template #content>
+              <Button kind="tertiary" size="sm" icon="Lifebuoy" text="Help" />
+              <Button kind="tertiary" size="sm" icon="BrandGit" text="Contribute" />
+              <Button kind="tertiary" size="sm" icon="Heart" text="Donate" />
+            </template>
+          </Section>
+
           <Section class="danger">
             <template #title>Danger Zone</template>
             <template #content>
@@ -94,7 +104,7 @@
             </template>
           </Section>
         </div>
-        <div class="right">
+        <div v-if="!mobileMode" class="right">
           <Button kind="tertiary" size="sm" icon="Lifebuoy" text="Help" />
           <Button kind="tertiary" size="sm" icon="BrandGit" text="Contribute" />
           <Button kind="tertiary" size="sm" icon="Heart" text="Donate" />

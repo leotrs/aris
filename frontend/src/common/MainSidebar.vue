@@ -4,6 +4,9 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./MainSidebarItem.vue";
 
+  const props = defineProps({
+    fab: { type: Boolean, default: true },
+  });
   const emit = defineEmits(["newEmptyFile", "showFileUploadModal"]);
 
   // Collapsing
@@ -45,7 +48,7 @@
       </div>
     </template>
 
-    <div class="cta" :class="{ fab: mobileMode }">
+    <div v-if="mobileMode && fab" class="cta" :class="{ fab: mobileMode }">
       <ContextMenu
         ref="menu-ref"
         icon="CirclePlus"

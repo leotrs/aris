@@ -27,12 +27,16 @@
 <style scoped>
   .pane {
     background-color: var(--surface-primary);
-    padding: 16px 16px 0 16px;
+    padding-block: 16px;
     width: 100%;
     display: flex;
     flex-direction: column;
     border-radius: 16px;
     box-shadow: var(--shadow-soft);
+  }
+
+  .pane > * {
+    padding-inline: 16px;
   }
 
   .pane-header {
