@@ -22,10 +22,8 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 16px;
     border-radius: 16px;
     box-shadow: var(--shadow-soft);
-    overflow-x: auto;
   }
 
   .pane-header {
@@ -37,5 +35,10 @@
 
   .pane-header > .title {
     margin-left: 4px;
+  }
+
+  .content {
+    padding-top: 16px;
+    overflow-x: auto;
   }
 </style>

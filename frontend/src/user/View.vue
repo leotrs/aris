@@ -89,6 +89,11 @@
     transition: padding var(--transition-duration) ease;
   }
 
+  .profile-card {
+    display: flex;
+    justify-content: center;
+  }
+
   .profile-card > :deep(.content) {
     padding: 0px;
     border-radius: 16px;
