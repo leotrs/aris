@@ -4,11 +4,11 @@
 
 <template>
   <div class="section">
-    <div class="title text-h5">
+    <div v-if="$slots.title" class="title text-h5">
       <slot name="title" />
     </div>
-    <slot name="content" />
-    <slot name="footer" />
+    <div class="content"><slot name="content" /></div>
+    <div class="footer"><slot name="footer" /></div>
   </div>
 </template>
 
@@ -24,6 +24,7 @@
 
   .section > .title {
     margin-bottom: 8px;
+    border-bottom: var(--border-extrathin) solid var(--border-primary);
   }
 
   .section.danger {
@@ -33,5 +34,6 @@
 
   .section.danger .title {
     background-color: var(--error-50);
+    border-color: var(--border-error);
   }
 </style>

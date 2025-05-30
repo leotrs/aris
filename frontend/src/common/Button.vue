@@ -261,4 +261,10 @@
   button.text-float:hover .btn-text {
     display: block;
   }
+
+  button.danger {
+    background-color: var(--surface-danger);
+    border-color: var(--surface-danger);
+    color: var(--error-50);
+  }
 </style>

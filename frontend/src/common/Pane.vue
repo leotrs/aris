@@ -4,7 +4,14 @@
 
 <template>
   <div class="pane">
-    <slot />
+    <div v-if="$slots.header">
+      <Header class="text-h4">
+        <slot name="header" />
+      </Header>
+    </div>
+    <div class="content">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -18,5 +25,17 @@
     gap: 16px;
     border-radius: 16px;
     box-shadow: var(--shadow-soft);
+    overflow-x: auto;
+  }
+
+  .pane-header {
+    height: 48px;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .pane-header > .title {
+    margin-left: 4px;
   }
 </style>

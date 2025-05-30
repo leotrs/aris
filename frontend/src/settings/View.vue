@@ -8,10 +8,11 @@
 <template>
   <HomeLayout>
     <Pane>
-      <Header class="text-h4">
+      <template #header>
         <IconSettings />
         <span class="title">Settings</span>
-      </Header>
+      </template>
+
       <div class="main">
         <Section>
           <template #title>Appearance</template>
