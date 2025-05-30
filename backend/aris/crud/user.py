@@ -25,12 +25,16 @@ async def create_user(name: str, email: str, password_hash: str, db: Session):
     return user
 
 
-async def update_user(user_id: int, name: str, email: str, db: Session):
-    user = get_user(user_id, db)
+async def update_user(user_id: int, name: str, initials: str, email: str, db: Session):
+    user = await get_user(user_id, db)
     if not user:
         return None
-    user.name = name
-    user.email = email
+    if name != user.name:
+        user.name = name
+    if initials != user.initials:
+        user.initials = initials
+    if email != user.email:
+        user.email = email
     db.commit()
     db.refresh(user)
     return user

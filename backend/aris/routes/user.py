@@ -1,10 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 
 from .. import crud, get_db, current_user
 from ..models import File, User
 
-router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(current_user)])
+router = APIRouter(
+    prefix="/users", tags=["users"], dependencies=[Depends(current_user)]
+)
 
 
 # @router.get("")
@@ -27,11 +30,21 @@ async def get_user(user_id: int, db: Session = Depends(get_db)):
     return user
 
 
+class UserUpdate(BaseModel):
+    name: str
+    initials: str
+    email: str
+
+
 @router.put("/{user_id}")
 async def update_user(
-    user_id: int, full_name: str, email: str, db: Session = Depends(get_db)
+    user_id: int,
+    update: UserUpdate,
+    db: Session = Depends(get_db),
 ):
-    user = await crud.update_user(user_id, full_name, email, db)
+    user = await crud.update_user(
+        user_id, update.name, update.initials, update.email, db
+    )
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
