@@ -115,10 +115,13 @@
   });
   provide("user", user);
   provide("fileStore", fileStore);
+
+  const isDev = import.meta.env.VITE_ENV === "DEV";
 </script>
 
 <template>
   <RouterView :class="`bp-${breakpoints.active().value}`" />
+  <div v-if="isDev" id="env">DEV/LOCAL</div>
 </template>
 
 <style>
@@ -137,5 +140,16 @@
     font-size: 16px;
     line-height: 1.25;
     color: var(--extra-dark);
+  }
+
+  #env {
+    position: fixed;
+    bottom: 8px;
+    left: 8px;
+    color: var(--dark);
+    background-color: var(--green-100);
+    padding: 4px;
+    border-radius: 16px;
+    z-index: 999;
   }
 </style>
