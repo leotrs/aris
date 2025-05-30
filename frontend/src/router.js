@@ -3,6 +3,7 @@ import LoginView from "./login/View.vue";
 import HomeView from "./home/View.vue";
 import MainView from "./main/View.vue";
 import UserView from "./user/View.vue";
+import SettingsView from "./settings/View.vue";
 import NotFoundView from "./notfound/View.vue";
 
 
@@ -11,6 +12,7 @@ const routes = [
   { path: "/", component: HomeView },
   { path: "/file/:file_id", component: MainView },
   { path: "/account", component: UserView },
+  { path: "/settings", component: SettingsView },
   // catch-all route: 404
   { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundView },
 ];

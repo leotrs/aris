@@ -74,7 +74,6 @@
         <SidebarItem :collapsed="collapsed" text="All Files" active @click="goHome" />
         <Separator />
         <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />
-        <ThemeSwitch />
       </div>
     </template>
   </div>
