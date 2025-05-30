@@ -8,21 +8,36 @@
 <template>
   <HomeLayout>
     <Pane>
-      <Header class="text-h4">
+      <template #header>
         <IconUserCircle />
         <span class="title">Account</span>
-      </Header>
+      </template>
+
+      <Section class="profile-card">
+        <template #content>
+          <div class="pic"></div>
+          <div class="info">
+            <div class="text-h6">{{ user.name }}</div>
+            <div>{{ user.email }}</div>
+            <div>Prestigious University or Institute</div>
+            <div>
+              <em>Aris user since{{ user.created_at }}</em>
+            </div>
+          </div>
+        </template>
+      </Section>
+
       <div class="main">
         <div class="left">
           <Section>
             <template #title>Profile</template>
             <template #content>
-              <div>picture</div>
-              <div>{{ user.name }}</div>
-              <div>{{ user.email }}</div>
-              <div>affiliation</div>
+              <div><label>Name</label>{{ user.name }}</div>
+              <div><label>Email</label>{{ user.email }}</div>
+              <div><label>Affiliation</label></div>
             </template>
           </Section>
+
           <Section>
             <template #title>Password</template>
             <template #content>
@@ -31,6 +46,14 @@
               <div>confirm</div>
             </template>
           </Section>
+
+          <Section class="cta">
+            <template #content>
+              <Button kind="tertiary">Discard changes</Button>
+              <Button kind="primary">Save settings</Button>
+            </template>
+          </Section>
+
           <Section class="danger">
             <template #title>Danger Zone</template>
             <template #content>
@@ -41,6 +64,7 @@
                 </p>
                 <p>This is an irreversible action.</p>
               </div>
+              <Button kind="primary danger">Delete account</Button>
             </template>
           </Section>
         </div>
@@ -65,23 +89,46 @@
     transition: padding var(--transition-duration) ease;
   }
 
-  .pane-header {
-    height: 48px !important;
+  .profile-card > :deep(.content) {
+    padding: 0px;
+    border-radius: 16px;
+    width: fit-content;
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
+    justify-content: center;
+    border: var(--border-thin) solid var(--primary-300);
   }
 
-  .pane-header > .title {
-    margin-left: 4px;
+  .profile-card > .content > .pic {
+    height: 150px;
+    width: 150px;
+    border-radius: 16px;
+    background-color: var(--gray-200);
+  }
+
+  .profile-card > .content > .info {
+    padding-inline: 32px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    & > * {
+      margin-bottom: 4px;
+    }
   }
 
   .main {
     display: flex;
+    gap: 32px;
   }
 
   .main > .left {
     flex: 4;
+  }
+
+  .main .section.cta :deep(.content) {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
   }
 
   .main > .right {
