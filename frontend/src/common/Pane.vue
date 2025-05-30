@@ -38,10 +38,15 @@
 
   .pane.mobile {
     border-radius: 0px;
+    padding-block: 8px;
   }
 
   .pane > * {
     padding-inline: 16px;
+  }
+
+  .pane.mobile > * {
+    padding-inline: 8px;
   }
 
   .pane-header {

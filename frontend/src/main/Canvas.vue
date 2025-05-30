@@ -292,6 +292,9 @@
 
   .outer.mobile .inner.right .dock.main.middle .rsm-manuscript {
     box-shadow: none;
+    border-color: transparent;
+    padding-inline: 0;
+    padding-block: 16px;
   }
 
   .rsm-manuscript {
