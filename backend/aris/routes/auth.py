@@ -34,6 +34,7 @@ async def me(user: User = Depends(current_user)):
         "id": user.id,
         "name": user.name,
         "initials": user.initials,
+        "created_at": user.created_at,
     }
 
 

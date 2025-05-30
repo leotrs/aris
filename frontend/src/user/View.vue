@@ -1,8 +1,32 @@
 <script setup>
-  import { inject } from "vue";
+  import { ref, inject } from "vue";
   import { IconUserCircle } from "@tabler/icons-vue";
 
   const user = inject("user");
+  const api = inject("api");
+
+  const newName = ref(null);
+  const newInitials = ref(null);
+  const newEmail = ref(null);
+  const onSave = async () => {
+    console.log(newName.value, newInitials.value, newEmail.value);
+    try {
+      const payload = {
+        name: newName.value || user.value.name,
+        initials: newInitials.value || user.value.initials,
+        email: newEmail.value || user.value.email,
+      };
+
+      const res = await api.put(`/users/${user.value.id}`, payload);
+      user.value.name = res.data.name;
+      user.value.initials = res.data.initials;
+      user.value.email = res.data.email;
+      // toast.success("Profile updated")
+    } catch (error) {
+      console.error("Failed to update user", error);
+      // toast.error("Failed to update profile")
+    }
+  };
 </script>
 
 <template>
@@ -32,9 +56,9 @@
           <Section>
             <template #title>Profile</template>
             <template #content>
-              <InputText label="Name" :placeholder="user.name" />
-              <InputText label="Initials" :placeholder="user.initials" />
-              <InputText label="Email" :placeholder="user.email" disabled="true" />
+              <InputText v-model="newName" label="Name" :placeholder="user.name" />
+              <InputText v-model="newInitials" label="Initials" :placeholder="user.initials" />
+              <InputText v-model="newEmail" label="Email" :placeholder="user.email" />
             </template>
           </Section>
 
@@ -50,7 +74,7 @@
           <Section class="cta">
             <template #content>
               <Button kind="tertiary">Discard changes</Button>
-              <Button kind="primary">Save</Button>
+              <Button kind="primary" @click="onSave">Save</Button>
             </template>
           </Section>
 
@@ -74,7 +98,6 @@
           <Button kind="tertiary" size="sm" icon="Lifebuoy" text="Help" />
           <Button kind="tertiary" size="sm" icon="BrandGit" text="Contribute" />
           <Button kind="tertiary" size="sm" icon="Heart" text="Donate" />
-          <Button class="logout" kind="secondary" icon="Logout" text="log out" />
         </div>
       </div>
     </Pane>

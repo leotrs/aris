@@ -30,7 +30,7 @@
     let fileData = {
       ...File.toJSON(file.value),
       id: null,
-      owner_id: user.id,
+      owner_id: user.value.id,
       title: file.value.title + " (Copy)",
     };
     fileStore.value.createFile(fileData);
