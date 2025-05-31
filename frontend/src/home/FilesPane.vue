@@ -27,7 +27,7 @@
       : "minmax(144px, 2fr) minmax(96px, 1.5fr) 8px 104px 16px 8px";
   });
   const shouldShowColumn = (columnName, mode) => {
-    if (["Tags", "Spacer"].includes(columnName) && xsMode.value) return false;
+    if (["Spacer"].includes(columnName) && xsMode.value) return false;
     return true;
   };
   provide("shouldShowColumn", shouldShowColumn);

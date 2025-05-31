@@ -77,7 +77,7 @@
         <FileTitle ref="file-title-ref" :file="file" :class="mode == 'cards' ? 'text-label' : ''" />
 
         <template v-if="!xsMode">
-          <TagRow v-model="file.tags" :file="file" />
+          <TagRow :file="file" />
           <!-- necessary because tags tend to overflow -->
           <div class="spacer"></div>
         </template>
@@ -138,10 +138,6 @@
 
     & .file-title {
       border-left: var(--border-med) solid transparent;
-    }
-
-    & .tag-row :deep(.cm-wrapper) {
-      visibility: hidden;
     }
 
     & > .mm-wrapper {
@@ -274,16 +270,10 @@
 
   .item .fm-wrapper :deep(.cm-btn) {
     opacity: 0;
-    transition:
-      opacity,
-      0.3s ease;
+    transition: opacity 0.3s ease;
   }
 
   :is(.item:hover, .item.focused, .item.hovered) .fm-wrapper :deep(.cm-btn) {
     opacity: 1;
-  }
-
-  :is(.item:hover, .item.focused, .item.hovered) .tag-row :deep(.cm-wrapper) {
-    visibility: visible;
   }
 </style>
