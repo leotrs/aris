@@ -25,16 +25,16 @@
   const onCTAClick = () => menuRef.value.toggle();
 
   const router = useRouter();
-  const goHome = () => {
-    router.push("/");
+  const goTo = (page) => {
+    router.push(`/${page}`);
   };
 
   // Keys
   useKeyboardShortcuts(
     {
-      "g,h": { fn: goHome, description: "go home" },
-      "g,a": { fn: () => router.push("/account"), description: "go to user account" },
-      "g,s": { fn: () => router.push("/settings"), description: "go to settings" },
+      "g,h": { fn: () => goTo(""), description: "go home" },
+      "g,a": { fn: () => goTo("account"), description: "go to user account" },
+      "g,s": { fn: () => goTo("settings"), description: "go to settings" },
       n: { fn: onCTAClick, description: "open new file menu" },
       c: { fn: toggleCollapsed, description: "collapse sidebar" },
     },
@@ -73,14 +73,21 @@
 
     <template v-if="!mobileMode">
       <div class="sb-menu">
-        <SidebarItem :collapsed="collapsed" text="Home" @click="goHome" />
+        <SidebarItem :collapsed="collapsed" text="Home" active @click="() => goTo('')" />
         <!-- <SidebarItem :collapsed="collapsed" text="Feedback" /> -->
         <!-- <SidebarItem :collapsed="collapsed" text="References" /> -->
         <!-- <Separator /> -->
         <!-- <SidebarItem :collapsed="collapsed" text="Read" /> -->
         <!-- <SidebarItem :collapsed="collapsed" text="Write" /> -->
         <!-- <SidebarItem :collapsed="collapsed" text="Review" /> -->
-        <SidebarItem :collapsed="collapsed" text="All Files" active @click="goHome" />
+        <Separator />
+        <SidebarItem :collapsed="collapsed" text="Recent Files" />
+        <SidebarItem :collapsed="collapsed" text="Recent Files" />
+        <SidebarItem :collapsed="collapsed" text="Recent Files" />
+        <SidebarItem :collapsed="collapsed" text="Recent Files" />
+        <Separator />
+        <SidebarItem :collapsed="collapsed" text="Account" @click="() => goTo('account')" />
+        <SidebarItem :collapsed="collapsed" text="Settings" @click="() => goTo('settings')" />
         <Separator />
         <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />
       </div>
