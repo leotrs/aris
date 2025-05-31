@@ -1,6 +1,6 @@
 <script setup>
   import { ref, computed, watch, provide, useTemplateRef, useSlots } from "vue";
-  import { useFloating, autoUpdate, offset, shift } from "@floating-ui/vue";
+  import { useFloating, autoUpdate, flip, offset, shift } from "@floating-ui/vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
 
@@ -37,7 +37,11 @@
   const { floatingStyles } = useFloating(btnRef, menuRef, {
     strategy: "fixed",
     placement: props.placement,
-    middleware: [offset({ mainAxis: 0, crossAxis: props.icon == "Dots" ? -8 : 0 }), shift()],
+    middleware: [
+      offset({ mainAxis: 0, crossAxis: props.icon == "Dots" ? -8 : 0 }),
+      shift(),
+      flip(),
+    ],
     whileElementsMounted: autoUpdate,
   });
 
