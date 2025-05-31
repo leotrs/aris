@@ -7,10 +7,6 @@
   /* View mode segmented control */
   const controlState = ref(0);
   watch(controlState, (newVal) => emit(newVal == 0 ? "list" : "cards"));
-  useKeyboardShortcuts({
-    "v,l": () => (controlState.value = 0),
-    "v,c": () => (controlState.value = 1),
-  });
 
   /* Search */
   const fileStore = inject("fileStore");
@@ -21,12 +17,17 @@
     );
   };
   const searchBar = useTemplateRef("search-bar-ref");
-  useKeyboardShortcuts({ "/": () => searchBar.value.focusInput() });
 
-  /* Breakpoints */
-  /* const segmentedControlIcons = computed(() =>
-   *   isMobile.value ? ["LayoutList", "LayoutCards", "CropPortrait"] : ["LayoutList", "LayoutCards"]
-   * ); */
+  // Keyboard shortcuts
+  useKeyboardShortcuts(
+    {
+      "v,l": { fn: () => (controlState.value = 0), description: "view as list" },
+      "v,c": { fn: () => (controlState.value = 1), description: "view as cards" },
+      "/": { fn: () => searchBar.value.focusInput(), description: "search" },
+    },
+    true,
+    "Home view"
+  );
 </script>
 
 <template>

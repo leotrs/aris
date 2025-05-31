@@ -1,3 +1,4 @@
+// useKeyboardShortcuts.js - Enhanced version
 import {
   ref,
   computed,
@@ -7,9 +8,7 @@ import {
   onBeforeUnmount,
 } from "vue";
 
-
 /* Utilities */
-// Use a string rather than a ref because string keys are much simpler
 const refToKey = (ref) => (ref ? `${ref.uid || ref.value?.uid}` : null);
 
 const hasModifiersAndNotQuestionMark = (ev) => {
@@ -18,16 +17,15 @@ const hasModifiersAndNotQuestionMark = (ev) => {
   return notQuestionMark && hasModifiers;
 };
 
-
 /* Global state */
 const components = reactive([]);
 const listeners = ref({});
+const componentMetadata = ref({}); // New: Store component metadata
 const lastKeyPressed = ref("");
 const sequenceTimeout = ref(null);
 const SEQUENCE_DELAY = 500;
 let isForwardingEvent = false;
 let fallbackComponent = computed(() => null);
-
 
 /* Event dispatching */
 const dispatchSequenceKey = (ev, shortcuts, key) => {
@@ -36,11 +34,14 @@ const dispatchSequenceKey = (ev, shortcuts, key) => {
   if (!lastKeyPressed.value) return false;
   const sequenceKey = `${lastKeyPressed.value},${key}`;
   if (!shortcuts[sequenceKey]) return false;
-  // console.log("dispatching sequence", sequenceKey);
+
   ev.preventDefault();
 
   try {
-    shortcuts[sequenceKey](ev);
+    // Execute the actual function, not the wrapper
+    const shortcutData = shortcuts[sequenceKey];
+    const fn = typeof shortcutData === 'function' ? shortcutData : shortcutData.fn;
+    fn(ev);
   } catch (error) {
     console.error(`Error executing sequence shortcut "${sequenceKey}":`, error);
   }
@@ -57,16 +58,15 @@ const dispatchSingleKey = (ev, shortcuts, key) => {
   if (isFirstKeyInSequence) {
     ev.preventDefault();
 
-    // Restart the sequence tracking
     lastKeyPressed.value = key;
     clearTimeout(sequenceTimeout.value);
 
-    // After a delay, execute the single key shortcut, if it exists
     sequenceTimeout.value = setTimeout(() => {
       if (shortcuts[key]) {
-        // console.log("dispatching delayed", key);
         try {
-          shortcuts[key](ev);
+          const shortcutData = shortcuts[key];
+          const fn = typeof shortcutData === 'function' ? shortcutData : shortcutData.fn;
+          fn(ev);
         } catch (error) {
           console.error(`Error executing shortcut "${key}:"`, error);
         }
@@ -76,11 +76,12 @@ const dispatchSingleKey = (ev, shortcuts, key) => {
 
     return true;
   } else if (shortcuts[key]) {
-    // console.log("dispatching", key);
     ev.preventDefault();
 
     try {
-      shortcuts[key](ev);
+      const shortcutData = shortcuts[key];
+      const fn = typeof shortcutData === 'function' ? shortcutData : shortcutData.fn;
+      fn(ev);
     } catch (error) {
       console.error(`Error executing shortcut "${key}:"`, error);
     }
@@ -114,15 +115,12 @@ const handleKeyDown = (ev) => {
   if (components.length === 0 && !fallbackComponent.value) return;
   console.log('Key pressed:', key, '. Last key:', lastKeyPressed.value);
 
-  // Try components in reverse order (most recently activated first)
   for (let i = components.length - 1; i >= 0; i--) {
     if (tryHandleKeyEvent(ev, components[i], key)) return;
   }
 
-  // Try the fallback component
   if (!fallbackComponent.value) return;
   isForwardingEvent = true;
-  // console.log("trying fallback:", fallbackComponent.value.$el);
   try {
     const clonedEvent = new KeyboardEvent('keydown', {
       key: ev.key,
@@ -149,15 +147,40 @@ if (typeof window !== "undefined") {
   window.addEventListener("keydown", handleKeyDown);
 }
 
-
 /* Global state management */
-function registerShortcuts(componentId, shortcuts) {
+function registerShortcuts(componentId, shortcuts, componentName = null) {
   const existingShortcuts = listeners.value[componentId];
 
-  const conflicts = Object.keys(shortcuts).filter(key =>
+  // Store component metadata
+  if (componentName) {
+    componentMetadata.value[componentId] = { name: componentName };
+  }
+
+  // Normalize shortcuts to support both old and new formats
+  const normalizedShortcuts = {};
+  Object.entries(shortcuts).forEach(([key, value]) => {
+    if (typeof value === 'function') {
+      // Legacy format - try to extract function name or use generic description
+      normalizedShortcuts[key] = {
+        fn: value,
+        description: value.name || 'Execute action'
+      };
+    } else if (typeof value === 'object' && value.fn) {
+      // New format with explicit description
+      normalizedShortcuts[key] = value;
+    } else {
+      console.warn(`Invalid shortcut format for key "${key}"`);
+      normalizedShortcuts[key] = {
+        fn: () => {},
+        description: 'Invalid shortcut'
+      };
+    }
+  });
+
+  const conflicts = Object.keys(normalizedShortcuts).filter(key =>
     existingShortcuts &&
     existingShortcuts[key] &&
-    existingShortcuts[key].toString() !== shortcuts[key].toString()
+    existingShortcuts[key].fn?.toString() !== normalizedShortcuts[key].fn?.toString()
   );
 
   if (conflicts.length > 0) {
@@ -166,10 +189,9 @@ function registerShortcuts(componentId, shortcuts) {
 
   listeners.value[componentId] = {
     ...existingShortcuts,
-    ...shortcuts
+    ...normalizedShortcuts
   };
 }
-
 
 /* Public interface */
 export function getActiveComponents() {
@@ -180,7 +202,11 @@ export function getRegisteredComponents() {
   return listeners.value;
 }
 
-export function useKeyboardShortcuts(shortcuts = {}, autoActivate = true) {
+export function getComponentMetadata() {
+  return componentMetadata.value;
+}
+
+export function useKeyboardShortcuts(shortcuts = {}, autoActivate = true, componentName = null) {
   const instance = getCurrentInstance();
   if (!instance) {
     console.error("useKeyboardShortcuts must be used within setup()");
@@ -188,16 +214,23 @@ export function useKeyboardShortcuts(shortcuts = {}, autoActivate = true) {
   }
 
   const componentId = refToKey(instance);
-  registerShortcuts(componentId, shortcuts);
 
-  // Handle component lifecycle
+  // Try to infer component name from Vue component if not provided
+  const inferredName = componentName ||
+    instance.type?.name ||
+    instance.type?.__name ||
+    instance.proxy?.$options?.name ||
+    `Component-${componentId}`;
+
+  registerShortcuts(componentId, shortcuts, inferredName);
+
   const isRegistered = () => components.some(comp => refToKey(comp) === componentId);
   const deactivate = () => {
     const idx = components.findIndex(comp => refToKey(comp) === componentId);
     if (idx !== -1) components.splice(idx, 1);
   };
   const activate = () => { deactivate(); components.push(instance); };
-  const addShortcuts = (newShortcuts) => registerShortcuts(componentId, newShortcuts);
+  const addShortcuts = (newShortcuts) => registerShortcuts(componentId, newShortcuts, inferredName);
   const removeShortcuts = (keys) => {
     if (!listeners.value[componentId]) return;
     if (Array.isArray(keys)) {
@@ -206,10 +239,17 @@ export function useKeyboardShortcuts(shortcuts = {}, autoActivate = true) {
       listeners.value[componentId] = {};
     }
   };
+
   onMounted(() => autoActivate && activate());
-  onBeforeUnmount(() => { deactivate(); removeShortcuts(); });
+  onBeforeUnmount(() => {
+    deactivate();
+    removeShortcuts();
+    delete componentMetadata.value[componentId];
+  });
+
   return {
-    activate, deactivate, isRegistered, addShortcuts, removeShortcuts, getShortcuts: () => ({ ...listeners.value[componentId] }),
+    activate, deactivate, isRegistered, addShortcuts, removeShortcuts,
+    getShortcuts: () => ({ ...listeners.value[componentId] }),
   };
 }
 

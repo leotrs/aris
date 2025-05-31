@@ -30,13 +30,17 @@
   };
 
   // Keys
-  useKeyboardShortcuts({
-    "g,h": goHome,
-    "g,a": () => router.push("/account"),
-    "g,s": () => router.push("/settings"),
-    n: onCTAClick,
-    c: toggleCollapsed,
-  });
+  useKeyboardShortcuts(
+    {
+      "g,h": { fn: goHome, description: "go home" },
+      "g,a": { fn: () => router.push("/account"), description: "go to user account" },
+      "g,s": { fn: () => router.push("/settings"), description: "go to settings" },
+      n: { fn: onCTAClick, description: "open new file menu" },
+      c: { fn: toggleCollapsed, description: "collapse sidebar" },
+    },
+    true,
+    "Main"
+  );
 </script>
 
 <template>

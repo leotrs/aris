@@ -40,7 +40,11 @@
 
   // Keys
   const userMenuRef = useTemplateRef("user-menu");
-  useKeyboardShortcuts({ u: () => userMenuRef.value.toggle() }, true);
+  useKeyboardShortcuts(
+    { u: { fn: () => userMenuRef.value.toggle(), description: "foo" } },
+    true,
+    "Menus"
+  );
 </script>
 
 <template>
