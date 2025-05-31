@@ -251,7 +251,9 @@
   }
 
   .sb-menu > .recent-file > :deep(.sb-text) {
-    padding-left: 38px;
+    padding-left: 36px;
+    overflow-x: clip;
+    text-overflow: ellipsis;
   }
 
   .sb-menu > .recent-file > :deep(*) {
