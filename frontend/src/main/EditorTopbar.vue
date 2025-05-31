@@ -1,9 +1,41 @@
 <script setup>
-  import { inject } from "vue";
+  import { ref, inject, watch } from "vue";
 
   const emit = defineEmits(["compile"]);
   const focusMode = inject("focusMode");
   const mobileMode = inject("mobileMode");
+  const file = inject("file");
+
+  const countWords = (text) => {
+    if (!text || typeof text !== "string") return 0;
+
+    // Match word characters (letters, numbers, underscores)
+    const words = text.match(/\b\w+\b/g);
+    return words ? words.length : 0;
+  };
+
+  const debouncedCounter = (() => {
+    let timeoutId;
+
+    return function countWordsDebounced(text, callback, delay = 200) {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => {
+        const count = countWords(text);
+        callback(count);
+      }, delay);
+    };
+  })();
+
+  const numWords = ref(0);
+  watch(
+    () => file.value.source,
+    (newText) => {
+      debouncedCounter(newText, (count) => {
+        numWords.value = count;
+      });
+    },
+    { immediate: true }
+  );
 </script>
 
 <template>
@@ -15,7 +47,7 @@
       </Tabs>
     </div>
     <div v-if="!mobileMode" class="middle">
-      <span class="word-count">2134 words</span>
+      <span class="word-count">{{ numWords }} words</span>
     </div>
     <div class="right">
       <Button kind="tertiary" size="sm" icon="Versions" />
