@@ -2,10 +2,7 @@
   import { ref, computed, provide, onMounted } from "vue";
   import { useRouter } from "vue-router";
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
-  import {
-    getRegisteredComponents,
-    useKeyboardShortcuts,
-  } from "@/composables/useKeyboardShortcuts.js";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { createFileStore } from "./FileStore.js";
   import axios from "axios";
 
@@ -124,63 +121,23 @@
 
   // Shortcuts modal
   const showShortcutsModal = ref(false);
-  const shortcuts = ref({});
-
-  const shortcutsModal = () => {
-    const comps = getRegisteredComponents();
-
-    const excludedKeys = new Set(["escape", "enter", "arrowdown", "arrowup", "j", "k", "?"]);
-    const hasShortcuts = (shortcuts) => Object.keys(shortcuts).length > 0;
-    const filterShortcuts = (shortcuts) =>
-      Object.fromEntries(Object.entries(shortcuts).filter(([key]) => !excludedKeys.has(key)));
-
-    const filteredComps = Object.fromEntries(
-      Object.entries(comps)
-        .map(([name, shortcuts]) => [name, filterShortcuts(shortcuts)])
-        .filter(([, shortcuts]) => hasShortcuts(shortcuts))
-    );
-
-    // Remove duplicates - keep first occurrence of each unique shortcut set
-    const seenShortcuts = new Set();
-    const deduped = Object.fromEntries(
-      Object.entries(filteredComps).filter(([name, shortcuts]) => {
-        const shortcutKey = JSON.stringify(Object.keys(shortcuts).sort());
-        if (seenShortcuts.has(shortcutKey)) return false;
-        seenShortcuts.add(shortcutKey);
-        return true;
-      })
-    );
-
-    shortcuts.value = deduped;
-    showShortcutsModal.value = true;
-  };
-
-  useKeyboardShortcuts({ "?": shortcutsModal }, true);
+  useKeyboardShortcuts(
+    {
+      "?": {
+        fn: () => (showShortcutsModal.value = !showShortcutsModal.value),
+        description: "Show keyboard shortcuts help",
+      },
+    },
+    true,
+    "Global"
+  );
 </script>
 
 <template>
   <RouterView :class="`bp-${breakpoints.active().value}`" />
   <div v-if="isDev" id="env">DEV/LOCAL</div>
 
-  <Modal v-if="showShortcutsModal" @close="showShortcutsModal = false">
-    <template #header>
-      <div>Keyboard Shortcuts</div>
-      <ButtonClose />
-    </template>
-    <div
-      v-for="(shortcutMap, componentName) in shortcuts"
-      :key="componentName"
-      class="component-section"
-    >
-      <h4 class="text-h4">{{ componentName }}</h4>
-      <div class="shortcuts-grid">
-        <div v-for="(fn, key) in shortcutMap" :key="key" class="shortcut-item">
-          <kbd class="key">{{ key }}</kbd>
-          <span class="description">{{ fn.name || "Function" }}</span>
-        </div>
-      </div>
-    </div>
-  </Modal>
+  <ModalShortcuts v-if="showShortcutsModal" @close="showShortcutsModal = false" />
 </template>
 
 <style>
@@ -210,41 +167,5 @@
     padding: 4px;
     border-radius: 16px;
     z-index: 999;
-  }
-
-  .component-section {
-    margin-bottom: 32px;
-  }
-
-  .component-section:last-child {
-    margin-bottom: 0;
-  }
-
-  .shortcuts-grid {
-    display: grid;
-    gap: 12px;
-  }
-
-  .shortcut-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 8px 0;
-  }
-
-  .key {
-    background-color: #f3f4f6;
-    border: var(--border-extrathin) solid var(--gray-200);
-    border-radius: 4px;
-    padding: 4px 8px;
-    color: var(--extra-dark);
-    min-width: 32px;
-    text-align: center;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-  }
-
-  .description {
-    color: #6b7280;
-    font-size: 0.875rem;
   }
 </style>

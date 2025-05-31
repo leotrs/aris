@@ -40,11 +40,12 @@
   // Keys
   const { activate, deactivate } = useKeyboardShortcuts(
     {
-      ".": () => menuRef.value?.toggle(),
+      ".": { fn: () => menuRef.value?.toggle(), description: "open file menu" },
       enter: readFile,
-      " ": readFile,
+      " ": { fn: readFile, description: "open file" },
     },
-    false
+    false,
+    "When a file item is selected"
   );
   watch(
     () => file.value.focused,
