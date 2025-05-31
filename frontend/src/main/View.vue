@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive, computed, inject, provide, watchEffect, onMounted } from "vue";
+  import { ref, reactive, computed, inject, provide, watchEffect, nextTick } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import Sidebar from "./Sidebar.vue";
@@ -10,14 +10,13 @@
   const file = ref({});
   const route = useRoute();
   watchEffect(() => {
-    if (!fileStore?.value || !fileStore.value.files || !route) return;
-    const fileId = computed(() => `${route.params.file_id}`);
-    if (!fileId.value) return;
-    file.value = fileStore.value.files.find((f) => f.id == fileId.value);
+    const files = fileStore?.value?.files;
+    const fileId = route?.params?.file_id;
+    if (!files || files.length == 0 || !fileId) return;
+
+    file.value = files.find((f) => f.id == fileId);
     if (!file.value) {
-      console.error("Could not find file with ID", fileId.value);
-    } else {
-      console.log("found file with ID", file.value.id);
+      console.error("Could not find file with ID", fileId);
     }
   });
   provide("file", file);
