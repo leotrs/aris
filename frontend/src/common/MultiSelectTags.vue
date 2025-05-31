@@ -8,25 +8,27 @@
   const tags = defineModel({ type: Array });
   const fileStore = inject("fileStore");
 
-  const state = reactive({
-    tagIsAssigned: fileStore?.value?.tags.value?.map(() => false) ?? [],
-  });
-  watchEffect(() => {
-    const tagIds = tags.value.map((t) => t.id);
-    fileStore?.value?.tags.value?.forEach((tag, idx) => {
-      state.tagIsAssigned[idx] = tagIds.includes(tag.id);
-    });
-  });
+  const state = reactive({ tagIsAssigned: [] });
+  watch(
+    tags,
+    () => {
+      const tagIds = tags.value.map((t) => t.id);
+      fileStore.value?.tags.forEach((tag, idx) => {
+        state.tagIsAssigned[idx] = tagIds.includes(tag.id);
+      });
+    },
+    { once: true }
+  );
   watch(
     () => [...(state.tagIsAssigned || [])],
     (newVal, oldVal) => {
       // On the first change, oldVal will be an empty array
-      if (oldVal.length == 0) oldVal = fileStore.value.tags.value.map(() => false);
+      if (oldVal.length == 0) oldVal = fileStore.value.tags.map(() => false);
 
       if (!props.file) return;
       newVal.forEach((isNowAssigned, idx) => {
         const wasAssigned = oldVal[idx];
-        const tag = fileStore.value.tags.value[idx];
+        const tag = fileStore.value.tags[idx];
 
         if (isNowAssigned && !wasAssigned) {
           fileStore.value.toggleFileTag(props.file, tag.id);

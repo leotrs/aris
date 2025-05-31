@@ -145,14 +145,14 @@ export class File {
    * @param {Object} user - User information
    */
   static async removeTag(file, tagId, api, user) {
+    if (!file.tags.some((t) => t.id == tagId)) return false;
+
     try {
       await api.delete(`/users/${user.id}/files/${file.id}/tags/${tagId}`);
 
-      // Remove tag from local file
-      const tagIndex = file.tags.findIndex(tag => tag.id === tagId);
-      if (tagIndex !== -1) {
-        file.tags.splice(tagIndex, 1);
-      }
+      // (Optimistically) Remove tag from file object
+      const tagIndex = file.tags.findIndex(tag => tag.id == tagId);
+      if (tagIndex !== -1) file.tags.splice(tagIndex, 1);
 
       return true;
     } catch (error) {
