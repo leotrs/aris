@@ -174,6 +174,18 @@ export function createFileStore(api, user) {
   };
 
   /**
+ * Get the n most recently edited files
+ * @param {Number} n - Number of recent files to return (default: 5)
+ * @returns {Array} Array of the n most recently edited files
+ */
+  const getRecentFiles = (n = 5) => {
+    return files.value
+      .slice() // Create a copy to avoid mutating the original array
+      .sort((a, b) => new Date(b.last_edited_at) - new Date(a.last_edited_at))
+      .slice(0, n);
+  };
+
+  /**
    * Add a tag to a file (proxy to File.addTag)
    * @param {Object} file - The file object
    * @param {Number|String} tagId - ID of tag to add
@@ -285,6 +297,7 @@ export function createFileStore(api, user) {
     selectFile,
     clearSelection,
     queueSync,
+    getRecentFiles,
 
     // Tag methods
     loadTags,
