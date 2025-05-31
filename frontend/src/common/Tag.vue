@@ -21,7 +21,7 @@
   <button
     type="button"
     class="tag"
-    :class="[active ? 'on' : 'off', tag?.color]"
+    :class="[active ? 'on' : 'off', tag?.color, editable ? 'editable' : '']"
     role="checkbox"
     :aria-checked="active"
     tabindex="0"
@@ -44,7 +44,7 @@
     background: transparent;
     border: none;
     font: inherit;
-    cursor: pointer;
+
     display: flex;
     align-items: center;
     border-radius: 16px;
@@ -54,6 +54,10 @@
     height: 24px;
     text-align: center;
     border: var(--border-thin) solid transparent;
+  }
+
+  .tag.editable {
+    cursor: pointer;
   }
 
   .tag.on {
