@@ -218,7 +218,8 @@
     position: relative;
     display: flex;
     width: 50%;
-    padding: 16px;
+    padding: 0 16px 16px 16px;
+    margin-top: 16px;
     height: 100%;
     background-color: v-bind("fileSettings.background");
     justify-content: center;
@@ -230,14 +231,11 @@
 
     &.left {
       flex-direction: column;
-      border-top-left-radius: 16px;
-      border-bottom-left-radius: 16px;
       flex: 1;
       max-width: 600px;
     }
 
     &.right {
-      border-radius: 16px;
       flex: 1;
       overflow-y: auto;
       scrollbar-gutter: stable;
