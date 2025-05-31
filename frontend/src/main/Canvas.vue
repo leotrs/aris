@@ -220,7 +220,6 @@
     width: 50%;
     padding: 0 16px 16px 16px;
     margin-top: 16px;
-    height: 100%;
     background-color: v-bind("fileSettings.background");
     justify-content: center;
     will-change: border-radius, height, top;
@@ -233,12 +232,16 @@
       flex-direction: column;
       flex: 1;
       max-width: 600px;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
     }
 
     &.right {
       flex: 1;
       overflow-y: auto;
       scrollbar-gutter: stable;
+      border-bottom-left-radius: 16px;
+      border-bottom-right-radius: 16px;
       padding-right: 8px; /* due to the scrollbar gutter */
     }
   }
