@@ -66,6 +66,6 @@
   }
 
   .content :deep(.section:last-child) {
-    margin-bottom: 16px;
+    margin-bottom: 0px;
   }
 </style>

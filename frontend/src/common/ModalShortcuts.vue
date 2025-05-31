@@ -92,7 +92,7 @@
   </Modal>
 </template>
 
-<style>
+<style scoped>
   .modal {
     overflow-y: auto;
   }
