@@ -247,7 +247,11 @@
   }
 
   .sb-menu > .sep {
-    margin-block: 16px;
+    margin-block: 12px;
+  }
+
+  .sb-menu > .recent-file {
+    margin-block: 4px;
   }
 
   .sb-menu > .recent-file > :deep(.sb-text) {
