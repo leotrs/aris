@@ -1,6 +1,5 @@
 <script setup>
   import { inject, computed } from "vue";
-  import Dock from "./Dock.vue";
 
   const props = defineProps({
     showTitle: { type: Boolean, required: true },
@@ -8,18 +7,12 @@
   });
   const file = inject("file");
 
-  const columnSizes = inject("columnSizes");
-  const fileSettings = inject("fileSettings");
   const focusMode = inject("focusMode");
-
-  const width = computed(() => {
-    console.log(columnSizes);
-    return columnSizes.middle.width || "0px";
-  });
+  const isActive = computed(() => props.showTitle || props.component);
 </script>
 
 <template>
-  <div class="tb-wrapper" :class="{ 'show-title': showTitle, focus: focusMode }">
+  <div class="tb-wrapper" :class="{ active: isActive, focus: focusMode }">
     <FileTitle v-if="!component && showTitle" :file="file" class="text-h6" />
     <component :is="component" v-if="component" ref="middle-comp" :file="file" side="top" />
   </div>
@@ -40,15 +33,17 @@
     transform: translateY(0);
     will-change: opacity, transform, width;
     background-color: transparent;
+    top: 16px;
+
     transition:
       opacity var(--transition-duration) ease,
       transform var(--transition-duration) ease,
       width var(--transition-duration) ease;
   }
 
-  .tb-wrapper.show-title {
+  .tb-wrapper.active {
     height: 48px;
-    top: 16px;
+    box-shadow: var(--shadow-soft);
     border-color: var(--border-primary);
     background-color: var(--surface-page);
   }

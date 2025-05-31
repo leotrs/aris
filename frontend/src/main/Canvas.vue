@@ -264,6 +264,7 @@
   }
 
   .inner.right .middle-column {
+    width: 100%;
     max-width: 720px;
     height: fit-content;
     min-height: 100%;
