@@ -72,7 +72,7 @@
       :tag="tag"
     />
     <Separator />
-    <div class="new-tag item">
+    <div class="new-tag item" @click.stop>
       <Tag
         :tag="newTagPlaceholder"
         :active="false"
