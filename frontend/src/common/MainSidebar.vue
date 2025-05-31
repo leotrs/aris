@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, useTemplateRef } from "vue";
+  import { ref, computed, inject, provide, watchEffect, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./MainSidebarItem.vue";
@@ -16,6 +16,7 @@
     collapsed.value = !collapsed.value;
     forceCollapsed.value = !forceCollapsed.value;
   };
+  provide("collapsed", collapsed);
 
   // Breakpoints
   const mobileMode = inject("mobileMode");
@@ -28,6 +29,13 @@
   const goTo = (page) => {
     router.push(`/${page}`);
   };
+
+  // Recent files
+  const fileStore = inject("fileStore");
+  const recentFiles = ref(["", "", ""]);
+  watchEffect(() => {
+    recentFiles.value = fileStore.value?.getRecentFiles(3) || ["", "", ""];
+  });
 
   // Keys
   useKeyboardShortcuts(
@@ -73,23 +81,35 @@
 
     <template v-if="!mobileMode">
       <div class="sb-menu">
-        <SidebarItem :collapsed="collapsed" text="Home" active @click="() => goTo('')" />
-        <!-- <SidebarItem :collapsed="collapsed" text="Feedback" /> -->
-        <!-- <SidebarItem :collapsed="collapsed" text="References" /> -->
+        <SidebarItem icon="Home" text="Home" active @click="() => goTo('')" />
+        <!-- <SidebarItem text="Feedback" /> -->
+        <!-- <SidebarItem text="References" /> -->
         <!-- <Separator /> -->
-        <!-- <SidebarItem :collapsed="collapsed" text="Read" /> -->
-        <!-- <SidebarItem :collapsed="collapsed" text="Write" /> -->
-        <!-- <SidebarItem :collapsed="collapsed" text="Review" /> -->
+        <!-- <SidebarItem text="Read" /> -->
+        <!-- <SidebarItem text="Write" /> -->
+        <!-- <SidebarItem text="Review" /> -->
         <Separator />
-        <SidebarItem :collapsed="collapsed" text="Recent Files" />
-        <SidebarItem :collapsed="collapsed" text="Recent Files" />
-        <SidebarItem :collapsed="collapsed" text="Recent Files" />
-        <SidebarItem :collapsed="collapsed" text="Recent Files" />
+        <SidebarItem icon="Clock" text="Recent Files" />
+        <SidebarItem
+          class="recent-file"
+          icon-collapsed="File"
+          :text="recentFiles[0]?.title || ''"
+        />
+        <SidebarItem
+          class="recent-file"
+          icon-collapsed="File"
+          :text="recentFiles[1]?.title || ''"
+        />
+        <SidebarItem
+          class="recent-file"
+          icon-collapsed="File"
+          :text="recentFiles[2]?.title || ''"
+        />
         <Separator />
-        <SidebarItem :collapsed="collapsed" text="Account" @click="() => goTo('account')" />
-        <SidebarItem :collapsed="collapsed" text="Settings" @click="() => goTo('settings')" />
+        <SidebarItem icon="User" text="Account" @click="() => goTo('account')" />
+        <SidebarItem icon="Settings" text="Settings" @click="() => goTo('settings')" />
         <Separator />
-        <SidebarItem :collapsed="collapsed" text="Collapse" @click="toggleCollapsed" />
+        <SidebarItem icon="LayoutSidebarLeftCollapse" text="Collapse" @click="toggleCollapsed" />
       </div>
     </template>
   </div>
@@ -196,6 +216,7 @@
   }
 
   .sb-menu {
+    padding-top: 8px;
     height: calc(100% - 64px - 32px - 16px - 16px);
     overflow-y: auto;
     scrollbar-width: none;
@@ -223,6 +244,26 @@
 
   .sb-menu > * {
     margin-block: 8px;
+  }
+
+  .sb-menu > .sep {
+    margin-block: 16px;
+  }
+
+  .sb-menu > .recent-file > :deep(.sb-text) {
+    padding-left: 38px;
+  }
+
+  .sb-menu > .recent-file > :deep(*) {
+    font-family: "Source Sans 3", sans-serif;
+    text-transform: none;
+    font-weight: 300;
+    font-size: 15px;
+  }
+
+  .sb-menu > .recent-file.collapsed > :deep(*) {
+    stroke-width: 1.5px;
+    color: var(--gray-700);
   }
 
   .sb-menu > *:first-child {

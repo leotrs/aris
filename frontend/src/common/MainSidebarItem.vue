@@ -1,54 +1,27 @@
 <script setup>
-  import { computed } from "vue";
-  import {
-    IconHome,
-    IconPencil,
-    IconBook,
-    IconUser,
-    IconSettings,
-    IconClock,
-    IconFileCheck,
-    IconFiles,
-    IconLayoutSidebarLeftCollapse,
-    IconLayoutSidebarLeftExpand,
-    IconQuote,
-    IconMessage,
-    IconCirclePlus,
-  } from "@tabler/icons-vue";
+  import { inject } from "vue";
+  import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
+    icon: { type: String, default: "" },
+    iconCollapsed: { type: String, default: "" },
     text: { type: String, required: true },
-    collapsed: { type: Boolean, required: true },
     active: { type: Boolean, default: false },
   });
-
-  const icons = {
-    New: IconCirclePlus,
-    Home: IconHome,
-    "All Files": IconFiles,
-    "Recent Files": IconClock,
-    Account: IconUser,
-    Settings: IconSettings,
-    Read: IconBook,
-    Write: IconPencil,
-    Review: IconFileCheck,
-    Feedback: IconMessage,
-    References: IconQuote,
-    Collapse: {
-      false: IconLayoutSidebarLeftCollapse,
-      true: IconLayoutSidebarLeftExpand,
-    },
-  };
-
-  const selectedIcon = computed(() => {
-    const ic = icons[props.text];
-    return typeof ic === "object" ? ic[props.collapsed] : ic;
-  });
+  const collapsed = inject("collapsed");
 </script>
 
 <template>
   <div class="sb-item" :class="{ collapsed: collapsed, active: active }">
-    <component :is="selectedIcon" v-if="selectedIcon" class="sb-icon" />
+    <template v-if="!collapsed">
+      <component :is="Icons['Icon' + icon]" v-if="icon" class="sb-icon" />
+    </template>
+    <template v-else-if="iconCollapsed">
+      <component :is="Icons['Icon' + iconCollapsed]" class="sb-icon" />
+    </template>
+    <template v-else>
+      <component :is="Icons['Icon' + icon]" v-if="icon" class="sb-icon" />
+    </template>
     <span class="text-h6 sb-text">{{ text }}</span>
 
     <!--for seamless transition to the panes-->
