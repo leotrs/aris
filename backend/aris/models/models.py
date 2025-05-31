@@ -31,13 +31,13 @@ class User(Base):
     name = Column(String, nullable=False)
     email = Column(String, unique=True, nullable=False)
     password_hash = Column(String, nullable=False)
-    deleted_at = Column(DateTime, nullable=True)
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
     initials = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     last_login = Column(DateTime(timezone=True), nullable=True)
     avatar_color = Column(Enum(AvatarColor), nullable=True, default=AvatarColor.BLUE)
 
-    files = relationship("File", backref="owner")
+    files = relationship("File", back_populates="owner")
     tags = relationship("Tag", back_populates="owner", cascade="all, delete-orphan")
 
 
@@ -79,6 +79,7 @@ class File(Base):
     deleted_at = Column(DateTime(timezone=True), nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
+    owner = relationship("User", back_populates="files")
     tags = relationship("Tag", secondary=file_tags, back_populates="files")
 
 
@@ -92,7 +93,7 @@ class Tag(Base):
     name = Column(String, nullable=False, unique=False)
     color = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    deleted_at = Column(DateTime, nullable=True)
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     files = relationship("File", secondary=file_tags, back_populates="tags")
     owner = relationship("User", back_populates="tags")

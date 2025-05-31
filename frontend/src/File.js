@@ -33,13 +33,14 @@ export class File {
       // Track if file has unsaved changes
       isDirty: false,
 
-      // Date methods
+      // Date methods -- remember JS needs the timestamp to end with a 'Z' to interpret
+      // it as UTC
       getFormattedDate() {
-        const utcDate = new Date(this.last_edited_at);
+        const utcDate = new Date(this.last_edited_at + 'Z');
         return relativeTime.from(utcDate, Date.now());
       },
       getFullDateTime() {
-        const date = new Date(this.last_edited_at);
+        const date = new Date(this.last_edited_at + 'Z');
         return date.toLocaleString(undefined, {
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // ensures user’s local tz
           year: 'numeric',
