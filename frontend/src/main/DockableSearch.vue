@@ -1,18 +1,31 @@
 <script setup>
   import { reactive, watch, inject, onMounted, useTemplateRef } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import { highlightSearchMatches, clearHighlights } from "./highlightSearchMatches.js";
+  import {
+    highlightSearchMatches,
+    highlightSearchMatchesSource,
+    clearHighlights,
+  } from "./highlightSearchMatches.js";
+
+  const props = defineProps({});
+  const manuscriptRef = inject("manuscriptRef");
+  const file = inject("file");
 
   const searchInfo = reactive({
     isSearching: false,
     searchString: "",
     matches: [],
+    sourceMatches: [],
     lastMatchScrolledTo: null,
   });
 
   const startSearch = () => {
     console.log("starting new search");
     searchInfo.matches = highlightSearchMatches(manuscriptRef.value.$el, searchInfo.searchString);
+    searchInfo.sourceMatches = highlightSearchMatchesSource(
+      file.value.source,
+      searchInfo.searchString
+    );
     searchInfo.lastMatchScrolledTo = null;
     onNext();
   };
@@ -23,6 +36,7 @@
     searchInfo.isSearching = false;
     searchInfo.searchString = "";
     searchInfo.matches = [];
+    searchInfo.sourceMatches = [];
     searchInfo.lastMatchScrolledTo = null;
   };
 
@@ -31,12 +45,10 @@
     (newVal) => (newVal ? startSearch() : cancelSearch())
   );
 
-  const manuscriptRef = inject("manuscriptRef");
   const onSubmit = (searchString) => {
     console.log("submit", searchString);
     if (!manuscriptRef.value) return;
     searchInfo.searchString = searchString.trim();
-
     // set the flag and let the watcher above handle the rest
     searchInfo.isSearching = searchInfo.searchString !== "";
   };
@@ -64,7 +76,6 @@
 
   const searchBar = useTemplateRef("searchBar");
   onMounted(() => searchBar.value?.focusInput());
-
   useKeyboardShortcuts({ "/": () => searchBar.value?.focusInput() });
 </script>
 
