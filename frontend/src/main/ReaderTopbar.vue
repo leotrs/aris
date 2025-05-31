@@ -49,7 +49,8 @@
   }
 
   .tb-wrapper.show-title {
-    height: 64px;
+    height: 48px;
+    top: 16px;
     border-color: var(--border-primary);
     background-color: var(--surface-page);
   }
