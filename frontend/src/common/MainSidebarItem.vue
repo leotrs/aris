@@ -61,10 +61,12 @@
     box-shadow: var(--shadow-soft);
 
     & > svg {
+      stroke-width: 2px;
       color: var(--primary-600);
     }
 
     & > .sb-text {
+      font-weight: var(--weight-medium);
       color: var(--primary-600);
     }
 
@@ -79,10 +81,12 @@
   }
 
   .sb-text {
+    font-weight: var(--weight-regular);
     text-wrap: nowrap;
   }
 
   .sb-icon {
     flex-shrink: 0;
+    stroke-width: 1.75px;
   }
 </style>
