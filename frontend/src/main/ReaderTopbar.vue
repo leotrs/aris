@@ -20,10 +20,8 @@
 
 <template>
   <div class="tb-wrapper" :class="{ 'show-title': showTitle, focus: focusMode }">
-    <template v-if="showTitle">
-      <FileTitle v-if="!component && showTitle" :file="file" class="text-h6" />
-      <component :is="component" v-if="component" ref="middle-comp" :file="file" side="top" />
-    </template>
+    <FileTitle v-if="!component && showTitle" :file="file" class="text-h6" />
+    <component :is="component" v-if="component" ref="middle-comp" :file="file" side="top" />
   </div>
 </template>
 
