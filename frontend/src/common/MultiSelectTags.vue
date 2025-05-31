@@ -1,38 +1,47 @@
 <script setup>
   import { ref, reactive, inject, watch, watchEffect } from "vue";
-
   const props = defineProps({
     file: { type: Object, default: null },
     icon: { type: String, default: "Tag" },
   });
   const tags = defineModel({ type: Array });
   const fileStore = inject("fileStore");
-
   const state = reactive({ tagIsAssigned: [] });
-  watch(
-    tags,
-    () => {
-      const tagIds = tags.value.map((t) => t.id);
-      fileStore.value?.tags.forEach((tag, idx) => {
-        state.tagIsAssigned[idx] = tagIds.includes(tag.id);
-      });
-    },
-    { once: true }
-  );
+
+  // Add this flag to track initialization
+  const isInitialized = ref(false);
+
+  watchEffect(() => {
+    if (!fileStore.value?.tags || !tags.value) return;
+    const tagIds = tags.value.map((t) => t.id);
+
+    // Use map instead of forEach for cleaner array assignment
+    state.tagIsAssigned = fileStore.value.tags.map((tag) => tagIds.includes(tag.id));
+
+    // Mark as initialized after first setup
+    if (!isInitialized.value) {
+      isInitialized.value = true;
+    }
+  });
+
   watch(
     () => [...(state.tagIsAssigned || [])],
     (newVal, oldVal) => {
-      // On the first change, oldVal will be an empty array
-      if (oldVal.length == 0) oldVal = fileStore.value.tags.map(() => false);
+      // Skip processing during initialization
+      if (!isInitialized.value || !props.file) return;
 
-      if (!props.file) return;
+      // Handle the case where oldVal is empty (shouldn't happen now, but safety check)
+      if (oldVal.length === 0) return;
+
       newVal.forEach((isNowAssigned, idx) => {
         const wasAssigned = oldVal[idx];
         const tag = fileStore.value.tags[idx];
 
         if (isNowAssigned && !wasAssigned) {
           fileStore.value.toggleFileTag(props.file, tag.id);
-          if (!tags.value.some((t) => t.id === tag.id)) tags.value = tags.value.concat([tag]);
+          if (!tags.value.some((t) => t.id === tag.id)) {
+            tags.value = tags.value.concat([tag]);
+          }
         } else if (!isNowAssigned && wasAssigned) {
           fileStore.value.toggleFileTag(props.file, tag.id);
           tags.value = tags.value.filter((t) => t.id !== tag.id);
