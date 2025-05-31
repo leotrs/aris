@@ -19,5 +19,6 @@
 
 <style scoped>
   .last-edited {
+    font-size: 14px;
   }
 </style>

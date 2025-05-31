@@ -54,7 +54,7 @@
 <template>
   <ContextMenu :icon="icon" placement="bottom-end" button-size="btn-sm">
     <TagControl
-      v-for="(tag, idx) in fileStore.tags.value"
+      v-for="(tag, idx) in fileStore.tags"
       :key="tag.id"
       v-model="state.tagIsAssigned[idx]"
       class="item"
