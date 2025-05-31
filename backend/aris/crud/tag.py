@@ -97,35 +97,36 @@ async def get_user_file_tags(user_id: int, doc_id: int, db: Session):
 
 
 async def add_tag_to_file(user_id: int, file_id: int, tag_id: str, db: Session):
-    with db.begin():
-        file = db.get(File, file_id)
-        if not file or file.owner_id != user_id:
-            raise ValueError("Unauthorized or file not found")
-        tag = db.get(Tag, tag_id)
-        if not tag or tag.user_id != user_id:
-            raise ValueError("Unauthorized or tag not found")
+    file = db.get(File, file_id)
+    if not file or file.owner_id != user_id:
+        raise ValueError("Unauthorized or file not found")
+    tag = db.get(Tag, tag_id)
+    if not tag or tag.user_id != user_id:
+        raise ValueError("Unauthorized or tag not found")
 
-        exists_stmt = select(file_tags).where(
-            (file_tags.c.file_id == file_id) & (file_tags.c.tag_id == tag_id)
-        )
-        if db.execute(exists_stmt).first():
-            raise ValueError("Tag already assigned")
+    exists_stmt = select(file_tags).where(
+        (file_tags.c.file_id == file_id) & (file_tags.c.tag_id == tag_id)
+    )
+    if db.execute(exists_stmt).first():
+        raise ValueError("Tag already assigned")
 
-        db.execute(file_tags.insert().values(file_id=file_id, tag_id=tag_id))
+    db.execute(file_tags.insert().values(file_id=file_id, tag_id=tag_id))
+    db.commit()
 
 
 async def remove_tag_from_file(user_id: int, file_id: int, tag_id: str, db: Session):
-    with db.begin():
-        file = db.get(File, file_id)
-        if not file or file.owner_id != user_id:
-            raise ValueError("Unauthorized or file not found")
-        tag = db.get(Tag, tag_id)
-        if not tag or tag.user_id != user_id:
-            raise ValueError("Unauthorized or tag not found")
+    file = db.get(File, file_id)
+    if not file or file.owner_id != user_id:
+        raise ValueError("Unauthorized or file not found")
+    tag = db.get(Tag, tag_id)
+    if not tag or tag.user_id != user_id:
+        raise ValueError("Unauthorized or tag not found")
 
-        delete_stmt = delete(file_tags).where(
-            (file_tags.c.file_id == file_id) & (file_tags.c.tag_id == tag_id)
-        )
-        result = db.execute(delete_stmt)
-        if result.rowcount == 0:
-            raise ValueError("Tag not assigned to this file")
+    delete_stmt = delete(file_tags).where(
+        (file_tags.c.file_id == file_id) & (file_tags.c.tag_id == tag_id)
+    )
+    result = db.execute(delete_stmt)
+    if not result.rowcount:
+        raise ValueError("Tag not assigned to this file")
+
+    db.commit()
