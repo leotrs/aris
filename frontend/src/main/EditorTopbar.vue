@@ -3,6 +3,7 @@
 
   const emit = defineEmits(["compile"]);
   const focusMode = inject("focusMode");
+  const mobileMode = inject("mobileMode");
 </script>
 
 <template>
@@ -13,12 +14,10 @@
         <TabPage />
       </Tabs>
     </div>
-    <!-- <div class="middle">Go to...</div> -->
+    <div v-if="!mobileMode" class="middle">
+      <span class="word-count">2134 words</span>
+    </div>
     <div class="right">
-      <!-- <div class="version">
-           <span class="text-default">v2</span>
-           <Button kind="tertiary" size="sm" icon="CaretDownFilled" />
-           </div> -->
       <Button kind="tertiary" size="sm" icon="Versions" />
       <Button kind="tertiary" size="sm" icon="Lifebuoy" />
       <Button kind="tertiary" size="sm" icon="Settings" />
@@ -35,7 +34,7 @@
 
     position: relative;
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     justify-content: space-between;
     height: 48px;
     border-top-left-radius: 16px;
@@ -60,6 +59,13 @@
     display: none !important;
     padding: 0px !important;
     margin: 0px !important;
+  }
+
+  .word-count {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--gray-600);
+    letter-spacing: 0.01em;
   }
 
   .right {
