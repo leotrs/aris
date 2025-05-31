@@ -61,7 +61,10 @@ async def get_user_files(
         raise ValueError(f"User {user_id} not found")
 
     docs = (
-        db.query(File).filter(File.owner_id == user_id, File.deleted_at.is_(None)).all()
+        db.query(File)
+        .filter(File.owner_id == user_id, File.deleted_at.is_(None))
+        .order_by(File.last_edited_at.desc())
+        .all()
     )
 
     titles = await asyncio.gather(*(extract_title(d) for d in docs))

@@ -38,6 +38,7 @@ async def get_user_tags(user_id: int, db: Session):
             Tag.user_id == user_id,
             Tag.deleted_at.is_(None),
         )
+        .order_by(Tag.created_at.asc())
         .all()
     )
     return [
@@ -105,20 +106,15 @@ async def add_tag_to_file(user_id: int, file_id: int, tag_id: str, db: Session):
             raise ValueError("Unauthorized or tag not found")
 
         exists_stmt = select(file_tags).where(
-            (file_tags.c.file_id == file_id)
-            & (file_tags.c.tag_id == tag_id)
+            (file_tags.c.file_id == file_id) & (file_tags.c.tag_id == tag_id)
         )
         if db.execute(exists_stmt).first():
             raise ValueError("Tag already assigned")
 
-        db.execute(
-            file_tags.insert().values(file_id=file_id, tag_id=tag_id)
-        )
+        db.execute(file_tags.insert().values(file_id=file_id, tag_id=tag_id))
 
 
-async def remove_tag_from_file(
-    user_id: int, file_id: int, tag_id: str, db: Session
-):
+async def remove_tag_from_file(user_id: int, file_id: int, tag_id: str, db: Session):
     with db.begin():
         file = db.get(File, file_id)
         if not file or file.owner_id != user_id:
@@ -128,8 +124,7 @@ async def remove_tag_from_file(
             raise ValueError("Unauthorized or tag not found")
 
         delete_stmt = delete(file_tags).where(
-            (file_tags.c.file_id == file_id)
-            & (file_tags.c.tag_id == tag_id)
+            (file_tags.c.file_id == file_id) & (file_tags.c.tag_id == tag_id)
         )
         result = db.execute(delete_stmt)
         if result.rowcount == 0:
