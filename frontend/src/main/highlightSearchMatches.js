@@ -180,3 +180,47 @@ export function highlightSearchMatches(rootEl, searchTerm, options = {}) {
   // Need to reverse since we traversed the document backwards
   return matches.toReversed();
 }
+
+
+/**
+ * Highlights text matches in source
+ * @param {Element} rootEl - The root element to search within
+ * @param {string} searchTerm - The text to search for
+ * @param {Object} options - Configuration options
+ * @param {boolean} options.caseSensitive - Whether search should be case-sensitive (default: false)
+ * @param {boolean} options.wholeWord - Match whole words only (default: false)
+ * @returns {number} - Count of matches found
+ */
+export function highlightSearchMatchesSource(sourceText, searchString) {
+  if (!searchString.trim() || !sourceText) {
+    return [];
+  }
+
+  const matches = [];
+  const regex = new RegExp(escapeRegExp(searchString), 'gi');
+  let match;
+
+  while ((match = regex.exec(sourceText)) !== null) {
+    matches.push({
+      index: match.index,
+      text: match[0],
+      line: getLineNumber(sourceText, match.index),
+      column: getColumnNumber(sourceText, match.index)
+    });
+  }
+
+  return matches;
+}
+
+function escapeRegExp(string) {
+  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function getLineNumber(text, index) {
+  return text.substring(0, index).split('\n').length;
+}
+
+function getColumnNumber(text, index) {
+  const lines = text.substring(0, index).split('\n');
+  return lines[lines.length - 1].length + 1;
+}

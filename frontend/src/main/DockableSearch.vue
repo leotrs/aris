@@ -77,12 +77,24 @@
     @next="onNext"
     @prev="onPrev"
     @cancel="cancelSearch"
-  />
+  >
+    <template #buttons>
+      <ButtonToggle icon="File" />
+      <ButtonToggle icon="Code" />
+      <!-- <ButtonToggle icon="Regex" /> -->
+    </template>
+  </SearchBar>
 </template>
 
 <style scoped>
   .s-wrapper {
     background-color: var(--surface-page) !important;
+  }
+
+  .source-matches-info {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-top: 0.5rem;
   }
 </style>
 
