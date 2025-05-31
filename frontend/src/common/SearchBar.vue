@@ -49,8 +49,10 @@
       @click.stop
       @dblclick.stop
     />
+    <div v-if="$slots.buttons" class="buttons">
+      <slot name="buttons" />
+    </div>
     <div v-if="withButtons" class="buttons">
-      <Button kind="tertiary" icon="Regex" :disabled="buttonsDisabled" @click.stop="emit('next')" />
       <Button
         kind="tertiary"
         icon="ChevronDown"
@@ -110,6 +112,7 @@
 
   .buttons {
     display: flex;
+    gap: 4px;
     flex-direction: row;
 
     :deep(& > button) {
