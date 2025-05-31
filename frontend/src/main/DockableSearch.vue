@@ -46,7 +46,6 @@
     const lastMatchScrolledTo =
       searchInfo.lastMatchScrolledTo === null ? -1 : searchInfo.lastMatchScrolledTo;
     const scrollTo = (lastMatchScrolledTo + 1) % searchInfo.matches.length;
-    console.log("next", scrollTo);
     searchInfo.matches[scrollTo].mark.scrollIntoView({ behavior: "smooth", block: "center" });
     searchInfo.lastMatchScrolledTo = scrollTo;
   };
@@ -59,7 +58,6 @@
         : searchInfo.lastMatchScrolledTo;
     const scrollTo =
       (lastMatchScrolledTo - 1 + searchInfo.matches.length) % searchInfo.matches.length;
-    console.log("prev", scrollTo);
     searchInfo.matches[scrollTo].mark.scrollIntoView({ behavior: "smooth", block: "center" });
     searchInfo.lastMatchScrolledTo = scrollTo;
   };

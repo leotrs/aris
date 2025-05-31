@@ -194,7 +194,7 @@
   .outer {
     --outer-padding: 8px;
     --sidebar-width: 64px;
-    --topbar-height: 64px;
+    --topbar-height: 48px;
 
     display: flex;
     z-index: 1;
@@ -273,6 +273,7 @@
   }
 
   .inner.right .dock.main {
+    position: relative;
     overflow-x: visible;
     will-change: padding-top;
     height: fit-content;
