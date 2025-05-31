@@ -20,18 +20,17 @@
   });
 
   const startSearch = () => {
-    console.log("starting new search");
     searchInfo.matches = highlightSearchMatches(manuscriptRef.value.$el, searchInfo.searchString);
     searchInfo.sourceMatches = highlightSearchMatchesSource(
       file.value.source,
       searchInfo.searchString
     );
+    console.log(searchInfo.sourceMatches);
     searchInfo.lastMatchScrolledTo = null;
     onNext();
   };
 
   const cancelSearch = () => {
-    console.log("cancelling search");
     clearHighlights(manuscriptRef.value.$el);
     searchInfo.isSearching = false;
     searchInfo.searchString = "";
@@ -46,7 +45,6 @@
   );
 
   const onSubmit = (searchString) => {
-    console.log("submit", searchString);
     if (!manuscriptRef.value) return;
     searchInfo.searchString = searchString.trim();
     // set the flag and let the watcher above handle the rest
@@ -90,8 +88,8 @@
     @cancel="cancelSearch"
   >
     <template #buttons>
-      <ButtonToggle icon="File" />
-      <ButtonToggle icon="Code" />
+      <!-- <ButtonToggle icon="File" />
+           <ButtonToggle icon="Code" /> -->
       <!-- <ButtonToggle icon="Regex" /> -->
     </template>
   </SearchBar>
