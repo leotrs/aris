@@ -34,7 +34,7 @@
   .mm-wrapper {
     top: calc(16px + 12px);
     right: 0;
-    height: calc(100% - 16px - 8px - 8px - 4px - 8px + 2px);
+    height: v-bind("minimapHeight");
     & :deep(svg > line.track) {
       visibility: hidden;
     }

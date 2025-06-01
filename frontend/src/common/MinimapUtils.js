@@ -157,11 +157,11 @@ export function getLayoutParametersVertical(lineSize, options) {
   let minX, maxX, minY, maxY;
 
   if (side == "left") {
-    minX = lineX - offset - 20; // 20 = 2 * (radiusDelta * (6-1))
+    minX = lineX - offset - 24; // 24 = 2 * (radiusDelta * (6-1)) + 4 extra
     maxX = lineX + trackWidth;
   } else if (side == "right") {
     minX = lineX - trackWidth;
-    maxX = lineX + offset + 20; // 20 = 2 * (radiusDelta * (6-1))
+    maxX = lineX + offset + 24; // 24 = 2 * (radiusDelta * (6-1)) + 4 extra
   } else {
     console.error(`Unknown side ${side}, must be either 'left' or 'right'`);
   }
@@ -333,7 +333,7 @@ export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeigh
   const scrollPercent = pos / 100;
   const containerDimension = isHorizontal ? wrapperWidth : wrapperHeight;
   const scrollPos = scrollPercent * containerDimension;
-  const paths = svg.querySelectorAll("path.mm-shape-group");
+  const paths = svg.querySelectorAll("g.mm-shape-group");
   const scrollIndicator = svg.querySelector(".scroll-indicator");
 
   // Set the position of the scroll indicator
@@ -368,6 +368,7 @@ export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeigh
   pathData.sort((a, b) => a.percent - b.percent);
 
   // Find and highlight the start: the innermost section where the scroll is positioned
+
   let sectionStartIndex = -1;
   for (let i = pathData.length - 1; i >= 0; i--) {
     if (pathData[i].percent <= pos) {
@@ -395,11 +396,10 @@ export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeigh
   // If we found both the start and end, highlight the line segment between them
   const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
   line.setAttribute("class", "current-section");
-  line.setAttribute("stroke-width", options.trackWidth);
-  line.setAttribute("stroke-linecap", "round");
-  line.setAttribute("x1", sectionStart.cx);
+  line.setAttribute("stroke-width", 4);
+  line.setAttribute("x1", sectionStart.cx + 4);
   line.setAttribute("y1", sectionStart.cy);
-  line.setAttribute("x2", sectionEnd.cx);
+  line.setAttribute("x2", sectionEnd.cx + 4);
   line.setAttribute("y2", sectionEnd.cy);
   svg.insertBefore(line, scrollIndicator || null);
 };
