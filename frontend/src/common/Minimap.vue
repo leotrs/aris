@@ -58,9 +58,9 @@
     await nextTick();
 
     // Remake when necessary
-    watchEffect(() => {
+    watchEffect(async () => {
       if (!wrapperRef.value || !props.file) return;
-      const { svg: newSvg, svgInitialData: newData } = makeMinimap(
+      const { svg: newSvg, svgInitialData: newData } = await makeMinimap(
         props.file,
         isHorizontal.value,
         wrapperWidth.value,
@@ -80,9 +80,9 @@
     // Responsiveness
     watch(
       () => (isHorizontal.value ? wrapperWidth.value : wrapperHeight.value),
-      (newDimension) => {
+      async (newDimension) => {
         if (newDimension <= 0 || !wrapperRef.value) return;
-        resizeMinimap(
+        await resizeMinimap(
           wrapperRef.value.querySelector("svg"),
           isHorizontal.value,
           wrapperWidth.value,
@@ -101,9 +101,9 @@
     // Highlight scroll position
     watch(
       yScroll,
-      (newVal) => {
+      async (newVal) => {
         if (!wrapperRef.value || !props.highlightScroll) return;
-        highlightScrollPos(
+        await highlightScrollPos(
           newVal,
           isHorizontal.value,
           wrapperWidth.value,
@@ -118,9 +118,9 @@
     // Include feedback icons
     watch(
       () => props.file.icons,
-      (newIcons) => {
+      async (newIcons) => {
         if (!wrapperRef.value || !newIcons || !props.file.isMountedAt) return;
-        icons.value = makeIcons(newIcons, props.file.isMountedAt, wrapperRef.value);
+        icons.value = await makeIcons(newIcons, props.file.isMountedAt, wrapperRef.value);
         console.log(icons.value);
       },
       { immediate: true }
