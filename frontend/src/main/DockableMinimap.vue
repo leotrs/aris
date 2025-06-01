@@ -32,14 +32,13 @@
 
 <style scoped>
   .mm-wrapper {
-    top: calc(16px + 13px);
+    top: calc(16px + 12px);
     right: 0;
-    height: calc(100% - 16px - 8px - 8px);
+    height: calc(100% - 16px - 8px - 8px - 4px - 8px + 2px);
     & :deep(svg > line.track) {
       visibility: hidden;
     }
     & :deep(svg > line.scroll-indicator) {
-      /* visibility: hidden; */
     }
   }
 
