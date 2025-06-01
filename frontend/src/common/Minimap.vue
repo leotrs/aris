@@ -133,7 +133,7 @@
         if (!wrapperRef.value) return;
 
         wrapperRef.value.querySelectorAll(".mm-shape-group").forEach((shape) => {
-          shape.addEventListener("mouseenter", (e) => {
+          shape.addEventListener("mouseenter", () => {
             hoveredElement.value = shape;
             tooltipContent.value = shape.dataset.title || "";
           });
