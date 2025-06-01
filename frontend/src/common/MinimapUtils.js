@@ -233,13 +233,25 @@ export function _makeMinimap(
       ${shapes
       .map(
         (s, idx) => `
+        <path class="mm-shape-box"
+         data-index="${idx}"
+         data-percent="${s.percent}"
+         data-title="${s.title}"
+         d="${createShapePath(s.cx, s.cy, s.r, options.side, options.shape, options.offset)}"
+         stroke-width="${options.strokeWidth + 8}"
+         stroke-linecap="round"
+         stroke="transparent"
+         fill="transparent"
+         pointer-events="all"
+        />
         <path class="mm-shape"
          data-index="${idx}"
          data-percent="${s.percent}"
          data-title="${s.title}"
          d="${createShapePath(s.cx, s.cy, s.r, options.side, options.shape, options.offset)}"
-         stroke-width="${options.strokeWidth - 1}"
+         stroke-width="${options.strokeWidth}"
          stroke-linecap="round"
+         pointer-events="none"
         />`
       )
       .join("\n  ")}

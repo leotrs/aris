@@ -133,10 +133,13 @@
         await nextTick();
         if (!wrapperRef.value) return;
 
-        wrapperRef.value.querySelectorAll(".mm-shape").forEach((shape) => {
+        wrapperRef.value.querySelectorAll(".mm-shape-box").forEach((shape) => {
           shape.addEventListener("mouseenter", (e) => {
             hoveredElement.value = e.target;
             tooltipContent.value = e.target.dataset.title || "";
+          });
+          shape.addEventListener("mouseup", () => {
+            console.log("click on ", shape);
           });
           shape.addEventListener("mouseleave", () => {
             hoveredElement.value = null;
@@ -221,17 +224,17 @@
       transition: stroke 0.3s ease;
     }
 
+    & path.mm-shape-box:hover + path.mm-shape {
+      fill: var(--surface-information);
+      stroke: var(--border-action);
+    }
+
     & path.mm-shape {
       fill: var(--surface-page);
       stroke: var(--mm-gray);
       transition:
-        fill 0.2s ease,
-        stroke 0.2s ease;
-
-      &:hover {
-        fill: var(--surface-information);
-        stroke: var(--border-action);
-      }
+        fill 0.3s ease,
+        stroke 0.3s ease;
 
       &.section-start {
         fill: var(--surface-primary);
