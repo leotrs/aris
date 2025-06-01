@@ -221,41 +221,35 @@ export function _makeMinimap(
 
   // Create the SVG markup
   const svg = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="${layout.viewBox}" preserveAspectRatio="xMidYMid meet">
-      <line class="track"
-       x1="${layout.track.x1}"
-       y1="${layout.track.y1}"
-       x2="${layout.track.x2}"
-       y2="${layout.track.y2}"
-       stroke-width="${options.trackWidth}"
-       stroke-linecap="round"
-      />
-      ${shapes
-      .map(
-        (s, idx) => `
-        <path class="mm-shape-box"
-         data-index="${idx}"
-         data-percent="${s.percent}"
-         data-title="${s.title}"
-         d="${createShapePath(s.cx, s.cy, s.r, options.side, options.shape, options.offset)}"
-         stroke-width="${options.strokeWidth + 8}"
-         stroke-linecap="round"
-         stroke="transparent"
-         fill="transparent"
-         pointer-events="all"
-        />
-        <path class="mm-shape"
-         data-index="${idx}"
-         data-percent="${s.percent}"
-         data-title="${s.title}"
-         d="${createShapePath(s.cx, s.cy, s.r, options.side, options.shape, options.offset)}"
-         stroke-width="${options.strokeWidth}"
-         stroke-linecap="round"
-         pointer-events="none"
-        />`
-      )
-      .join("\n  ")}
-      ${options.highlightScroll
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="${layout.viewBox}" preserveAspectRatio="xMidYMid meet">
+    <line class="track"
+     x1="${layout.track.x1}"
+     y1="${layout.track.y1}"
+     x2="${layout.track.x2}"
+     y2="${layout.track.y2}"
+     stroke-width="${options.trackWidth}"
+     stroke-linecap="round"
+    />
+    ${shapes
+      .map((s, idx) => `
+        <g class="mm-shape-group" data-index="${idx}" data-title="${s.title}" data-percent="${s.percent}">
+          <path class="mm-shape-box"
+            d="${createShapePath(s.cx, s.cy, s.r + 6, options.side, options.shape, options.offset)}"
+            stroke="transparent"
+            stroke-width="${options.strokeWidth + 10}"
+            fill="transparent"
+            pointer-events="stroke"
+          />
+          <path class="mm-shape"
+            d="${createShapePath(s.cx, s.cy, s.r, options.side, options.shape, options.offset)}"
+            stroke-width="${options.strokeWidth}"
+            stroke-linecap="round"
+            pointer-events="none"
+          />
+        </g>
+      `)
+      .join("\n")}
+    ${options.highlightScroll
       ? `<line class="scroll-indicator"
           x1="${layout.scrollLine.x1}"
           y1="${layout.scrollLine.y1}"
@@ -264,9 +258,8 @@ export function _makeMinimap(
           stroke-width="${options.strokeWidth}"
           stroke-linecap="round"
          />`
-      : ""
-    }
-    </svg>`;
+      : ""}
+  </svg>`;
 
   return { svg, svgInitialData };
 };
