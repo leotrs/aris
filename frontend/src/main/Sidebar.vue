@@ -22,13 +22,14 @@
       key: "f",
       state: false,
     },
-    DockableMinimap: {
-      icon: "MapPin",
-      label: "map",
-      preferredSide: "right",
-      key: "m",
-      state: true,
-    },
+    // always on!
+    /* DockableMinimap: {
+     *   icon: "MapPin",
+     *   label: "map",
+     *   preferredSide: "right",
+     *   key: "m",
+     *   state: true,
+     * }, */
     Comments: { icon: "Message", label: "comments", preferredSide: "left", key: "c", state: false },
     /* PanelSymbols: {
      *   icon: "Variable",
