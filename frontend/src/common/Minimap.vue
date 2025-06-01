@@ -133,7 +133,7 @@
         await nextTick();
         if (!wrapperRef.value) return;
 
-        wrapperRef.value.querySelectorAll(".mm-shape-box").forEach((shape) => {
+        wrapperRef.value.querySelectorAll(".mm-shape-group").forEach((shape) => {
           shape.addEventListener("mouseenter", (e) => {
             hoveredElement.value = e.target;
             tooltipContent.value = e.target.dataset.title || "";
@@ -206,7 +206,7 @@
     }
   }
 
-  .mm-wrapper > .mm-main > svg {
+  .mm-main > svg {
     width: 100%;
     height: 100%;
 
@@ -224,8 +224,19 @@
       transition: stroke 0.3s ease;
     }
 
-    & path.mm-shape-box:hover + path.mm-shape {
-      fill: var(--surface-information);
+    & g.mm-shape-group:hover {
+      cursor: pointer;
+    }
+
+    & g.mm-shape-group > path.mm-shape-box {
+      stroke: transparent;
+    }
+
+    & g.mm-shape-group > path.mm-shape {
+      stroke: var(--border-primary);
+    }
+
+    & g.mm-shape-group:hover > path.mm-shape {
       stroke: var(--border-action);
     }
 
