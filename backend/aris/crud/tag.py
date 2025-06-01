@@ -91,7 +91,7 @@ async def get_user_file_tags(user_id: int, doc_id: int, db: Session):
         .filter(Tag.user_id == user_id, Tag.deleted_at.is_(None))
         .join(file_tags, Tag.id == file_tags.c.tag_id)
         .filter(file_tags.c.file_id == doc_id)
-        .order_by(Tag.name.asc())
+        .order_by(Tag.created_at.asc(), Tag.name.asc())
         .all()
     )
 

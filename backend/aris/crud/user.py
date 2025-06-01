@@ -63,7 +63,7 @@ async def get_user_files(
     docs = (
         db.query(File)
         .filter(File.owner_id == user_id, File.deleted_at.is_(None))
-        .order_by(File.last_edited_at.desc())
+        .order_by(File.last_edited_at.desc(), File.source.asc())
         .all()
     )
 
