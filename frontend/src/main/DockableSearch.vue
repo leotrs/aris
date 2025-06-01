@@ -78,32 +78,57 @@
 </script>
 
 <template>
-  <SearchBar
-    ref="searchBar"
-    :with-buttons="true"
-    :buttons-disabled="!searchInfo.isSearching"
-    @submit="onSubmit"
-    @next="onNext"
-    @prev="onPrev"
-    @cancel="cancelSearch"
-  >
-    <template #buttons>
-      <!-- <ButtonToggle icon="File" />
+  <Teleport to="body">
+    <div class="dockable-search">
+      <div class="match-count source">
+        <span class="text-caption">0 source matches</span>
+      </div>
+      <SearchBar
+        ref="searchBar"
+        :with-buttons="true"
+        :buttons-disabled="!searchInfo.isSearching"
+        @submit="onSubmit"
+        @next="onNext"
+        @prev="onPrev"
+        @cancel="cancelSearch"
+      >
+        <template #buttons>
+          <!-- <ButtonToggle icon="File" />
            <ButtonToggle icon="Code" /> -->
-      <!-- <ButtonToggle icon="Regex" /> -->
-    </template>
-  </SearchBar>
+          <!-- <ButtonToggle icon="Regex" /> -->
+        </template>
+      </SearchBar>
+      <div class="match-count file">
+        <span class="text-caption">0 text matches</span>
+      </div>
+    </div>
+  </Teleport>
 </template>
 
 <style scoped>
-  .s-wrapper {
-    background-color: var(--surface-page) !important;
+  .dockable-search {
+    background-color: var(--surface-page);
+    position: fixed;
+    width: calc(100% - 64px - 40px);
+    height: 64px;
+    top: 8px;
+    right: 24px;
+    z-index: 998;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-inline: 16px;
   }
 
-  .source-matches-info {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-top: 0.5rem;
+  .match-count {
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    padding-block: 8px;
+  }
+
+  .s-wrapper {
+    background-color: var(--surface-page) !important;
   }
 </style>
 

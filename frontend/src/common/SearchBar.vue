@@ -5,6 +5,7 @@
   const props = defineProps({
     withButtons: { type: Boolean, default: false },
     buttonsDisabled: { type: Boolean, default: true },
+    showMatches: { type: Boolean, default: true },
   });
   const emit = defineEmits(["submit", "cancel", "next", "prev"]);
   const searchText = ref("");
