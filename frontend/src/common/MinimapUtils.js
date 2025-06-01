@@ -234,7 +234,12 @@ export function _makeMinimap(
     />
     ${shapes
       .map((s, idx) => `
-        <g class="mm-shape-group" data-index="${idx}" data-title="${s.title}" data-percent="${s.percent}">
+        <g class="mm-shape-group"
+           data-index="${idx}"
+           data-title="${s.title}"
+           data-percent="${s.percent}"
+           data-anchor="${s.anchor}"
+        >
           <path class="mm-shape-box"
             d="${createShapePath(s.cx, s.cy, s.r + 6, options.side, options.shape, options.offset)}"
             stroke="transparent"

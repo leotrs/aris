@@ -137,8 +137,17 @@
             hoveredElement.value = shape;
             tooltipContent.value = shape.dataset.title || "";
           });
-          shape.addEventListener("mouseup", () => {
-            console.log("click on ", shape);
+          shape.addEventListener("click", () => {
+            const anchorId = shape.dataset.anchor;
+            if (!anchorId) return;
+
+            // try to go to the header, not to the section itself
+            let targetEl = document.getElementById(anchorId);
+            const header = targetEl.querySelector("& > .hr");
+            if (header) targetEl = header;
+            if (targetEl) {
+              targetEl.scrollIntoView({ behavior: "smooth", block: "start" });
+            }
           });
           shape.addEventListener("mouseleave", () => {
             hoveredElement.value = null;
