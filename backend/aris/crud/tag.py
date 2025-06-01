@@ -38,7 +38,7 @@ async def get_user_tags(user_id: int, db: Session):
             Tag.user_id == user_id,
             Tag.deleted_at.is_(None),
         )
-        .order_by(Tag.created_at.asc())
+        .order_by(Tag.created_at.asc(), Tag.name.asc())
         .all()
     )
     return [
