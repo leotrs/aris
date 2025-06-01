@@ -7,16 +7,20 @@
 
   // Load and provide file
   const fileStore = inject("fileStore");
-  const file = ref({});
+  const file = reactive({});
   const route = useRoute();
   watchEffect(() => {
     const files = fileStore?.value?.files;
     const fileId = route?.params?.file_id;
     if (!files || files.length == 0 || !fileId) return;
 
-    file.value = files.find((f) => f.id == fileId);
-    if (!file.value) {
+    const found = files.find((f) => f.id == fileId);
+    if (found) {
+      Object.assign(file, found); // this line keeps reactivity
+      console.log("just set file.value in main/View.vue to", file.value);
+    } else {
       console.error("Could not find file with ID", fileId);
+      Object.keys(file).forEach((k) => delete file[k]);
     }
   });
   provide("file", file);

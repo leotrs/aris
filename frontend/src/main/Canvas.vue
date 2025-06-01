@@ -4,6 +4,7 @@
     reactive,
     computed,
     watch,
+    watchEffect,
     inject,
     provide,
     useTemplateRef,
@@ -81,20 +82,16 @@
   provide("fileSettings", fileSettings);
 
   const api = inject("api");
-  watch(
-    file,
-    async () => {
-      if (!file.value || file.value.html || !file.value.id) return;
+  watchEffect(async () => {
+    if (!file.value || file.value.html || !file.value.id) return;
 
-      try {
-        const response = await api.get(`/files/${file.value.id}/content`);
-        file.value.html = response.data;
-      } catch (error) {
-        console.error("Error fetching HTML:", error);
-      }
-    },
-    { immediate: true }
-  );
+    try {
+      const response = await api.get(`/files/${file.value.id}/content`);
+      file.value.html = response.data;
+    } catch (error) {
+      console.error("Error fetching HTML:", error);
+    }
+  });
 
   const manuscriptRef = useTemplateRef("manuscript-ref");
   watch(
@@ -110,7 +107,7 @@
   const isMainTitleVisible = ref(true);
   let tearDown = () => {};
   watch(
-    () => file.value.html,
+    () => file.value,
     async () => {
       await nextTick(); // waits for ManuscriptWrapper to receive html
       await nextTick(); // waits for v-html DOM to update

@@ -1,5 +1,14 @@
 <script setup>
-  import { ref, watch, inject, computed, onMounted, useTemplateRef, nextTick } from "vue";
+  import {
+    ref,
+    watch,
+    watchEffect,
+    inject,
+    computed,
+    onMounted,
+    useTemplateRef,
+    nextTick,
+  } from "vue";
   import { useElementSize } from "@vueuse/core";
   import {
     IconBookmarkFilled,
@@ -49,27 +58,24 @@
     await nextTick();
 
     // Remake when necessary
-    watch(
-      () => [props.side, props.file.id, props.orientation],
-      () => {
-        if (!wrapperRef.value) return;
-        const { svg: newSvg, svgInitialData: newData } = makeMinimap(
-          props.file,
-          isHorizontal.value,
-          wrapperWidth.value,
-          wrapperHeight.value,
-          {
-            side: props.side,
-            highlightScroll: props.highlightScroll,
-            trackWidth: props.trackWidth,
-            shape: props.shape,
-          }
-        );
-        html.value = newSvg;
-        svgInitialData.value = newData;
-      },
-      { deep: true, immediate: true }
-    );
+    watchEffect(() => {
+      if (!wrapperRef.value || !props.file) return;
+      const { svg: newSvg, svgInitialData: newData } = makeMinimap(
+        props.file,
+        isHorizontal.value,
+        wrapperWidth.value,
+        wrapperHeight.value,
+        {
+          side: props.side,
+          highlightScroll: props.highlightScroll,
+          trackWidth: props.trackWidth,
+          shape: props.shape,
+          html: props.file.html,
+        }
+      );
+      html.value = newSvg;
+      svgInitialData.value = newData;
+    });
 
     // Responsiveness
     watch(
