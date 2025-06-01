@@ -160,7 +160,7 @@
 
   #env {
     position: fixed;
-    bottom: 8px;
+    top: 8px;
     left: 8px;
     color: var(--dark);
     background-color: var(--green-100);

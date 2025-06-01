@@ -133,10 +133,10 @@
 
   .menus {
     position: absolute;
-    right: 16px;
-    top: 16px;
-    height: 64px;
+    bottom: 0;
+    width: 64px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     z-index: 2;
     padding: 8px;
