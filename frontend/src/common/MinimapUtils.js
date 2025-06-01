@@ -55,7 +55,8 @@ export function getSectionsFromHTML(file) {
     const titleTag = s.querySelector(".heading.hr .hr-content-zone :is(h1, h2, h3, h4, h5, h6)");
     const title = titleTag?.textContent || "";
 
-    return { percent, level, title };
+    const anchor = s.id ?? "";
+    return { percent, level, title, anchor };
   });
 
   return sections;
@@ -75,7 +76,7 @@ export function getSections(file) {
     console.log('extracting sections from source');
     sections = getSectionsFromSource(file.source);
   } else {
-    console.warn(`No way to get sections for file with id ${file.id}, skipping`, file);
+    console.warn(`No way to get sections for file with id ${file.id}, skipping`);
   }
   return [{ percent: 0, level: 1 }, ...sections, { percent: 1, level: 1 }];
 };
@@ -113,13 +114,14 @@ const createShapePath = (cx, cy, r, side, shape, offset = 4) => {
 
 const createShapesData = (sections, lineSize, isHorizontal, options) => {
   const { lineX, lineY, radiusDelta } = options;
-  return sections.map(({ percent, level, title }) => ({
-    cx: isHorizontal ? percent * lineSize : lineX,
-    cy: isHorizontal ? lineY : percent * lineSize,
-    r: radiusDelta * (6 - level),
-    percent,
-    level,
-    title,
+  return sections.map((s) => ({
+    cx: isHorizontal ? s.percent * lineSize : lineX,
+    cy: isHorizontal ? lineY : s.percent * lineSize,
+    r: radiusDelta * (6 - s.level),
+    percent: s.percent,
+    level: s.level,
+    title: s.title,
+    anchor: s.anchor || "",
   }));
 };
 
