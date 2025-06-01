@@ -42,7 +42,7 @@
     /* DockableClaims, */
   };
 
-  const innerRef = useTemplateRef("inner-ref");
+  const innerRef = useTemplateRef("inner-right-ref");
   const lftColRef = useTemplateRef("leftColumnRef");
   const midColRef = useTemplateRef("middleColumnRef");
   const rgtColRef = useTemplateRef("rightColumnRef");
@@ -154,7 +154,7 @@
         <Editor v-model="file" />
       </div>
 
-      <div class="inner right">
+      <div ref="inner-right-ref" class="inner right">
         <div ref="left-column-ref" class="left-column">
           <Dock class="dock left top"> </Dock>
           <Dock class="dock left main"> </Dock>

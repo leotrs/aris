@@ -333,7 +333,7 @@ export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeigh
   const scrollPercent = pos / 100;
   const containerDimension = isHorizontal ? wrapperWidth : wrapperHeight;
   const scrollPos = scrollPercent * containerDimension;
-  const paths = svg.querySelectorAll("path.mm-shape");
+  const paths = svg.querySelectorAll("path.mm-shape-group");
   const scrollIndicator = svg.querySelector(".scroll-indicator");
 
   // Set the position of the scroll indicator
