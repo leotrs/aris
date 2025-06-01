@@ -27,6 +27,7 @@
     right: { type: Array, default: () => [] },
     top: { type: Array, default: () => [] },
     showEditor: { type: Boolean, default: false },
+    showMap: { type: Boolean, default: true },
   });
   const file = defineModel({ type: Object });
 
@@ -184,6 +185,8 @@
           <Dock class="dock right main"> </Dock>
         </div>
       </div>
+
+      <DockableMinimap :file="file" side="right" />
 
       <!-- <Drawer :class="{ focus: focusMode }" /> -->
     </div>

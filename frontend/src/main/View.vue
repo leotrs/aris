@@ -27,9 +27,14 @@
   const rightComponents = reactive([]);
   const sideRefMap = { left: leftComponents, top: topComponents, right: rightComponents };
   const showEditor = ref(false);
+  const showMap = ref(true);
   const showComponent = (compName, side) => {
+    console.log(`showComponent ${compName}`);
     if (compName == "DockableEditor") {
       showEditor.value = true;
+      return;
+    } else if (compName == "DockableMap") {
+      showMap.value = true;
       return;
     }
     if (!sideRefMap[side]) {
@@ -42,6 +47,9 @@
   const hideComponent = (compName, side) => {
     if (compName == "DockableEditor") {
       showEditor.value = false;
+      return;
+    } else if (compName == "DockableMap") {
+      showMap.value = true;
       return;
     }
     if (!sideRefMap[side]) {
@@ -80,6 +88,7 @@
       v-if="file"
       v-model="file"
       :show-editor="showEditor"
+      :show-map="showMap"
       :left="leftComponents"
       :right="rightComponents"
       :top="topComponents"
