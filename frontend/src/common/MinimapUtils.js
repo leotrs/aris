@@ -5,7 +5,7 @@ function countLeadingPounds(str) {
 };
 
 // Section extraction
-export function getSectionsFromSource(src) {
+export async function getSectionsFromSource(src) {
   const lines = src.split("\n");
   if (!src || lines.length < 1) return [];
 
@@ -29,14 +29,14 @@ export function getSectionsFromSource(src) {
   return sections;
 };
 
-export function getSectionsFromHTMLString(html) {
+export async function getSectionsFromHTMLString(html) {
   const parser = new DOMParser();
   const dom = parser.parseFromString(html, "text/html");
   const sections = [...dom.querySelectorAll("section")].map((s) => s);
   return sections;
 };
 
-export function getSectionsFromHTML(file) {
+export async function getSectionsFromHTML(file) {
   // The following works by looking at the parent element's height because there are
   // only two cases: if the level is 1, then the parent is the manuscript wrapper, and
   // if the level is more than 1, the parent is the section of level-1. Both this
@@ -63,18 +63,18 @@ export function getSectionsFromHTML(file) {
 }
 
 
-export function getSections(file) {
+export async function getSections(file) {
   let sections = [];
 
   if (file.isMountedAt) {
     console.log('extracting sections from mounted html');
-    sections = getSectionsFromHTML(file);
+    sections = await getSectionsFromHTML(file);
   } else if (file.html) {
     console.log('extracting sections from html string');
-    sections = getSectionsFromHTMLString(file.html);
+    sections = await getSectionsFromHTMLString(file.html);
   } else if (file.source) {
     console.log('extracting sections from source');
-    sections = getSectionsFromSource(file.source);
+    sections = await getSectionsFromSource(file.source);
   } else {
     console.warn(`No way to get sections for file with id ${file.id}, skipping`);
   }
@@ -126,7 +126,7 @@ const createShapesData = (sections, lineSize, isHorizontal, options) => {
 };
 
 // SVG Layout
-export function getLayoutParametersHorizontal(lineSize, options) {
+export async function getLayoutParametersHorizontal(lineSize, options) {
   const { side, lineY, strokeWidth, trackWidth, offset } = options;
   let minX, maxX, minY, maxY;
 
@@ -152,7 +152,7 @@ export function getLayoutParametersHorizontal(lineSize, options) {
   };
 };
 
-export function getLayoutParametersVertical(lineSize, options) {
+export async function getLayoutParametersVertical(lineSize, options) {
   const { side, lineX, strokeWidth, trackWidth, offset } = options;
   let minX, maxX, minY, maxY;
 
@@ -182,17 +182,17 @@ export function getLayoutParametersVertical(lineSize, options) {
 let shapePositions = [];
 
 // Public interface
-export function makeMinimap(file, isHorizontal, wrapperWidth, wrapperHeight, options = {}) {
+export async function makeMinimap(file, isHorizontal, wrapperWidth, wrapperHeight, options = {}) {
   const defaults = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 8, highlightScroll: true, side: 'left', shape: 'line' };
   options = { ...defaults, ...options };
 
   // DO NOT use file.minimap -- this is usually the one extracted from the HTMl, we want to make our own
   // if (file.minimap) return file.minimap;
   const currentSize = isHorizontal ? (wrapperWidth || 400) : (wrapperHeight || 400);
-  return _makeMinimap(getSections(file), isHorizontal, currentSize, options);
+  return await _makeMinimap(await getSections(file), isHorizontal, currentSize, options);
 }
 
-export function _makeMinimap(
+export async function _makeMinimap(
   sections,
   isHorizontal,
   containerSize = 400,
@@ -217,9 +217,12 @@ export function _makeMinimap(
   shapePositions = JSON.parse(JSON.stringify(shapes));
 
   // Get layout parameters based on orientation and side
-  const layout = isHorizontal
-    ? getLayoutParametersHorizontal(lineSize, options)
-    : getLayoutParametersVertical(lineSize, options);
+  let layout = {};
+  if (isHorizontal) {
+    layout = await getLayoutParametersHorizontal(lineSize, options);
+  } else {
+    layout = await getLayoutParametersVertical(lineSize, options);
+  }
 
   // Create the SVG markup
   const svg = `
@@ -271,7 +274,7 @@ export function _makeMinimap(
   return { svg, svgInitialData };
 };
 
-export function resizeMinimap(
+export async function resizeMinimap(
   svg,
   isHorizontal,
   wrapperWidth,
@@ -328,7 +331,7 @@ export function resizeMinimap(
   svg.setAttribute("viewBox", layout.viewBox);
 };
 
-export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeight, svg, options = { trackWidth: 3 }) {
+export async function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeight, svg, options = { trackWidth: 3 }) {
   if (!svg) return;
   const scrollPercent = pos / 100;
   const containerDimension = isHorizontal ? wrapperWidth : wrapperHeight;
@@ -405,7 +408,7 @@ export function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeigh
 };
 
 
-export function makeIcons(newIcons, totalHeightEl) {
+export async function makeIcons(newIcons, totalHeightEl) {
   // totalHeightEl must be an element whose height equals that of the entire manuscript,
   // e.g. the .manuscriptwrapper, .manuscrupt, or even .middle-column or
   // section.level-1.
