@@ -33,13 +33,15 @@
     emit("cancel");
   };
 
-  const saveChanges = () => {
+  const saveChanges = async () => {
     if (!isEditing.value) return;
+
     if (text.value == inputValue.value) {
       isEditing.value = false;
       return;
     }
     text.value = inputValue.value;
+    await nextTick();
     isEditing.value = false;
     emit("save", text.value);
   };

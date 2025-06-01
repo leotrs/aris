@@ -1,5 +1,5 @@
 <script setup>
-  import { useTemplateRef } from "vue";
+  import { ref, useTemplateRef } from "vue";
   const props = defineProps({
     tag: { type: Object, required: true },
     active: { type: Boolean, default: false },
@@ -8,6 +8,7 @@
     clearOnStartRenaming: { type: Boolean, default: false },
   });
   const emit = defineEmits(["rename"]);
+  const newName = ref(props.tag.name);
 
   const editableTextRef = useTemplateRef("editableTextRef");
   defineExpose({
@@ -29,10 +30,10 @@
     <EditableText
       v-if="editable"
       ref="editableTextRef"
-      v-model="tag.name"
+      v-model="newName"
       :edit-on-click="editOnClick"
       :clear-on-start="clearOnStartRenaming"
-      @save="emit('rename')"
+      @save="(n) => emit('rename', n)"
     />
     <span v-else>{{ tag.name }}</span>
   </button>

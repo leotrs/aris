@@ -97,7 +97,7 @@
 <template>
   <div class="cm-wrapper" @click.stop @dblclick.stop>
     <template v-if="$slots.trigger">
-      <Button ref="slot-ref" kind="tertiary" @click="show = !show">
+      <Button ref="slot-ref" kind="tertiary" @click.stop="show = !show">
         <slot name="trigger" />
       </Button>
     </template>
