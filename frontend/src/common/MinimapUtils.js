@@ -183,7 +183,7 @@ let shapePositions = [];
 
 // Public interface
 export function makeMinimap(file, isHorizontal, wrapperWidth, wrapperHeight, options = {}) {
-  const defaults = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 4, highlightScroll: true, side: 'left', shape: 'line' };
+  const defaults = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 8, highlightScroll: true, side: 'left', shape: 'line' };
   options = { ...defaults, ...options };
 
   // DO NOT use file.minimap -- this is usually the one extracted from the HTMl, we want to make our own
@@ -198,7 +198,7 @@ export function _makeMinimap(
   containerSize = 400,
   options = {}
 ) {
-  const defaults = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 4, highlightScroll: true, side: 'left', shape: 'line' };
+  const defaults = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 8, highlightScroll: true, side: 'left', shape: 'line' };
   options = { ...defaults, ...options };
 
   // Leave some padding between the line and the container

@@ -218,8 +218,8 @@
     position: relative;
     display: flex;
     width: 50%;
-    padding-inline: 16px;
-    margin-block: 16px;
+    padding: 0 16px 16px 16px;
+    margin-top: 16px;
     background-color: v-bind("fileSettings.background");
     justify-content: center;
     will-change: border-radius, height, top;
