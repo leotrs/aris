@@ -17,7 +17,6 @@
     const found = files.find((f) => f.id == fileId);
     if (found) {
       Object.assign(file, found); // this line keeps reactivity
-      console.log("just set file.value in main/View.vue to", file.value);
     } else {
       console.error("Could not find file with ID", fileId);
       Object.keys(file).forEach((k) => delete file[k]);

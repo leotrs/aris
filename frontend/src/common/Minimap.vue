@@ -129,14 +129,13 @@
     // Setup tooltips for dynamically created elements
     watch(
       html,
-      async () => {
-        await nextTick();
+      () => {
         if (!wrapperRef.value) return;
 
         wrapperRef.value.querySelectorAll(".mm-shape-group").forEach((shape) => {
           shape.addEventListener("mouseenter", (e) => {
-            hoveredElement.value = e.target;
-            tooltipContent.value = e.target.dataset.title || "";
+            hoveredElement.value = shape;
+            tooltipContent.value = shape.dataset.title || "";
           });
           shape.addEventListener("mouseup", () => {
             console.log("click on ", shape);
