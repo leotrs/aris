@@ -28,7 +28,7 @@
 
   const numWords = ref(0);
   watch(
-    () => file.value.source,
+    () => file.value?.source,
     (newText) => {
       debouncedCounter(newText, (count) => {
         numWords.value = count;
