@@ -1,7 +1,6 @@
 <script setup>
   import { ref, watch, inject, computed, onMounted, useTemplateRef, nextTick } from "vue";
   import { useElementSize } from "@vueuse/core";
-  import { useFloating, autoUpdate, offset, shift } from "@floating-ui/vue";
   import {
     IconBookmarkFilled,
     IconStarFilled,
@@ -12,6 +11,7 @@
     IconQuoteFilled,
   } from "@tabler/icons-vue";
   import { makeMinimap, resizeMinimap, highlightScrollPos, makeIcons } from "./MinimapUtils.js";
+  import Tooltip from "./Tooltip.vue";
 
   const props = defineProps({
     file: { type: Object, required: true },
@@ -21,6 +21,7 @@
     shape: { type: String, default: "line" },
     trackWidth: { type: Number, default: 3 },
   });
+
   const wrapperRef = useTemplateRef("mm-wrapper");
   const { width: wrapperWidth, height: wrapperHeight } = useElementSize(wrapperRef);
   const yScroll = inject("yScroll", ref(null));
@@ -28,14 +29,10 @@
   const svgInitialData = ref(null);
   const isHorizontal = computed(() => props.orientation === "horizontal");
   const icons = ref([]);
-  const tooltipReferenceRef = ref(null);
-  const tooltipRef = useTemplateRef("tooltip-ref");
-  const tooltipText = ref("");
-  const { floatingStyles } = useFloating(tooltipReferenceRef, tooltipRef, {
-    placement: "left",
-    middleware: [offset(6), shift()],
-    whileElementsMounted: autoUpdate,
-  });
+
+  // Tooltip state
+  const hoveredElement = ref(null);
+  const tooltipContent = ref("");
 
   const classToIconComponent = {
     bookmark: IconBookmarkFilled,
@@ -51,7 +48,7 @@
     if (!props.file) return;
     await nextTick();
 
-    // Remake when neccessary
+    // Remake when necessary
     watch(
       () => [props.side, props.file.id, props.orientation],
       () => {
@@ -123,7 +120,7 @@
       { immediate: true }
     );
 
-    // Include tooltips
+    // Setup tooltips for dynamically created elements
     watch(
       html,
       async () => {
@@ -132,11 +129,12 @@
 
         wrapperRef.value.querySelectorAll(".mm-shape").forEach((shape) => {
           shape.addEventListener("mouseenter", (e) => {
-            tooltipReferenceRef.value = e.target;
-            tooltipText.value = e.target.dataset.title;
+            hoveredElement.value = e.target;
+            tooltipContent.value = e.target.dataset.title || "";
           });
-          shape.addEventListener("mouseleave", (e) => {
-            tooltipText.value = "";
+          shape.addEventListener("mouseleave", () => {
+            hoveredElement.value = null;
+            tooltipContent.value = "";
           });
         });
       },
@@ -157,7 +155,7 @@
         :style="{ top: `${obj.pos * 100}%` }"
       />
     </div>
-    <div ref="tooltip-ref" class="mm-tooltip" :style="floatingStyles">{{ tooltipText }}</div>
+    <Tooltip :anchor="hoveredElement" :content="tooltipContent" placement="left" />
   </div>
 </template>
 
