@@ -159,6 +159,7 @@
   }
 
   #env {
+    opacity: 0.75;
     position: fixed;
     top: 8px;
     left: 8px;
