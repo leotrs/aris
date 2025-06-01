@@ -41,7 +41,7 @@
       :active="state"
       :editable="true"
       @click.stop="state = !state"
-      @done-editing="(newName) => renameTag(newName)"
+      @rename="renameTag"
     />
     <ContextMenu placement="right-start">
       <ColorPicker :colors="colors" @change="setColor" />

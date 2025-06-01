@@ -18,7 +18,7 @@
     class="item"
     role="menuitem"
     tabindex="-1"
-    @click="closeMenu"
+    @click.stop="closeMenu"
   >
     <component :is="Icons['Icon' + props.icon]" class="cmi-icon" :class="iconClass" />
     <span class="cmi-caption">{{ caption }}</span>
