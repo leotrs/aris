@@ -180,19 +180,91 @@ class File(Base):
 
     owner = relationship("User", back_populates="files")
     tags = relationship("Tag", secondary=file_tags, back_populates="files")
+    file_assets = relationship("FileAsset", back_populates="file", cascade="all, delete-orphan")
 
 
 class Tag(Base):
+    """
+    Represents a user-defined tag for organizing research files.
+
+    Attributes
+    ----------
+    id : int
+        Primary key.
+    user_id : int
+        Foreign key to User.
+    name : str
+        Tag name.
+    color : str
+        Display color.
+    created_at : datetime
+        Timestamp of creation.
+    deleted_at : datetime
+        Soft delete marker.
+    files : list of File
+        Files associated with this tag.
+    owner : User
+        Owner relationship.
+    """
+
     __tablename__ = "tags"
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(
-        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
-    )
-    name = Column(String, nullable=False, unique=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    name = Column(String, nullable=False)
     color = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     files = relationship("File", secondary=file_tags, back_populates="tags")
     owner = relationship("User", back_populates="tags")
+
+
+class FileAsset(Base):
+    """
+    Represents a private user-uploaded file associated with a File.
+
+    Used for storing supporting assets such as images, data files, or text snippets.
+    Visibility is restricted to the owning user.
+
+    Attributes
+    ----------
+    id : int
+        Primary key.
+    filename : str
+        Name of the file.
+    mime_type : str
+        MIME type (e.g., image/png).
+    content : str
+        File contents (stored inline).
+    uploaded_at : datetime
+        Timestamp of upload.
+    deleted_at : datetime
+        Soft delete marker.
+    owner_id : int
+        Foreign key to User.
+    file_id : int
+        Foreign key to File.
+    owner : User
+        Owner relationship.
+    file : File
+        File to which the asset is attached.
+    """
+
+    __tablename__ = "file_assets"
+    __table_args__ = (
+        UniqueConstraint("file_id", "filename", name="uq_file_asset_filename_per_file"),
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    filename = Column(String, nullable=False)
+    mime_type = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    uploaded_at = Column(DateTime(timezone=True), server_default=func.now())
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
+
+    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    file_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"), nullable=False)
+
+    owner = relationship("User", back_populates="file_assets")
+    file = relationship("File", back_populates="file_assets")
