@@ -1,7 +1,7 @@
 <script setup>
   import { useScrollShadows } from "@/composables/useScrollShadows.js";
 
-  const emit = defineEmits(["insert", "compile"]);
+  const emit = defineEmits(["insert"]);
 
   const { scrollElementRef: toolbarRef, showLeftShadow, showRightShadow } = useScrollShadows();
 </script>
