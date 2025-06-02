@@ -258,8 +258,12 @@ export function createFileStore(api, user) {
     try {
       if (newTag == null) {
         await api.delete(url);
+        const index = tags.value.find((t) => t === oldTag);
+        if (index !== -1) tags.value.splice(index, 1);
       } else {
         await api.put(url, newTag);
+        const index = tags.value.find((t) => t === oldTag);
+        if (index !== -1) tags.value.splice(index, 1, newTag);
       }
       await loadTags();
     } catch (error) {
