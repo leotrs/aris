@@ -32,14 +32,19 @@
 
 <template>
   <div class="tag-row">
-    <Tag v-for="tag in visibleTags.slice(0, -1)" :key="tag" :tag="tag" :active="true" />
+    <Tag
+      v-for="tag in visibleTags.slice(0, -1)"
+      :key="tag.name + tag.color"
+      :tag="tag"
+      :active="true"
+    />
     <!-- The last visible tag + overflow indicator + MultiSelectTags wrapped together -->
     <div class="nowrap">
       <!-- Last visible tag -->
       <Tag
         v-if="visibleTags.length > 0"
-        :key="visibleTags.at(-1) ?? {}"
-        :tag="visibleTags.at(-1) ?? {}"
+        :key="visibleTags.at(-1).name"
+        :tag="visibleTags.at(-1)"
         :active="true"
       />
 
