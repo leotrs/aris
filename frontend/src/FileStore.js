@@ -35,7 +35,7 @@ export function createFileStore(api, user) {
       syncInProgress.value = true;
       for (const fileId of syncQueue) {
         const file = files.value.find(f => f.id === fileId);
-        if (!file || !file.isDirty) continue;
+        if (!file) continue;
         await File.save(file, api, user);
       }
       syncQueue.clear();

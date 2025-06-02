@@ -30,9 +30,6 @@ export class File {
       filtered: rawData.filtered || false,
       isMountedAt: rawData.isMountedAt || null,
 
-      // Track if file has unsaved changes
-      isDirty: false,
-
       // Date methods -- remember JS needs the timestamp to end with a 'Z' to interpret
       // it as UTC
       getFormattedDate() {
@@ -60,14 +57,10 @@ export class File {
    * Updates file with new data and marks it for sync
    * @param {Object} file - The reactive file object
    * @param {Object} changes - Object with properties to update
-   * @param {Boolean} markDirty - Whether to mark file as needing sync
    */
-  static update(file, changes, markDirty = true) {
+  static async update(file, changes) {
     Object.assign(file, changes);
-    if (markDirty) {
-      file.isDirty = true;
-      fileStore?.queueSync(file);
-    }
+    await fileStore?.queueSync(file);
     return file;
   }
 
@@ -80,6 +73,8 @@ export class File {
   static async save(file, api, user) {
     try {
       let fileData = File.toJSON(file);
+
+      // The backend expects owner_id and not ownerId
       fileData.owner_id = user.id;
       delete fileData.ownerId;
 
@@ -92,7 +87,6 @@ export class File {
         Object.assign(file, response.data);
       }
 
-      file.isDirty = false;
       return true;
     } catch (error) {
       console.error(`Error saving file:`, error);
