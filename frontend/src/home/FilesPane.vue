@@ -48,14 +48,9 @@
       <FilesHeader :mode="mode" />
 
       <Suspense>
-        <div ref="files-ref" class="files" :class="mode">
-          <template v-for="(file, idx) in fileStore?.files">
-            <FilesItem
-              v-if="!file.filtered"
-              :key="file"
-              v-model="fileStore.files[idx]"
-              :mode="mode"
-            />
+        <div v-if="visibleFiles" ref="files-ref" class="files" :class="mode">
+          <template v-for="(file, idx) in visibleFiles" :key="file">
+            <FilesItem v-model="visibleFiles[idx]" :mode="mode" />
           </template>
         </div>
 
