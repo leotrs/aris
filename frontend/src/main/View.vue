@@ -7,20 +7,14 @@
 
   // Load and provide file
   const fileStore = inject("fileStore");
-  const file = reactive({});
   const route = useRoute();
-  watchEffect(() => {
+  const file = computed(() => {
     const files = fileStore?.value?.files;
     const fileId = route?.params?.file_id;
-    if (!files || files.length == 0 || !fileId) return;
+    if (!files || files.length == 0 || !fileId) return {};
 
     const found = files.find((f) => f.id == fileId);
-    if (found) {
-      Object.assign(file, found); // this line keeps reactivity
-    } else {
-      console.error("Could not find file with ID", fileId);
-      Object.keys(file).forEach((k) => delete file[k]);
-    }
+    return found || {};
   });
   provide("file", file);
 

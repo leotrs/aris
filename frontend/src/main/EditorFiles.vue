@@ -31,7 +31,7 @@
 
 <template>
   <div class="files">
-    <EditorFilesItem v-for="(asset, idx) in assets" v-model="assets[idx]" />
+    <EditorFilesItem v-for="(asset, idx) in assets" :key="asset" v-model="assets[idx]" />
   </div>
 </template>
 

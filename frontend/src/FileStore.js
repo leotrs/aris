@@ -22,7 +22,7 @@ export function createFileStore(api, user) {
   const queueSync = async (fileOrFileId) => {
     const fileId = (typeof fileOrFileId == 'number') ? fileOrFileId : fileOrFileId.id;
     syncQueue.add(fileId);
-    scheduleSyncProcess();
+    await scheduleSyncProcess();
   };
 
   /**
@@ -56,7 +56,7 @@ export function createFileStore(api, user) {
    */
   let syncTimeout = null;
   const scheduleSyncProcess = () => {
-    if (syncTimeout) clearTimeout(syncTimeout);    // debounce
+    if (syncTimeout) clearTimeout(syncTimeout);
     syncTimeout = setTimeout(syncProcess, 800);
   };
 
