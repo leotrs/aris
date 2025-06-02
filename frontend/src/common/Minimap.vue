@@ -59,7 +59,11 @@
 
     // Remake when necessary
     watchEffect(async () => {
-      if (!wrapperRef.value || !props.file) return;
+      if (!wrapperRef.value || !props.file || !props.file.id) return;
+
+      // We know we want to make the miniMap only after the file is mounted
+      if (!props.file.isMountedAt) return;
+
       const { svg: newSvg, svgInitialData: newData } = await makeMinimap(
         props.file,
         isHorizontal.value,
