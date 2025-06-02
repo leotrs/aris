@@ -9,6 +9,8 @@ wheels/
 # Virtual environments
 .venv
 
+
 # duh
+backend/.env
 backend/aris/.env
 backend/alembic.ini
