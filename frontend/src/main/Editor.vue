@@ -10,25 +10,21 @@
 </script>
 
 <template>
-  <EditorSource v-if="tabIndex == 0" v-model="file" />
-  <EditorFiles v-if="tabIndex == 1" v-model="file" />
+  <div class="wrapper">
+    <EditorSource v-if="tabIndex == 0" v-model="file" />
+    <EditorFiles v-if="tabIndex == 1" v-model="file" />
+  </div>
 </template>
 
 <style scoped>
-  .outer {
-    --outer-padding: 8px;
-    --sidebar-width: 64px;
-    --topbar-height: 48px;
-
+  .wrapper {
+    --toolbar-height: 40px;
     display: flex;
+    flex-direction: column;
+    height: calc(100% - 16px);
+    border: var(--border-extrathin) solid var(--border-primary);
+    border-radius: 0 8px 8px 8px;
+    background-color: var(--surface-page);
     z-index: 1;
-    box-shadow: var(--shadow-soft);
-
-    border-radius: 16px;
-    will-change: width, left, border-radius;
-    transition:
-      width var(--transition-duration) ease,
-      left var(--transition-duration) ease,
-      border-radius var(--transition-duration) ease;
   }
 </style>
