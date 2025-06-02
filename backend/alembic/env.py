@@ -19,8 +19,7 @@ config = context.config
 
 
 def get_database_url() -> str:
-    """
-    Select the database URL based on the ENV environment variable.
+    """Select the database URL based on the ENV environment variable.
 
     If ENV=LOCAL, use DB_URL_LOCAL.
     If ENV=PROD, use DB_URL_PROD.
