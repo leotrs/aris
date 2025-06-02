@@ -3,10 +3,11 @@
 </script>
 
 <template>
-  <div>hello files</div>
+  <div class="files">hello files</div>
 </template>
 
 <style scoped>
   .files {
+    height: 100%;
   }
 </style>

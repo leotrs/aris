@@ -262,10 +262,6 @@
     border-bottom-right-radius: 0;
   }
 
-  .inner.left .editor-wrapper {
-    height: calc(100% - 48px);
-  }
-
   .inner.right .middle-column {
     width: 100%;
     max-width: 720px;

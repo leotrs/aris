@@ -52,7 +52,7 @@
 </script>
 
 <template>
-  <div class="editor-wrapper text-mono">
+  <div class="text-mono">
     <Toolbar @compile="onCompile" @insert="onInsert" />
 
     <textarea
@@ -70,20 +70,10 @@
 </template>
 
 <style scoped>
-  .editor-wrapper {
-    --toolbar-height: 40px;
+  .text-mono {
     display: flex;
     flex-direction: column;
-    height: calc(100% - 16px);
-    border: var(--border-extrathin) solid var(--border-primary);
-    border-radius: 0 8px 8px 8px;
-    background-color: var(--surface-page);
-    z-index: 1;
-  }
-
-  .editor-wrapper:has(> textarea.editor:focus) {
-    border-color: var(--border-action);
-    outline: var(--border-extrathin) solid var(--border-action);
+    height: 100%;
   }
 
   button.primary.cta {
@@ -91,6 +81,7 @@
   }
 
   textarea.editor {
+    height: calc(100% - 48px - 32px);
     font-family: "Source Code Pro", monospace;
     box-shadow: inset var(--shadow-strong);
     flex: 1;
