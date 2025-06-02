@@ -1,7 +1,8 @@
 import asyncio
 from datetime import datetime
 
-from sqlalchemy.orm import Session
+from sqlalchemy import select, desc, asc
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import File, User
 from .file import get_file, get_file_section
@@ -9,27 +10,27 @@ from .tag import get_user_file_tags
 from .utils import extract_title
 
 
-async def get_users(db: Session):
-    return db.query(User).filter(User.deleted_at.is_(None)).all()
+async def get_users(db: AsyncSession):
+    result = await db.execute(select(User).where(User.deleted_at.is_(None)))
+    return result.scalars().all()
 
 
-async def get_user(user_id: int, db: Session):
-    return db.query(User).filter(User.id == user_id, User.deleted_at.is_(None)).first()
+async def get_user(user_id: int, db: AsyncSession):
+    result = await db.execute(select(User).where(User.id == user_id, User.deleted_at.is_(None)))
+    return result.scalars().first()
 
 
-async def create_user(
-    name: str, initials: str, email: str, password_hash: str, db: Session
-):
+async def create_user(name: str, initials: str, email: str, password_hash: str, db: AsyncSession):
     if not initials:
         initials = "".join([w[0].upper() for w in name.split()])
     user = User(name=name, initials=initials, email=email, password_hash=password_hash)
     db.add(user)
-    db.commit()
-    db.refresh(user)
+    await db.commit()
+    await db.refresh(user)
     return user
 
 
-async def update_user(user_id: int, name: str, initials: str, email: str, db: Session):
+async def update_user(user_id: int, name: str, initials: str, email: str, db: AsyncSession):
     user = await get_user(user_id, db)
     if not user:
         return None
@@ -39,50 +40,44 @@ async def update_user(user_id: int, name: str, initials: str, email: str, db: Se
         user.initials = initials
     if email != user.email:
         user.email = email
-    db.commit()
-    db.refresh(user)
+    await db.commit()
+    await db.refresh(user)
     return user
 
 
-async def soft_delete_user(user_id: int, db: Session):
+async def soft_delete_user(user_id: int, db: AsyncSession):
     user = get_user(user_id, db)
     if not user:
         return None
     user.deleted_at = datetime.utcnow()
-    db.commit()
+    await db.commit()
     return user
 
 
-async def get_user_files(
-    user_id: int, with_tags: bool, with_minimap: bool, db: Session
-):
+async def get_user_files(user_id: int, with_tags: bool, with_minimap: bool, db: AsyncSession):
     user = await get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")
 
-    docs = (
-        db.query(File)
-        .filter(File.owner_id == user_id, File.deleted_at.is_(None))
-        .order_by(File.last_edited_at.desc(), File.source.asc())
-        .all()
+    result = await db.execute(
+        select(File)
+        .where(File.owner_id == user_id, File.deleted_at.is_(None))
+        .order_by(desc(File.last_edited_at), asc(File.source))
     )
+    docs = result.scalars().all()
 
     titles = await asyncio.gather(*(extract_title(d) for d in docs))
     titles = dict(zip(docs, titles))
 
     tags = None
     if with_tags:
-        tags = await asyncio.gather(
-            *(get_user_file_tags(user_id, d.id, db) for d in docs)
-        )
-        tags = dict(zip(docs, tags))
+        tags_list = await asyncio.gather(*(get_user_file_tags(user_id, d.id, db) for d in docs))
+        tags = dict(zip(docs, tags_list))
 
     minimaps = None
     if with_minimap:
-        minimaps = await asyncio.gather(
-            *(get_file_section(d.id, "minimap", db) for d in docs)
-        )
-        minimaps = dict(zip(docs, minimaps))
+        minimaps_list = await asyncio.gather(*(get_file_section(d.id, "minimap", db) for d in docs))
+        minimaps = dict(zip(docs, minimaps_list))
 
     return [
         {
@@ -98,7 +93,7 @@ async def get_user_files(
 
 
 async def get_user_file(
-    user_id: int, doc_id: int, with_tags: bool, with_minimap: bool, db: Session
+    user_id: int, doc_id: int, with_tags: bool, with_minimap: bool, db: AsyncSession
 ):
     user = await get_user(user_id, db)
     if not user:

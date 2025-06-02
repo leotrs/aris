@@ -22,8 +22,9 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel, EmailStr
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from typing import AsyncGenerator
+
 
 from . import crud
 from .config import settings
@@ -33,24 +34,22 @@ load_dotenv()
 
 DB_URL_LOCAL = os.getenv("DB_URL_LOCAL")
 DB_URL_PROD = os.getenv("DB_URL_PROD")
-ENGINE = create_engine(DB_URL_PROD if os.getenv("ENV") == "PROD" else DB_URL_LOCAL)
-ArisSession = sessionmaker(autocommit=False, autoflush=False, bind=ENGINE)
+ENGINE = create_async_engine(DB_URL_PROD if os.getenv("ENV") == "PROD" else DB_URL_LOCAL)
+ArisSession = async_sessionmaker(ENGINE, expire_on_commit=False)
 
 
-def get_db():
+async def get_db() -> AsyncGenerator[AsyncSession, None]:
     """
     Provide a SQLAlchemy database session as a FastAPI dependency.
 
     Yields:
-        Session: A SQLAlchemy session connected to the configured database.
+        async_session: A SQLAlchemy async session connected to the configured database.
 
     Ensures the session is properly closed after use.
+
     """
-    db = ArisSession()
-    try:
-        yield db
-    finally:
-        db.close()
+    async with ArisSession() as async_session:
+        yield async_session
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
@@ -76,14 +75,14 @@ class UserRead(BaseModel):
 
 
 async def current_user(
-    token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)
+    token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
 ) -> UserRead:
     """Dependency that retrieves and validates the current authenticated user based on
     the provided OAuth2 Bearer token.
 
     Args:
         token (str): OAuth2 Bearer token extracted from the Authorization header.
-        db (Session): SQLAlchemy database session.
+        db (AsyncSession): SQLAlchemy database async session.
 
     Raises:
         HTTPException: If the token is invalid, missing, or the user does not exist.
@@ -100,10 +99,15 @@ async def current_user(
 
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
-        user_id: str = payload.get("sub")
-        if user_id is None:
+        user_id_str: str = payload.get("sub")
+        if user_id_str is None:
             raise credentials_exception
     except JWTError:
+        raise credentials_exception
+
+    try:
+        user_id: int = int(user_id_str)
+    except ValueError:
         raise credentials_exception
 
     user = await crud.get_user(user_id, db)

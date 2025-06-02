@@ -1,5 +1,5 @@
 import logging
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 import rsm
 
@@ -7,7 +7,7 @@ import rsm
 logger = logging.getLogger("RSM")
 
 
-async def render(src: str, db: Session):
+async def render(src: str, db: AsyncSession):
     try:
         result = rsm.render(src, handrails=True)
     except rsm.RSMApplicationError as e:

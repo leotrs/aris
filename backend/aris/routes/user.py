@@ -1,22 +1,20 @@
 from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel
 
 from .. import crud, get_db, current_user
 from ..models import File, User
 
-router = APIRouter(
-    prefix="/users", tags=["users"], dependencies=[Depends(current_user)]
-)
+router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(current_user)])
 
 
 # @router.get("")
-# async def get_users(db: Session = Depends(get_db)):
+# async def get_users(db: AsyncSession = Depends(get_db)):
 #     return await crud.get_users(db)
 
 
 @router.get("/{user_id}")
-async def get_user(user_id: int, db: Session = Depends(get_db)):
+async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
     user = await crud.get_user(user_id, db)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -33,18 +31,16 @@ class UserUpdate(BaseModel):
 async def update_user(
     user_id: int,
     update: UserUpdate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
-    user = await crud.update_user(
-        user_id, update.name, update.initials, update.email, db
-    )
+    user = await crud.update_user(user_id, update.name, update.initials, update.email, db)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
 
 
 @router.delete("/{user_id}")
-async def soft_delete_user(user_id: int, db: Session = Depends(get_db)):
+async def soft_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
     user = await crud.soft_delete_user(user_id, db)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -56,7 +52,7 @@ async def get_user_files(
     user_id: int,
     with_tags: bool = True,
     with_minimap: bool = True,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     return await crud.get_user_files(user_id, with_tags, with_minimap, db)
 
@@ -67,6 +63,6 @@ async def get_user_file(
     doc_id: int,
     with_tags: bool = True,
     with_minimap: bool = True,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     return await crud.get_user_file(user_id, doc_id, with_tags, with_minimap, db)

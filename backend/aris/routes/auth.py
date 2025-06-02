@@ -1,5 +1,6 @@
 from fastapi import APIRouter, HTTPException, Depends
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel, EmailStr
 
 from .. import get_db, current_user, jwt, crud
@@ -40,8 +41,11 @@ async def me(user: User = Depends(current_user)):
 
 
 @router.post("/login", response_model=Token)
-async def login(user_data: UserLogin, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.email == user_data.email).first()
+async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(User).where(User.email == user_data.email, User.deleted_at.is_(None))
+    )
+    user = result.scalars().first()
     if not user or not verify_password(user_data.password, user.password_hash):
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
@@ -51,8 +55,9 @@ async def login(user_data: UserLogin, db: Session = Depends(get_db)):
 
 
 @router.post("/register")
-async def register(user_data: UserCreate, db: Session = Depends(get_db)):
-    existing_user = db.query(User).filter(User.email == user_data.email).first()
+async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
+    result = await db.execute(select(User).where(User.email == user_data.email))
+    existing_user = result.scalars().first()
     if existing_user:
         raise HTTPException(status_code=409, detail="Email already registered.")
 
