@@ -16,7 +16,6 @@
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
   import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import ReaderTopbar from "./ReaderTopbar.vue";
-  import EditorTopbar from "./EditorTopbar.vue";
   import Dock from "./Dock.vue";
   import Drawer from "./Drawer.vue";
   import Editor from "./Editor.vue";
@@ -144,17 +143,13 @@
 
   // Responsiveness
   const mobileMode = inject("mobileMode");
-
-  // Editor topbar state
-  const editorTopbarActiveTabIndex = ref(0);
 </script>
 
 <template>
   <Suspense>
     <div class="outer" :class="{ focus: focusMode, mobile: mobileMode }">
       <div v-if="showEditor" class="inner left">
-        <EditorTopbar v-model="editorTopbarActiveTabIndex" />
-        <Editor v-model="file" :tab-index="editorTopbarActiveTabIndex" />
+        <Editor v-model="file" />
       </div>
 
       <div ref="inner-right-ref" class="inner right">

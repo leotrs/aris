@@ -49,16 +49,10 @@
       </Tabs>
     </div>
 
-    <div v-show="activeIndex == 0" class="source-middle">
-      <span class="word-count">{{ numWords }} words</span>
-    </div>
-    <div v-show="activeIndex == 1" class="files-middle">
-      <span></span>
-    </div>
-
     <div class="right">
       <transition name="fade-slide" mode="out-in">
         <div v-if="activeIndex == 0" key="source" class="source-right">
+          <span class="word-count">{{ numWords }} words</span>
           <Button kind="tertiary" size="sm" icon="Versions" />
           <Button kind="tertiary" size="sm" icon="Lifebuoy" />
           <Button kind="tertiary" size="sm" icon="Settings" />
@@ -112,6 +106,7 @@
     font-weight: 400;
     color: var(--gray-600);
     letter-spacing: 0.01em;
+    text-wrap: nowrap;
   }
 
   .source-right,
