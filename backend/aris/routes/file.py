@@ -1,9 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
+
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import crud, get_db, current_user
+from ..models import FileAsset
+from .file_assets import FileAssetOut
 
 router = APIRouter(prefix="/files", tags=["files"], dependencies=[Depends(current_user)])
 
@@ -120,3 +124,20 @@ async def get_file_section(
     except ValueError:
         raise HTTPException(status_code=404, detail=f"Section {section_name} not found")
     return HTMLResponse(content=html)
+
+
+@router.get("/{file_id}/assets", response_model=list[FileAssetOut])
+async def get_assets_for_file(
+    file_id: int,
+    db: AsyncSession = Depends(get_db),
+    user=Depends(current_user),
+):
+    result = await db.execute(
+        select(FileAsset).where(
+            FileAsset.file_id == file_id,
+            FileAsset.owner_id == user.id,
+            FileAsset.deleted_at.is_(None),
+        )
+    )
+    assets = result.scalars().all()
+    return assets
