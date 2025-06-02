@@ -41,7 +41,7 @@
 
 <template>
   <div class="editor">
-    <EditorTopbar v-model="tabIndex" @compile="onCompile" />
+    <EditorTopbar v-model="tabIndex" @compile="onCompile" @upload="onUpload" />
     <div class="content">
       <EditorSource
         v-if="tabIndex == 0"

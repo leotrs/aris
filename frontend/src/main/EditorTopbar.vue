@@ -1,24 +1,20 @@
 <script setup>
   import { ref, inject, watch } from "vue";
-
   const emit = defineEmits(["compile", "upload"]);
   const activeIndex = defineModel({ type: Number, required: true });
-
   const focusMode = inject("focusMode");
-  const mobileMode = inject("mobileMode");
   const file = inject("file");
 
+  // Word counter
+  const numWords = ref(0);
   const countWords = (text) => {
     if (!text || typeof text !== "string") return 0;
-
     // Match word characters (letters, numbers, underscores)
     const words = text.match(/\b\w+\b/g);
     return words ? words.length : 0;
   };
-
   const debouncedCounter = (() => {
     let timeoutId;
-
     return function countWordsDebounced(text, callback, delay = 200) {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
@@ -27,8 +23,6 @@
       }, delay);
     };
   })();
-
-  const numWords = ref(0);
   watch(
     () => file.value?.source,
     (newText) => {
@@ -38,6 +32,19 @@
     },
     { immediate: true }
   );
+
+  // Handle file selection
+  const fileInputRef = ref(null);
+  const selectedFile = ref(null);
+  const handleFileSelect = (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      selectedFile.value = file;
+      emit("upload", file);
+    }
+    event.target.value = "";
+  };
+  const openFileDialog = () => fileInputRef.value?.click();
 </script>
 
 <template>
@@ -48,7 +55,6 @@
         <TabPage />
       </Tabs>
     </div>
-
     <div class="right">
       <transition name="fade-slide" mode="out-in">
         <div v-if="activeIndex == 0" key="source" class="source-right">
@@ -59,7 +65,14 @@
           <Button kind="primary" size="sm" text="compile" class="cta" @click="emit('compile')" />
         </div>
         <div v-else key="files" class="files-right">
-          <Button kind="primary" size="sm" text="New File" class="cta" @click="emit('upload')" />
+          <input
+            ref="fileInputRef"
+            type="file"
+            style="display: none"
+            multiple
+            @change="handleFileSelect"
+          />
+          <Button kind="primary" size="sm" text="New File" class="cta" @click="openFileDialog" />
         </div>
       </transition>
     </div>
@@ -71,7 +84,6 @@
     --outer-padding: 8px;
     --sidebar-width: 64px;
     --links-width: 151px;
-
     position: relative;
     display: flex;
     align-items: center;
