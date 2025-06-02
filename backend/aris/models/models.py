@@ -1,5 +1,4 @@
-"""
-models.py
+"""All Aris database models.
 
 This module defines the SQLAlchemy ORM models for the Aris platform, including users,
 files, associated metadata such as tags, and private user-uploaded file assets (images,
@@ -119,9 +118,7 @@ file_tags = Table(
 
 
 class FileStatus(enum.Enum):
-    """
-    Enum representing the publication status of a research file.
-    """
+    """Enum representing the publication status of a research file."""
 
     DRAFT = "Draft"
     UNDER_REVIEW = "Under Review"
@@ -129,8 +126,7 @@ class FileStatus(enum.Enum):
 
 
 class File(Base):
-    """
-    Represents a research file with RSM source and associated metadata.
+    """A research file with RSM source and associated metadata.
 
     Attributes
     ----------
@@ -184,8 +180,7 @@ class File(Base):
 
 
 class Tag(Base):
-    """
-    Represents a user-defined tag for organizing research files.
+    """A user-defined tag for organizing research files.
 
     Attributes
     ----------
@@ -221,8 +216,7 @@ class Tag(Base):
 
 
 class FileAsset(Base):
-    """
-    Represents a private user-uploaded file associated with a File.
+    """A private user-uploaded file associated with a File.
 
     Used for storing supporting assets such as images, data files, or text snippets.
     Visibility is restricted to the owning user.
