@@ -10,13 +10,16 @@
 
   /* Selected file */
   const filesRef = useTemplateRef("files-ref");
-  const numFiles = computed(() => fileStore.value?.numFiles?.value ?? 0);
+  const numFiles = computed(() => {
+    return fileStore.value?.files?.filter((file) => !file.filtered).length ?? 0;
+  });
   const { activeIndex } = useListKeyboardNavigation(numFiles, filesRef, true);
   watch(activeIndex, (newVal) => {
     const currentFocused = fileStore.value.files.filter((d) => d.focused);
     currentFocused.forEach((d) => (d.focused = false));
     if (newVal === null) return;
-    fileStore.value.files.value[newVal].focused = true;
+    const visibleFiles = fileStore.value.files.filter((file) => !file.filtered);
+    if (visibleFiles[newVal]) visibleFiles[newVal].focused = true;
   });
 
   /* Breakpoints */
