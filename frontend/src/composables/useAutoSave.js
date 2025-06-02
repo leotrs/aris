@@ -23,27 +23,28 @@ export function useAutoSave({
       saveStatus.value = "saved";
 
       setTimeout(() => {
-        if (saveStatus.value === "saved") {
-          saveStatus.value = "idle";
-        }
+        if (saveStatus.value === "saved") saveStatus.value = "idle";
       }, 3000);
     } catch (error) {
       console.error("Error saving file:", error);
       saveStatus.value = "error";
       setTimeout(() => {
-        if (saveStatus.value === "error") {
-          saveStatus.value = "pending";
-        }
+        if (saveStatus.value === "error") saveStatus.value = "pending";
       }, 5000);
     }
   }
 
   // Handle input with debounce
-  function onInput(e) {
+  async function onInput(e) {
     file.value.source = e.target.value;
     saveStatus.value = "pending";
     if (debounceTimeout.value) clearTimeout(debounceTimeout.value);
-    debounceTimeout.value = setTimeout(() => { saveFile(); compileFunction(); }, debounceTime);
+    debounceTimeout.value = setTimeout(
+      () => {
+        saveFile();
+        compileFunction();
+      },
+      debounceTime);
   }
 
   // Manual save (for keyboard shortcuts)

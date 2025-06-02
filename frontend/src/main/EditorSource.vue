@@ -1,21 +1,18 @@
 <script setup>
   import { inject, useTemplateRef } from "vue";
-  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import { useAutoSave } from "@/composables/useAutoSave.js";
-  import { File } from "../File.js";
   import Toolbar from "./EditorToolbar.vue";
   import StatusBar from "./EditorStatusBar.vue";
 
-  const props = defineProps({});
+  const props = defineProps({ saveStatus: { type: String, required: true } });
+  const emit = defineEmits(["input"]);
   const file = defineModel({ type: Object, required: true });
-  const editorRef = useTemplateRef("editor-ref");
-  const api = inject("api");
+  const textareaRef = useTemplateRef("editor-ref");
 
   // Toolbar functions
   const onInsert = (text) => {
-    if (!editorRef.value) return;
+    if (!textareaRef.value) return;
     console.log("insert", text);
-    const textarea = editorRef.value;
+    const textarea = textareaRef.value;
 
     const start = textarea.selectionStart;
     const end = textarea.selectionEnd;
@@ -27,33 +24,16 @@
     textarea.selectionStart = textarea.selectionEnd = cursor;
     textarea.focus();
   };
-  const onCompile = async () => {
-    const response = await api.post("render", { source: file.value.source });
-    file.value.html = response.data;
-  };
 
-  // File saving
-  const saveFile = async (fileToSave) => {
-    await File.update(fileToSave, { source: file.value.source });
-  };
-  const { saveStatus, onInput, manualSave } = useAutoSave({
-    file,
-    saveFunction: saveFile,
-    compileFunction: onCompile,
-  });
-
-  // Keys
-  const onEscape = () => editorRef.value === document.activeElement && editorRef.value.blur();
-  const onSaveShortcut = () => manualSave();
-  useKeyboardShortcuts({
-    escape: onEscape,
-    s: onSaveShortcut,
+  // Expose
+  defineExpose({
+    value: () => textareaRef.value.value,
   });
 </script>
 
 <template>
   <div class="text-mono">
-    <Toolbar @compile="onCompile" @insert="onInsert" />
+    <Toolbar @insert="onInsert" />
 
     <textarea
       ref="editor-ref"
@@ -63,8 +43,8 @@
       autocomplete="off"
       autocorrect="off"
       autocapitalize="off"
-      @input="onInput"
-    ></textarea>
+      @input="(e) => emit('input', e)"
+    />
     <StatusBar :save-status="saveStatus" />
   </div>
 </template>
