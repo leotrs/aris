@@ -2,6 +2,8 @@
   import { ref, inject, watch } from "vue";
 
   const emit = defineEmits(["compile"]);
+  const activeIndex = defineModel({ type: Number, required: true });
+
   const focusMode = inject("focusMode");
   const mobileMode = inject("mobileMode");
   const file = inject("file");
@@ -41,7 +43,7 @@
 <template>
   <div class="tb-wrapper" :class="{ focus: focusMode }">
     <div class="left">
-      <Tabs :labels="['Source', 'Files']" :icons="['Code', 'Files']">
+      <Tabs v-model="activeIndex" :labels="['Source', 'Files']" :icons="['Code', 'Files']">
         <TabPage />
         <TabPage />
       </Tabs>
