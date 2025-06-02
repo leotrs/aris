@@ -11,7 +11,7 @@
   /* Search */
   const fileStore = inject("fileStore");
   const onSearchSubmit = (searchString) => {
-    fileStore.value.clearFilterFiles();
+    fileStore.value.clearFilters();
     fileStore.value.filterFiles(
       (file) => !file.title.toLowerCase().includes(searchString.toLowerCase())
     );

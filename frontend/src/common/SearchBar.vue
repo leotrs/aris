@@ -45,7 +45,7 @@
       v-model="searchText"
       type="text"
       placeholder="Search..."
-      @keyup.enter="onEnter"
+      @keyup.enter.stop="onEnter"
       @keyup.escape="onEscape"
       @click.stop
       @dblclick.stop

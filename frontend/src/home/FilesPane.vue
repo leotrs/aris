@@ -10,18 +10,17 @@
 
   /* Selected file */
   const filesRef = useTemplateRef("files-ref");
-  const numFiles = computed(() => {
-    return fileStore.value?.files?.filter((file) => !file.filtered).length ?? 0;
-  });
+  const visibleFiles = computed(
+    () => fileStore.value?.files?.filter((file) => !file.filtered) ?? []
+  );
+  const numFiles = computed(() => visibleFiles.value.length);
   const { activeIndex } = useListKeyboardNavigation(numFiles, filesRef, true);
   watch(activeIndex, (newVal) => {
     const currentFocused = fileStore.value.files.filter((d) => d.focused);
     currentFocused.forEach((d) => (d.focused = false));
     if (newVal === null) return;
-    const visibleFiles = fileStore.value.files.filter((file) => !file.filtered);
-    if (visibleFiles[newVal]) visibleFiles[newVal].focused = true;
+    if (visibleFiles.value[newVal]) visibleFiles.value[newVal].focused = true;
   });
-
   /* Breakpoints */
   const xsMode = inject("xsMode");
   const gridTemplateColumns = computed(() => {
