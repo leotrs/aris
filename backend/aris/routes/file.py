@@ -5,9 +5,7 @@ from sqlalchemy.orm import Session
 
 from .. import crud, get_db, current_user
 
-router = APIRouter(
-    prefix="/files", tags=["files"], dependencies=[Depends(current_user)]
-)
+router = APIRouter(prefix="/files", tags=["files"], dependencies=[Depends(current_user)])
 
 
 def _validate_source(model):
@@ -57,9 +55,7 @@ async def create_file(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    result = await crud.create_file(
-        doc.source, doc.owner_id, doc.title, doc.abstract, db
-    )
+    result = await crud.create_file(doc.source, doc.owner_id, doc.title, doc.abstract, db)
     return {"id": result.id}
 
 
