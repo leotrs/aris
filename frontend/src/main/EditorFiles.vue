@@ -1,5 +1,6 @@
 <script setup>
   import { ref, inject, onMounted } from "vue";
+  import EditorFilesItem from "./EditorFilesItem.vue";
 
   const props = defineProps({});
   const file = defineModel({ type: Object, required: true });
@@ -30,7 +31,7 @@
 
 <template>
   <div class="files">
-    {{ assets }}
+    <EditorFilesItem v-for="(asset, idx) in assets" v-model="assets[idx]" />
   </div>
 </template>
 

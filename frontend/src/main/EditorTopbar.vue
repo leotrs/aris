@@ -1,7 +1,7 @@
 <script setup>
   import { ref, inject, watch } from "vue";
 
-  const emit = defineEmits(["compile"]);
+  const emit = defineEmits(["compile", "upload"]);
   const activeIndex = defineModel({ type: Number, required: true });
 
   const focusMode = inject("focusMode");
@@ -48,14 +48,26 @@
         <TabPage />
       </Tabs>
     </div>
-    <div v-if="!mobileMode" class="middle">
+
+    <div v-show="activeIndex == 0" class="source-middle">
       <span class="word-count">{{ numWords }} words</span>
     </div>
+    <div v-show="activeIndex == 1" class="files-middle">
+      <span></span>
+    </div>
+
     <div class="right">
-      <Button kind="tertiary" size="sm" icon="Versions" />
-      <Button kind="tertiary" size="sm" icon="Lifebuoy" />
-      <Button kind="tertiary" size="sm" icon="Settings" />
-      <Button kind="primary" size="sm" text="compile" class="cta" @click="emit('compile')" />
+      <transition name="fade-slide" mode="out-in">
+        <div v-if="activeIndex == 0" key="source" class="source-right">
+          <Button kind="tertiary" size="sm" icon="Versions" />
+          <Button kind="tertiary" size="sm" icon="Lifebuoy" />
+          <Button kind="tertiary" size="sm" icon="Settings" />
+          <Button kind="primary" size="sm" text="compile" class="cta" @click="emit('compile')" />
+        </div>
+        <div v-else key="files" class="files-right">
+          <Button kind="primary" size="sm" text="New File" class="cta" @click="emit('upload')" />
+        </div>
+      </transition>
     </div>
   </div>
 </template>
@@ -102,15 +114,38 @@
     letter-spacing: 0.01em;
   }
 
-  .right {
-    display: flex;
-    gap: 4px;
-    height: 100%;
-    padding-block: 8px;
-  }
-
-  .right .version {
+  .source-right,
+  .files-right {
     display: flex;
     align-items: center;
+    gap: 8px;
+  }
+
+  .right {
+    position: relative;
+    height: 32px;
+  }
+
+  .fade-slide-enter-active,
+  .fade-slide-leave-active {
+    position: absolute;
+    right: 0;
+    transition: all 0.3s ease-out;
+  }
+
+  .fade-slide-enter-from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  .fade-slide-leave-to {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+
+  .fade-slide-enter-to,
+  .fade-slide-leave-from {
+    opacity: 1;
+    transform: translateX(0);
   }
 </style>
