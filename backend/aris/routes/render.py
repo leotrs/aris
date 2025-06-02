@@ -1,7 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Depends
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import crud, get_db
 
@@ -13,5 +12,5 @@ class RenderObject(BaseModel):
 
 
 @router.post("")
-async def render(data: RenderObject, db: Session = Depends(get_db)):
+async def render(data: RenderObject, db: AsyncSession = Depends(get_db)):
     return await crud.render(data.source, db)

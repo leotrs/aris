@@ -2,37 +2,37 @@ import asyncio
 from datetime import datetime
 
 import rsm
-from sqlalchemy.orm import Session
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import File, FileStatus, Tag, file_tags
+from ..models import File, FileStatus, file_tags
 from .utils import extract_section, extract_title
 
 
-async def get_files(db: Session):
-    docs = db.query(File).filter(File.deleted_at.is_(None)).all()
-    titles = await asyncio.gather(*(extract_title(d) for d in docs))
-    for doc, title in zip(docs, titles):
-        doc.title = title
-    return docs
+async def get_files(db: AsyncSession):
+    result = await db.execute(select(File).where(File.deleted_at.is_(None)))
+    files = result.scalars().all()
+    titles = await asyncio.gather(*(extract_title(f) for f in files))
+    for file, title in zip(files, titles):
+        file.title = title
+    return files
 
 
-async def get_file(doc_id: int, db: Session):
-    doc = db.query(File).filter(File.id == doc_id, File.deleted_at.is_(None)).first()
-    if doc:
-        doc.title = await extract_title(doc)
-    return doc
+async def get_file(file_id: int, db: AsyncSession):
+    result = await db.execute(select(File).where(File.id == file_id, File.deleted_at.is_(None)))
+    file = result.scalars().first()
+    if file:
+        file.title = await extract_title(file)
+    return file
 
 
-async def get_file_html(doc_id: int, db: Session):
-    result = (
-        db.query(File.source)
-        .filter(File.id == doc_id, File.deleted_at.is_(None))
-        .first()
+async def get_file_html(file_id: int, db: AsyncSession):
+    result = await db.execute(
+        select(File.source).where(File.id == file_id, File.deleted_at.is_(None))
     )
-    if result:
-        src = result[0]
-    else:
-        return src
+    src = result.scalars().first()
+    if not src:
+        return None
 
     return rsm.render(src, handrails=True)
 
@@ -42,80 +42,79 @@ async def create_file(
     owner_id: int,
     title: str = "",
     abstract: str = "",
-    db: Session = None,
+    db: AsyncSession = None,
 ):
-    doc = File(
+    file = File(
         title=title,
         abstract=abstract,
         owner_id=owner_id,
         source=source,
         status=FileStatus.DRAFT,
     )
-    doc.last_edited_at = datetime.utcnow()
-    db.add(doc)
-    db.commit()
-    db.refresh(doc)
-    return doc
+    file.last_edited_at = datetime.utcnow()
+    db.add(file)
+    await db.commit()
+    await db.refresh(file)
+    return file
 
 
 async def update_file(
-    doc_id: int,
+    file_id: int,
     title: str,
     source: str,
-    db: Session,
+    db: AsyncSession,
 ):
-    doc = await get_file(doc_id, db)
-    if not doc:
+    file = await get_file(file_id, db)
+    if not file:
         return None
 
-    doc.title = title
-    doc.source = source
-    doc.last_edited_at = datetime.utcnow()
-    db.commit()
-    db.refresh(doc)
-    return doc
+    file.title = title
+    file.source = source
+    file.last_edited_at = datetime.utcnow()
+    await db.commit()
+    await db.refresh(file)
+    return file
 
 
-async def soft_delete_file(doc_id: int, db: Session):
-    doc = await get_file(doc_id, db)
-    if not doc:
+async def soft_delete_file(file_id: int, db: AsyncSession):
+    file = await get_file(file_id, db)
+    if not file:
         return None
-    doc.deleted_at = datetime.utcnow()
-    db.commit()
-    return {"message": f"File {doc_id} soft deleted"}
+    file.deleted_at = datetime.utcnow()
+    await db.commit()
+    return {"message": f"File {file_id} soft deleted"}
 
 
-async def duplicate_file(doc_id: int, db: Session):
-    original = await get_file(doc_id, db)
+async def duplicate_file(file_id: int, db: AsyncSession):
+    original = await get_file(file_id, db)
     if not original or original.deleted_at:
         raise ValueError("File not found")
 
-    new_doc = File(
+    new_file = File(
         title=f"{original.title} (copy)",
         source=original.source,
         owner_id=original.owner_id,
         last_edited_at=datetime.utcnow(),
     )
-    db.add(new_doc)
-    db.flush()
+    db.add(new_file)
+    await db.flush()
 
-    tag_ids = db.execute(
-        file_tags.select().where(file_tags.c.file_id == doc_id)
-    ).fetchall()
-    db.execute(
+    tag_ids = await db.execute(file_tags.select().where(file_tags.c.file_id == file_id)).fetchall()
+    await db.execute(
         file_tags.insert(),
-        [{"file_id": new_doc.id, "tag_id": tag.tag_id} for tag in tag_ids],
+        [{"file_id": new_file.id, "tag_id": tag.tag_id} for tag in tag_ids],
     )
-    db.commit()
+    await db.commit()
 
-    return new_doc
+    return new_file
 
 
 async def get_file_section(
-    doc_id: int, section_name: str, db: Session, handrails: bool = True
+    file_id: int, section_name: str, db: AsyncSession, handrails: bool = True
 ):
-    doc = db.query(File).filter(File.id == doc_id).first()
-    if not doc:
-        raise ValueError(f"File {doc_id} not found")
-    html = await extract_section(doc, section_name, handrails)
+    result = await db.execute(select(File).where(File.id == file_id))
+    file = result.scalars().first()
+    if not file:
+        raise ValueError(f"File {file_id} not found")
+    html = await extract_section(file, section_name, handrails)
     return html or ""

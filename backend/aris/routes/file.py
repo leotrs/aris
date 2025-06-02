@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import crud, get_db, current_user
 
@@ -41,14 +41,14 @@ class FileUpdate(BaseModel):
 
 
 @router.get("")
-async def get_files(db: Session = Depends(get_db)):
+async def get_files(db: AsyncSession = Depends(get_db)):
     return await crud.get_files(db)
 
 
 @router.post("")
 async def create_file(
     doc: FileCreate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     try:
         doc.validate_source()
@@ -60,7 +60,7 @@ async def create_file(
 
 
 @router.get("/{doc_id}")
-async def get_file(doc_id: int, db: Session = Depends(get_db)):
+async def get_file(doc_id: int, db: AsyncSession = Depends(get_db)):
     doc = await crud.get_file(doc_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
@@ -78,7 +78,7 @@ async def get_file(doc_id: int, db: Session = Depends(get_db)):
 async def update_file(
     doc_id: int,
     file_data: FileUpdate,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     doc = await crud.update_file(doc_id, file_data.title, file_data.source, db)
     if not doc:
@@ -87,7 +87,7 @@ async def update_file(
 
 
 @router.delete("/{doc_id}")
-async def soft_delete_file(doc_id: int, db: Session = Depends(get_db)):
+async def soft_delete_file(doc_id: int, db: AsyncSession = Depends(get_db)):
     doc = await crud.soft_delete_file(doc_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
@@ -95,13 +95,13 @@ async def soft_delete_file(doc_id: int, db: Session = Depends(get_db)):
 
 
 @router.post("/{doc_id}/duplicate")
-async def duplicate_file(doc_id: int, db: Session = Depends(get_db)):
+async def duplicate_file(doc_id: int, db: AsyncSession = Depends(get_db)):
     new_doc = await crud.duplicate_file(doc_id, db)
     return {"id": new_doc.id, "message": "File duplicated successfully"}
 
 
 @router.get("/{doc_id}/content", response_class=HTMLResponse)
-async def get_file_html(doc_id: int, db: Session = Depends(get_db)):
+async def get_file_html(doc_id: int, db: AsyncSession = Depends(get_db)):
     doc = await crud.get_file_html(doc_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
@@ -113,7 +113,7 @@ async def get_file_section(
     doc_id: int,
     section_name: str,
     handrails: bool = True,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_db),
 ):
     try:
         html = await crud.get_file_section(doc_id, section_name, db, handrails)

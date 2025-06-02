@@ -19,6 +19,8 @@ dependencies = [
     "pydantic[email]>=2.11.1",
     "bcrypt>=4.3.0",
     "python-dotenv>=1.1.0",
+    "asyncpg>=0.30.0",
+    "greenlet>=3.1.1",
 ]
 
 
@@ -28,3 +30,12 @@ package-dir = {"" = "."}
 
 [tool.ruff]
 extend-select = ["I"]    # Enable import sorting
+line-length = 100
+
+
+[tool.pylsp.plugins.pycodestyle]
+max_line_length = 100
+
+
+[tool.pylsp.plugins.flake8]
+enabled = false
