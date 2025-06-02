@@ -144,14 +144,17 @@
 
   // Responsiveness
   const mobileMode = inject("mobileMode");
+
+  // Editor topbar state
+  const editorTopbarActiveTabIndex = ref(0);
 </script>
 
 <template>
   <Suspense>
     <div class="outer" :class="{ focus: focusMode, mobile: mobileMode }">
       <div v-if="showEditor" class="inner left">
-        <EditorTopbar />
-        <Editor v-model="file" />
+        <EditorTopbar v-model="editorTopbarActiveTabIndex" />
+        <Editor v-model="file" :tab-index="editorTopbarActiveTabIndex" />
       </div>
 
       <div ref="inner-right-ref" class="inner right">
