@@ -34,17 +34,17 @@
   );
 
   // Handle file selection
-  const fileInputRef = ref(null);
-  const selectedFile = ref(null);
-  const handleFileSelect = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      selectedFile.value = file;
-      emit("upload", file);
+  const assetInputRef = ref(null);
+  const selectedAsset = ref(null);
+  const handleAssetSelect = (event) => {
+    const asset = event.target.files[0];
+    if (asset) {
+      selectedAsset.value = asset;
+      emit("upload", asset);
     }
     event.target.value = "";
   };
-  const openFileDialog = () => fileInputRef.value?.click();
+  const openAssetDialog = () => assetInputRef.value?.click();
 </script>
 
 <template>
@@ -66,13 +66,13 @@
         </div>
         <div v-else key="files" class="files-right">
           <input
-            ref="fileInputRef"
+            ref="assetInputRef"
             type="file"
             style="display: none"
             multiple
-            @change="handleFileSelect"
+            @change="handleAssetSelect"
           />
-          <Button kind="primary" size="sm" text="New File" class="cta" @click="openFileDialog" />
+          <Button kind="primary" size="sm" text="New File" class="cta" @click="openAssetDialog" />
         </div>
       </transition>
     </div>

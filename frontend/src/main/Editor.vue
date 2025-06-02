@@ -28,10 +28,45 @@
     compileFunction: onCompile,
   });
 
+  // File asset upload
+  const fileToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        // Remove the data:mime/type;base64, prefix
+        const base64 = reader.result.split(",")[1];
+        resolve(base64);
+      };
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const onUpload = async (asset) => {
+    console.log("upload", asset);
+
+    try {
+      const base64Content = await fileToBase64(asset);
+
+      const payload = {
+        filename: asset.name,
+        mime_type: asset.type,
+        content: base64Content,
+        file_id: file.value.id,
+      };
+
+      const response = await api.post("/assets", payload);
+      const result = response.data;
+      console.log("File uploaded successfully:", result);
+    } catch (error) {
+      console.error("Error uploading asset:", error);
+    }
+  };
+
   // Keys
-  const editorSourceRref = useTemplateRef("editor-source-ref");
+  const editorSourceRef = useTemplateRef("editor-source-ref");
   const onEscape = () =>
-    editorSourceRref.value === document.activeElement && editorSourceRref.value.blur();
+    editorSourceRef.value === document.activeElement && editorSourceRef.value.blur();
   const onSaveShortcut = () => manualSave();
   useKeyboardShortcuts({
     escape: onEscape,
