@@ -30,12 +30,26 @@
 </script>
 
 <template>
+  <div class="header">
+    <span>File Name</span>
+    <span>Uploaded at</span>
+  </div>
   <div class="files">
     <EditorFilesItem v-for="(asset, idx) in assets" :key="asset" v-model="assets[idx]" />
   </div>
 </template>
 
 <style scoped>
+  .header {
+    background-color: var(--gray-75);
+    height: 32px;
+    padding: 8px;
+    display: flex;
+    gap: 8px;
+    justify-content: space-between;
+    border-bottom: var(--border-extrathin) solid var(--border-primary);
+  }
+
   .files {
     height: 100%;
   }
