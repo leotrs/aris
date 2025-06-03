@@ -52,7 +52,7 @@
       </button>
 
       <Tooltip
-        v-if="tooltips && tooltips[idx - 1]"
+        v-if="tooltips && tooltips[idx - 1] && buttonRefs[idx - 1]"
         :anchor="buttonRefs[idx - 1]"
         :content="tooltips[idx - 1]"
       />
