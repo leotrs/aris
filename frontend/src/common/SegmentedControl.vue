@@ -1,10 +1,11 @@
 <script setup>
-  import { computed, onMounted } from "vue";
+  import { computed, onMounted, ref } from "vue";
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
     icons: { type: Array, default: null },
     labels: { type: Array, default: null },
+    tooltips: { type: Array, default: null },
     defaultActive: { type: Number, default: -1 },
   });
 
@@ -26,6 +27,11 @@
     }
   });
 
+  const buttonRefs = ref([]);
+  const setButtonRef = (el, index) => {
+    if (el) buttonRefs.value[index] = el;
+  };
+
   const active = defineModel({ type: Number, default: -1 });
   onMounted(() => (active.value = props.defaultActive));
   const click = (idx) => (active.value = idx);
@@ -33,8 +39,9 @@
 
 <template>
   <div class="sc-wrapper">
-    <template v-for="idx in numItems">
+    <template v-for="idx in numItems" :key="`segment-${idx}`">
       <button
+        :ref="(el) => setButtonRef(el, idx - 1)"
         type="button"
         class="sc-item sc-btn"
         :class="{ active: idx - 1 == active }"
@@ -43,6 +50,12 @@
         <component :is="Icons['Icon' + icons[idx - 1]]" v-if="icons" class="sc-icon" />
         <span v-if="labels" class="sc-label text-default">{{ labels[idx - 1] }}</span>
       </button>
+
+      <Tooltip
+        v-if="tooltips && tooltips[idx - 1]"
+        :anchor="buttonRefs[idx - 1]"
+        :content="tooltips[idx - 1]"
+      />
     </template>
   </div>
 </template>
@@ -56,7 +69,6 @@
 
   .sc-item {
     --padding-inline: 10px;
-
     padding-block: 6px;
     display: flex;
     align-items: center;
@@ -117,7 +129,6 @@
     &:focus-visible {
       background-color: var(--surface-hover);
       outline-offset: var(--border-extrathin);
-
       & > .sc-icon {
         color: var(--dark);
       }
