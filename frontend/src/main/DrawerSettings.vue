@@ -4,20 +4,27 @@
 
   const props = defineProps({ file: { type: Object, default: () => {} } });
 
-  const colors = {
+  const bgColors = {
     white: "var(--surface-page)",
     gray: "var(--gray-75)",
     orange: "var(--orange-50)",
     green: "var(--green-50)",
-    blue: "var(--blue-50)",
+  };
+
+  const fgColors = {
+    blue: "var(--blue-500)",
+    purple: "var(--purple-500)",
+    orange: "var(--orange-500)",
+    green: "var(--green-500)",
   };
 
   const fileSettings = inject("fileSettings");
   const onChangeBackground = (colorName) => {
-    fileSettings.background = colors[colorName];
+    fileSettings.background = bgColors[colorName];
   };
 
-  const onSizeChange = (idx) => {
+  const fontSize = ref("16px");
+  watch(fontSize, (idx) => {
     if (idx === 0) {
       fileSettings.fontSize = "14px";
     } else if (idx === 1) {
@@ -25,9 +32,10 @@
     } else if (idx === 2) {
       fileSettings.fontSize = "18px";
     }
-  };
+  });
 
-  const onDensityChange = (idx) => {
+  const lineHeight = ref("1.5");
+  watch(lineHeight, (idx) => {
     if (idx === 0) {
       fileSettings.lineHeight = "1.2";
     } else if (idx === 1) {
@@ -35,13 +43,13 @@
     } else if (idx === 2) {
       fileSettings.lineHeight = "1.8";
     }
-  };
+  });
 
-  const styleControlState = ref(0);
-  watch(styleControlState, (newVal) => {
-    if (newVal == 0) {
+  const fontFamily = ref(0);
+  watch(fontFamily, (idx) => {
+    if (idx == 0) {
       fileSettings.fontFamily = "Source Sans 3";
-    } else if (newVal == 1) {
+    } else if (idx == 1) {
       fileSettings.fontFamily = "Source Serif 4";
     }
   });
@@ -52,25 +60,23 @@
     <div class="content">
       <div class="sec">
         <div class="sec-header">
-          <span class="text-h5">Theme</span>
+          <span class="text-h5">Colors</span>
         </div>
         <div class="s-content">
           <div class="row theme">
+            <span class="label">Theme</span>
             <span class="control">
               <ThemeSwitch :labels="true" />
             </span>
           </div>
-        </div>
-      </div>
-
-      <div class="sec">
-        <div class="sec-header">
-          <span class="text-h5">Background</span>
-        </div>
-        <div class="s-content">
-          <div class="row">
-            <ColorPicker :colors="colors" @change="onChangeBackground" />
+          <div class="row bg">
+            <span class="label">Background</span>
+            <ColorPicker :colors="bgColors" @change="onChangeBackground" />
           </div>
+          <!-- <div class="row accent">
+               <span class="label">Accent</span>
+               <ColorPicker :colors="fgColors" @change="onChangeBackground" />
+               </div> -->
         </div>
       </div>
 
@@ -83,6 +89,7 @@
             <span class="label">Size</span>
             <span class="control">
               <SegmentedControl
+                v-model="fontSize"
                 :icons="['TextDecrease', 'LetterA', 'TextIncrease']"
                 :labels="['small', 'normal', 'large']"
                 :tooltips="['base size: 14px', 'base size: 16px', 'base size: 18px']"
@@ -94,6 +101,7 @@
             <span class="label">Density</span>
             <span class="control">
               <SegmentedControl
+                v-model="lineHeight"
                 :labels="['tight', 'normal', 'roomy']"
                 :icons="['BaselineDensitySmall', 'BaselineDensityMedium', 'BaselineDensityLarge']"
                 :tooltips="['line height: 1.2', 'line height: 1.5', 'line height: 1.8']"
@@ -105,7 +113,7 @@
             <span class="label">Style</span>
             <span class="control">
               <SegmentedControl
-                v-model="styleControlState"
+                v-model="fontFamily"
                 :labels="['Sans', 'Serif']"
                 :tooltips="['Source Sans 3', 'Charter']"
                 :default-active="0"
@@ -175,7 +183,7 @@
       height: 40px;
       border-bottom: 2px solid var(--border-primary);
       padding-inline: 8px;
-      background-color: var(--blue-50);
+      background-color: var(--gray-200);
       border-radius: 8px 8px 0 0;
       display: flex;
       align-items: center;
@@ -252,6 +260,10 @@
     & :deep(.sc-btn) {
       padding-inline: 2px 8px !important;
     }
+  }
+
+  :is(.bg, .accent) .label {
+    width: 96px !important;
   }
 
   .style {
