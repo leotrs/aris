@@ -1,24 +1,11 @@
 <script setup>
-  import { ref, inject, watch } from "vue";
+  import { ref, inject, watch, computed } from "vue";
+  import { useSnakeCase } from "@/composables/useCasing.js";
 
   const props = defineProps({
     file: { type: Object, default: () => {} },
     active: { type: Boolean, required: true },
   });
-
-  const bgColors = {
-    white: "var(--surface-page)",
-    gray: "var(--gray-75)",
-    orange: "var(--orange-50)",
-    green: "var(--green-50)",
-  };
-
-  const fgColors = {
-    blue: "var(--blue-500)",
-    purple: "var(--purple-500)",
-    orange: "var(--orange-500)",
-    green: "var(--green-500)",
-  };
 
   // Sync UI with fileSettings object
   const fileSettings = inject("fileSettings");
@@ -26,43 +13,75 @@
     fileSettings.background = bgColors[colorName];
   };
 
-  const fontSize = ref(fileSettings.fontSize);
+  // All available options
+  const bgColors = {
+    white: "var(--surface-page)",
+    gray: "var(--gray-75)",
+    orange: "var(--orange-50)",
+    green: "var(--green-50)",
+  };
+  const fgColors = {
+    blue: "var(--blue-500)",
+    purple: "var(--purple-500)",
+    orange: "var(--orange-500)",
+    green: "var(--green-500)",
+  };
   const fontSizeOptions = ["14px", "16px", "18px"];
-  watch(fontSize, (idx) => (fileSettings.fontSize = fontSizeOptions[idx]));
-
-  const lineHeight = ref(fileSettings.lineHeight);
   const lineHeightOptions = ["1.2", "1.5", "1.8"];
-  watch(lineHeight, (idx) => (fileSettings.lineHeight = lineHeightOptions[idx]));
-
-  const fontFamily = ref(fileSettings.fontFamily);
   const fontFamilyOptions = ["Source Sans 3", "Source Serif 4"];
-  watch(fontFamily, (idx) => (fileSettings.fontFamily = fontFamilyOptions[idx]));
-
-  const marginWidth = ref(fileSettings.marginWidth);
   const marginWidthOptions = ["0px", "16px", "64px"];
-  watch(marginWidth, (idx) => (fileSettings.marginWidth = marginWidthOptions[idx]));
 
-  // Buttons: cancel and save
+  watch(fileSettings, (newVal) => console.log(newVal));
+
+  // Computed properties for two-way binding between indices and actual values
+  const fontSize = computed({
+    get: () => fontSizeOptions.indexOf(fileSettings.fontSize),
+    set: (index) => {
+      if (index >= 0 && index < fontSizeOptions.length) {
+        fileSettings.fontSize = fontSizeOptions[index];
+      }
+    },
+  });
+
+  const lineHeight = computed({
+    get: () => lineHeightOptions.indexOf(fileSettings.lineHeight),
+    set: (index) => {
+      if (index >= 0 && index < lineHeightOptions.length) {
+        fileSettings.lineHeight = lineHeightOptions[index];
+      }
+    },
+  });
+
+  const fontFamily = computed({
+    get: () => fontFamilyOptions.indexOf(fileSettings.fontFamily),
+    set: (index) => {
+      if (index >= 0 && index < fontFamilyOptions.length) {
+        fileSettings.fontFamily = fontFamilyOptions[index];
+      }
+    },
+  });
+
+  const marginWidth = computed({
+    get: () => marginWidthOptions.indexOf(fileSettings.marginWidth),
+    set: (index) => {
+      if (index >= 0 && index < marginWidthOptions.length) {
+        fileSettings.marginWidth = marginWidthOptions[index];
+      }
+    },
+  });
+
+  // Buttons: reset and save
   const oldSettings = {};
   watch(
     () => props.active,
-    (newVal) => {
-      if (newVal) Object.assign(oldSettings, fileSettings);
-    }
+    (isActive) => isActive && Object.assign(oldSettings, fileSettings)
   );
-  const onReset = () => {
-    Object.assign(fileSettings, oldSettings);
-    fontSize.value = fontSizeOptions.indexOf(oldSettings.fontSize);
-    lineHeight.value = lineHeightOptions.indexOf(oldSettings.lineHeight);
-    fontFamily.value = fontFamilyOptions.indexOf(oldSettings.fontFamily);
-    marginWidth.value = marginWidthOptions.indexOf(oldSettings.marginWidth);
-    console.log(fontSize.value);
-  };
-
+  const onReset = () => Object.assign(fileSettings, oldSettings);
   const api = inject("api");
+
   const onSave = () => {
-    console.log("save");
-    api.post(`/settings/${props.file.id}`, fileSettings);
+    const snakeCaseSettings = useSnakeCase(fileSettings);
+    api.post(`/settings/${props.file.id}`, snakeCaseSettings);
   };
 </script>
 
@@ -104,7 +123,7 @@
                 :icons="['TextDecrease', 'LetterA', 'TextIncrease']"
                 :labels="['small', 'normal', 'large']"
                 :tooltips="['base size: 14px', 'base size: 16px', 'base size: 18px']"
-                :default-active="fontSizeOptions?.indexOf(fileSettings.fontSize) ?? 0"
+                :default-active="fontSize"
               />
             </span>
           </div>
@@ -116,7 +135,7 @@
                 :labels="['tight', 'normal', 'roomy']"
                 :icons="['BaselineDensitySmall', 'BaselineDensityMedium', 'BaselineDensityLarge']"
                 :tooltips="['line height: 1.2', 'line height: 1.5', 'line height: 1.8']"
-                :default-active="lineHeightOptions?.indexOf(fileSettings.lineHeight) ?? 0"
+                :default-active="lineHeight"
               />
             </span>
           </div>
@@ -127,7 +146,7 @@
                 v-model="fontFamily"
                 :labels="['Sans', 'Serif']"
                 :tooltips="['Source Sans 3', 'Charter']"
-                :default-active="fontFamilyOptions?.indexOf(fileSettings.fontFamily) ?? 0"
+                :default-active="fontFamily"
               />
             </span>
           </div>
@@ -146,7 +165,7 @@
                 :labels="['narrow', 'normal', 'wide']"
                 :icons="['ViewportNarrow', 'Crop11', 'ViewportWide']"
                 :tooltips="['twice  normal', 'normal', 'half normal']"
-                :default-active="marginWidthOptions?.indexOf(fileSettings.marginWidth) ?? 0"
+                :default-active="marginWidth"
               />
             </span>
           </div>
