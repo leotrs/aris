@@ -1,6 +1,7 @@
 <script setup>
-  import { ref, watch, inject, useTemplateRef, onMounted } from "vue";
+  import { ref, inject } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import useClosable from "@/composables/useClosable.js";
   import DrawerCitation from "./DrawerCitation.vue";
   import DrawerSettings from "./DrawerSettings.vue";
 
@@ -13,6 +14,11 @@
   // Keys
   useKeyboardShortcuts({
     d: () => (active.value = !active.value),
+  });
+
+  // Closable
+  useClosable({
+    onClose: () => (active.value = false),
   });
 </script>
 
@@ -38,7 +44,7 @@
         <TabPage><TagRow v-model="file.tags" :file="file" /></TabPage>
         <TabPage><DrawerSettings /></TabPage>
       </Tabs>
-      <ButtonClose />
+      <ButtonClose @click="active = false" />
     </div>
   </div>
 </template>
