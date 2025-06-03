@@ -113,7 +113,7 @@ const handleKeyDown = (ev) => {
 
   const key = ev.key.toLowerCase();
   if (components.length === 0 && !fallbackComponent.value) return;
-  console.log('Key pressed:', key, '. Last key:', lastKeyPressed.value);
+  // console.log('Key pressed:', key, '. Last key:', lastKeyPressed.value);
 
   for (let i = components.length - 1; i >= 0; i--) {
     if (tryHandleKeyEvent(ev, components[i], key)) return;
