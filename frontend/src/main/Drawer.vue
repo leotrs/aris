@@ -19,6 +19,7 @@
 <template>
   <div class="d-wrapper" :class="{ active }">
     <ButtonToggle
+      v-if="!active"
       v-model="active"
       :icon="active ? 'LayoutSidebarRightCollapse' : 'LayoutSidebarRightExpand'"
       button-size="btn-sm"
@@ -37,6 +38,7 @@
         <TabPage><TagRow v-model="file.tags" :file="file" /></TabPage>
         <TabPage><DrawerSettings /></TabPage>
       </Tabs>
+      <ButtonClose />
     </div>
   </div>
 </template>
@@ -54,7 +56,7 @@
     top: calc(64px - 8px);
     right: 32px;
     z-index: 2;
-    width: calc(420px + 32px);
+    width: calc(412px);
     transform: translateX(calc(100% - 32px - 8px - 8px));
     will-change: transform;
     transition: transform var(--transition-duration) ease;
@@ -104,5 +106,11 @@
 
   .tabs-wrapper {
     width: 100%;
+  }
+
+  .btn-close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
   }
 </style>
