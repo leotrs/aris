@@ -25,12 +25,11 @@
 <template>
   <div class="d-wrapper" :class="{ active }">
     <ButtonToggle
-      v-if="!active"
       v-model="active"
-      :icon="active ? 'LayoutSidebarRightCollapse' : 'LayoutSidebarRightExpand'"
+      icon="LayoutSidebarRightExpand"
       button-size="btn-sm"
       class="d-btn"
-      @click="active = true"
+      :style="{ visibility: active ? 'hidden' : 'visible' }"
     />
     <div class="drawer" :class="{ active }">
       <Tabs
