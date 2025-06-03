@@ -41,6 +41,19 @@
     /* DockableClaims, */
   };
 
+  // Mount the manuscript
+  const manuscriptRef = useTemplateRef("manuscript-ref");
+  watch(
+    () => manuscriptRef.value?.mountPoint,
+    (newVal) => {
+      if (!newVal) return;
+      file.value.isMountedAt = newVal;
+    },
+    { immediate: true }
+  );
+  provide("manuscriptRef", manuscriptRef);
+
+  // Expose some of the geometry
   const innerRef = useTemplateRef("inner-right-ref");
   const lftColRef = useTemplateRef("leftColumnRef");
   const midColRef = useTemplateRef("middleColumnRef");
@@ -51,7 +64,6 @@
     right: { width: 0, height: 0 },
     inner: { width: 0, height: 0 },
   });
-
   onMounted(async () => {
     await nextTick();
     const { width: lftColW, height: lftColH } = useElementSize(lftColRef);
@@ -70,39 +82,60 @@
   });
   provide("columnSizes", columnSizes);
 
-  const fileSettings = reactive({
-    background: "var(--surface-page)",
-    fontSize: "16px",
-    lineHeight: "1.5",
-    fontFamily: "Source Sans 3",
-    marginWidth: "16px",
-    columns: 1,
+  const { y: yScroll } = useScroll(innerRef);
+  const yScrollPercent = computed(
+    () => (yScroll.value / (manuscriptRef.value?.$el.clientHeight ?? 1)) * 100
+  );
+  provide("yScroll", yScrollPercent);
+
+  // File and file settings
+  const api = inject("api");
+  watchEffect((onCleanup) => {
+    if (!file.value || file.value.html || !file.value.id) return;
+
+    let cancelled = false;
+    const fetchContent = async () => {
+      try {
+        const response = await api.get(`/files/${file.value.id}/content`);
+        if (!cancelled && file.value) {
+          file.value.html = response.data;
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Error fetching HTML:", error);
+        }
+      }
+    };
+
+    fetchContent();
+    onCleanup(() => (cancelled = true));
+  });
+
+  const fileSettings = reactive({});
+  watchEffect((onCleanup) => {
+    if (!file.value || !file.value.id) return;
+
+    let cancelled = false;
+    const fetchSettings = async () => {
+      try {
+        const response = await api.get(`/settings/${file.value.id}`);
+        if (!cancelled) {
+          Object.assign(fileSettings, response.data);
+          console.log(fileSettings);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          console.error("Error fetching file settings:", error);
+        }
+      }
+    };
+
+    fetchSettings();
+    onCleanup(() => (cancelled = true));
   });
   provide("fileSettings", fileSettings);
 
-  const api = inject("api");
-  watchEffect(async () => {
-    if (!file.value || file.value.html || !file.value.id) return;
-
-    try {
-      const response = await api.get(`/files/${file.value.id}/content`);
-      file.value.html = response.data;
-    } catch (error) {
-      console.error("Error fetching HTML:", error);
-    }
-  });
-
-  const manuscriptRef = useTemplateRef("manuscript-ref");
-  watch(
-    () => manuscriptRef.value?.mountPoint,
-    (newVal) => {
-      if (!newVal) return;
-      file.value.isMountedAt = newVal;
-    },
-    { immediate: true }
-  );
-  provide("manuscriptRef", manuscriptRef);
-
+  // Is main title visible?
   const isMainTitleVisible = ref(true);
   let tearDown = () => {};
   watch(
@@ -128,17 +161,10 @@
   );
   onUnmounted(() => tearDown());
 
-  /* Scroll position */
-  const { y: yScroll } = useScroll(innerRef);
-  const yScrollPercent = computed(
-    () => (yScroll.value / (manuscriptRef.value?.$el.clientHeight ?? 1)) * 100
-  );
-  provide("yScroll", yScrollPercent);
-
-  /* Keyboard shortcuts */
+  // Keyboard shortcuts
   registerAsFallback(manuscriptRef);
 
-  /* Focus mode */
+  // Focus mode
   const focusMode = inject("focusMode");
 
   // Responsiveness
