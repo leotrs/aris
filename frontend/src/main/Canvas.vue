@@ -75,7 +75,7 @@
     fontSize: "16px",
     lineHeight: "1.5",
     fontFamily: "Source Sans 3",
-    margin: "16px",
+    marginWidth: "16px",
     columns: 1,
   });
   provide("fileSettings", fileSettings);

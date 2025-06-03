@@ -1,6 +1,5 @@
 <script setup>
   import { ref, inject, watch } from "vue";
-  import { IconFileSettings } from "@tabler/icons-vue";
 
   const props = defineProps({ file: { type: Object, default: () => {} } });
 
@@ -23,47 +22,21 @@
     fileSettings.background = bgColors[colorName];
   };
 
-  const fontSize = ref("16px");
-  watch(fontSize, (idx) => {
-    if (idx === 0) {
-      fileSettings.fontSize = "14px";
-    } else if (idx === 1) {
-      fileSettings.fontSize = "16px";
-    } else if (idx === 2) {
-      fileSettings.fontSize = "18px";
-    }
-  });
+  const fontSize = ref(fileSettings.fontSize);
+  const fontSizeOptions = ["14px", "16px", "18px"];
+  watch(fontSize, (idx) => (fileSettings.fontSize = fontSizeOptions[idx]));
 
-  const lineHeight = ref("1.5");
-  watch(lineHeight, (idx) => {
-    if (idx === 0) {
-      fileSettings.lineHeight = "1.2";
-    } else if (idx === 1) {
-      fileSettings.lineHeight = "1.5";
-    } else if (idx === 2) {
-      fileSettings.lineHeight = "1.8";
-    }
-  });
+  const lineHeight = ref(fileSettings.lineHeight);
+  const lineHeightOptions = ["1.2", "1.5", "1.8"];
+  watch(lineHeight, (idx) => (fileSettings.lineHeight = lineHeightOptions[idx]));
 
-  const fontFamily = ref(0);
-  watch(fontFamily, (idx) => {
-    if (idx == 0) {
-      fileSettings.fontFamily = "Source Sans 3";
-    } else if (idx == 1) {
-      fileSettings.fontFamily = "Source Serif 4";
-    }
-  });
+  const fontFamily = ref(fileSettings.fontFamily);
+  const fontFamilyOptions = ["Source Sans 3", "Source Serif 4"];
+  watch(fontFamily, (idx) => (fileSettings.fontFamily = fontFamilyOptions[idx]));
 
-  const marginWidth = ref(0);
-  watch(marginWidth, (idx) => {
-    if (idx == 0) {
-      fileSettings.marginWidth = "0px";
-    } else if (idx == 1) {
-      fileSettings.marginWidth = "16px";
-    } else if (idx == 2) {
-      fileSettings.marginWidth = "64px";
-    }
-  });
+  const marginWidth = ref(fileSettings.marginWidth);
+  const marginWidthOptions = ["0px", "16px", "64px"];
+  watch(marginWidth, (idx) => (fileSettings.marginWidth = marginWidthOptions[idx]));
 </script>
 
 <template>
@@ -104,7 +77,7 @@
                 :icons="['TextDecrease', 'LetterA', 'TextIncrease']"
                 :labels="['small', 'normal', 'large']"
                 :tooltips="['base size: 14px', 'base size: 16px', 'base size: 18px']"
-                :default-active="0"
+                :default-active="fontSizeOptions?.indexOf(fileSettings.fontSize) ?? 0"
               />
             </span>
           </div>
@@ -116,7 +89,7 @@
                 :labels="['tight', 'normal', 'roomy']"
                 :icons="['BaselineDensitySmall', 'BaselineDensityMedium', 'BaselineDensityLarge']"
                 :tooltips="['line height: 1.2', 'line height: 1.5', 'line height: 1.8']"
-                :default-active="0"
+                :default-active="lineHeightOptions?.indexOf(fileSettings.lineHeight) ?? 0"
               />
             </span>
           </div>
@@ -127,7 +100,7 @@
                 v-model="fontFamily"
                 :labels="['Sans', 'Serif']"
                 :tooltips="['Source Sans 3', 'Charter']"
-                :default-active="0"
+                :default-active="fontFamilyOptions?.indexOf(fileSettings.fontFamily) ?? 0"
               />
             </span>
           </div>
@@ -146,7 +119,7 @@
                 :labels="['narrow', 'normal', 'wide']"
                 :icons="['ViewportNarrow', 'Crop11', 'ViewportWide']"
                 :tooltips="['twice  normal', 'normal', 'half normal']"
-                :default-active="0"
+                :default-active="marginWidthOptions?.indexOf(fileSettings.marginWidth) ?? 0"
               />
             </span>
           </div>
