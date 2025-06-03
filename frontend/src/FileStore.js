@@ -66,7 +66,7 @@ export function createFileStore(api, user) {
   const loadFiles = async () => {
     try {
       const response = await api.get(`/users/${user.id}/files`, {
-        params: { with_tags: true, with_minimap: true },
+        params: { with_tags: true },
       });
 
       // Preserve selected and filtered states when reloading
