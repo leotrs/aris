@@ -53,6 +53,17 @@
       fileSettings.fontFamily = "Source Serif 4";
     }
   });
+
+  const marginWidth = ref(0);
+  watch(marginWidth, (idx) => {
+    if (idx == 0) {
+      fileSettings.marginWidth = "0px";
+    } else if (idx == 1) {
+      fileSettings.marginWidth = "16px";
+    } else if (idx == 2) {
+      fileSettings.marginWidth = "64px";
+    }
+  });
 </script>
 
 <template>
@@ -131,7 +142,7 @@
             <span class="label">Margins</span>
             <span class="control">
               <SegmentedControl
-                v-model="marginControlState"
+                v-model="marginWidth"
                 :labels="['narrow', 'normal', 'wide']"
                 :icons="['ViewportNarrow', 'Crop11', 'ViewportWide']"
                 :tooltips="['twice  normal', 'normal', 'half normal']"
@@ -139,16 +150,16 @@
               />
             </span>
           </div>
-          <div class="row">
-            <span class="label">Columns</span>
-            <span class="control">
-              <SegmentedControl
-                :labels="['one', 'two']"
-                :icons="['Columns1', 'Columns2']"
-                :default-active="0"
-              />
-            </span>
-          </div>
+          <!-- <div class="row">
+               <span class="label">Columns</span>
+               <span class="control">
+               <SegmentedControl
+               :labels="['one', 'two']"
+               :icons="['Columns1', 'Columns2']"
+               :default-active="0"
+               />
+               </span>
+               </div> -->
         </div>
       </div>
     </div>
