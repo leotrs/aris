@@ -329,7 +329,7 @@
     box-shadow: var(--shadow-soft);
   }
 
-  .d-wrapper.focus {
+  .drawer.focus {
     opacity: 0;
     transition: opacity var(--transition-duration) ease;
   }

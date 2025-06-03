@@ -43,7 +43,9 @@
         <div class="left">
           <Section class="profile-card">
             <template #content>
-              <div id="pic"></div>
+              <div id="pic">
+                <Button kind="tertiary" icon="Upload" class="pic-upload" size="sm" />
+              </div>
               <div class="info">
                 <div id="username" class="text-h6">{{ user.name }}</div>
                 <div>{{ user.email }}</div>
@@ -153,7 +155,14 @@
     aspect-ratio: 1/1;
     flex-shrink: 0;
     border-radius: calc(16px - var(--border-thin));
-    background-color: var(--gray-200);
+    background-color: var(--gray-100);
+    position: relative;
+  }
+
+  .pic-upload {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
   }
 
   #since {
