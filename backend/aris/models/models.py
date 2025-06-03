@@ -106,6 +106,9 @@ class User(Base):
 
     files = relationship("File", back_populates="owner")
     tags = relationship("Tag", back_populates="owner", cascade="all, delete-orphan")
+    file_settings = relationship(
+        "FileSettings", back_populates="user", cascade="all, delete-orphan"
+    )
     file_assets = relationship("FileAsset", back_populates="owner", cascade="all, delete-orphan")
 
 
@@ -177,6 +180,9 @@ class File(Base):
     owner = relationship("User", back_populates="files")
     tags = relationship("Tag", secondary=file_tags, back_populates="files")
     file_assets = relationship("FileAsset", back_populates="file", cascade="all, delete-orphan")
+    file_settings = relationship(
+        "FileSettings", back_populates="file", cascade="all, delete-orphan"
+    )
 
 
 class Tag(Base):
@@ -262,3 +268,66 @@ class FileAsset(Base):
 
     owner = relationship("User", back_populates="file_assets")
     file = relationship("File", back_populates="file_assets")
+
+
+class FileSettings(Base):
+    """User-specific per-file display settings.
+
+    Stores personalized display preferences (background, font, layout) that users can
+    configure per file. Each user can have unique display settings for each file.
+
+    Attributes
+    ----------
+    id : int
+        Primary key.
+    file_id : int
+        Foreign key to File.
+    user_id : int
+        Foreign key to User (owner of the settings).
+    background : str
+        CSS background value (color, variable, etc.).
+    font_size : str
+        Font size with units (e.g., "16px").
+    line_height : str
+        Line height value (unitless or with units).
+    font_family : str
+        Font family name or stack.
+    margin_width : str
+        Margin width with units (e.g., "16px").
+    columns : int
+        Number of display columns.
+    created_at : datetime
+        Timestamp of settings creation.
+    updated_at : datetime
+        Timestamp of last update.
+    deleted_at : datetime
+        Soft delete marker.
+    file : File
+        File relationship.
+    user : User
+        User relationship.
+
+    """
+
+    __tablename__ = "file_settings"
+    __table_args__ = (
+        UniqueConstraint("file_id", "user_id", name="uq_file_settings_per_user_file"),
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    file_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+
+    background = Column(String, nullable=False, default="var(--surface-page)")
+    font_size = Column(String, nullable=False, default="16px")
+    line_height = Column(String, nullable=False, default="1.5")
+    font_family = Column(String, nullable=False, default="Source Sans 3")
+    margin_width = Column(String, nullable=False, default="16px")
+    columns = Column(Integer, nullable=False, default=1)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
+
+    file = relationship("File", back_populates="file_settings")
+    user = relationship("User", back_populates="file_settings")
