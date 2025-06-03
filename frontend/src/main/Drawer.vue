@@ -23,7 +23,7 @@
 </script>
 
 <template>
-  <div class="d-wrapper" :class="{ active }">
+  <div class="drawer" :class="{ active }">
     <ButtonToggle
       v-model="active"
       icon="LayoutSidebarRightExpand"
@@ -50,7 +50,7 @@
 </template>
 
 <style>
-  .d-wrapper {
+  .drawer {
     --transition-duration: 0.3s;
     --tab-width: 64px;
     --padding: 8px;
@@ -68,7 +68,7 @@
     transition: transform var(--transition-duration) ease;
   }
 
-  .d-wrapper.active {
+  .drawer.active {
     transform: translateX(0);
     right: 0;
   }
