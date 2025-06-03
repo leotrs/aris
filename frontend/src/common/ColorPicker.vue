@@ -17,24 +17,65 @@
 
 <template>
   <span class="cp-wrapper">
-    <button
+    <div
       v-for="(color, name) in colors"
-      type="button"
-      class="circle"
+      :key="name"
+      class="swatch"
       :class="[name, activeColor == name ? 'active' : '']"
-      :style="{ 'background-color': color }"
       @click="onClick(name)"
-      @keydown.enter.prevent="onClick(name)"
-      @keydown.space.prevent="onClick(name)"
-    />
+    >
+      <button
+        type="button"
+        class="circle"
+        :style="{ 'background-color': color }"
+        @keydown.enter.prevent="onClick(name)"
+        @keydown.space.prevent="onClick(name)"
+      />
+      <span class="label text-caption">{{ name }}</span>
+    </div>
   </span>
 </template>
 
 <style scoped>
   .cp-wrapper {
     display: flex;
-    justify-content: space-between;
-    gap: 4px;
+    justify-content: flex-start;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .swatch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    border-radius: 4px;
+    padding: 8px;
+    width: 60px;
+
+    &:hover {
+      cursor: pointer;
+      background-color: var(--purple-100);
+      color: var(--extra-dark);
+
+      & .circle {
+        box-shadow: var(--shadow-strong);
+      }
+    }
+  }
+
+  .swatch.active {
+    background-color: var(--purple-300);
+  }
+
+  .swatch.active .circle {
+    border-color: var(--almost-black);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .swatch.active .label {
+    color: var(--almost-black);
+    font-weight: var(--weight-medium);
   }
 
   .circle {
@@ -42,23 +83,16 @@
     width: 32px;
     height: 32px;
     border-radius: 16px;
-    border: var(--border-thin) solid var(--gray-800);
+    border: var(--border-thin) solid var(--gray-700);
+    pointer-events: none;
 
-    &:hover {
-      cursor: pointer;
-      border-color: var(--almost-black);
-      box-shadow: var(--shadow-strong);
-    }
     &:focus-visible {
       border-color: var(--almost-black);
       box-shadow: var(--shadow-strong);
-      outline: var(--border-med) solid var(--border-action);
-      outline-offset: var(--border-extrathin);
     }
+  }
 
-    &.active {
-      border-color: var(--almost-black);
-      box-shadow: var(--shadow-strong);
-    }
+  .label {
+    color: var(--extra-dark);
   }
 </style>
