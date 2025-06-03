@@ -40,6 +40,7 @@
     padding-block: 0px;
     gap: 4px;
     transition: var(--transition-bg-color);
+    color: var(--extra-dark);
 
     &:hover {
       background-color: var(--surface-hover);
