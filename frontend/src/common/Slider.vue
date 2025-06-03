@@ -63,16 +63,18 @@
   }
 
   .s-stop {
-    height: 8px;
-    width: 8px;
-    border-radius: 4px;
+    height: 9px;
+    width: 9px;
+    border-radius: 50%;
     background-color: var(--light);
     z-index: 1;
     border: var(--border-thin) solid transparent;
 
     &.active {
-      border-color: var(--primary-500);
-      background-color: var(--primary-500);
+      height: 14px;
+      width: 14px;
+      border-color: var(--gray-700);
+      background-color: var(--gray-700);
     }
 
     &:not(.active) {

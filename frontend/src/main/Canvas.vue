@@ -183,7 +183,7 @@
 
       <DockableMinimap :file="file" side="right" />
 
-      <!-- <Drawer :class="{ focus: focusMode }" /> -->
+      <Drawer :class="{ focus: focusMode }" />
     </div>
   </Suspense>
 </template>

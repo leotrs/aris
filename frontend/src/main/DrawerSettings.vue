@@ -7,8 +7,9 @@
   const colors = {
     white: "var(--surface-page)",
     gray: "var(--gray-75)",
-    sepia: "#F4E8D5",
+    orange: "var(--orange-50)",
     green: "var(--green-50)",
+    blue: "var(--blue-50)",
   };
 
   const fileSettings = inject("fileSettings");
@@ -51,47 +52,50 @@
     <div class="content">
       <div class="sec">
         <div class="sec-header">
-          <span class="text-label">Colors</span>
+          <span class="text-h5">Theme</span>
+        </div>
+        <div class="s-content">
+          <div class="row theme">
+            <span class="control">
+              <ThemeSwitch :labels="true" />
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec">
+        <div class="sec-header">
+          <span class="text-h5">Background</span>
         </div>
         <div class="s-content">
           <div class="row">
-            <span class="label">Theme</span>
-            <span class="control">
-              <ThemeSwitch />
-            </span>
-          </div>
-          <div class="row">
-            <span class="label">Background</span>
             <ColorPicker :colors="colors" @change="onChangeBackground" />
           </div>
         </div>
       </div>
+
       <div class="sec">
         <div class="sec-header">
-          <span class="text-label">Font</span>
+          <span class="text-h5">Font</span>
         </div>
         <div class="s-content">
           <div class="row size">
             <span class="label">Size</span>
             <span class="control">
-              <Slider
-                :number-stops="3"
-                label-left="Aa"
-                label-right="Aa"
-                :default-active="1"
-                @change="onSizeChange"
+              <SegmentedControl
+                :icons="['TextDecrease', 'LetterA', 'TextIncrease']"
+                :labels="['small', 'normal', 'large']"
+                :default-active="0"
               />
             </span>
           </div>
           <div class="row">
             <span class="label">Density</span>
             <span class="control">
-              <Slider
-                :number-stops="3"
-                icon-left="BaselineDensitySmall"
-                icon-right="BaselineDensityLarge"
-                :default-active="1"
-                @change="onDensityChange"
+              <SegmentedControl
+                :labels="['tight', 'normal', 'roomy']"
+                :icons="['BaselineDensitySmall', 'BaselineDensityMedium', 'BaselineDensityLarge']"
+                :default-active="0"
               />
             </span>
           </div>
@@ -100,7 +104,7 @@
             <span class="control">
               <SegmentedControl
                 v-model="styleControlState"
-                :labels="['sans', 'serif']"
+                :labels="['Sans', 'Serif']"
                 :default-active="0"
               />
             </span>
@@ -109,24 +113,28 @@
       </div>
       <div class="sec">
         <div class="sec-header">
-          <span class="text-label">Layout</span>
+          <span class="text-h5">Layout</span>
         </div>
         <div class="s-content">
           <div class="row">
             <span class="label">Margins</span>
             <span class="control">
-              <Slider
-                :number-stops="3"
-                icon-left="ViewportNarrow"
-                icon-right="ViewportWide"
-                :default-active="1"
+              <SegmentedControl
+                v-model="marginControlState"
+                :labels="['narrow', 'normal', 'wide']"
+                :icons="['ViewportNarrow', 'Crop11', 'ViewportWide']"
+                :default-active="0"
               />
             </span>
           </div>
           <div class="row">
-            <span class="label">Column</span>
+            <span class="label">Columns</span>
             <span class="control">
-              <SegmentedControl :icons="['ColumnsOff', 'Columns']" :default-active="0" />
+              <SegmentedControl
+                :labels="['one', 'two']"
+                :icons="['Columns1', 'Columns2']"
+                :default-active="0"
+              />
             </span>
           </div>
         </div>
@@ -134,9 +142,8 @@
     </div>
 
     <div class="footer">
-      <Button kind="secondary" text="Reset" />
-      <Button kind="secondary" text="Cancel" />
-      <Button kind="primary" text="Save" />
+      <Button kind="tertiary" text="Cancel" />
+      <Button class="cta" kind="primary" text="Save Settings" />
     </div>
   </div>
 </template>
@@ -145,7 +152,7 @@
   .settings {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
   }
 
   .content {
@@ -157,38 +164,55 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      padding-bottom: 8px;
     }
 
     & .sec-header {
-      height: 32px;
-      border-bottom: 2px solid var(--border-information);
+      height: 40px;
+      border-bottom: 2px solid var(--border-primary);
       padding-inline: 8px;
+      background-color: var(--blue-50);
+      border-radius: 8px 8px 0 0;
+      display: flex;
+      align-items: center;
     }
 
     & .s-content {
       display: flex;
       flex-direction: column;
       padding-inline: 8px;
-      gap: 8px;
+      gap: 16px;
     }
+  }
+
+  .sec {
+    border-radius: 8px;
+    background-color: var(--surface-hover);
   }
 
   .footer {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
-    padding-inline: 8px;
+
+    & > button {
+      padding-inline: 16px;
+    }
+
+    & > .cta {
+      padding-inline: 48px;
+    }
   }
 
   .row {
     display: flex;
     justify-content: flex-start;
-    gap: 24px;
+    gap: 8px;
     align-items: center;
 
     & .label {
       text-align: left;
-      width: 80px;
+      width: 60px;
     }
 
     & .control {
@@ -204,26 +228,37 @@
 
   .control {
     & :deep(.sc-btn) {
-      padding: 0;
+      padding-inline: 2px 8px;
+      padding-block: 0px;
+      width: 96px;
+      display: flex;
+      justify-content: center;
     }
 
-    & :deep(.sc-btn .tabler-icon) {
-      margin: 4px;
+    & :deep(.sc-btn:first-child) {
+      border-radius: 8px 0 0 8px;
     }
 
-    & :deep(.sc-btn:first-child .tabler-icon) {
-      margin-left: 6px;
+    & :deep(.sc-btn:last-child) {
+      border-radius: 0 8px 8px 0;
     }
+  }
 
-    & :deep(.sc-btn:last-child .tabler-icon) {
-      margin-right: 6px;
+  .theme {
+    & :deep(.sc-btn) {
+      padding-inline: 2px 8px !important;
     }
   }
 
   .style {
+    & :deep(.sc-btn) {
+      letter-spacing: 0.04em;
+      height: 32px;
+      padding-inline: 8px;
+    }
+
     & :deep(.sc-item .sc-label) {
-      padding-block: 4px;
-      padding-inline: 6px;
+      text-transform: none;
     }
 
     & :deep(.sc-item:first-child .sc-label) {
@@ -236,10 +271,6 @@
   }
 
   .size {
-    & :deep(.s-wrapper) {
-      align-items: baseline !important;
-    }
-
     & :deep(.s-label:first-child) {
       font-size: 14px !important;
       width: 20px;

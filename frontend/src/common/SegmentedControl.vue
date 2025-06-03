@@ -62,14 +62,12 @@
     align-items: center;
     padding-inline: calc(var(--padding-inline) - 2 * var(--border-thin));
     border-radius: 4px;
-    border-width: var(--border-thin);
-    border-style: solid;
     transition: var(--transition-bd-color), var(--transition-bg-color);
 
     &:first-child,
     &:last-child {
-      padding-left: calc(var(--padding-inline) - 2 * var(--border-thin));
-      padding-right: calc(var(--padding-inline) - 2 * var(--border-thin));
+      padding-left: calc(var(--padding-inline));
+      padding-right: calc(var(--padding-inline));
     }
 
     &:first-child {
@@ -83,25 +81,37 @@
     }
 
     &.active {
-      color: var(--extra-dark);
-      background-color: var(--surface-information);
-      border-color: var(--border-action);
-      box-shadow: var(--shadow-strong);
+      color: var(--almost-black);
+      background-color: var(--purple-300);
+      border-color: transparent;
+      box-shadow: var(--shadow-soft), var(--shadow-strong);
+
+      & > .sc-icon {
+        color: var(--almost-black);
+      }
     }
 
     &:not(.active) {
       cursor: pointer;
       color: var(--dark);
-      background-color: var(--surface-hover);
-      border-color: var(--surface-hover);
+      background-color: var(--white);
+
+      & > .sc-icon {
+        color: var(--dark);
+      }
 
       &:hover {
         box-shadow: var(--shadow-strong);
+        background-color: var(--purple-100);
+        color: var(--extra-dark);
+        & > .sc-icon {
+          color: var(--extra-dark);
+        }
       }
     }
+
     &:focus-visible {
       background-color: var(--surface-hover);
-      outline: var(--border-med) solid var(--border-action);
       outline-offset: var(--border-extrathin);
 
       & > .sc-icon {
@@ -109,8 +119,6 @@
       }
 
       &:hover {
-        border-color: var(--dark);
-
         & > .sc-icon {
           color: var(--extra-dark);
         }

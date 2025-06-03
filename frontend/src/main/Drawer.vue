@@ -8,7 +8,7 @@
   const file = inject("file");
 
   // State
-  const activeTabIndex = ref(0);
+  const activeTabIndex = ref(2);
 
   // Keys
   useKeyboardShortcuts({
