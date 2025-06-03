@@ -85,6 +85,7 @@
               <SegmentedControl
                 :icons="['TextDecrease', 'LetterA', 'TextIncrease']"
                 :labels="['small', 'normal', 'large']"
+                :tooltips="['base size: 14px', 'base size: 16px', 'base size: 18px']"
                 :default-active="0"
               />
             </span>
@@ -95,6 +96,7 @@
               <SegmentedControl
                 :labels="['tight', 'normal', 'roomy']"
                 :icons="['BaselineDensitySmall', 'BaselineDensityMedium', 'BaselineDensityLarge']"
+                :tooltips="['line height: 1.2', 'line height: 1.5', 'line height: 1.8']"
                 :default-active="0"
               />
             </span>
@@ -105,6 +107,7 @@
               <SegmentedControl
                 v-model="styleControlState"
                 :labels="['Sans', 'Serif']"
+                :tooltips="['Source Sans 3', 'Charter']"
                 :default-active="0"
               />
             </span>
@@ -123,6 +126,7 @@
                 v-model="marginControlState"
                 :labels="['narrow', 'normal', 'wide']"
                 :icons="['ViewportNarrow', 'Crop11', 'ViewportWide']"
+                :tooltips="['twice  normal', 'normal', 'half normal']"
                 :default-active="0"
               />
             </span>
