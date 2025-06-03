@@ -51,10 +51,9 @@ async def soft_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
 async def get_user_files(
     user_id: int,
     with_tags: bool = True,
-    with_minimap: bool = True,
     db: AsyncSession = Depends(get_db),
 ):
-    return await crud.get_user_files(user_id, with_tags, with_minimap, db)
+    return await crud.get_user_files(user_id, with_tags, db)
 
 
 @router.get("/{user_id}/files/{doc_id}")

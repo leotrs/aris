@@ -83,12 +83,16 @@ class User(Base):
         Last login timestamp.
     avatar_color : AvatarColor
         Selected avatar color.
+    profile_picture_id : int
+        Foreign key to ProfilePicture (optional).
     files : list of File
         Files owned by the user.
     tags : list of Tag
         Tags owned by the user.
     file_assets : list of FileAsset
         Private files attached to user files.
+    profile_picture : ProfilePicture
+        User's profile picture.
 
     """
 
@@ -103,6 +107,7 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     last_login = Column(DateTime(timezone=True), nullable=True)
     avatar_color = Column(Enum(AvatarColor), nullable=True, default=AvatarColor.BLUE)
+    profile_picture_id = Column(Integer, ForeignKey("profile_pictures.id"), nullable=True)
 
     files = relationship("File", back_populates="owner")
     tags = relationship("Tag", back_populates="owner", cascade="all, delete-orphan")
@@ -110,6 +115,44 @@ class User(Base):
         "FileSettings", back_populates="user", cascade="all, delete-orphan"
     )
     file_assets = relationship("FileAsset", back_populates="owner", cascade="all, delete-orphan")
+    profile_picture = relationship("ProfilePicture", back_populates="user")
+
+
+class ProfilePicture(Base):
+    """A user's profile picture.
+
+    Stores profile picture data with support for multiple image formats.
+    Only one profile picture per user is active at a time.
+
+    Attributes
+    ----------
+    id : int
+        Primary key.
+    filename : str
+        Original filename of the uploaded image.
+    mime_type : str
+        MIME type (e.g., image/jpeg, image/png).
+    content : str
+        Base64-encoded image content.
+    uploaded_at : datetime
+        Timestamp of upload.
+    deleted_at : datetime
+        Soft delete marker.
+    user : User
+        User who owns this profile picture.
+
+    """
+
+    __tablename__ = "profile_pictures"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    filename = Column(String, nullable=False)
+    mime_type = Column(String, nullable=False)
+    content = Column(Text, nullable=False)
+    uploaded_at = Column(DateTime(timezone=True), server_default=func.now())
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
+
+    user = relationship("User", back_populates="profile_picture")
 
 
 file_tags = Table(
@@ -161,6 +204,7 @@ class File(Base):
         Tags associated with the file.
     file_assets : list of FileAsset
         Assets attached to the file.
+
     """
 
     __tablename__ = "files"
@@ -169,7 +213,7 @@ class File(Base):
     title = Column(String, nullable=True)
     abstract = Column(Text, nullable=True)
     keywords = Column(String, nullable=True)
-    status = Column(Enum(FileStatus), nullable=False, default=FileStatus.DRAFT)
+    status = Column(Enum(FileStatus, name="filestatus"), nullable=False, default=FileStatus.DRAFT)
     last_edited_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     doi = Column(String, unique=True, nullable=True)
