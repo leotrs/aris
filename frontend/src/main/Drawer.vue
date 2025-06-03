@@ -30,6 +30,7 @@
       :icon="active ? 'LayoutSidebarRightCollapse' : 'LayoutSidebarRightExpand'"
       button-size="btn-sm"
       class="d-btn"
+      @click="active = true"
     />
     <div class="drawer" :class="{ active }">
       <Tabs
@@ -42,7 +43,7 @@
         <!-- <TabPage>history</TabPage> -->
         <TabPage><DrawerCitation /></TabPage>
         <TabPage><TagRow v-model="file.tags" :file="file" /></TabPage>
-        <TabPage><DrawerSettings /></TabPage>
+        <TabPage><DrawerSettings :active="active" :file="file" /></TabPage>
       </Tabs>
       <ButtonClose @click="active = false" />
     </div>

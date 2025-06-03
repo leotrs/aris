@@ -1,7 +1,10 @@
 <script setup>
   import { ref, inject, watch } from "vue";
 
-  const props = defineProps({ file: { type: Object, default: () => {} } });
+  const props = defineProps({
+    file: { type: Object, default: () => {} },
+    active: { type: Boolean, required: true },
+  });
 
   const bgColors = {
     white: "var(--surface-page)",
@@ -17,6 +20,7 @@
     green: "var(--green-500)",
   };
 
+  // Sync UI with fileSettings object
   const fileSettings = inject("fileSettings");
   const onChangeBackground = (colorName) => {
     fileSettings.background = bgColors[colorName];
@@ -37,6 +41,29 @@
   const marginWidth = ref(fileSettings.marginWidth);
   const marginWidthOptions = ["0px", "16px", "64px"];
   watch(marginWidth, (idx) => (fileSettings.marginWidth = marginWidthOptions[idx]));
+
+  // Buttons: cancel and save
+  const oldSettings = {};
+  watch(
+    () => props.active,
+    (newVal) => {
+      if (newVal) Object.assign(oldSettings, fileSettings);
+    }
+  );
+  const onReset = () => {
+    Object.assign(fileSettings, oldSettings);
+    fontSize.value = fontSizeOptions.indexOf(oldSettings.fontSize);
+    lineHeight.value = lineHeightOptions.indexOf(oldSettings.lineHeight);
+    fontFamily.value = fontFamilyOptions.indexOf(oldSettings.fontFamily);
+    marginWidth.value = marginWidthOptions.indexOf(oldSettings.marginWidth);
+    console.log(fontSize.value);
+  };
+
+  const api = inject("api");
+  const onSave = () => {
+    console.log("save");
+    api.post(`/settings/${props.file.id}`, fileSettings);
+  };
 </script>
 
 <template>
@@ -138,8 +165,8 @@
     </div>
 
     <div class="footer">
-      <Button kind="tertiary" text="Cancel" />
-      <Button class="cta" kind="primary" text="Save Settings" />
+      <Button kind="tertiary" text="Reset" @click="onReset" />
+      <Button class="cta" kind="primary" text="Save Settings" @click="onSave" />
     </div>
   </div>
 </template>
