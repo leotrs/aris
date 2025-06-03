@@ -29,9 +29,9 @@ def get_database_url() -> str:
     """
     env = os.getenv("ENV", "LOCAL").upper()
     if env == "PROD":
-        url = os.getenv("DB_URL_PROD")
+        url = os.getenv("ALEMBIC_DB_URL_PROD")
     else:
-        url = os.getenv("DB_URL_LOCAL")
+        url = os.getenv("ALEMBIC_DB_URL_LOCAL")
 
     if not url:
         raise RuntimeError(f"Database URL not found for environment '{env}'")
@@ -41,6 +41,7 @@ def get_database_url() -> str:
 
 # Set sqlalchemy.url dynamically based on ENV
 database_url = get_database_url()
+
 config.set_main_option("sqlalchemy.url", database_url)
 
 if config.config_file_name is not None:

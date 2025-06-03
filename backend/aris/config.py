@@ -26,6 +26,12 @@ class Settings(BaseSettings):
     DB_URL_PROD: str = Field(..., env="DB_URL_PROD")
     """Database URL for production environment."""
 
+    ALEMBIC_DB_URL_LOCAL: str = Field(..., env="ALEMBIC_DB_URL_LOCAL")
+    """Database URL for Alembic local development."""
+
+    ALEMBIC_DB_URL_PROD: str = Field(..., env="ALEMBIC_DB_URL_PROD")
+    """Database URL for Alembic production environment."""
+
     ENV: str = Field("LOCAL", env="ENV")
     """Current environment ('LOCAL', 'PROD', etc.)."""
 

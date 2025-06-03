@@ -7,6 +7,7 @@ from aris.routes import (
     tag_router,
     user_router,
     file_assets_router,
+    file_settings_router,
     render_router,
     auth_router,
 )
@@ -30,6 +31,7 @@ app.include_router(user_router)
 app.include_router(file_router)
 app.include_router(tag_router)
 app.include_router(file_assets_router)
+app.include_router(file_settings_router)
 app.include_router(render_router)
 app.include_router(auth_router)
 
