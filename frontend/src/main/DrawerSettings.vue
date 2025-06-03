@@ -152,7 +152,7 @@
   .settings {
     display: flex;
     flex-direction: column;
-    gap: 32px;
+    gap: 24px;
   }
 
   .content {

@@ -62,7 +62,7 @@
     align-items: center;
     padding-inline: calc(var(--padding-inline) - 2 * var(--border-thin));
     border-radius: 4px;
-    transition: var(--transition-bd-color), var(--transition-bg-color);
+    transition: var(--transition-bg-color);
 
     &:first-child,
     &:last-child {
@@ -78,6 +78,10 @@
     &:last-child {
       border-top-right-radius: 16px;
       border-bottom-right-radius: 16px;
+    }
+
+    &:active {
+      background-color: var(--purple-400) !important;
     }
 
     &.active {

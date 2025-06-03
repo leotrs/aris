@@ -52,6 +52,11 @@
     border-radius: 4px;
     padding: 8px;
     width: 60px;
+    transition: var(--transition-bg-color);
+
+    &:active {
+      background-color: var(--purple-400) !important;
+    }
 
     &:hover {
       cursor: pointer;
