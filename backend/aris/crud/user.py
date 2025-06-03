@@ -54,7 +54,7 @@ async def soft_delete_user(user_id: int, db: AsyncSession):
     return user
 
 
-async def get_user_files(user_id: int, with_tags: bool, with_minimap: bool, db: AsyncSession):
+async def get_user_files(user_id: int, with_tags: bool, db: AsyncSession):
     user = await get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")
@@ -74,11 +74,6 @@ async def get_user_files(user_id: int, with_tags: bool, with_minimap: bool, db: 
         tags_list = await asyncio.gather(*(get_user_file_tags(user_id, d.id, db) for d in docs))
         tags = dict(zip(docs, tags_list))
 
-    minimaps = None
-    if with_minimap:
-        minimaps_list = await asyncio.gather(*(get_file_section(d.id, "minimap", db) for d in docs))
-        minimaps = dict(zip(docs, minimaps_list))
-
     return [
         {
             "id": doc.id,
@@ -86,7 +81,6 @@ async def get_user_files(user_id: int, with_tags: bool, with_minimap: bool, db: 
             "source": doc.source,
             "last_edited_at": doc.last_edited_at,
             "tags": tags[doc] if tags else [],
-            "minimap": str(minimaps[doc]) if minimaps else "",
         }
         for doc in docs
     ]

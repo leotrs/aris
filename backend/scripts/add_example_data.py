@@ -1,20 +1,21 @@
+import asyncio
 import sys
 from pathlib import Path
 
 import rsm
 from aris import ArisSession
-from aris.models import Document
+from aris.models import File
 
 FOLDER = Path("./.venv/lib/python3.13/site-packages/rsm-examples/")
 
 
-def main():
+async def main():
     session = ArisSession()
 
     for filename in FOLDER.glob("*.rsm"):
         with filename.open(encoding="utf-8") as f:
             source = f.read()
-            doc = Document(
+            doc = File(
                 title="",
                 abstract="",
                 owner_id=1,
@@ -22,12 +23,12 @@ def main():
             )
 
             session.add(doc)
-            session.flush()
-            session.commit()
+            await session.flush()
+            await session.commit()
             print(f"Added {filename}!")
 
-    session.close()
+    await session.close()
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

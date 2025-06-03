@@ -70,13 +70,13 @@ MOCK_FILES = [
 
 
 MOCK_TAGS = [
-    Tag(name="Research", user_id=1),
-    Tag(name="Data Analysis", user_id=1),
-    Tag(name="Machine Learning", user_id=2),
-    Tag(name="Deep Learning", user_id=2),
-    Tag(name="Network Science", user_id=2),
-    Tag(name="Data Science", user_id=3),
-    Tag(name="AI Ethics", user_id=3),
-    Tag(name="Databases", user_id=3),
-    Tag(name="Chem. Eng.", user_id=3),
+    Tag(name="Research", user_id=1, color="ORANGE"),
+    Tag(name="Data Analysis", user_id=1, color="RED"),
+    Tag(name="Machine Learning", user_id=2, color="PURPLE"),
+    Tag(name="Deep Learning", user_id=2, color="GREEN"),
+    Tag(name="Network Science", user_id=2, color="RED"),
+    Tag(name="Data Science", user_id=3, color="GREEN"),
+    Tag(name="AI Ethics", user_id=3, color="ORANGE"),
+    Tag(name="Databases", user_id=3, color="PURPLE"),
+    Tag(name="Chem. Eng.", user_id=3, color="GREEN"),
 ]

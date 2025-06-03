@@ -1,18 +1,19 @@
+import asyncio
 from aris import ArisSession
-from aris.models import MOCK_DOCUMENTS, MOCK_TAGS, MOCK_USERS
+from aris.models import MOCK_FILES, MOCK_TAGS, MOCK_USERS
 
 
-def main():
+async def main():
     session = ArisSession()
     session.add_all(MOCK_USERS)
-    session.flush()
-    session.add_all(MOCK_DOCUMENTS)
-    session.flush()
+    await session.commit()
+    session.add_all(MOCK_FILES)
+    await session.commit()
     session.add_all(MOCK_TAGS)
-    session.commit()
-    session.close()
+    await session.commit()
+    await session.close()
     print("Mock data added successfully!")
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())
