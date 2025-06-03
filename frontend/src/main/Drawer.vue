@@ -54,6 +54,7 @@
     top: calc(64px - 8px);
     right: 32px;
     z-index: 2;
+    width: calc(420px + 32px);
     transform: translateX(calc(100% - 32px - 8px - 8px));
     will-change: transform;
     transition: transform var(--transition-duration) ease;
@@ -86,6 +87,7 @@
     pointer-events: none;
     box-shadow: var(--shadow-strong), var(--shadow-soft);
     width: calc(64px * 3 + + 4px * 2 + 2 * var(--padding));
+    width: 100%;
     height: fit-content;
     max-height: 100%;
 
@@ -98,5 +100,9 @@
   .drawer.active {
     pointer-events: all;
     opacity: 1;
+  }
+
+  .tabs-wrapper {
+    width: 100%;
   }
 </style>
