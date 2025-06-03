@@ -15,6 +15,7 @@
   import { useElementSize, useScroll } from "@vueuse/core";
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
   import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
+  import { useCamelCase } from "@/composables/useCasing.js";
   import ReaderTopbar from "./ReaderTopbar.vue";
   import Dock from "./Dock.vue";
   import Drawer from "./Drawer.vue";
@@ -114,14 +115,14 @@
   const fileSettings = reactive({});
   watchEffect((onCleanup) => {
     if (!file.value || !file.value.id) return;
-
     let cancelled = false;
+
     const fetchSettings = async () => {
       try {
         const response = await api.get(`/settings/${file.value.id}`);
         if (!cancelled) {
-          Object.assign(fileSettings, response.data);
-          console.log(fileSettings);
+          const camelCaseSettings = useCamelCase(response.data);
+          Object.assign(fileSettings, camelCaseSettings);
         }
       } catch (error) {
         if (!cancelled) {
