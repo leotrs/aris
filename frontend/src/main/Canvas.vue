@@ -75,7 +75,7 @@
     fontSize: "16px",
     lineHeight: "1.5",
     fontFamily: "Source Sans 3",
-    margin: "M",
+    margin: "16px",
     columns: 1,
   });
   provide("fileSettings", fileSettings);
@@ -295,7 +295,6 @@
   }
 
   .rsm-manuscript {
-    padding-inline: 16px;
     padding-block: 32px;
     border-radius: 8px;
     border: var(--border-extrathin) solid var(--border-primary);
@@ -320,5 +319,6 @@
     font-size: v-bind(fileSettings.fontSize) !important;
     font-family: v-bind(` "${fileSettings.fontFamily}" `) !important;
     line-height: v-bind(fileSettings.lineHeight) !important;
+    padding-inline: v-bind(fileSettings.marginWidth) !important;
   }
 </style>
