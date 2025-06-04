@@ -193,7 +193,7 @@
           </Dock>
           <Dock class="dock middle main">
             <ManuscriptWrapper
-              v-if="file.html"
+              v-if="file.html && (!mobileMode || (mobileMode && !showEditor))"
               ref="manuscript-ref"
               :class="{ 'title-visible': isMainTitleVisible }"
               :html-string="file.html || ''"
@@ -273,8 +273,13 @@
 
   .outer.mobile > .inner {
     padding: 0;
-    padding-left: 8px; /* match the scrollbart gutter */
+    padding-left: 8px; /* match the scrollbar gutter */
     border-radius: 0px;
+  }
+
+  .outer.mobile > .inner.left {
+    width: 100%;
+    padding-inline: 0;
   }
 
   .inner.focus {
