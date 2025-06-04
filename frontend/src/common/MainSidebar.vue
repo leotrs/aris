@@ -5,6 +5,7 @@
   import SidebarItem from "./MainSidebarItem.vue";
 
   const props = defineProps({
+    active: { type: String, default: "" },
     fab: { type: Boolean, default: true },
   });
   const emit = defineEmits(["newEmptyFile", "showFileUploadModal"]);
@@ -81,7 +82,7 @@
 
     <template v-if="!mobileMode">
       <div class="sb-menu">
-        <SidebarItem icon="Home" text="Home" active @click="() => goTo('')" />
+        <SidebarItem icon="Home" text="Home" :active="active === 'Home'" @click="() => goTo('')" />
         <!-- <SidebarItem text="Feedback" /> -->
         <!-- <SidebarItem text="References" /> -->
         <!-- <Separator /> -->
@@ -89,7 +90,7 @@
         <!-- <SidebarItem text="Write" /> -->
         <!-- <SidebarItem text="Review" /> -->
         <Separator />
-        <SidebarItem icon="Clock" text="Recent Files" />
+        <SidebarItem icon="Clock" text="Recent Files" :clickable="false" />
         <SidebarItem
           class="recent-file"
           icon-collapsed="File"
@@ -106,8 +107,18 @@
           :text="recentFiles[2]?.title || ''"
         />
         <Separator />
-        <SidebarItem icon="User" text="Account" @click="() => goTo('account')" />
-        <SidebarItem icon="Settings" text="Settings" @click="() => goTo('settings')" />
+        <SidebarItem
+          icon="User"
+          text="Account"
+          :active="active === 'Account'"
+          @click="() => goTo('account')"
+        />
+        <SidebarItem
+          icon="Settings"
+          text="Settings"
+          :active="active === 'Settings'"
+          @click="() => goTo('settings')"
+        />
         <Separator />
         <SidebarItem icon="LayoutSidebarLeftCollapse" text="Collapse" @click="toggleCollapsed" />
       </div>
