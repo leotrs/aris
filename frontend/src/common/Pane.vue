@@ -27,8 +27,8 @@
 
 <style scoped>
   .pane {
+    padding-top: 16px;
     background-color: var(--surface-primary);
-    padding-block: 16px;
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -63,6 +63,7 @@
   .content {
     padding-top: 16px;
     overflow-x: auto;
+    padding-block: 16px;
   }
 
   .content :deep(.section:last-child) {

@@ -29,6 +29,10 @@
       // toast.error("Failed to update profile")
     }
   };
+
+  const onUpload = () => {
+    console.log("uploading new picture");
+  };
 </script>
 
 <template>
@@ -44,7 +48,13 @@
           <Section class="profile-card">
             <template #content>
               <div id="pic">
-                <Button kind="tertiary" icon="Upload" class="pic-upload" size="sm" />
+                <Button
+                  kind="tertiary"
+                  icon="Upload"
+                  class="pic-upload"
+                  size="sm"
+                  @click="onUpload"
+                />
               </div>
               <div class="info">
                 <div id="username" class="text-h6">{{ user.name }}</div>
@@ -80,7 +90,7 @@
 
           <div class="buttons">
             <Button kind="tertiary">Discard</Button>
-            <Button id="cta" kind="primary" @click="onSave">Save Defaults</Button>
+            <Button id="cta" kind="primary" @click="onSave">Save</Button>
           </div>
 
           <Section v-if="mobileMode">
