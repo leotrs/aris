@@ -264,10 +264,30 @@
     position: relative;
   }
 
+  #pic::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 35%;
+    background: linear-gradient(
+      to top,
+      color-mix(in srgb, v-bind(user.color) 60%, transparent) 0%,
+      color-mix(in srgb, v-bind(user.color) 30%, transparent) 70%,
+      transparent 100%
+    );
+    border-radius: 0 0 calc(16px - var(--border-thin)) calc(16px - var(--border-thin));
+    pointer-events: none;
+  }
+
   .pic-upload {
     position: absolute;
     bottom: 8px;
     right: 8px;
+    & :deep(.tabler-icon) {
+      color: var(--almost-white);
+    }
   }
 
   #since {
