@@ -24,10 +24,12 @@
       return height ? `${height}px` : "100%";
     }
   });
+
+  const mobileMode = inject("mobileMode");
 </script>
 
 <template>
-  <Minimap v-bind="minimapProps" />
+  <Minimap v-bind="minimapProps" :class="{ mobile: mobileMode }" />
 </template>
 
 <style scoped>
@@ -40,6 +42,10 @@
     }
     & :deep(svg > line.scroll-indicator) {
     }
+  }
+
+  .mm-wrapper.mobile {
+    right: -8px;
   }
 
   .mm-wrapper > :deep(:is(.mm-main, .mm-icons)) {
