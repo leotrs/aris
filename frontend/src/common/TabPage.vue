@@ -10,7 +10,6 @@
 
 <style>
   .tab-page-wrapper {
-    padding-inline: 8px;
     width: 100%;
     height: 100%;
   }

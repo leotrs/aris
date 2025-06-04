@@ -14,21 +14,34 @@
 
 <style scoped>
   .section {
+    border-radius: calc(8px + var(--border-thin));
+    background-color: var(--surface-page);
+    border: var(--border-thin) solid var(--border-primary);
     margin-bottom: 16px;
-    border: var(--border-thin) solid transparent;
+    width: fit-content;
   }
 
   .section > * {
     padding-inline: 8px;
   }
 
-  .section > :is(.content, .footer) {
-    padding-bottom: 16px;
+  .section > .title {
+    height: 40px;
+    border-bottom: 2px solid var(--border-primary);
+    margin-bottom: 8px;
+    padding-inline: 8px;
+    background-color: var(--gray-200);
+    border-radius: 8px 8px 0 0;
+    display: flex;
+    align-items: center;
   }
 
-  .section > .title {
-    margin-bottom: 8px;
-    border-bottom: var(--border-extrathin) solid var(--border-primary);
+  .section > :is(.content, .footer) {
+    display: flex;
+    flex-direction: column;
+    padding-inline: 8px;
+    gap: 16px;
+    padding-bottom: 16px;
   }
 
   .section.danger {

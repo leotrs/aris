@@ -78,12 +78,10 @@
             </template>
           </Section>
 
-          <Section class="cta">
-            <template #content>
-              <Button kind="tertiary">Discard changes</Button>
-              <Button kind="primary" @click="onSave">Save</Button>
-            </template>
-          </Section>
+          <div class="buttons">
+            <Button kind="tertiary">Discard</Button>
+            <Button id="cta" kind="primary" @click="onSave">Save Defaults</Button>
+          </div>
 
           <Section v-if="mobileMode">
             <template #title>Useful Links</template>
@@ -106,7 +104,7 @@
               </div>
             </template>
             <template #footer>
-              <Button kind="primary danger">Delete account</Button>
+              <Button id="danger" kind="primary danger">Delete account</Button>
             </template>
           </Section>
         </div>
@@ -131,17 +129,23 @@
     transition: padding var(--transition-duration) ease;
   }
 
+  .section {
+    width: 100%;
+  }
+
   .profile-card {
-    width: max-content;
     display: flex;
     justify-content: flex-start;
+    border: var(--border-thin) solid v-bind(user.color);
+    border-radius: 16px;
   }
 
   .profile-card > :deep(.content) {
+    width: 100%;
     padding: 0px;
-    border-radius: 16px;
     display: flex;
-    border: var(--border-thin) solid var(--primary-300);
+    flex-direction: row;
+    border-radius: 16px;
     box-shadow: var(--shadow-soft);
   }
 
@@ -152,7 +156,7 @@
 
   #pic {
     height: 150px;
-    aspect-ratio: 1/1;
+    width: 150px;
     flex-shrink: 0;
     border-radius: calc(16px - var(--border-thin));
     background-color: var(--gray-100);
@@ -213,10 +217,15 @@
     width: 100%;
   }
 
-  .section.cta :deep(.content) {
+  .buttons {
     display: flex;
     justify-content: flex-end;
+    margin-bottom: 16px;
     gap: 16px;
+  }
+
+  #cta {
+    padding-inline: 48px;
   }
 
   .section.danger :deep(.footer) {
@@ -236,5 +245,9 @@
     gap: 8px;
     padding: 16px;
     padding-bottom: 16px;
+  }
+
+  #danger {
+    width: fit-content;
   }
 </style>
