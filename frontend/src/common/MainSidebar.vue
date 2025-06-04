@@ -12,7 +12,7 @@
 
   // Collapsing
   const forceCollapsed = ref(false);
-  const collapsed = ref(false);
+  const collapsed = inject("sidebarIsCollapsed");
   const toggleCollapsed = () => {
     collapsed.value = !collapsed.value;
     forceCollapsed.value = !forceCollapsed.value;
