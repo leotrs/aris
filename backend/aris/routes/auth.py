@@ -37,6 +37,7 @@ async def me(user: User = Depends(current_user)):
         "name": user.name,
         "initials": user.initials,
         "created_at": user.created_at,
+        "color": user.avatar_color,
     }
 
 

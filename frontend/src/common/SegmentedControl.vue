@@ -110,7 +110,7 @@
     &:not(.active) {
       cursor: pointer;
       color: var(--dark);
-      background-color: var(--white);
+      background-color: var(--gray-100);
 
       & > .sc-icon {
         color: var(--dark);

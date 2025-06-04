@@ -53,7 +53,7 @@
   .drawer-wrapper {
     --transition-duration: 0.3s;
     --tab-width: 64px;
-    --padding: 8px;
+    --padding: 16px;
     --border-width: var(--border-extrathin);
 
     position: fixed;
@@ -62,7 +62,7 @@
     top: calc(64px - 8px);
     right: 32px;
     z-index: 2;
-    width: calc(412px);
+    width: calc(420px + 32px);
     transform: translateX(calc(100% - 32px - 8px - 8px));
     will-change: transform;
     transition: transform var(--transition-duration) ease;
@@ -91,10 +91,10 @@
     border-top-left-radius: 16px;
     border-bottom-left-radius: 16px;
     background-color: var(--surface-primary);
-    padding: var(--padding);
+    padding-inline: 0px;
+    padding-block: var(--padding);
     pointer-events: none;
     box-shadow: var(--shadow-strong), var(--shadow-soft);
-    width: calc(64px * 3 + + 4px * 2 + 2 * var(--padding));
     width: 100%;
     height: fit-content;
     max-height: 100%;
@@ -111,6 +111,7 @@
   }
 
   .tabs-wrapper {
+    padding-inline: 16px;
     width: 100%;
   }
 
