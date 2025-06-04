@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject } from "vue";
+  import { ref, computed, inject, onUnmounted } from "vue";
   import { IconUserCircle } from "@tabler/icons-vue";
 
   const xsMode = inject("xsMode");
@@ -7,6 +7,7 @@
   const user = inject("user");
   const api = inject("api");
 
+  // Profile section form submission
   const newName = ref(null);
   const newInitials = ref(null);
   const newEmail = ref(null);
@@ -20,9 +21,7 @@
       };
 
       const res = await api.put(`/users/${user.value.id}`, payload);
-      user.value.name = res.data.name;
-      user.value.initials = res.data.initials;
-      user.value.email = res.data.email;
+      Object.assign(user.value, res.data);
       // toast.success("Profile updated")
     } catch (error) {
       console.error("Failed to update user", error);
@@ -30,9 +29,52 @@
     }
   };
 
-  const onUpload = () => {
-    console.log("uploading new picture");
+  // Profile picture upload
+  const fileInputRef = ref(null);
+  const selectedFile = ref(null);
+  const previewUrl = computed(() => {
+    return user.value ? `${api.getUri()}/users/${user.value.id}/avatar` : "";
+  });
+  const onUpload = () => fileInputRef.value?.click();
+
+  const onFileSelected = async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      console.error("Please select an image file");
+      // toast.error('Please select an image file');
+      return;
+    }
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      console.error("File size must be less than 5MB");
+      // toast.error('File size must be less than 5MB');
+      return;
+    }
+    selectedFile.value = file;
+
+    // Create preview URL
+    if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
+    previewUrl.value = URL.createObjectURL(file);
+
+    // Upload the file immediately
+    try {
+      const formData = new FormData();
+      formData.append("avatar", file);
+
+      await api.post(`/users/${user.value.id}/avatar`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log("Avatar uploaded successfully");
+      // toast.success('Avatar updated successfully');
+    } catch (error) {
+      console.error("Failed to upload avatar", error);
+      // toast.error('Failed to upload avatar');
+    }
   };
+
+  // Clean up preview URL when component unmounts
+  onUnmounted(() => previewUrl.value && URL.revokeObjectURL(previewUrl.value));
 </script>
 
 <template>
@@ -47,13 +89,26 @@
         <div class="left">
           <Section class="profile-card">
             <template #content>
-              <div id="pic">
+              <div
+                id="pic"
+                :style="{
+                  backgroundImage: previewUrl ? `url(${previewUrl})` : 'none',
+                }"
+              >
                 <Button
                   kind="tertiary"
                   icon="Upload"
                   class="pic-upload"
                   size="sm"
                   @click="onUpload"
+                />
+                <!-- Hidden file input -->
+                <input
+                  ref="fileInputRef"
+                  type="file"
+                  accept="image/*"
+                  style="display: none"
+                  @change="onFileSelected"
                 />
               </div>
               <div class="info">
@@ -170,6 +225,8 @@
     flex-shrink: 0;
     border-radius: calc(16px - var(--border-thin));
     background-color: var(--gray-100);
+    background-size: cover;
+    background-position: center;
     position: relative;
   }
 
