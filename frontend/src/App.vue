@@ -131,6 +131,10 @@
     true,
     "Global"
   );
+
+  // Main sidebar collapsed state - here only because it's shared by multiple views
+  const sidebarIsCollapsed = ref(false);
+  provide("sidebarIsCollapsed", sidebarIsCollapsed);
 </script>
 
 <template>
