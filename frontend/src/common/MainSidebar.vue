@@ -94,17 +94,17 @@
         <SidebarItem
           class="recent-file"
           icon-collapsed="File"
-          :text="recentFiles[0]?.title || ''"
+          :text="recentFiles[0]?.title || 'Untitled'"
         />
         <SidebarItem
           class="recent-file"
           icon-collapsed="File"
-          :text="recentFiles[1]?.title || ''"
+          :text="recentFiles[1]?.title || 'Untitled'"
         />
         <SidebarItem
           class="recent-file"
           icon-collapsed="File"
-          :text="recentFiles[2]?.title || ''"
+          :text="recentFiles[2]?.title || 'Untitled'"
         />
         <Separator />
         <SidebarItem

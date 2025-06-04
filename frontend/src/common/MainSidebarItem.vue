@@ -1,5 +1,5 @@
 <script setup>
-  import { inject } from "vue";
+  import { inject, useTemplateRef } from "vue";
   import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
@@ -10,10 +10,12 @@
     clickable: { type: Boolean, default: true },
   });
   const collapsed = inject("collapsed");
+  const selfRef = useTemplateRef("self-ref");
 </script>
 
 <template>
   <div
+    ref="self-ref"
     class="sb-item"
     :class="{ collapsed: collapsed, active: active, 'not-clickable': !clickable }"
   >
@@ -30,6 +32,8 @@
 
     <!--for seamless transition to the panes-->
     <span class="join"></span>
+
+    <Tooltip v-if="collapsed" :content="text" :anchor="selfRef" placement="right" />
   </div>
 </template>
 
