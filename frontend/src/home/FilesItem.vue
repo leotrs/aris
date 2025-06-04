@@ -13,15 +13,12 @@
   // State
   const hovered = ref(false);
   const router = useRouter();
-  const readFile = () => {
-    /* fileStore.value.selectFile(file.value); */
-    router.push(`/file/${file.value.id}`);
-  };
 
   // Breakpoints
   const shouldShowColumn = inject("shouldShowColumn");
 
   // File menu callbacks
+  const open = () => File.openFile(file.value, router);
   const menuRef = useTemplateRef("menu-ref");
   const fileTitleRef = useTemplateRef("file-title-ref");
   const user = inject("user");
@@ -41,8 +38,8 @@
   const { activate, deactivate } = useKeyboardShortcuts(
     {
       ".": { fn: () => menuRef.value?.toggle(), description: "open file menu" },
-      enter: readFile,
-      " ": { fn: readFile, description: "open file" },
+      enter: open,
+      " ": { fn: open, description: "open file" },
     },
     false,
     "When a file item is selected"
@@ -67,8 +64,8 @@
     }"
     @mouseenter="hovered = true"
     @mouseleave="hovered = false"
-    @click="readFile"
-    @dblclick="readFile"
+    @click="open"
+    @dblclick="open"
   >
     <template v-if="!!file">
       <template v-if="mode == 'cards'"> </template>

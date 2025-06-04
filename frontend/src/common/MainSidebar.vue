@@ -1,6 +1,7 @@
 <script setup>
   import { ref, computed, inject, provide, watchEffect, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
+  import { File } from "../File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./MainSidebarItem.vue";
 
@@ -92,19 +93,25 @@
         <Separator />
         <SidebarItem icon="Clock" text="Recent Files" :clickable="false" />
         <SidebarItem
+          v-if="recentFiles[0]"
           class="recent-file"
           icon-collapsed="File"
-          :text="recentFiles[0]?.title || 'Untitled'"
+          :text="recentFiles[0].title || 'Untitled'"
+          @click="File.openFile(recentFiles[0], router)"
         />
         <SidebarItem
+          v-if="recentFiles[1]"
           class="recent-file"
           icon-collapsed="File"
-          :text="recentFiles[1]?.title || 'Untitled'"
+          :text="recentFiles[1].title || 'Untitled'"
+          @click="File.openFile(recentFiles[1], router)"
         />
         <SidebarItem
+          v-if="recentFiles[2]"
           class="recent-file"
           icon-collapsed="File"
-          :text="recentFiles[2]?.title || 'Untitled'"
+          :text="recentFiles[2].title || 'Untitled'"
+          @click="File.openFile(recentFiles[2], router)"
         />
         <Separator />
         <SidebarItem

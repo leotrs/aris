@@ -171,6 +171,14 @@ export class File {
   }
 
   /**
+   * Navigates to the main file view.
+   * @param {Object} file - The file object
+   */
+  static openFile(file, router) {
+    router.push(`/file/${file.id}`);
+  }
+
+  /**
    * Creates a plain JS object from file (for API calls)
    * @param {Object} file - The file object
    * @returns {Object} Plain JS object with file data
