@@ -210,7 +210,7 @@
 
       <DockableMinimap :file="file" side="right" />
 
-      <Drawer :class="{ focus: focusMode }" />
+      <Drawer :class="{ focus: focusMode, mobile: mobileMode }" />
     </div>
   </Suspense>
 </template>
