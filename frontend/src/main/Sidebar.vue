@@ -40,6 +40,24 @@
      * }, */
     /* PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t", state: false }, */
   });
+  const panelComponentsMobile = reactive({
+    /* PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a", state: false }, */
+    DockableEditor: {
+      icon: "Code",
+      label: "source",
+      preferredSide: "left",
+      key: "e",
+      state: false,
+    },
+    DockableSearch: {
+      icon: "Search",
+      label: "search",
+      preferredSide: "top",
+      key: "f",
+      state: false,
+    },
+    Comments: { icon: "Message", label: "comments", preferredSide: "left", key: "c", state: false },
+  });
 
   // Keys
   useKeyboardShortcuts(
@@ -68,12 +86,12 @@
       @click="focusMode = false"
     />
 
-    <div id="logo" role="button" tabindex="0" @click="router?.push('/')">
+    <div v-if="!mobileMode" id="logo" role="button" tabindex="0" @click="router?.push('/')">
       <img src="../assets/logo-32px.svg" />
     </div>
 
     <div class="sb-menu">
-      <div class="sb-menu-inner">
+      <div v-if="!mobileMode" class="sb-menu-std">
         <SidebarItem
           v-for="(obj, name) in panelComponents"
           :key="obj"
@@ -91,6 +109,22 @@
           :with-side-control="false"
         />
       </div>
+
+      <div v-if="mobileMode" class="sb-menu-mobile">
+        <SidebarItem icon="Home" label="home" :with-side-control="false" />
+
+        <SidebarItem
+          v-for="(obj, name) in panelComponentsMobile"
+          :key="obj"
+          v-model="obj.state"
+          :icon="obj.icon"
+          :label="obj.label"
+          :preferred-side="obj.preferredSide"
+          @on="(side) => emit('showComponent', name, side)"
+          @off="(side) => emit('hideComponent', name, side)"
+        />
+        <SidebarItem icon="Share3" label="share" :with-side-control="false" />
+      </div>
     </div>
   </div>
 </template>
@@ -100,7 +134,6 @@
     position: fixed;
     height: 100%;
     z-index: 2;
-    max-width: 64px;
     width: 64px;
     top: 0;
 
@@ -109,10 +142,6 @@
     transition:
       opacity var(--transition-duration) ease,
       transform var(--transition-duration) ease;
-  }
-
-  .sb-wrapper.mobile {
-    display: none;
   }
 
   .sb-wrapper.focus {
@@ -163,7 +192,7 @@
     padding-block: 8px;
   }
 
-  .sb-menu-inner {
+  .sb-menu-std {
     height: 100%;
     padding-block: 8px;
     padding-inline: 4px;
@@ -186,5 +215,42 @@
     bottom: 21px;
     margin: 8px;
     left: 64px;
+  }
+
+  .sb-wrapper.mobile {
+    padding: 0;
+    height: calc(64px);
+    width: 100%;
+    top: unset;
+    bottom: 0;
+    border-top: var(--border-thin) solid var(--border-primary);
+    background-color: var(--surface-hover);
+    border-radius: 16px 16px 0 0;
+  }
+
+  .sb-wrapper.mobile > .sb-menu {
+    padding: 0;
+    position: fixed;
+    left: 0;
+    max-width: 100%;
+    width: 100%;
+    opacity: 1;
+  }
+
+  .sb-menu-mobile {
+    display: flex;
+    width: 100%;
+    padding-inline: 24px;
+    justify-content: space-between;
+
+    & .sb-item {
+      padding-block: 8px;
+      padding-inline: 0;
+      align-items: center;
+    }
+
+    & .sb-item > :deep(.sb-item-label) {
+      width: 32px;
+    }
   }
 </style>

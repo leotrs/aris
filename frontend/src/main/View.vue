@@ -90,7 +90,7 @@
       :right="rightComponents"
       :top="topComponents"
     />
-    <div class="menus" :class="{ focus: focusMode }">
+    <div class="menus" :class="{ focus: focusMode, mobile: mobileMode }">
       <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
       <FileMenu icon="Menu3" />
       <UserMenu />
@@ -149,8 +149,7 @@
   }
 
   .view.mobile > .menus {
-    right: 8px;
-    top: 0px;
+    display: none;
   }
 
   .menus.focus {

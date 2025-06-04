@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, onBeforeUnmount } from "vue";
+  import { ref, watch, inject, onBeforeUnmount } from "vue";
 
   const props = defineProps({
     icon: { type: String, required: true },
@@ -91,6 +91,8 @@
       showTimeout = null;
     }
   });
+
+  const mobileMode = inject("mobileMode");
 </script>
 
 <template>
@@ -102,6 +104,7 @@
         :aria-label="label || 'Toggle ' + icon"
         :aria-pressed="buttonState"
         tabindex="0"
+        :button-size="mobileMode ? 'btn-sm' : 'btn-md'"
         @mouseenter="onMouseEnterButton"
         @mouseleave="onMouseLeaveButton"
       />
