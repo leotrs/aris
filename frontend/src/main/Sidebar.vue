@@ -111,7 +111,12 @@
       </div>
 
       <div v-if="mobileMode" class="sb-menu-mobile">
-        <SidebarItem icon="Home" label="home" :with-side-control="false" />
+        <SidebarItem
+          icon="Home"
+          label="home"
+          :with-side-control="false"
+          @click="router.push('/')"
+        />
 
         <SidebarItem
           v-for="(obj, name) in panelComponentsMobile"
