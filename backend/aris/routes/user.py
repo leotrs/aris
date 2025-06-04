@@ -139,7 +139,9 @@ async def upload_profile_picture(
 
 
 @router.get("/{user_id}/avatar")
-async def get_profile_picture(user_id: int, db: AsyncSession = Depends(get_db)):
+async def get_profile_picture(
+    user_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(current_user)
+):
     """Retrieve a user's profile picture."""
     if current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not authorized to retrieve this profile")

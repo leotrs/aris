@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, inject, onUnmounted } from "vue";
+  import { ref, computed, inject, onMounted, onUnmounted } from "vue";
   import { IconUserCircle } from "@tabler/icons-vue";
 
   const xsMode = inject("xsMode");
@@ -32,9 +32,29 @@
   // Profile picture upload
   const fileInputRef = ref(null);
   const selectedFile = ref(null);
-  const previewUrl = computed(() => {
-    return user.value ? `${api.getUri()}/users/${user.value.id}/avatar` : "";
-  });
+  const localPreviewUrl = ref(null);
+  const serverAvatarUrl = ref(null);
+
+  const fetchAvatar = async () => {
+    if (!user.value) return;
+    try {
+      const response = await api.get(`/users/${user.value.id}/avatar`, {
+        responseType: "blob",
+      });
+      if (serverAvatarUrl.value) {
+        URL.revokeObjectURL(serverAvatarUrl.value);
+      }
+      serverAvatarUrl.value = URL.createObjectURL(response.data);
+    } catch (error) {
+      console.log("No avatar found or error fetching avatar:", error);
+      serverAvatarUrl.value = null;
+    }
+  };
+
+  const previewUrl = computed(() =>
+    localPreviewUrl.value ? localPreviewUrl.value : serverAvatarUrl.value || ""
+  );
+
   const onUpload = () => fileInputRef.value?.click();
 
   const onFileSelected = async (event) => {
@@ -53,9 +73,9 @@
     }
     selectedFile.value = file;
 
-    // Create preview URL
-    if (previewUrl.value) URL.revokeObjectURL(previewUrl.value);
-    previewUrl.value = URL.createObjectURL(file);
+    // Create new preview URL
+    if (localPreviewUrl.value) URL.revokeObjectURL(localPreviewUrl.value);
+    localPreviewUrl.value = URL.createObjectURL(file);
 
     // Upload the file immediately
     try {
@@ -67,14 +87,28 @@
       });
       console.log("Avatar uploaded successfully");
       // toast.success('Avatar updated successfully');
+
+      // Clear local preview and refetch from server
+      setTimeout(async () => {
+        if (localPreviewUrl.value) {
+          URL.revokeObjectURL(localPreviewUrl.value);
+          localPreviewUrl.value = null;
+        }
+        // Refetch the avatar from server
+        await fetchAvatar();
+      }, 500);
     } catch (error) {
       console.error("Failed to upload avatar", error);
       // toast.error('Failed to upload avatar');
     }
   };
 
-  // Clean up preview URL when component unmounts
-  onUnmounted(() => previewUrl.value && URL.revokeObjectURL(previewUrl.value));
+  // Lifecycle
+  onMounted(() => fetchAvatar());
+  onUnmounted(() => {
+    if (localPreviewUrl.value) URL.revokeObjectURL(localPreviewUrl.value);
+    if (serverAvatarUrl.value) URL.revokeObjectURL(serverAvatarUrl.value);
+  });
 </script>
 
 <template>
