@@ -7,12 +7,16 @@
     iconCollapsed: { type: String, default: "" },
     text: { type: String, required: true },
     active: { type: Boolean, default: false },
+    clickable: { type: Boolean, default: true },
   });
   const collapsed = inject("collapsed");
 </script>
 
 <template>
-  <div class="sb-item" :class="{ collapsed: collapsed, active: active }">
+  <div
+    class="sb-item"
+    :class="{ collapsed: collapsed, active: active, 'not-clickable': !clickable }"
+  >
     <template v-if="!collapsed">
       <component :is="Icons['Icon' + icon]" v-if="icon" class="sb-icon" />
     </template>
@@ -45,7 +49,7 @@
     padding-right: var(--padding-inline);
     transition: var(--transition-bg-color);
 
-    &:hover {
+    &:hover:not(:is(.not-clickable, .active)) {
       background-color: var(--gray-200);
       border-left-color: var(--light);
       cursor: pointer;

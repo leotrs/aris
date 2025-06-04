@@ -6,7 +6,7 @@
 </script>
 
 <template>
-  <HomeLayout :fab="false">
+  <HomeLayout :fab="false" active="Settings">
     <Pane>
       <template #header>
         <IconSettings />

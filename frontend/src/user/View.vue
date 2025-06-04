@@ -36,7 +36,7 @@
 </script>
 
 <template>
-  <HomeLayout :fab="false">
+  <HomeLayout :fab="false" active="Account">
     <Pane>
       <template #header>
         <IconUserCircle />

@@ -48,7 +48,7 @@
 </script>
 
 <template>
-  <HomeLayout>
+  <HomeLayout active="Home">
     <div ref="panes-ref" class="panes">
       <FilesPane :style="{ height: '100%' }" />
 

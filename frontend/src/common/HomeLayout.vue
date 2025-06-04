@@ -4,6 +4,7 @@
   import UploadFile from "../home/ModalUploadFile.vue";
 
   const props = defineProps({
+    active: { type: String, default: "" },
     fab: { type: Boolean, default: true },
   });
   const mobileMode = inject("mobileMode");
@@ -34,6 +35,7 @@
   <div class="view" :class="{ mobile: mobileMode }">
     <MainSidebar
       :fab="fab"
+      :active="active"
       @new-empty-file="newEmptyFile"
       @show-file-upload-modal="showModal = true"
     />
