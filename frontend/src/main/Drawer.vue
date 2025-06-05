@@ -49,7 +49,7 @@
   </div>
 </template>
 
-<style>
+<style scoped>
   .drawer-wrapper {
     --transition-duration: 0.3s;
     --tab-width: 64px;
@@ -59,7 +59,7 @@
     position: fixed;
     display: flex;
     align-items: flex-start;
-    top: calc(64px - 8px);
+    top: 24px;
     right: 32px;
     z-index: 2;
     width: calc(420px + 32px);

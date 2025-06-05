@@ -30,7 +30,13 @@
      *   key: "m",
      *   state: true,
      * }, */
-    Comments: { icon: "Message", label: "comments", preferredSide: "left", key: "c", state: false },
+    Comments: {
+      icon: "Message",
+      label: "comments",
+      preferredSide: "left",
+      key: "c",
+      state: false,
+    },
     /* PanelSymbols: {
      *   icon: "Variable",
      *   label: "symbols",
@@ -56,7 +62,13 @@
       key: "f",
       state: false,
     },
-    Comments: { icon: "Message", label: "comments", preferredSide: "left", key: "c", state: false },
+    Comments: {
+      icon: "Message",
+      label: "comments",
+      preferredSide: "left",
+      key: "c",
+      state: false,
+    },
   });
 
   // Keys
@@ -74,10 +86,15 @@
 
   // Responsiveness
   const mobileMode = inject("mobileMode");
+  const xsMode = inject("xsMode");
 </script>
 
 <template>
-  <div ref="sidebar-ref" class="sb-wrapper" :class="{ focus: focusMode, mobile: mobileMode }">
+  <div
+    ref="sidebar-ref"
+    class="sb-wrapper"
+    :class="{ focus: focusMode, mobile: mobileMode, xs: xsMode }"
+  >
     <Button
       v-show="focusMode"
       class="layout-on"
@@ -110,7 +127,7 @@
         />
       </div>
 
-      <div v-if="mobileMode" class="sb-menu-mobile">
+      <div v-if="mobileMode" class="sb-menu-mobile" :class="{ xs: xsMode }">
         <SidebarItem
           icon="Home"
           label="home"
@@ -169,7 +186,7 @@
     justify-content: center;
     height: 64px;
     width: 64px;
-    margin-top: 16px;
+    margin-top: 0px;
     opacity: 1;
     &:hover {
       cursor: pointer;
@@ -182,9 +199,7 @@
   }
 
   .sb-menu {
-    padding: 8px 4px 24px 4px;
     position: fixed;
-    height: calc(100% - 48px - 8px - 8px);
     max-width: 64px;
     left: 0;
     width: 64px;
@@ -199,8 +214,7 @@
 
   .sb-menu-std {
     height: 100%;
-    padding-block: 8px;
-    padding-inline: 4px;
+    padding: 8px;
 
     /* no scrollbar in any browser */
     overflow-y: auto;
@@ -256,6 +270,13 @@
 
     & .sb-item > :deep(.sb-item-label) {
       width: 32px;
+      margin: 0;
+      display: flex;
+      justify-content: center;
     }
+  }
+
+  .sb-menu-mobile.xs {
+    padding-inline: 16px;
   }
 </style>

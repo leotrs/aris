@@ -119,6 +119,7 @@
     color: var(--gray-600);
     letter-spacing: 0.01em;
     text-wrap: nowrap;
+    padding-inline: 16px;
   }
 
   .source-right,

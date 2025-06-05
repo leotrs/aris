@@ -171,7 +171,7 @@
 
     & > #logo > img {
       height: 64px;
-      margin: 6px 0 -6px 6px;
+      margin: 6px 0 -2px 6px;
     }
   }
 
