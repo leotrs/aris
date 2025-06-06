@@ -37,4 +37,12 @@
   <FileSettings v-model="fileSettings" @save="onSave" @reset="onReset" />
 </template>
 
-<style scoped></style>
+<style scoped>
+  .settings {
+    height: 100%;
+  }
+
+  :deep(.pane) {
+    height: 100%;
+  }
+</style>
