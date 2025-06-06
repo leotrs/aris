@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, inject, reactive, useTemplateRef } from "vue";
+  import { watch, computed, inject, reactive, nextTick, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
@@ -24,7 +24,7 @@
       state: false,
       type: "toggle",
     },
-    { name: "Separator" },
+    { name: "Separator", state: false },
     {
       name: "DrawerMargins",
       icon: "LayoutDistributeVertical",
@@ -67,27 +67,66 @@
       type: "drawer",
       pane: "DrawerSettings",
     },
-    { name: "Separator" },
+    { name: "Separator", state: false },
   ]);
   const itemsMobile = reactive([]);
 
-  // Drawer
-  const drawerOpen = inject("drawerOpen");
-  const onItemOn = (obj, side) => {
-    if (obj.type == "drawer") drawerOpen.value = true;
-    else emit("showComponent", obj.name, side);
-  };
-  const onItemOff = (obj, side) => {
-    if (obj.type == "drawer") drawerOpen.value = false;
-    else emit("hideComponent", obj.name, side);
-  };
   const sidebarWidth = computed(() => (drawerOpen.value ? "calc(64px + 420px)" : "64px"));
 
+  // Drawer
+  const drawerOpen = inject("drawerOpen");
+  const handleDrawerClick = (clickedIndex) => {
+    const wasActive = items[clickedIndex].state;
+
+    if (wasActive) {
+      // Deactivating: close drawer
+      items[clickedIndex].state = false;
+      drawerOpen.value = false;
+    } else {
+      // Activating: Close all other drawers first and then open this one
+      items.forEach((item) => item.type === "drawer" && (item.state = false));
+      // Open the clicked drawer
+      items[clickedIndex].state = true;
+      drawerOpen.value = true;
+    }
+  };
+
+  watch(drawerOpen, (newVal) => console.log(newVal));
+
+  // Simple watcher for toggles only
+  watch(
+    () => items.filter((item) => item.type === "toggle").map((obj) => obj.state),
+    (newStates, oldStates) => {
+      const toggleItems = items.filter((item) => item.type === "toggle");
+
+      newStates.forEach((isOn, idx) => {
+        const wasOn = oldStates[idx];
+        if (isOn && !wasOn) {
+          emit("showComponent", toggleItems[idx].name, "right");
+        } else if (!isOn && wasOn) {
+          emit("hideComponent", toggleItems[idx].name, "right");
+        }
+      });
+    }
+  );
+
   // Keys
+  // Update keyboard shortcuts to use the method for drawers
   useKeyboardShortcuts(
-    Object.fromEntries(
-      items.filter((obj) => obj.key).map((obj) => [`p,${obj.key}`, () => (obj.state = !obj.state)])
-    )
+    Object.fromEntries([
+      // Toggles work as before
+      ...items
+        .filter((obj) => obj.key && obj.type === "toggle")
+        .map((obj) => [`p,${obj.key}`, () => (obj.state = !obj.state)]),
+
+      // Drawers use the method
+      ...items
+        .filter((obj) => obj.key && obj.type === "drawer")
+        .map((obj, _, drawerItems) => {
+          const originalIndex = items.indexOf(obj);
+          return [`p,${obj.key}`, () => handleDrawerClick(originalIndex)];
+        }),
+    ])
   );
 
   // Focus mode
@@ -124,13 +163,18 @@
         <template v-for="(it, idx) in items" :key="it">
           <Separator v-if="it.name == 'Separator'" />
           <SidebarItem
-            v-else
+            v-else-if="it.type === 'toggle'"
             v-model="items[idx].state"
             :icon="it.icon"
             :label="it.label"
-            :type="it.type === 'drawer' ? 'outline' : 'filled'"
-            @on="(side) => onItemOn(it, side)"
-            @off="(side) => onItemOff(it, side)"
+          />
+          <SidebarItem
+            v-else-if="it.type === 'drawer'"
+            :model-value="items[idx].state"
+            :icon="it.icon"
+            :label="it.label"
+            type="outline"
+            @click="handleDrawerClick(idx)"
           />
         </template>
         <SidebarItem
