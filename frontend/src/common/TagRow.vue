@@ -1,5 +1,6 @@
 <script setup>
   import { ref, watchEffect, computed } from "vue";
+
   const props = defineProps({
     file: { type: Object, required: true },
     maxTags: { type: Number, default: 3 },
@@ -8,15 +9,23 @@
   const selectedTags = ref([]);
   const showAll = ref(false);
 
+  // Use a more stable way to sync tags
   watchEffect(() => {
-    selectedTags.value = [...(props.file.tags || [])];
+    const fileTags = props.file.tags || [];
+    // Only update if the tags have actually changed (by id)
+    const currentIds = selectedTags.value.map((t) => t.id).sort();
+    const newIds = fileTags.map((t) => t.id).sort();
+
+    if (JSON.stringify(currentIds) !== JSON.stringify(newIds)) {
+      selectedTags.value = [...fileTags];
+    }
   });
 
   const visibleTags = computed(() => {
     if (showAll.value || selectedTags.value.length <= props.maxTags) {
       return selectedTags.value;
     }
-    return selectedTags.value.slice(0, props.maxTags - 1);
+    return selectedTags.value.slice(0, props.maxTags);
   });
 
   const hasOverflow = computed(() => {
@@ -24,7 +33,7 @@
   });
 
   const overflowCount = computed(() => {
-    return selectedTags.value.length - (props.maxTags - 1);
+    return selectedTags.value.length - props.maxTags;
   });
 
   const toggleShowAll = () => (showAll.value = !showAll.value);
@@ -32,22 +41,11 @@
 
 <template>
   <div class="tag-row">
-    <Tag
-      v-for="tag in visibleTags.slice(0, -1)"
-      :key="tag.name + tag.color"
-      :tag="tag"
-      :active="true"
-    />
-    <!-- The last visible tag + overflow indicator + MultiSelectTags wrapped together -->
-    <div class="nowrap">
-      <!-- Last visible tag -->
-      <Tag
-        v-if="visibleTags.length > 0"
-        :key="visibleTags.at(-1).name"
-        :tag="visibleTags.at(-1)"
-        :active="true"
-      />
+    <!-- Always use tag.id as key for consistency -->
+    <Tag v-for="tag in visibleTags" :key="tag.id" :tag="tag" :active="true" />
 
+    <!-- Overflow controls in a separate container -->
+    <div class="controls">
       <!-- Overflow indicator -->
       <button
         v-if="hasOverflow && !showAll"
@@ -68,6 +66,7 @@
         show less
       </button>
 
+      <!-- Tag selector always at the end -->
       <MultiSelectTags v-model="selectedTags" :file="file" />
     </div>
   </div>
@@ -78,11 +77,10 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    column-gap: 8px;
-    row-gap: 0px;
+    gap: 8px;
   }
 
-  .nowrap {
+  .controls {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -97,6 +95,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .overflow-tag:hover {
@@ -108,11 +107,5 @@
   .overflow-tag.show-less {
     color: var(--gray-700);
     font-size: 12px;
-  }
-
-  .new-tag {
-    &:hover {
-      background-color: var(--surface-hint);
-    }
   }
 </style>
