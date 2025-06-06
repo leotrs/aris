@@ -3,6 +3,8 @@
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
+  import DrawerMargins from "./DrawerMargins.vue";
+  import DrawerSettings from "./DrawerSettings.vue";
 
   const router = useRouter();
   const emit = defineEmits(["showComponent", "hideComponent"]);
@@ -35,6 +37,7 @@
       key: "m",
       state: false,
       type: "drawer",
+      pane: DrawerMargins,
     },
     DrawerActivity: {
       // icon: "Versions",
@@ -66,9 +69,10 @@
       icon: "AdjustmentsHorizontal",
       label: "settings",
       preferredSide: "left",
-      key: "c",
+      key: "s",
       state: false,
       type: "drawer",
+      pane: DrawerSettings,
     },
     Separator2: { label: "Separator" },
     /* PanelSymbols: {
@@ -115,7 +119,7 @@
     if (obj.type == "drawer") drawerOpen.value = false;
     else emit("hideComponent", obj.name, side);
   };
-  const sidebarWidth = computed(() => (drawerOpen.value ? "calc(64px + 320px)" : "64px"));
+  const sidebarWidth = computed(() => (drawerOpen.value ? "calc(64px + 420px)" : "64px"));
 
   // Keys
   useKeyboardShortcuts(
@@ -175,21 +179,7 @@
         />
         <UserMenu />
         <div class="newdrawer" :class="{ active: drawerOpen }">
-          <Pane>
-            <template #header>Margins</template>
-            <Section>
-              <template #title>Annotations</template>
-              <template #content>Comments and notes</template>
-            </Section>
-            <Section>
-              <template #title>Ari</template>
-              <template #content>Artificial research intelligence</template>
-            </Section>
-            <Section>
-              <template #title>Math Tools</template>
-              <template #content>Symbols and results</template>
-            </Section>
-          </Pane>
+          <component :is="Object.values(panelComponents).find((obj) => obj.state)?.pane" />
         </div>
       </div>
 
@@ -360,11 +350,11 @@
     position: absolute;
     top: calc(-64px + 8px);
     bottom: 0;
-    left: -312px;
-    width: calc(320px - 8px);
+    left: -404px;
+    width: calc(404px - 8px);
     border-radius: 16px;
     box-shadow: var(--shadow-soft);
-    border: var(--border-med) solid var(--information-200);
+    border: var(--border-med) solid var(--purple-300);
     opacity: 0;
     transition:
       left 0.3s ease,

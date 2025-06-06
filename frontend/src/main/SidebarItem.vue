@@ -106,6 +106,7 @@
         :aria-pressed="buttonState"
         tabindex="0"
         :button-size="mobileMode ? 'btn-sm' : 'btn-md'"
+        :active-color="type == 'outline' ? 'var(--purple-300)' : 'var(--surface-hint)'"
         :type="type"
         @mouseenter="onMouseEnterButton"
         @mouseleave="onMouseLeaveButton"
