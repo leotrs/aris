@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, inject, provide, watchEffect, useTemplateRef } from "vue";
+  import { ref, inject, provide, watchEffect, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { File } from "../File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
@@ -187,7 +187,6 @@
     }
 
     & > #logo {
-      margin-top: 8px;
       margin-bottom: 16px;
       padding-inline: 16px;
 

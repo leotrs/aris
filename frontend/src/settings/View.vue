@@ -15,12 +15,13 @@
 
       <div class="main">
         <div class="left">
-          <FileSettings />
+          <FileSettings :header="false" />
           <div class="info">
             <IconInfoCircle />
             <p>
-              The settings you choose here will be applied to every new file. You can modify the
-              settings of existing files by opening them and opening the right-hand side panel.
+              These settings will be applied to <em>new</em> files. Modify the settings of
+              <em>existing</em> files by opening them and choosing the Settings option in the
+              sidebar.
             </p>
           </div>
         </div>
