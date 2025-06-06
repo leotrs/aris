@@ -76,7 +76,7 @@
     },
     { name: "Separator" },
   ]);
-  const itemsMobile = reactive();
+  const itemsMobile = reactive([]);
 
   // Drawer
   const drawerOpen = inject("drawerOpen");
@@ -118,7 +118,7 @@
       icon="Layout"
       @click="focusMode = false"
     />
-    <Tooltip :anchor="layoutOnRef?.btn" content="Focus mode off" placement="top" />
+    <Tooltip :anchor="layoutOnRef?.btn ?? null" content="Focus mode off" placement="top" />
 
     <div v-if="!mobileMode" id="logo" role="button" tabindex="0" @click="router?.push('/')">
       <img src="../assets/logo-32px.svg" />
@@ -126,11 +126,11 @@
 
     <div class="sb-menu">
       <div v-if="!mobileMode" class="sb-menu-std">
-        <template v-for="it in items" :key="it">
+        <template v-for="(it, idx) in items" :key="it">
           <Separator v-if="it.name == 'Separator'" />
           <SidebarItem
             v-else
-            v-model="it.state"
+            v-model="items[idx].state"
             :icon="it.icon"
             :label="it.label"
             :type="it.type === 'drawer' ? 'outline' : 'filled'"
