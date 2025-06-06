@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive, inject, watch, watchEffect, nextTick } from "vue";
+  import { ref, reactive, inject, watch, watchEffect, nextTick, computed } from "vue";
 
   const props = defineProps({
     file: { type: Object, default: null },
@@ -12,10 +12,14 @@
 
   // Track when we're programmatically updating to avoid loops
   const updatingFromProps = ref(false);
+  const isFilterContext = computed(() => !props.file);
 
   // Sync state with current tags
   watchEffect(async () => {
     if (!fileStore.value?.tags) return;
+
+    // In filter context, only initialize once - don't keep syncing
+    if (isFilterContext.value && state.tagIsAssigned.length > 0) return;
 
     updatingFromProps.value = true;
     const tagIds = (tags.value || []).map((t) => t.id);
@@ -29,8 +33,8 @@
   watch(
     () => [...state.tagIsAssigned],
     (newVal, oldVal) => {
-      // Ignore changes during programmatic updates
-      if (updatingFromProps.value || !props.file || !oldVal) return;
+      // Ignore changes during programmatic updates or missing oldVal
+      if (updatingFromProps.value || !oldVal) return;
 
       newVal.forEach((isAssigned, idx) => {
         const wasAssigned = oldVal[idx];
@@ -38,11 +42,15 @@
 
         if (isAssigned && !wasAssigned) {
           // User checked a tag - add it
-          fileStore.value.toggleFileTag(props.file, tag.id);
+          if (props.file) {
+            fileStore.value.toggleFileTag(props.file, tag.id);
+          }
           tags.value = [...(tags.value || []), tag];
         } else if (!isAssigned && wasAssigned) {
           // User unchecked a tag - remove it
-          fileStore.value.toggleFileTag(props.file, tag.id);
+          if (props.file) {
+            fileStore.value.toggleFileTag(props.file, tag.id);
+          }
           tags.value = (tags.value || []).filter((t) => t.id !== tag.id);
         }
       });

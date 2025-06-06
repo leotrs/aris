@@ -53,7 +53,6 @@
       :class="[name.toLowerCase().replace(' ', '-'), 'filterable']"
       @mouseenter="filterableSVGColor = 'var(--medium)'"
       @mouseleave="filterableSVGColor = 'transparent'"
-      @focus-visible=""
     >
       <span class="col-header-label text-label">{{ name }}</span>
       <MultiSelectTags v-model="tagsSelectedForFilter" icon="Filter" />

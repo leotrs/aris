@@ -39,9 +39,8 @@
     }
   };
   const handleColumnFilterEvent = (columnName, tags) => {
-    console.log(columnName, tags);
     if (tags.length == 0) {
-      fileStore.value.clearFilterFiles();
+      fileStore.value.clearFilters();
     } else {
       fileStore.value.filterFiles((file) => {
         const filterTagIds = tags.map((t) => t.id);
