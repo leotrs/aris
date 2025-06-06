@@ -22,8 +22,8 @@
   .drawer {
     background: var(--surface-page);
     position: absolute;
-    top: calc(-64px + 8px);
-    bottom: calc(8px);
+    top: calc(-1 * 64px - 8px);
+    bottom: 24px;
     left: calc(-1 * var(--sidebar-width));
     width: calc(var(--sidebar-width) - 8px);
     border-radius: 16px;
@@ -41,7 +41,8 @@
     opacity: 1;
   }
 
-  .pane {
+  :deep(.pane) {
+    padding-top: 16px;
     overflow-y: auto;
     height: 100%;
   }
