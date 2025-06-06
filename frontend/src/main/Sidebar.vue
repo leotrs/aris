@@ -174,7 +174,7 @@
             :icon="it.icon"
             :label="it.label"
             type="outline"
-            @click="handleDrawerClick(idx)"
+            @click.stop="handleDrawerClick(idx)"
           />
         </template>
         <SidebarItem
