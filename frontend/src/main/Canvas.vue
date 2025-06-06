@@ -234,8 +234,8 @@
   }
 
   .outer.narrow {
-    left: calc(320px + 64px);
-    width: calc(100% - 320px);
+    left: calc(404px + 64px);
+    width: calc(100% - 404px);
   }
 
   .outer.focus {

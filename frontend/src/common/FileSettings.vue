@@ -77,83 +77,85 @@
 
 <template>
   <div class="settings">
-    <Section>
-      <template #title>Colors</template>
-      <template #content>
-        <div class="row theme">
-          <span class="label">Theme</span>
-          <span class="control">
-            <ThemeSwitch :labels="true" />
-          </span>
-        </div>
-        <div class="row bg">
-          <span class="label">Background</span>
-          <ColorPicker :colors="bgColors" @change="onChangeBackground" />
-        </div>
-        <!-- <div class="row accent">
+    <Pane>
+      <template #header>File Settings</template>
+      <Section>
+        <template #title>Colors</template>
+        <template #content>
+          <div class="row theme">
+            <span class="label">Theme</span>
+            <span class="control">
+              <ThemeSwitch :labels="true" />
+            </span>
+          </div>
+          <div class="row bg">
+            <span class="label">Background</span>
+            <ColorPicker :colors="bgColors" @change="onChangeBackground" />
+          </div>
+          <!-- <div class="row accent">
              <span class="label">Accent</span>
              <ColorPicker :colors="fgColors" @change="onChangeBackground" />
              </div> -->
-      </template>
-    </Section>
+        </template>
+      </Section>
 
-    <Section>
-      <template #title>Font</template>
-      <template #content>
-        <div class="row size">
-          <span class="label">Size</span>
-          <span class="control">
-            <SegmentedControl
-              v-model="fontSize"
-              :icons="['TextDecrease', 'LetterA', 'TextIncrease']"
-              :labels="['small', 'normal', 'large']"
-              :tooltips="['base size: 14px', 'base size: 16px', 'base size: 18px']"
-              :default-active="fontSize"
-            />
-          </span>
-        </div>
-        <div class="row">
-          <span class="label">Density</span>
-          <span class="control">
-            <SegmentedControl
-              v-model="lineHeight"
-              :labels="['tight', 'normal', 'roomy']"
-              :icons="['BaselineDensitySmall', 'BaselineDensityMedium', 'BaselineDensityLarge']"
-              :tooltips="['line height: 1.2', 'line height: 1.5', 'line height: 1.8']"
-              :default-active="lineHeight"
-            />
-          </span>
-        </div>
-        <div class="row style">
-          <span class="label">Style</span>
-          <span class="control">
-            <SegmentedControl
-              v-model="fontFamily"
-              :labels="['Sans', 'Serif']"
-              :tooltips="['Source Sans 3', 'Charter']"
-              :default-active="fontFamily"
-            />
-          </span>
-        </div>
-      </template>
-    </Section>
+      <Section>
+        <template #title>Font</template>
+        <template #content>
+          <div class="row size">
+            <span class="label">Size</span>
+            <span class="control">
+              <SegmentedControl
+                v-model="fontSize"
+                :icons="['TextDecrease', 'LetterA', 'TextIncrease']"
+                :labels="['small', 'normal', 'large']"
+                :tooltips="['base size: 14px', 'base size: 16px', 'base size: 18px']"
+                :default-active="fontSize"
+              />
+            </span>
+          </div>
+          <div class="row">
+            <span class="label">Density</span>
+            <span class="control">
+              <SegmentedControl
+                v-model="lineHeight"
+                :labels="['tight', 'normal', 'roomy']"
+                :icons="['BaselineDensitySmall', 'BaselineDensityMedium', 'BaselineDensityLarge']"
+                :tooltips="['line height: 1.2', 'line height: 1.5', 'line height: 1.8']"
+                :default-active="lineHeight"
+              />
+            </span>
+          </div>
+          <div class="row style">
+            <span class="label">Style</span>
+            <span class="control">
+              <SegmentedControl
+                v-model="fontFamily"
+                :labels="['Sans', 'Serif']"
+                :tooltips="['Source Sans 3', 'Charter']"
+                :default-active="fontFamily"
+              />
+            </span>
+          </div>
+        </template>
+      </Section>
 
-    <Section>
-      <template #title>Layout</template>
-      <template #content>
-        <div class="row">
-          <span class="label">Width</span>
-          <span class="control">
-            <SegmentedControl
-              v-model="marginWidth"
-              :labels="['narrow', 'normal', 'wide']"
-              :icons="['ViewportNarrow', 'Crop11', 'ViewportWide']"
-              :tooltips="['twice  normal', 'normal', 'half normal']"
-              :default-active="marginWidth"
-            />
-          </span>
-        </div>
-        <!-- <div class="row">
+      <Section>
+        <template #title>Layout</template>
+        <template #content>
+          <div class="row">
+            <span class="label">Width</span>
+            <span class="control">
+              <SegmentedControl
+                v-model="marginWidth"
+                :labels="['narrow', 'normal', 'wide']"
+                :icons="['ViewportNarrow', 'Crop11', 'ViewportWide']"
+                :tooltips="['twice  normal', 'normal', 'half normal']"
+                :default-active="marginWidth"
+              />
+            </span>
+          </div>
+          <!-- <div class="row">
              <span class="label">Columns</span>
              <span class="control">
              <SegmentedControl
@@ -163,12 +165,13 @@
              />
              </span>
              </div> -->
-      </template>
-    </Section>
-    <div class="buttons">
-      <Button kind="tertiary" text="Reset" @click="emit('reset')" />
-      <Button class="cta" kind="primary" text="Save Settings" @click="emit('save')" />
-    </div>
+        </template>
+      </Section>
+      <div class="buttons">
+        <Button kind="tertiary" text="Reset" @click="emit('reset')" />
+        <Button class="cta" kind="primary" text="Save Settings" @click="emit('save')" />
+      </div>
+    </Pane>
   </div>
 </template>
 
@@ -176,6 +179,10 @@
   .settings {
     display: flex;
     flex-direction: column;
+  }
+
+  :deep(.title) {
+    background-color: var(--purple-50) !important;
   }
 
   .buttons {
