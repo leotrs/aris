@@ -90,7 +90,9 @@
           </div>
           <div class="column bg">
             <span class="label">Background</span>
-            <ColorPicker :colors="bgColors" @change="onChangeBackground" />
+            <span class="control">
+              <ColorPicker :colors="bgColors" @change="onChangeBackground" />
+            </span>
           </div>
           <!-- <div class="row accent">
              <span class="label">Accent</span>
@@ -181,8 +183,14 @@
     flex-direction: column;
   }
 
+  :deep(.pane-header) {
+    background-color: var(--purple-200);
+    color: var(--purple-900);
+  }
+
   :deep(.title) {
     background-color: var(--purple-50) !important;
+    color: var(--purple-900);
   }
 
   .buttons {
@@ -197,6 +205,9 @@
 
     & > .cta {
       padding-inline: 48px;
+      background-color: var(--purple-500);
+      border-color: var(--purple-500);
+      color: var(--purple-50);
     }
   }
 
@@ -246,6 +257,10 @@
 
     & :deep(.sc-label) {
       font-size: 15px;
+    }
+
+    & :deep(.cp-wrapper) {
+      justify-content: space-between;
     }
   }
 
