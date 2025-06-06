@@ -21,16 +21,12 @@
   // Panel component management
   const showEditor = ref(false);
   const showSearch = ref(false);
-  const showMap = ref(true);
   const showComponent = (compName) => {
     if (compName == "DockableEditor") {
       showEditor.value = true;
       return;
     } else if (compName == "DockableSearch") {
       showSearch.value = true;
-      return;
-    } else if (compName == "DockableMap") {
-      showMap.value = true;
       return;
     }
   };
@@ -40,9 +36,6 @@
       return;
     } else if (compName == "DockableSearch") {
       showSearch.value = false;
-      return;
-    } else if (compName == "DockableMap") {
-      showMap.value = false;
       return;
     }
   };
@@ -71,7 +64,7 @@
 <template>
   <div class="view" :class="{ focus: focusMode, mobile: mobileMode }">
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
-    <Canvas v-if="file" v-model="file" :show-editor="showEditor" :show-map="showMap" />
+    <Canvas v-if="file" v-model="file" :show-editor="showEditor" />
     <div class="menus" :class="{ focus: focusMode, mobile: mobileMode }">
       <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
       <!-- <UserMenu /> -->
