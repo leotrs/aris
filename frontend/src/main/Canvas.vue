@@ -18,27 +18,14 @@
   import { useCamelCase } from "@/composables/useCasing.js";
   import ReaderTopbar from "./ReaderTopbar.vue";
   import Dock from "./Dock.vue";
-  import Drawer from "./Drawer.vue";
   import Editor from "./Editor.vue";
-  import DockableSearch from "./DockableSearch.vue";
   import DockableMinimap from "./DockableMinimap.vue";
 
   const props = defineProps({
     showEditor: { type: Boolean, default: false },
     showSearch: { type: Boolean, default: false },
-    showMap: { type: Boolean, default: true },
   });
   const file = defineModel({ type: Object });
-
-  const validDockComponents = {
-    /* DockableChat, */
-    DockableSearch,
-    DockableMinimap,
-    /* DockableEditor, */
-    /* DockableComments, */
-    /* DockableSymbols, */
-    /* DockableClaims, */
-  };
 
   // Mount the manuscript
   const manuscriptRef = useTemplateRef("manuscript-ref");
