@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive, computed, inject, provide, watchEffect, nextTick } from "vue";
+  import { ref, reactive, computed, inject, provide } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import Sidebar from "./Sidebar.vue";
@@ -92,8 +92,7 @@
     />
     <div class="menus" :class="{ focus: focusMode, mobile: mobileMode }">
       <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
-      <FileMenu icon="Menu3" />
-      <UserMenu />
+      <!-- <UserMenu /> -->
     </div>
   </div>
 </template>
@@ -130,10 +129,10 @@
 
   .menus {
     position: absolute;
-    bottom: 0;
-    width: 64px;
+    bottom: 0px;
+    left: 0px;
+    height: 64px;
     display: flex;
-    flex-direction: column;
     align-items: center;
     z-index: 2;
     padding: 8px;
