@@ -33,7 +33,7 @@
 
 <template>
   <div class="view" :class="{ mobile: mobileMode }">
-    <MainSidebar
+    <HomeSidebar
       :fab="fab"
       :active="active"
       @new-empty-file="newEmptyFile"
