@@ -14,6 +14,7 @@
     hideDelay: { type: Number, default: 300 },
     type: { type: String, default: "filled" },
   });
+
   const emit = defineEmits(["on", "off"]);
   const buttonState = defineModel({ type: Boolean, default: false });
 
@@ -23,7 +24,6 @@
   const updateVisibility = () => {
     visibilityClass.value = isHoveringButton.value || isHoveringControl.value ? "show" : "";
   };
-
   let hideTimeout = null;
   let showTimeout = null;
   const onMouseEnterButton = () => {
@@ -36,64 +36,13 @@
     clearTimeout(showTimeout);
     hideTimeout = setTimeout(updateVisibility, 300);
   };
-  const onMouseEnterControl = () => {
-    isHoveringControl.value = true;
-    clearTimeout(hideTimeout);
-    updateVisibility();
-  };
-  const onMouseLeaveControl = () => {
-    isHoveringControl.value = false;
-    clearTimeout(showTimeout);
-    hideTimeout = setTimeout(updateVisibility, 300);
-  };
-
-  // Segmented control allows user to choose side
-  const controlState = ref(-1);
-  const sides = ["left", "top", "right"];
-  watch(controlState, (newVal, oldVal) => {
-    clearTimeout(hideTimeout);
-    visibilityClass.value = "";
-
-    if (!buttonState.value) {
-      buttonState.value = true;
-      // DONT emit here since setting buttonState.value = true will emit
-      // emit('on', sides[newVal]);
-    } else {
-      if (oldVal !== -1) emit("off", sides[oldVal]);
-      emit("on", sides[newVal]);
-    }
-  });
-
-  const sideToIndexMap = { left: 0, top: 1, right: 2 };
-  watch(buttonState, (pressed) => {
-    if (pressed) {
-      if (controlState.value == -1) {
-        controlState.value = sideToIndexMap[props.preferredSide];
-        // DONT emit here since setting controlState.value = 0 will emit
-        // emit('on', sides[controlState.value]);
-      } else {
-        emit("on", sides[controlState.value]);
-      }
-    } else {
-      emit("off", sides[controlState.value]);
-      clearTimeout(hideTimeout);
-      visibilityClass.value = "";
-    }
-  });
-
-  // Clean up any timers when component is unmounted
-  onBeforeUnmount(() => {
-    if (hideTimeout) {
-      clearTimeout(hideTimeout);
-      hideTimeout = null;
-    }
-    if (showTimeout) {
-      clearTimeout(showTimeout);
-      showTimeout = null;
-    }
-  });
 
   const mobileMode = inject("mobileMode");
+
+  onBeforeUnmount(() => {
+    if (hideTimeout) clearTimeout(hideTimeout);
+    if (showTimeout) clearTimeout(showTimeout);
+  });
 </script>
 
 <template>
@@ -110,18 +59,8 @@
         :type="type"
         @mouseenter="onMouseEnterButton"
         @mouseleave="onMouseLeaveButton"
+        @click.prevent
       />
-      <!-- <SegmentedControl
-           v-if="withSideControl"
-           v-model="controlState"
-           :icons="['LayoutSidebarFilled', 'LayoutNavbarFilled', 'LayoutSidebarRightFilled']"
-           :class="visibilityClass"
-           :aria-orientation="'horizontal'"
-           role="tablist"
-           tabindex="0"
-           @mouseenter="onMouseEnterControl"
-           @mouseleave="onMouseLeaveControl"
-           /> -->
     </div>
     <div class="sb-item-label text-default">{{ label }}</div>
   </div>

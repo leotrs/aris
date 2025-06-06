@@ -7,9 +7,9 @@
 
   const props = defineProps({ component: { type: String, required: true } });
   const active = inject("drawerOpen");
-  useClosable({
-    onClose: () => (active.value = false),
-  });
+  /* useClosable({
+   *   onClose: () => (active.value = false),
+   * }); */
   const componentMap = {
     DrawerMargins: DrawerMargins,
     DrawerActivity: DrawerActivity,
