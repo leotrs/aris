@@ -165,16 +165,15 @@
   // Keyboard shortcuts
   registerAsFallback(manuscriptRef);
 
-  // Focus mode
-  const focusMode = inject("focusMode");
-
-  // Responsiveness
+  // Responsiveness to viewport and various modes
   const mobileMode = inject("mobileMode");
+  const focusMode = inject("focusMode");
+  const drawerOpen = inject("drawerOpen");
 </script>
 
 <template>
   <Suspense>
-    <div class="outer" :class="{ focus: focusMode, mobile: mobileMode }">
+    <div class="outer" :class="{ focus: focusMode, mobile: mobileMode, narrow: drawerOpen }">
       <div v-if="showEditor" class="inner left">
         <Editor v-model="file" />
       </div>
@@ -226,11 +225,17 @@
     box-shadow: var(--shadow-soft);
     background-color: v-bind("fileSettings.background");
     border-radius: 16px;
+    width: 100%;
     will-change: width, left, border-radius;
     transition:
       width var(--transition-duration) ease,
       left var(--transition-duration) ease,
       border-radius var(--transition-duration) ease;
+  }
+
+  .outer.narrow {
+    left: calc(320px + 64px);
+    width: calc(100% - 320px);
   }
 
   .outer.focus {

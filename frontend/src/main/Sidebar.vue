@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, reactive } from "vue";
+  import { computed, inject, reactive } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
@@ -9,6 +9,7 @@
   const panelComponents = reactive({
     /* PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a", state: false }, */
     DockableEditor: {
+      name: "DockableEditor",
       icon: "Code",
       label: "source",
       preferredSide: "left",
@@ -17,6 +18,7 @@
       type: "toggle",
     },
     DockableSearch: {
+      name: "DockableSearch",
       icon: "Search",
       label: "search",
       preferredSide: "top",
@@ -30,7 +32,7 @@
       icon: "LayoutDistributeVertical",
       label: "margins",
       preferredSide: "lef",
-      key: "t",
+      key: "m",
       state: false,
       type: "drawer",
     },
@@ -103,16 +105,17 @@
     },
   });
 
-  // Item emits
-  const showDrawer = ref(false);
+  // Drawer
+  const drawerOpen = inject("drawerOpen");
   const onItemOn = (obj, side) => {
-    if (obj.type == "drawer") showDrawer.value = true;
+    if (obj.type == "drawer") drawerOpen.value = true;
     else emit("showComponent", obj.name, side);
   };
   const onItemOff = (obj, side) => {
-    if (obj.type == "drawer") showDrawer.value = false;
+    if (obj.type == "drawer") drawerOpen.value = false;
     else emit("hideComponent", obj.name, side);
   };
+  const sidebarWidth = computed(() => (drawerOpen.value ? "calc(64px + 320px)" : "64px"));
 
   // Keys
   useKeyboardShortcuts(
@@ -171,7 +174,7 @@
           :with-side-control="false"
         />
         <UserMenu />
-        <div class="newdrawer" :class="{ active: showDrawer }">
+        <div class="newdrawer" :class="{ active: drawerOpen }">
           <Pane>
             <template #header>Margins</template>
             <Section>
@@ -219,7 +222,7 @@
     position: fixed;
     height: 100%;
     z-index: 2;
-    width: 64px;
+    width: v-bind(sidebarWidth);
     top: 0;
 
     transform: translateX(0);
@@ -362,11 +365,15 @@
     border-radius: 16px;
     box-shadow: var(--shadow-soft);
     border: var(--border-med) solid var(--information-200);
-    transition: left 0.3s ease;
+    opacity: 0;
+    transition:
+      left 0.3s ease,
+      opacity 0.3s ease;
   }
 
   .newdrawer.active {
     left: 64px;
+    opacity: 1;
   }
 
   .pane {
