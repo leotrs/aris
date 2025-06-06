@@ -131,7 +131,19 @@
   .sb-item {
     display: flex;
     flex-direction: column;
+    position: relative;
   }
+
+  /* .sb-item::after {
+     content: "";
+     height: 8px;
+     width: 8px;
+     background: var(--purple-500);
+     position: absolute;
+     right: 12px;
+     border-radius: 50%;
+     bottom: 12px;
+     } */
 
   .sb-item-btn {
     display: flex;
