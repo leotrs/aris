@@ -7,6 +7,7 @@
     iconCollapsed: { type: String, default: "" },
     text: { type: String, required: true },
     tooltip: { type: String, default: "" },
+    tooltipAlways: { type: Boolean, default: false },
     active: { type: Boolean, default: false },
     clickable: { type: Boolean, default: true },
   });
@@ -35,7 +36,7 @@
     <span class="join"></span>
 
     <Tooltip
-      v-if="collapsed && (tooltip || text)"
+      v-if="tooltipAlways || (collapsed && (tooltip || text))"
       :content="tooltip || text"
       :anchor="selfRef"
       placement="right"

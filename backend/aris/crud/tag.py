@@ -1,4 +1,5 @@
 from datetime import datetime
+import itertools
 
 from sqlalchemy import delete, select, insert
 from sqlalchemy.exc import SQLAlchemyError
@@ -10,7 +11,7 @@ from ..models import File, Tag, User, file_tags
 # to avoid circular imports we simply rewrite get_user here
 # from .user import get_user
 
-COLORS = iter(["red", "purple", "green", "orange"])
+COLORS = itertools.cycle(["red", "purple", "green", "orange"])
 
 
 async def create_tag(user_id: int, name: str, color: str, db: AsyncSession):

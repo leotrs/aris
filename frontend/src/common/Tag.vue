@@ -9,7 +9,6 @@
   });
   const emit = defineEmits(["rename"]);
   const newName = ref(props.tag.name);
-
   const editableTextRef = useTemplateRef("editableTextRef");
   defineExpose({
     startEditing: () => {

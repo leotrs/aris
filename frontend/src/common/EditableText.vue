@@ -15,8 +15,7 @@
   const inputValue = ref("");
 
   const startEditing = async () => {
-    if (props.clearOnStart) text.value = "";
-    inputValue.value = text.value;
+    inputValue.value = props.clearOnStart ? "" : text.value;
     isEditing.value = true;
     await nextTick();
     if (!inputRef.value) return;

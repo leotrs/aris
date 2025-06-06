@@ -97,6 +97,7 @@
           class="recent-file"
           icon-collapsed="File"
           :text="recentFiles[0].title || 'Untitled'"
+          :tooltip-always="true"
           @click="File.openFile(recentFiles[0], router)"
         />
         <SidebarItem
@@ -104,6 +105,7 @@
           class="recent-file"
           icon-collapsed="File"
           :text="recentFiles[1].title || 'Untitled'"
+          :tooltip-always="true"
           @click="File.openFile(recentFiles[1], router)"
         />
         <SidebarItem
@@ -111,6 +113,7 @@
           class="recent-file"
           icon-collapsed="File"
           :text="recentFiles[2].title || 'Untitled'"
+          :tooltip-always="true"
           @click="File.openFile(recentFiles[2], router)"
         />
         <Separator />

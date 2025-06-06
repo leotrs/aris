@@ -57,8 +57,8 @@
     color: "new-tag-color",
   };
 
-  const createTag = () => {
-    fileStore.value.createTag(newTagPlaceholder.name);
+  const createTag = (newName) => {
+    fileStore.value.createTag(newName);
   };
 </script>
 
