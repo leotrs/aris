@@ -71,8 +71,8 @@
 
   .menus {
     position: absolute;
-    right: 32px;
-    top: 32px;
+    right: 24px;
+    top: 24px;
     z-index: 1;
     display: flex;
     align-items: center;

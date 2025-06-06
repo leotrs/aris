@@ -1,7 +1,9 @@
 <script setup>
   import { watch, computed } from "vue";
 
-  const props = defineProps({});
+  const props = defineProps({
+    header: { type: Boolean, default: true },
+  });
   const settingsObj = defineModel({
     type: Object,
     default: () => {
@@ -78,7 +80,7 @@
 <template>
   <div class="settings">
     <Pane>
-      <template #header>File Settings</template>
+      <template v-if="header" #header>File Settings</template>
       <Section>
         <template #title>Colors</template>
         <template #content>
@@ -181,6 +183,10 @@
   .settings {
     display: flex;
     flex-direction: column;
+  }
+
+  .pane {
+    box-shadow: none !important;
   }
 
   :deep(.pane-header) {
