@@ -40,7 +40,6 @@
     }
     if (!sideRefMap[side].includes(compName)) sideRefMap[side].push(compName);
   };
-
   const hideComponent = (compName, side) => {
     if (compName == "DockableEditor") {
       showEditor.value = false;
@@ -62,14 +61,22 @@
     panels: sideRefMap,
   });
 
-  /* Focus Mode */
+  // Sidebar drawer
+  const showDrawer = () => {};
+  const hideDrawer = () => {};
+
+  // Focus Mode
   const focusMode = ref(false);
   provide("focusMode", focusMode);
 
-  /* Responsiveness */
+  // Sidebar drawer
+  const drawerOpen = ref(false);
+  provide("drawerOpen", drawerOpen);
+
+  // Responsiveness
   const mobileMode = inject("mobileMode");
 
-  /* Keyboard shortcuts */
+  // Keyboard shortcuts
   const goHome = () => router.push("/");
   const router = useRouter();
   useKeyboardShortcuts({
@@ -80,7 +87,12 @@
 
 <template>
   <div class="view" :class="{ focus: focusMode, mobile: mobileMode }">
-    <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
+    <Sidebar
+      @show-component="showComponent"
+      @hide-component="hideComponent"
+      @show-drawer="showDrawer"
+      @hide-drawer="hideDrawer"
+    />
     <Canvas
       v-if="file"
       v-model="file"
@@ -106,6 +118,7 @@
     will-change: padding;
     transition: padding var(--transition-duration) ease;
     position: relative;
+    overflow-x: hidden;
   }
 
   .view.mobile {
