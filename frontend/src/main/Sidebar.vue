@@ -32,7 +32,6 @@
       key: "m",
       state: false,
       type: "drawer",
-      pane: "DrawerMargins",
     },
     {
       name: "DrawerActivity",
@@ -65,7 +64,6 @@
       key: "t",
       state: false,
       type: "drawer",
-      pane: "DrawerSettings",
     },
     { name: "Separator", state: false },
   ]);
@@ -186,7 +184,7 @@
         <UserMenu />
       </div>
 
-      <Drawer :component="items.find((it) => it.type == 'drawer' && it.state)?.pane ?? ''" />
+      <Drawer :component="items.find((it) => it.type == 'drawer' && it.state)?.name ?? ''" />
 
       <div v-if="mobileMode" class="sb-menu-mobile" :class="{ xs: xsMode }">
         <SidebarItem
