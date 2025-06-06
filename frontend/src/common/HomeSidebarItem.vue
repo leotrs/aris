@@ -6,6 +6,7 @@
     icon: { type: String, default: "" },
     iconCollapsed: { type: String, default: "" },
     text: { type: String, required: true },
+    tooltip: { type: String, default: "" },
     active: { type: Boolean, default: false },
     clickable: { type: Boolean, default: true },
   });
@@ -33,7 +34,12 @@
     <!--for seamless transition to the panes-->
     <span class="join"></span>
 
-    <Tooltip v-if="collapsed" :content="text" :anchor="selfRef" placement="right" />
+    <Tooltip
+      v-if="collapsed && (tooltip || text)"
+      :content="tooltip || text"
+      :anchor="selfRef"
+      placement="right"
+    />
   </div>
 </template>
 

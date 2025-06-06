@@ -3,7 +3,7 @@
   import { useRouter } from "vue-router";
   import { File } from "../File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import SidebarItem from "./MainSidebarItem.vue";
+  import SidebarItem from "./HomeSidebarItem.vue";
 
   const props = defineProps({
     active: { type: String, default: "" },
@@ -127,7 +127,13 @@
           @click="() => goTo('settings')"
         />
         <Separator />
-        <SidebarItem icon="LayoutSidebarLeftCollapse" text="Collapse" @click="toggleCollapsed" />
+        <SidebarItem
+          icon="LayoutSidebarLeftCollapse"
+          icon-collapsed="LayoutSidebarLeftExpand"
+          text="Collapse"
+          tooltip="Expand"
+          @click="toggleCollapsed"
+        />
       </div>
     </template>
   </div>
@@ -171,7 +177,7 @@
 
     & > #logo > img {
       height: 64px;
-      margin: 6px 0 -2px 6px;
+      margin: -2px 0 -2px 6px;
     }
   }
 
@@ -187,7 +193,7 @@
     }
 
     & > #logo {
-      margin-bottom: 16px;
+      margin-bottom: 20px;
       padding-inline: 16px;
 
       & > img {
