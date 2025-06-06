@@ -12,6 +12,7 @@
     },
     showDelay: { type: Number, default: 500 },
     hideDelay: { type: Number, default: 300 },
+    type: { type: String, default: "filled" },
   });
   const emit = defineEmits(["on", "off"]);
   const buttonState = defineModel({ type: Boolean, default: false });
@@ -105,6 +106,7 @@
         :aria-pressed="buttonState"
         tabindex="0"
         :button-size="mobileMode ? 'btn-sm' : 'btn-md'"
+        :type="type"
         @mouseenter="onMouseEnterButton"
         @mouseleave="onMouseLeaveButton"
       />
@@ -141,11 +143,23 @@
     background-color: var(--gray-50);
   }
 
+  .sb-item-btn:has(button.active.outline) {
+    font-weight: var(--weight-semi);
+  }
+
+  .sb-item-btn > button.active.outline {
+    background-color: var(--surface-page);
+  }
+
+  .sb-item-btn:has(button.active) + .sb-item-label {
+    font-weight: var(--weight-semi);
+  }
+
   .sb-item-label {
     margin-left: -8px;
     width: 64px;
     text-align: center;
-    font-size: 13px;
+    font-size: 14px;
   }
 
   .sc-wrapper {
