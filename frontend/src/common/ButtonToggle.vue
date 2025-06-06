@@ -33,15 +33,16 @@
 
 <style scoped>
   button {
+    --border-width: var(--border-thin);
+
     display: flex;
     align-items: center;
-    border: unset;
+    border: var(--border-width) solid transparent;
     border-radius: 16px;
     transition: background 0.15s ease-in-out;
     gap: 2px;
     background-color: transparent;
     outline: none;
-
     padding-block: 6px;
 
     &:has(.btn-icon):has(.btn-text) {
@@ -50,7 +51,7 @@
     }
 
     &:has(.btn-icon):not(:has(.btn-text)) {
-      padding: 8px;
+      padding: calc(8px - var(--border-width)) !important;
     }
 
     &:hover {
@@ -76,7 +77,7 @@
     }
 
     &.active.outline {
-      outline: var(--border-med) solid v-bind("activeColor");
+      border: var(--border-width) solid v-bind("activeColor");
     }
   }
 

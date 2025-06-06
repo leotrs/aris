@@ -72,6 +72,7 @@
   // Sidebar drawer
   const drawerOpen = ref(false);
   provide("drawerOpen", drawerOpen);
+  const sidebarWidth = computed(() => (drawerOpen.value ? "360px" : "64px"));
 
   // Responsiveness
   const mobileMode = inject("mobileMode");
@@ -112,6 +113,8 @@
 <style scoped>
   .view {
     --transition-duration: 0.3s;
+    --sidebar-width: v-bind(sidebarWidth);
+
     display: flex;
     width: 100%;
     padding: 8px 8px 8px 0;
