@@ -105,7 +105,7 @@
         :aria-label="label || 'Toggle ' + icon"
         :aria-pressed="buttonState"
         tabindex="0"
-        :button-size="mobileMode ? 'btn-sm' : 'btn-md'"
+        :button-size="mobileMode ? 'sm' : 'md'"
         :active-color="type == 'outline' ? 'var(--purple-300)' : 'var(--surface-hint)'"
         :type="type"
         @mouseenter="onMouseEnterButton"
@@ -141,7 +141,7 @@
   }
 
   .sb-item-btn button {
-    padding-inline: 6px;
+    padding: 6px !important;
   }
 
   .sb-item-btn:hover button:not(.active) {

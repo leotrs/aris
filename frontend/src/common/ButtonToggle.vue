@@ -6,7 +6,7 @@
     text: { type: String, default: "" },
     icon: { type: String, default: "" },
     iconClass: { type: String, default: "" },
-    buttonSize: { type: String, default: "btn-md" },
+    buttonSize: { type: String, default: "md" },
     hoverColor: { type: String, default: "var(--gray-50)" },
     activeColor: { type: String, default: "var(--surface-hint)" },
     type: { type: String, default: "filled" },
