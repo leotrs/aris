@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, inject, reactive } from "vue";
+  import { computed, inject, reactive, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
@@ -96,6 +96,7 @@
   );
 
   // Focus mode
+  const layoutOnRef = useTemplateRef("layout-on-ref");
   const focusMode = inject("focusMode");
 
   // Responsiveness
@@ -111,11 +112,13 @@
   >
     <Button
       v-show="focusMode"
+      ref="layout-on-ref"
       class="layout-on"
       kind="tertiary"
       icon="Layout"
       @click="focusMode = false"
     />
+    <Tooltip :anchor="layoutOnRef?.btn" content="Focus mode off" placement="top" />
 
     <div v-if="!mobileMode" id="logo" role="button" tabindex="0" @click="router?.push('/')">
       <img src="../assets/logo-32px.svg" />
@@ -210,6 +213,7 @@
   .sb-menu {
     position: fixed;
     max-width: 64px;
+    padding-bottom: 16px;
     left: 0;
     width: 64px;
     opacity: 1;
@@ -245,7 +249,7 @@
 
   .layout-on {
     position: fixed;
-    bottom: 21px;
+    bottom: 16px;
     margin: 8px;
     left: 64px;
   }
