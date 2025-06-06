@@ -21,14 +21,14 @@
 <style scoped>
   .drawer {
     background: var(--surface-page);
-    overflow-y: auto;
     position: absolute;
     top: calc(-64px + 8px);
-    bottom: 0;
+    bottom: calc(8px);
     left: calc(-1 * var(--sidebar-width));
     width: calc(var(--sidebar-width) - 8px);
     border-radius: 16px;
     box-shadow: var(--shadow-soft);
+    overflow: hidden;
     border: var(--border-thin) solid var(--purple-300);
     opacity: 0;
     transition:
@@ -42,10 +42,12 @@
   }
 
   .pane {
+    overflow-y: auto;
     height: 100%;
   }
 
-  .section {
+  :deep(.section) {
     width: 100%;
+    background-color: var(--surface-page);
   }
 </style>

@@ -152,7 +152,7 @@
                 v-model="marginWidth"
                 :labels="['narrow', 'normal', 'wide']"
                 :icons="['ViewportNarrow', 'Crop11', 'ViewportWide']"
-                :tooltips="['twice  normal', 'normal', 'half normal']"
+                :tooltips="['wide margins', 'normal margins', 'no normal']"
                 :default-active="marginWidth"
               />
             </span>
@@ -196,7 +196,6 @@
   .buttons {
     display: flex;
     justify-content: flex-end;
-    padding-inline: 16px;
     gap: 8px;
 
     & > button {

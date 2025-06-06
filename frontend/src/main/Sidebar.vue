@@ -76,7 +76,7 @@
     },
     { name: "Separator" },
   ]);
-  const panelComponentsMobile = reactive();
+  const itemsMobile = reactive();
 
   // Drawer
   const drawerOpen = inject("drawerOpen");
@@ -142,8 +142,9 @@
           :with-side-control="false"
         />
         <UserMenu />
-        <Drawer :component="items.find((it) => it.type == 'drawer' && it.state)?.pane ?? ''" />
       </div>
+
+      <Drawer :component="items.find((it) => it.type == 'drawer' && it.state)?.pane ?? ''" />
 
       <div v-if="mobileMode" class="sb-menu-mobile" :class="{ xs: xsMode }">
         <SidebarItem
@@ -214,6 +215,7 @@
     opacity: 1;
     will-change: opacity;
     height: calc(100% - 64px);
+    display: flex;
   }
 
   .sb-menu > .sb-item:last-child {

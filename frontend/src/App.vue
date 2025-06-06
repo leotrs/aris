@@ -139,7 +139,7 @@
 
 <template>
   <RouterView :class="`bp-${breakpoints.active().value}`" />
-  <div v-if="isDev" id="env">DEV/LOCAL</div>
+  <div v-if="isDev" id="env">LOCAL</div>
 
   <ModalShortcuts v-if="showShortcutsModal" @close="showShortcutsModal = false" />
 </template>
@@ -163,9 +163,8 @@
   }
 
   #env {
-    opacity: 0.75;
     position: fixed;
-    top: 8px;
+    top: 48px;
     left: 8px;
     color: var(--dark);
     background-color: var(--green-100);
