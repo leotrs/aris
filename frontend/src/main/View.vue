@@ -19,60 +19,42 @@
   provide("file", file);
 
   // Panel component management
-  const leftComponents = reactive([]);
-  const topComponents = reactive([]);
-  const rightComponents = reactive([]);
-  const sideRefMap = { left: leftComponents, top: topComponents, right: rightComponents };
   const showEditor = ref(false);
+  const showSearch = ref(false);
   const showMap = ref(true);
-  const showComponent = (compName, side) => {
-    console.log(`showComponent ${compName}`);
+  const showComponent = (compName) => {
     if (compName == "DockableEditor") {
       showEditor.value = true;
       return;
+    } else if (compName == "DockableSearch") {
+      showSearch.value = true;
+      return;
     } else if (compName == "DockableMap") {
       showMap.value = true;
       return;
     }
-    if (!sideRefMap[side]) {
-      console.warn(`Invalid side specified: ${side}`);
-      return;
-    }
-    if (!sideRefMap[side].includes(compName)) sideRefMap[side].push(compName);
   };
-  const hideComponent = (compName, side) => {
+  const hideComponent = (compName) => {
     if (compName == "DockableEditor") {
       showEditor.value = false;
       return;
+    } else if (compName == "DockableSearch") {
+      showSearch.value = false;
+      return;
     } else if (compName == "DockableMap") {
-      showMap.value = true;
+      showMap.value = false;
       return;
     }
-    if (!sideRefMap[side]) {
-      console.warn(`Invalid side specified: ${side}`);
-      return;
-    }
-    const index = sideRefMap[side].indexOf(compName);
-    if (index !== -1) sideRefMap[side].splice(index, 1);
   };
-  provide("panelManager", {
-    showComponent,
-    hideComponent,
-    panels: sideRefMap,
-  });
-
-  // Sidebar drawer
-  const showDrawer = () => {};
-  const hideDrawer = () => {};
-
-  // Focus Mode
-  const focusMode = ref(false);
-  provide("focusMode", focusMode);
 
   // Sidebar drawer
   const drawerOpen = ref(false);
   provide("drawerOpen", drawerOpen);
   const sidebarWidth = computed(() => (drawerOpen.value ? "360px" : "64px"));
+
+  // Focus Mode
+  const focusMode = ref(false);
+  provide("focusMode", focusMode);
 
   // Responsiveness
   const mobileMode = inject("mobileMode");
@@ -88,21 +70,8 @@
 
 <template>
   <div class="view" :class="{ focus: focusMode, mobile: mobileMode }">
-    <Sidebar
-      @show-component="showComponent"
-      @hide-component="hideComponent"
-      @show-drawer="showDrawer"
-      @hide-drawer="hideDrawer"
-    />
-    <Canvas
-      v-if="file"
-      v-model="file"
-      :show-editor="showEditor"
-      :show-map="showMap"
-      :left="leftComponents"
-      :right="rightComponents"
-      :top="topComponents"
-    />
+    <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
+    <Canvas v-if="file" v-model="file" :show-editor="showEditor" :show-map="showMap" />
     <div class="menus" :class="{ focus: focusMode, mobile: mobileMode }">
       <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
       <!-- <UserMenu /> -->

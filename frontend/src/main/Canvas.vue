@@ -24,10 +24,8 @@
   import DockableMinimap from "./DockableMinimap.vue";
 
   const props = defineProps({
-    left: { type: Array, default: () => [] },
-    right: { type: Array, default: () => [] },
-    top: { type: Array, default: () => [] },
     showEditor: { type: Boolean, default: false },
+    showSearch: { type: Boolean, default: false },
     showMap: { type: Boolean, default: true },
   });
   const file = defineModel({ type: Object });
@@ -185,10 +183,7 @@
         </div>
         <div ref="middle-column-ref" class="middle-column">
           <Dock class="dock middle top">
-            <ReaderTopbar
-              :show-title="!isMainTitleVisible"
-              :component="validDockComponents[top.at(-1)]"
-            />
+            <ReaderTopbar :show-title="!isMainTitleVisible" />
           </Dock>
           <Dock class="dock middle main">
             <ManuscriptWrapper
