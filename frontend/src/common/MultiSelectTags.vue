@@ -1,50 +1,49 @@
 <script setup>
-  import { ref, reactive, inject, watch, watchEffect } from "vue";
+  import { ref, reactive, inject, watch, watchEffect, nextTick } from "vue";
+
   const props = defineProps({
     file: { type: Object, default: null },
     icon: { type: String, default: "Tag" },
   });
+
   const tags = defineModel({ type: Array });
   const fileStore = inject("fileStore");
   const state = reactive({ tagIsAssigned: [] });
 
-  // Add this flag to track initialization
-  const isInitialized = ref(false);
+  // Track when we're programmatically updating to avoid loops
+  const updatingFromProps = ref(false);
 
-  watchEffect(() => {
-    if (!fileStore.value?.tags || !tags.value) return;
-    const tagIds = tags.value.map((t) => t.id);
+  // Sync state with current tags
+  watchEffect(async () => {
+    if (!fileStore.value?.tags) return;
 
-    // Use map instead of forEach for cleaner array assignment
+    updatingFromProps.value = true;
+    const tagIds = (tags.value || []).map((t) => t.id);
     state.tagIsAssigned = fileStore.value.tags.map((tag) => tagIds.includes(tag.id));
 
-    // Mark as initialized after first setup
-    if (!isInitialized.value) {
-      isInitialized.value = true;
-    }
+    await nextTick();
+    updatingFromProps.value = false;
   });
 
+  // Handle UI changes to checkboxes
   watch(
-    () => [...(state.tagIsAssigned || [])],
+    () => [...state.tagIsAssigned],
     (newVal, oldVal) => {
-      // Skip processing during initialization
-      if (!isInitialized.value || !props.file) return;
+      // Ignore changes during programmatic updates
+      if (updatingFromProps.value || !props.file || !oldVal) return;
 
-      // Handle the case where oldVal is empty (shouldn't happen now, but safety check)
-      if (oldVal.length === 0) return;
-
-      newVal.forEach((isNowAssigned, idx) => {
+      newVal.forEach((isAssigned, idx) => {
         const wasAssigned = oldVal[idx];
         const tag = fileStore.value.tags[idx];
 
-        if (isNowAssigned && !wasAssigned) {
+        if (isAssigned && !wasAssigned) {
+          // User checked a tag - add it
           fileStore.value.toggleFileTag(props.file, tag.id);
-          if (!tags.value.some((t) => t.id === tag.id)) {
-            tags.value = tags.value.concat([tag]);
-          }
-        } else if (!isNowAssigned && wasAssigned) {
+          tags.value = [...(tags.value || []), tag];
+        } else if (!isAssigned && wasAssigned) {
+          // User unchecked a tag - remove it
           fileStore.value.toggleFileTag(props.file, tag.id);
-          tags.value = tags.value.filter((t) => t.id !== tag.id);
+          tags.value = (tags.value || []).filter((t) => t.id !== tag.id);
         }
       });
     },
