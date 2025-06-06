@@ -59,7 +59,6 @@
         :type="type"
         @mouseenter="onMouseEnterButton"
         @mouseleave="onMouseLeaveButton"
-        @click.prevent
       />
     </div>
     <div class="sb-item-label text-default">{{ label }}</div>
