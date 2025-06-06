@@ -136,7 +136,12 @@
   .sb-item-btn {
     display: flex;
     gap: 16px;
+    justify-content: center;
     align-items: center;
+  }
+
+  .sb-item-btn button {
+    padding-inline: 6px;
   }
 
   .sb-item-btn:hover button:not(.active) {
@@ -161,6 +166,7 @@
     width: 64px;
     text-align: center;
     font-size: 14px;
+    transition: font-weight 0.3s ease;
   }
 
   .sc-wrapper {

@@ -20,7 +20,7 @@
 <template>
   <button
     class="text-h6 btn-toggle"
-    :class="[buttonSize, active ? 'active' : '', type]"
+    :class="[type, `btn-${buttonSize}`, active ? 'active' : '']"
     @click="active = !active"
   >
     <template v-if="icon">
@@ -43,7 +43,6 @@
     gap: 2px;
     background-color: transparent;
     outline: none;
-    padding-block: 6px;
 
     &:has(.btn-icon):has(.btn-text) {
       padding-left: 2px;
@@ -51,7 +50,6 @@
     }
 
     &:has(.btn-icon):not(:has(.btn-text)) {
-      padding: calc(8px - var(--border-width)) !important;
     }
 
     &:hover {
@@ -82,7 +80,7 @@
   }
 
   button.btn-sm {
-    border-radius: 8px;
+    border-radius: 12px;
     padding-block: 0px;
 
     &:has(.btn-icon):has(.btn-text) {

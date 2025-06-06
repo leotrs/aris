@@ -63,7 +63,7 @@
 </script>
 
 <template>
-  <ContextMenu :icon="icon" placement="bottom-end" button-size="btn-sm">
+  <ContextMenu :icon="icon" placement="bottom-end" button-size="sm">
     <TagControl
       v-for="(tag, idx) in fileStore.tags"
       :key="tag.id"
