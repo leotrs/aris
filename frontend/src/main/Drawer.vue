@@ -2,6 +2,7 @@
   import { ref, inject } from "vue";
   import useClosable from "@/composables/useClosable.js";
   import DrawerMargins from "./DrawerMargins.vue";
+  import DrawerActivity from "./DrawerActivity.vue";
   import DrawerSettings from "./DrawerSettings.vue";
 
   const props = defineProps({ component: { type: String, required: true } });
@@ -9,7 +10,11 @@
   useClosable({
     onClose: () => (active.value = false),
   });
-  const componentMap = { DrawerSettings: DrawerSettings, DrawerMargins: DrawerMargins };
+  const componentMap = {
+    DrawerMargins: DrawerMargins,
+    DrawerActivity: DrawerActivity,
+    DrawerSettings: DrawerSettings,
+  };
 </script>
 
 <template>
