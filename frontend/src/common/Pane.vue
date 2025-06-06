@@ -27,7 +27,7 @@
 
 <style scoped>
   .pane {
-    padding-top: 16px;
+    padding-top: 8px;
     background-color: var(--surface-primary);
     width: 100%;
     display: flex;
@@ -42,7 +42,7 @@
   }
 
   .pane > * {
-    padding-inline: 16px;
+    padding-inline: 8px;
   }
 
   .pane.mobile > * {

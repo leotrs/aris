@@ -347,14 +347,15 @@
 
   .newdrawer {
     background: var(--surface-page);
+    overflow-y: auto;
     position: absolute;
     top: calc(-64px + 8px);
     bottom: 0;
-    left: -404px;
-    width: calc(404px - 8px);
+    left: calc(-1 * var(--sidebar-width));
+    width: calc(var(--sidebar-width) - 8px);
     border-radius: 16px;
     box-shadow: var(--shadow-soft);
-    border: var(--border-med) solid var(--purple-300);
+    border: var(--border-thin) solid var(--purple-300);
     opacity: 0;
     transition:
       left 0.3s ease,

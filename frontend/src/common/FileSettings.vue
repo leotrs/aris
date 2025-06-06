@@ -88,7 +88,7 @@
               <ThemeSwitch :labels="true" />
             </span>
           </div>
-          <div class="row bg">
+          <div class="column bg">
             <span class="label">Background</span>
             <ColorPicker :colors="bgColors" @change="onChangeBackground" />
           </div>
@@ -208,7 +208,7 @@
 
     & .label {
       text-align: left;
-      width: 60px;
+      width: 48px;
     }
 
     & .control {
@@ -224,11 +224,16 @@
 
   .control {
     & :deep(.sc-btn) {
-      padding-inline: 2px 8px;
+      padding-inline: 2px 8px !important;
       padding-block: 0px;
-      width: 96px;
+      width: 80px;
       display: flex;
       justify-content: center;
+    }
+
+    & :deep(.sc-icon) {
+      flex-shrink: 0;
+      margin: 6px 2px;
     }
 
     & :deep(.sc-btn:first-child) {
@@ -237,6 +242,10 @@
 
     & :deep(.sc-btn:last-child) {
       border-radius: 0 8px 8px 0;
+    }
+
+    & :deep(.sc-label) {
+      font-size: 15px;
     }
   }
 

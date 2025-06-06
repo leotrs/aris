@@ -217,7 +217,6 @@
 <style scoped>
   .outer {
     --outer-padding: 8px;
-    --sidebar-width: 64px;
     --topbar-height: 48px;
 
     display: flex;
@@ -234,8 +233,8 @@
   }
 
   .outer.narrow {
-    left: calc(404px + 64px);
-    width: calc(100% - 404px);
+    left: calc(var(--sidebar-width) + 64px);
+    width: calc(100% - var(--sidebar-width));
   }
 
   .outer.focus {
