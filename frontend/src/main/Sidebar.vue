@@ -12,7 +12,6 @@
       name: "DockableEditor",
       icon: "Code",
       label: "source",
-      preferredSide: "left",
       key: "e",
       state: false,
       type: "toggle",
@@ -21,7 +20,6 @@
       name: "DockableSearch",
       icon: "Search",
       label: "search",
-      preferredSide: "top",
       key: "f",
       state: false,
       type: "toggle",
@@ -31,7 +29,6 @@
       name: "DrawerMargins",
       icon: "LayoutDistributeVertical",
       label: "margins",
-      preferredSide: "lef",
       key: "m",
       state: false,
       type: "drawer",
@@ -41,7 +38,6 @@
       name: "DrawerActivity",
       icon: "ProgressBolt",
       label: "activity",
-      preferredSide: "left",
       key: "a",
       state: false,
       type: "drawer",
@@ -50,7 +46,6 @@
       name: "DrawerCollaborate",
       icon: "UserShare",
       label: "share",
-      preferredSide: "left",
       key: "s",
       state: false,
       type: "drawer",
@@ -59,7 +54,6 @@
       name: "DrawerMeta",
       icon: "FileText",
       label: "meta",
-      preferredSide: "left",
       key: "i",
       state: false,
       type: "drawer",
@@ -68,7 +62,6 @@
       name: "DrawerSettings",
       icon: "AdjustmentsHorizontal",
       label: "settings",
-      preferredSide: "left",
       key: "t",
       state: false,
       type: "drawer",
@@ -92,7 +85,9 @@
 
   // Keys
   useKeyboardShortcuts(
-    Object.fromEntries(items.map((obj) => [`p,${obj.key}`, () => (obj.state = !obj.state)]))
+    Object.fromEntries(
+      items.filter((obj) => obj.key).map((obj) => [`p,${obj.key}`, () => (obj.state = !obj.state)])
+    )
   );
 
   // Focus mode
