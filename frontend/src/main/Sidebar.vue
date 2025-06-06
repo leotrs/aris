@@ -166,7 +166,7 @@
     height: 100%;
     z-index: 2;
     width: v-bind(sidebarWidth);
-    top: 0;
+    top: 16px;
 
     transform: translateX(0);
     will-change: transform;
