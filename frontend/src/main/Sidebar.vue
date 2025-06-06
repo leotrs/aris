@@ -1,5 +1,5 @@
 <script setup>
-  import { inject, reactive } from "vue";
+  import { ref, inject, reactive } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
@@ -14,6 +14,7 @@
       preferredSide: "left",
       key: "e",
       state: false,
+      type: "toggle",
     },
     DockableSearch: {
       icon: "Search",
@@ -21,22 +22,53 @@
       preferredSide: "top",
       key: "f",
       state: false,
+      type: "toggle",
     },
-    // always on!
-    /* DockableMinimap: {
-     *   icon: "MapPin",
-     *   label: "map",
-     *   preferredSide: "right",
-     *   key: "m",
-     *   state: true,
-     * }, */
-    Comments: {
-      icon: "Message",
-      label: "comments",
+    Separator: { label: "Separator" },
+    DrawerMargins: {
+      // icon: "LayoutSidebarRight",
+      icon: "LayoutDistributeVertical",
+      label: "margins",
+      preferredSide: "lef",
+      key: "t",
+      state: false,
+      type: "drawer",
+    },
+    DrawerActivity: {
+      // icon: "Versions",
+      icon: "ProgressBolt",
+      label: "activity",
       preferredSide: "left",
       key: "c",
       state: false,
+      type: "drawer",
     },
+    DrawerCollaborate: {
+      icon: "UserShare",
+      label: "share",
+      preferredSide: "left",
+      key: "c",
+      state: false,
+      type: "drawer",
+    },
+    DrawerMeta: {
+      // icon: "Versions",
+      icon: "FileText",
+      label: "meta",
+      preferredSide: "left",
+      key: "c",
+      state: false,
+      type: "drawer",
+    },
+    DrawerSettings: {
+      icon: "AdjustmentsHorizontal",
+      label: "settings",
+      preferredSide: "left",
+      key: "c",
+      state: false,
+      type: "drawer",
+    },
+    Separator2: { label: "Separator" },
     /* PanelSymbols: {
      *   icon: "Variable",
      *   label: "symbols",
@@ -70,6 +102,17 @@
       state: false,
     },
   });
+
+  // Item emits
+  const showDrawer = ref(false);
+  const onItemOn = (obj, side) => {
+    if (obj.type == "drawer") showDrawer.value = true;
+    else emit("showComponent", obj.name, side);
+  };
+  const onItemOff = (obj, side) => {
+    if (obj.type == "drawer") showDrawer.value = false;
+    else emit("hideComponent", obj.name, side);
+  };
 
   // Keys
   useKeyboardShortcuts(
@@ -109,22 +152,42 @@
 
     <div class="sb-menu">
       <div v-if="!mobileMode" class="sb-menu-std">
-        <SidebarItem
-          v-for="(obj, name) in panelComponents"
-          :key="obj"
-          v-model="obj.state"
-          :icon="obj.icon"
-          :label="obj.label"
-          :preferred-side="obj.preferredSide"
-          @on="(side) => emit('showComponent', name, side)"
-          @off="(side) => emit('hideComponent', name, side)"
-        />
+        <template v-for="obj in panelComponents" :key="obj">
+          <Separator v-if="obj.label == 'Separator'" />
+          <SidebarItem
+            v-else
+            v-model="obj.state"
+            :icon="obj.icon"
+            :label="obj.label"
+            :type="obj.type === 'drawer' ? 'outline' : 'filled'"
+            @on="(side) => onItemOn(obj, side)"
+            @off="(side) => onItemOff(obj, side)"
+          />
+        </template>
         <SidebarItem
           v-model="focusMode"
           icon="LayoutOff"
           label="focus"
           :with-side-control="false"
         />
+        <UserMenu />
+        <div class="newdrawer" :class="{ active: showDrawer }">
+          <Pane>
+            <template #header>Margins</template>
+            <Section>
+              <template #title>Annotations</template>
+              <template #content>Comments and notes</template>
+            </Section>
+            <Section>
+              <template #title>Ari</template>
+              <template #content>Artificial research intelligence</template>
+            </Section>
+            <Section>
+              <template #title>Math Tools</template>
+              <template #content>Symbols and results</template>
+            </Section>
+          </Pane>
+        </div>
       </div>
 
       <div v-if="mobileMode" class="sb-menu-mobile" :class="{ xs: xsMode }">
@@ -136,14 +199,14 @@
         />
 
         <SidebarItem
-          v-for="(obj, name) in panelComponentsMobile"
+          v-for="obj in panelComponentsMobile"
           :key="obj"
           v-model="obj.state"
           :icon="obj.icon"
           :label="obj.label"
           :preferred-side="obj.preferredSide"
-          @on="(side) => emit('showComponent', name, side)"
-          @off="(side) => emit('hideComponent', name, side)"
+          @on="(side) => emit('showComponent', obj, side)"
+          @off="(side) => emit('hideComponent', obj, side)"
         />
         <SidebarItem icon="Share3" label="share" :with-side-control="false" />
       </div>
@@ -205,6 +268,7 @@
     width: 64px;
     opacity: 1;
     will-change: opacity;
+    height: calc(100% - 64px);
   }
 
   .sb-menu > .sb-item:last-child {
@@ -214,7 +278,7 @@
 
   .sb-menu-std {
     height: 100%;
-    padding: 8px;
+    padding-inline: 8px;
 
     /* no scrollbar in any browser */
     overflow-y: auto;
@@ -224,8 +288,11 @@
       display: none;
     }
 
-    & > *:not(:last-child) {
+    & > * {
       margin-bottom: 12px;
+    }
+    & > *:last-child {
+      margin-bottom: 8px;
     }
   }
 
@@ -278,5 +345,35 @@
 
   .sb-menu-mobile.xs {
     padding-inline: 16px;
+  }
+
+  .sep {
+    margin-block: 8px;
+    padding-block: 4px;
+  }
+
+  .newdrawer {
+    background: var(--surface-page);
+    position: absolute;
+    top: calc(-64px + 8px);
+    bottom: 0;
+    left: -312px;
+    width: calc(320px - 8px);
+    border-radius: 16px;
+    box-shadow: var(--shadow-soft);
+    border: var(--border-med) solid var(--information-200);
+    transition: left 0.3s ease;
+  }
+
+  .newdrawer.active {
+    left: 64px;
+  }
+
+  .pane {
+    height: 100%;
+  }
+
+  .section {
+    width: 100%;
   }
 </style>

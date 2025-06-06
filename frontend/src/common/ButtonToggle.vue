@@ -9,6 +9,7 @@
     buttonSize: { type: String, default: "btn-md" },
     hoverColor: { type: String, default: "var(--gray-50)" },
     activeColor: { type: String, default: "var(--surface-hint)" },
+    type: { type: String, default: "filled" },
   });
   const active = defineModel({ type: Boolean });
   const emit = defineEmits(["on", "off"]);
@@ -19,7 +20,7 @@
 <template>
   <button
     class="text-h6 btn-toggle"
-    :class="[buttonSize, active ? 'active' : '']"
+    :class="[buttonSize, active ? 'active' : '', type]"
     @click="active = !active"
   >
     <template v-if="icon">
@@ -66,9 +67,16 @@
     }
 
     &.active {
-      background-color: v-bind("activeColor");
       color: var(--almost-black);
       box-shadow: var(--shadow-strong);
+    }
+
+    &.active.filled {
+      background-color: v-bind("activeColor");
+    }
+
+    &.active.outline {
+      outline: var(--border-med) solid v-bind("activeColor");
     }
   }
 
