@@ -3,14 +3,12 @@
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
-  import DrawerMargins from "./DrawerMargins.vue";
-  import DrawerSettings from "./DrawerSettings.vue";
+  import Drawer from "./Drawer.vue";
 
   const router = useRouter();
   const emit = defineEmits(["showComponent", "hideComponent"]);
-  const panelComponents = reactive({
-    /* PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a", state: false }, */
-    DockableEditor: {
+  const items = reactive([
+    {
       name: "DockableEditor",
       icon: "Code",
       label: "source",
@@ -19,7 +17,7 @@
       state: false,
       type: "toggle",
     },
-    DockableSearch: {
+    {
       name: "DockableSearch",
       icon: "Search",
       label: "search",
@@ -28,19 +26,19 @@
       state: false,
       type: "toggle",
     },
-    Separator: { label: "Separator" },
-    DrawerMargins: {
-      // icon: "LayoutSidebarRight",
+    { name: "Separator" },
+    {
+      name: "DrawerMargins",
       icon: "LayoutDistributeVertical",
       label: "margins",
       preferredSide: "lef",
       key: "m",
       state: false,
       type: "drawer",
-      pane: DrawerMargins,
+      pane: "DrawerMargins",
     },
-    DrawerActivity: {
-      // icon: "Versions",
+    {
+      name: "DrawerActivity",
       icon: "ProgressBolt",
       label: "activity",
       preferredSide: "left",
@@ -48,7 +46,8 @@
       state: false,
       type: "drawer",
     },
-    DrawerCollaborate: {
+    {
+      name: "DrawerCollaborate",
       icon: "UserShare",
       label: "share",
       preferredSide: "left",
@@ -56,8 +55,8 @@
       state: false,
       type: "drawer",
     },
-    DrawerMeta: {
-      // icon: "Versions",
+    {
+      name: "DrawerMeta",
       icon: "FileText",
       label: "meta",
       preferredSide: "left",
@@ -65,49 +64,19 @@
       state: false,
       type: "drawer",
     },
-    DrawerSettings: {
+    {
+      name: "DrawerSettings",
       icon: "AdjustmentsHorizontal",
       label: "settings",
       preferredSide: "left",
       key: "s",
       state: false,
       type: "drawer",
-      pane: DrawerSettings,
+      pane: "DrawerSettings",
     },
-    Separator2: { label: "Separator" },
-    /* PanelSymbols: {
-     *   icon: "Variable",
-     *   label: "symbols",
-     *   preferredSide: "left",
-     *   key: "x",
-     *   state: false,
-     * }, */
-    /* PanelClaims: { icon: "Bulb", label: "claims", preferredSide: "left", key: "t", state: false }, */
-  });
-  const panelComponentsMobile = reactive({
-    /* PanelChat: { icon: "Sparkles", label: "chat", preferredSide: "left", key: "a", state: false }, */
-    DockableEditor: {
-      icon: "Code",
-      label: "source",
-      preferredSide: "left",
-      key: "e",
-      state: false,
-    },
-    DockableSearch: {
-      icon: "Search",
-      label: "search",
-      preferredSide: "top",
-      key: "f",
-      state: false,
-    },
-    Comments: {
-      icon: "Message",
-      label: "comments",
-      preferredSide: "left",
-      key: "c",
-      state: false,
-    },
-  });
+    { name: "Separator" },
+  ]);
+  const panelComponentsMobile = reactive();
 
   // Drawer
   const drawerOpen = inject("drawerOpen");
@@ -123,12 +92,7 @@
 
   // Keys
   useKeyboardShortcuts(
-    Object.fromEntries(
-      Object.entries(panelComponents).map(([name, obj]) => [
-        `p,${obj.key}`,
-        () => (obj.state = !obj.state),
-      ])
-    )
+    Object.fromEntries(items.map((obj) => [`p,${obj.key}`, () => (obj.state = !obj.state)]))
   );
 
   // Focus mode
@@ -159,16 +123,16 @@
 
     <div class="sb-menu">
       <div v-if="!mobileMode" class="sb-menu-std">
-        <template v-for="obj in panelComponents" :key="obj">
-          <Separator v-if="obj.label == 'Separator'" />
+        <template v-for="it in items" :key="it">
+          <Separator v-if="it.name == 'Separator'" />
           <SidebarItem
             v-else
-            v-model="obj.state"
-            :icon="obj.icon"
-            :label="obj.label"
-            :type="obj.type === 'drawer' ? 'outline' : 'filled'"
-            @on="(side) => onItemOn(obj, side)"
-            @off="(side) => onItemOff(obj, side)"
+            v-model="it.state"
+            :icon="it.icon"
+            :label="it.label"
+            :type="it.type === 'drawer' ? 'outline' : 'filled'"
+            @on="(side) => onItemOn(it, side)"
+            @off="(side) => onItemOff(it, side)"
           />
         </template>
         <SidebarItem
@@ -178,9 +142,7 @@
           :with-side-control="false"
         />
         <UserMenu />
-        <div class="newdrawer" :class="{ active: drawerOpen }">
-          <component :is="Object.values(panelComponents).find((obj) => obj.state)?.pane" />
-        </div>
+        <Drawer :component="items.find((it) => it.type == 'drawer' && it.state)?.pane ?? ''" />
       </div>
 
       <div v-if="mobileMode" class="sb-menu-mobile" :class="{ xs: xsMode }">
@@ -191,16 +153,6 @@
           @click="router.push('/')"
         />
 
-        <SidebarItem
-          v-for="obj in panelComponentsMobile"
-          :key="obj"
-          v-model="obj.state"
-          :icon="obj.icon"
-          :label="obj.label"
-          :preferred-side="obj.preferredSide"
-          @on="(side) => emit('showComponent', obj, side)"
-          @off="(side) => emit('hideComponent', obj, side)"
-        />
         <SidebarItem icon="Share3" label="share" :with-side-control="false" />
       </div>
     </div>
@@ -343,35 +295,5 @@
   .sep {
     margin-block: 8px;
     padding-block: 4px;
-  }
-
-  .newdrawer {
-    background: var(--surface-page);
-    overflow-y: auto;
-    position: absolute;
-    top: calc(-64px + 8px);
-    bottom: 0;
-    left: calc(-1 * var(--sidebar-width));
-    width: calc(var(--sidebar-width) - 8px);
-    border-radius: 16px;
-    box-shadow: var(--shadow-soft);
-    border: var(--border-thin) solid var(--purple-300);
-    opacity: 0;
-    transition:
-      left 0.3s ease,
-      opacity 0.3s ease;
-  }
-
-  .newdrawer.active {
-    left: 64px;
-    opacity: 1;
-  }
-
-  .pane {
-    height: 100%;
-  }
-
-  .section {
-    width: 100%;
   }
 </style>
