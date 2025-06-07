@@ -201,8 +201,19 @@ export class File {
    * @param {Object} api - The axios instance
    */
   static async updateSettings(file, newSettings, api) {
+    if (!file.id) throw new Error("file id is undefined; if trying to update user's default settings, use File.updateDefaultSettings");
     const snakeCaseSettings = useSnakeCase(newSettings);
     return await api.post(`/settings/${file.id}`, snakeCaseSettings);
+  }
+
+  /**
+   * Updates the user's default settings.
+   * @param {Object} newSettings - The new settings object
+   * @param {Object} api - The axios instance
+   */
+  static async updateDefaultSettings(newSettings, api) {
+    const snakeCaseSettings = useSnakeCase(newSettings);
+    return await api.post(`/settings/defaults`, snakeCaseSettings);
   }
 
   /**
