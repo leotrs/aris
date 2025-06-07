@@ -173,7 +173,12 @@
       </Section>
       <div class="buttons">
         <Button kind="tertiary" text="Reset" @click="emit('reset')" />
-        <Button class="cta" kind="primary" text="Save Settings" @click="emit('save')" />
+        <Button
+          class="cta"
+          kind="primary"
+          text="Save Settings"
+          @click="emit('save', settingsObj)"
+        />
       </div>
     </Pane>
   </div>

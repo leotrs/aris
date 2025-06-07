@@ -51,8 +51,8 @@ Insightful remark goes here, with a reference to the earlier :ref:sec::.
     file.value.html = response.data;
   });
 
-  const onSave = () => {
-    console.log("save");
+  const onSave = (settingsObj) => {
+    console.log(settingsObj);
   };
 </script>
 
