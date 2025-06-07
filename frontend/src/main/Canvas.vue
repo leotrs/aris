@@ -104,10 +104,9 @@
 
     const fetchSettings = async () => {
       try {
-        const response = await api.get(`/settings/${file.value.id}`);
+        const settings = File.getSettings(file.value, api);
         if (!cancelled) {
-          const camelCaseSettings = useCamelCase(response.data);
-          Object.assign(fileSettings, camelCaseSettings);
+          Object.assign(fileSettings, useCamelCase(settings));
         }
       } catch (error) {
         if (!cancelled) {
