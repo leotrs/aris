@@ -72,8 +72,16 @@
     & p {
       padding-inline: 8px;
       font-size: 14px;
-      color: var(--information-900);
+      color: var(--information-700);
     }
+  }
+
+  :deep(.settings > .pane) {
+    padding: 0;
+  }
+
+  :deep(.settings > .pane > .content) {
+    padding: 0 0 8px 0;
   }
 
   .main {

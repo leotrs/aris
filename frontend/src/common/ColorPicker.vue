@@ -39,7 +39,7 @@
 <style scoped>
   .cp-wrapper {
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: 8px;
     width: 100%;
   }
