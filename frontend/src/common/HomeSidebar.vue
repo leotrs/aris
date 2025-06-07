@@ -92,30 +92,17 @@
         <!-- <SidebarItem text="Review" /> -->
         <Separator />
         <SidebarItem icon="Clock" text="Recent Files" :clickable="false" />
-        <SidebarItem
-          v-if="recentFiles[0]"
-          class="recent-file"
-          icon-collapsed="File"
-          :text="recentFiles[0].title || 'Untitled'"
-          :tooltip-always="true"
-          @click="File.openFile(recentFiles[0], router)"
-        />
-        <SidebarItem
-          v-if="recentFiles[1]"
-          class="recent-file"
-          icon-collapsed="File"
-          :text="recentFiles[1].title || 'Untitled'"
-          :tooltip-always="true"
-          @click="File.openFile(recentFiles[1], router)"
-        />
-        <SidebarItem
-          v-if="recentFiles[2]"
-          class="recent-file"
-          icon-collapsed="File"
-          :text="recentFiles[2].title || 'Untitled'"
-          :tooltip-always="true"
-          @click="File.openFile(recentFiles[2], router)"
-        />
+        <template v-for="idx in 3" :key="recentFiles[idx - 1]">
+          <SidebarItem
+            v-if="recentFiles[idx - 1]"
+            class="recent-file"
+            icon="File"
+            :text="recentFiles[idx - 1].title || 'Untitled'"
+            :tooltip="`Open &quot;${recentFiles[idx - 1].title}&quot;`"
+            :tooltip-always="true"
+            @click="File.openFile(recentFiles[idx - 1], router)"
+          />
+        </template>
         <Separator />
         <SidebarItem
           icon="User"
@@ -280,8 +267,20 @@
     margin-block: 4px;
   }
 
+  .sb-menu > .recent-file:not(.collapsed) > :deep(.tabler-icon) {
+    color: transparent;
+  }
+
+  .sb-menu > .recent-file:not(.collapsed):hover {
+    & > :deep(.tabler-icon) {
+      color: var(--gray-800);
+    }
+    & > :deep(.sb-text) {
+      color: var(--almost-black);
+    }
+  }
+
   .sb-menu > .recent-file > :deep(.sb-text) {
-    padding-left: 36px;
     overflow-x: clip;
     text-overflow: ellipsis;
   }
@@ -289,12 +288,14 @@
   .sb-menu > .recent-file > :deep(*) {
     font-family: "Source Sans 3", sans-serif;
     text-transform: none;
-    font-weight: 300;
-    font-size: 15px;
+    font-weight: 350;
+    color: var(--gray-800);
+    font-style: italic;
+    font-size: 14px;
   }
 
   .sb-menu > .recent-file.collapsed > :deep(*) {
-    stroke-width: 1.5px;
+    stroke-width: 1.75px;
     color: var(--gray-700);
   }
 
