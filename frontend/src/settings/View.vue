@@ -19,8 +19,26 @@
         isMountedAt: null,
         html: "",
         source: `:rsm:
-# Sample Title
-Sample text.
+# File Settings Preview
+
+:author:
+:name: ${user.value.name}
+:email: ${user.value.email}
+::
+
+## Sample Section Heading
+:label: sec
+
+Aris\\: the web-native, human-first ResOps platform.
+
+### And a subsection
+
+Lorem ipsum.
+
+:remark:
+Insightful remark goes here, with a reference to the earlier :ref:sec::.
+::
+
 ::`,
       },
       null
@@ -32,6 +50,10 @@ Sample text.
     const response = await api.post("render", { source: file.value.source });
     file.value.html = response.data;
   });
+
+  const onSave = () => {
+    console.log("save");
+  };
 </script>
 
 <template>
@@ -44,7 +66,7 @@ Sample text.
 
       <div class="main">
         <div class="left">
-          <FileSettings :header="false" />
+          <FileSettings :header="false" @save="onSave" />
           <div class="info">
             <IconInfoCircle />
             <p>
@@ -55,7 +77,7 @@ Sample text.
           </div>
         </div>
         <div class="right">
-          <ManuscriptWrapper :html-string="file?.html || ''" :keys="false" :show-footer="false" />
+          <ManuscriptWrapper :html-string="file?.html || ''" :keys="false" />
         </div>
       </div>
     </Pane>
@@ -64,6 +86,7 @@ Sample text.
 
 <style scoped>
   .view {
+    --settings-width: 324px;
     --transition-duration: 0.3s;
     display: flex;
     width: 100%;
@@ -106,16 +129,17 @@ Sample text.
   }
 
   .settings {
-    outline: 2px solid pink;
   }
 
-  :deep(.settings > .pane) {
+  .settings > :deep(.pane) {
     padding: 0;
-    width: 100%;
   }
 
-  :deep(.settings > .pane > .content) {
+  .settings > :deep(.pane > .content) {
     padding: 0 0 8px 0;
+  }
+
+  .settings > :deep(.pane > .content > .section) {
     width: 100%;
   }
 
@@ -124,6 +148,10 @@ Sample text.
     flex-direction: row;
     justify-content: space-between;
     gap: 16px;
+  }
+
+  .left {
+    max-width: var(--settings-width);
   }
 
   .left,
@@ -135,5 +163,10 @@ Sample text.
     box-shadow: var(--shadow-soft);
     padding-block: 16px;
     border-radius: 8px;
+    height: 100%;
+  }
+
+  :deep(.manuscriptwrapper) {
+    padding-bottom: 0 !important;
   }
 </style>
