@@ -32,6 +32,7 @@
       v-model="newName"
       :edit-on-click="editOnClick"
       :clear-on-start="clearOnStartRenaming"
+      :preserve-width="true"
       @save="(n) => emit('rename', n)"
     />
     <span v-else>{{ tag.name }}</span>
@@ -62,23 +63,23 @@
 
   .tag.on {
     &.red {
-      background-color: var(--red-400);
-      color: var(--red-50);
+      background-color: var(--red-300);
+      color: var(--white);
     }
 
     &.purple {
-      background-color: var(--purple-400);
-      color: var(--purple-50);
+      background-color: var(--purple-300);
+      color: var(--white);
     }
 
     &.green {
-      background-color: var(--green-400);
-      color: var(--green-50);
+      background-color: var(--green-300);
+      color: var(--white);
     }
 
     &.orange {
-      background-color: var(--orange-400);
-      color: var(--orange-50);
+      background-color: var(--orange-300);
+      color: var(--white);
     }
   }
 

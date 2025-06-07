@@ -1,11 +1,12 @@
 <script setup>
-  import { ref, nextTick, useTemplateRef } from "vue";
+  import { ref, nextTick, useTemplateRef, watch } from "vue";
   import { useKeyboardShortcuts } from "../composables/useKeyboardShortcuts.js";
   const props = defineProps({
     inputClass: { type: [String, Object, Array], default: "" },
     textClass: { type: [String, Object, Array], default: "" },
     editOnClick: { type: Boolean, default: true },
     clearOnStart: { type: Boolean, default: false },
+    preserveWidth: { type: Boolean, default: false },
   });
   const text = defineModel({ type: String, default: "" });
   const emit = defineEmits(["save", "cancel"]);
@@ -14,16 +15,14 @@
   const textRef = useTemplateRef("textRef");
   const inputValue = ref("");
   const capturedWidth = ref(0);
+  const currentInputWidth = ref(0);
   const startEditing = async () => {
     inputValue.value = props.clearOnStart ? "" : text.value;
 
-    // Calculate width based on text content
-    if (textRef.value) {
-      const computedStyle = window.getComputedStyle(textRef.value);
+    // Calculate width based on text content only if preserveWidth is enabled
+    if (props.preserveWidth && textRef.value) {
       capturedWidth.value = Math.max(textRef.value.scrollWidth, textRef.value.offsetWidth);
-      console.log("Text scrollWidth:", textRef.value.scrollWidth);
-      console.log("Text offsetWidth:", textRef.value.offsetWidth);
-      console.log("Using width:", capturedWidth.value);
+      currentInputWidth.value = capturedWidth.value;
     }
 
     isEditing.value = true;
@@ -58,6 +57,25 @@
     },
     false
   );
+
+  // Watch for input changes and adjust width dynamically
+  watch(inputValue, () => {
+    if (!props.preserveWidth || !isEditing.value || !inputRef.value) return;
+
+    // Create a temporary element to measure the text width
+    const temp = document.createElement("span");
+    temp.style.position = "absolute";
+    temp.style.visibility = "hidden";
+    temp.style.whiteSpace = "pre";
+    temp.style.font = window.getComputedStyle(inputRef.value).font;
+    temp.textContent = inputValue.value || " ";
+    document.body.appendChild(temp);
+
+    const textWidth = temp.offsetWidth + 20; // Add some padding
+    currentInputWidth.value = Math.max(capturedWidth.value, textWidth);
+
+    document.body.removeChild(temp);
+  });
   defineExpose({ startEditing, cancelEditing });
 </script>
 <template>
@@ -81,7 +99,7 @@
       ref="inputRef"
       v-model="inputValue"
       :class="[inputClass, isEditing ? 'editing' : '']"
-      :style="{ width: capturedWidth + 'px' }"
+      :style="props.preserveWidth ? { width: currentInputWidth + 'px' } : {}"
       @blur="saveChanges"
       @click.stop
       @dblclick.stop
@@ -97,6 +115,7 @@
     font: inherit;
     color: inherit;
     outline: none;
+    width: 100%;
     min-width: 50px;
   }
   input.editing {
