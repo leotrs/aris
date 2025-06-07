@@ -233,17 +233,17 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 64px;
+    height: 48px;
     width: 64px;
-    margin-top: 0px;
+    margin-top: 8px;
     opacity: 1;
     &:hover {
       cursor: pointer;
     }
 
     & img {
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
     }
   }
 
@@ -280,7 +280,7 @@
       margin-bottom: 12px;
     }
     & > *:last-child {
-      margin-bottom: 8px;
+      margin-bottom: 0px;
     }
   }
 
