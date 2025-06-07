@@ -19,6 +19,8 @@ from sqlalchemy import (
     Table,
     Text,
     UniqueConstraint,
+    Index,
+    text,
 )
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.sql import func
@@ -315,17 +317,19 @@ class FileAsset(Base):
 
 
 class FileSettings(Base):
-    """User-specific per-file display settings.
+    """User-specific per-file display settings and default settings.
 
     Stores personalized display preferences (background, font, layout) that users can
     configure per file. Each user can have unique display settings for each file.
+    When file_id is NULL, the record represents the user's default settings that
+    are applied to new files as starting configuration.
 
     Attributes
     ----------
     id : int
         Primary key.
-    file_id : int
-        Foreign key to File.
+    file_id : int, optional
+        Foreign key to File. NULL for default user settings.
     user_id : int
         Foreign key to User (owner of the settings).
     background : str
@@ -346,8 +350,8 @@ class FileSettings(Base):
         Timestamp of last update.
     deleted_at : datetime
         Soft delete marker.
-    file : File
-        File relationship.
+    file : File, optional
+        File relationship. None for default settings.
     user : User
         User relationship.
 
@@ -356,10 +360,16 @@ class FileSettings(Base):
     __tablename__ = "file_settings"
     __table_args__ = (
         UniqueConstraint("file_id", "user_id", name="uq_file_settings_per_user_file"),
+        Index(
+            "ix_unique_default_settings_per_user",
+            "user_id",
+            unique=True,
+            postgresql_where=text("file_id IS NULL"),
+        ),
     )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
-    file_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"), nullable=False)
+    file_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"), nullable=True)
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
 
     background = Column(String, nullable=False, default="var(--surface-page)")
