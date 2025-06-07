@@ -44,6 +44,14 @@ Insightful remark goes here, with a reference to the earlier :ref:sec::.
       null
     )
   );
+
+  const defaultSettings = reactive({});
+  const fileSettingsRef = useTemplateRef("file-settings-ref");
+  onMounted(async () => {
+    const fromDb = await File.getSettings(file.value, api);
+    Object.assign(defaultSettings, fromDb);
+    fileSettingsRef.value.startReceivingUserInput();
+  });
   provide("file", file);
 
   onMounted(async () => {

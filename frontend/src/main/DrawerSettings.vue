@@ -1,37 +1,20 @@
 <script setup>
-  import { inject, watch } from "vue";
+  import { inject, useTemplateRef, onMounted } from "vue";
+  import { File } from "../File.js";
 
   const props = defineProps({
     file: { type: Object, default: () => {} },
-    active: { type: Boolean, required: true },
   });
   const fileSettings = inject("fileSettings");
 
-  const bgColors = {
-    white: "var(--surface-page)",
-    gray: "var(--gray-75)",
-    orange: "var(--orange-50)",
-    green: "var(--green-50)",
-  };
-  const onChangeBackground = (colorName) => {
-    fileSettings.background = bgColors[colorName];
-  };
-
-  // Buttons: reset and save
-  const oldSettings = {};
-  watch(
-    () => props.active,
-    (isActive) => isActive && Object.assign(oldSettings, fileSettings)
-  );
-  const onReset = () => Object.assign(fileSettings, oldSettings);
-  const api = inject("api");
-  const onSave = () => {
-    File.updateSettings(props.file, fileSettings, api);
-  };
+  const fileSettingsRef = useTemplateRef("file-settings-ref");
+  onMounted(() => {
+    fileSettingsRef.value.startReceivingUserInput();
+  });
 </script>
 
 <template>
-  <FileSettings v-model="fileSettings" @save="onSave" @reset="onReset" />
+  <FileSettings ref="file-settings-ref" v-model="fileSettings" />
 </template>
 
 <style scoped>
