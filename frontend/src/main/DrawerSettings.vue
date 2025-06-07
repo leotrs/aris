@@ -1,6 +1,5 @@
 <script setup>
-  import { ref, inject, watch, computed } from "vue";
-  import { useSnakeCase } from "@/composables/useCasing.js";
+  import { inject, watch } from "vue";
 
   const props = defineProps({
     file: { type: Object, default: () => {} },
@@ -26,10 +25,8 @@
   );
   const onReset = () => Object.assign(fileSettings, oldSettings);
   const api = inject("api");
-
   const onSave = () => {
-    const snakeCaseSettings = useSnakeCase(fileSettings);
-    api.post(`/settings/${props.file.id}`, snakeCaseSettings);
+    File.updateSettings(props.file, fileSettings, api);
   };
 </script>
 

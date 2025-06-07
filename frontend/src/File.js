@@ -1,6 +1,7 @@
 // File.js
 import { reactive } from 'vue';
 import RelativeTime from "@yaireo/relative-time";
+import { useSnakeCase, useCamelCase } from "@/composables/useCasing.js";
 
 // Singleton for date formatting
 const relativeTime = new RelativeTime({ locale: "en" });
@@ -24,6 +25,7 @@ export class File {
       tags: rawData.tags || [],
       minimap: rawData.minimap || null,
       ownerId: rawData.owner_id || null,
+      _settings: rawData.settings || null,
 
       // UI state
       selected: rawData.selected || false,
@@ -176,6 +178,30 @@ export class File {
    */
   static openFile(file, router) {
     router.push(`/file/${file.id}`);
+  }
+
+  /**
+   * Load the file's settings
+   * @param {Object} file - The file object
+   * @param {Object} api - The axios instance
+   */
+  static async getSettings(file, api) {
+    if (!file._settings) {
+      file._settings = await api.get(`/settings/${file.id}`);
+      file._settings = useCamelCase(file._settings);
+    }
+    return file._settings;
+  }
+
+  /**
+   * Updates the file settings.
+   * @param {Object} file - The file object
+   * @param {Object} newSettings - The new settings object
+   * @param {Object} api - The axios instance
+   */
+  static async updateSettings(file, newSettings, api) {
+    const snakeCaseSettings = useSnakeCase(newSettings);
+    return await api.post(`/settings/${file.id}`, snakeCaseSettings);
   }
 
   /**
