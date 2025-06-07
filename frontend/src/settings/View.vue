@@ -59,8 +59,13 @@ Insightful remark goes here, with a reference to the earlier :ref:sec::.
     file.value.html = response.data;
   });
 
-  const onSave = (settingsObj) => {
-    console.log(settingsObj);
+  const onSave = async (settingsObj) => {
+    try {
+      await File.updateDefaultSettings(settingsObj, api);
+    } catch (error) {
+      console.error("Failed trying to update default settings.");
+      console.error(error);
+    }
   };
 </script>
 
@@ -74,7 +79,12 @@ Insightful remark goes here, with a reference to the earlier :ref:sec::.
 
       <div class="main">
         <div class="left">
-          <FileSettings ref="file-settings-ref" v-model="defaultSettings" :header="false" />
+          <FileSettings
+            ref="file-settings-ref"
+            v-model="defaultSettings"
+            :header="false"
+            @save="onSave"
+          />
           <div class="info">
             <IconInfoCircle />
             <p>

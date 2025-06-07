@@ -11,10 +11,20 @@
   onMounted(() => {
     fileSettingsRef.value.startReceivingUserInput();
   });
+
+  const api = inject("api");
+  const onSave = async (settingsObj) => {
+    try {
+      await File.updateSettings(props.file, settingsObj, api);
+    } catch (error) {
+      console.error("Failed trying to updated file settings");
+      console.error(error);
+    }
+  };
 </script>
 
 <template>
-  <FileSettings ref="file-settings-ref" v-model="fileSettings" />
+  <FileSettings ref="file-settings-ref" v-model="fileSettings" @save="onSave" />
 </template>
 
 <style scoped>

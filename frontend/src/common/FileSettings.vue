@@ -1,11 +1,11 @@
 <script setup>
-  import { watch, computed, onMounted, ref } from "vue";
+  import { computed, ref } from "vue";
 
   const props = defineProps({
     header: { type: Boolean, default: true },
   });
-  const settingsObj = defineModel({ type: Object, required: true });
   const emit = defineEmits(["save"]);
+  const settingsObj = defineModel({ type: Object, required: true });
 
   // All available options
   const bgColors = {
@@ -14,18 +14,10 @@
     orange: "var(--orange-50)",
     green: "var(--green-50)",
   };
-  const fgColors = {
-    blue: "var(--blue-500)",
-    purple: "var(--purple-500)",
-    orange: "var(--orange-500)",
-    green: "var(--green-500)",
-  };
   const fontSizeOptions = ["14px", "16px", "18px"];
   const lineHeightOptions = ["1.2", "1.5", "1.8"];
   const fontFamilyOptions = ["'Source Sans 3', sans-serif", "'Source Serif 4', serif"];
   const marginWidthOptions = ["0px", "16px", "64px"];
-
-  watch(settingsObj, (newVal) => console.log(newVal));
 
   // Sync settingsObj with the UI: some via simple watchers and some via computed
   // properties for two-way binding between indices and v-models
@@ -67,19 +59,14 @@
 
   // Reset to the initial settings
   const onReset = () => {
-    console.log("resetting");
-    if (initialSettings.value) {
-      console.log("resetting to", initialSettings.value);
-      Object.assign(settingsObj.value, initialSettings.value);
-    }
+    if (!initialSettings.value) return;
+    Object.assign(settingsObj.value, initialSettings.value);
   };
 
   const initialSettings = ref(null);
   const startReceivingUserInput = () => {
-    console.log("starting", initialSettings.value, settingsObj.value);
     if (!settingsObj.value || !Object.keys(settingsObj.value).length > 0) return;
     initialSettings.value = JSON.parse(JSON.stringify(settingsObj.value));
-    console.log("stored old settings as", initialSettings.value);
   };
   defineExpose({ startReceivingUserInput });
 </script>
@@ -103,10 +90,6 @@
               <ColorPicker :colors="bgColors" @change="onChangeBackground" />
             </span>
           </div>
-          <!-- <div class="row accent">
-               <span class="label">Accent</span>
-               <ColorPicker :colors="fgColors" @change="onChangeAccent" />
-               </div> -->
         </template>
       </Section>
 
@@ -166,16 +149,6 @@
               />
             </span>
           </div>
-          <!-- <div class="row">
-               <span class="label">Columns</span>
-               <span class="control">
-               <SegmentedControl
-               :labels="['one', 'two']"
-               :icons="['Columns1', 'Columns2']"
-               :default-active="0"
-               />
-               </span>
-               </div> -->
         </template>
       </Section>
       <div class="buttons">
@@ -184,7 +157,7 @@
           class="cta"
           kind="primary"
           text="Save Settings"
-          @click="emit('save', settingsObj)"
+          @click="emit('save', { ...settingsObj })"
         />
       </div>
     </Pane>
