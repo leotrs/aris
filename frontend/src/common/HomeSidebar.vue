@@ -314,7 +314,7 @@
   }
 
   .sb-menu > .recent-file.collapsed > :deep(*) {
-    stroke-width: 1.75px;
+    stroke-width: 1.5px;
     color: var(--gray-700);
   }
 

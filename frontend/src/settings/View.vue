@@ -66,7 +66,7 @@ Insightful remark goes here, with a reference to the earlier :ref:sec::.
 
       <div class="main">
         <div class="left">
-          <FileSettings :header="false" @save="onSave" />
+          <FileSettings ref="file-settings-ref" v-model="defaultSettings" :header="false" />
           <div class="info">
             <IconInfoCircle />
             <p>

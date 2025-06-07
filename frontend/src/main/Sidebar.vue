@@ -69,8 +69,6 @@
   ]);
   const itemsMobile = reactive([]);
 
-  const sidebarWidth = computed(() => (drawerOpen.value ? "calc(64px + 420px)" : "64px"));
-
   // Drawer
   const drawerOpen = inject("drawerOpen");
   const handleDrawerClick = (clickedIndex) => {
@@ -88,8 +86,6 @@
       drawerOpen.value = true;
     }
   };
-
-  watch(drawerOpen, (newVal) => console.log(newVal));
 
   // Simple watcher for toggles only
   watch(
@@ -112,12 +108,12 @@
   // Update keyboard shortcuts to use the method for drawers
   useKeyboardShortcuts(
     Object.fromEntries([
-      // Toggles work as before
+      // Toggles
       ...items
         .filter((obj) => obj.key && obj.type === "toggle")
         .map((obj) => [`p,${obj.key}`, () => (obj.state = !obj.state)]),
 
-      // Drawers use the method
+      // Drawers
       ...items
         .filter((obj) => obj.key && obj.type === "drawer")
         .map((obj, _, drawerItems) => {
@@ -205,7 +201,7 @@
     position: fixed;
     height: 100%;
     z-index: 2;
-    width: v-bind(sidebarWidth);
+    width: var(--sidebar-width);
     top: 16px;
 
     transform: translateX(0);
