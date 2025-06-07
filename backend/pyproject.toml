@@ -25,6 +25,7 @@ dependencies = [
     "pytest-asyncio>=1.0.0",
     "httpx>=0.28.1",
     "pytest-postgresql>=7.0.2",
+    "aiosqlite>=0.21.0",
 ]
 
 
