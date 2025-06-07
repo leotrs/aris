@@ -104,9 +104,9 @@
             </span>
           </div>
           <!-- <div class="row accent">
-             <span class="label">Accent</span>
-             <ColorPicker :colors="fgColors" @change="onChangeBackground" />
-             </div> -->
+               <span class="label">Accent</span>
+               <ColorPicker :colors="fgColors" @change="onChangeAccent" />
+               </div> -->
         </template>
       </Section>
 
@@ -167,15 +167,15 @@
             </span>
           </div>
           <!-- <div class="row">
-             <span class="label">Columns</span>
-             <span class="control">
-             <SegmentedControl
-             :labels="['one', 'two']"
-             :icons="['Columns1', 'Columns2']"
-             :default-active="0"
-             />
-             </span>
-             </div> -->
+               <span class="label">Columns</span>
+               <span class="control">
+               <SegmentedControl
+               :labels="['one', 'two']"
+               :icons="['Columns1', 'Columns2']"
+               :default-active="0"
+               />
+               </span>
+               </div> -->
         </template>
       </Section>
       <div class="buttons">
