@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from pydantic import BaseModel, validator
+from pydantic import BaseModel, field_validator
 from typing import List
 from datetime import datetime
 import base64
@@ -17,7 +17,8 @@ class FileAssetCreate(BaseModel):
     content: str
     file_id: int
 
-    @validator("content")
+    @field_validator("content")
+    @classmethod
     def validate_content(cls, v, values):
         mime = values.get("mime_type", "")
         if mime.startswith("image/"):
@@ -33,7 +34,8 @@ class FileAssetUpdate(BaseModel):
     content: str | None = None
     deleted_at: datetime | None = None
 
-    @validator("content")
+    @field_validator("content")
+    @classmethod
     def validate_optional_content(cls, v):
         if v is None:
             return v
