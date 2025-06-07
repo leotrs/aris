@@ -50,6 +50,10 @@
 </template>
 
 <style scoped>
+  .rsm-manuscript {
+    background-color: v-bind(settings.background) !important;
+  }
+
   .footer-logo {
     display: flex;
     justify-content: center;
