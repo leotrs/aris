@@ -1,8 +1,37 @@
 <script setup>
-  import { inject } from "vue";
+  import { ref, inject, provide, onMounted } from "vue";
   import { IconSettings, IconInfoCircle } from "@tabler/icons-vue";
+  import { File } from "../File.js";
 
   const user = inject("user");
+  const api = inject("api");
+  const file = ref(
+    new File(
+      {
+        id: null,
+        title: "Sample Title",
+        last_edited_at: new Date().toISOString(),
+        tags: [],
+        minimap: null,
+        ownerId: user.id,
+        selected: false,
+        filtered: false,
+        isMountedAt: null,
+        html: "",
+        source: `:rsm:
+# Sample Title
+Sample text.
+::`,
+      },
+      null
+    )
+  );
+  provide("file", file);
+
+  onMounted(async () => {
+    const response = await api.post("render", { source: file.value.source });
+    file.value.html = response.data;
+  });
 </script>
 
 <template>
@@ -26,7 +55,7 @@
           </div>
         </div>
         <div class="right">
-          <ManuscriptWrapper html-string=":rsm: foo ::" :keys="false" :show-footer="false" />
+          <ManuscriptWrapper :html-string="file?.html || ''" :keys="false" :show-footer="false" />
         </div>
       </div>
     </Pane>
@@ -76,12 +105,18 @@
     }
   }
 
+  .settings {
+    outline: 2px solid pink;
+  }
+
   :deep(.settings > .pane) {
     padding: 0;
+    width: 100%;
   }
 
   :deep(.settings > .pane > .content) {
     padding: 0 0 8px 0;
+    width: 100%;
   }
 
   .main {
@@ -94,5 +129,11 @@
   .left,
   .right {
     flex: 1;
+  }
+
+  .rsm-manuscript {
+    box-shadow: var(--shadow-soft);
+    padding-block: 16px;
+    border-radius: 8px;
   }
 </style>
