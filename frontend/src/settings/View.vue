@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, provide, onMounted } from "vue";
+  import { ref, reactive, watch, inject, provide, onMounted, useTemplateRef } from "vue";
   import { IconSettings, IconInfoCircle } from "@tabler/icons-vue";
   import { File } from "../File.js";
 
@@ -77,7 +77,11 @@ Insightful remark goes here, with a reference to the earlier :ref:sec::.
           </div>
         </div>
         <div class="right">
-          <ManuscriptWrapper :html-string="file?.html || ''" :keys="false" />
+          <ManuscriptWrapper
+            :html-string="file?.html || ''"
+            :keys="false"
+            :settings="defaultSettings"
+          />
         </div>
       </div>
     </Pane>

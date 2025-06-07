@@ -1,23 +1,11 @@
 <script setup>
-  import { watch, computed } from "vue";
+  import { watch, computed, onMounted, ref } from "vue";
 
   const props = defineProps({
     header: { type: Boolean, default: true },
   });
-  const settingsObj = defineModel({
-    type: Object,
-    default: () => {
-      return {
-        background: "var(--surface-page)",
-        fontSize: "16px",
-        lineHeight: "1.5",
-        fontFamily: "Source Sans 3",
-        marginWidth: "16px",
-        collumns: 1,
-      };
-    },
-  });
-  const emit = defineEmits(["save", "reset"]);
+  const settingsObj = defineModel({ type: Object, required: true });
+  const emit = defineEmits(["save"]);
 
   // All available options
   const bgColors = {
@@ -34,47 +22,66 @@
   };
   const fontSizeOptions = ["14px", "16px", "18px"];
   const lineHeightOptions = ["1.2", "1.5", "1.8"];
-  const fontFamilyOptions = ["Source Sans 3", "Source Serif 4"];
+  const fontFamilyOptions = ["'Source Sans 3', sans-serif", "'Source Serif 4', serif"];
   const marginWidthOptions = ["0px", "16px", "64px"];
 
   watch(settingsObj, (newVal) => console.log(newVal));
 
-  // Computed properties for two-way binding between indices and actual values
+  // Sync settingsObj with the UI: some via simple watchers and some via computed
+  // properties for two-way binding between indices and v-models
+  const onChangeBackground = (color) => {
+    settingsObj.value.background = bgColors[color];
+  };
   const fontSize = computed({
-    get: () => fontSizeOptions.indexOf(settingsObj.value.fontSize),
+    get: () => fontSizeOptions.indexOf(settingsObj.value?.fontSize),
     set: (index) => {
       if (index >= 0 && index < fontSizeOptions.length) {
         settingsObj.value.fontSize = fontSizeOptions[index];
       }
     },
   });
-
   const lineHeight = computed({
-    get: () => lineHeightOptions.indexOf(settingsObj.value.lineHeight),
+    get: () => lineHeightOptions.indexOf(settingsObj.value?.lineHeight),
     set: (index) => {
       if (index >= 0 && index < lineHeightOptions.length) {
         settingsObj.value.lineHeight = lineHeightOptions[index];
       }
     },
   });
-
   const fontFamily = computed({
-    get: () => fontFamilyOptions.indexOf(settingsObj.value.fontFamily),
+    get: () => fontFamilyOptions.indexOf(settingsObj.value?.fontFamily),
     set: (index) => {
       if (index >= 0 && index < fontFamilyOptions.length) {
         settingsObj.value.fontFamily = fontFamilyOptions[index];
       }
     },
   });
-
   const marginWidth = computed({
-    get: () => marginWidthOptions.indexOf(settingsObj.value.marginWidth),
+    get: () => marginWidthOptions.indexOf(settingsObj.value?.marginWidth),
     set: (index) => {
       if (index >= 0 && index < marginWidthOptions.length) {
         settingsObj.value.marginWidth = marginWidthOptions[index];
       }
     },
   });
+
+  // Reset to the initial settings
+  const onReset = () => {
+    console.log("resetting");
+    if (initialSettings.value) {
+      console.log("resetting to", initialSettings.value);
+      Object.assign(settingsObj.value, initialSettings.value);
+    }
+  };
+
+  const initialSettings = ref(null);
+  const startReceivingUserInput = () => {
+    console.log("starting", initialSettings.value, settingsObj.value);
+    if (!settingsObj.value || !Object.keys(settingsObj.value).length > 0) return;
+    initialSettings.value = JSON.parse(JSON.stringify(settingsObj.value));
+    console.log("stored old settings as", initialSettings.value);
+  };
+  defineExpose({ startReceivingUserInput });
 </script>
 
 <template>
@@ -172,7 +179,7 @@
         </template>
       </Section>
       <div class="buttons">
-        <Button kind="tertiary" text="Reset" @click="emit('reset')" />
+        <Button kind="tertiary" text="Reset" @click="onReset" />
         <Button
           class="cta"
           kind="primary"
