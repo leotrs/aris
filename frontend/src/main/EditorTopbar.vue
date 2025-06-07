@@ -4,6 +4,7 @@
   const activeIndex = defineModel({ type: Number, required: true });
   const focusMode = inject("focusMode");
   const file = inject("file");
+  const fileSettings = inject("fileSettings");
 
   // Word counter
   const numWords = ref(0);
@@ -89,6 +90,7 @@
     justify-content: space-between;
     height: 48px;
     border-top-left-radius: 16px;
+    background-color: v-bind(fileSettings.background);
     opacity: 1;
     transform: translateY(0);
     will-change: opacity, transform, width;

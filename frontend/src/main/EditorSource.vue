@@ -7,6 +7,7 @@
   const emit = defineEmits(["input"]);
   const file = defineModel({ type: Object, required: true });
   const textareaRef = useTemplateRef("editor-ref");
+  const fileSettings = inject("fileSettings");
 
   // Toolbar functions
   const onInsert = (text) => {

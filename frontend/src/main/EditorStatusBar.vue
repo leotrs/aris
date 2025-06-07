@@ -52,6 +52,8 @@
     display: flex;
     width: 100%;
     justify-content: space-between;
+    background-color: var(--gray-100);
+    border-radius: 0 0 8px 8px;
   }
 
   .statusbar * {
@@ -59,7 +61,7 @@
     line-height: 18px;
     display: flex;
     align-items: center;
-    color: var(--dark);
+    color: var(--gray-800);
   }
 
   .statusbar > .left > .button {
@@ -78,7 +80,7 @@
   }
 
   .statusbar > :is(.left, .middle) > :deep(svg) {
-    color: var(--dark);
+    color: var(--gray-800);
   }
 
   .statusbar .middle {
@@ -132,7 +134,6 @@
   }
 
   .icon-idle {
-    color: var(--text-tertiary);
     opacity: 0.5;
   }
 
