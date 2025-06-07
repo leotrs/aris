@@ -179,7 +179,7 @@
     display: flex;
     z-index: 1;
     box-shadow: var(--shadow-soft);
-    background-color: v-bind("fileSettings.background");
+    background-color: v-bind(fileSettings.background);
     border-radius: 16px;
     width: 100%;
     will-change: width, left, border-radius;
@@ -206,7 +206,7 @@
     width: 50%;
     padding: 0 16px 16px 16px;
     margin-top: 16px;
-    background-color: v-bind("fileSettings.background");
+    background-color: v-bind(fileSettings.background);
     justify-content: center;
     will-change: border-radius, height, top;
     transition:
