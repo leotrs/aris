@@ -21,7 +21,7 @@ from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from typing import AsyncGenerator
 
@@ -67,11 +67,7 @@ class UserRead(BaseModel):
     id: UUID
     email: EmailStr
     full_name: str
-
-    class Config:
-        """Pydantic configuration to allow population from ORM objects."""
-
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 async def current_user(
