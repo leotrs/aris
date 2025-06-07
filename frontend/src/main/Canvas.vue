@@ -22,7 +22,6 @@
 
   const props = defineProps({
     showEditor: { type: Boolean, default: false },
-    showSearch: { type: Boolean, default: false },
   });
   const file = defineModel({ type: Object });
 

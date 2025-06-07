@@ -5,6 +5,7 @@
   import { File } from "../File.js";
   import Sidebar from "./Sidebar.vue";
   import Canvas from "./Canvas.vue";
+  import DockableSearch from "./DockableSearch.vue";
 
   // Load and provide file
   const fileStore = inject("fileStore");
@@ -74,6 +75,7 @@
   <div class="view" :class="{ focus: focusMode, mobile: mobileMode }">
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
     <Canvas v-if="file" v-model="file" :show-editor="showEditor" />
+    <DockableSearch v-if="showSearch" />
     <div class="menus" :class="{ focus: focusMode, mobile: mobileMode }">
       <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
       <!-- <UserMenu /> -->
