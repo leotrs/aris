@@ -15,8 +15,6 @@
   import { useElementSize, useScroll } from "@vueuse/core";
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
   import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
-  import { useCamelCase } from "@/composables/useCasing.js";
-  import { File } from "../File.js";
   import ReaderTopbar from "./ReaderTopbar.vue";
   import Dock from "./Dock.vue";
   import Editor from "./Editor.vue";
@@ -103,11 +101,9 @@
   const isMainTitleVisible = ref(true);
   let tearDown = () => {};
   watch(
-    () => file.value,
+    () => [file.value, manuscriptRef.value],
     async () => {
-      await nextTick(); // waits for ManuscriptWrapper to receive html
-      await nextTick(); // waits for v-html DOM to update
-      if (!manuscriptRef.value) return;
+      if (!file.value || !manuscriptRef.value) return;
       tearDown();
 
       const mainTitle = manuscriptRef.value.$el.querySelector("section.level-1 > .heading.hr");
@@ -121,7 +117,8 @@
         newTearDown();
         stopWatch();
       };
-    }
+    },
+    { immedate: true }
   );
   onUnmounted(() => tearDown());
 
