@@ -46,12 +46,38 @@ async def get_file_settings(
     settings = result.scalar_one_or_none()
 
     if not settings:
-        settings = FileSettingsResponse(
-            file_id=file_id,
-            user_id=current_user.id,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+        # Fall back to user defaults
+        default_query = select(FileSettings).where(
+            FileSettings.file_id.is_(None),
+            FileSettings.user_id == current_user.id,
+            FileSettings.deleted_at.is_(None),
         )
+        default_result = await db.execute(default_query)
+        default_settings = default_result.scalar_one_or_none()
+
+        if default_settings:
+            # Create response using default values
+            settings = FileSettingsResponse(
+                file_id=file_id,
+                user_id=current_user.id,
+                background=default_settings.background,
+                font_size=default_settings.font_size,
+                line_height=default_settings.line_height,
+                font_family=default_settings.font_family,
+                margin_width=default_settings.margin_width,
+                columns=default_settings.columns,
+                created_at=datetime.utcnow(),
+                updated_at=datetime.utcnow(),
+            )
+        else:
+            # Use hardcoded defaults
+            settings = FileSettingsResponse(
+                file_id=file_id,
+                user_id=current_user.id,
+                created_at=datetime.utcnow(),
+                updated_at=datetime.utcnow(),
+            )
+
     return settings
 
 
