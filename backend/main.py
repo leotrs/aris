@@ -1,3 +1,5 @@
+"""Aris backend: FastApi app."""
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -14,10 +16,18 @@ from aris.routes import (
 
 app = FastAPI()
 
+
+@app.get("/health")
+async def health_check():
+    """Health check route."""
+    return {"status": "ok"}
+
+
 origins = [
     "http://localhost:5173",  # local Vue app
     "https://aris-frontend.netlify.app",  # Netlify frontend
 ]
+
 
 app.add_middleware(
     CORSMiddleware,
