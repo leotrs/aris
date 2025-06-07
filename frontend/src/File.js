@@ -25,7 +25,7 @@ export class File {
       tags: rawData.tags || [],
       minimap: rawData.minimap || null,
       ownerId: rawData.owner_id || null,
-      _settings: rawData.settings || null,
+      _settings: rawData._settings || null,
 
       // UI state
       selected: rawData.selected || false,
@@ -187,8 +187,9 @@ export class File {
    */
   static async getSettings(file, api) {
     if (!file._settings) {
-      file._settings = await api.get(`/settings/${file.id}`);
-      file._settings = useCamelCase(file._settings);
+      const url = file.id ? `/settings/${file.id}` : `/settings/defaults`;
+      const response = await api.get(url);
+      file._settings = useCamelCase(response.data);
     }
     return file._settings;
   }
