@@ -77,7 +77,8 @@
     display: flex;
     align-items: center;
     flex-wrap: wrap;
-    gap: 8px;
+    column-gap: 8px;
+    row-gap: 0px;
   }
 
   .controls {

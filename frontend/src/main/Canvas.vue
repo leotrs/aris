@@ -16,6 +16,7 @@
   import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
   import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import { useCamelCase } from "@/composables/useCasing.js";
+  import { File } from "../File.js";
   import ReaderTopbar from "./ReaderTopbar.vue";
   import Dock from "./Dock.vue";
   import Editor from "./Editor.vue";
@@ -313,7 +314,7 @@
 
   :deep(.manuscriptwrapper) {
     font-size: v-bind(fileSettings.fontSize) !important;
-    font-family: v-bind(` "${fileSettings.fontFamily}" `) !important;
+    font-family: v-bind(fileSettings.fontFamily) !important;
     line-height: v-bind(fileSettings.lineHeight) !important;
     padding-inline: v-bind(fileSettings.marginWidth) !important;
   }

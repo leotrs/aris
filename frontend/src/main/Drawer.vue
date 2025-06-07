@@ -27,8 +27,8 @@
   .drawer {
     background: var(--surface-page);
     position: absolute;
-    top: calc(-1 * 64px - 8px);
-    bottom: 24px;
+    top: calc(-1 * 64px);
+    bottom: 16px;
     left: calc(-1 * var(--sidebar-width));
     width: calc(var(--sidebar-width) - 8px);
     border-radius: 16px;
