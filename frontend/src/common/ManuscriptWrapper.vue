@@ -6,6 +6,7 @@
     htmlString: { type: String, required: true },
     keys: { type: Boolean, required: true },
     showFooter: { type: Boolean, default: false },
+    settings: { type: Object, default: () => {} },
   });
   const emit = defineEmits(["mounted-at"]);
 
@@ -40,7 +41,7 @@
       />
     </div>
 
-    <Manuscript ref="manuscript-ref" :html-string="htmlString" />
+    <Manuscript ref="manuscript-ref" :html-string="htmlString" :settings="settings" />
 
     <div v-if="showFooter" class="middle-footer">
       <div class="footer-logo"><img src="../assets/logo-32px.svg" /></div>

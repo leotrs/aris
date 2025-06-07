@@ -1,7 +1,8 @@
 <script setup>
-  import { ref, reactive, computed, inject, provide } from "vue";
+  import { ref, computed, inject, provide, onMounted } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import { File } from "../File.js";
   import Sidebar from "./Sidebar.vue";
   import Canvas from "./Canvas.vue";
 
@@ -17,6 +18,14 @@
     return found || {};
   });
   provide("file", file);
+
+  const api = inject("api");
+  const fileSettings = ref({});
+  onMounted(async () => {
+    const fromDb = await File.getSettings(file.value, api);
+    Object.assign(fileSettings.value, fromDb);
+  });
+  provide("fileSettings", fileSettings);
 
   // Panel component management
   const showEditor = ref(false);

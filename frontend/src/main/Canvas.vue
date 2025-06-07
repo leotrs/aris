@@ -96,29 +96,7 @@
     fetchContent();
     onCleanup(() => (cancelled = true));
   });
-
-  const fileSettings = reactive({});
-  watchEffect((onCleanup) => {
-    if (!file.value || !file.value.id) return;
-    let cancelled = false;
-
-    const fetchSettings = async () => {
-      try {
-        const settings = File.getSettings(file.value, api);
-        if (!cancelled) {
-          Object.assign(fileSettings, useCamelCase(settings));
-        }
-      } catch (error) {
-        if (!cancelled) {
-          console.error("Error fetching file settings:", error);
-        }
-      }
-    };
-
-    fetchSettings();
-    onCleanup(() => (cancelled = true));
-  });
-  provide("fileSettings", fileSettings);
+  const fileSettings = inject("fileSettings");
 
   // Is main title visible?
   const isMainTitleVisible = ref(true);
@@ -178,6 +156,7 @@
               :class="{ 'title-visible': isMainTitleVisible }"
               :html-string="file.html || ''"
               :keys="true"
+              :settings="fileSettings"
               :show-footer="true"
             />
           </Dock>
