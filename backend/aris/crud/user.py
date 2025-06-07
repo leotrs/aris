@@ -4,7 +4,7 @@ from datetime import datetime
 from sqlalchemy import select, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import File, User
+from ..models import File, User, FileSettings
 from .file import get_file, get_file_section
 from .tag import get_user_file_tags
 from .utils import extract_title
@@ -23,8 +23,24 @@ async def get_user(user_id: int, db: AsyncSession):
 async def create_user(name: str, initials: str, email: str, password_hash: str, db: AsyncSession):
     if not initials:
         initials = "".join([w[0].upper() for w in name.split()])
+
     user = User(name=name, initials=initials, email=email, password_hash=password_hash)
     db.add(user)
+    await db.flush()  # Flush to get the user.id without committing
+
+    # Create default settings for the new user
+    default_settings = FileSettings(
+        file_id=None,  # NULL for default settings
+        user_id=user.id,
+        background="var(--surface-page)",
+        font_size="16px",
+        line_height="1.5",
+        font_family="Source Sans 3",
+        margin_width="16px",
+        columns=1,
+    )
+    db.add(default_settings)
+
     await db.commit()
     await db.refresh(user)
     return user
