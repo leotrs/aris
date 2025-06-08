@@ -1,4 +1,5 @@
-# backend/tests/test_routes/test_files.py
+"""Test file routes."""
+
 import pytest
 from httpx import AsyncClient
 

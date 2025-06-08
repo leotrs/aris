@@ -1,6 +1,5 @@
 import pytest
 from unittest.mock import AsyncMock, patch
-from time import sleep
 
 from aris.crud.file import (
     create_file,
