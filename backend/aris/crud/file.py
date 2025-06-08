@@ -51,7 +51,7 @@ async def create_file(
         source=source,
         status=FileStatus.DRAFT,
     )
-    file.last_edited_at = datetime.utcnow()
+    file.last_edited_at = datetime.now(UTC)
     db.add(file)
     await db.commit()
     await db.refresh(file)
@@ -70,7 +70,7 @@ async def update_file(
 
     file.title = title
     file.source = source
-    file.last_edited_at = datetime.utcnow()
+    file.last_edited_at = datetime.now(UTC)
     await db.commit()
     await db.refresh(file)
     return file
@@ -80,7 +80,7 @@ async def soft_delete_file(file_id: int, db: AsyncSession):
     file = await get_file(file_id, db)
     if not file:
         return None
-    file.deleted_at = datetime.utcnow()
+    file.deleted_at = datetime.now(UTC)
     await db.commit()
     return {"message": f"File {file_id} soft deleted"}
 
@@ -94,7 +94,7 @@ async def duplicate_file(file_id: int, db: AsyncSession):
         title=f"{original.title} (copy)",
         source=original.source,
         owner_id=original.owner_id,
-        last_edited_at=datetime.utcnow(),
+        last_edited_at=datetime.now(UTC),
     )
     db.add(new_file)
     await db.flush()

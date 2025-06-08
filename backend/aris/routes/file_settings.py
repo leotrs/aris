@@ -88,8 +88,8 @@ async def get_default_settings(
         # Return default values without persisting
         return DefaultSettingsResponse(
             user_id=current_user.id,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
         )
 
     return settings
@@ -114,8 +114,8 @@ async def get_file_settings(
         settings = FileSettingsResponse(
             file_id=file_id,
             user_id=current_user.id,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow(),
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
         )
 
     return settings
