@@ -76,7 +76,7 @@ async def delete_tag(_id: int, user_id: int, db: AsyncSession = Depends(get_db))
 
     deleted_tag = await crud.soft_delete_tag(_id, user_id, db)
     if deleted_tag is None:
-        raise HTTPException(status_code=400, detail="Error updating tag: " + str(e))
+        raise HTTPException(status_code=400, detail="Error deleting tag: " + str(_id))
     return deleted_tag
 
 
