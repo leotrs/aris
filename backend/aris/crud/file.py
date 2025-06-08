@@ -99,7 +99,9 @@ async def duplicate_file(file_id: int, db: AsyncSession):
     db.add(new_file)
     await db.flush()
 
-    tag_ids = await db.execute(file_tags.select().where(file_tags.c.file_id == file_id)).fetchall()
+    tag_ids = (
+        await db.execute(file_tags.select().where(file_tags.c.file_id == file_id))
+    ).fetchall()
     await db.execute(
         file_tags.insert(),
         [{"file_id": new_file.id, "tag_id": tag.tag_id} for tag in tag_ids],
