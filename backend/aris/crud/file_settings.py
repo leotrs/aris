@@ -1,8 +1,10 @@
+"""CRUD operations for file settings."""
+
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
-from datetime import datetime
+from datetime import datetime, UTC
 from ..models import FileSettings, File
 
 
@@ -53,6 +55,7 @@ class FileSettingsDB:
             # Update existing
             for field, value in settings_data.model_dump().items():
                 setattr(settings, field, value)
+            settings.updated_at = datetime.now(UTC)
         else:
             # Create new
             settings = FileSettings(
@@ -99,6 +102,7 @@ class FileSettingsDB:
             # Update existing
             for field, value in settings_data.model_dump().items():
                 setattr(settings, field, value)
+            settings.updated_at = datetime.now(UTC)
         else:
             # Create new
             settings = FileSettings(file_id=file_id, user_id=user_id, **settings_data.model_dump())

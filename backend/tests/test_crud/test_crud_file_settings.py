@@ -57,12 +57,12 @@ async def test_upsert_default_settings_update(db_session, test_user):
         updated_data, test_user.id, db_session
     )
 
-    assert updated_settings.id == original_id  # Same record
+    assert updated_settings.id == original_id
     assert updated_settings.background == "var(--new-bg)"
     assert updated_settings.font_size == "20px"
     assert updated_settings.columns == 3
-    assert updated_settings.created_at == original_created_at  # Created time unchanged
-    assert updated_settings.updated_at > original_created_at  # Updated time changed
+    assert updated_settings.created_at == original_created_at
+    assert updated_settings.updated_at > original_created_at
 
 
 @pytest.mark.asyncio
@@ -207,12 +207,12 @@ async def test_upsert_file_settings_update(db_session, test_user):
         file.id, updated_data, test_user.id, db_session
     )
 
-    assert updated_settings.id == original_id  # Same record
+    assert updated_settings.id == original_id
     assert updated_settings.background == "var(--new-file-bg)"
     assert updated_settings.font_size == "24px"
     assert updated_settings.columns == 4
-    assert updated_settings.created_at == original_created_at  # Created time unchanged
-    assert updated_settings.updated_at > original_created_at  # Updated time changed
+    assert updated_settings.created_at == original_created_at
+    assert updated_settings.updated_at > original_created_at
 
 
 @pytest.mark.asyncio
