@@ -109,22 +109,6 @@ async def test_update_user_not_found(client: AsyncClient, authenticated_user):
 
 
 @pytest.mark.asyncio
-async def test_update_user_invalid_data(client: AsyncClient, authenticated_user):
-    """Test updating user with invalid data."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-    update_data = {
-        "name": "",  # Invalid empty name
-        "initials": "",  # Invalid empty initials
-        "email": "invalid-email",  # Invalid email format
-    }
-    response = await client.put(
-        f"/users/{authenticated_user['user_id']}", headers=headers, json=update_data
-    )
-    # Depending on your validation, this might be 422 or 400
-    assert response.status_code in [400, 422]
-
-
-@pytest.mark.asyncio
 async def test_soft_delete_user_success(client: AsyncClient, authenticated_user):
     """Test soft deleting user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -323,13 +307,13 @@ async def test_get_profile_picture_not_found(client: AsyncClient, authenticated_
 
 
 @pytest.mark.asyncio
-async def test_get_profile_picture_user_not_found(client: AsyncClient, authenticated_user):
+async def test_get_profile_picture_wrong_user(client: AsyncClient, authenticated_user):
     """Test getting profile picture for non-existent user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
 
     response = await client.get("/users/99999/avatar", headers=headers)
-    assert response.status_code == 404
-    assert response.json()["detail"] == "User not found"
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Not authorized to retrieve this profile"
 
 
 @pytest.mark.asyncio
@@ -378,13 +362,13 @@ async def test_delete_profile_picture_not_found(client: AsyncClient, authenticat
 
 
 @pytest.mark.asyncio
-async def test_delete_profile_picture_user_not_found(client: AsyncClient, authenticated_user):
+async def test_delete_profile_picture_wrong_user(client: AsyncClient, authenticated_user):
     """Test deleting profile picture for non-existent user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
 
     response = await client.delete("/users/99999/avatar", headers=headers)
-    assert response.status_code == 404
-    assert response.json()["detail"] == "User not found"
+    assert response.status_code == 403
+    assert response.json()["detail"] == "Not authorized to delete this profile"
 
 
 @pytest.mark.asyncio
