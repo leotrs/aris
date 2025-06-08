@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+from datetime import datetime, UTC
 
 import rsm
 from sqlalchemy import select
@@ -102,10 +102,11 @@ async def duplicate_file(file_id: int, db: AsyncSession):
     tag_ids = (
         await db.execute(file_tags.select().where(file_tags.c.file_id == file_id))
     ).fetchall()
-    await db.execute(
-        file_tags.insert(),
-        [{"file_id": new_file.id, "tag_id": tag.tag_id} for tag in tag_ids],
-    )
+    if tag_ids:
+        await db.execute(
+            file_tags.insert(),
+            [{"file_id": new_file.id, "tag_id": tag.tag_id} for tag in tag_ids],
+        )
     await db.commit()
 
     return new_file

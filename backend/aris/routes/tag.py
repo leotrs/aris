@@ -68,17 +68,15 @@ async def delete_tag(_id: int, user_id: int, db: AsyncSession = Depends(get_db))
     return deleted_tag
 
 
-@router.get("/{user_id}/files/{doc_id}/tags")
-async def get_user_file_tags(
-    user_id: int, doc_id: int, _id: int, db: AsyncSession = Depends(get_db)
-):
+@router.get("/{user_id}/files/{file_id}/tags")
+async def get_user_file_tags(user_id: int, file_id: int, db: AsyncSession = Depends(get_db)):
     """Get a user's tags assigned to the file."""
     try:
-        result = await crud.get_user_file_tags(user_id, doc_id, db)
+        result = await crud.get_user_file_tags(user_id, file_id, db)
     except ValueError as e:
         raise HTTPException(
             status_code=400,
-            detail=f"Error fetching tags for file {doc_id}: " + str(e),
+            detail=f"Error fetching tags for file {file_id}: " + str(e),
         )
     return result
 

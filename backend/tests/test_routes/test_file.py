@@ -299,6 +299,76 @@ async def test_duplicate_file(client: AsyncClient, authenticated_user):
 
 
 @pytest.mark.asyncio
+async def test_duplicate_file_with_tags(client: AsyncClient, authenticated_user):
+    """Test duplicating a file that has tags."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    user_id = authenticated_user["user_id"]
+
+    # First create some tags
+    tag1_response = await client.post(
+        f"/users/{user_id}/tags", headers=headers, json={"name": "Test Tag 1", "color": "#FF0000"}
+    )
+    tag1_id = tag1_response.json()["id"]
+
+    tag2_response = await client.post(
+        f"/users/{user_id}/tags", headers=headers, json={"name": "Test Tag 2", "color": "#00FF00"}
+    )
+    tag2_id = tag2_response.json()["id"]
+
+    # Create a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Original Document with Tags",
+            "abstract": "Original abstract with tags",
+            "owner_id": user_id,
+            "source": ":rsm:original content with tags::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Add tags to the file
+    await client.post(f"/users/{user_id}/files/{file_id}/tags/{tag1_id}", headers=headers)
+    await client.post(f"/users/{user_id}/files/{file_id}/tags/{tag2_id}", headers=headers)
+
+    # Verify original file has tags
+    original_tags_response = await client.get(
+        f"/users/{user_id}/files/{file_id}/tags", headers=headers
+    )
+    original_tags = original_tags_response.json()
+    assert len(original_tags) == 2
+    original_tag_ids = {tag["id"] for tag in original_tags}
+    assert tag1_id in original_tag_ids
+    assert tag2_id in original_tag_ids
+
+    # Duplicate the file
+    response = await client.post(f"/files/{file_id}/duplicate", headers=headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert "id" in data
+    duplicated_file_id = data["id"]
+    assert duplicated_file_id != file_id  # Should be a new ID
+    assert data["message"] == "File duplicated successfully"
+
+    # Verify the duplicated file has the same tags
+    duplicated_tags_response = await client.get(
+        f"/users/{user_id}/files/{duplicated_file_id}/tags", headers=headers
+    )
+    duplicated_tags = duplicated_tags_response.json()
+
+    assert len(duplicated_tags) == 2
+    duplicated_tag_ids = {tag["id"] for tag in duplicated_tags}
+    assert duplicated_tag_ids == original_tag_ids  # Same tags
+
+    # Verify we can get the duplicated file (basic check)
+    duplicated_file_response = await client.get(f"/files/{duplicated_file_id}", headers=headers)
+    assert duplicated_file_response.status_code == 200
+    duplicated_file_data = duplicated_file_response.json()
+    assert duplicated_file_data["title"] == "Original Document with Tags (copy)"
+
+
+@pytest.mark.asyncio
 async def test_get_file_html_content(client: AsyncClient, authenticated_user):
     """Test getting file HTML content."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
