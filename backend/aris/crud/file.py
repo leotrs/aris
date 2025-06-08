@@ -51,7 +51,9 @@ async def create_file(
         source=source,
         status=FileStatus.DRAFT,
     )
-    file.last_edited_at = datetime.now(UTC)
+    now = datetime.now(UTC)
+    file.created_at = now
+    file.last_edited_at = now
     db.add(file)
     await db.commit()
     await db.refresh(file)
