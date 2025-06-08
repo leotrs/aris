@@ -1,6 +1,6 @@
 from aris.models import File, Tag
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, Field, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import crud, get_db, current_user
@@ -17,7 +17,19 @@ class TagRetrieveOrUpdate(BaseModel):
 
 class TagCreate(BaseModel):
     name: str
-    color: str
+    color: str | None = None
+
+    @field_validator("name")
+    @classmethod
+    def validate_name(cls, v: str) -> str:
+        v = v.strip()
+        if not v:
+            raise ValueError("Tag name cannot be empty")
+        if len(v) < 1:
+            raise ValueError("Tag name must be at least 1 character long")
+        if len(v) > 50:
+            raise ValueError("Tag name cannot exceed 50 characters")
+        return v
 
 
 @router.post(
