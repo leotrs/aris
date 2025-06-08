@@ -77,7 +77,7 @@ async def test_get_user_file_full_bundle(db_session, test_user):
     ):
         result = await get_user_file(
             user_id=test_user.id,
-            doc_id=file.id,
+            file_id=file.id,
             with_tags=True,
             with_minimap=True,
             db=db_session,
@@ -86,3 +86,132 @@ async def test_get_user_file_full_bundle(db_session, test_user):
     assert result["title"] == "Mocked Title"
     assert result["tags"] == ["physics", "ML"]
     assert result["minimap"] == "Mocked Minimap"
+
+
+import pytest
+from datetime import datetime
+from sqlalchemy.exc import IntegrityError
+
+from aris.crud.user import (
+    get_user,
+    create_user,
+    update_user,
+    soft_delete_user,
+    get_user_files,
+    get_user_file,
+)
+
+
+@pytest.mark.asyncio
+async def test_get_user_returns_none_for_missing_user(db_session):
+    user = await get_user(999999, db_session)
+    assert user is None
+
+
+@pytest.mark.asyncio
+async def test_update_user_returns_none_for_missing_user(db_session):
+    updated = await update_user(999999, "Name", "NN", "email@example.com", db_session)
+    assert updated is None
+
+
+@pytest.mark.asyncio
+async def test_soft_delete_user_returns_none_for_missing_user(db_session):
+    deleted = await soft_delete_user(999999, db_session)
+    assert deleted is None
+
+
+@pytest.mark.asyncio
+async def test_create_user_initials_from_name_with_spaces(db_session):
+    user = await create_user("  Bob   Marley  ", "", "bob@example.com", "hash", db_session)
+    assert user.initials == "BM"
+
+
+@pytest.mark.asyncio
+async def test_create_user_initials_explicit(db_session):
+    user = await create_user("Charlie Brown", "CB", "charlie@example.com", "hash", db_session)
+    assert user.initials == "CB"
+
+
+@pytest.mark.asyncio
+async def test_get_user_files_raises_for_missing_user(db_session):
+    with pytest.raises(ValueError) as excinfo:
+        await get_user_files(999999, with_tags=False, db=db_session)
+    assert "User 999999 not found" in str(excinfo.value)
+
+
+@pytest.mark.asyncio
+async def test_get_user_file_raises_for_missing_user(db_session, test_file):
+    with pytest.raises(ValueError) as excinfo:
+        await get_user_file(
+            999999, test_file.id, with_tags=False, with_minimap=False, db=db_session
+        )
+    assert "User 999999 not found" in str(excinfo.value)
+
+
+@pytest.mark.asyncio
+async def test_get_user_file_raises_for_missing_file(db_session, test_user):
+    with pytest.raises(ValueError) as excinfo:
+        await get_user_file(
+            test_user.id, 999999, with_tags=False, with_minimap=False, db=db_session
+        )
+    assert "File 999999 not found" in str(excinfo.value)
+
+
+@pytest.mark.asyncio
+async def test_update_user_no_changes(db_session, test_user):
+    # Update with same values should still return user unchanged
+    updated = await update_user(
+        test_user.id, test_user.name, test_user.initials, test_user.email, db_session
+    )
+    assert updated.id == test_user.id
+    assert updated.name == test_user.name
+
+
+@pytest.mark.asyncio
+async def test_soft_delete_user_sets_deleted_at_value(db_session, test_user):
+    deleted = await soft_delete_user(test_user.id, db_session)
+    assert deleted.deleted_at is not None
+    assert isinstance(deleted.deleted_at, datetime)
+
+
+@pytest.mark.asyncio
+async def test_get_user_files_with_tags_returns_tags(db_session, test_user):
+    from aris.crud.file import create_file
+    from unittest.mock import patch
+
+    file = await create_file("source", test_user.id, "Title", db=db_session)
+
+    with (
+        patch("aris.crud.user.extract_title", return_value="Mock Title"),
+        patch("aris.crud.user.get_user_file_tags", return_value=["tag1", "tag2"]),
+    ):
+        files = await get_user_files(test_user.id, with_tags=True, db=db_session)
+
+    assert files[0]["tags"] == ["tag1", "tag2"]
+
+
+@pytest.mark.asyncio
+async def test_get_user_files_without_tags_returns_empty_list(db_session, test_user):
+    from aris.crud.file import create_file
+    from unittest.mock import patch
+
+    file = await create_file("source", test_user.id, "Title", db=db_session)
+
+    with patch("aris.crud.user.extract_title", return_value="Mock Title"):
+        files = await get_user_files(test_user.id, with_tags=False, db=db_session)
+
+    assert files[0]["tags"] == []
+
+
+@pytest.mark.asyncio
+async def test_create_user_with_empty_name_sets_initials_empty(db_session):
+    user = await create_user("", "", "emptyname@example.com", "hash", db_session)
+    # initials will be empty string as no words in name
+    assert user.initials == ""
+
+
+@pytest.mark.asyncio
+async def test_create_user_duplicate_email_raises(db_session, test_user):
+    with pytest.raises(IntegrityError):
+        # Assuming email unique constraint in DB
+        await create_user("Another Name", "AN", test_user.email, "hash", db_session)

@@ -98,19 +98,19 @@ async def get_user_files(user_id: int, with_tags: bool, db: AsyncSession):
 
 
 async def get_user_file(
-    user_id: int, doc_id: int, with_tags: bool, with_minimap: bool, db: AsyncSession
+    user_id: int, file_id: int, with_tags: bool, with_minimap: bool, db: AsyncSession
 ):
     user = await get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")
 
-    doc = await get_file(doc_id, db)
+    doc = await get_file(file_id, db)
     if not doc:
-        raise ValueError(f"File {user_id} not found")
+        raise ValueError(f"File {file_id} not found")
 
     title = await extract_title(doc)
-    tags = (await get_user_file_tags(user_id, doc_id, db)) if with_tags else []
-    minimap = (await get_file_section(doc_id, "minimap", db)) if with_minimap else ""
+    tags = (await get_user_file_tags(user_id, file_id, db)) if with_tags else []
+    minimap = (await get_file_section(file_id, "minimap", db)) if with_minimap else ""
 
     return {
         "id": doc.id,
