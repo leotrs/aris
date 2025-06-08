@@ -2,8 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from pydantic import BaseModel, ConfigDict
-from typing import Optional
-from datetime import datetime
+from datetime import datetime, UTC
 
 from ..models import FileSettings, File, User
 from .. import get_db, current_user
