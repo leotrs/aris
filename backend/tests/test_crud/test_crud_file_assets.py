@@ -218,7 +218,7 @@ async def test_file_asset_create_validation_image(db_session, test_user):
 @pytest.mark.asyncio
 async def test_file_asset_create_validation_invalid_base64():
     """Test FileAssetCreate validation fails for invalid base64 image content"""
-    with pytest.raises(ValueError, match="Invalid base64 content"):
+    with pytest.raises(ValueError, match="Invalid base64-encoded string"):
         FileAssetCreate(
             filename="test.jpg", mime_type="image/jpeg", content="invalid_base64!@#", file_id=1
         )
@@ -235,6 +235,6 @@ async def test_file_asset_update_validation():
     update_none = FileAssetUpdate(content=None)
     assert update_none.content is None
 
-    # Invalid base64 should not raise error (just prints warning)
-    update_invalid = FileAssetUpdate(content="invalid_base64")
-    assert update_invalid.content == "invalid_base64"
+    # Invalid string should raise
+    with pytest.raises(ValueError, match="Invalid base64-encoded string"):
+        FileAssetUpdate(content="invalid_base64")
