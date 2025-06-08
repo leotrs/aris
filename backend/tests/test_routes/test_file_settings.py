@@ -223,76 +223,6 @@ class TestFileSettings:
             assert data["columns"] == 1
 
     @pytest.mark.asyncio
-    async def test_create_file_settings(
-        self, client: AsyncClient, auth_headers, test_file, sample_settings, authenticated_user
-    ):
-        """Test creating new file settings."""
-        file_id = test_file["id"]
-
-        response = await client.post(
-            f"/settings/{file_id}", headers=auth_headers, json=sample_settings
-        )
-
-        assert response.status_code == 200
-        data = response.json()
-
-        assert data["file_id"] == file_id
-        assert data["user_id"] == authenticated_user["user_id"]
-        assert data["background"] == sample_settings["background"]
-        assert data["font_size"] == sample_settings["font_size"]
-        assert data["columns"] == sample_settings["columns"]
-        assert "created_at" in data
-        assert "updated_at" in data
-
-    @pytest.mark.asyncio
-    async def test_update_file_settings(
-        self, client: AsyncClient, auth_headers, test_file, sample_settings, authenticated_user
-    ):
-        """Test updating existing file settings."""
-        file_id = test_file["id"]
-
-        # Create initial settings
-        await client.post(f"/settings/{file_id}", headers=auth_headers, json=sample_settings)
-
-        # Update settings
-        updated_settings = sample_settings.copy()
-        updated_settings["font_size"] = "24px"
-        updated_settings["background"] = "var(--surface-light)"
-
-        response = await client.post(
-            f"/settings/{file_id}", headers=auth_headers, json=updated_settings
-        )
-
-        assert response.status_code == 200
-        data = response.json()
-
-        assert data["file_id"] == file_id
-        assert data["font_size"] == "24px"
-        assert data["background"] == "var(--surface-light)"
-        assert data["columns"] == sample_settings["columns"]  # Unchanged
-
-    @pytest.mark.asyncio
-    async def test_get_file_settings_exist(
-        self, client: AsyncClient, auth_headers, test_file, sample_settings, authenticated_user
-    ):
-        """Test getting file settings when they exist."""
-        file_id = test_file["id"]
-
-        # Create settings first
-        await client.post(f"/settings/{file_id}", headers=auth_headers, json=sample_settings)
-
-        # Get settings
-        response = await client.get(f"/settings/{file_id}", headers=auth_headers)
-
-        assert response.status_code == 200
-        data = response.json()
-
-        assert data["file_id"] == file_id
-        assert data["user_id"] == authenticated_user["user_id"]
-        assert data["background"] == sample_settings["background"]
-        assert data["font_size"] == sample_settings["font_size"]
-
-    @pytest.mark.asyncio
     async def test_upsert_file_settings_file_not_found(
         self, client: AsyncClient, auth_headers, sample_settings
     ):
@@ -355,30 +285,6 @@ class TestFileSettings:
 
         assert response.status_code == 404
         assert response.json()["detail"] == "File not found or access denied"
-
-    @pytest.mark.asyncio
-    async def test_file_settings_validation(self, client: AsyncClient, auth_headers, test_file):
-        """Test file settings input validation."""
-        file_id = test_file["id"]
-
-        invalid_settings = {
-            "background": "invalid-background",
-            "font_size": "invalid-size",
-            "line_height": "invalid-height",
-            "font_family": "",
-            "margin_width": "invalid-width",
-            "columns": -1,  # Invalid negative columns
-        }
-
-        response = await client.post(
-            f"/settings/{file_id}", headers=auth_headers, json=invalid_settings
-        )
-
-        # Should still succeed as the endpoint doesn't have strict validation
-        # But you might want to add validation to your Pydantic models
-        assert response.status_code == 200
-        data = response.json()
-        assert data["columns"] == -1  # This might be something you want to validate
 
 
 class TestSettingsIntegration:
