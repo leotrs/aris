@@ -1,5 +1,6 @@
 import pytest
 from unittest.mock import AsyncMock, patch
+from time import sleep
 
 from aris.crud.file import (
     create_file,
@@ -37,10 +38,12 @@ async def test_get_files(mock_extract_title, db_session, test_user):
 @pytest.mark.asyncio
 async def test_update_file(db_session, test_user):
     file = await create_file("old source", owner_id=test_user.id, title="Old", db=db_session)
+    old_timestamp = file.last_edited_at
     updated = await update_file(file.id, "New", "new source", db_session)
     assert updated.title == "New"
     assert updated.source == "new source"
-    assert updated.last_edited_at > file.last_edited_at
+    assert updated.created_at == file.created_at
+    assert updated.last_edited_at > old_timestamp
 
 
 @pytest.mark.asyncio
