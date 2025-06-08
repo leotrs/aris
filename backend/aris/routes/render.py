@@ -1,3 +1,5 @@
+"""Routes for rendering RSM into HTML."""
+
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
