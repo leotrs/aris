@@ -14,3 +14,4 @@ wheels/
 backend/.env
 backend/aris/.env
 backend/alembic.ini
+backend/.coverage
