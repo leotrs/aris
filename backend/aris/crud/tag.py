@@ -79,6 +79,20 @@ async def soft_delete_tag(_id: int, user_id: int, db: AsyncSession):
 
 
 async def get_user_file_tags(user_id: int, doc_id: int, db: AsyncSession):
+    # First check if the file exists and belongs to the user
+    file_result = await db.execute(
+        select(File).where(
+            File.id == doc_id,
+            File.owner_id == user_id,
+            File.deleted_at.is_(None),  # Assuming you have soft delete for files too
+        )
+    )
+    file = file_result.scalar_one_or_none()
+
+    if file is None:
+        raise ValueError(f"File with id {doc_id} not found or does not belong to user {user_id}")
+
+    # If file exists, get the tags
     result = await db.execute(
         select(Tag)
         .join(file_tags, Tag.id == file_tags.c.tag_id)
