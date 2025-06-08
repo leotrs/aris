@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from pydantic import BaseModel, field_validator
 from typing import List
-from datetime import datetime
+from datetime import datetime, UTC
 import base64
 
 from .. import models, get_db, current_user
@@ -19,8 +20,8 @@ class FileAssetCreate(BaseModel):
 
     @field_validator("content")
     @classmethod
-    def validate_content(cls, v, values):
-        mime = values.get("mime_type", "")
+    def validate_content(cls, v, info):
+        mime = info.data.get("mime_type", "") if info.data else ""
         if mime.startswith("image/"):
             try:
                 base64.b64decode(v)
@@ -83,9 +84,7 @@ async def upload_asset(
 @router.get("", response_model=List[FileAssetOut])
 async def list_assets(db: AsyncSession = Depends(get_db), user=Depends(current_user)):
     result = await db.execute(
-        models.select(FileAsset).where(
-            FileAsset.owner_id == user.id, FileAsset.deleted_at.is_(None)
-        )
+        select(FileAsset).where(FileAsset.owner_id == user.id, FileAsset.deleted_at.is_(None))
     )
     return result.scalars().all()
 
