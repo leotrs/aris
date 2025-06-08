@@ -29,6 +29,11 @@ dependencies = [
     "pytest-xdist>=3.7.0",
 ]
 
+[dependency-groups]
+test = [
+    "pillow>=11.2.1",
+    "pytest-cov>=6.1.1",
+]
 
 [tool.setuptools]
 package-dir = {"" = "."}
@@ -58,7 +63,15 @@ python_classes = ["Test*"]
 python_functions = ["test_*"]
 asyncio_mode = "auto"
 
-[dependency-groups]
-test = [
-    "pillow>=11.2.1",
+[tool.coverage.run]
+branch = true
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "@abc.abstractmethod",
+    "raise NotImplementedError"
 ]
+show_missing = true
