@@ -7,9 +7,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import File, Tag, User, file_tags
 
-# we'd like to import get_user, but alas .user also needs to import from this module, so
-# to avoid circular imports we simply rewrite get_user here
-# from .user import get_user
 
 COLORS = itertools.cycle(["red", "purple", "green", "orange"])
 
