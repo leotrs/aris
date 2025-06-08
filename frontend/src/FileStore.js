@@ -15,12 +15,15 @@ export function createFileStore(api, user) {
   const syncQueue = reactive(new Set());
   const syncInProgress = ref(false);
 
+  // Forward declare store for circular reference
+  let store;
+
   /**
    * Queue a file for synchronization
-   * @param {Object} file - File to synchronize
+   * @param {Object|Number} fileOrFileId - File object or file ID to synchronize
    */
   const queueSync = async (fileOrFileId) => {
-    const fileId = (typeof fileOrFileId == 'number') ? fileOrFileId : fileOrFileId.id;
+    const fileId = (typeof fileOrFileId === 'number') ? fileOrFileId : fileOrFileId.id;
     syncQueue.add(fileId);
     await scheduleSyncProcess();
   };
@@ -33,17 +36,18 @@ export function createFileStore(api, user) {
 
     try {
       syncInProgress.value = true;
+
       for (const fileId of syncQueue) {
         const file = files.value.find(f => f.id === fileId);
         if (!file) continue;
         await File.save(file, api, user);
       }
+
       syncQueue.clear();
     } catch (error) {
       console.error('Error during file sync:', error);
     } finally {
       syncInProgress.value = false;
-
       // If there are still items in the queue, schedule another sync
       if (syncQueue.size > 0) {
         scheduleSyncProcess();
@@ -98,6 +102,7 @@ export function createFileStore(api, user) {
       ...fileData,
       last_edited_at: new Date().toISOString(),
     }, store);
+
     files.value.push(newFile);
     await File.save(newFile, api, user);
     return newFile;
@@ -110,15 +115,19 @@ export function createFileStore(api, user) {
   const deleteFile = async (fileOrId) => {
     const fileId = typeof fileOrId === 'object' ? fileOrId.id : fileOrId;
     const file = files.value.find(f => f.id === fileId);
+
     if (!file) return;
 
-    // Delete from server, local collection, and queue (if present)
+    // Delete from server first
     const success = await File.delete(file, api, user);
+
     if (success) {
+      // Remove from local collection
       const index = files.value.findIndex(f => f.id === fileId);
       if (index !== -1) {
         files.value.splice(index, 1);
       }
+      // Remove from sync queue
       syncQueue.delete(fileId);
     }
   };
@@ -169,15 +178,16 @@ export function createFileStore(api, user) {
    * Clear file selection
    */
   const clearSelection = () => {
-    const selected = files.value.find((f) => f.selected);
-    if (selected) selected.selected = false;
+    files.value.forEach((file) => {
+      file.selected = false;
+    });
   };
 
   /**
- * Get the n most recently edited files
- * @param {Number} n - Number of recent files to return (default: 5)
- * @returns {Array} Array of the n most recently edited files
- */
+   * Get the n most recently edited files
+   * @param {Number} n - Number of recent files to return (default: 5)
+   * @returns {Array} Array of the n most recently edited files
+   */
   const getRecentFiles = (n = 5) => {
     return files.value
       .slice() // Create a copy to avoid mutating the original array
@@ -204,18 +214,19 @@ export function createFileStore(api, user) {
   };
 
   /**
-   * Add or remove a tag to/from a file
+   * Toggle a tag on a file (add if not present, remove if present)
    * @param {Object} file - The file object
-   * @param {Number|String} tagId - ID of tag to remove
+   * @param {Number|String} tagId - ID of tag to toggle
    */
   const toggleFileTag = async (file, tagId) => {
-    if (file.tags.map((t) => t.id).includes(tagId)) {
+    const hasTag = file.tags.some((tag) => tag.id === tagId);
+
+    if (hasTag) {
       return await File.removeTag(file, tagId, api, user);
     } else {
       return await File.addTag(file, tagId, api, user);
     }
   };
-
 
   /**
    * Load tags from the server
@@ -252,18 +263,18 @@ export function createFileStore(api, user) {
    * @param {Object} newTag - Updated tag data
    */
   const updateTag = async (oldTag, newTag) => {
-    if (!oldTag) { await loadTags(); return; };
+    if (!oldTag) {
+      await loadTags();
+      return;
+    }
 
     const url = `/users/${user.id}/tags/${oldTag.id}`;
+
     try {
-      if (newTag == null) {
+      if (newTag === null) {
         await api.delete(url);
-        const index = tags.value.find((t) => t === oldTag);
-        if (index !== -1) tags.value.splice(index, 1);
       } else {
         await api.put(url, newTag);
-        const index = tags.value.find((t) => t === oldTag);
-        if (index !== -1) tags.value.splice(index, 1, newTag);
       }
       await loadTags();
     } catch (error) {
@@ -282,7 +293,7 @@ export function createFileStore(api, user) {
   const filteredFiles = computed(() => files.value.filter(f => !f.filtered));
 
   // Create the store object
-  const store = {
+  store = {
     // State
     files,
     numFiles,
@@ -290,6 +301,7 @@ export function createFileStore(api, user) {
     syncInProgress,
     selectedFile,
     filteredFiles,
+    syncQueue, // Add syncQueue to the store for tests
 
     // File methods
     loadFiles,
