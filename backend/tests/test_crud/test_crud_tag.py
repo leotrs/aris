@@ -1,5 +1,5 @@
 import pytest
-from sqlalchemy import select
+from sqlalchemy import select, insert
 from aris.models import Tag, File, file_tags
 from aris.crud.tag import (
     create_tag,
@@ -100,3 +100,128 @@ async def test_get_user_file_tags(db_session, test_user):
     tags = await get_user_file_tags(test_user.id, file.id, db_session)
     tag_names = {t.name for t in tags}
     assert tag_names == {"T1", "T2"}
+
+
+import pytest
+from sqlalchemy.exc import SQLAlchemyError
+from unittest.mock import AsyncMock, patch
+from datetime import datetime
+
+
+@pytest.mark.asyncio
+async def test_create_tag_without_name_raises(db_session, test_user):
+    with pytest.raises(ValueError, match="Name not provided"):
+        await create_tag(test_user.id, "", "red", db_session)
+
+
+@pytest.mark.asyncio
+async def test_create_tag_with_no_color_assigns_next_color(db_session, test_user):
+    tag = await create_tag(test_user.id, "AutoColorTag", None, db_session)
+    assert tag.color in ("red", "purple", "green", "orange")
+
+
+@pytest.mark.asyncio
+async def test_create_tag_commit_failure_rolls_back(db_session, test_user):
+    # Patch db.commit to raise SQLAlchemyError to test rollback and None return
+    with patch.object(db_session, "commit", new_callable=AsyncMock) as mock_commit:
+        mock_commit.side_effect = SQLAlchemyError()
+        tag = await create_tag(test_user.id, "failtag", "red", db_session)
+        assert tag is None
+
+
+@pytest.mark.asyncio
+async def test_update_tag_not_found_raises(db_session, test_user):
+    with pytest.raises(ValueError, match="Tag not found"):
+        await update_tag(999999, test_user.id, "NewName", "blue", db_session)
+
+
+@pytest.mark.asyncio
+async def test_update_tag_with_partial_update(db_session, test_user):
+    tag = Tag(name="Partial", color="gray", user_id=test_user.id)
+    db_session.add(tag)
+    await db_session.commit()
+    await db_session.refresh(tag)
+
+    # Only update name
+    updated = await update_tag(tag.id, test_user.id, "UpdatedName", None, db_session)
+    assert updated.name == "UpdatedName"
+    assert updated.color == "gray"
+
+    # Only update color
+    updated = await update_tag(tag.id, test_user.id, None, "blue", db_session)
+    assert updated.name == "UpdatedName"
+    assert updated.color == "blue"
+
+
+@pytest.mark.asyncio
+async def test_soft_delete_tag_not_found_raises(db_session, test_user):
+    with pytest.raises(ValueError, match="Tag not found"):
+        await soft_delete_tag(999999, test_user.id, db_session)
+
+
+@pytest.mark.asyncio
+async def test_get_user_file_tags_file_not_found_raises(db_session, test_user):
+    with pytest.raises(ValueError, match="File with id 9999 not found or does not belong to user"):
+        await get_user_file_tags(test_user.id, 9999, db_session)
+
+
+@pytest.mark.asyncio
+async def test_add_tag_to_file_errors(db_session, test_user):
+    # file not found
+    with pytest.raises(ValueError, match="Unauthorized or file not found"):
+        await add_tag_to_file(test_user.id, 99999, 1, db_session)
+
+    # prepare file but tag not found
+    file = File(owner_id=test_user.id)
+    db_session.add(file)
+    await db_session.commit()
+    await db_session.refresh(file)
+
+    with pytest.raises(ValueError, match="Unauthorized or tag not found"):
+        await add_tag_to_file(test_user.id, file.id, 99999, db_session)
+
+
+@pytest.mark.asyncio
+async def test_add_tag_to_file_already_assigned(db_session, test_user):
+    file = File(owner_id=test_user.id)
+    tag = Tag(name="dup", color="red", user_id=test_user.id)
+    db_session.add_all([file, tag])
+    await db_session.commit()
+    await db_session.refresh(file)
+    await db_session.refresh(tag)
+
+    # Manually insert file_tag link
+    await db_session.execute(insert(file_tags).values(file_id=file.id, tag_id=tag.id))
+    await db_session.commit()
+
+    with pytest.raises(ValueError, match="Tag already assigned"):
+        await add_tag_to_file(test_user.id, file.id, tag.id, db_session)
+
+
+@pytest.mark.asyncio
+async def test_remove_tag_from_file_errors(db_session, test_user):
+    # file not found
+    with pytest.raises(ValueError, match="Unauthorized or file not found"):
+        await remove_tag_from_file(test_user.id, 99999, 1, db_session)
+
+    # prepare file but tag not found
+    file = File(owner_id=test_user.id)
+    db_session.add(file)
+    await db_session.commit()
+    await db_session.refresh(file)
+
+    with pytest.raises(ValueError, match="Unauthorized or tag not found"):
+        await remove_tag_from_file(test_user.id, file.id, 99999, db_session)
+
+
+@pytest.mark.asyncio
+async def test_remove_tag_from_file_tag_not_assigned(db_session, test_user):
+    file = File(owner_id=test_user.id)
+    tag = Tag(name="notassigned", color="blue", user_id=test_user.id)
+    db_session.add_all([file, tag])
+    await db_session.commit()
+    await db_session.refresh(file)
+    await db_session.refresh(tag)
+
+    with pytest.raises(ValueError, match="Tag not assigned to this file"):
+        await remove_tag_from_file(test_user.id, file.id, tag.id, db_session)

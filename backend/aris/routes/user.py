@@ -60,15 +60,15 @@ async def get_user_files(
     return await crud.get_user_files(user_id, with_tags, db)
 
 
-@router.get("/{user_id}/files/{doc_id}")
+@router.get("/{user_id}/files/{file_id}")
 async def get_user_file(
     user_id: int,
-    doc_id: int,
+    file_id: int,
     with_tags: bool = True,
     with_minimap: bool = True,
     db: AsyncSession = Depends(get_db),
 ):
-    return await crud.get_user_file(user_id, doc_id, with_tags, with_minimap, db)
+    return await crud.get_user_file(user_id, file_id, with_tags, with_minimap, db)
 
 
 # Maximum file size (5MB)

@@ -11,7 +11,7 @@ import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from main import app
-from aris.models import Base, User
+from aris.models import Base, User, File
 from aris.deps import get_db
 
 
@@ -79,3 +79,16 @@ async def test_user(db_session):
     await db_session.commit()
     await db_session.refresh(user)
     return user
+
+
+@pytest_asyncio.fixture
+async def test_file(db_session, test_user):
+    file = File(
+        owner_id=test_user.id,
+        id="1234",
+        source=":rsm: Test file. ::",
+    )
+    db_session.add(file)
+    await db_session.commit()
+    await db_session.refresh(file)
+    return file
