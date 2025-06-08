@@ -15,7 +15,10 @@ from aris.crud.tag import (
 @pytest.mark.asyncio
 async def test_create_tag_success(db_session):
     user = User(
-        name="foo bar", email="test@example.com", password_hash="example_hash_pwd_for_testing"
+        id="10",
+        name="foo bar",
+        email="test@example.com",
+        password_hash="example_hash_pwd_for_testing",
     )
     db_session.add(user)
     await db_session.commit()
@@ -36,7 +39,10 @@ async def test_create_tag_user_not_found(db_session):
 @pytest.mark.asyncio
 async def test_get_user_tags(db_session):
     user = User(
-        name="foo bar", email="taguser@example.com", password_hash="example_hash_pwd_for_testing"
+        id="10",
+        name="foo bar",
+        email="taguser@example.com",
+        password_hash="example_hash_pwd_for_testing",
     )
     db_session.add(user)
     await db_session.commit()
@@ -54,7 +60,10 @@ async def test_get_user_tags(db_session):
 @pytest.mark.asyncio
 async def test_update_tag(db_session):
     user = User(
-        name="foo bar", email="up@example.com", password_hash="example_hash_pwd_for_testing"
+        id="10",
+        name="foo bar",
+        email="up@example.com",
+        password_hash="example_hash_pwd_for_testing",
     )
     tag = Tag(name="Old", color="gray", user_id=user.id)
     db_session.add_all([user, tag])
@@ -69,7 +78,10 @@ async def test_update_tag(db_session):
 @pytest.mark.asyncio
 async def test_soft_delete_tag(db_session):
     user = User(
-        name="foo bar", email="del@example.com", password_hash="example_hash_pwd_for_testing"
+        id="10",
+        name="foo bar",
+        email="del@example.com",
+        password_hash="example_hash_pwd_for_testing",
     )
     tag = Tag(name="Softie", color="orange", user_id=user.id)
     db_session.add_all([user, tag])
@@ -87,7 +99,10 @@ async def test_soft_delete_tag(db_session):
 @pytest.mark.asyncio
 async def test_add_and_remove_tag_from_file(db_session):
     user = User(
-        name="foo bar", email="link@example.com", password_hash="example_hash_pwd_for_testing"
+        id="10",
+        name="foo bar",
+        email="link@example.com",
+        password_hash="example_hash_pwd_for_testing",
     )
     file = File(owner_id=user.id)
     tag = Tag(name="linked", color="purple", user_id=user.id)
@@ -112,7 +127,10 @@ async def test_add_and_remove_tag_from_file(db_session):
 @pytest.mark.asyncio
 async def test_get_user_file_tags(db_session):
     user = User(
-        name="foo bar", email="filer@example.com", password_hash="example_hash_pwd_for_testing"
+        id="10",
+        name="foo bar",
+        email="filer@example.com",
+        password_hash="example_hash_pwd_for_testing",
     )
     file = File(owner_id=user.id)
     tag1 = Tag(name="T1", color="red", user_id=user.id)
