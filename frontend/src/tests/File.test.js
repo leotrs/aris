@@ -81,13 +81,13 @@ describe('File', () => {
     });
 
     it('sets last_edited_at to current time when not provided', () => {
-      const beforeCreate = Date.now()
-      const file = new File()
-      const afterCreate = Date.now()
+      const beforeCreate = Date.now();
+      const file = new File();
+      const afterCreate = Date.now();
 
-      const fileTime = new Date(file.last_edited_at).getTime()
-      expect(fileTime).toBeGreaterThanOrEqual(beforeCreate)
-      expect(fileTime).toBeLessThanOrEqual(afterCreate)
+      const fileTime = new Date(file.last_edited_at).getTime();
+      expect(fileTime).toBeGreaterThanOrEqual(beforeCreate);
+      expect(fileTime).toBeLessThanOrEqual(afterCreate);
     });
   });
 
