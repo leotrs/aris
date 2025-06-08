@@ -116,7 +116,7 @@ async def upload_profile_picture(
 
         # Soft delete existing profile picture if it exists
         if user.profile_picture and not user.profile_picture.deleted_at:
-            user.profile_picture.deleted_at = datetime.utcnow()
+            user.profile_picture.deleted_at = datetime.now(UTC)
 
         # Create new profile picture
         new_picture = ProfilePicture(
@@ -192,7 +192,7 @@ async def delete_profile_picture(
             raise HTTPException(status_code=404, detail="Profile picture not found")
 
         # Soft delete the profile picture
-        user.profile_picture.deleted_at = datetime.utcnow()
+        user.profile_picture.deleted_at = datetime.now(UTC)
         user.profile_picture_id = None
         await db.commit()
         return {"message": "Profile picture deleted successfully"}

@@ -121,6 +121,6 @@ async def soft_delete_asset(
     asset_id: int, db: AsyncSession = Depends(get_db), user=Depends(current_user)
 ):
     asset = await get_user_asset_or_404(asset_id, user.id, db)
-    asset.deleted_at = datetime.utcnow()
+    asset.deleted_at = datetime.now(UTC)
     await db.commit()
     return {"message": f"Asset {asset_id} soft deleted"}

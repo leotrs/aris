@@ -65,7 +65,7 @@ async def soft_delete_user(user_id: int, db: AsyncSession):
     user = get_user(user_id, db)
     if not user:
         return None
-    user.deleted_at = datetime.utcnow()
+    user.deleted_at = datetime.now(UTC)
     await db.commit()
     return user
 

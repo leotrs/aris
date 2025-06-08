@@ -73,7 +73,7 @@ async def soft_delete_tag(_id: int, user_id: int, db: AsyncSession):
     if not tag_to_delete:
         raise ValueError("Tag not found")
 
-    tag_to_delete.deleted_at = datetime.utcnow()
+    tag_to_delete.deleted_at = datetime.now(UTC)
     await db.commit()
     return {"message": "Tag deleted successfully"}
 
