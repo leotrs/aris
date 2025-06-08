@@ -10,11 +10,6 @@ from .tag import get_user_file_tags
 from .utils import extract_title
 
 
-async def get_users(db: AsyncSession):
-    result = await db.execute(select(User).where(User.deleted_at.is_(None)))
-    return result.scalars().all()
-
-
 async def get_user(user_id: int, db: AsyncSession):
     result = await db.execute(select(User).where(User.id == user_id, User.deleted_at.is_(None)))
     return result.scalars().first()
