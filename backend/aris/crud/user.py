@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+from datetime import datetime, UTC
 
 from sqlalchemy import select, desc, asc
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -62,7 +62,7 @@ async def update_user(user_id: int, name: str, initials: str, email: str, db: As
 
 
 async def soft_delete_user(user_id: int, db: AsyncSession):
-    user = get_user(user_id, db)
+    user = await get_user(user_id, db)
     if not user:
         return None
     user.deleted_at = datetime.now(UTC)
