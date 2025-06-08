@@ -1,5 +1,7 @@
-# backend/tests/test_routes/test_tags.py
+"""Tests for tag routes."""
+
 import pytest
+from unittest.mock import patch
 from httpx import AsyncClient
 
 
@@ -350,3 +352,168 @@ async def test_remove_tag_from_file_invalid_data(client: AsyncClient, authentica
     )
     assert response.status_code == 400
     assert "Error removing tag" in response.json()["detail"]
+
+
+import pytest
+from httpx import AsyncClient
+
+
+@pytest.mark.asyncio
+async def test_create_tag_invalid_names(authenticated_user, client: AsyncClient):
+    """
+    Test creating tags with invalid names:
+    - empty string
+    - whitespace only
+    - too long (>50 chars)
+    Expect 422 or 400 validation errors.
+    """
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    invalid_names = ["", "    ", "a" * 51]
+
+    for name in invalid_names:
+        response = await client.post(
+            f"/users/{authenticated_user['user_id']}/tags",
+            headers=headers,
+            json={"name": name},
+        )
+        assert response.status_code == 422 or response.status_code == 400
+        assert "Tag name" in response.text or "value_error" in response.text
+
+
+@pytest.mark.asyncio
+async def test_update_tag_not_owned(sample_tag, client: AsyncClient):
+    """
+    Test updating a tag with a user_id different from the authenticated user's.
+    Expect 404 Not Found because tag doesn't belong to the user.
+    """
+    headers = {"Authorization": f"Bearer {sample_tag['token']}"}
+    tag = sample_tag["tag"]
+
+    fake_tag = tag.copy()
+    fake_tag["user_id"] = 999999  # Simulate different user
+
+    response = await client.put(
+        f"/users/{fake_tag['user_id']}/tags/{fake_tag['id']}",
+        headers=headers,
+        json=fake_tag,
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Tag not found"
+
+
+@pytest.mark.asyncio
+async def test_delete_nonexistent_tag(authenticated_user, client: AsyncClient):
+    """
+    Test deleting a tag that does not exist.
+    Expect 404 Not Found with appropriate error detail.
+    """
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    non_existent_tag_id = 99999999
+
+    response = await client.delete(
+        f"/users/{authenticated_user['user_id']}/tags/{non_existent_tag_id}",
+        headers=headers,
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Tag not found"
+
+
+@pytest.mark.asyncio
+async def test_add_tag_to_file_invalid_tag(client: AsyncClient, authenticated_user, sample_file):
+    """
+    Test adding a tag to a file with an invalid tag ID.
+    Expect 400 Bad Request with error message about adding tag.
+    """
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    invalid_tag_id = 99999999
+
+    response = await client.post(
+        f"/users/{authenticated_user['user_id']}/files/{sample_file['id']}/tags/{invalid_tag_id}",
+        headers=headers,
+    )
+    assert response.status_code == 400
+    assert "Error adding tag" in response.json()["detail"]
+
+
+@pytest.mark.asyncio
+async def test_get_user_tags_empty(client: AsyncClient, authenticated_user):
+    """
+    Test getting tags for a user who has no tags.
+    Expect an empty list in response.
+    """
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    response = await client.post(
+        "/register",
+        json={
+            "email": "emptytags@example.com",
+            "name": "Empty Tags",
+            "initials": "ET",
+            "password": "password123",
+        },
+    )
+    new_user_id = response.json()["user"]["id"]
+    new_token = response.json()["access_token"]
+    new_headers = {"Authorization": f"Bearer {new_token}"}
+
+    response = await client.get(f"/users/{new_user_id}/tags", headers=new_headers)
+    assert response.status_code == 200
+    data = response.json()
+    assert isinstance(data, list)
+    assert len(data) == 0
+
+
+@pytest.mark.asyncio
+async def test_remove_tag_from_file_not_assigned(
+    client: AsyncClient, authenticated_user, sample_file, sample_tag
+):
+    """
+    Test removing a tag from a file that does not have the tag assigned.
+    Expect 400 Bad Request with error message about removing tag.
+    """
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    tag_id = sample_tag["tag"]["id"]
+
+    response = await client.delete(
+        f"/users/{authenticated_user['user_id']}/files/{sample_file['id']}/tags/{tag_id}",
+        headers=headers,
+    )
+    assert response.status_code == 400
+    assert "Error removing tag" in response.json()["detail"]
+
+
+def test_tagcreate_validate_name():
+    """
+    Unit test for TagCreate Pydantic model validator on name field:
+    - Valid name passes and is stripped
+    - Empty or whitespace only names raise ValidationError
+    - Too long names (>50 chars) raise ValidationError
+    """
+    from pydantic import ValidationError
+    from aris.routes.tag import TagCreate
+
+    valid_name = "Valid Tag"
+    tag = TagCreate(name=valid_name)
+    assert tag.name == valid_name.strip()
+
+    with pytest.raises(ValidationError):
+        TagCreate(name="")
+
+    with pytest.raises(ValidationError):
+        TagCreate(name="    ")
+
+    too_long = "a" * 51
+    with pytest.raises(ValidationError):
+        TagCreate(name=too_long)
+
+
+@pytest.mark.asyncio
+async def test_unauthorized_access(client: AsyncClient):
+    """
+    Test making a request without Authorization header.
+    Expect 401 Unauthorized response.
+    """
+    response = await client.post(
+        "/users/1/tags",
+        json={"name": "Unauthorized"},
+    )
+    assert response.status_code == 401
