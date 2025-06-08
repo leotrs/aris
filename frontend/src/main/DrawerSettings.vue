@@ -34,5 +34,6 @@
 
   :deep(.pane) {
     height: 100%;
+    background-color: v-bind(fileSettings.background);
   }
 </style>

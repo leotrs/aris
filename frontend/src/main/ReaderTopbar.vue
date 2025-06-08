@@ -6,6 +6,7 @@
     component: { type: Object, default: null },
   });
   const file = inject("file");
+  const fileSettings = inject("fileSettings");
 
   const focusMode = inject("focusMode");
   const isActive = computed(() => props.showTitle || props.component);
@@ -45,7 +46,7 @@
     height: 48px;
     box-shadow: var(--shadow-soft);
     border-color: var(--border-primary);
-    background-color: var(--surface-page);
+    background-color: v-bind(fileSettings.background);
   }
 
   .tb-wrapper.focus {
