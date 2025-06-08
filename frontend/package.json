@@ -9,7 +9,9 @@
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "test": "vitest",
-    "test:run": "vitest run"
+    "test:run": "vitest run",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ui": "vitest --coverage --ui"
   },
   "dependencies": {
     "@floating-ui/vue": "^1.1.6",
@@ -28,6 +30,7 @@
     "@babel/plugin-syntax-jsx": "^7.25.9",
     "@eslint/js": "^9.25.0",
     "@vitejs/plugin-vue": "^5.2.4",
+    "@vitest/coverage-v8": "^3.2.2",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/test-utils": "^2.4.6",
     "eslint": "^9.25.0",
