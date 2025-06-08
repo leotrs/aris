@@ -38,7 +38,11 @@ async def sample_tag(client: AsyncClient, authenticated_user):
             "color": "#FF0000",
         },
     )
-    return {"tag": response.json(), "user_id": authenticated_user["user_id"]}
+    return {
+        "tag": response.json(),
+        "user_id": authenticated_user["user_id"],
+        "token": authenticated_user["token"],
+    }
 
 
 @pytest.fixture
@@ -144,7 +148,7 @@ async def test_get_user_tags_with_auth(client: AsyncClient, authenticated_user):
 @pytest.mark.asyncio
 async def test_get_user_tags_with_existing_tag(client: AsyncClient, sample_tag):
     """Test getting user tags when tags exist."""
-    headers = {"Authorization": f"Bearer {sample_tag['user_id']}"}
+    headers = {"Authorization": f"Bearer {sample_tag['token']}"}
     response = await client.get(f"/users/{sample_tag['user_id']}/tags", headers=headers)
     assert response.status_code == 200
     tags = response.json()
