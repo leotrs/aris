@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, UTC
 import itertools
 
 from sqlalchemy import delete, select, insert
