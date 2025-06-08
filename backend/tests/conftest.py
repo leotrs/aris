@@ -11,7 +11,7 @@ import uuid
 
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from main import app
-from aris.models.models import Base
+from aris.models import Base, User
 from aris.deps import get_db
 
 
@@ -65,3 +65,17 @@ async def client(db_session):
     async with AsyncClient(transport=transport, base_url="http://test") as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+@pytest_asyncio.fixture
+async def test_user(db_session):
+    user = User(
+        id="10",
+        name="foo bar",
+        email="test@example.com",
+        password_hash="example_hash_pwd_for_testing",
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return user
