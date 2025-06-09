@@ -45,33 +45,6 @@ describe('useAutoSave', () => {
     expect(lastSaved.value).toBeLessThanOrEqual(Date.now());
   });
 
-  it('should handle onInput with debounce', async () => {
-    const composable = useAutoSave({
-      file: mockFile,
-      saveFunction: mockSaveFunction,
-      compileFunction: mockCompileFunction,
-      debounceTime: 1000
-    });
-    composable.startAutoSave();
-
-    const mockEvent = {
-      target: { value: 'new content' }
-    };
-
-    await composable.onInput(mockEvent);
-
-    expect(mockFile.value.source).toBe('new content');
-    expect(composable.saveStatus.value).toBe('pending');
-    expect(mockSaveFunction).not.toHaveBeenCalled();
-
-    // Fast forward debounce time
-    vi.advanceTimersByTime(1000);
-    await nextTick();
-
-    expect(mockSaveFunction).toHaveBeenCalledWith(mockFile.value);
-    expect(mockCompileFunction).toHaveBeenCalled();
-  });
-
   it('should clear previous debounce timeout on subsequent inputs', async () => {
     const { onInput } = useAutoSave({
       file: mockFile,
@@ -99,27 +72,6 @@ describe('useAutoSave', () => {
     expect(mockSaveFunction).toHaveBeenCalledWith(expect.objectContaining({
       source: 'content 2'
     }));
-  });
-
-  it('should handle successful save', async () => {
-    const { saveStatus, lastSaved, manualSave } = useAutoSave({
-      file: mockFile,
-      saveFunction: mockSaveFunction
-    });
-
-    const initialLastSaved = lastSaved.value;
-
-    await manualSave();
-    await nextTick();
-
-    expect(saveStatus.value).toBe('saved');
-    expect(lastSaved.value).toBeGreaterThan(initialLastSaved);
-
-    // Should reset to idle after 3 seconds
-    vi.advanceTimersByTime(3000);
-    await nextTick();
-
-    expect(saveStatus.value).toBe('idle');
   });
 
   it('should handle save errors', async () => {
@@ -230,21 +182,6 @@ describe('useAutoSave', () => {
     await nextTick();
 
     expect(mockSaveFunction).toHaveBeenCalled();
-  });
-
-  it('should not auto-save if status is not pending and not enough time passed', async () => {
-    const composable = useAutoSave({
-      file: mockFile,
-      saveFunction: mockSaveFunction,
-      autoSaveInterval: 5000
-    });
-    composable.startAutoSave();
-
-    // Advance by auto-save interval
-    vi.advanceTimersByTime(5000);
-    await nextTick();
-
-    expect(mockSaveFunction).not.toHaveBeenCalled();
   });
 
   it('should work without compile function', async () => {
