@@ -1,6 +1,5 @@
 <script setup>
   import { useTemplateRef } from "vue";
-  import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
     kind: { type: String, required: true },
@@ -28,7 +27,7 @@
     ]"
   >
     <template v-if="icon">
-      <component :is="Icons['Icon' + icon]" class="btn-icon" />
+      <Icon :name="icon" class="btn-icon" />
     </template>
     <span v-if="text" class="btn-text" :class="textFloat ? 'text-caption' : 'text-h6'">
       {{ text }}

@@ -1,6 +1,5 @@
 <script setup>
   import { computed, onMounted, ref } from "vue";
-  import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
     icons: { type: Array, default: null },
@@ -47,7 +46,7 @@
         :class="{ active: idx - 1 == active }"
         @click="click(idx - 1)"
       >
-        <component :is="Icons['Icon' + icons[idx - 1]]" v-if="icons" class="sc-icon" />
+        <Icon v-if="icons" :name="icons[idx - 1]" class="sc-icon" />
         <span v-if="labels" class="sc-label text-default">{{ labels[idx - 1] }}</span>
       </button>
 

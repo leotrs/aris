@@ -1,6 +1,5 @@
 <script setup>
   import {} from "vue";
-  import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
     label: { type: String, default: "" },
@@ -21,7 +20,7 @@
     @keydown.enter.prevent="active = true"
     @keydown.space.prevent="active = true"
   >
-    <component :is="Icons['Icon' + icon]" class="tab-icon" />
+    <Icon :name="icon" class="tab-icon" />
     <span class="tab-label text-caption">{{ label }}</span>
   </button>
 </template>
