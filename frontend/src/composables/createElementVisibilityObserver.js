@@ -9,8 +9,8 @@ export default function (el) {
       ([entry]) => (isVisible.value = entry.isIntersecting),
       { threshold: 0.25 }
     );
+    observer.observe(el);
   }
-  observer.observe(el);
 
   const tearDown = () => {
     if (observer) {
