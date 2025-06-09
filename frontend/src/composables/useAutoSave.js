@@ -11,6 +11,7 @@ export function useAutoSave({
   const saveStatus = ref("idle");
   const lastSaved = ref(Date.now());
   const debounceTimeout = ref(null);
+  let autoSaveTimer = null;
 
   // Save the file with status handling
   async function saveFile() {
@@ -28,6 +29,7 @@ export function useAutoSave({
     } catch (error) {
       console.error("Error saving file:", error);
       saveStatus.value = "error";
+
       setTimeout(() => {
         if (saveStatus.value === "error") saveStatus.value = "pending";
       }, 5000);
@@ -38,39 +40,53 @@ export function useAutoSave({
   async function onInput(e) {
     file.value.source = e.target.value;
     saveStatus.value = "pending";
+
     if (debounceTimeout.value) clearTimeout(debounceTimeout.value);
-    debounceTimeout.value = setTimeout(
-      () => {
-        saveFile();
-        compileFunction && compileFunction();
-      },
-      debounceTime);
+
+    debounceTimeout.value = setTimeout(async () => {
+      await saveFile();
+      if (compileFunction) compileFunction();
+    }, debounceTime);
   }
 
   // Manual save (for keyboard shortcuts)
-  function manualSave() {
+  async function manualSave() {
     if (debounceTimeout.value) {
       clearTimeout(debounceTimeout.value);
       debounceTimeout.value = null;
     }
-    saveFile();
+    await saveFile();
   }
 
-  // Set up auto-save interval
-  let autoSaveTimer;
-  onMounted(() => {
-    autoSaveTimer = setInterval(() => {
+  // Function to start auto-save interval
+  function startAutoSave() {
+    if (autoSaveTimer) return; // Don't start multiple intervals
+
+    autoSaveTimer = setInterval(async () => {
       if (
         saveStatus.value === "pending" ||
         (Date.now() - lastSaved.value >= autoSaveInterval && file.value?.source)
       ) {
-        saveFile();
+        await saveFile();
       }
     }, autoSaveInterval);
+  }
+
+  // Function to stop auto-save interval
+  function stopAutoSave() {
+    if (autoSaveTimer) {
+      clearInterval(autoSaveTimer);
+      autoSaveTimer = null;
+    }
+  }
+
+  // Set up auto-save interval only when mounted
+  onMounted(() => {
+    startAutoSave();
   });
 
   onBeforeUnmount(() => {
-    clearInterval(autoSaveTimer);
+    stopAutoSave();
     if (debounceTimeout.value) clearTimeout(debounceTimeout.value);
   });
 
@@ -78,6 +94,9 @@ export function useAutoSave({
     saveStatus,
     lastSaved,
     onInput,
-    manualSave
+    manualSave,
+    // Expose these for testing purposes
+    startAutoSave,
+    stopAutoSave
   };
 }
