@@ -2,7 +2,7 @@
   import { ref, inject, computed, useTemplateRef } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import UploadFile from "../home/ModalUploadFile.vue";
+  import UploadFile from "@/home/ModalUploadFile.vue";
 
   const props = defineProps({
     active: { type: String, default: "" },
