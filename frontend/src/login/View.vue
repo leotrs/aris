@@ -1,7 +1,7 @@
 <script setup>
   import { ref, inject, onMounted } from "vue";
   import { useRouter } from "vue-router";
-  import { createFileStore } from "../FileStore.js";
+  import { createFileStore } from "@/FileStore.js";
 
   const router = useRouter();
   const email = ref("");

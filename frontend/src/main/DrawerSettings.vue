@@ -1,6 +1,6 @@
 <script setup>
   import { inject, useTemplateRef, onMounted } from "vue";
-  import { File } from "../File.js";
+  import { File } from "@/File.js";
 
   const props = defineProps({
     file: { type: Object, default: () => {} },
