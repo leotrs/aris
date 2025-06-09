@@ -105,21 +105,28 @@
   );
 
   // Keys
-  // Update keyboard shortcuts to use the method for drawers
+  const userMenuRef = useTemplateRef("user-menu");
+  const toggleUserMenu = () => {
+    if (!userMenuRef.value) return;
+    userMenuRef.value.toggle();
+  };
   useKeyboardShortcuts(
     Object.fromEntries([
       // Toggles
       ...items
         .filter((obj) => obj.key && obj.type === "toggle")
-        .map((obj) => [`p,${obj.key}`, () => (obj.state = !obj.state)]),
+        .map((obj) => [`p,${obj.key}`, { fn: () => (obj.state = !obj.state) }]),
 
       // Drawers
       ...items
         .filter((obj) => obj.key && obj.type === "drawer")
         .map((obj, _, drawerItems) => {
           const originalIndex = items.indexOf(obj);
-          return [`p,${obj.key}`, () => handleDrawerClick(originalIndex)];
+          return [`p,${obj.key}`, { fn: () => handleDrawerClick(originalIndex) }];
         }),
+
+      // Other
+      ["u", { fn: () => toggleUserMenu(), description: "Toggle user menu" }],
     ])
   );
 
@@ -177,7 +184,7 @@
           label="focus"
           :with-side-control="false"
         />
-        <UserMenu />
+        <UserMenu ref="user-menu" />
       </div>
 
       <Drawer :component="items.find((it) => it.type == 'drawer' && it.state)?.name ?? ''" />
