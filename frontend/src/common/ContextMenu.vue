@@ -36,7 +36,7 @@
   const menuRef = useTemplateRef("menu-ref");
   const { floatingStyles } = useFloating(btnRef, menuRef, {
     strategy: "fixed",
-    placement: props.placement,
+    placement: () => props.placement,
     middleware: [
       offset({ mainAxis: 0, crossAxis: props.icon == "Dots" ? -8 : 0 }),
       shift(),
