@@ -1,6 +1,5 @@
 <script setup>
-  import { inject, useTemplateRef } from "vue";
-  import * as Icons from "@tabler/icons-vue";
+  import { inject } from "vue";
 
   const props = defineProps({
     icon: { type: String, required: true },
@@ -20,7 +19,7 @@
     tabindex="-1"
     @click.stop="closeMenu"
   >
-    <component :is="Icons['Icon' + props.icon]" class="cmi-icon" :class="iconClass" />
+    <Icon :name="icon" class="cmi-icon" :class="iconClass" />
     <span class="cmi-caption">{{ caption }}</span>
   </button>
 </template>

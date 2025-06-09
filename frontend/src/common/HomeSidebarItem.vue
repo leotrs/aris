@@ -1,6 +1,5 @@
 <script setup>
   import { inject, useTemplateRef } from "vue";
-  import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
     icon: { type: String, default: "" },
@@ -22,13 +21,13 @@
     :class="{ collapsed: collapsed, active: active, 'not-clickable': !clickable }"
   >
     <template v-if="!collapsed">
-      <component :is="Icons['Icon' + icon]" v-if="icon" class="sb-icon" />
+      <Icon v-if="icon" :name="icon" class="sb-icon" />
     </template>
     <template v-else-if="iconCollapsed">
-      <component :is="Icons['Icon' + iconCollapsed]" class="sb-icon" />
+      <Icon :name="icon" class="sb-icon" />
     </template>
     <template v-else>
-      <component :is="Icons['Icon' + icon]" v-if="icon" class="sb-icon" />
+      <Icon v-if="icon" :name="icon" class="sb-icon" />
     </template>
     <span class="text-h6 sb-text">{{ text }}</span>
 

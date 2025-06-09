@@ -1,6 +1,5 @@
 <script setup>
-  import { ref, watch, onMounted } from "vue";
-  import * as Icons from "@tabler/icons-vue";
+  import { ref, watch } from "vue";
 
   const props = defineProps({
     iconLeft: { type: String, default: null },
@@ -18,7 +17,7 @@
 
 <template>
   <div class="s-wrapper">
-    <component :is="Icons['Icon' + iconLeft]" class="s-icon" />
+    <Icon :name="iconLeft" class="s-icon" />
     <span class="s-label">{{ labelLeft }}</span>
     <div class="s-control">
       <span class="s-track"></span>
@@ -32,7 +31,7 @@
         @keydown.space.prevent="active = idx"
       />
     </div>
-    <component :is="Icons['Icon' + iconRight]" class="s-icon" />
+    <Icon :name="iconRight" class="s-icon" />
     <span class="s-label">{{ labelRight }}</span>
   </div>
 </template>

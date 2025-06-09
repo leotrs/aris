@@ -1,6 +1,5 @@
 <script setup>
   import { watch } from "vue";
-  import * as Icons from "@tabler/icons-vue";
 
   const props = defineProps({
     text: { type: String, default: "" },
@@ -24,7 +23,7 @@
     @click="active = !active"
   >
     <template v-if="icon">
-      <component :is="Icons['Icon' + props.icon]" class="btn-icon" :class="iconClass" />
+      <Icon :name="icon" class="btn-icon" :class="iconClass" />
     </template>
     <span v-if="text" class="btn-text">{{ text }}</span>
     <slot />

@@ -1,5 +1,5 @@
 <script setup>
-  import { watch, computed, inject, reactive, nextTick, useTemplateRef } from "vue";
+  import { watch, inject, reactive, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
