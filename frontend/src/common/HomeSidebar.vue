@@ -38,6 +38,11 @@
   watchEffect(() => {
     recentFiles.value = fileStore.value?.getRecentFiles(3) || ["", "", ""];
   });
+  const openRecentFile = (idx) => {
+    const file = recentFiles.value[idx];
+    if (!file) return;
+    goTo(`file/${file.id}`);
+  };
 
   // Keys
   useKeyboardShortcuts(
@@ -45,6 +50,9 @@
       "g,h": { fn: () => goTo(""), description: "go home" },
       "g,a": { fn: () => goTo("account"), description: "go to user account" },
       "g,s": { fn: () => goTo("settings"), description: "go to settings" },
+      "g,1": { fn: () => openRecentFile(0), description: "open most recent file" },
+      "g,2": { fn: () => openRecentFile(1), description: "open second most recent file" },
+      "g,3": { fn: () => openRecentFile(2), description: "open third most recent file" },
       n: { fn: onCTAClick, description: "open new file menu" },
       c: { fn: toggleCollapsed, description: "collapse sidebar" },
     },
@@ -167,7 +175,7 @@
 
     & > #logo > img {
       height: 64px;
-      margin: 0 0 -4px 6px;
+      margin: 0 0 4px 6px;
     }
   }
 

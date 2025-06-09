@@ -1,6 +1,7 @@
 <script setup>
-  import { ref, inject, computed } from "vue";
+  import { ref, inject, computed, useTemplateRef } from "vue";
   import { useRoute, useRouter } from "vue-router";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import UploadFile from "../home/ModalUploadFile.vue";
 
   const props = defineProps({
@@ -29,6 +30,13 @@
   const showModal = ref(false);
   const route = useRoute();
   const isHome = computed(() => route.fullPath === "/");
+
+  const userMenuRef = useTemplateRef("user-menu");
+  const toggleUserMenu = () => {
+    if (!userMenuRef.value) return;
+    userMenuRef.value.toggle();
+  };
+  useKeyboardShortcuts({ u: { fn: () => toggleUserMenu(), description: "foo" } }, true, "Menus");
 </script>
 
 <template>
