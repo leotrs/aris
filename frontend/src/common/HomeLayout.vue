@@ -36,7 +36,11 @@
     if (!userMenuRef.value) return;
     userMenuRef.value.toggle();
   };
-  useKeyboardShortcuts({ u: { fn: () => toggleUserMenu(), description: "foo" } }, true, "Menus");
+  useKeyboardShortcuts(
+    { u: { fn: () => toggleUserMenu(), description: "Toggle user menu" } },
+    true,
+    "Menus"
+  );
 </script>
 
 <template>
