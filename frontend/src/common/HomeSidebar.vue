@@ -175,7 +175,7 @@
 
     & > #logo > img {
       height: 64px;
-      margin: 0 0 4px 6px;
+      margin: 4px 0 0 6px;
     }
   }
 
@@ -238,7 +238,7 @@
 
   .sb-menu {
     padding-top: 8px;
-    height: calc(100% - 64px - 32px - 16px - 16px);
+    height: calc(100% - 64px - 32px - 16px - 16px - 8px);
     overflow-y: auto;
     scrollbar-width: none;
     -ms-overflow-style: none;
