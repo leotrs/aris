@@ -183,13 +183,13 @@
     }
 
     & > #logo {
-      margin-bottom: 20px;
+      margin-bottom: 22px;
       padding-inline: 16px;
 
       & > img {
         margin: 0 0 -8px 0;
-        width: 32px;
-        height: 32px;
+        width: 30px;
+        height: 30px;
       }
     }
 

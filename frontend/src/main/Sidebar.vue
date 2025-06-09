@@ -231,15 +231,15 @@
     justify-content: center;
     height: 48px;
     width: 64px;
-    margin-top: 8px;
+    margin-bottom: 8px;
     opacity: 1;
     &:hover {
       cursor: pointer;
     }
 
     & img {
-      width: 32px;
-      height: 32px;
+      width: 30px;
+      height: 30px;
     }
   }
 

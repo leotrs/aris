@@ -164,8 +164,8 @@
 
   #env {
     position: fixed;
-    top: 0px;
-    left: 0px;
+    bottom: 0px;
+    right: 0px;
     color: var(--dark);
     background-color: var(--green-100);
     padding: 4px;

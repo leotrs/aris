@@ -61,7 +61,7 @@
     position: relative;
     display: flex;
     flex-grow: 2;
-    padding: 16px 16px 16px 0;
+    padding: 8px 8px 8px 0;
     height: 100%;
   }
 
