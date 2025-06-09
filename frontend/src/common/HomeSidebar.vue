@@ -183,7 +183,7 @@
     }
 
     & > #logo {
-      margin-bottom: 22px;
+      margin-bottom: 30px;
       padding-inline: 16px;
 
       & > img {
