@@ -60,7 +60,6 @@
       <transition name="fade-slide" mode="out-in">
         <div v-if="activeIndex == 0" key="source" class="source-right">
           <span class="word-count">{{ numWords }} words</span>
-          <Button kind="tertiary" size="sm" icon="Lifebuoy" />
           <Button kind="tertiary" size="sm" icon="Settings" />
           <Button kind="primary" size="sm" text="compile" class="cta" @click="emit('compile')" />
         </div>
