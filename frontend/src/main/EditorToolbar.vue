@@ -1,6 +1,9 @@
 <script setup>
   import { useScrollShadows } from "@/composables/useScrollShadows.js";
 
+  const props = defineProps({
+    mini: { type: Boolean, default: false },
+  });
   const emit = defineEmits(["insert"]);
 
   const { scrollElementRef: toolbarRef, showLeftShadow, showRightShadow } = useScrollShadows();
@@ -12,57 +15,73 @@
       <Button kind="tertiary" size="sm" icon="Heading" />
       <Button kind="tertiary" size="sm" icon="Bold" />
       <Button kind="tertiary" size="sm" icon="Italic" />
-      <Button kind="tertiary" size="sm" text=":B:" />
-      <Button kind="tertiary" size="sm" text=":I:" />
+      <template v-if="!mini">
+        <Button kind="tertiary" size="sm" icon="LayoutRows" />
+        <Button kind="tertiary" size="sm" icon="LayoutGrid" />
+      </template>
       <HSeparator />
-      <ContextMenu icon="" text="Insert">
+      <ContextMenu icon="" text="Insert" placement="bottom-start">
+        <template v-if="mini">
+          <ContextMenuItem caption="Block Tag" icon="LayoutRows" />
+          <ContextMenuItem caption="Inline Tag" icon="LayoutGrid" />
+        </template>
         <ContextMenuItem caption="List" icon="List" />
         <ContextMenuItem caption="Numbered List" icon="ListNumbers" />
         <ContextMenuItem caption="Figure" icon="Photo" />
         <ContextMenuItem caption="Table" icon="Table" />
         <ContextMenuItem caption="Code Inline" icon="Code" />
         <ContextMenuItem caption="Code Block" icon="SourceCode" />
-        <ContextMenuItem caption="Comment" icon="MessageCode" />
-      </ContextMenu>
-      <ContextMenu icon="" text="Link">
+        <ContextMenuItem caption="Comment" icon="SquareRoundedPercentage" />
+        <Separator />
         <ContextMenuItem caption="Cross-Reference" icon="FileSymlink" />
         <ContextMenuItem caption="Citation" icon="Quote" />
         <ContextMenuItem caption="URL" icon="Link" />
       </ContextMenu>
-      <ContextMenu icon="" text="Sections">
-        <ContextMenuItem caption="Heading" icon="Heading" />
+      <ContextMenu v-if="!mini" icon="" text="Sections" placement="bottom-start">
         <ContextMenuItem caption="Author" icon="UserEdit" />
-        <ContextMenuItem caption="References" icon="List" />
+        <ContextMenuItem caption="Abstract" icon="FileDescription" />
+        <ContextMenuItem caption="Table of Contents" icon="ListDetails" />
+        <ContextMenuItem caption="Appendix" icon="SectionSign" />
+        <ContextMenuItem caption="References" icon="SectionSign" />
+        <Separator />
         <ContextMenuItem caption="Bibliography" icon="Books" />
         <ContextMenuItem caption="Bibliography Item" icon="Book2" />
-        <ContextMenuItem caption="Abstract" icon="SectionSign" />
-        <ContextMenuItem caption="Appendix" icon="SectionSign" />
       </ContextMenu>
-      <ContextMenu icon="" text="Math">
-        <ContextMenuItem caption="Math Block" icon="" />
-        <ContextMenuItem caption="Math Inline" icon="" />
-        <ContextMenuItem caption="Theorem" icon="" />
-        <ContextMenuItem caption="Proposition" icon="" />
-        <ContextMenuItem caption="Lemma" icon="" />
-        <ContextMenuItem caption="Corollary" icon="" />
-        <ContextMenuItem caption="Proof" icon="" />
-        <ContextMenuItem caption="Proof Step" icon="" />
-        <ContextMenuItem caption="Subproof" icon="" />
-        <ContextMenuItem caption="Assumption" icon="" />
-        <ContextMenuItem caption="Case" icon="" />
-        <ContextMenuItem caption="Claim" icon="" />
-        <ContextMenuItem caption="Definition" icon="" />
-        <ContextMenuItem caption="Let" icon="" />
-        <ContextMenuItem caption="New" icon="" />
-        <ContextMenuItem caption="Pick" icon="" />
-        <ContextMenuItem caption="Prove" icon="" />
-        <ContextMenuItem caption="Such That" icon="" />
-        <ContextMenuItem caption="Suffices" icon="" />
-        <ContextMenuItem caption="Suppose" icon="" />
-        <ContextMenuItem caption="Then" icon="" />
-        <ContextMenuItem caption="WLOG" icon="" />
-        <ContextMenuItem caption="Write" icon="" />
+      <ContextMenu icon="" text="Math" placement="bottom-start">
+        <ContextMenuItem caption="Math Block" icon="LayoutRows" />
+        <ContextMenuItem caption="Math Inline" icon="LayoutGrid" />
+        <Separator />
+        <ContextMenu icon="Therefore" text="Theorems" placement="right-start">
+          <ContextMenuItem caption="Proof" icon="" />
+          <ContextMenuItem caption="Proof Step" icon="" />
+          <ContextMenuItem caption="Subproof" icon="" />
+          <Separator />
+          <ContextMenuItem caption="Theorem" icon="" />
+          <ContextMenuItem caption="Proposition" icon="" />
+          <ContextMenuItem caption="Lemma" icon="" />
+          <ContextMenuItem caption="Corollary" icon="" />
+          <ContextMenuItem caption="Problem" icon="" />
+          <ContextMenuItem caption="Exercise" icon="" />
+        </ContextMenu>
+        <ContextMenu icon="Sum" text="Constructs" class="constructs" placement="right-start">
+          <ContextMenuItem caption="Assumption" icon="" />
+          <ContextMenuItem caption="Case" icon="" />
+          <ContextMenuItem caption="Claim" icon="" />
+          <ContextMenuItem caption="Definition" icon="" />
+          <ContextMenuItem caption="Let" icon="" />
+          <ContextMenuItem caption="New" icon="" />
+          <ContextMenuItem caption="Pick" icon="" />
+          <ContextMenuItem caption="Prove" icon="" />
+          <ContextMenuItem caption="Such That" icon="" />
+          <ContextMenuItem caption="Suffices" icon="" />
+          <ContextMenuItem caption="Suppose" icon="" />
+          <ContextMenuItem caption="Then" icon="" />
+          <ContextMenuItem caption="WLOG" icon="" />
+          <ContextMenuItem caption="Write" icon="" />
+        </ContextMenu>
       </ContextMenu>
+      <HSeparator />
+      <Button kind="tertiary" size="sm" icon="Help" />
     </div>
 
     <div class="shadow-overlay shadow-left" :class="{ active: showLeftShadow }"></div>
@@ -138,5 +157,11 @@
   .cm-menu {
     max-height: 400px;
     overflow-y: auto;
+  }
+
+  .constructs :deep(.cmi-caption) {
+    font-family: "Source Code Pro", monospace;
+    text-transform: lowercase;
+    font-size: 14px;
   }
 </style>
