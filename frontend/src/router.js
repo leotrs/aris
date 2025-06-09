@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import LoginView from "./login/View.vue";
 import RegisterView from "./register/View.vue";
 import HomeView from "./home/View.vue";
-import MainView from "./main/View.vue";
+import WorkspaceView from "./Workspace/View.vue";
 import AccountView from "./account/View.vue";
 import SettingsView from "./settings/View.vue";
 import NotFoundView from "./notfound/View.vue";
@@ -12,7 +12,7 @@ const routes = [
   { path: "/login", component: LoginView },
   { path: "/register", component: RegisterView },
   { path: "/", component: HomeView },
-  { path: "/file/:file_id", component: MainView },
+  { path: "/file/:file_id", component: WorkspaceView },
   { path: "/account", component: AccountView },
   { path: "/settings", component: SettingsView },
   // catch-all route: 404
