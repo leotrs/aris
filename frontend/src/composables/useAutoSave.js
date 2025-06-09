@@ -42,7 +42,7 @@ export function useAutoSave({
     debounceTimeout.value = setTimeout(
       () => {
         saveFile();
-        compileFunction();
+        compileFunction && compileFunction();
       },
       debounceTime);
   }
