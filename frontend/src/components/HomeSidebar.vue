@@ -162,13 +162,16 @@
       justify-content: center;
       padding-block: 12px;
       padding-inline: 16px;
+      width: 100%;
+    }
+
+    & .cta > .cm-wrapper > {
+      width: 100%;
     }
 
     & .cta > .cm-wrapper > :deep(button) {
-      padding-left: 18px !important;
-      padding-right: 24px !important;
-      justify-content: center;
-      margin: 0 auto;
+      padding-left: 24px !important;
+      padding-right: 30px !important;
       width: 100%;
       gap: 0px;
     }

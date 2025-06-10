@@ -1,6 +1,7 @@
 <script setup>
-  import { watch } from "vue";
-  import { IconDotsVertical } from "@tabler/icons-vue";
+import { watch } from "vue";
+import ButtonToggle from "@/components/ButtonToggle.vue";
+import { IconDotsVertical } from "@tabler/icons-vue";
 
   const props = defineProps({
     hoverColor: { type: String, default: "var(--surface-hint)" },
