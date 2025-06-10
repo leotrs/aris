@@ -1,4 +1,15 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+
+// Mock Vue lifecycle hooks to avoid warnings when running composables outside component setup
+vi.mock('vue', async () => {
+  const actual = await vi.importActual('vue');
+  return {
+    ...actual,
+    onMounted: vi.fn(),
+    onBeforeUnmount: vi.fn(),
+  };
+});
+
 import { ref, nextTick } from 'vue';
 import { useAutoSave } from '@/composables/useAutoSave.js';
 
