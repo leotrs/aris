@@ -1,25 +1,20 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { defineComponent } from 'vue';
 import { mount } from '@vue/test-utils';
 
-// Mock Tabler icons
-const FooIcon = defineComponent({
-  name: 'IconFoo',
-  template: '<div data-test="icon-foo"><slot/></div>',
-});
-vi.mock('@tabler/icons-vue', () => ({ IconFoo: FooIcon }));
-
-// Mock specialized IconTherefore component
-const ThereforeIcon = defineComponent({
-  name: 'IconTherefore',
-  template: '<div data-test="icon-therefore"><slot/></div>',
-});
-vi.mock('@/components/IconTherefore.vue', () => ThereforeIcon);
-
-import Icon from '@/components/Icon.vue';
-
 describe('Icon.vue', () => {
-  it('renders a Tabler icon component based on the name prop', () => {
+  beforeEach(() => {
+    vi.resetModules();
+  });
+
+  it('renders a Tabler icon component based on the name prop', async () => {
+    const FooIcon = defineComponent({
+      name: 'IconFoo',
+      template: '<div data-test="icon-foo"><slot/></div>',
+    });
+    vi.doMock('@tabler/icons-vue', () => ({ IconFoo: FooIcon }));
+
+    const { default: Icon } = await import('@/components/Icon.vue');
     const wrapper = mount(Icon, {
       props: { name: 'Foo', iconClass: 'custom-class' },
     });
@@ -30,7 +25,14 @@ describe('Icon.vue', () => {
     expect(icon.text()).toBe('Foo');
   });
 
-  it('renders the IconTherefore component when name is "Therefore"', () => {
+  it('renders the IconTherefore component when name is "Therefore"', async () => {
+    const ThereforeIcon = defineComponent({
+      name: 'IconTherefore',
+      template: '<div data-test="icon-therefore"><slot/></div>',
+    });
+    vi.doMock('@/components/IconTherefore.vue', () => ({ default: ThereforeIcon }));
+
+    const { default: Icon } = await import('@/components/Icon.vue');
     const wrapper = mount(Icon, {
       props: { name: 'Therefore' },
     });
