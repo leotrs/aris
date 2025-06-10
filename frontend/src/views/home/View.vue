@@ -5,7 +5,7 @@
   import PreviewPane from "./PreviewPane.vue";
 
   import DragBorder from "./DragBorder.vue";
-  const fileStore = inject("fileStore");
+  const fileStore = inject("fileStore", ref({ selectedFile: ref({}) }));
 
   // Handle draggable border and pane height
   const panesRef = useTemplateRef("panes-ref");
@@ -13,13 +13,13 @@
   const boxTopPixels = 16 + 48 + 16 + 40 + 56 + 6; // padding + topbar height + gap + pane header height + height of one item row + epsilon
   const borderPos = ref(0);
   const filesHeight = computed(() =>
-    fileStore.value?.selectedFile.value?.id ? `calc(${borderPos.value}%)` : "100%"
+    fileStore.value?.selectedFile?.value?.id ? `calc(${borderPos.value}%)` : "100%"
   );
   const previewHeight = computed(() =>
-    fileStore.value?.selectedFile.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
+    fileStore.value?.selectedFile?.value?.id ? `calc(${100 - borderPos.value}%)` : "0%"
   );
   watch(
-    () => !!fileStore.value?.selectedFile.value?.id,
+    () => !!fileStore.value?.selectedFile?.value?.id,
     (hasSelection, oldValue) => {
       // Make sure borderPos is correct when transitioning from no selection to having a selection
       if (hasSelection && !oldValue) borderPos.value = (boxTopPixels / panesHeight.value) * 100;
@@ -35,7 +35,7 @@
 
   /* Since the gap between panes is 8px but the outer padding is 16px, when the Preview
    * pane is inactive, its top edge peeks out by 8px. This hides it. */
-  const previewTop = computed(() => (fileStore.value.selectedFile.value?.id ? "0" : "8px"));
+  const previewTop = computed(() => (fileStore.value?.selectedFile?.value?.id ? "0" : "8px"));
 </script>
 
 <template>
