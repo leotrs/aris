@@ -30,7 +30,7 @@ describe('createElementVisibilityObserver', () => {
     mockElement = document.createElement('div');
 
     // Capture the callback passed to IntersectionObserver
-    mockIntersectionObserver.mockImplementation((callback, options) => {
+    mockIntersectionObserver.mockImplementation((callback) => {
       observerCallback = callback;
       return {
         observe: mockObserve,
@@ -165,7 +165,6 @@ describe('createElementVisibilityObserver', () => {
       const changes = [];
 
       // Watch the ref for changes (Vue 3 reactivity)
-      const stopWatching = vi.fn();
 
       // Simulate watching the ref value
       changes.push(isVisible.value); // Initial value
