@@ -108,16 +108,21 @@
 <style scoped>
   .dockable-search {
     background-color: var(--surface-page);
+    background-color: var(--surface-primary);
+    background-color: var(--surface-hover);
+    border: var(--border-thin) solid transparent;
     position: fixed;
-    width: calc(100% - 64px - 40px);
     height: 64px;
     top: 8px;
-    right: 24px;
+    right: 8px;
+    left: 64px;
+    border-radius: 16px 16px 0 0;
     z-index: 998;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding-inline: 16px;
+    box-shadow: var(--shadow-soft);
   }
 
   .match-count {
