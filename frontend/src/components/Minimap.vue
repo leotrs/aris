@@ -1,14 +1,5 @@
 <script setup>
-  import {
-    ref,
-    watch,
-    watchEffect,
-    inject,
-    computed,
-    onMounted,
-    useTemplateRef,
-    nextTick,
-  } from "vue";
+  import { ref, watch, inject, computed, onMounted, useTemplateRef } from "vue";
   import { useElementSize } from "@vueuse/core";
   import {
     IconBookmarkFilled,
@@ -58,33 +49,52 @@
     quote: IconQuoteFilled,
   };
 
-  onMounted(async () => {
-    if (!props.file) return;
-    await nextTick();
+  onMounted(() => {
+    const watchedSize = computed(() =>
+      isHorizontal.value ? wrapperWidth.value : wrapperHeight.value
+    );
 
-    // Remake when necessary
-    watchEffect(async () => {
-      if (!wrapperRef.value || !props.file || !props.file.id) return;
+    watch(
+      () => [props.file.id, props.file.isMountedAt, watchedSize.value],
+      (value, _, onInvalidate) => {
+        let canceled = false;
+        let timer;
+        onInvalidate(() => {
+          canceled = true;
+          clearTimeout(timer);
+        });
 
-      // We know we want to make the miniMap only after the file is mounted
-      if (!props.file.isMountedAt) return;
+        const run = async () => {
+          if (canceled) return;
+          const { svg: newSvg, svgInitialData: newData } = await makeMinimap(
+            props.file,
+            isHorizontal.value,
+            wrapperWidth.value,
+            wrapperHeight.value,
+            {
+              side: props.side,
+              highlightScroll: props.highlightScroll,
+              trackWidth: props.trackWidth,
+              shape: props.shape,
+              html: props.file.html,
+            }
+          );
+          if (!canceled) {
+            html.value = newSvg;
+            svgInitialData.value = newData;
+          }
+        };
 
-      const { svg: newSvg, svgInitialData: newData } = await makeMinimap(
-        props.file,
-        isHorizontal.value,
-        wrapperWidth.value,
-        wrapperHeight.value,
-        {
-          side: props.side,
-          highlightScroll: props.highlightScroll,
-          trackWidth: props.trackWidth,
-          shape: props.shape,
-          html: props.file.html,
-        }
-      );
-      html.value = newSvg;
-      svgInitialData.value = newData;
-    });
+        const [fileId, isMounted] = value;
+        if (!fileId || !isMounted) return;
+
+        // Leading update for correct positioning during transitions
+        run();
+        // Debounced trailing update for final dimensions
+        timer = setTimeout(run, 100);
+      },
+      { immediate: true }
+    );
 
     // Responsiveness
     watch(
