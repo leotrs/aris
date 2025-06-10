@@ -19,9 +19,11 @@
   import Dock from "./Dock.vue";
   import Editor from "./Editor.vue";
   import DockableMinimap from "./DockableMinimap.vue";
+  import DockableSearch from "./DockableSearch.vue";
 
   const props = defineProps({
     showEditor: { type: Boolean, default: false },
+    showSearch: { type: Boolean, default: false },
   });
   const file = defineModel({ type: Object });
 
@@ -164,6 +166,7 @@
         </div>
       </div>
 
+      <DockableSearch v-if="showSearch" />
       <DockableMinimap :file="file" side="right" />
 
       <!-- <Drawer :class="{ focus: focusMode, mobile: mobileMode }" /> -->
