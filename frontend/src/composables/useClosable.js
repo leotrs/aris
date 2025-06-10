@@ -41,9 +41,13 @@ export default function ({
 
   // Handle clicking the close button
   const getCloseButton = () => {
-    if (!closeButtonSelector || !instance || !instance.$el) return null;
-    const closeButton = instance.$el.querySelector(closeButtonSelector);
-    return closeButton ? closeButton : console.error("No close button found") || null;
+    if (!closeButtonSelector || !instance || !instance.proxy.$el) return null;
+    const closeButton = instance.proxy.$el.querySelector(closeButtonSelector);
+    if (!closeButton) {
+      console.error("No close button found");
+      return null;
+    }
+    return closeButton;
   };
   const setupCloseButton = () => getCloseButton()?.addEventListener("click", onClose);
   const tearDownCloseButton = () =>

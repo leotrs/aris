@@ -477,5 +477,18 @@ describe('useClosable', () => {
         expect.any(Function)
       );
     });
+
+    it('should call onClose when close button is clicked', async () => {
+      const { activate } = useClosable({
+        onClose: mockOnClose,
+        closeOnEsc: false,
+        closeOnOutsideClick: false,
+        closeOnCloseButton: true
+      });
+
+      await activate();
+      mockCloseButton.click();
+      expect(mockOnClose).toHaveBeenCalled();
+    });
   });
 });
