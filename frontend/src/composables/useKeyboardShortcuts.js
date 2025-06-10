@@ -165,7 +165,7 @@ function registerShortcuts(componentId, shortcuts, componentName = null) {
         fn: value,
         description: value.name || 'Execute action'
       };
-    } else if (typeof value === 'object' && value.fn) {
+    } else if (value && typeof value === 'object' && value.fn) {
       // New format with explicit description
       normalizedShortcuts[key] = value;
     } else {
