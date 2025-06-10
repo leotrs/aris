@@ -19,7 +19,12 @@
     IconHelpSquareRoundedFilled,
     IconQuoteFilled,
   } from "@tabler/icons-vue";
-  import { makeMinimap, resizeMinimap, highlightScrollPos, makeIcons } from "./MinimapUtils.js";
+  import {
+    makeMinimap,
+    resizeMinimap,
+    highlightScrollPos,
+    makeIcons,
+  } from "@/utils/MinimapUtils.js";
   import Tooltip from "./Tooltip.vue";
 
   const props = defineProps({

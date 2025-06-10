@@ -3,7 +3,7 @@
   import { useRouter } from "vue-router";
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import { createFileStore } from "./FileStore.js";
+  import { createFileStore } from "@/store/FileStore.js";
   import axios from "axios";
 
   // Create API instance with base URL and error handling

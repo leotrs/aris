@@ -1,5 +1,5 @@
 // File.js
-import { reactive } from 'vue';
+import { reactive } from "vue";
 import RelativeTime from "@yaireo/relative-time";
 import { useSnakeCase, useCamelCase } from "@/composables/useCasing.js";
 
@@ -20,7 +20,7 @@ export class File {
       // File metadata
       id: rawData.id || null,
       title: rawData.title,
-      source: rawData.source || '',
+      source: rawData.source || "",
       last_edited_at: rawData.last_edited_at || new Date().toISOString(),
       tags: rawData.tags || [],
       minimap: rawData.minimap || null,
@@ -42,14 +42,14 @@ export class File {
         const date = new Date(this.last_edited_at);
         return date.toLocaleString(undefined, {
           timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone, // ensures user’s local tz
-          year: 'numeric',
-          month: 'long',
-          day: 'numeric',
-          hour: 'numeric',
-          minute: 'numeric',
-          second: 'numeric'
+          year: "numeric",
+          month: "long",
+          day: "numeric",
+          hour: "numeric",
+          minute: "numeric",
+          second: "numeric",
         });
-      }
+      },
     });
 
     return reactiveFile;
@@ -162,7 +162,7 @@ export class File {
       await api.delete(`/users/${user.id}/files/${file.id}/tags/${tagId}`);
 
       // (Optimistically) remove tag from file object
-      const tagIndex = file.tags.findIndex(tag => tag.id == tagId);
+      const tagIndex = file.tags.findIndex((tag) => tag.id == tagId);
       if (tagIndex !== -1) file.tags.splice(tagIndex, 1);
 
       return true;
@@ -201,7 +201,10 @@ export class File {
    * @param {Object} api - The axios instance
    */
   static async updateSettings(file, newSettings, api) {
-    if (!file.id) throw new Error("file id is undefined; if trying to update user's default settings, use File.updateDefaultSettings");
+    if (!file.id)
+      throw new Error(
+        "file id is undefined; if trying to update user's default settings, use File.updateDefaultSettings"
+      );
     const snakeCaseSettings = useSnakeCase(newSettings);
     return await api.post(`/settings/${file.id}`, snakeCaseSettings);
   }
@@ -229,7 +232,7 @@ export class File {
       source,
       ownerId,
       // Only send tag IDs to API
-      tags: tags?.map(tag => typeof tag === 'object' ? tag.id : tag) ?? []
+      tags: tags?.map((tag) => (typeof tag === "object" ? tag.id : tag)) ?? [],
     };
   }
 }

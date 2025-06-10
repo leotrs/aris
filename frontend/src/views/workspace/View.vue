@@ -2,7 +2,7 @@
   import { ref, computed, inject, provide, onMounted } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import { File } from "@/File.js";
+  import { File } from "@/models/File.js";
   import Sidebar from "./Sidebar.vue";
   import Canvas from "./Canvas.vue";
 

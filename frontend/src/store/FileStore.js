@@ -1,5 +1,5 @@
-import { ref, computed, reactive } from 'vue';
-import { File } from './File.js';
+import { ref, computed, reactive } from "vue";
+import { File } from "@/models/File.js";
 
 /**
  * Creates a file store for managing file state and synchronization
@@ -23,7 +23,7 @@ export function createFileStore(api, user) {
    * @param {Object|Number} fileOrFileId - File object or file ID to synchronize
    */
   const queueSync = async (fileOrFileId) => {
-    const fileId = (typeof fileOrFileId === 'number') ? fileOrFileId : fileOrFileId.id;
+    const fileId = typeof fileOrFileId === "number" ? fileOrFileId : fileOrFileId.id;
     syncQueue.add(fileId);
     await scheduleSyncProcess();
   };
@@ -38,14 +38,14 @@ export function createFileStore(api, user) {
       syncInProgress.value = true;
 
       for (const fileId of syncQueue) {
-        const file = files.value.find(f => f.id === fileId);
+        const file = files.value.find((f) => f.id === fileId);
         if (!file) continue;
         await File.save(file, api, user);
       }
 
       syncQueue.clear();
     } catch (error) {
-      console.error('Error during file sync:', error);
+      console.error("Error during file sync:", error);
     } finally {
       syncInProgress.value = false;
       // If there are still items in the queue, schedule another sync
@@ -78,14 +78,17 @@ export function createFileStore(api, user) {
         const existingFile = files.value.find((f) => f.id === newFile.id);
 
         // DONT use createFile - that will create a new file in the DB!
-        return new File({
-          ...newFile,
-          filtered: existingFile ? existingFile.filtered : false,
-          selected: existingFile ? existingFile.selected : false,
-          isMountedAt: existingFile ? existingFile.isMountedAt : false,
-          html: existingFile ? existingFile.html : false,
-          ownerId: user.id,
-        }, store);
+        return new File(
+          {
+            ...newFile,
+            filtered: existingFile ? existingFile.filtered : false,
+            selected: existingFile ? existingFile.selected : false,
+            isMountedAt: existingFile ? existingFile.isMountedAt : false,
+            html: existingFile ? existingFile.html : false,
+            ownerId: user.id,
+          },
+          store
+        );
       });
     } catch (error) {
       console.error("Error loading files:", error);
@@ -98,10 +101,13 @@ export function createFileStore(api, user) {
    * @returns {Object} The newly created file
    */
   const createFile = async (fileData = {}) => {
-    const newFile = new File({
-      ...fileData,
-      last_edited_at: new Date().toISOString(),
-    }, store);
+    const newFile = new File(
+      {
+        ...fileData,
+        last_edited_at: new Date().toISOString(),
+      },
+      store
+    );
 
     files.value.push(newFile);
     await File.save(newFile, api, user);
@@ -113,8 +119,8 @@ export function createFileStore(api, user) {
    * @param {Number|String|Object} fileOrId - File or ID of file to delete
    */
   const deleteFile = async (fileOrId) => {
-    const fileId = typeof fileOrId === 'object' ? fileOrId.id : fileOrId;
-    const file = files.value.find(f => f.id === fileId);
+    const fileId = typeof fileOrId === "object" ? fileOrId.id : fileOrId;
+    const file = files.value.find((f) => f.id === fileId);
 
     if (!file) return;
 
@@ -123,7 +129,7 @@ export function createFileStore(api, user) {
 
     if (success) {
       // Remove from local collection
-      const index = files.value.findIndex(f => f.id === fileId);
+      const index = files.value.findIndex((f) => f.id === fileId);
       if (index !== -1) {
         files.value.splice(index, 1);
       }
@@ -289,8 +295,8 @@ export function createFileStore(api, user) {
   const getTags = () => tags.value;
 
   // Computed properties
-  const selectedFile = computed(() => files.value.find(f => f.selected) || {});
-  const filteredFiles = computed(() => files.value.filter(f => !f.filtered));
+  const selectedFile = computed(() => files.value.find((f) => f.selected) || {});
+  const filteredFiles = computed(() => files.value.filter((f) => !f.filtered));
 
   // Create the store object
   store = {
@@ -322,7 +328,7 @@ export function createFileStore(api, user) {
     getTags,
     addTagToFile,
     removeTagFromFile,
-    toggleFileTag
+    toggleFileTag,
   };
 
   return store;

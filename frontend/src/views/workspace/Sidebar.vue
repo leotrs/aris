@@ -156,7 +156,7 @@
     <Tooltip :anchor="layoutOnRef?.btn ?? null" content="Focus mode off" placement="top" />
 
     <div v-if="!mobileMode" id="logo" role="button" tabindex="0" @click="router?.push('/')">
-      <img src="../assets/logo-32px.svg" />
+      <img src="../../assets/logo-32px.svg" />
     </div>
 
     <div class="sb-menu">

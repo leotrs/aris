@@ -1,7 +1,7 @@
 <script setup>
   import { ref, reactive, inject, provide, onMounted, useTemplateRef } from "vue";
   import { IconSettings, IconInfoCircle } from "@tabler/icons-vue";
-  import { File } from "@/File.js";
+  import { File } from "@/models/File.js";
 
   const user = inject("user");
   const api = inject("api");

@@ -1,7 +1,7 @@
 <script setup>
   import { ref, inject, provide, watchEffect, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
-  import { File } from "@/File.js";
+  import { File } from "@/models/File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./HomeSidebarItem.vue";
 

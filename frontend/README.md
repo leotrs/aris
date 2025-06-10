@@ -42,9 +42,19 @@ review manuscripts as responsive, interactive web documents.
 
 4. **Development Notes**
 
-   + API instance is created and injected in App.vue and reused throughout.
-   + Tokens are stored in localStorage and refreshed transparently.
-   + Responsive design adapts to mobile via VueUse breakpoints.
+   - API instance is created and injected in App.vue and reused throughout.
+   - Tokens are stored in localStorage and refreshed transparently.
+   - Responsive design adapts to mobile via VueUse breakpoints.
+
+## Environment Variables
+
+Copy `.env.example` to `.env` and update the values as needed for your environment. For example:
+
+```dotenv
+VITE_API_BASE_URL_PROD=https://your-production-api.example.com
+VITE_API_BASE_URL=http://localhost:8000
+VITE_ENV=DEV
+```
 
 ## Deployment
 

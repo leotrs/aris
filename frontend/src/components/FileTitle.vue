@@ -1,6 +1,6 @@
 <script setup>
   import { watch, useTemplateRef } from "vue";
-  import { File } from "@/File.js";
+  import { File } from "@/models/File.js";
 
   const props = defineProps({
     file: { type: Object, required: true },

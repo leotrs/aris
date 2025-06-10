@@ -5,7 +5,7 @@
     highlightSearchMatches,
     highlightSearchMatchesSource,
     clearHighlights,
-  } from "./highlightSearchMatches.js";
+  } from "@/utils/highlightSearchMatches.js";
 
   const props = defineProps({});
   const manuscriptRef = inject("manuscriptRef");
@@ -78,45 +78,43 @@
 </script>
 
 <template>
-  <Teleport to="body">
-    <div class="dockable-search">
-      <div class="match-count source">
-        <span class="text-caption">0 source matches</span>
-      </div>
-      <SearchBar
-        ref="searchBar"
-        :with-buttons="true"
-        :buttons-disabled="!searchInfo.isSearching"
-        @submit="onSubmit"
-        @next="onNext"
-        @prev="onPrev"
-        @cancel="cancelSearch"
-      >
-        <template #buttons>
-          <!-- <ButtonToggle icon="File" />
-           <ButtonToggle icon="Code" /> -->
-          <!-- <ButtonToggle icon="Regex" /> -->
-        </template>
-      </SearchBar>
-      <div class="match-count file">
-        <span class="text-caption">0 text matches</span>
-      </div>
+  <div class="dockable-search">
+    <div class="match-count source">
+      <span class="text-caption">0 source matches</span>
     </div>
-  </Teleport>
+    <SearchBar
+      ref="searchBar"
+      :with-buttons="true"
+      :buttons-disabled="!searchInfo.isSearching"
+      @submit="onSubmit"
+      @next="onNext"
+      @prev="onPrev"
+      @cancel="cancelSearch"
+    >
+      <template #buttons>
+        <!-- <ButtonToggle icon="File" />
+           <ButtonToggle icon="Code" /> -->
+        <!-- <ButtonToggle icon="Regex" /> -->
+      </template>
+    </SearchBar>
+    <div class="match-count file">
+      <span class="text-caption">0 text matches</span>
+    </div>
+    <ButtonClose />
+  </div>
 </template>
 
 <style scoped>
   .dockable-search {
-    background-color: var(--surface-page);
-    background-color: var(--surface-primary);
     background-color: var(--surface-hover);
-    border: var(--border-thin) solid transparent;
-    position: fixed;
-    height: 64px;
-    top: 8px;
+    border: var(--border-extrathin) solid var(--border-action);
+    height: calc(64px + 1px);
+    width: 100%;
+    position: sticky;
     right: 8px;
-    left: 64px;
-    border-radius: 16px 16px 0 0;
+    /* right: 8px;
+       left: 64px; */
+    border-radius: 16px;
     z-index: 998;
     display: flex;
     justify-content: space-between;

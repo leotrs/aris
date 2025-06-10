@@ -2,7 +2,7 @@
   import { ref, inject, useTemplateRef } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { useAutoSave } from "@/composables/useAutoSave.js";
-  import { File } from "@/File.js";
+  import { File } from "@/models/File.js";
   import EditorTopbar from "./EditorTopbar.vue";
   import EditorSource from "./EditorSource.vue";
   import EditorFiles from "./EditorFiles.vue";
