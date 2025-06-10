@@ -173,4 +173,16 @@ describe('WorkspaceView', () => {
     });
     expect(wrapper.findComponent({ name: 'Button' }).exists()).toBe(false);
   });
+
+  it('redirects to 404 when file not found', () => {
+    pushMock.mockClear();
+    const emptyStore = { value: { files: [] } };
+    mount(WorkspaceView, {
+      global: {
+        provide: { fileStore: emptyStore, api, mobileMode: false },
+        stubs: { Sidebar: true, Canvas: true, Button: true },
+      },
+    });
+    expect(pushMock).toHaveBeenCalledWith({ name: 'NotFound' });
+  });
 });

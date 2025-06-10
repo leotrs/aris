@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, inject, provide, onMounted } from "vue";
+  import { ref, computed, inject, provide, onMounted, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { File } from "@/models/File.js";
@@ -18,6 +18,18 @@
     return found || {};
   });
   provide("file", file);
+
+  // If no file matches the route param, redirect to 404
+  const router = useRouter();
+  watch(
+    () => file.value.id,
+    (id) => {
+      if (route.params.file_id && id === undefined) {
+        router.push({ name: "NotFound" });
+      }
+    },
+    { immediate: true }
+  );
 
   const api = inject("api");
   const fileSettings = ref({});
@@ -63,7 +75,6 @@
 
   // Keyboard shortcuts
   const goHome = () => router.push("/");
-  const router = useRouter();
   useKeyboardShortcuts({
     "g,h": goHome,
     c: () => (focusMode.value = !focusMode.value),
