@@ -10,13 +10,13 @@ vi.mock('vue', () => ({
 // Mock the external dependencies
 vi.mock('@yaireo/relative-time', () => ({
   default: vi.fn().mockImplementation(() => ({
-    from: vi.fn((date, now) => '2 hours ago')
+    from: vi.fn(() => '2 hours ago')
   }))
 }));
 
 vi.mock('@/composables/useCasing.js', () => ({
-  useSnakeCase: vi.fn((obj) => ({ snake_case: 'converted' })),
-  useCamelCase: vi.fn((obj) => ({ camelCase: 'converted' }))
+  useSnakeCase: vi.fn(() => ({ snake_case: 'converted' })),
+  useCamelCase: vi.fn(() => ({ camelCase: 'converted' }))
 }));
 
 describe('File', () => {

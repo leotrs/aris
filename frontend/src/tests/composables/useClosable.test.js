@@ -20,7 +20,6 @@ vi.mock('@/composables/useKeyboardShortcuts.js', () => ({
   }))
 }));
 
-import { nextTick } from 'vue';
 import useClosable from '@/composables/useClosable.js';
 
 describe('useClosable', () => {
@@ -66,7 +65,7 @@ describe('useClosable', () => {
     };
 
     // Mock getCurrentInstance to return our mock instance
-    const { getCurrentInstance, onMounted, onBeforeUnmount } = await import('vue');
+    const { getCurrentInstance } = await import('vue');
     getCurrentInstance.mockReturnValue(mockInstance);
 
     // Store original event listener methods

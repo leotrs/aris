@@ -1,6 +1,5 @@
 // src/tests/unit/router.test.js
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { createMemoryHistory } from 'vue-router';
 import router from '@/router.js';
 
 // Mock localStorage

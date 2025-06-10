@@ -27,7 +27,7 @@ vi.mock('vue', () => ({
 
 // Mock File class
 vi.mock('@/File.js', () => ({
-  File: vi.fn().mockImplementation((data, store) => ({
+  File: vi.fn().mockImplementation((data) => ({
     ...data,
     id: data.id || Math.random(),
     selected: data.selected || false,
@@ -194,8 +194,7 @@ describe('FileStore', () => {
       mockFileSave.mockResolvedValue(true);
       const fileData = { title: 'New File', source: 'content' };
 
-      const newFile = await store.createFile(fileData);
-
+      await store.createFile(fileData);
       expect(File).toHaveBeenCalledWith(
         expect.objectContaining({
           title: 'New File',
