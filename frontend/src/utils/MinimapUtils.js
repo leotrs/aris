@@ -2,7 +2,7 @@
 function countLeadingPounds(str) {
   const match = str.match(/^\s*#+/);
   return match ? match[0].trimStart().length : 0;
-};
+}
 
 // Section extraction
 export async function getSectionsFromSource(src) {
@@ -17,24 +17,24 @@ export async function getSectionsFromSource(src) {
       lineno: idx,
       isSection: regex1.test(line) || regex2.test(line),
       line: line,
-      title: line.match(regex2)?.[1] ?? ""
+      title: line.match(regex2)?.[1] ?? "",
     }))
     .filter((line) => line.isSection)
     .map((obj) => ({
       percent: obj.lineno / lines.length,
       level: countLeadingPounds(obj.line) + 1,
-      title: obj.title
+      title: obj.title,
     }));
 
   return sections;
-};
+}
 
 export async function getSectionsFromHTMLString(html) {
   const parser = new DOMParser();
   const dom = parser.parseFromString(html, "text/html");
   const sections = [...dom.querySelectorAll("section")].map((s) => s);
   return sections;
-};
+}
 
 export async function getSectionsFromHTML(file) {
   // The following works by looking at the parent element's height because there are
@@ -62,24 +62,23 @@ export async function getSectionsFromHTML(file) {
   return sections;
 }
 
-
 export async function getSections(file) {
   let sections = [];
 
   if (file.isMountedAt) {
-    console.log('extracting sections from mounted html');
+    console.log("extracting sections from mounted html");
     sections = await getSectionsFromHTML(file);
   } else if (file.html) {
-    console.log('extracting sections from html string');
+    console.log("extracting sections from html string");
     sections = await getSectionsFromHTMLString(file.html);
   } else if (file.source) {
-    console.log('extracting sections from source');
+    console.log("extracting sections from source");
     sections = await getSectionsFromSource(file.source);
   } else {
     console.warn(`No way to get sections for file with id ${file.id}, skipping`);
   }
   return [{ percent: 0, level: 1 }, ...sections, { percent: 1, level: 1 }];
-};
+}
 
 // Shapes
 const createShapePath = (cx, cy, r, side, shape, offset = 4) => {
@@ -150,7 +149,7 @@ export async function getLayoutParametersHorizontal(lineSize, options) {
     track: { x1: "0", y1: lineY, x2: lineSize, y2: lineY },
     scrollLine: { x1: "0", y1: lineY, x2: "0", y2: lineY },
   };
-};
+}
 
 export async function getLayoutParametersVertical(lineSize, options) {
   const { side, lineX, strokeWidth, trackWidth, offset } = options;
@@ -176,29 +175,44 @@ export async function getLayoutParametersVertical(lineSize, options) {
     track: { x1: lineX, y1: "0", x2: lineX, y2: lineSize },
     scrollLine: { x1: lineX, y1: "0", x2: lineX, y2: "0" },
   };
-};
+}
 
 // Global state
 let shapePositions = [];
 
 // Public interface
 export async function makeMinimap(file, isHorizontal, wrapperWidth, wrapperHeight, options = {}) {
-  const defaults = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 8, highlightScroll: true, side: 'left', shape: 'line' };
+  const defaults = {
+    lineX: 12,
+    lineY: 12,
+    strokeWidth: 3,
+    trackWidth: 3,
+    radiusDelta: 2,
+    offset: 8,
+    highlightScroll: true,
+    side: "left",
+    shape: "line",
+  };
   options = { ...defaults, ...options };
 
   // DO NOT use file.minimap -- this is usually the one extracted from the HTMl, we want to make our own
   // if (file.minimap) return file.minimap;
-  const currentSize = isHorizontal ? (wrapperWidth || 400) : (wrapperHeight || 400);
+  const currentSize = isHorizontal ? wrapperWidth || 400 : wrapperHeight || 400;
   return await _makeMinimap(await getSections(file), isHorizontal, currentSize, options);
 }
 
-export async function _makeMinimap(
-  sections,
-  isHorizontal,
-  containerSize = 400,
-  options = {}
-) {
-  const defaults = { lineX: 12, lineY: 12, strokeWidth: 3, trackWidth: 3, radiusDelta: 2, offset: 8, highlightScroll: true, side: 'left', shape: 'line' };
+export async function _makeMinimap(sections, isHorizontal, containerSize = 400, options = {}) {
+  const defaults = {
+    lineX: 12,
+    lineY: 12,
+    strokeWidth: 3,
+    trackWidth: 3,
+    radiusDelta: 2,
+    offset: 8,
+    highlightScroll: true,
+    side: "left",
+    shape: "line",
+  };
   options = { ...defaults, ...options };
 
   // Leave some padding between the line and the container
@@ -236,7 +250,8 @@ export async function _makeMinimap(
      stroke-linecap="round"
     />
     ${shapes
-      .map((s, idx) => `
+      .map(
+        (s, idx) => `
         <g class="mm-shape-group"
            data-index="${idx}"
            data-title="${s.title}"
@@ -257,10 +272,12 @@ export async function _makeMinimap(
             pointer-events="none"
           />
         </g>
-      `)
+      `
+      )
       .join("\n")}
-    ${options.highlightScroll
-      ? `<line class="scroll-indicator"
+    ${
+      options.highlightScroll
+        ? `<line class="scroll-indicator"
           x1="${layout.scrollLine.x1}"
           y1="${layout.scrollLine.y1}"
           x2="${layout.scrollLine.x2}"
@@ -268,11 +285,12 @@ export async function _makeMinimap(
           stroke-width="${options.strokeWidth}"
           stroke-linecap="round"
          />`
-      : ""}
+        : ""
+    }
   </svg>`;
 
   return { svg, svgInitialData };
-};
+}
 
 export async function resizeMinimap(
   svg,
@@ -290,8 +308,8 @@ export async function resizeMinimap(
     radiusDelta: 2,
     offset: 4,
     minSizeForSubsections: 250,
-    side: 'left',
-    shape: 'line'
+    side: "left",
+    shape: "line",
   };
   options = { ...defaults, ...options };
 
@@ -318,7 +336,10 @@ export async function resizeMinimap(
     const shape = initialShapes[index];
     let newCx = isHorizontal ? shape.cx * scaleFactor : shape.cx;
     let newCy = isHorizontal ? shape.cy : shape.cy * scaleFactor;
-    path.setAttribute("d", createShapePath(newCx, newCy, shape.r, options.side, options.shape, options.offset));
+    path.setAttribute(
+      "d",
+      createShapePath(newCx, newCy, shape.r, options.side, options.shape, options.offset)
+    );
 
     // Hide small subsections if container is too small
     const shouldHide = containerDimension < options.minSizeForSubsections && shape.level > 2;
@@ -329,9 +350,16 @@ export async function resizeMinimap(
     ? getLayoutParametersHorizontal(containerDimension, options)
     : getLayoutParametersVertical(containerDimension, options);
   svg.setAttribute("viewBox", layout.viewBox);
-};
+}
 
-export async function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrapperHeight, svg, options = { trackWidth: 3 }) {
+export async function highlightScrollPos(
+  pos,
+  isHorizontal,
+  wrapperWidth,
+  wrapperHeight,
+  svg,
+  options = { trackWidth: 3 }
+) {
   if (!svg) return;
   const scrollPercent = pos / 100;
   const containerDimension = isHorizontal ? wrapperWidth : wrapperHeight;
@@ -405,8 +433,7 @@ export async function highlightScrollPos(pos, isHorizontal, wrapperWidth, wrappe
   line.setAttribute("x2", sectionEnd.cx + 4);
   line.setAttribute("y2", sectionEnd.cy);
   svg.insertBefore(line, scrollIndicator || null);
-};
-
+}
 
 export async function makeIcons(newIcons, totalHeightEl) {
   // totalHeightEl must be an element whose height equals that of the entire manuscript,

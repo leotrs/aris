@@ -1,10 +1,10 @@
 // src/tests/unit/FileStore.test.js
-import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { createFileStore } from '@/FileStore.js';
-import { File } from '@/File.js';
+import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
+import { createFileStore } from "@/store/FileStore.js";
+import { File } from "@/models/File.js";
 
 // Mock Vue reactivity functions
-vi.mock('vue', () => ({
+vi.mock("vue", () => ({
   ref: vi.fn((value) => ({ value })),
   computed: vi.fn((fn) => ({ value: fn() })),
   reactive: vi.fn((obj) => {
@@ -20,21 +20,21 @@ vi.mock('vue', () => ({
       set(target, prop, value) {
         target[prop] = value;
         return true;
-      }
+      },
     });
-  })
+  }),
 }));
 
 // Mock File class
-vi.mock('@/File.js', () => ({
+vi.mock("@/models/File.js", () => ({
   File: vi.fn().mockImplementation((data) => ({
     ...data,
     id: data.id || Math.random(),
     selected: data.selected || false,
     filtered: data.filtered || false,
     tags: data.tags || [],
-    last_edited_at: data.last_edited_at || new Date().toISOString()
-  }))
+    last_edited_at: data.last_edited_at || new Date().toISOString(),
+  })),
 }));
 
 // Mock File static methods
@@ -48,7 +48,7 @@ File.delete = mockFileDelete;
 File.addTag = mockFileAddTag;
 File.removeTag = mockFileRemoveTag;
 
-describe('FileStore', () => {
+describe("FileStore", () => {
   let mockApi;
   let mockUser;
   let store;
@@ -59,13 +59,13 @@ describe('FileStore', () => {
       get: vi.fn(),
       post: vi.fn(),
       put: vi.fn(),
-      delete: vi.fn()
+      delete: vi.fn(),
     };
 
     mockUser = { id: 123 };
 
     // Clear console.error mock
-    vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
 
     // Reset File static method mocks
     mockFileSave.mockClear();
@@ -85,8 +85,8 @@ describe('FileStore', () => {
     vi.clearAllTimers();
   });
 
-  describe('Store Creation', () => {
-    it('creates a store with initial state', () => {
+  describe("Store Creation", () => {
+    it("creates a store with initial state", () => {
       expect(store.files.value).toEqual([]);
       expect(store.tags.value).toEqual([]);
       expect(store.syncInProgress.value).toBe(false);
@@ -94,60 +94,60 @@ describe('FileStore', () => {
       expect(store.syncQueue).toBeInstanceOf(Set);
     });
 
-    it('provides all required methods', () => {
+    it("provides all required methods", () => {
       const expectedMethods = [
-        'loadFiles',
-        'createFile',
-        'deleteFile',
-        'sortFiles',
-        'filterFiles',
-        'clearFilters',
-        'selectFile',
-        'clearSelection',
-        'queueSync',
-        'getRecentFiles',
-        'loadTags',
-        'createTag',
-        'updateTag',
-        'getTags',
-        'addTagToFile',
-        'removeTagFromFile',
-        'toggleFileTag'
+        "loadFiles",
+        "createFile",
+        "deleteFile",
+        "sortFiles",
+        "filterFiles",
+        "clearFilters",
+        "selectFile",
+        "clearSelection",
+        "queueSync",
+        "getRecentFiles",
+        "loadTags",
+        "createTag",
+        "updateTag",
+        "getTags",
+        "addTagToFile",
+        "removeTagFromFile",
+        "toggleFileTag",
       ];
 
-      expectedMethods.forEach(method => {
-        expect(typeof store[method]).toBe('function');
+      expectedMethods.forEach((method) => {
+        expect(typeof store[method]).toBe("function");
       });
     });
   });
 
-  describe('File Loading', () => {
-    it('loads files from server successfully', async () => {
+  describe("File Loading", () => {
+    it("loads files from server successfully", async () => {
       const mockFiles = [
-        { id: 1, title: 'File 1', tags: [] },
-        { id: 2, title: 'File 2', tags: [] }
+        { id: 1, title: "File 1", tags: [] },
+        { id: 2, title: "File 2", tags: [] },
       ];
       mockApi.get.mockResolvedValue({ data: mockFiles });
 
       await store.loadFiles();
 
       expect(mockApi.get).toHaveBeenCalledWith(`/users/${mockUser.id}/files`, {
-        params: { with_tags: true }
+        params: { with_tags: true },
       });
       expect(store.files.value).toHaveLength(2);
       expect(File).toHaveBeenCalledTimes(2);
     });
 
-    it('preserves existing file states when reloading', async () => {
+    it("preserves existing file states when reloading", async () => {
       // Set up existing files with states
       store.files.value = [
         { id: 1, selected: true, filtered: true },
-        { id: 2, selected: false, filtered: false }
+        { id: 2, selected: false, filtered: false },
       ];
 
       const mockFiles = [
-        { id: 1, title: 'Updated File 1' },
-        { id: 2, title: 'Updated File 2' }
+        { id: 1, title: "Updated File 1" },
+        { id: 2, title: "Updated File 2" },
       ];
       mockApi.get.mockResolvedValue({ data: mockFiles });
 
@@ -156,26 +156,26 @@ describe('FileStore', () => {
       expect(File).toHaveBeenCalledWith(
         expect.objectContaining({
           id: 1,
-          title: 'Updated File 1',
+          title: "Updated File 1",
           selected: true,
-          filtered: true
+          filtered: true,
         }),
         store
       );
     });
 
-    it('handles API errors gracefully', async () => {
-      const error = new Error('API Error');
+    it("handles API errors gracefully", async () => {
+      const error = new Error("API Error");
       mockApi.get.mockRejectedValue(error);
 
       await store.loadFiles();
 
-      expect(console.error).toHaveBeenCalledWith('Error loading files:', error);
+      expect(console.error).toHaveBeenCalledWith("Error loading files:", error);
     });
   });
 
-  describe('File Creation', () => {
-    it('creates a new file with default data', async () => {
+  describe("File Creation", () => {
+    it("creates a new file with default data", async () => {
       mockFileSave.mockResolvedValue(true);
 
       const newFile = await store.createFile();
@@ -183,38 +183,38 @@ describe('FileStore', () => {
       expect(store.files.value).toHaveLength(1);
       expect(File).toHaveBeenCalledWith(
         expect.objectContaining({
-          last_edited_at: expect.any(String)
+          last_edited_at: expect.any(String),
         }),
         store
       );
       expect(mockFileSave).toHaveBeenCalledWith(newFile, mockApi, mockUser);
     });
 
-    it('creates a new file with provided data', async () => {
+    it("creates a new file with provided data", async () => {
       mockFileSave.mockResolvedValue(true);
-      const fileData = { title: 'New File', source: 'content' };
+      const fileData = { title: "New File", source: "content" };
 
       await store.createFile(fileData);
       expect(File).toHaveBeenCalledWith(
         expect.objectContaining({
-          title: 'New File',
-          source: 'content',
-          last_edited_at: expect.any(String)
+          title: "New File",
+          source: "content",
+          last_edited_at: expect.any(String),
         }),
         store
       );
     });
   });
 
-  describe('File Deletion', () => {
+  describe("File Deletion", () => {
     beforeEach(() => {
       store.files.value = [
-        { id: 1, title: 'File 1' },
-        { id: 2, title: 'File 2' }
+        { id: 1, title: "File 1" },
+        { id: 2, title: "File 2" },
       ];
     });
 
-    it('deletes file by object', async () => {
+    it("deletes file by object", async () => {
       mockFileDelete.mockResolvedValue(true);
       const fileToDelete = store.files.value[0];
 
@@ -225,7 +225,7 @@ describe('FileStore', () => {
       expect(store.files.value[0].id).toBe(2);
     });
 
-    it('deletes file by ID', async () => {
+    it("deletes file by ID", async () => {
       mockFileDelete.mockResolvedValue(true);
 
       await store.deleteFile(1);
@@ -234,14 +234,14 @@ describe('FileStore', () => {
       expect(store.files.value[0].id).toBe(2);
     });
 
-    it('does nothing when file not found', async () => {
+    it("does nothing when file not found", async () => {
       await store.deleteFile(999);
 
       expect(mockFileDelete).not.toHaveBeenCalled();
       expect(store.files.value).toHaveLength(2);
     });
 
-    it('removes file from sync queue when deleted', async () => {
+    it("removes file from sync queue when deleted", async () => {
       mockFileDelete.mockResolvedValue(true);
 
       // Add file to sync queue first
@@ -253,7 +253,7 @@ describe('FileStore', () => {
       expect(store.syncQueue.has(1)).toBe(false);
     });
 
-    it('does not remove file when deletion fails', async () => {
+    it("does not remove file when deletion fails", async () => {
       mockFileDelete.mockResolvedValue(false);
 
       await store.deleteFile(1);
@@ -262,56 +262,56 @@ describe('FileStore', () => {
     });
   });
 
-  describe('File Sorting and Filtering', () => {
+  describe("File Sorting and Filtering", () => {
     beforeEach(() => {
       store.files.value = [
-        { id: 1, title: 'B File', filtered: false },
-        { id: 2, title: 'A File', filtered: false },
-        { id: 3, title: 'C File', filtered: false }
+        { id: 1, title: "B File", filtered: false },
+        { id: 2, title: "A File", filtered: false },
+        { id: 3, title: "C File", filtered: false },
       ];
     });
 
-    it('sorts files with provided compare function', () => {
+    it("sorts files with provided compare function", () => {
       const compareFunc = (a, b) => a.title.localeCompare(b.title);
       store.sortFiles(compareFunc);
 
-      expect(store.files.value[0].title).toBe('A File');
-      expect(store.files.value[1].title).toBe('B File');
-      expect(store.files.value[2].title).toBe('C File');
+      expect(store.files.value[0].title).toBe("A File");
+      expect(store.files.value[1].title).toBe("B File");
+      expect(store.files.value[2].title).toBe("C File");
     });
 
-    it('filters files with provided filter function', () => {
-      const filterFunc = (file) => file.title.startsWith('A');
+    it("filters files with provided filter function", () => {
+      const filterFunc = (file) => file.title.startsWith("A");
       store.filterFiles(filterFunc);
 
       expect(store.files.value[0].filtered).toBe(false); // B File - filtered out
-      expect(store.files.value[1].filtered).toBe(true);  // A File - shown
+      expect(store.files.value[1].filtered).toBe(true); // A File - shown
       expect(store.files.value[2].filtered).toBe(false); // C File - filtered out
     });
 
-    it('clears all filters', () => {
+    it("clears all filters", () => {
       // Set some files as filtered
       store.files.value[0].filtered = true;
       store.files.value[1].filtered = true;
 
       store.clearFilters();
 
-      store.files.value.forEach(file => {
+      store.files.value.forEach((file) => {
         expect(file.filtered).toBe(false);
       });
     });
   });
 
-  describe('File Selection', () => {
+  describe("File Selection", () => {
     beforeEach(() => {
       store.files.value = [
         { id: 1, selected: false },
         { id: 2, selected: true },
-        { id: 3, selected: false }
+        { id: 3, selected: false },
       ];
     });
 
-    it('selects a file and deselects others', () => {
+    it("selects a file and deselects others", () => {
       const fileToSelect = store.files.value[0];
       store.selectFile(fileToSelect);
 
@@ -320,28 +320,28 @@ describe('FileStore', () => {
       expect(store.files.value[2].selected).toBe(false);
     });
 
-    it('does nothing if file is already selected', () => {
+    it("does nothing if file is already selected", () => {
       const alreadySelected = store.files.value[1];
       store.selectFile(alreadySelected);
 
       expect(store.files.value[1].selected).toBe(true);
     });
 
-    it('clears selection', () => {
+    it("clears selection", () => {
       store.clearSelection();
 
-      store.files.value.forEach(file => {
+      store.files.value.forEach((file) => {
         expect(file.selected).toBe(false);
       });
     });
   });
 
-  describe('Sync Queue', () => {
+  describe("Sync Queue", () => {
     beforeEach(() => {
       vi.useFakeTimers();
       store.files.value = [
-        { id: 1, title: 'File 1' },
-        { id: 2, title: 'File 2' }
+        { id: 1, title: "File 1" },
+        { id: 2, title: "File 2" },
       ];
     });
 
@@ -349,7 +349,7 @@ describe('FileStore', () => {
       vi.useRealTimers();
     });
 
-    it('queues file for sync by object', async () => {
+    it("queues file for sync by object", async () => {
       const file = store.files.value[0];
       mockFileSave.mockResolvedValue(true);
 
@@ -358,7 +358,7 @@ describe('FileStore', () => {
       expect(store.syncQueue.has(1)).toBe(true);
     });
 
-    it('queues file for sync by ID', async () => {
+    it("queues file for sync by ID", async () => {
       mockFileSave.mockResolvedValue(true);
 
       await store.queueSync(1);
@@ -366,7 +366,7 @@ describe('FileStore', () => {
       expect(store.syncQueue.has(1)).toBe(true);
     });
 
-    it('processes sync queue after timeout', async () => {
+    it("processes sync queue after timeout", async () => {
       mockFileSave.mockResolvedValue(true);
 
       await store.queueSync(1);
@@ -374,14 +374,14 @@ describe('FileStore', () => {
 
       vi.advanceTimersByTime(800);
       // Wait a tick for async operations to complete
-      await new Promise(resolve => process.nextTick(resolve));
+      await new Promise((resolve) => process.nextTick(resolve));
 
       expect(mockFileSave).toHaveBeenCalled();
       expect(store.syncQueue.size).toBe(0);
     });
 
-    it('handles sync errors gracefully', async () => {
-      const error = new Error('Sync error');
+    it("handles sync errors gracefully", async () => {
+      const error = new Error("Sync error");
       mockFileSave.mockRejectedValue(error);
 
       // Add a file to sync
@@ -391,13 +391,13 @@ describe('FileStore', () => {
       // Advance timer to trigger sync process
       vi.advanceTimersByTime(800);
       // Wait a tick for async operations to complete
-      await new Promise(resolve => process.nextTick(resolve));
+      await new Promise((resolve) => process.nextTick(resolve));
 
-      expect(console.error).toHaveBeenCalledWith('Error during file sync:', error);
+      expect(console.error).toHaveBeenCalledWith("Error during file sync:", error);
       expect(store.syncInProgress.value).toBe(false);
     });
 
-    it('does not sync if already in progress', async () => {
+    it("does not sync if already in progress", async () => {
       store.syncInProgress.value = true;
 
       await store.queueSync(1);
@@ -408,18 +408,18 @@ describe('FileStore', () => {
     });
   });
 
-  describe('Recent Files', () => {
+  describe("Recent Files", () => {
     beforeEach(() => {
       const now = new Date();
       store.files.value = [
         { id: 1, last_edited_at: new Date(now - 3600000).toISOString() }, // 1 hour ago
         { id: 2, last_edited_at: new Date(now - 7200000).toISOString() }, // 2 hours ago
         { id: 3, last_edited_at: new Date(now - 1800000).toISOString() }, // 30 min ago
-        { id: 4, last_edited_at: new Date(now - 10800000).toISOString() } // 3 hours ago
+        { id: 4, last_edited_at: new Date(now - 10800000).toISOString() }, // 3 hours ago
       ];
     });
 
-    it('returns most recent files in order', () => {
+    it("returns most recent files in order", () => {
       const recent = store.getRecentFiles(3);
 
       expect(recent).toHaveLength(3);
@@ -428,25 +428,25 @@ describe('FileStore', () => {
       expect(recent[2].id).toBe(2);
     });
 
-    it('returns default of 5 files when no count specified', () => {
+    it("returns default of 5 files when no count specified", () => {
       const recent = store.getRecentFiles();
 
       expect(recent).toHaveLength(4); // We only have 4 files
     });
 
-    it('does not mutate original files array', () => {
-      const originalOrder = store.files.value.map(f => f.id);
+    it("does not mutate original files array", () => {
+      const originalOrder = store.files.value.map((f) => f.id);
       store.getRecentFiles();
 
-      expect(store.files.value.map(f => f.id)).toEqual(originalOrder);
+      expect(store.files.value.map((f) => f.id)).toEqual(originalOrder);
     });
   });
 
-  describe('Tag Management', () => {
-    it('loads tags from server', async () => {
+  describe("Tag Management", () => {
+    it("loads tags from server", async () => {
       const mockTags = [
-        { id: 1, name: 'Tag 1' },
-        { id: 2, name: 'Tag 2' }
+        { id: 1, name: "Tag 1" },
+        { id: 2, name: "Tag 2" },
       ];
       mockApi.get.mockResolvedValue({ data: mockTags });
 
@@ -456,42 +456,42 @@ describe('FileStore', () => {
       expect(store.tags.value).toEqual(mockTags);
     });
 
-    it('handles tag loading errors', async () => {
-      const error = new Error('Tag load error');
+    it("handles tag loading errors", async () => {
+      const error = new Error("Tag load error");
       mockApi.get.mockRejectedValue(error);
 
       await store.loadTags();
 
-      expect(console.error).toHaveBeenCalledWith('Error loading tags:', error);
+      expect(console.error).toHaveBeenCalledWith("Error loading tags:", error);
     });
 
-    it('creates a new tag', async () => {
+    it("creates a new tag", async () => {
       mockApi.post.mockResolvedValue({});
       mockApi.get.mockResolvedValue({ data: [] }); // for loadTags call
 
-      await store.createTag('New Tag', '#ff0000');
+      await store.createTag("New Tag", "#ff0000");
 
       expect(mockApi.post).toHaveBeenCalledWith(`/users/${mockUser.id}/tags`, {
-        name: 'New Tag',
-        color: '#ff0000'
+        name: "New Tag",
+        color: "#ff0000",
       });
     });
 
-    it('creates tag with default empty color', async () => {
+    it("creates tag with default empty color", async () => {
       mockApi.post.mockResolvedValue({});
       mockApi.get.mockResolvedValue({ data: [] });
 
-      await store.createTag('New Tag');
+      await store.createTag("New Tag");
 
       expect(mockApi.post).toHaveBeenCalledWith(`/users/${mockUser.id}/tags`, {
-        name: 'New Tag',
-        color: ''
+        name: "New Tag",
+        color: "",
       });
     });
 
-    it('updates existing tag', async () => {
-      const oldTag = { id: 1, name: 'Old Tag' };
-      const newTag = { name: 'Updated Tag' };
+    it("updates existing tag", async () => {
+      const oldTag = { id: 1, name: "Old Tag" };
+      const newTag = { name: "Updated Tag" };
       store.tags.value = [oldTag];
 
       mockApi.put.mockResolvedValue({});
@@ -502,8 +502,8 @@ describe('FileStore', () => {
       expect(mockApi.put).toHaveBeenCalledWith(`/users/${mockUser.id}/tags/1`, newTag);
     });
 
-    it('deletes tag when newTag is null', async () => {
-      const oldTag = { id: 1, name: 'Tag to delete' };
+    it("deletes tag when newTag is null", async () => {
+      const oldTag = { id: 1, name: "Tag to delete" };
       store.tags.value = [oldTag];
 
       mockApi.delete.mockResolvedValue({});
@@ -514,30 +514,30 @@ describe('FileStore', () => {
       expect(mockApi.delete).toHaveBeenCalledWith(`/users/${mockUser.id}/tags/1`);
     });
 
-    it('reloads tags when oldTag is null', async () => {
+    it("reloads tags when oldTag is null", async () => {
       mockApi.get.mockResolvedValue({ data: [] });
 
-      await store.updateTag(null, { name: 'Some tag' });
+      await store.updateTag(null, { name: "Some tag" });
 
       expect(mockApi.get).toHaveBeenCalledWith(`/users/${mockUser.id}/tags`);
     });
 
-    it('returns all tags', () => {
-      const mockTags = [{ id: 1, name: 'Tag 1' }];
+    it("returns all tags", () => {
+      const mockTags = [{ id: 1, name: "Tag 1" }];
       store.tags.value = mockTags;
 
       expect(store.getTags()).toEqual(mockTags);
     });
   });
 
-  describe('File Tag Operations', () => {
+  describe("File Tag Operations", () => {
     let mockFile;
 
     beforeEach(() => {
       mockFile = { id: 1, tags: [{ id: 1 }, { id: 2 }] };
     });
 
-    it('adds tag to file', async () => {
+    it("adds tag to file", async () => {
       mockFileAddTag.mockResolvedValue(true);
 
       await store.addTagToFile(mockFile, 3);
@@ -545,7 +545,7 @@ describe('FileStore', () => {
       expect(mockFileAddTag).toHaveBeenCalledWith(mockFile, 3, mockApi, mockUser);
     });
 
-    it('removes tag from file', async () => {
+    it("removes tag from file", async () => {
       mockFileRemoveTag.mockResolvedValue(true);
 
       await store.removeTagFromFile(mockFile, 1);
@@ -553,7 +553,7 @@ describe('FileStore', () => {
       expect(mockFileRemoveTag).toHaveBeenCalledWith(mockFile, 1, mockApi, mockUser);
     });
 
-    it('toggles tag on file - removes existing tag', async () => {
+    it("toggles tag on file - removes existing tag", async () => {
       mockFileRemoveTag.mockResolvedValue(true);
 
       await store.toggleFileTag(mockFile, 1);
@@ -562,7 +562,7 @@ describe('FileStore', () => {
       expect(mockFileAddTag).not.toHaveBeenCalled();
     });
 
-    it('toggles tag on file - adds new tag', async () => {
+    it("toggles tag on file - adds new tag", async () => {
       mockFileAddTag.mockResolvedValue(true);
 
       await store.toggleFileTag(mockFile, 3);

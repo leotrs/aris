@@ -13,7 +13,7 @@
     onUnmounted,
   } from "vue";
   import { useElementSize, useScroll } from "@vueuse/core";
-  import createElementVisibilityObserver from "@/composables/createElementVisibilityObserver";
+  import useElementVisibilityObserver from "@/composables/useElementVisibilityObserver";
   import { registerAsFallback } from "@/composables/useKeyboardShortcuts.js";
   import ReaderTopbar from "./ReaderTopbar.vue";
   import Dock from "./Dock.vue";
@@ -110,7 +110,7 @@
       const mainTitle = manuscriptRef.value.$el.querySelector("section.level-1 > .heading.hr");
       if (!mainTitle) return;
 
-      const { isVisible, tearDown: newTearDown } = createElementVisibilityObserver(mainTitle);
+      const { isVisible, tearDown: newTearDown } = useElementVisibilityObserver(mainTitle);
       isMainTitleVisible.value = isVisible.value;
 
       const stopWatch = watch(isVisible, (newVal) => (isMainTitleVisible.value = newVal));

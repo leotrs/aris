@@ -13,8 +13,7 @@ export function clearHighlights(rootEl) {
   }
   // Normalize at the root level once rather than per node
   rootEl.normalize();
-};
-
+}
 
 /**
  * Highlights text matches across multiple DOM nodes
@@ -26,30 +25,25 @@ export function clearHighlights(rootEl) {
  * @returns {number} - Count of matches found
  */
 export function highlightSearchMatches(rootEl, searchTerm, options = {}) {
-  const {
-    caseSensitive = false,
-    wholeWord = false
-  } = options;
+  const { caseSensitive = false, wholeWord = false } = options;
   if (!rootEl || !searchTerm || searchTerm.trim() === "") return 0;
 
   // Setup TreeWalker to find all text nodes
-  const treeWalker = document.createTreeWalker(
-    rootEl,
-    NodeFilter.SHOW_TEXT,
-    {
-      acceptNode: node => {
-        // Skip empty text nodes and script/style content
-        const parent = node.parentNode;
-        if (!node.textContent.trim() ||
-          parent.nodeName === 'SCRIPT' ||
-          parent.nodeName === 'STYLE' ||
-          parent.nodeName === 'MARK') {
-          return NodeFilter.FILTER_REJECT;
-        }
-        return NodeFilter.FILTER_ACCEPT;
+  const treeWalker = document.createTreeWalker(rootEl, NodeFilter.SHOW_TEXT, {
+    acceptNode: (node) => {
+      // Skip empty text nodes and script/style content
+      const parent = node.parentNode;
+      if (
+        !node.textContent.trim() ||
+        parent.nodeName === "SCRIPT" ||
+        parent.nodeName === "STYLE" ||
+        parent.nodeName === "MARK"
+      ) {
+        return NodeFilter.FILTER_REJECT;
       }
-    }
-  );
+      return NodeFilter.FILTER_ACCEPT;
+    },
+  });
 
   // Collect all text nodes and their position data
   const nodeInfo = [];
@@ -60,7 +54,7 @@ export function highlightSearchMatches(rootEl, searchTerm, options = {}) {
     nodeInfo.push({
       node,
       start: currentPosition,
-      end: currentPosition + length
+      end: currentPosition + length,
     });
     currentPosition += length;
   }
@@ -71,7 +65,7 @@ export function highlightSearchMatches(rootEl, searchTerm, options = {}) {
   }
 
   // Combine all text for searching
-  const fullText = nodeInfo.map(info => info.node.textContent).join("");
+  const fullText = nodeInfo.map((info) => info.node.textContent).join("");
 
   // Prepare search term and text for matching
   const searchFor = caseSensitive ? searchTerm : searchTerm.toLowerCase();
@@ -80,8 +74,8 @@ export function highlightSearchMatches(rootEl, searchTerm, options = {}) {
   // Create regex pattern for whole word search if needed
   let searchRegex = null;
   if (wholeWord) {
-    const escapedTerm = searchFor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    searchRegex = new RegExp(`\\b${escapedTerm}\\b`, caseSensitive ? 'g' : 'gi');
+    const escapedTerm = searchFor.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    searchRegex = new RegExp(`\\b${escapedTerm}\\b`, caseSensitive ? "g" : "gi");
   }
 
   // Find all matches
@@ -181,7 +175,6 @@ export function highlightSearchMatches(rootEl, searchTerm, options = {}) {
   return matches.toReversed();
 }
 
-
 /**
  * Highlights text matches in source
  * @param {Element} rootEl - The root element to search within
@@ -197,7 +190,7 @@ export function highlightSearchMatchesSource(sourceText, searchString) {
   }
 
   const matches = [];
-  const regex = new RegExp(escapeRegExp(searchString), 'gi');
+  const regex = new RegExp(escapeRegExp(searchString), "gi");
   let match;
 
   while ((match = regex.exec(sourceText)) !== null) {
@@ -205,7 +198,7 @@ export function highlightSearchMatchesSource(sourceText, searchString) {
       index: match.index,
       text: match[0],
       line: getLineNumber(sourceText, match.index),
-      column: getColumnNumber(sourceText, match.index)
+      column: getColumnNumber(sourceText, match.index),
     });
   }
 
@@ -213,14 +206,14 @@ export function highlightSearchMatchesSource(sourceText, searchString) {
 }
 
 function escapeRegExp(string) {
-  return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  return string.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
 function getLineNumber(text, index) {
-  return text.substring(0, index).split('\n').length;
+  return text.substring(0, index).split("\n").length;
 }
 
 function getColumnNumber(text, index) {
-  const lines = text.substring(0, index).split('\n');
+  const lines = text.substring(0, index).split("\n");
   return lines[lines.length - 1].length + 1;
 }
