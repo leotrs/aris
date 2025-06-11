@@ -426,3 +426,79 @@ async def test_multiple_file_formats(client: AsyncClient, authenticated_user):
         )
         assert response.status_code == 200
         assert response.json()["message"] == "Profile picture uploaded successfully"
+
+
+@pytest.mark.asyncio
+async def test_update_user_without_auth(client: AsyncClient):
+    response = await client.put(
+        "/users/1",
+        json={"name": "Name", "initials": "NN", "email": "email@example.com"},
+    )
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_soft_delete_user_without_auth(client: AsyncClient):
+    response = await client.delete("/users/1")
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_get_user_files_without_auth(client: AsyncClient):
+    response = await client.get("/users/1/files")
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_get_user_file_without_auth(client: AsyncClient):
+    response = await client.get("/users/1/files/1")
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_get_user_files_user_not_found(client: AsyncClient, authenticated_user):
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    response = await client.get(f"/users/99999/files", headers=headers)
+    assert response.status_code == 404
+    assert response.json()["detail"] == "User 99999 not found"
+
+
+@pytest.mark.asyncio
+async def test_get_user_file_user_not_found(client: AsyncClient, authenticated_user):
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    response = await client.get(f"/users/99999/files/1", headers=headers)
+    assert response.status_code == 404
+    assert response.json()["detail"] == "User 99999 not found"
+
+
+@pytest.mark.asyncio
+async def test_get_user_file_file_not_found(client: AsyncClient, authenticated_user):
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    response = await client.get(
+        f"/users/{authenticated_user['user_id']}/files/99999", headers=headers
+    )
+    assert response.status_code == 404
+    assert response.json()["detail"] == "File 99999 not found"
+
+
+@pytest.mark.asyncio
+async def test_get_profile_picture_invalid_data(client: AsyncClient, authenticated_user, db_session):
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    # Upload a valid profile picture
+    test_image = create_test_image("PNG")
+    files = {"avatar": ("test.png", test_image, "image/png")}
+    upload_response = await client.post(
+        f"/users/{authenticated_user['user_id']}/avatar", headers=headers, files=files
+    )
+    assert upload_response.status_code == 200
+    # Corrupt the stored content to be invalid base64
+    from aris.models import ProfilePicture
+
+    pic_id = upload_response.json()["picture_id"]
+    pp = await db_session.get(ProfilePicture, pic_id)
+    pp.content = "not_base64!"
+    await db_session.commit()
+    # Attempt to retrieve the corrupted profile picture
+    response = await client.get(f"/users/{authenticated_user['user_id']}/avatar", headers=headers)
+    assert response.status_code == 500
+    assert response.json()["detail"] == "Invalid image data"
