@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, ref } from "vue";
+  import { computed, ref, onMounted } from "vue";
 
   const props = defineProps({
     header: { type: Boolean, default: true },
@@ -69,6 +69,7 @@
     initialSettings.value = JSON.parse(JSON.stringify(settingsObj.value));
   };
   defineExpose({ startReceivingUserInput });
+  onMounted(startReceivingUserInput);
 </script>
 
 <template>
@@ -157,7 +158,7 @@
           class="cta"
           kind="primary"
           text="Save Settings"
-          @click="emit('save', { ...settingsObj })"
+          @click="emit('save', settingsObj)"
         />
       </div>
     </Pane>
