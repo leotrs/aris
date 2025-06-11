@@ -34,31 +34,37 @@
   }
 
   .box {
-    border: var(--border-extrathin) solid var(--blue-300);
-    margin-block: 4px;
+    border-width: var(--border-extrathin);
+    border-style: solid;
+    border-color: var(--blue-300);
+    margin-block: auto;
     background-color: var(--blue-100);
     width: 12px;
     height: 12px;
     border-radius: 4px;
+    transition: all 0.3s ease;
   }
 
   .tabler-icon {
     margin-block: 0px;
     stroke-width: 1.5px;
     color: var(--text-disabled);
+    transition: color 0.3s ease;
   }
 
   .text {
     color: var(--text-disabled);
     font-weight: 350;
+    transition: color 0.3s ease;
   }
 
   .checkbox.active {
   }
 
   .checkbox.active .box {
-    border-color: var(--border-action-hover);
-    background-color: var(--surface-action);
+    background-color: var(--blue-300);
+    border-color: var(--blue-700);
+    box-shadow: var(--shadow-strong);
   }
 
   .checkbox.active .tabler-icon {
