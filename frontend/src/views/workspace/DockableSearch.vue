@@ -117,7 +117,7 @@
   .dockable-search {
     --border-width: var(--border-extrathin);
     background-color: var(--surface-hover);
-    outline: var(--border-width) solid var(--border-action);
+    outline: var(--border-width) solid var(--blue-300);
     height: 48px;
     width: calc(100% - 32px);
     max-width: 720px;
@@ -157,6 +157,8 @@
       color: var(--text-disabled);
       font-size: 12px;
       transition: color 0.3s ease;
+      width: 80px;
+      text-align: right;
     }
 
     & .checkbox {
