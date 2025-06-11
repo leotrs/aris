@@ -34,7 +34,10 @@ load_dotenv()
 
 DB_URL_LOCAL = os.getenv("DB_URL_LOCAL")
 DB_URL_PROD = os.getenv("DB_URL_PROD")
-ENGINE = create_async_engine(DB_URL_PROD if os.getenv("ENV") == "PROD" else DB_URL_LOCAL)
+ENGINE = create_async_engine(
+    DB_URL_PROD if os.getenv("ENV") == "PROD" else DB_URL_LOCAL,
+    future=True,
+)
 ArisSession = async_sessionmaker(ENGINE, expire_on_commit=False)
 
 
