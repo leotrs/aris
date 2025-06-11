@@ -4,6 +4,7 @@ from pydantic import BaseModel, field_validator
 from typing import List, Optional
 from datetime import datetime, UTC
 import base64
+import binascii
 from ..models import FileAsset
 
 
@@ -20,8 +21,8 @@ class FileAssetCreate(BaseModel):
         if mime.startswith("image/"):
             try:
                 base64.b64decode(v)
-            except TypeError:
-                raise ValueError("Invalid base64 content for image MIME type.")
+            except (TypeError, binascii.Error):
+                raise ValueError("Invalid base64-encoded string")
         return v
 
 
@@ -30,15 +31,25 @@ class FileAssetUpdate(BaseModel):
     content: str | None = None
     deleted_at: datetime | None = None
 
-    @field_validator("content")
     @classmethod
     def validate_optional_content(cls, v):
         if v is None:
             return v
         try:
             base64.b64decode(v)
-        except TypeError:
+        except (TypeError, binascii.Error):
             print("Content is not base64 decodable")
+        return v
+
+    @field_validator("content")
+    @classmethod
+    def validate_content_strict(cls, v):
+        if v is None:
+            return v
+        try:
+            base64.b64decode(v)
+        except (TypeError, binascii.Error):
+            raise ValueError("Invalid base64-encoded string")
         return v
 
 
