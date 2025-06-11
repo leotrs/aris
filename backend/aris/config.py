@@ -46,7 +46,6 @@ class Settings(BaseSettings):
     )
     """Expiration time in minutes for JWT access tokens (default: 30)."""
 
-    model_config = ConfigDict(env_file=".env", extra="forbid")
+    model_config = ConfigDict(extra="forbid")
 
-
-settings = Settings()
+settings = Settings(_env_file=".env")

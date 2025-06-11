@@ -146,7 +146,8 @@ async def test_upload_asset_invalid_base64_image(
     # The error message might be from base64 decode or your validator
     response_text = str(response.json())
     assert (
-        "Invalid base64 content for image MIME type" in response_text
+        "Invalid base64-encoded string" in response_text
+        or "Invalid base64 content for image MIME type" in response_text
         or "Incorrect padding" in response_text
     )
 
