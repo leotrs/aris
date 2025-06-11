@@ -57,7 +57,10 @@ async def get_user_files(
     with_tags: bool = True,
     db: AsyncSession = Depends(get_db),
 ):
-    return await crud.get_user_files(user_id, with_tags, db)
+    try:
+        return await crud.get_user_files(user_id, with_tags, db)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 @router.get("/{user_id}/files/{file_id}")
@@ -68,7 +71,10 @@ async def get_user_file(
     with_minimap: bool = True,
     db: AsyncSession = Depends(get_db),
 ):
-    return await crud.get_user_file(user_id, file_id, with_tags, with_minimap, db)
+    try:
+        return await crud.get_user_file(user_id, file_id, with_tags, with_minimap, db)
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
 
 
 # Maximum file size (5MB)
