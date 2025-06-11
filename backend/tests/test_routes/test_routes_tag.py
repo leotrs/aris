@@ -517,3 +517,63 @@ async def test_unauthorized_access(client: AsyncClient):
         json={"name": "Unauthorized"},
     )
     assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_create_tag_crud_error(monkeypatch, client: AsyncClient, authenticated_user):
+    """
+    Test handling of error when CRUD create_tag returns None.
+    """
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    async def fake_create_tag(user_id, name, color, db):
+        return None
+    monkeypatch.setattr("aris.routes.tag.crud.create_tag", fake_create_tag)
+    response = await client.post(
+        f"/users/{authenticated_user['user_id']}/tags",
+        headers=headers,
+        json={"name": "New Tag", "color": "#ABCDEF"},
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Error creating tag"
+
+
+@pytest.mark.asyncio
+async def test_update_tag_crud_error(monkeypatch, client: AsyncClient, authenticated_user, sample_tag):
+    """
+    Test handling of error when CRUD update_tag raises ValueError.
+    """
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    tag_data = sample_tag["tag"]
+    async def fake_update_tag(_id, user_id, name, color, db):
+        raise ValueError("update failed")
+    monkeypatch.setattr("aris.routes.tag.crud.update_tag", fake_update_tag)
+    response = await client.put(
+        f"/users/{authenticated_user['user_id']}/tags/{tag_data['id']}",
+        headers=headers,
+        json={
+            "id": tag_data["id"],
+            "user_id": authenticated_user["user_id"],
+            "name": "Updated Name",
+            "color": "#123456",
+        },
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Error updating tag update failed"
+
+
+@pytest.mark.asyncio
+async def test_delete_tag_crud_error(monkeypatch, client: AsyncClient, authenticated_user, sample_tag):
+    """
+    Test handling of error when CRUD soft_delete_tag returns None.
+    """
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    tag_data = sample_tag["tag"]
+    async def fake_soft_delete(_id, user_id, db):
+        return None
+    monkeypatch.setattr("aris.routes.tag.crud.soft_delete_tag", fake_soft_delete)
+    response = await client.delete(
+        f"/users/{authenticated_user['user_id']}/tags/{tag_data['id']}",
+        headers=headers,
+    )
+    assert response.status_code == 400
+    assert response.json()["detail"] == f"Error deleting tag: {tag_data['id']}"
