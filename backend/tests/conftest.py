@@ -30,6 +30,7 @@ async def test_engine():
         database_url,
         connect_args={"check_same_thread": False},
         poolclass=StaticPool,
+        future=True,
     )
     yield engine
     await engine.dispose()
