@@ -67,6 +67,12 @@
         :disabled="buttonsDisabled"
         @click.stop="emit('prev')"
       />
+      <Button
+        kind="tertiary"
+        icon="Backspace"
+        :disabled="buttonsDisabled"
+        @click.stop="emit('prev')"
+      />
     </div>
   </div>
 </template>
