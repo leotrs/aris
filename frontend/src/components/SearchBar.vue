@@ -7,6 +7,7 @@
     buttonsDisabled: { type: Boolean, default: true },
     showMatches: { type: Boolean, default: true },
     placeholder: { type: String, default: "Search..." },
+    pillText: { type: String, default: "" },
   });
   const emit = defineEmits(["submit", "cancel", "next", "prev"]);
   const searchText = ref("");
@@ -51,6 +52,7 @@
       @click.stop
       @dblclick.stop
     />
+    <div v-if="pillText" class="pill">{{ pillText }}</div>
     <div v-if="$slots.buttons" class="buttons">
       <slot name="buttons" />
     </div>
@@ -87,7 +89,7 @@
     min-width: 192px;
     display: flex;
     align-items: center;
-    padding-inline: 12px;
+    padding-inline: 12px 8px;
     gap: 16px;
     transition: var(--transition-bg-color), var(--transition-bd-color);
 
@@ -102,6 +104,7 @@
     }
 
     & > input {
+      flex: 1;
       background-color: transparent;
       border: none;
       padding: 0;
@@ -116,6 +119,16 @@
     &:hover {
       cursor: text;
     }
+  }
+
+  .pill {
+    border: var(--border-thin) solid var(--border-primary);
+    border-radius: 16px;
+    width: fit-content;
+    text-wrap: nowrap;
+    padding-block: 4px;
+    padding-inline: 8px;
+    color: var(--dark);
   }
 
   .buttons {
