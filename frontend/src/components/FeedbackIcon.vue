@@ -19,6 +19,8 @@
     for (var i = 0; i < icons.length; i++) {
       icons[i].active = false;
     }
+    // Clear all file icons
+    file.value.icons = {};
     menuRef.value.toggle();
   };
   const activate = (objToActivate) => {
