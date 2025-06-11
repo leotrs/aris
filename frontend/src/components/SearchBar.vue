@@ -4,10 +4,9 @@
 
   const props = defineProps({
     withButtons: { type: Boolean, default: false },
-    buttonsDisabled: { type: Boolean, default: true },
-    showMatches: { type: Boolean, default: true },
     placeholder: { type: String, default: "Search..." },
     pillText: { type: String, default: "" },
+    hintText: { type: String, default: "" },
   });
   const emit = defineEmits(["submit", "cancel", "next", "prev"]);
   const searchText = ref("");
@@ -42,6 +41,7 @@
 <template>
   <div class="s-wrapper text-caption" @click.stop="focusInput">
     <IconSearch />
+    <div v-if="pillText" class="pill">{{ pillText }}</div>
     <input
       ref="inputRef"
       v-model="searchText"
@@ -52,26 +52,37 @@
       @click.stop
       @dblclick.stop
     />
-    <div v-if="pillText" class="pill">{{ pillText }}</div>
+
     <div v-if="$slots.buttons" class="buttons">
       <slot name="buttons" />
     </div>
-    <div v-if="withButtons" class="buttons">
+
+    <div v-if="withButtons" class="match-buttons">
       <Button
         kind="tertiary"
-        icon="ChevronDown"
+        icon="ChevronLeft"
+        :disabled="buttonsDisabled"
+        size="sm"
+        @click.stop="emit('prev')"
+      />
+      <div v-if="hintText" class="hint">
+        <span class="text-caption">{{ hintText }}</span>
+        <Icon name="ArrowsHorizontal" />
+      </div>
+      <Button
+        kind="tertiary"
+        icon="ChevronRight"
+        size="sm"
         :disabled="buttonsDisabled"
         @click.stop="emit('next')"
       />
-      <Button
-        kind="tertiary"
-        icon="ChevronUp"
-        :disabled="buttonsDisabled"
-        @click.stop="emit('prev')"
-      />
+    </div>
+
+    <div v-if="withButtons" class="extra-buttons">
       <Button
         kind="tertiary"
         icon="Backspace"
+        size="sm"
         :disabled="buttonsDisabled"
         @click.stop="emit('prev')"
       />
@@ -131,14 +142,34 @@
     color: var(--dark);
   }
 
-  .buttons {
+  .hint {
     display: flex;
-    gap: 4px;
-    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: var(--weight-medium);
+    color: var(--blue-900);
+    text-align: center;
+  }
 
-    :deep(& > button) {
-      padding: 0 !important;
-      height: fit-content;
+  .match-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+
+    & svg {
+      margin-inline: 0;
     }
+  }
+
+  .extra-buttons {
+    & :deep(svg) {
+      color: var(--dark);
+    }
+    /* & :deep(> button) {
+       padding: 0 !important;
+       height: fit-content;
+       } */
   }
 </style>

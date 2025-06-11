@@ -19,20 +19,15 @@
     sourceMatches: [],
     lastMatchScrolledTo: null,
   });
-  const numMatchesDraft = computed(() => {
-    if (!searchInfo.isSearching) return "0";
-    const numMatches = searchInfo.matches.length;
-    if (numMatches == 0) return "0";
-    const text = `${searchInfo.lastMatchScrolledTo + 1}/${numMatches}`;
-    return text;
-  });
-  const numMatchesSource = computed(() => {
-    if (!searchInfo.isSearching) return "0";
-    const numMatches = searchInfo.sourceMatches.length;
-    if (numMatches == 0) return "0";
-    const text = `${searchInfo.lastMatchScrolledTo + 1}/${numMatches}`;
-    return text;
-  });
+  const numMatchesDraft = computed(() =>
+    searchInfo.isSearching ? searchInfo.matches.length : "0"
+  );
+  const numMatchesSource = computed(() =>
+    searchInfo.isSearching ? searchInfo.sourceMatches.length : "0"
+  );
+  const currentMatchNumber = computed(
+    () => `match ${searchInfo.lastMatchScrolledTo + 1} of ${numMatchesDraft.value}`
+  );
 
   const startSearch = () => {
     searchInfo.matches = highlightSearchMatches(manuscriptRef.value.$el, searchInfo.searchString);
@@ -40,7 +35,6 @@
       file.value.source,
       searchInfo.searchString
     );
-    console.log(searchInfo.sourceMatches);
     searchInfo.lastMatchScrolledTo = null;
     onNext();
   };
@@ -91,9 +85,6 @@
   onMounted(() => searchBar.value?.focusInput());
   useKeyboardShortcuts({ "/": () => searchBar.value?.focusInput() });
 
-  const searchInDraft = ref(true);
-  const searchInSource = ref(false);
-
   useClosable({
     onClose: () => console.log("closing"),
     closeOnEsc: true,
@@ -108,6 +99,7 @@
       ref="searchBar"
       :with-buttons="true"
       placeholder="Search this draft..."
+      :hint-text="searchInfo.isSearching && currentMatchNumber"
       @submit="onSubmit"
       @next="onNext"
       @prev="onPrev"
@@ -115,13 +107,13 @@
     >
     </SearchBar>
     <div class="match-counts">
-      <div class="match-count" @click.stop="searchInDraft = !searchInDraft">
-        <Checkbox v-model="searchInDraft" text="draft" icon="File" />
-        <span class="text-caption"> {{ numMatchesDraft }} matches </span>
+      <div class="match-count">
+        <span class="text-caption"> Draft: {{ numMatchesDraft }} matches </span>
       </div>
-      <div class="match-count" @click.stop="searchInSource = !searchInSource">
-        <Checkbox v-model="searchInSource" text="source" icon="Code" />
-        <span class="text-caption" @click="s"> {{ numMatchesSource }} matches </span>
+      <div class="match-count">
+        <span class="text-caption" @click="searchInSource = !searchInSource">
+          Source: {{ numMatchesSource }} matches
+        </span>
       </div>
     </div>
     <ButtonClose />
@@ -148,11 +140,11 @@
   }
 
   .match-counts {
-    cursor: pointer;
     height: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
+    align-items: flex-end;
     gap: 2px;
 
     & > * {
@@ -161,28 +153,16 @@
       gap: 8px;
     }
 
-    & .btn-toggle {
-      border-radius: 8px;
-      width: 96px;
-      height: 24px;
-      font-size: 11px;
-    }
-
     & .text-caption {
-      color: var(--text-disabled);
+      color: var(--gray-600);
       font-size: 12px;
       transition: color 0.3s ease;
-      width: 80px;
       text-align: right;
     }
+  }
 
-    & .checkbox {
-      width: 80px;
-    }
-
-    & .checkbox > :deep(.text) {
-      font-size: 14px;
-    }
+  .match-count {
+    text-wrap: nowrap;
   }
 
   .match-count:has(.checkbox.active) > .text-caption {
