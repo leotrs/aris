@@ -242,7 +242,7 @@
       scrollbar-gutter: stable;
       border-bottom-left-radius: calc(16px - 12px);
       border-bottom-right-radius: calc(16px - 2px);
-      margin-left: 16px;
+      padding-inline: 16px 8px;
       padding-bottom: 16px;
     }
   }
@@ -266,6 +266,7 @@
   }
 
   .inner.right .middle-column {
+    margin: 0 auto;
     width: 100%;
     max-width: 720px;
     height: fit-content;
