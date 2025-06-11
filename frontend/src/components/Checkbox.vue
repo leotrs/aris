@@ -5,10 +5,17 @@
     text: { type: String, required: true },
     icon: { type: String, default: "" },
   });
+  const active = defineModel({ type: Boolean, default: false });
 </script>
 
 <template>
-  <div class="checkbox">
+  <div
+    class="checkbox"
+    :class="{ active }"
+    tabindex="0"
+    role="button"
+    @click.stop="active = !active"
+  >
     <div class="box"></div>
     <Icon v-if="icon" :name="icon" />
     <span class="text text-default">{{ text }}</span>
@@ -19,6 +26,11 @@
   .checkbox {
     display: flex;
     align-items: flex-end;
+    border-radius: 4px;
+  }
+
+  .checkbox:hover {
+    cursor: pointer;
   }
 
   .box {
@@ -32,5 +44,28 @@
 
   .tabler-icon {
     margin-block: 0px;
+    stroke-width: 1.5px;
+    color: var(--text-disabled);
+  }
+
+  .text {
+    color: var(--text-disabled);
+    font-weight: 350;
+  }
+
+  .checkbox.active {
+  }
+
+  .checkbox.active .box {
+    border-color: var(--border-action-hover);
+    background-color: var(--surface-action);
+  }
+
+  .checkbox.active .tabler-icon {
+    color: var(--almost-black);
+  }
+
+  .checkbox.active .text {
+    color: var(--almost-black);
   }
 </style>
