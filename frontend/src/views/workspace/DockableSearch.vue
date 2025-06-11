@@ -1,6 +1,7 @@
 <script setup>
   import { ref, computed, reactive, watch, inject, onMounted, useTemplateRef } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import useClosable from "@/composables/useClosable.js";
   import {
     highlightSearchMatches,
     highlightSearchMatchesSource,
@@ -85,6 +86,13 @@
 
   const searchInDraft = ref(true);
   const searchInSource = ref(false);
+
+  useClosable({
+    onClose: () => console.log("closing"),
+    closeOnEsc: true,
+    closeOnOutsideClick: false,
+    closeOnCloseButton: true,
+  });
 </script>
 
 <template>
