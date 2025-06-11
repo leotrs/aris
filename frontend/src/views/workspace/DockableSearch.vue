@@ -103,12 +103,12 @@
     </SearchBar>
     <div class="match-count">
       <div class="match-count-draft">
-        <ButtonToggle text="draft" icon="File" button-size="sm" />
-        <span class="text-caption"> {{ numMatchesText }} draft matches </span>
+        <Checkbox text="draft" icon="File" />
+        <span class="text-caption"> {{ numMatchesText }} matches </span>
       </div>
       <div class="mach-count-source">
-        <ButtonToggle text="source" icon="Code" button-size="sm" />
-        <span class="text-caption"> {{ numMatchesText }} source matches </span>
+        <Checkbox text="source" icon="Code" />
+        <span class="text-caption"> {{ numMatchesText }} matches </span>
       </div>
     </div>
     <ButtonClose />
@@ -127,7 +127,7 @@
     margin-top: 16px;
     border-radius: 16px;
     display: flex;
-    gap: 8px;
+    gap: 24px;
     justify-content: space-between;
     align-items: center;
     box-shadow: var(--shadow-soft);
@@ -139,6 +139,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    gap: 2px;
 
     & > * {
       display: flex;
@@ -155,6 +156,14 @@
 
     & .text-caption {
       font-size: 12px;
+    }
+
+    & .checkbox {
+      width: 80px;
+    }
+
+    & .checkbox > :deep(.text) {
+      font-size: 14px;
     }
   }
 
