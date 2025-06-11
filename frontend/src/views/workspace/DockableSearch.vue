@@ -19,9 +19,16 @@
     sourceMatches: [],
     lastMatchScrolledTo: null,
   });
-  const numMatchesText = computed(() => {
+  const numMatchesDraft = computed(() => {
     if (!searchInfo.isSearching) return "0";
     const numMatches = searchInfo.matches.length;
+    if (numMatches == 0) return "0";
+    const text = `${searchInfo.lastMatchScrolledTo + 1}/${numMatches}`;
+    return text;
+  });
+  const numMatchesSource = computed(() => {
+    if (!searchInfo.isSearching) return "0";
+    const numMatches = searchInfo.sourceMatches.length;
     if (numMatches == 0) return "0";
     const text = `${searchInfo.lastMatchScrolledTo + 1}/${numMatches}`;
     return text;
@@ -110,11 +117,11 @@
     <div class="match-counts">
       <div class="match-count" @click.stop="searchInDraft = !searchInDraft">
         <Checkbox v-model="searchInDraft" text="draft" icon="File" />
-        <span class="text-caption"> {{ numMatchesText }} matches </span>
+        <span class="text-caption"> {{ numMatchesDraft }} matches </span>
       </div>
       <div class="match-count" @click.stop="searchInSource = !searchInSource">
         <Checkbox v-model="searchInSource" text="source" icon="Code" />
-        <span class="text-caption" @click="s"> {{ numMatchesText }} matches </span>
+        <span class="text-caption" @click="s"> {{ numMatchesSource }} matches </span>
       </div>
     </div>
     <ButtonClose />
