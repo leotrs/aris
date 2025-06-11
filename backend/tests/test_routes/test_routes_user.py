@@ -502,3 +502,93 @@ async def test_get_profile_picture_invalid_data(client: AsyncClient, authenticat
     response = await client.get(f"/users/{authenticated_user['user_id']}/avatar", headers=headers)
     assert response.status_code == 500
     assert response.json()["detail"] == "Invalid image data"
+
+
+@pytest.mark.asyncio
+async def test_upload_profile_picture_user_not_found(client: AsyncClient, authenticated_user, db_session):
+    """Test uploading profile picture for a user that was deleted."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    from aris.models import User
+
+    user = await db_session.get(User, authenticated_user["user_id"])
+    await db_session.delete(user)
+    await db_session.commit()
+
+    test_image = create_test_image("PNG")
+    files = {"avatar": ("test.png", test_image, "image/png")}
+    response = await client.post(
+        f"/users/{authenticated_user['user_id']}/avatar", headers=headers, files=files
+    )
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_upload_profile_picture_db_error(client: AsyncClient, authenticated_user, db_session, monkeypatch):
+    """Test uploading profile picture when a database error occurs."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    test_image = create_test_image("PNG")
+    files = {"avatar": ("test.png", test_image, "image/png")}
+
+    async def bad_flush(*args, **kwargs):
+        raise TypeError("boom")
+
+    monkeypatch.setattr(db_session, "flush", bad_flush)
+
+    response = await client.post(
+        f"/users/{authenticated_user['user_id']}/avatar", headers=headers, files=files
+    )
+    assert response.status_code == 500
+    assert response.json()["detail"] == "Failed to upload profile picture"
+
+
+@pytest.mark.asyncio
+async def test_get_profile_picture_user_not_found_after_deletion(client: AsyncClient, authenticated_user, db_session):
+    """Test retrieving profile picture for a user that was deleted."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    from aris.models import User
+
+    user = await db_session.get(User, authenticated_user["user_id"])
+    await db_session.delete(user)
+    await db_session.commit()
+
+    response = await client.get(
+        f"/users/{authenticated_user['user_id']}/avatar", headers=headers
+    )
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_delete_profile_picture_user_not_found_after_deletion(client: AsyncClient, authenticated_user, db_session):
+    """Test deleting profile picture when the user was deleted."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    from aris.models import User
+
+    user = await db_session.get(User, authenticated_user["user_id"])
+    await db_session.delete(user)
+    await db_session.commit()
+
+    response = await client.delete(
+        f"/users/{authenticated_user['user_id']}/avatar", headers=headers
+    )
+    assert response.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_delete_profile_picture_db_error(client: AsyncClient, authenticated_user, db_session, monkeypatch):
+    """Test deleting profile picture when a database error occurs."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    test_image = create_test_image("PNG")
+    files = {"avatar": ("test.png", test_image, "image/png")}
+    upload_resp = await client.post(
+        f"/users/{authenticated_user['user_id']}/avatar", headers=headers, files=files
+    )
+    assert upload_resp.status_code == 200
+
+    monkeypatch.setattr(db_session, "commit", lambda *args, **kwargs: (_ for _ in ()).throw(ValueError("fail")))
+
+    response = await client.delete(
+        f"/users/{authenticated_user['user_id']}/avatar", headers=headers
+    )
+    assert response.status_code == 500
+    assert response.json()["detail"] == "Failed to delete profile picture"
