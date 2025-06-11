@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, reactive, watch, inject, onMounted, useTemplateRef } from "vue";
+  import { ref, computed, reactive, watch, inject, onMounted, useTemplateRef } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import {
     highlightSearchMatches,
@@ -82,6 +82,9 @@
   const searchBar = useTemplateRef("searchBar");
   onMounted(() => searchBar.value?.focusInput());
   useKeyboardShortcuts({ "/": () => searchBar.value?.focusInput() });
+
+  const searchInDraft = ref(true);
+  const searchInSource = ref(false);
 </script>
 
 <template>
@@ -95,20 +98,15 @@
       @prev="onPrev"
       @cancel="cancelSearch"
     >
-      <template #buttons>
-        <!-- <ButtonToggle icon="File" />
-           <ButtonToggle icon="Code" /> -->
-        <!-- <ButtonToggle icon="Regex" /> -->
-      </template>
     </SearchBar>
-    <div class="match-count">
-      <div class="match-count-draft">
-        <Checkbox text="draft" icon="File" />
+    <div class="match-counts">
+      <div class="match-count" @click.stop="searchInDraft = !searchInDraft">
+        <Checkbox v-model="searchInDraft" text="draft" icon="File" />
         <span class="text-caption"> {{ numMatchesText }} matches </span>
       </div>
-      <div class="mach-count-source">
-        <Checkbox text="source" icon="Code" />
-        <span class="text-caption"> {{ numMatchesText }} matches </span>
+      <div class="match-count" @click.stop="searchInSource = !searchInSource">
+        <Checkbox v-model="searchInSource" text="source" icon="Code" />
+        <span class="text-caption" @click="s"> {{ numMatchesText }} matches </span>
       </div>
     </div>
     <ButtonClose />
@@ -134,7 +132,8 @@
     padding-right: 8px;
   }
 
-  .match-count {
+  .match-counts {
+    cursor: pointer;
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -155,6 +154,7 @@
     }
 
     & .text-caption {
+      color: var(--text-disabled);
       font-size: 12px;
     }
 
@@ -165,6 +165,10 @@
     & .checkbox > :deep(.text) {
       font-size: 14px;
     }
+  }
+
+  .match-count:has(.checkbox.active) > .text-caption {
+    color: var(--almost-black);
   }
 
   .s-wrapper {
