@@ -6,6 +6,7 @@
     withButtons: { type: Boolean, default: false },
     buttonsDisabled: { type: Boolean, default: true },
     showMatches: { type: Boolean, default: true },
+    placeholder: { type: String, default: "Search..." },
   });
   const emit = defineEmits(["submit", "cancel", "next", "prev"]);
   const searchText = ref("");
@@ -44,7 +45,7 @@
       ref="inputRef"
       v-model="searchText"
       type="text"
-      placeholder="Search..."
+      :placeholder="placeholder"
       @keyup.enter.stop="onEnter"
       @keyup.escape="onEscape"
       @click.stop

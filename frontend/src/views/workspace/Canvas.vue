@@ -135,38 +135,43 @@
 <template>
   <Suspense>
     <div class="outer" :class="{ focus: focusMode, mobile: mobileMode, narrow: drawerOpen }">
-      <div v-if="showEditor" class="inner left">
-        <Editor v-model="file" />
+      <div class="outer-topbar">
+        <DockableSearch v-if="showSearch" />
       </div>
 
-      <div ref="inner-right-ref" class="inner right">
-        <div ref="left-column-ref" class="left-column">
-          <Dock class="dock left top"> </Dock>
-          <Dock class="dock left main"> </Dock>
+      <div class="inner-wrapper">
+        <div v-if="showEditor" class="inner left">
+          <Editor v-model="file" />
         </div>
-        <div ref="middle-column-ref" class="middle-column">
-          <Dock class="dock middle top">
-            <ReaderTopbar :show-title="!isMainTitleVisible" />
-          </Dock>
-          <Dock class="dock middle main">
-            <ManuscriptWrapper
-              v-if="file.html && (!mobileMode || (mobileMode && !showEditor))"
-              ref="manuscript-ref"
-              :class="{ 'title-visible': isMainTitleVisible }"
-              :html-string="file.html || ''"
-              :keys="true"
-              :settings="fileSettings"
-              :show-footer="true"
-            />
-          </Dock>
-        </div>
-        <div ref="right-column-ref" class="right-column">
-          <Dock class="dock right top"> </Dock>
-          <Dock class="dock right main"> </Dock>
+
+        <div ref="inner-right-ref" class="inner right">
+          <div ref="left-column-ref" class="left-column">
+            <Dock class="dock left top"> </Dock>
+            <Dock class="dock left main"> </Dock>
+          </div>
+          <div ref="middle-column-ref" class="middle-column">
+            <Dock class="dock middle top">
+              <ReaderTopbar :show-title="!isMainTitleVisible" />
+            </Dock>
+            <Dock class="dock middle main">
+              <ManuscriptWrapper
+                v-if="file.html && (!mobileMode || (mobileMode && !showEditor))"
+                ref="manuscript-ref"
+                :class="{ 'title-visible': isMainTitleVisible }"
+                :html-string="file.html || ''"
+                :keys="true"
+                :settings="fileSettings"
+                :show-footer="true"
+              />
+            </Dock>
+          </div>
+          <div ref="right-column-ref" class="right-column">
+            <Dock class="dock right top"> </Dock>
+            <Dock class="dock right main"> </Dock>
+          </div>
         </div>
       </div>
 
-      <DockableSearch v-if="showSearch" />
       <DockableMinimap :file="file" side="right" />
 
       <!-- <Drawer :class="{ focus: focusMode, mobile: mobileMode }" /> -->
@@ -180,6 +185,8 @@
     --topbar-height: 48px;
 
     display: flex;
+    flex-direction: column;
+    gap: 16px;
     z-index: 1;
     box-shadow: var(--shadow-soft);
     background-color: v-bind(fileSettings.background);
@@ -203,35 +210,40 @@
     border-radius: 0;
   }
 
-  .inner {
+  .inner-wrapper {
     position: relative;
     display: flex;
-    width: 50%;
-    padding: 0 16px 16px 16px;
-    margin-top: 16px;
+    overflow-y: hidden;
     background-color: v-bind(fileSettings.background);
     justify-content: center;
     will-change: border-radius, height, top;
+    border-radius: 0 0 16px 16px;
     transition:
       border-radius var(--transition-duration) ease,
       height var(--transition-duration) ease,
       top var(--transition-duration) ease;
+  }
+
+  .inner {
+    width: 50%;
 
     &.left {
-      flex-direction: column;
       flex: 1;
       max-width: 600px;
       border-bottom-left-radius: 16px;
       border-bottom-right-radius: 16px;
+      margin-inline: 16px 0;
+      padding-bottom: 16px;
     }
 
     &.right {
       flex: 1;
       overflow-y: auto;
       scrollbar-gutter: stable;
-      border-bottom-left-radius: 16px;
-      border-bottom-right-radius: 16px;
-      padding-right: 8px; /* due to the scrollbar gutter */
+      border-bottom-left-radius: calc(16px - 12px);
+      border-bottom-right-radius: calc(16px - 2px);
+      margin-left: 16px;
+      padding-bottom: 16px;
     }
   }
 
@@ -258,6 +270,7 @@
     max-width: 720px;
     height: fit-content;
     min-height: 100%;
+    scrollbar-gutter: stable;
   }
 
   .inner.right .dock.top.middle {

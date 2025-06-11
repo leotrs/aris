@@ -85,10 +85,10 @@
   <div class="view" :class="{ focus: focusMode, mobile: mobileMode }">
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
     <Canvas v-if="file" v-model="file" :show-editor="showEditor" :show-search="showSearch" />
-    <div class="menus" :class="{ focus: focusMode, mobile: mobileMode }">
-      <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
-      <!-- <UserMenu /> -->
-    </div>
+    <!-- <div class="menus" :class="{ focus: focusMode, mobile: mobileMode }">
+         <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
+         <UserMenu />
+         </div> -->
   </div>
 </template>
 
