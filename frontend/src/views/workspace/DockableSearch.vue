@@ -156,6 +156,7 @@
     & .text-caption {
       color: var(--text-disabled);
       font-size: 12px;
+      transition: color 0.3s ease;
     }
 
     & .checkbox {
