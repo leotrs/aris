@@ -14,7 +14,7 @@
 </script>
 
 <template>
-  <component :is="Icons['Icon' + name]" :class="['tabler-icon', iconClass]">{{ name }}</component>
+  <component :is="Icons['Icon' + name]" :class="['tabler-icon', iconClass]" />
 </template>
 
 <style scoped>
