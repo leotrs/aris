@@ -108,9 +108,10 @@
     outline: var(--border-width) solid var(--border-action);
     height: 48px;
     width: calc(100% - 32px);
-    margin: 16px 16px 0 16px;
+    max-width: 720px;
+    margin-inline: auto;
+    margin-top: 16px;
     border-radius: 16px;
-    z-index: 998;
     display: flex;
     justify-content: space-between;
     align-items: center;
