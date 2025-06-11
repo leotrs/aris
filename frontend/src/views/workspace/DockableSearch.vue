@@ -1,5 +1,5 @@
 <script setup>
-  import { reactive, watch, inject, onMounted, useTemplateRef } from "vue";
+  import { computed, reactive, watch, inject, onMounted, useTemplateRef } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import {
     highlightSearchMatches,
@@ -18,6 +18,7 @@
     sourceMatches: [],
     lastMatchScrolledTo: null,
   });
+  const numMatches = computed(() => searchInfo.matches.length);
 
   const startSearch = () => {
     searchInfo.matches = highlightSearchMatches(manuscriptRef.value.$el, searchInfo.searchString);
@@ -81,7 +82,7 @@
   <div class="dockable-search">
     <SearchBar
       ref="searchBar"
-      :with-buttons="false"
+      :with-buttons="true"
       placeholder="Search this document..."
       @submit="onSubmit"
       @next="onNext"
@@ -94,8 +95,13 @@
         <!-- <ButtonToggle icon="Regex" /> -->
       </template>
     </SearchBar>
-    <div class="match-count file">
-      <span class="text-caption">0 text matches</span>
+    <div v-if="searchInfo.isSearching" class="match-count">
+      <span class="text-caption">
+        {{ searchInfo.lastMatchScrolledTo + 1 }}/{{ numMatches }} document matches
+      </span>
+    </div>
+    <div v-else class="match-count">
+      <span class="text-caption">0 document matches</span>
     </div>
     <ButtonClose />
   </div>
