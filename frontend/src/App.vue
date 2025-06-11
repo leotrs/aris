@@ -168,6 +168,7 @@
     right: 0px;
     color: var(--dark);
     background-color: var(--green-100);
+    opacity: 0.3;
     padding: 4px;
     border-radius: 16px;
     z-index: 999;

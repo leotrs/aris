@@ -79,13 +79,10 @@
 
 <template>
   <div class="dockable-search">
-    <div class="match-count source">
-      <span class="text-caption">0 source matches</span>
-    </div>
     <SearchBar
       ref="searchBar"
-      :with-buttons="true"
-      :buttons-disabled="!searchInfo.isSearching"
+      :with-buttons="false"
+      placeholder="Search this document..."
       @submit="onSubmit"
       @next="onNext"
       @prev="onPrev"
@@ -106,20 +103,17 @@
 
 <style scoped>
   .dockable-search {
+    --border-width: var(--border-extrathin);
     background-color: var(--surface-hover);
-    border: var(--border-extrathin) solid var(--border-action);
-    height: calc(64px + 1px);
-    width: 100%;
-    position: sticky;
-    right: 8px;
-    /* right: 8px;
-       left: 64px; */
+    outline: var(--border-width) solid var(--border-action);
+    height: 48px;
+    width: calc(100% - 32px);
+    margin: 16px 16px 0 16px;
     border-radius: 16px;
     z-index: 998;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-inline: 16px;
     box-shadow: var(--shadow-soft);
   }
 
@@ -132,6 +126,9 @@
 
   .s-wrapper {
     background-color: var(--surface-page) !important;
+    width: 360px;
+    height: 48px;
+    border-width: 1px;
   }
 </style>
 
