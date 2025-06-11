@@ -6,6 +6,14 @@ import { mount } from '@vue/test-utils';
 const flushPromises = () => new Promise(resolve => setTimeout(resolve, 0));
 
 describe('Abstract.vue', () => {
+  beforeAll(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+  });
+
+  afterAll(() => {
+    console.error.mockRestore();
+  });
+
   beforeEach(() => {
     vi.resetModules();
   });

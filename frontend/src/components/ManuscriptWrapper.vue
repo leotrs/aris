@@ -14,10 +14,13 @@
   let onload = ref(null);
   onBeforeMount(async () => {
     const base = api.getUri();
-    await import(/* @vite-ignore */ `${base}/static/jquery-3.6.0.js`);
-    await import(/* @vite-ignore */ `${base}/static/tooltipster.bundle.js`);
-    const module = await import(/* @vite-ignore */ `${base}/static/onload.js`);
-    onload.value = module.onload;
+    try {
+      await import(/* @vite-ignore */ `${base}/static/jquery-3.6.0.js`);
+      await import(/* @vite-ignore */ `${base}/static/tooltipster.bundle.js`);
+      const module = await import(/* @vite-ignore */ `${base}/static/onload.js`);
+      onload.value = module.onload;
+    } catch {
+    }
   });
 
   const selfRef = useTemplateRef("self-ref");
