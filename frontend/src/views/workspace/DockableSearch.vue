@@ -18,7 +18,13 @@
     sourceMatches: [],
     lastMatchScrolledTo: null,
   });
-  const numMatches = computed(() => searchInfo.matches.length);
+  const numMatchesText = computed(() => {
+    if (!searchInfo.isSearching) return "0";
+    const numMatches = searchInfo.matches.length;
+    if (numMatches == 0) return "0";
+    const text = `${searchInfo.lastMatchScrolledTo + 1}/${numMatches}`;
+    return text;
+  });
 
   const startSearch = () => {
     searchInfo.matches = highlightSearchMatches(manuscriptRef.value.$el, searchInfo.searchString);
@@ -83,7 +89,7 @@
     <SearchBar
       ref="searchBar"
       :with-buttons="true"
-      placeholder="Search this document..."
+      placeholder="Search this draft..."
       @submit="onSubmit"
       @next="onNext"
       @prev="onPrev"
@@ -95,13 +101,15 @@
         <!-- <ButtonToggle icon="Regex" /> -->
       </template>
     </SearchBar>
-    <div v-if="searchInfo.isSearching" class="match-count">
-      <span class="text-caption">
-        {{ searchInfo.lastMatchScrolledTo + 1 }}/{{ numMatches }} document matches
-      </span>
-    </div>
-    <div v-else class="match-count">
-      <span class="text-caption">0 document matches</span>
+    <div class="match-count">
+      <div class="match-count-draft">
+        <ButtonToggle text="draft" icon="File" button-size="sm" />
+        <span class="text-caption"> {{ numMatchesText }} draft matches </span>
+      </div>
+      <div class="mach-count-source">
+        <ButtonToggle text="source" icon="Code" button-size="sm" />
+        <span class="text-caption"> {{ numMatchesText }} source matches </span>
+      </div>
     </div>
     <ButtonClose />
   </div>
@@ -119,19 +127,39 @@
     margin-top: 16px;
     border-radius: 16px;
     display: flex;
+    gap: 8px;
     justify-content: space-between;
     align-items: center;
     box-shadow: var(--shadow-soft);
+    padding-right: 8px;
   }
 
   .match-count {
     height: 100%;
     display: flex;
-    align-items: flex-end;
-    padding-block: 8px;
+    flex-direction: column;
+    justify-content: center;
+
+    & > * {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    & .btn-toggle {
+      border-radius: 8px;
+      width: 96px;
+      height: 24px;
+      font-size: 11px;
+    }
+
+    & .text-caption {
+      font-size: 12px;
+    }
   }
 
   .s-wrapper {
+    flex: 1;
     background-color: var(--surface-page) !important;
     width: 360px;
     height: 48px;
