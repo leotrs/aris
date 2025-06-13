@@ -19,15 +19,10 @@
     sourceMatches: [],
     lastMatchScrolledTo: null,
   });
-  const numMatchesDraft = computed(() =>
-    searchInfo.isSearching ? searchInfo.matches.length : "0"
-  );
-  const numMatchesSource = computed(() =>
-    searchInfo.isSearching ? searchInfo.sourceMatches.length : "0"
-  );
-  const currentMatchNumber = computed(
-    () => `match ${searchInfo.lastMatchScrolledTo + 1} of ${numMatchesDraft.value}`
-  );
+  const currentMatchText = computed(() => {
+    if (searchInfo.matches.length < 1) return "0 matches";
+    return `match ${searchInfo.lastMatchScrolledTo + 1} of ${searchInfo.matches.length}`;
+  });
 
   const startSearch = () => {
     searchInfo.matches = highlightSearchMatches(manuscriptRef.value.$el, searchInfo.searchString);
@@ -81,7 +76,10 @@
     searchInfo.lastMatchScrolledTo = scrollTo;
   };
 
+  const selectScope = ref("both views");
+  const selectMode = ref("exact match");
   const searchBar = useTemplateRef("searchBar");
+  const replaceValue = ref("replace with...");
   onMounted(() => searchBar.value?.focusInput());
   useKeyboardShortcuts({ "/": () => searchBar.value?.focusInput() });
 
@@ -95,28 +93,42 @@
 
 <template>
   <div class="dockable-search">
-    <SearchBar
-      ref="searchBar"
-      :with-buttons="true"
-      placeholder="Search this draft..."
-      :hint-text="searchInfo.isSearching && currentMatchNumber"
-      @submit="onSubmit"
-      @next="onNext"
-      @prev="onPrev"
-      @cancel="cancelSearch"
-    >
-    </SearchBar>
-    <div class="match-counts">
-      <div class="match-count">
-        <span class="text-caption"> Draft: {{ numMatchesDraft }} matches </span>
+    <div class="left">
+      <div class="top">
+        <SearchBar
+          ref="searchBar"
+          :with-buttons="false"
+          placeholder="search term..."
+          :show-icon="false"
+          @submit="onSubmit"
+          @next="onNext"
+          @prev="onPrev"
+          @cancel="cancelSearch"
+        >
+        </SearchBar>
+        <Button kind="primary" text="" icon="Search" size="sm" class="cta search" />
       </div>
-      <div class="match-count">
-        <span class="text-caption" @click="searchInSource = !searchInSource">
-          Source: {{ numMatchesSource }} matches
-        </span>
+      <div class="bottom">
+        <SelectBox v-model="selectScope" :options="['both views', 'text', 'source']" />
+        <SelectBox v-model="selectMode" :options="['exact match', 'regex', 'replace']" />
       </div>
     </div>
-    <ButtonClose />
+    <div class="middle">
+      <div class="top">
+        <InputText v-model="replaceValue" />
+      </div>
+      <div class="bottom">
+        <div class="match-count-row">
+          <Button kind="tertiary" text="" icon="ChevronLeft" size="sm" />
+          <span class="match-count text-caption">{{ currentMatchText }}</span>
+          <Button kind="tertiary" text="" icon="ChevronRight" size="sm" />
+        </div>
+        <Button kind="tertiary" text="" icon="Replace" size="sm" class="cta replace" />
+      </div>
+    </div>
+    <div class="right">
+      <ButtonClose />
+    </div>
   </div>
 </template>
 
@@ -125,56 +137,113 @@
     --border-width: var(--border-extrathin);
     background-color: var(--surface-hover);
     outline: var(--border-width) solid var(--blue-300);
-    height: 48px;
-    width: calc(100% - 32px);
+    height: 64px;
+    width: 472px;
     max-width: 720px;
     margin-inline: auto;
     margin-top: 16px;
     border-radius: 16px;
     display: flex;
-    gap: 24px;
-    justify-content: space-between;
-    align-items: center;
     box-shadow: var(--shadow-soft);
-    padding-right: 8px;
+    padding-inline: 14px;
+    padding-block: 6px;
+    gap: 16px;
+    align-items: center;
   }
 
-  .match-counts {
-    height: 100%;
+  .left,
+  .middle,
+  .right {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: flex-end;
-    gap: 2px;
+    gap: 4px;
+  }
+
+  .left {
+    min-width: 212px;
+    max-width: 212px;
+  }
+
+  .middle {
+    min-width: 180px;
+    max-width: 180px;
+  }
+
+  .top,
+  .bottom {
+    display: flex;
+    flex-direction: row;
+    gap: 8px;
+    width: max-content;
 
     & > * {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+      height: 24px;
     }
+  }
 
-    & .text-caption {
-      color: var(--gray-600);
-      font-size: 12px;
-      transition: color 0.3s ease;
-      text-align: right;
+  .select-box {
+    border-width: var(--border-extrathin);
+    width: 108px !important;
+    font-size: 14px;
+  }
+
+  .input-text {
+    border-radius: 8px;
+    background: var(--surface-page);
+    height: 24px !important;
+    width: 180px;
+
+    & :deep(input) {
+      border-radius: 8px !important;
+      height: 100% !important;
+      width: 180px !important;
+    }
+  }
+
+  .match-count-row {
+    flex: 1;
+    display: flex;
+    width: fit-content;
+    align-items: center;
+    & :deep(.tabler-icon) {
+      color: var(--dark) !important;
     }
   }
 
   .match-count {
+    flex: 1;
     text-wrap: nowrap;
   }
 
-  .match-count:has(.checkbox.active) > .text-caption {
-    color: var(--almost-black);
+  .cta.search {
+    background: var(--surface-hint) !important;
+    border-color: var(--surface-hint) !important;
+  }
+
+  .cta.replace :deep(.tabler-icon) {
+    color: var(--dark) !important;
+  }
+
+  .cta :deep(.tabler-icon) {
+    margin: 0 !important;
+    color: var(--almost-black) !important;
   }
 
   .s-wrapper {
     flex: 1;
-    background-color: var(--surface-page) !important;
-    width: 360px;
-    height: 48px;
+    width: 184px !important;
+    height: 24px;
     border-width: 1px;
+    padding-inline: 8px;
+    border-radius: 8px;
+
+    & :deep(input) {
+      width: 184px !important;
+      padding-inline: 0 !important;
+    }
+  }
+
+  .btn-close {
   }
 </style>
 

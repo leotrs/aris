@@ -12,9 +12,10 @@
 
 <template>
   <div class="input-text" :class="direction">
-    <label v-if="label" class="text-label"
-      >{{ label }}<template v-if="direction == 'row'">:</template></label
-    >
+    <label v-if="label" class="text-label">
+      {{ label }}
+      <template v-if="direction == 'row'">:</template>
+    </label>
     <input v-bind="$attrs" v-model="value" :type="type" />
   </div>
 </template>
