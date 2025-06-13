@@ -76,6 +76,7 @@
     searchInfo.lastMatchScrolledTo = scrollTo;
   };
 
+  const advanced = ref(false);
   const selectScope = ref("both views");
   const selectMode = ref("exact match");
   const searchBar = useTemplateRef("searchBar");
@@ -92,63 +93,99 @@
 </script>
 
 <template>
-  <div class="dockable-search">
-    <div class="left">
-      <div class="top">
-        <SearchBar
-          ref="searchBar"
-          :with-buttons="false"
-          placeholder="search term..."
-          :show-icon="false"
-          @submit="onSubmit"
-          @next="onNext"
-          @prev="onPrev"
-          @cancel="cancelSearch"
-        >
-        </SearchBar>
-        <Button kind="primary" text="" icon="Search" size="sm" class="cta search" />
-      </div>
-      <div class="bottom">
-        <SelectBox v-model="selectScope" :options="['both views', 'text', 'source']" />
-        <SelectBox v-model="selectMode" :options="['exact match', 'regex', 'replace']" />
-      </div>
+  <div class="dockable-search" :class="advanced ? 'advanced' : 'simple'">
+    <div v-if="!advanced">
+      <SearchBar
+        ref="searchBar"
+        :with-buttons="true"
+        placeholder="search term..."
+        :show-icon="true"
+        :button-close="true"
+        @submit="onSubmit"
+        @next="onNext"
+        @prev="onPrev"
+        @cancel="cancelSearch"
+      >
+        <template #buttons>
+          <Button
+            kind="tertiary"
+            icon="Adjustments"
+            text=""
+            size="sm"
+            @click.stop="advanced = true"
+          />
+        </template>
+      </SearchBar>
     </div>
-    <div class="middle">
-      <div class="top">
-        <InputText v-model="replaceValue" />
-      </div>
-      <div class="bottom">
-        <div class="match-count-row">
-          <Button kind="tertiary" text="" icon="ChevronLeft" size="sm" />
-          <span class="match-count text-caption">{{ currentMatchText }}</span>
-          <Button kind="tertiary" text="" icon="ChevronRight" size="sm" />
+
+    <template v-if="advanced">
+      <div class="left">
+        <div class="top">
+          <SearchBar
+            ref="searchBar"
+            :with-buttons="false"
+            placeholder="search term..."
+            :show-icon="false"
+            @submit="onSubmit"
+            @next="onNext"
+            @prev="onPrev"
+            @cancel="cancelSearch"
+          />
+          <Button kind="primary" text="" icon="Search" size="sm" class="cta search" />
         </div>
-        <Button kind="tertiary" text="" icon="Replace" size="sm" class="cta replace" />
+        <div class="bottom">
+          <SelectBox v-model="selectScope" :options="['both views', 'text', 'source']" />
+          <SelectBox v-model="selectMode" :options="['exact match', 'regex', 'replace']" />
+        </div>
       </div>
-    </div>
-    <div class="right">
-      <ButtonClose />
-    </div>
+      <div class="middle">
+        <div class="top">
+          <InputText v-model="replaceValue" />
+        </div>
+        <div class="bottom">
+          <div class="match-count-row">
+            <Button kind="tertiary" text="" icon="ChevronLeft" size="sm" />
+            <span class="match-count text-caption">{{ currentMatchText }}</span>
+            <Button kind="tertiary" text="" icon="ChevronRight" size="sm" />
+          </div>
+          <Button kind="tertiary" text="" icon="Replace" size="sm" class="cta replace" />
+        </div>
+      </div>
+      <div class="right">
+        <ButtonClose />
+      </div>
+    </template>
   </div>
 </template>
 
 <style scoped>
   .dockable-search {
-    --border-width: var(--border-extrathin);
-    background-color: var(--surface-hover);
-    outline: var(--border-width) solid var(--blue-300);
-    height: 64px;
-    width: 472px;
-    max-width: 720px;
-    margin-inline: auto;
-    margin-top: 16px;
     border-radius: 16px;
     display: flex;
     box-shadow: var(--shadow-soft);
-    padding-inline: 14px;
-    padding-block: 6px;
-    gap: 16px;
     align-items: center;
+
+    &.advanced {
+      background-color: var(--surface-hover);
+      outline: var(--border-extrathin) solid var(--border-primary);
+      padding-inline: 14px;
+      padding-block: 6px;
+      gap: 16px;
+      height: 64px;
+      width: 472px;
+      max-width: 720px;
+      margin-inline: auto;
+      margin-top: 16px;
+    }
+
+    &.simple {
+      position: fixed;
+      top: 0px;
+      right: 0px;
+      height: 36px;
+      width: 288px;
+      z-index: 999;
+    }
   }
 
   .left,
@@ -229,7 +266,35 @@
     color: var(--almost-black) !important;
   }
 
-  .s-wrapper {
+  .dockable-search.simple .s-wrapper {
+    height: 36px !important;
+    padding-inline: 4px !important;
+    gap: 0px;
+
+    & :deep(input) {
+      padding-inline: 0 !important;
+    }
+
+    & :deep(.btn-close) {
+      height: 24px !important;
+      width: 24px !important;
+      margin-inline: 4px;
+      color: var(--dark);
+    }
+
+    & :deep(.tabler-icon) {
+      height: 24px !important;
+      width: 24px !important;
+      margin: 0 !important;
+      color: var(--dark);
+    }
+
+    & :deep(> svg:first-child) {
+      margin-right: 8px !important;
+    }
+  }
+
+  .dockable-search.advanced .s-wrapper {
     flex: 1;
     width: 184px !important;
     height: 24px;

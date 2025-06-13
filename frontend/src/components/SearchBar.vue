@@ -5,9 +5,9 @@
   const props = defineProps({
     withButtons: { type: Boolean, default: false },
     placeholder: { type: String, default: "Search..." },
-    pillText: { type: String, default: "" },
     hintText: { type: String, default: "" },
     showIcon: { type: Boolean, default: true },
+    buttonClose: { type: Boolean, default: false },
   });
   const emit = defineEmits(["submit", "cancel", "next", "prev"]);
   const searchText = ref("");
@@ -42,6 +42,7 @@
 <template>
   <div class="s-wrapper text-caption" @click.stop="focusInput">
     <IconSearch v-if="showIcon" />
+
     <input
       ref="inputRef"
       v-model="searchText"
@@ -53,10 +54,6 @@
       @dblclick.stop
     />
 
-    <div v-if="$slots.buttons" class="buttons">
-      <slot name="buttons" />
-    </div>
-
     <div v-if="withButtons" class="match-buttons">
       <Button kind="tertiary" icon="ChevronLeft" size="sm" @click.stop="emit('prev')" />
       <div v-if="hintText" class="hint">
@@ -65,6 +62,12 @@
       </div>
       <Button kind="tertiary" icon="ChevronRight" size="sm" @click.stop="emit('next')" />
     </div>
+
+    <div v-if="$slots.buttons" class="buttons">
+      <slot name="buttons" />
+    </div>
+
+    <ButtonClose v-if="buttonClose" />
   </div>
 </template>
 
@@ -111,23 +114,6 @@
 
   .tabler-icon {
     height: 100%;
-    background-color: var(--surface-hover);
-  }
-
-  .pill {
-    display: flex;
-    align-items: center;
-    text-align: center;
-    margin-inline: -16px;
-    background-color: var(--surface-hover);
-    border: var(--border-thin) solid transparent;
-    border-right-color: var(--border-primary);
-    width: min-content;
-    height: 100%;
-    font-size: 13px;
-    padding-block: 4px;
-    padding-inline: 8px;
-    color: var(--dark);
   }
 
   .hint {
