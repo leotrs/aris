@@ -7,6 +7,7 @@
     placeholder: { type: String, default: "Search..." },
     pillText: { type: String, default: "" },
     hintText: { type: String, default: "" },
+    showIcon: { type: Boolean, default: true },
   });
   const emit = defineEmits(["submit", "cancel", "next", "prev"]);
   const searchText = ref("");
@@ -40,8 +41,7 @@
 
 <template>
   <div class="s-wrapper text-caption" @click.stop="focusInput">
-    <IconSearch />
-    <div v-if="pillText" class="pill">{{ pillText }}</div>
+    <IconSearch v-if="showIcon" />
     <input
       ref="inputRef"
       v-model="searchText"
@@ -58,34 +58,12 @@
     </div>
 
     <div v-if="withButtons" class="match-buttons">
-      <Button
-        kind="tertiary"
-        icon="ChevronLeft"
-        :disabled="buttonsDisabled"
-        size="sm"
-        @click.stop="emit('prev')"
-      />
+      <Button kind="tertiary" icon="ChevronLeft" size="sm" @click.stop="emit('prev')" />
       <div v-if="hintText" class="hint">
         <span class="text-caption">{{ hintText }}</span>
         <Icon name="ArrowsHorizontal" />
       </div>
-      <Button
-        kind="tertiary"
-        icon="ChevronRight"
-        size="sm"
-        :disabled="buttonsDisabled"
-        @click.stop="emit('next')"
-      />
-    </div>
-
-    <div v-if="withButtons" class="extra-buttons">
-      <Button
-        kind="tertiary"
-        icon="Backspace"
-        size="sm"
-        :disabled="buttonsDisabled"
-        @click.stop="emit('prev')"
-      />
+      <Button kind="tertiary" icon="ChevronRight" size="sm" @click.stop="emit('next')" />
     </div>
   </div>
 </template>
@@ -93,7 +71,7 @@
 <style scoped>
   .s-wrapper {
     color: var(--extra-dark);
-    background-color: transparent;
+    background-color: var(--surface-page);
     border: 2px solid var(--border-primary);
     border-radius: 16px;
     height: 48px;
@@ -105,7 +83,6 @@
     transition: var(--transition-bg-color), var(--transition-bd-color);
 
     &:has(> input:focus) {
-      background-color: var(--surface-primary);
       border-color: var(--border-action);
       box-shadow: var(--shadow-strong);
     }
@@ -116,9 +93,9 @@
 
     & > input {
       flex: 1;
-      background-color: transparent;
+      background-color: var(--surface-page);
       border: none;
-      padding: 0;
+      padding-inline: 16px;
       margin: 0;
       font: inherit;
       color: inherit;
@@ -132,11 +109,22 @@
     }
   }
 
+  .tabler-icon {
+    height: 100%;
+    background-color: var(--surface-hover);
+  }
+
   .pill {
-    border: var(--border-thin) solid var(--border-primary);
-    border-radius: 16px;
-    width: fit-content;
-    text-wrap: nowrap;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin-inline: -16px;
+    background-color: var(--surface-hover);
+    border: var(--border-thin) solid transparent;
+    border-right-color: var(--border-primary);
+    width: min-content;
+    height: 100%;
+    font-size: 13px;
     padding-block: 4px;
     padding-inline: 8px;
     color: var(--dark);
