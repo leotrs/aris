@@ -138,21 +138,31 @@
           <SelectBox v-model="selectMode" :options="['exact match', 'regex', 'replace']" />
         </div>
       </div>
+
       <div class="middle">
         <div class="top">
-          <InputText v-model="replaceValue" />
+          <InputText v-model="replaceValue" class="replace-input" />
+          <Button kind="tertiary" text="" icon="Replace" size="sm" class="cta replace" />
         </div>
         <div class="bottom">
           <div class="match-count-row">
             <Button kind="tertiary" text="" icon="ChevronLeft" size="sm" />
-            <span class="match-count text-caption">{{ currentMatchText }}</span>
+            <span class="match-count text-caption">match 133 of 234</span>
             <Button kind="tertiary" text="" icon="ChevronRight" size="sm" />
           </div>
-          <Button kind="tertiary" text="" icon="Replace" size="sm" class="cta replace" />
         </div>
       </div>
+
       <div class="right">
         <ButtonClose />
+        <Button
+          kind="tertiary"
+          text=""
+          icon="AdjustmentsOff"
+          size="sm"
+          class="cta simple"
+          @click="advanced = false"
+        />
       </div>
     </template>
   </div>
@@ -160,6 +170,8 @@
 
 <style scoped>
   .dockable-search {
+    --search-input-width: calc(192px + 32px);
+
     border-radius: 16px;
     display: flex;
     box-shadow: var(--shadow-soft);
@@ -168,11 +180,11 @@
     &.advanced {
       background-color: var(--surface-hover);
       outline: var(--border-extrathin) solid var(--border-primary);
-      padding-inline: 14px;
+      padding-inline: 14px 4px;
       padding-block: 6px;
       gap: 16px;
       height: 64px;
-      width: 472px;
+      width: fit-content;
       max-width: 720px;
       margin-inline: auto;
       margin-top: 16px;
@@ -196,14 +208,9 @@
     gap: 4px;
   }
 
-  .left {
-    min-width: 212px;
-    max-width: 212px;
-  }
-
-  .middle {
-    min-width: 180px;
-    max-width: 180px;
+  .right {
+    min-width: 32px;
+    max-width: 32px;
   }
 
   .top,
@@ -220,36 +227,39 @@
 
   .select-box {
     border-width: var(--border-extrathin);
-    width: 108px !important;
+    width: calc((var(--search-input-width) - 8px) * 0.5) !important;
     font-size: 14px;
   }
 
   .input-text {
     border-radius: 8px;
     background: var(--surface-page);
-    height: 24px !important;
-    width: 180px;
+    width: var(--search-input-width);
 
     & :deep(input) {
       border-radius: 8px !important;
       height: 100% !important;
-      width: 180px !important;
+      width: 100%;
     }
   }
 
   .match-count-row {
     flex: 1;
     display: flex;
-    width: fit-content;
+    width: var(--search-input-width);
     align-items: center;
+    gap: 4px;
+
     & :deep(.tabler-icon) {
       color: var(--dark) !important;
     }
-  }
 
-  .match-count {
-    flex: 1;
-    text-wrap: nowrap;
+    & .match-count {
+      flex: 1;
+      text-wrap: nowrap;
+      display: flex;
+      justify-content: center;
+    }
   }
 
   .cta.search {
@@ -261,7 +271,14 @@
     color: var(--dark) !important;
   }
 
-  .cta :deep(.tabler-icon) {
+  button.tertiary {
+    height: 24px;
+    width: 24px;
+    display: flex;
+    justify-content: center;
+  }
+
+  :deep(.tabler-icon) {
     margin: 0 !important;
     color: var(--almost-black) !important;
   }
@@ -296,16 +313,21 @@
 
   .dockable-search.advanced .s-wrapper {
     flex: 1;
-    width: 184px !important;
+    width: 192px !important;
+    width: var(--search-input-width) !important;
     height: 24px;
-    border-width: 1px;
+    border-width: var(--border-extrathin);
     padding-inline: 8px;
     border-radius: 8px;
 
     & :deep(input) {
-      width: 184px !important;
       padding-inline: 0 !important;
     }
+  }
+
+  .dockable-search.simple .s-wrapper {
+    border-radius: 8px;
+    padding-inline: 6px 0px !important;
   }
 
   .btn-close {
