@@ -275,10 +275,18 @@
   .inner.right .dock.top.middle {
     max-width: calc(720px + 48px);
     position: sticky;
-    top: -16px;
+    top: 0;
     z-index: 2;
-    background: v-bind(fileSettings.background) !important;
     margin: 0 auto;
+  }
+
+  .inner.right .middle-column .middle.top {
+    &:has(+ .middle.main .rsm-manuscript.title-visible) {
+      background: transparent !important;
+    }
+    &:has(+ .middle.main .rsm-manuscript:not(.title-visible)) {
+      background: v-bind(fileSettings.background) !important;
+    }
   }
 
   .inner.right .dock.main {
