@@ -268,7 +268,6 @@
   .inner.right .middle-column {
     width: 100%;
     height: fit-content;
-    min-height: 100%;
     scrollbar-gutter: stable;
   }
 
@@ -278,14 +277,20 @@
     top: 0;
     z-index: 2;
     margin: 0 auto;
+    background: v-bind(fileSettings.background) !important;
+
+    will-change: opacity;
+    transition: opacity 0.3s ease;
   }
 
   .inner.right .middle-column .middle.top {
     &:has(+ .middle.main .rsm-manuscript.title-visible) {
-      background: transparent !important;
+      height: 2px;
+      opacity: 0;
     }
     &:has(+ .middle.main .rsm-manuscript:not(.title-visible)) {
-      background: v-bind(fileSettings.background) !important;
+      height: 48px;
+      opacity: 1;
     }
   }
 
