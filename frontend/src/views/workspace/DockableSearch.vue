@@ -79,8 +79,9 @@
   const advanced = ref(false);
   const selectScope = ref("both views");
   const selectMode = ref("exact match");
+  const replaceMode = computed(() => selectMode.value == "replace");
   const searchBar = useTemplateRef("searchBar");
-  const replaceValue = ref("replace with...");
+  const replaceValue = ref("");
   onMounted(() => searchBar.value?.focusInput());
   useKeyboardShortcuts({ "/": () => searchBar.value?.focusInput() });
 
@@ -141,8 +142,10 @@
 
       <div class="middle">
         <div class="top">
-          <InputText v-model="replaceValue" class="replace-input" />
-          <Button kind="tertiary" text="" icon="Replace" size="sm" class="cta replace" />
+          <template v-if="replaceMode">
+            <InputText v-model="replaceValue" class="replace-input" placeholder="replace with..." />
+            <Button kind="tertiary" text="" icon="Replace" size="sm" class="cta replace" />
+          </template>
         </div>
         <div class="bottom">
           <div class="match-count-row">
@@ -234,7 +237,7 @@
   .input-text {
     border-radius: 8px;
     background: var(--surface-page);
-    width: var(--search-input-width);
+    width: calc(var(--search-input-width) - 48px);
 
     & :deep(input) {
       border-radius: 8px !important;
@@ -246,8 +249,9 @@
   .match-count-row {
     flex: 1;
     display: flex;
-    width: var(--search-input-width);
     align-items: center;
+    justify-content: flex-start;
+    width: calc(var(--search-input-width) - 48px + 24px + 8px);
     gap: 4px;
 
     & :deep(.tabler-icon) {

@@ -5,6 +5,7 @@
     label: { type: String, default: "" },
     type: { type: String, default: "text" },
     direction: { type: String, default: "row" },
+    placeholder: { type: String, default: "" },
   });
   const value = defineModel({ type: String });
   defineOptions({ inheritAttrs: false });
@@ -16,7 +17,13 @@
       {{ label }}
       <template v-if="direction == 'row'">:</template>
     </label>
-    <input v-bind="$attrs" v-model="value" :type="type" />
+    <input
+      v-bind="$attrs"
+      v-model="value"
+      class="text-caption"
+      :type="type"
+      :placeholder="placeholder"
+    />
   </div>
 </template>
 
@@ -41,8 +48,6 @@
     border: none;
     padding: 4px;
     margin: 0;
-    font: inherit;
-    color: inherit;
     outline: none;
     width: fit-content;
     border: var(--border-extrathin) solid var(--border-primary);
