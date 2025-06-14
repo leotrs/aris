@@ -266,24 +266,27 @@
   }
 
   .inner.right .middle-column {
-    margin: 0 auto;
     width: 100%;
-    max-width: 720px;
     height: fit-content;
     min-height: 100%;
     scrollbar-gutter: stable;
   }
 
   .inner.right .dock.top.middle {
+    max-width: calc(720px + 48px);
     position: sticky;
     top: -16px;
     z-index: 2;
+    background: v-bind(fileSettings.background) !important;
+    margin: 0 auto;
   }
 
   .inner.right .dock.main {
+    max-width: 720px;
     position: relative;
     overflow-x: visible;
     will-change: padding-top;
+    margin: 0 auto;
     height: fit-content;
     transition: padding-top var(--transition-duration) ease;
 

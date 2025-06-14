@@ -35,6 +35,8 @@
     will-change: opacity, transform, width;
     background-color: transparent;
     top: 16px;
+    max-width: 720px;
+    margin: 0 auto;
 
     transition:
       opacity var(--transition-duration) ease,
@@ -42,7 +44,7 @@
       width var(--transition-duration) ease;
   }
 
-  .tb-wrapper.active {
+  .topbar.active {
     height: 48px;
     box-shadow: var(--shadow-soft);
     border-color: var(--border-primary);
