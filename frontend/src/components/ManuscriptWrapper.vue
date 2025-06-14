@@ -19,8 +19,7 @@
       await import(/* @vite-ignore */ `${base}/static/tooltipster.bundle.js`);
       const module = await import(/* @vite-ignore */ `${base}/static/onload.js`);
       onload.value = module.onload;
-    } catch {
-    }
+    } catch {}
   });
 
   const selfRef = useTemplateRef("self-ref");
@@ -49,6 +48,8 @@
     <div v-if="showFooter" class="middle-footer">
       <div class="footer-logo"><img src="../assets/logo-32px.svg" /></div>
     </div>
+
+    <HighlightMenu />
   </div>
 </template>
 
