@@ -13,14 +13,14 @@
 </script>
 
 <template>
-  <div class="tb-wrapper" :class="{ active: isActive, focus: focusMode }">
+  <div class="topbar" :class="{ active: isActive, focus: focusMode }">
     <FileTitle v-if="!component && showTitle" :file="file" class="text-h6" />
     <component :is="component" v-if="component" ref="middle-comp" :file="file" side="top" />
   </div>
 </template>
 
 <style scoped>
-  .tb-wrapper {
+  .topbar {
     --sidebar-width: 64px;
     --links-width: 120px;
 
@@ -49,7 +49,7 @@
     background-color: v-bind(fileSettings.background);
   }
 
-  .tb-wrapper.focus {
+  .topbar.focus {
     opacity: 0;
     transform: translateY(-100%);
   }
