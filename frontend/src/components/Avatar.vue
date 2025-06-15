@@ -27,34 +27,32 @@
   onMounted(() => fetchAvatar());
 
   const style = computed(() => {
-    if (props.size === "sm")
+    if (props.size === "sm") {
       return {
-        backgroundColor: `${props.user?.color}`,
-      };
-    else {
-      return {
-        backgroundColor: hasAvatar.value ? "transparent" : `${props.user?.color}`,
-        backgroundImage: hasAvatar.value ? `url(${avatarUrl.value})` : "none",
+        backgroundColor: props.user.color,
       };
     }
+    return {
+      backgroundColor: hasAvatar.value ? "transparent" : props.user.color,
+      backgroundImage: hasAvatar.value ? `url(${avatarUrl.value})` : "none",
+    };
   });
 </script>
 
 <template>
   <div
-    v-if="size === 'sm'"
-    class="avatar"
-    :class="[hasAvatar ? 'has-avatar' : '', `size-${size}`]"
+    class="av-wrapper"
+    :class="[hasAvatar ? 'has-avatar' : '', `size-${props.size}`]"
     :style="style"
   >
-    <template v-if="size !== 'sm'">
-      <span v-if="!hasAvatar" class="initials">{{ initials }}</span>
-    </template>
+    <span v-if="!hasAvatar && props.size !== 'sm'" class="av-name">
+      {{ initials }}
+    </span>
   </div>
 </template>
 
 <style scoped>
-  .avatar {
+  .av-wrapper {
     border-radius: 50%;
     width: 32px;
     height: 32px;
@@ -66,12 +64,12 @@
     flex-shrink: 0;
   }
 
-  .avatar.size-sm {
+  .av-wrapper.size-sm {
     width: 16px;
     height: 16px;
   }
 
-  .initials {
+  .av-name {
     color: white;
     font-weight: 600;
     font-size: 14px;
