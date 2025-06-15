@@ -118,6 +118,11 @@
     document.removeEventListener("scroll", updateFloatingPosition, true);
     window.removeEventListener("resize", updateFloatingPosition);
   });
+
+  const inputText = ref("");
+  const onSubmit = () => {
+    console.log("submit", inputText.value);
+  };
 </script>
 
 <template>
@@ -127,7 +132,7 @@
         <ColorPicker :colors="colors" :labels="false" />
       </div>
       <div class="middle">
-        <AnnotationInputBox :expanded="expanded" />
+        <AnnotationInputBox v-model="inputText" :expanded="expanded" @submit="onSubmit" />
       </div>
       <div class="right">
         <Button
