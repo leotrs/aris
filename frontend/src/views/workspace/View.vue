@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, inject, provide, onMounted, watch } from "vue";
+  import { ref, reactive, computed, inject, provide, onMounted, watch } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { File } from "@/models/File.js";
@@ -18,6 +18,9 @@
     return found || {};
   });
   provide("file", file);
+
+  const annotations = reactive([]);
+  provide("annotations", annotations);
 
   // If no file matches the route param, redirect to 404
   const router = useRouter();

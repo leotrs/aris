@@ -20,6 +20,7 @@
   import Editor from "./Editor.vue";
   import DockableMinimap from "./DockableMinimap.vue";
   import DockableSearch from "./DockableSearch.vue";
+  import DockableAnnotations from "./DockableAnnotations.vue";
 
   const props = defineProps({
     showEditor: { type: Boolean, default: false },
@@ -167,7 +168,9 @@
           </div>
           <div ref="right-column-ref" class="right-column">
             <Dock class="dock right top"> </Dock>
-            <Dock class="dock right main"> </Dock>
+            <Dock class="dock right main">
+              <DockableAnnotations />
+            </Dock>
           </div>
         </div>
       </div>
@@ -244,6 +247,7 @@
       border-bottom-right-radius: calc(16px - 2px);
       padding-inline: 16px 8px;
       padding-bottom: 16px;
+      display: flex;
     }
   }
 
