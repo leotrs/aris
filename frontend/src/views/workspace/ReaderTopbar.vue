@@ -34,6 +34,7 @@
     transform: translateY(0);
     will-change: opacity, transform, width;
     background-color: transparent;
+    z-index: 9999;
 
     max-width: 720px;
     margin: 0 auto;
