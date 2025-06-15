@@ -99,7 +99,7 @@
 
 <template>
   <Teleport to="body">
-    <div v-if="!visible" ref="self-ref" :style="floatingStyles" class="hl-menu">
+    <div v-if="visible" ref="self-ref" :style="floatingStyles" class="hl-menu">
       <div class="left">
         <ColorPicker :colors="colors" :labels="false" />
       </div>
