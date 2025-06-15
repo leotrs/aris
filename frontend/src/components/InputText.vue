@@ -23,7 +23,6 @@
       class="text-caption"
       :type="type"
       :placeholder="placeholder"
-      @click.stop
     />
   </div>
 </template>

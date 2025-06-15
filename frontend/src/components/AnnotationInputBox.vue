@@ -4,15 +4,17 @@
   const props = defineProps({
     expanded: { type: Boolean, default: true },
   });
+  const emit = defineEmits(["submit"]);
+  const value = defineModel({ type: String, default: "" });
 
   const onSubmit = () => {
-    console.log("submit");
+    emit("submit", value.value);
   };
 </script>
 
 <template>
   <div class="ann-input-box" :class="expanded ? 'expanded' : ''">
-    <InputText />
+    <InputText v-model="value" @keyup.enter="onSubmit" />
     <div class="buttons">
       <Button v-if="expanded" class="edit" kind="tertiary" size="sm" icon="Edit" />
       <Button class="send" kind="tertiary" size="sm" icon="Send2" @click="onSubmit" />
