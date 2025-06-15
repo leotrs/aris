@@ -43,6 +43,7 @@
     justify-content: space-between;
     gap: 8px;
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .swatch {
