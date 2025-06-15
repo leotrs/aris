@@ -54,7 +54,7 @@
 </script>
 
 <template>
-  <div class="view">
+  <div class="view" @keydown.enter="onLogin">
     <!-- <div class="left">
          <div class="logo"></div>
          <div class="tagline">
