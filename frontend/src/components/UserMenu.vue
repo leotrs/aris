@@ -1,5 +1,5 @@
 <script setup>
-  import { useTemplateRef } from "vue";
+  import { inject, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
 
   const menuRef = useTemplateRef("menu-ref");
@@ -15,13 +15,14 @@
   };
 
   defineExpose({ toggle: () => menuRef.value.toggle() });
+  const user = inject("user");
 </script>
 
 <template>
   <div class="um-wrapper" @click.stop="onClick">
     <ContextMenu ref="menu-ref" icon="">
       <template #trigger>
-        <Avatar />
+        <Avatar :user="user" />
       </template>
       <ContextMenuItem icon="User" caption="Account" @click="() => goTo('account')" />
       <ContextMenuItem icon="Settings" caption="Settings" @click="() => goTo('settings')" />
