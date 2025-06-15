@@ -67,7 +67,6 @@ async def sample_file(client: AsyncClient, authenticated_user):
 # Tag CRUD Tests
 
 
-@pytest.mark.asyncio
 async def test_create_tag_without_auth(client: AsyncClient):
     """Test that create tag endpoint requires authentication."""
     response = await client.post(
@@ -80,7 +79,6 @@ async def test_create_tag_without_auth(client: AsyncClient):
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_create_tag_with_auth(client: AsyncClient, authenticated_user):
     """Test creating a tag with authentication."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -100,7 +98,6 @@ async def test_create_tag_with_auth(client: AsyncClient, authenticated_user):
     assert "id" in data
 
 
-@pytest.mark.asyncio
 async def test_create_tag_nonexistent_user(client: AsyncClient, authenticated_user):
     """Test creating a tag for a nonexistent user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -116,7 +113,6 @@ async def test_create_tag_nonexistent_user(client: AsyncClient, authenticated_us
     assert "User not found" in response.json()["detail"]
 
 
-@pytest.mark.asyncio
 async def test_create_tag_invalid_data(client: AsyncClient, authenticated_user):
     """Test creating a tag with invalid data."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -131,14 +127,12 @@ async def test_create_tag_invalid_data(client: AsyncClient, authenticated_user):
     assert response.status_code == 422
 
 
-@pytest.mark.asyncio
 async def test_get_user_tags_without_auth(client: AsyncClient):
     """Test that get user tags endpoint requires authentication."""
     response = await client.get("/users/1/tags")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_get_user_tags_with_auth(client: AsyncClient, authenticated_user):
     """Test getting user tags with authentication."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -147,7 +141,6 @@ async def test_get_user_tags_with_auth(client: AsyncClient, authenticated_user):
     assert isinstance(response.json(), list)
 
 
-@pytest.mark.asyncio
 async def test_get_user_tags_with_existing_tag(client: AsyncClient, sample_tag):
     """Test getting user tags when tags exist."""
     headers = {"Authorization": f"Bearer {sample_tag['token']}"}
@@ -159,7 +152,6 @@ async def test_get_user_tags_with_existing_tag(client: AsyncClient, sample_tag):
     assert "Test Tag" in tag_names
 
 
-@pytest.mark.asyncio
 async def test_update_tag_without_auth(client: AsyncClient):
     """Test that update tag endpoint requires authentication."""
     response = await client.put(
@@ -174,7 +166,6 @@ async def test_update_tag_without_auth(client: AsyncClient):
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_update_tag_with_auth(client: AsyncClient, sample_tag, authenticated_user):
     """Test updating a tag with authentication."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -196,7 +187,6 @@ async def test_update_tag_with_auth(client: AsyncClient, sample_tag, authenticat
     assert data["id"] == tag_data["id"]
 
 
-@pytest.mark.asyncio
 async def test_update_nonexistent_tag(client: AsyncClient, authenticated_user):
     """Test updating a tag that doesn't exist."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -214,14 +204,12 @@ async def test_update_nonexistent_tag(client: AsyncClient, authenticated_user):
     assert "Tag not found" in response.json()["detail"]
 
 
-@pytest.mark.asyncio
 async def test_delete_tag_without_auth(client: AsyncClient):
     """Test that delete tag endpoint requires authentication."""
     response = await client.delete("/users/1/tags/1")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_delete_tag_with_auth(client: AsyncClient, sample_tag, authenticated_user):
     """Test deleting a tag with authentication."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -233,7 +221,6 @@ async def test_delete_tag_with_auth(client: AsyncClient, sample_tag, authenticat
     assert response.status_code == 204
 
 
-@pytest.mark.asyncio
 async def test_delete_nonexistent_tag(client: AsyncClient, authenticated_user):
     """Test deleting a tag that doesn't exist."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -248,14 +235,12 @@ async def test_delete_nonexistent_tag(client: AsyncClient, authenticated_user):
 # File-Tag Association Tests
 
 
-@pytest.mark.asyncio
 async def test_get_user_file_tags_without_auth(client: AsyncClient):
     """Test that get user file tags endpoint requires authentication."""
     response = await client.get("/users/1/files/1/tags")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_get_user_file_tags_with_auth(client: AsyncClient, authenticated_user, sample_file):
     """Test getting user file tags with authentication."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -266,7 +251,6 @@ async def test_get_user_file_tags_with_auth(client: AsyncClient, authenticated_u
     assert response.status_code == 200
 
 
-@pytest.mark.asyncio
 async def test_get_user_file_tags_invalid_file(client: AsyncClient, authenticated_user):
     """Test getting tags for a nonexistent file."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -278,14 +262,12 @@ async def test_get_user_file_tags_invalid_file(client: AsyncClient, authenticate
     assert "Error fetching tags for file" in response.json()["detail"]
 
 
-@pytest.mark.asyncio
 async def test_add_tag_to_file_without_auth(client: AsyncClient):
     """Test that add tag to file endpoint requires authentication."""
     response = await client.post("/users/1/files/1/tags/1")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_add_tag_to_file_with_auth(
     client: AsyncClient, authenticated_user, sample_file, sample_tag
 ):
@@ -300,7 +282,6 @@ async def test_add_tag_to_file_with_auth(
     assert response.json()["message"] == "Tag added successfully"
 
 
-@pytest.mark.asyncio
 async def test_add_tag_to_file_invalid_data(client: AsyncClient, authenticated_user):
     """Test adding a tag to a file with invalid data."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -312,14 +293,12 @@ async def test_add_tag_to_file_invalid_data(client: AsyncClient, authenticated_u
     assert "Error adding tag" in response.json()["detail"]
 
 
-@pytest.mark.asyncio
 async def test_remove_tag_from_file_without_auth(client: AsyncClient):
     """Test that remove tag from file endpoint requires authentication."""
     response = await client.delete("/users/1/files/1/tags/1")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_remove_tag_from_file_with_auth(
     client: AsyncClient, authenticated_user, sample_file, sample_tag
 ):
@@ -342,7 +321,6 @@ async def test_remove_tag_from_file_with_auth(
     assert response.json()["message"] == "Tag removed successfully"
 
 
-@pytest.mark.asyncio
 async def test_remove_tag_from_file_invalid_data(client: AsyncClient, authenticated_user):
     """Test removing a tag from a file with invalid data."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -358,7 +336,6 @@ import pytest
 from httpx import AsyncClient
 
 
-@pytest.mark.asyncio
 async def test_create_tag_invalid_names(authenticated_user, client: AsyncClient):
     """
     Test creating tags with invalid names:
@@ -380,7 +357,6 @@ async def test_create_tag_invalid_names(authenticated_user, client: AsyncClient)
         assert "Tag name" in response.text or "value_error" in response.text
 
 
-@pytest.mark.asyncio
 async def test_update_tag_not_owned(sample_tag, client: AsyncClient):
     """
     Test updating a tag with a user_id different from the authenticated user's.
@@ -401,7 +377,6 @@ async def test_update_tag_not_owned(sample_tag, client: AsyncClient):
     assert response.json()["detail"] == "Tag not found"
 
 
-@pytest.mark.asyncio
 async def test_delete_nonexistent_tag(authenticated_user, client: AsyncClient):
     """
     Test deleting a tag that does not exist.
@@ -418,7 +393,6 @@ async def test_delete_nonexistent_tag(authenticated_user, client: AsyncClient):
     assert response.json()["detail"] == "Tag not found"
 
 
-@pytest.mark.asyncio
 async def test_add_tag_to_file_invalid_tag(client: AsyncClient, authenticated_user, sample_file):
     """
     Test adding a tag to a file with an invalid tag ID.
@@ -435,7 +409,6 @@ async def test_add_tag_to_file_invalid_tag(client: AsyncClient, authenticated_us
     assert "Error adding tag" in response.json()["detail"]
 
 
-@pytest.mark.asyncio
 async def test_get_user_tags_empty(client: AsyncClient, authenticated_user):
     """
     Test getting tags for a user who has no tags.
@@ -462,7 +435,6 @@ async def test_get_user_tags_empty(client: AsyncClient, authenticated_user):
     assert len(data) == 0
 
 
-@pytest.mark.asyncio
 async def test_remove_tag_from_file_not_assigned(
     client: AsyncClient, authenticated_user, sample_file, sample_tag
 ):
@@ -506,7 +478,6 @@ def test_tagcreate_validate_name():
         TagCreate(name=too_long)
 
 
-@pytest.mark.asyncio
 async def test_unauthorized_access(client: AsyncClient):
     """
     Test making a request without Authorization header.
@@ -519,7 +490,6 @@ async def test_unauthorized_access(client: AsyncClient):
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_create_tag_crud_error(monkeypatch, client: AsyncClient, authenticated_user):
     """
     Test handling of error when CRUD create_tag returns None.
@@ -537,7 +507,6 @@ async def test_create_tag_crud_error(monkeypatch, client: AsyncClient, authentic
     assert response.json()["detail"] == "Error creating tag"
 
 
-@pytest.mark.asyncio
 async def test_update_tag_crud_error(monkeypatch, client: AsyncClient, authenticated_user, sample_tag):
     """
     Test handling of error when CRUD update_tag raises ValueError.
@@ -561,7 +530,6 @@ async def test_update_tag_crud_error(monkeypatch, client: AsyncClient, authentic
     assert response.json()["detail"] == "Error updating tag update failed"
 
 
-@pytest.mark.asyncio
 async def test_delete_tag_crud_error(monkeypatch, client: AsyncClient, authenticated_user, sample_tag):
     """
     Test handling of error when CRUD soft_delete_tag returns None.

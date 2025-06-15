@@ -3,7 +3,6 @@
 import pytest
 
 
-@pytest.mark.asyncio
 async def test_health_check(client):
     """Test health endpoint returns ok status."""
     response = await client.get("/health")

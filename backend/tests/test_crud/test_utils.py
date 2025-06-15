@@ -25,19 +25,16 @@ class DummyProcessor:
         pass
 
 
-@pytest.mark.asyncio
 async def test_extract_title_none_file():
     assert await extract_title(None) == ""
 
 
-@pytest.mark.asyncio
 async def test_extract_title_existing_title():
     file = SimpleNamespace(title="Hello", source="ignored")
     result = await extract_title(file)
     assert result == "Hello"
 
 
-@pytest.mark.asyncio
 async def test_extract_title_parsed(monkeypatch):
     file = SimpleNamespace(title="", source="some source")
     monkeypatch.setattr(rsm.app, "ParserApp", DummyParser)
@@ -45,7 +42,6 @@ async def test_extract_title_parsed(monkeypatch):
     assert result == "ParsedTitle"
 
 
-@pytest.mark.asyncio
 async def test_extract_section_found(monkeypatch):
     file = SimpleNamespace(source="dummy")
     monkeypatch.setattr(rsm.app, "ProcessorApp", DummyProcessor)
@@ -54,7 +50,6 @@ async def test_extract_section_found(monkeypatch):
     assert "Content" in element.text
 
 
-@pytest.mark.asyncio
 async def test_extract_section_not_found(monkeypatch):
     class NoSectionProcessor:
         def __init__(self, plain, handrails=True):

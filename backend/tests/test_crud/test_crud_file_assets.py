@@ -9,7 +9,6 @@ from aris.crud.file_assets import (
 from aris.models import FileAsset
 
 
-@pytest.mark.asyncio
 async def test_create_asset(db_session, test_user):
     """Test creating a new file asset"""
     payload = FileAssetCreate(
@@ -31,7 +30,6 @@ async def test_create_asset(db_session, test_user):
     assert asset.deleted_at is None
 
 
-@pytest.mark.asyncio
 async def test_get_user_asset(db_session, test_user):
     """Test getting a user's asset"""
     # Create an asset first
@@ -52,14 +50,12 @@ async def test_get_user_asset(db_session, test_user):
     assert asset.owner_id == test_user.id
 
 
-@pytest.mark.asyncio
 async def test_get_user_asset_not_found(db_session, test_user):
     """Test getting a non-existent asset returns None"""
     asset = await FileAssetDB.get_user_asset(999, test_user.id, db_session)
     assert asset is None
 
 
-@pytest.mark.asyncio
 async def test_get_user_asset_wrong_owner(db_session, test_user):
     """Test getting an asset owned by another user returns None"""
     # Create an asset
@@ -73,7 +69,6 @@ async def test_get_user_asset_wrong_owner(db_session, test_user):
     assert asset is None
 
 
-@pytest.mark.asyncio
 async def test_get_user_asset_soft_deleted(db_session, test_user):
     """Test getting a soft-deleted asset returns None"""
     # Create and soft delete an asset
@@ -88,7 +83,6 @@ async def test_get_user_asset_soft_deleted(db_session, test_user):
     assert asset is None
 
 
-@pytest.mark.asyncio
 async def test_list_user_assets(db_session, test_user):
     """Test listing all user assets"""
     # Create multiple assets
@@ -116,7 +110,6 @@ async def test_list_user_assets(db_session, test_user):
     assert "file2.jpg" in filenames
 
 
-@pytest.mark.asyncio
 async def test_list_user_assets_excludes_soft_deleted(db_session, test_user):
     """Test that listing assets excludes soft-deleted ones"""
     # Create two assets
@@ -139,7 +132,6 @@ async def test_list_user_assets_excludes_soft_deleted(db_session, test_user):
     assert assets[0].filename == "keep.txt"
 
 
-@pytest.mark.asyncio
 async def test_update_asset(db_session, test_user):
     """Test updating an asset"""
     # Create an asset
@@ -162,7 +154,6 @@ async def test_update_asset(db_session, test_user):
     assert updated_asset.id == asset.id
 
 
-@pytest.mark.asyncio
 async def test_update_asset_partial(db_session, test_user):
     """Test partially updating an asset"""
     # Create an asset
@@ -180,7 +171,6 @@ async def test_update_asset_partial(db_session, test_user):
     assert updated_asset.content == "b3JpZ2luYWw="  # unchanged
 
 
-@pytest.mark.asyncio
 async def test_soft_delete_asset(db_session, test_user):
     """Test soft deleting an asset"""
     # Create an asset
@@ -200,7 +190,6 @@ async def test_soft_delete_asset(db_session, test_user):
     assert isinstance(asset.deleted_at, datetime)
 
 
-@pytest.mark.asyncio
 async def test_file_asset_create_validation_image(db_session, test_user):
     """Test FileAssetCreate validation for image content"""
     # Valid base64 image content
@@ -215,7 +204,6 @@ async def test_file_asset_create_validation_image(db_session, test_user):
     assert asset.mime_type == "image/jpeg"
 
 
-@pytest.mark.asyncio
 async def test_file_asset_create_validation_invalid_base64():
     """Test FileAssetCreate validation fails for invalid base64 image content"""
     with pytest.raises(ValueError, match="Invalid base64-encoded string"):
@@ -224,7 +212,6 @@ async def test_file_asset_create_validation_invalid_base64():
         )
 
 
-@pytest.mark.asyncio
 async def test_file_asset_update_validation():
     """Test FileAssetUpdate validation for content"""
     # Valid base64

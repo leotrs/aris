@@ -88,7 +88,6 @@ OUTPUT = """
 """
 
 
-@pytest.mark.asyncio
 async def test_render(client: AsyncClient):
     """Test that files endpoint requires authentication."""
     response = await client.post("/render", json={"source": ":rsm:foo::"})

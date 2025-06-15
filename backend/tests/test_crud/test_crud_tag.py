@@ -12,7 +12,6 @@ from aris.crud.tag import (
 )
 
 
-@pytest.mark.asyncio
 async def test_create_tag_success(db_session, test_user):
     tag = await create_tag(test_user.id, "TestTag", "blue", db_session)
     assert tag.name == "TestTag"
@@ -20,13 +19,11 @@ async def test_create_tag_success(db_session, test_user):
     assert tag.user_id == test_user.id
 
 
-@pytest.mark.asyncio
 async def test_create_tag_user_not_found(db_session):
     with pytest.raises(ValueError, match="User not found"):
         await create_tag(9999, "Name", "color", db_session)
 
 
-@pytest.mark.asyncio
 async def test_get_user_tags(db_session, test_user):
     await create_tag(test_user.id, "A", "red", db_session)
     await create_tag(test_user.id, "B", "green", db_session)
@@ -37,7 +34,6 @@ async def test_get_user_tags(db_session, test_user):
     assert tags[1]["name"] == "B"
 
 
-@pytest.mark.asyncio
 async def test_update_tag(db_session, test_user):
     tag = Tag(name="Old", color="gray", user_id=test_user.id)
     db_session.add(tag)
@@ -49,7 +45,6 @@ async def test_update_tag(db_session, test_user):
     assert updated.color == "blue"
 
 
-@pytest.mark.asyncio
 async def test_soft_delete_tag(db_session, test_user):
     tag = Tag(name="Softie", color="orange", user_id=test_user.id)
     db_session.add(tag)
@@ -64,7 +59,6 @@ async def test_soft_delete_tag(db_session, test_user):
     assert deleted.deleted_at is not None
 
 
-@pytest.mark.asyncio
 async def test_add_and_remove_tag_from_file(db_session, test_user):
     file = File(owner_id=test_user.id)
     tag = Tag(name="linked", color="purple", user_id=test_user.id)
@@ -86,7 +80,6 @@ async def test_add_and_remove_tag_from_file(db_session, test_user):
     assert post.first() is None
 
 
-@pytest.mark.asyncio
 async def test_get_user_file_tags(db_session, test_user):
     file = File(owner_id=test_user.id)
     tag1 = Tag(name="T1", color="red", user_id=test_user.id)
@@ -108,19 +101,16 @@ from unittest.mock import AsyncMock, patch
 from datetime import datetime
 
 
-@pytest.mark.asyncio
 async def test_create_tag_without_name_raises(db_session, test_user):
     with pytest.raises(ValueError, match="Name not provided"):
         await create_tag(test_user.id, "", "red", db_session)
 
 
-@pytest.mark.asyncio
 async def test_create_tag_with_no_color_assigns_next_color(db_session, test_user):
     tag = await create_tag(test_user.id, "AutoColorTag", None, db_session)
     assert tag.color in ("red", "purple", "green", "orange")
 
 
-@pytest.mark.asyncio
 async def test_create_tag_commit_failure_rolls_back(db_session, test_user):
     # Patch db.commit to raise SQLAlchemyError to test rollback and None return
     with patch.object(db_session, "commit", new_callable=AsyncMock) as mock_commit:
@@ -129,13 +119,11 @@ async def test_create_tag_commit_failure_rolls_back(db_session, test_user):
         assert tag is None
 
 
-@pytest.mark.asyncio
 async def test_update_tag_not_found_raises(db_session, test_user):
     with pytest.raises(ValueError, match="Tag not found"):
         await update_tag(999999, test_user.id, "NewName", "blue", db_session)
 
 
-@pytest.mark.asyncio
 async def test_update_tag_with_partial_update(db_session, test_user):
     tag = Tag(name="Partial", color="gray", user_id=test_user.id)
     db_session.add(tag)
@@ -153,19 +141,16 @@ async def test_update_tag_with_partial_update(db_session, test_user):
     assert updated.color == "blue"
 
 
-@pytest.mark.asyncio
 async def test_soft_delete_tag_not_found_raises(db_session, test_user):
     with pytest.raises(ValueError, match="Tag not found"):
         await soft_delete_tag(999999, test_user.id, db_session)
 
 
-@pytest.mark.asyncio
 async def test_get_user_file_tags_file_not_found_raises(db_session, test_user):
     with pytest.raises(ValueError, match="File with id 9999 not found or does not belong to user"):
         await get_user_file_tags(test_user.id, 9999, db_session)
 
 
-@pytest.mark.asyncio
 async def test_add_tag_to_file_errors(db_session, test_user):
     # file not found
     with pytest.raises(ValueError, match="Unauthorized or file not found"):
@@ -181,7 +166,6 @@ async def test_add_tag_to_file_errors(db_session, test_user):
         await add_tag_to_file(test_user.id, file.id, 99999, db_session)
 
 
-@pytest.mark.asyncio
 async def test_add_tag_to_file_already_assigned(db_session, test_user):
     file = File(owner_id=test_user.id)
     tag = Tag(name="dup", color="red", user_id=test_user.id)
@@ -198,7 +182,6 @@ async def test_add_tag_to_file_already_assigned(db_session, test_user):
         await add_tag_to_file(test_user.id, file.id, tag.id, db_session)
 
 
-@pytest.mark.asyncio
 async def test_remove_tag_from_file_errors(db_session, test_user):
     # file not found
     with pytest.raises(ValueError, match="Unauthorized or file not found"):
@@ -214,7 +197,6 @@ async def test_remove_tag_from_file_errors(db_session, test_user):
         await remove_tag_from_file(test_user.id, file.id, 99999, db_session)
 
 
-@pytest.mark.asyncio
 async def test_remove_tag_from_file_tag_not_assigned(db_session, test_user):
     file = File(owner_id=test_user.id)
     tag = Tag(name="notassigned", color="blue", user_id=test_user.id)

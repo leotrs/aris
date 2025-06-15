@@ -61,19 +61,16 @@ def sample_settings():
 class TestDefaultSettings:
     """Test default settings endpoints."""
 
-    @pytest.mark.asyncio
     async def test_upsert_default_settings_without_auth(self, client: AsyncClient, sample_settings):
         """Test that default settings endpoint requires authentication."""
         response = await client.post("/settings/defaults", json=sample_settings)
         assert response.status_code == 401
 
-    @pytest.mark.asyncio
     async def test_get_default_settings_without_auth(self, client: AsyncClient):
         """Test that get default settings endpoint requires authentication."""
         response = await client.get("/settings/defaults")
         assert response.status_code == 401
 
-    @pytest.mark.asyncio
     async def test_create_default_settings(
         self, client: AsyncClient, auth_headers, sample_settings, authenticated_user
     ):
@@ -96,7 +93,6 @@ class TestDefaultSettings:
         assert "created_at" in data
         assert "updated_at" in data
 
-    @pytest.mark.asyncio
     async def test_update_default_settings(
         self, client: AsyncClient, auth_headers, sample_settings, authenticated_user
     ):
@@ -121,7 +117,6 @@ class TestDefaultSettings:
         assert data["columns"] == 3
         assert data["background"] == sample_settings["background"]  # Unchanged field
 
-    @pytest.mark.asyncio
     async def test_get_default_settings_none_exist(
         self, client: AsyncClient, auth_headers, authenticated_user
     ):
@@ -144,7 +139,6 @@ class TestDefaultSettings:
             assert data["margin_width"] == "16px"
             assert data["columns"] == 1
 
-    @pytest.mark.asyncio
     async def test_get_default_settings_exist(
         self, client: AsyncClient, auth_headers, sample_settings, authenticated_user
     ):
@@ -163,7 +157,6 @@ class TestDefaultSettings:
         assert data["font_size"] == sample_settings["font_size"]
         assert data["columns"] == sample_settings["columns"]
 
-    @pytest.mark.asyncio
     async def test_upsert_default_settings_partial_data(
         self, client: AsyncClient, auth_headers, authenticated_user
     ):
@@ -187,19 +180,16 @@ class TestDefaultSettings:
 class TestFileSettings:
     """Test file-specific settings endpoints."""
 
-    @pytest.mark.asyncio
     async def test_get_file_settings_without_auth(self, client: AsyncClient):
         """Test that file settings endpoint requires authentication."""
         response = await client.get("/settings/1")
         assert response.status_code == 401
 
-    @pytest.mark.asyncio
     async def test_upsert_file_settings_without_auth(self, client: AsyncClient, sample_settings):
         """Test that upsert file settings endpoint requires authentication."""
         response = await client.post("/settings/1", json=sample_settings)
         assert response.status_code == 401
 
-    @pytest.mark.asyncio
     async def test_get_file_settings_none_exist(
         self, client: AsyncClient, auth_headers, test_file, authenticated_user
     ):
@@ -222,7 +212,6 @@ class TestFileSettings:
             assert data["font_size"] == "16px"
             assert data["columns"] == 1
 
-    @pytest.mark.asyncio
     async def test_upsert_file_settings_file_not_found(
         self, client: AsyncClient, auth_headers, sample_settings
     ):
@@ -236,7 +225,6 @@ class TestFileSettings:
         assert response.status_code == 404
         assert response.json()["detail"] == "File not found or access denied"
 
-    @pytest.mark.asyncio
     async def test_upsert_file_settings_access_denied(self, client: AsyncClient, sample_settings):
         """Test upserting settings for file owned by another user."""
         # Create another user
@@ -290,7 +278,6 @@ class TestFileSettings:
 class TestSettingsIntegration:
     """Integration tests for settings functionality."""
 
-    @pytest.mark.asyncio
     async def test_settings_isolation_between_users(self, client: AsyncClient, sample_settings):
         """Test that settings are isolated between different users."""
         # Create first user and settings
@@ -335,7 +322,6 @@ class TestSettingsIntegration:
         assert user1_settings.json()["columns"] == sample_settings["columns"]
         assert user2_settings.json()["columns"] == different_settings["columns"]
 
-    @pytest.mark.asyncio
     async def test_settings_persistence(self, client: AsyncClient, auth_headers, sample_settings):
         """Test that settings persist across requests."""
         # Create settings

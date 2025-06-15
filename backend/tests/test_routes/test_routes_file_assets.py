@@ -61,7 +61,6 @@ def valid_base64_text():
     return base64.b64encode(b"Hello, World!").decode()
 
 
-@pytest.mark.asyncio
 async def test_upload_asset_without_auth(client: AsyncClient):
     """Test that asset upload requires authentication."""
     response = await client.post(
@@ -76,7 +75,6 @@ async def test_upload_asset_without_auth(client: AsyncClient):
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_upload_asset_valid_image(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image
 ):
@@ -103,7 +101,6 @@ async def test_upload_asset_valid_image(
     assert data["deleted_at"] is None
 
 
-@pytest.mark.asyncio
 async def test_upload_asset_valid_text(
     client: AsyncClient, authenticated_user, test_file, valid_base64_text
 ):
@@ -126,7 +123,6 @@ async def test_upload_asset_valid_text(
     assert data["content"] == valid_base64_text
 
 
-@pytest.mark.asyncio
 async def test_upload_asset_invalid_base64_image(
     client: AsyncClient, authenticated_user, test_file
 ):
@@ -152,14 +148,12 @@ async def test_upload_asset_invalid_base64_image(
     )
 
 
-@pytest.mark.asyncio
 async def test_list_assets_without_auth(client: AsyncClient):
     """Test that listing assets requires authentication."""
     response = await client.get("/assets")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_list_assets_empty(client: AsyncClient, authenticated_user):
     """Test listing assets when user has no assets."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -168,7 +162,6 @@ async def test_list_assets_empty(client: AsyncClient, authenticated_user):
     assert response.json() == []
 
 
-@pytest.mark.asyncio
 async def test_list_assets_with_data(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image
 ):
@@ -196,14 +189,12 @@ async def test_list_assets_with_data(
     assert assets[0]["deleted_at"] is None
 
 
-@pytest.mark.asyncio
 async def test_get_asset_without_auth(client: AsyncClient):
     """Test that getting an asset requires authentication."""
     response = await client.get("/assets/1")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_get_asset_not_found(client: AsyncClient, authenticated_user):
     """Test getting a non-existent asset."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -212,7 +203,6 @@ async def test_get_asset_not_found(client: AsyncClient, authenticated_user):
     assert response.json()["detail"] == "Asset not found"
 
 
-@pytest.mark.asyncio
 async def test_get_asset_success(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image
 ):
@@ -241,7 +231,6 @@ async def test_get_asset_success(
     assert data["content"] == valid_base64_image
 
 
-@pytest.mark.asyncio
 async def test_get_asset_different_user(client: AsyncClient, test_file, valid_base64_image):
     """Test that users can't access other users' assets."""
     # Create first user and asset
@@ -286,14 +275,12 @@ async def test_get_asset_different_user(client: AsyncClient, test_file, valid_ba
     assert response.json()["detail"] == "Asset not found"
 
 
-@pytest.mark.asyncio
 async def test_update_asset_without_auth(client: AsyncClient):
     """Test that updating an asset requires authentication."""
     response = await client.put("/assets/1", json={"filename": "new_name.txt"})
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_update_asset_not_found(client: AsyncClient, authenticated_user):
     """Test updating a non-existent asset."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -302,7 +289,6 @@ async def test_update_asset_not_found(client: AsyncClient, authenticated_user):
     assert response.json()["detail"] == "Asset not found"
 
 
-@pytest.mark.asyncio
 async def test_update_asset_filename(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image
 ):
@@ -332,7 +318,6 @@ async def test_update_asset_filename(
     assert data["content"] == valid_base64_image  # Content unchanged
 
 
-@pytest.mark.asyncio
 async def test_update_asset_content(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image, valid_base64_text
 ):
@@ -362,7 +347,6 @@ async def test_update_asset_content(
     assert data["filename"] == "test.png"  # Filename unchanged
 
 
-@pytest.mark.asyncio
 async def test_update_asset_soft_delete(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image
 ):
@@ -392,7 +376,6 @@ async def test_update_asset_soft_delete(
     assert data["deleted_at"] is not None
 
 
-@pytest.mark.asyncio
 async def test_update_asset_invalid_base64_content(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image
 ):
@@ -419,14 +402,12 @@ async def test_update_asset_invalid_base64_content(
     assert response.status_code == 422
 
 
-@pytest.mark.asyncio
 async def test_delete_asset_without_auth(client: AsyncClient):
     """Test that deleting an asset requires authentication."""
     response = await client.delete("/assets/1")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_delete_asset_not_found(client: AsyncClient, authenticated_user):
     """Test deleting a non-existent asset."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -435,7 +416,6 @@ async def test_delete_asset_not_found(client: AsyncClient, authenticated_user):
     assert response.json()["detail"] == "Asset not found"
 
 
-@pytest.mark.asyncio
 async def test_delete_asset_success(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image
 ):
@@ -469,7 +449,6 @@ async def test_delete_asset_success(
     assert len(list_response.json()) == 0
 
 
-@pytest.mark.asyncio
 async def test_delete_asset_different_user(client: AsyncClient, test_file, valid_base64_image):
     """Test that users can't delete other users' assets."""
     # Create first user and asset
@@ -514,7 +493,6 @@ async def test_delete_asset_different_user(client: AsyncClient, test_file, valid
     assert response.json()["detail"] == "Asset not found"
 
 
-@pytest.mark.asyncio
 async def test_list_assets_excludes_deleted(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image
 ):
