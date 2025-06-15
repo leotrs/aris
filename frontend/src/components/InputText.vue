@@ -50,6 +50,7 @@
     margin: 0;
     outline: none;
     width: fit-content;
+    height: 100%;
     border: var(--border-extrathin) solid var(--border-primary);
     border-radius: 8px;
   }
