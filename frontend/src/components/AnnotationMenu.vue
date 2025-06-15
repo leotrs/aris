@@ -5,6 +5,7 @@
   const selfRef = useTemplateRef("self-ref");
   const visible = ref(false);
   const virtualEl = ref(null);
+  const currentRange = ref(null); // Store the current range
 
   const colors = computed(() => {
     if (!expanded.value)
@@ -25,11 +26,13 @@
     }
   });
 
-  // Create a virtual element for Floating UI
+  // Create a virtual element that updates dynamically with the range position
   const getVirtualElementFromRange = (range) => {
-    const rect = range.getBoundingClientRect();
     return {
-      getBoundingClientRect: () => rect,
+      getBoundingClientRect: () => {
+        // Always get fresh bounding rect when called
+        return range.getBoundingClientRect();
+      },
       contextElement: document.body,
     };
   };
@@ -48,6 +51,7 @@
       console.log("nothing to show");
       visible.value = false;
       virtualEl.value = null;
+      currentRange.value = null;
       return;
     }
 
@@ -55,9 +59,11 @@
     if (!selectedRange || selectedRange.collapsed) {
       visible.value = false;
       virtualEl.value = null;
+      currentRange.value = null;
       return;
     }
 
+    currentRange.value = selectedRange;
     virtualEl.value = getVirtualElementFromRange(selectedRange);
     console.log(virtualEl.value.getBoundingClientRect());
     console.log(floatingStyles.value);
@@ -68,10 +74,41 @@
     console.log("clearing");
     visible.value = false;
     virtualEl.value = null;
+    currentRange.value = null;
+  };
+
+  // Check if range is visible in viewport
+  const isRangeInViewport = (range) => {
+    const rect = range.getBoundingClientRect();
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
+    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
+
+    return (
+      rect.bottom >= 0 &&
+      rect.right >= 0 &&
+      rect.top <= viewportHeight &&
+      rect.left <= viewportWidth
+    );
+  };
+
+  // Force floating UI to update position when scrolling
+  const updateFloatingPosition = () => {
+    if (visible.value && currentRange.value) {
+      // Check if the selected range is still visible
+      if (!isRangeInViewport(currentRange.value)) {
+        clearSelection();
+        return;
+      }
+
+      // Force a re-computation by updating the virtual element
+      virtualEl.value = getVirtualElementFromRange(currentRange.value);
+    }
   };
 
   onMounted(() => {
     document.addEventListener("selectionchange", updateSelection);
+    document.addEventListener("scroll", updateFloatingPosition, true); // Use capture phase
+    window.addEventListener("resize", updateFloatingPosition);
     window.addEventListener("mousedown", (e) => {
       if (!selfRef.value?.contains(e.target)) {
         clearSelection();
@@ -81,6 +118,8 @@
 
   onUnmounted(() => {
     document.removeEventListener("selectionchange", updateSelection);
+    document.removeEventListener("scroll", updateFloatingPosition, true);
+    window.removeEventListener("resize", updateFloatingPosition);
     window.removeEventListener("mousedown", clearSelection);
   });
 
@@ -130,7 +169,7 @@
     box-shadow: var(--shadow-soft);
     display: flex;
     gap: 24px;
-    z-index: 999;
+    z-index: 1;
 
     & > * {
       display: flex;
