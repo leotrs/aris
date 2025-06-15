@@ -3,6 +3,9 @@ import base64
 import io
 from httpx import AsyncClient
 from PIL import Image
+from unittest.mock import AsyncMock
+from aris.deps import current_user
+from main import app
 
 
 @pytest.fixture
@@ -79,6 +82,17 @@ async def test_get_user_not_found(client: AsyncClient, authenticated_user):
     """Test getting non-existent user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     response = await client.get("/users/99999", headers=headers)
+    assert response.status_code == 404
+    assert response.json()["detail"] == "User not found"
+
+
+@pytest.mark.asyncio
+async def test_get_user_route_crud_returns_none(monkeypatch, client: AsyncClient):
+    """Test GET /users/{user_id} returns 404 when crud.get_user returns None."""
+    # Bypass authentication by overriding current_user dependency
+    app.dependency_overrides[current_user] = lambda: None
+
+    response = await client.get("/users/-999")
     assert response.status_code == 404
     assert response.json()["detail"] == "User not found"
 
@@ -482,7 +496,9 @@ async def test_get_user_file_file_not_found(client: AsyncClient, authenticated_u
 
 
 @pytest.mark.asyncio
-async def test_get_profile_picture_invalid_data(client: AsyncClient, authenticated_user, db_session):
+async def test_get_profile_picture_invalid_data(
+    client: AsyncClient, authenticated_user, db_session
+):
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     # Upload a valid profile picture
     test_image = create_test_image("PNG")
@@ -505,7 +521,9 @@ async def test_get_profile_picture_invalid_data(client: AsyncClient, authenticat
 
 
 @pytest.mark.asyncio
-async def test_upload_profile_picture_user_not_found(client: AsyncClient, authenticated_user, db_session):
+async def test_upload_profile_picture_user_not_found(
+    client: AsyncClient, authenticated_user, db_session
+):
     """Test uploading profile picture for a user that was deleted."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     from aris.models import User
@@ -523,7 +541,9 @@ async def test_upload_profile_picture_user_not_found(client: AsyncClient, authen
 
 
 @pytest.mark.asyncio
-async def test_upload_profile_picture_db_error(client: AsyncClient, authenticated_user, db_session, monkeypatch):
+async def test_upload_profile_picture_db_error(
+    client: AsyncClient, authenticated_user, db_session, monkeypatch
+):
     """Test uploading profile picture when a database error occurs."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     test_image = create_test_image("PNG")
@@ -542,7 +562,9 @@ async def test_upload_profile_picture_db_error(client: AsyncClient, authenticate
 
 
 @pytest.mark.asyncio
-async def test_get_profile_picture_user_not_found_after_deletion(client: AsyncClient, authenticated_user, db_session):
+async def test_get_profile_picture_user_not_found_after_deletion(
+    client: AsyncClient, authenticated_user, db_session
+):
     """Test retrieving profile picture for a user that was deleted."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     from aris.models import User
@@ -551,14 +573,14 @@ async def test_get_profile_picture_user_not_found_after_deletion(client: AsyncCl
     await db_session.delete(user)
     await db_session.commit()
 
-    response = await client.get(
-        f"/users/{authenticated_user['user_id']}/avatar", headers=headers
-    )
+    response = await client.get(f"/users/{authenticated_user['user_id']}/avatar", headers=headers)
     assert response.status_code == 401
 
 
 @pytest.mark.asyncio
-async def test_delete_profile_picture_user_not_found_after_deletion(client: AsyncClient, authenticated_user, db_session):
+async def test_delete_profile_picture_user_not_found_after_deletion(
+    client: AsyncClient, authenticated_user, db_session
+):
     """Test deleting profile picture when the user was deleted."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     from aris.models import User
@@ -574,7 +596,9 @@ async def test_delete_profile_picture_user_not_found_after_deletion(client: Asyn
 
 
 @pytest.mark.asyncio
-async def test_delete_profile_picture_db_error(client: AsyncClient, authenticated_user, db_session, monkeypatch):
+async def test_delete_profile_picture_db_error(
+    client: AsyncClient, authenticated_user, db_session, monkeypatch
+):
     """Test deleting profile picture when a database error occurs."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
 
@@ -585,7 +609,9 @@ async def test_delete_profile_picture_db_error(client: AsyncClient, authenticate
     )
     assert upload_resp.status_code == 200
 
-    monkeypatch.setattr(db_session, "commit", lambda *args, **kwargs: (_ for _ in ()).throw(ValueError("fail")))
+    monkeypatch.setattr(
+        db_session, "commit", lambda *args, **kwargs: (_ for _ in ()).throw(ValueError("fail"))
+    )
 
     response = await client.delete(
         f"/users/{authenticated_user['user_id']}/avatar", headers=headers
