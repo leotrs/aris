@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, onMounted, onUnmounted, useTemplateRef } from "vue";
+  import { ref, computed, toRef, onMounted, onUnmounted, useTemplateRef } from "vue";
   import { useFloating, autoUpdate, offset, flip, shift } from "@floating-ui/vue";
 
   const selfRef = useTemplateRef("self-ref");
@@ -45,6 +45,7 @@
   const updateSelection = () => {
     const sel = window.getSelection();
     if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
+      console.log("nothing to show");
       visible.value = false;
       virtualEl.value = null;
       return;
@@ -58,16 +59,19 @@
     }
 
     virtualEl.value = getVirtualElementFromRange(selectedRange);
+    console.log(virtualEl.value.getBoundingClientRect());
+    console.log(floatingStyles.value);
     visible.value = true;
   };
 
   const clearSelection = () => {
+    console.log("clearing");
     visible.value = false;
     virtualEl.value = null;
   };
 
   onMounted(() => {
-    window.addEventListener("selectionchange", updateSelection);
+    document.addEventListener("selectionchange", updateSelection);
     window.addEventListener("mousedown", (e) => {
       if (!selfRef.value?.contains(e.target)) {
         clearSelection();
@@ -76,7 +80,7 @@
   });
 
   onUnmounted(() => {
-    window.removeEventListener("selectionchange", updateSelection);
+    document.removeEventListener("selectionchange", updateSelection);
     window.removeEventListener("mousedown", clearSelection);
   });
 
@@ -139,6 +143,9 @@
   }
 
   .right {
+    display: flex;
+    padding-block: 4px;
+    align-items: flex-start;
     margin: -4px;
 
     & :deep(.tabler-icon) {
