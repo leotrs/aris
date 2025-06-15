@@ -1,10 +1,13 @@
-"""Sync specified columns from one Postgres database to another, avoiding duplicate rows.
+#!/usr/bin/env python3
+"""
+Sync specified columns from one Postgres database to another, avoiding duplicate rows.
+
+Supports SQLAlchemy asyncpg URLs (e.g. postgresql+asyncpg://...).
 
 Usage:
     python scripts/sync_columns.py --table TABLE \
         --columns filename,mime_type,content,uploaded_at,deleted_at \
         [--source-url-key DB_URL_LOCAL] [--dest-url-key DB_URL_PROD] [--dry-run]
-
 """
 
 import argparse
