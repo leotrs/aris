@@ -1,17 +1,22 @@
 <script setup>
   import { inject, computed, ref, onMounted } from "vue";
 
-  const user = inject("user");
+  const props = defineProps({
+    size: { type: String, default: "md" },
+    user: { type: Object, required: true },
+  });
   const api = inject("api");
 
   const avatarUrl = ref(null);
   const hasAvatar = computed(() => !!avatarUrl.value);
-  const initials = computed(() => user.value?.initials || user.value?.name?.charAt(0) || "");
+  const initials = computed(() => props.user?.initials || props.user?.name?.charAt(0) || "");
 
   const fetchAvatar = async () => {
-    if (!user.value) return;
+    if (!props.user) return;
     try {
-      const response = await api.get(`/users/${user.value.id}/avatar`, { responseType: "blob" });
+      const response = await api.get(`/users/${props.user.id}/avatar`, {
+        responseType: "blob",
+      });
       if (avatarUrl.value) URL.revokeObjectURL(avatarUrl.value);
       avatarUrl.value = URL.createObjectURL(response.data);
     } catch (error) {
@@ -20,23 +25,36 @@
   };
 
   onMounted(() => fetchAvatar());
+
+  const style = computed(() => {
+    if (props.size === "sm")
+      return {
+        backgroundColor: `${props.user?.color}`,
+      };
+    else {
+      return {
+        backgroundColor: hasAvatar.value ? "transparent" : `${props.user?.color}`,
+        backgroundImage: hasAvatar.value ? `url(${avatarUrl.value})` : "none",
+      };
+    }
+  });
 </script>
 
 <template>
   <div
-    class="av-wrapper"
-    :class="{ 'has-avatar': hasAvatar }"
-    :style="{
-      backgroundColor: hasAvatar ? 'transparent' : `${user?.color}`,
-      backgroundImage: hasAvatar ? `url(${avatarUrl})` : 'none',
-    }"
+    v-if="size === 'sm'"
+    class="avatar"
+    :class="[hasAvatar ? 'has-avatar' : '', `size-${size}`]"
+    :style="style"
   >
-    <span v-if="!hasAvatar" class="av-name">{{ initials }}</span>
+    <template v-if="size !== 'sm'">
+      <span v-if="!hasAvatar" class="initials">{{ initials }}</span>
+    </template>
   </div>
 </template>
 
 <style scoped>
-  .av-wrapper {
+  .avatar {
     border-radius: 50%;
     width: 32px;
     height: 32px;
@@ -48,7 +66,12 @@
     flex-shrink: 0;
   }
 
-  .av-name {
+  .avatar.size-sm {
+    width: 16px;
+    height: 16px;
+  }
+
+  .initials {
     color: white;
     font-weight: 600;
     font-size: 14px;
@@ -57,7 +80,7 @@
   }
 
   .has-avatar {
-    border: 2px solid v-bind(user.color);
+    border: 2px solid v-bind(props.user.color);
     box-shadow: var(--shadow-soft);
   }
 </style>
