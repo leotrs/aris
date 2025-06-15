@@ -4,7 +4,6 @@ import pytest
 from httpx import AsyncClient
 
 
-@pytest.mark.asyncio
 async def test_register_new_user(client: AsyncClient):
     """Test successful user registration."""
     response = await client.post(
@@ -36,7 +35,6 @@ async def test_register_new_user(client: AsyncClient):
     assert "created_at" in user
 
 
-@pytest.mark.asyncio
 async def test_register_duplicate_email(client: AsyncClient):
     """Test registration with already existing email."""
     # First registration
@@ -65,7 +63,6 @@ async def test_register_duplicate_email(client: AsyncClient):
     assert response.json()["detail"] == "Email already registered."
 
 
-@pytest.mark.asyncio
 async def test_register_invalid_email(client: AsyncClient):
     """Test registration with invalid email format."""
     response = await client.post(
@@ -81,7 +78,6 @@ async def test_register_invalid_email(client: AsyncClient):
     assert response.status_code == 422  # Validation error
 
 
-@pytest.mark.asyncio
 async def test_login_valid_credentials(client: AsyncClient):
     """Test login with valid credentials."""
     # First register a user
@@ -108,7 +104,6 @@ async def test_login_valid_credentials(client: AsyncClient):
     assert data["token_type"] == "bearer"
 
 
-@pytest.mark.asyncio
 async def test_login_invalid_email(client: AsyncClient):
     """Test login with non-existent email."""
     response = await client.post(
@@ -119,7 +114,6 @@ async def test_login_invalid_email(client: AsyncClient):
     assert response.json()["detail"] == "Invalid credentials"
 
 
-@pytest.mark.asyncio
 async def test_login_invalid_password(client: AsyncClient):
     """Test login with wrong password."""
     # First register a user
@@ -142,7 +136,6 @@ async def test_login_invalid_password(client: AsyncClient):
     assert response.json()["detail"] == "Invalid credentials"
 
 
-@pytest.mark.asyncio
 async def test_me_endpoint_with_valid_token(client: AsyncClient):
     """Test /me endpoint with valid authentication."""
     # Register and get token
@@ -172,7 +165,6 @@ async def test_me_endpoint_with_valid_token(client: AsyncClient):
     assert "color" in data
 
 
-@pytest.mark.asyncio
 async def test_me_endpoint_without_token(client: AsyncClient):
     """Test /me endpoint without authentication."""
     response = await client.get("/me")
@@ -180,7 +172,6 @@ async def test_me_endpoint_without_token(client: AsyncClient):
     assert response.status_code == 401  # Unauthorized
 
 
-@pytest.mark.asyncio
 async def test_me_endpoint_with_invalid_token(client: AsyncClient):
     """Test /me endpoint with invalid token."""
     response = await client.get("/me", headers={"Authorization": "Bearer invalid_token"})
@@ -188,7 +179,6 @@ async def test_me_endpoint_with_invalid_token(client: AsyncClient):
     assert response.status_code == 401  # Unauthorized
 
 
-@pytest.mark.asyncio
 async def test_register_without_initials(client: AsyncClient):
     """Test registration without initials (should auto-generate from name)."""
     response = await client.post(
@@ -203,7 +193,6 @@ async def test_register_without_initials(client: AsyncClient):
     assert user["initials"] == "TU"  # Auto-generated from "Test User"
 
 
-@pytest.mark.asyncio
 async def test_login_missing_fields(client: AsyncClient):
     """Test login with missing required fields."""
     response = await client.post(

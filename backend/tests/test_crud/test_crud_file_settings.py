@@ -7,14 +7,12 @@ from aris.crud.file_settings import (
 )
 
 
-@pytest.mark.asyncio
 async def test_get_default_settings_not_found(db_session, test_user):
     """Test getting non-existent default settings returns None"""
     settings = await FileSettingsDB.get_default_settings(test_user.id, db_session)
     assert settings is None
 
 
-@pytest.mark.asyncio
 async def test_upsert_default_settings_create(db_session, test_user):
     """Test creating new default settings"""
     settings_data = FileSettingsBase(
@@ -42,7 +40,6 @@ async def test_upsert_default_settings_create(db_session, test_user):
     assert settings.deleted_at is None
 
 
-@pytest.mark.asyncio
 async def test_upsert_default_settings_update(db_session, test_user):
     """Test updating existing default settings"""
     # Create initial settings
@@ -65,7 +62,6 @@ async def test_upsert_default_settings_update(db_session, test_user):
     assert updated_settings.updated_at > original_created_at
 
 
-@pytest.mark.asyncio
 async def test_get_default_settings_found(db_session, test_user):
     """Test getting existing default settings"""
     # Create settings first
@@ -83,21 +79,18 @@ async def test_get_default_settings_found(db_session, test_user):
     assert retrieved_settings.font_size == "14px"
 
 
-@pytest.mark.asyncio
 async def test_get_file_settings_not_found(db_session, test_user):
     """Test getting non-existent file settings returns None"""
     settings = await FileSettingsDB.get_file_settings(1, test_user.id, db_session)
     assert settings is None
 
 
-@pytest.mark.asyncio
 async def test_verify_file_access_not_found(db_session, test_user):
     """Test verifying access to non-existent file returns False"""
     has_access = await FileSettingsDB.verify_file_access(999, test_user.id, db_session)
     assert has_access is False
 
 
-@pytest.mark.asyncio
 async def test_verify_file_access_wrong_owner(db_session, test_user):
     """Test verifying access to file owned by another user returns False"""
     # Create a file owned by test_user
@@ -115,7 +108,6 @@ async def test_verify_file_access_wrong_owner(db_session, test_user):
     assert has_access is False
 
 
-@pytest.mark.asyncio
 async def test_verify_file_access_success(db_session, test_user):
     """Test verifying access to owned file returns True"""
     # Create a file owned by test_user
@@ -133,7 +125,6 @@ async def test_verify_file_access_success(db_session, test_user):
     assert has_access is True
 
 
-@pytest.mark.asyncio
 async def test_verify_file_access_soft_deleted(db_session, test_user):
     """Test verifying access to soft-deleted file returns False"""
     # Create and soft delete a file
@@ -149,7 +140,6 @@ async def test_verify_file_access_soft_deleted(db_session, test_user):
     assert has_access is False
 
 
-@pytest.mark.asyncio
 async def test_upsert_file_settings_create(db_session, test_user):
     """Test creating new file settings"""
     # Create a file first
@@ -180,7 +170,6 @@ async def test_upsert_file_settings_create(db_session, test_user):
     assert settings.deleted_at is None
 
 
-@pytest.mark.asyncio
 async def test_upsert_file_settings_update(db_session, test_user):
     """Test updating existing file settings"""
     # Create a file
@@ -215,7 +204,6 @@ async def test_upsert_file_settings_update(db_session, test_user):
     assert updated_settings.updated_at > original_created_at
 
 
-@pytest.mark.asyncio
 async def test_get_file_settings_found(db_session, test_user):
     """Test getting existing file settings"""
     # Create a file
@@ -244,7 +232,6 @@ async def test_get_file_settings_found(db_session, test_user):
     assert retrieved_settings.font_size == "19px"
 
 
-@pytest.mark.asyncio
 async def test_file_settings_excludes_soft_deleted(db_session, test_user):
     """Test that soft-deleted settings are not returned"""
     # Create a file
@@ -272,7 +259,6 @@ async def test_file_settings_excludes_soft_deleted(db_session, test_user):
     assert retrieved_settings is None
 
 
-@pytest.mark.asyncio
 async def test_file_settings_base_defaults():
     """Test FileSettingsBase default values"""
     settings = FileSettingsBase()
@@ -285,7 +271,6 @@ async def test_file_settings_base_defaults():
     assert settings.columns == 1
 
 
-@pytest.mark.asyncio
 async def test_default_settings_user_isolation(db_session, test_user):
     """Test that default settings are isolated per user"""
     # Create another user

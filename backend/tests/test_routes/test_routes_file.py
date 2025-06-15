@@ -27,14 +27,12 @@ def auth_headers(authenticated_user):
     return {"Authorization": f"Bearer {authenticated_user['token']}"}
 
 
-@pytest.mark.asyncio
 async def test_get_files_without_auth(client: AsyncClient):
     """Test that files endpoint requires authentication."""
     response = await client.get("/files")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_get_files_with_auth(client: AsyncClient, authenticated_user):
     """Test getting files list with authentication."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -43,7 +41,6 @@ async def test_get_files_with_auth(client: AsyncClient, authenticated_user):
     assert isinstance(response.json(), list)
 
 
-@pytest.mark.asyncio
 async def test_create_file_valid_rsm_source(client: AsyncClient, authenticated_user):
     """Test creating a file with valid RSM source."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -64,7 +61,6 @@ async def test_create_file_valid_rsm_source(client: AsyncClient, authenticated_u
     assert "id" in data
 
 
-@pytest.mark.asyncio
 async def test_create_file_invalid_rsm_source_no_prefix(client: AsyncClient, authenticated_user):
     """Test creating a file with invalid RSM source (missing :rsm: prefix)."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -84,7 +80,6 @@ async def test_create_file_invalid_rsm_source_no_prefix(client: AsyncClient, aut
     assert "Malformed RSM source" in response.json()["detail"]
 
 
-@pytest.mark.asyncio
 async def test_create_file_invalid_rsm_source_no_suffix(client: AsyncClient, authenticated_user):
     """Test creating a file with invalid RSM source (missing :: suffix)."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -104,7 +99,6 @@ async def test_create_file_invalid_rsm_source_no_suffix(client: AsyncClient, aut
     assert "Malformed RSM source" in response.json()["detail"]
 
 
-@pytest.mark.asyncio
 async def test_create_file_empty_source(client: AsyncClient, authenticated_user):
     """Test creating a file with empty source (should pass validation)."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -125,7 +119,6 @@ async def test_create_file_empty_source(client: AsyncClient, authenticated_user)
     assert "id" in data
 
 
-@pytest.mark.asyncio
 async def test_create_file_without_auth(client: AsyncClient):
     """Test creating a file without authentication."""
     response = await client.post(
@@ -141,7 +134,6 @@ async def test_create_file_without_auth(client: AsyncClient):
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_get_file_by_id(client: AsyncClient, authenticated_user):
     """Test getting a specific file by ID."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -173,7 +165,6 @@ async def test_get_file_by_id(client: AsyncClient, authenticated_user):
     assert "last_edited_at" in data
 
 
-@pytest.mark.asyncio
 async def test_get_nonexistent_file(client: AsyncClient, authenticated_user):
     """Test getting a file that doesn't exist."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -183,7 +174,6 @@ async def test_get_nonexistent_file(client: AsyncClient, authenticated_user):
     assert response.json()["detail"] == "File not found"
 
 
-@pytest.mark.asyncio
 async def test_update_file(client: AsyncClient, authenticated_user):
     """Test updating a file."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -216,7 +206,6 @@ async def test_update_file(client: AsyncClient, authenticated_user):
     assert response.status_code == 200
 
 
-@pytest.mark.asyncio
 async def test_update_nonexistent_file(client: AsyncClient, authenticated_user):
     """Test updating a file that doesn't exist."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -235,7 +224,6 @@ async def test_update_nonexistent_file(client: AsyncClient, authenticated_user):
     assert response.json()["detail"] == "File not found"
 
 
-@pytest.mark.asyncio
 async def test_soft_delete_file(client: AsyncClient, authenticated_user):
     """Test soft deleting a file."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -260,7 +248,6 @@ async def test_soft_delete_file(client: AsyncClient, authenticated_user):
     assert f"File {file_id} soft deleted" in response.json()["message"]
 
 
-@pytest.mark.asyncio
 async def test_delete_nonexistent_file(client: AsyncClient, authenticated_user):
     """Test deleting a file that doesn't exist."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -270,7 +257,6 @@ async def test_delete_nonexistent_file(client: AsyncClient, authenticated_user):
     assert response.json()["detail"] == "File not found"
 
 
-@pytest.mark.asyncio
 async def test_duplicate_file(client: AsyncClient, authenticated_user):
     """Test duplicating a file."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -299,7 +285,6 @@ async def test_duplicate_file(client: AsyncClient, authenticated_user):
     assert data["message"] == "File duplicated successfully"
 
 
-@pytest.mark.asyncio
 async def test_duplicate_file_with_tags(client: AsyncClient, authenticated_user):
     """Test duplicating a file that has tags."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -369,7 +354,6 @@ async def test_duplicate_file_with_tags(client: AsyncClient, authenticated_user)
     assert duplicated_file_data["title"] == "Original Document with Tags (copy)"
 
 
-@pytest.mark.asyncio
 async def test_get_file_html_content(client: AsyncClient, authenticated_user):
     """Test getting file HTML content."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -394,7 +378,6 @@ async def test_get_file_html_content(client: AsyncClient, authenticated_user):
     assert response.status_code in [200, 404, 500]  # Depends on your crud implementation
 
 
-@pytest.mark.asyncio
 async def test_get_file_section(client: AsyncClient, authenticated_user):
     """Test getting a specific file section."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -419,7 +402,6 @@ async def test_get_file_section(client: AsyncClient, authenticated_user):
     assert response.status_code in [200, 404, 500]
 
 
-@pytest.mark.asyncio
 async def test_get_file_assets(client: AsyncClient, authenticated_user):
     """Test getting assets for a file."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -444,7 +426,6 @@ async def test_get_file_assets(client: AsyncClient, authenticated_user):
     assert isinstance(response.json(), list)
 
 
-@pytest.mark.asyncio
 async def test_create_file_missing_required_fields(client: AsyncClient, authenticated_user):
     """Test creating a file with missing required fields."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}

@@ -57,14 +57,12 @@ def create_test_image(format="PNG"):
     return img_bytes
 
 
-@pytest.mark.asyncio
 async def test_get_user_without_auth(client: AsyncClient):
     """Test that user endpoint requires authentication."""
     response = await client.get("/users/1")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_get_user_success(client: AsyncClient, authenticated_user):
     """Test getting user details with authentication."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -77,7 +75,6 @@ async def test_get_user_success(client: AsyncClient, authenticated_user):
     assert data["initials"] == "TU"
 
 
-@pytest.mark.asyncio
 async def test_get_user_not_found(client: AsyncClient, authenticated_user):
     """Test getting non-existent user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -86,7 +83,6 @@ async def test_get_user_not_found(client: AsyncClient, authenticated_user):
     assert response.json()["detail"] == "User not found"
 
 
-@pytest.mark.asyncio
 async def test_get_user_route_crud_returns_none(monkeypatch, client: AsyncClient):
     """Test GET /users/{user_id} returns 404 when crud.get_user returns None."""
     # Bypass authentication by overriding current_user dependency
@@ -97,7 +93,6 @@ async def test_get_user_route_crud_returns_none(monkeypatch, client: AsyncClient
     assert response.json()["detail"] == "User not found"
 
 
-@pytest.mark.asyncio
 async def test_update_user_success(client: AsyncClient, authenticated_user):
     """Test updating user details."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -112,7 +107,6 @@ async def test_update_user_success(client: AsyncClient, authenticated_user):
     assert data["email"] == "updated@example.com"
 
 
-@pytest.mark.asyncio
 async def test_update_user_not_found(client: AsyncClient, authenticated_user):
     """Test updating non-existent user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -122,7 +116,6 @@ async def test_update_user_not_found(client: AsyncClient, authenticated_user):
     assert response.json()["detail"] == "User not found"
 
 
-@pytest.mark.asyncio
 async def test_soft_delete_user_success(client: AsyncClient, authenticated_user):
     """Test soft deleting user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -131,7 +124,6 @@ async def test_soft_delete_user_success(client: AsyncClient, authenticated_user)
     assert response.json()["message"] == f"User {authenticated_user['user_id']} soft deleted"
 
 
-@pytest.mark.asyncio
 async def test_soft_delete_user_not_found(client: AsyncClient, authenticated_user):
     """Test soft deleting non-existent user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -140,7 +132,6 @@ async def test_soft_delete_user_not_found(client: AsyncClient, authenticated_use
     assert response.json()["detail"] == "User not found"
 
 
-@pytest.mark.asyncio
 async def test_get_user_files_success(client: AsyncClient, authenticated_user):
     """Test getting user files."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -149,7 +140,6 @@ async def test_get_user_files_success(client: AsyncClient, authenticated_user):
     assert isinstance(response.json(), list)
 
 
-@pytest.mark.asyncio
 async def test_get_user_files_with_params(client: AsyncClient, authenticated_user):
     """Test getting user files with query parameters."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -160,7 +150,6 @@ async def test_get_user_files_with_params(client: AsyncClient, authenticated_use
     assert isinstance(response.json(), list)
 
 
-@pytest.mark.asyncio
 async def test_get_user_file_success(client: AsyncClient, authenticated_user):
     """Test getting specific user file."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -187,7 +176,6 @@ async def test_get_user_file_success(client: AsyncClient, authenticated_user):
     assert data["id"] == file_id
 
 
-@pytest.mark.asyncio
 async def test_get_user_file_with_params(client: AsyncClient, authenticated_user):
     """Test getting user file with query parameters."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -213,7 +201,6 @@ async def test_get_user_file_with_params(client: AsyncClient, authenticated_user
     assert response.status_code == 200
 
 
-@pytest.mark.asyncio
 async def test_upload_profile_picture_success(client: AsyncClient, authenticated_user):
     """Test uploading profile picture successfully."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -229,7 +216,6 @@ async def test_upload_profile_picture_success(client: AsyncClient, authenticated
     assert "picture_id" in data
 
 
-@pytest.mark.asyncio
 async def test_upload_profile_picture_unauthorized(
     client: AsyncClient, authenticated_user, second_user
 ):
@@ -245,7 +231,6 @@ async def test_upload_profile_picture_unauthorized(
     assert response.json()["detail"] == "Not authorized to update this profile"
 
 
-@pytest.mark.asyncio
 async def test_upload_profile_picture_invalid_type(client: AsyncClient, authenticated_user):
     """Test uploading profile picture with invalid file type."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -261,7 +246,6 @@ async def test_upload_profile_picture_invalid_type(client: AsyncClient, authenti
     assert "Invalid file type" in response.json()["detail"]
 
 
-@pytest.mark.asyncio
 async def test_upload_profile_picture_too_large(client: AsyncClient, authenticated_user):
     """Test uploading profile picture that's too large."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -277,7 +261,6 @@ async def test_upload_profile_picture_too_large(client: AsyncClient, authenticat
     assert "File size too large" in response.json()["detail"]
 
 
-@pytest.mark.asyncio
 async def test_get_profile_picture_success(client: AsyncClient, authenticated_user):
     """Test getting profile picture successfully."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -298,7 +281,6 @@ async def test_get_profile_picture_success(client: AsyncClient, authenticated_us
     assert "Cache-Control" in response.headers
 
 
-@pytest.mark.asyncio
 async def test_get_profile_picture_unauthorized(
     client: AsyncClient, authenticated_user, second_user
 ):
@@ -310,7 +292,6 @@ async def test_get_profile_picture_unauthorized(
     assert response.json()["detail"] == "Not authorized to retrieve this profile"
 
 
-@pytest.mark.asyncio
 async def test_get_profile_picture_not_found(client: AsyncClient, authenticated_user):
     """Test getting non-existent profile picture."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -320,7 +301,6 @@ async def test_get_profile_picture_not_found(client: AsyncClient, authenticated_
     assert response.json()["detail"] == "Profile picture not found"
 
 
-@pytest.mark.asyncio
 async def test_get_profile_picture_wrong_user(client: AsyncClient, authenticated_user):
     """Test getting profile picture for non-existent user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -330,7 +310,6 @@ async def test_get_profile_picture_wrong_user(client: AsyncClient, authenticated
     assert response.json()["detail"] == "Not authorized to retrieve this profile"
 
 
-@pytest.mark.asyncio
 async def test_delete_profile_picture_success(client: AsyncClient, authenticated_user):
     """Test deleting profile picture successfully."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -351,7 +330,6 @@ async def test_delete_profile_picture_success(client: AsyncClient, authenticated
     assert response.json()["message"] == "Profile picture deleted successfully"
 
 
-@pytest.mark.asyncio
 async def test_delete_profile_picture_unauthorized(
     client: AsyncClient, authenticated_user, second_user
 ):
@@ -363,7 +341,6 @@ async def test_delete_profile_picture_unauthorized(
     assert response.json()["detail"] == "Not authorized to delete this profile"
 
 
-@pytest.mark.asyncio
 async def test_delete_profile_picture_not_found(client: AsyncClient, authenticated_user):
     """Test deleting non-existent profile picture."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -375,7 +352,6 @@ async def test_delete_profile_picture_not_found(client: AsyncClient, authenticat
     assert response.json()["detail"] == "Profile picture not found"
 
 
-@pytest.mark.asyncio
 async def test_delete_profile_picture_wrong_user(client: AsyncClient, authenticated_user):
     """Test deleting profile picture for non-existent user."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -385,7 +361,6 @@ async def test_delete_profile_picture_wrong_user(client: AsyncClient, authentica
     assert response.json()["detail"] == "Not authorized to delete this profile"
 
 
-@pytest.mark.asyncio
 async def test_upload_profile_picture_replace_existing(client: AsyncClient, authenticated_user):
     """Test uploading profile picture when one already exists (should replace)."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -419,7 +394,6 @@ async def test_upload_profile_picture_replace_existing(client: AsyncClient, auth
     assert get_response.headers["content-type"] == "image/jpeg"
 
 
-@pytest.mark.asyncio
 async def test_multiple_file_formats(client: AsyncClient, authenticated_user):
     """Test uploading different valid image formats."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -442,7 +416,6 @@ async def test_multiple_file_formats(client: AsyncClient, authenticated_user):
         assert response.json()["message"] == "Profile picture uploaded successfully"
 
 
-@pytest.mark.asyncio
 async def test_update_user_without_auth(client: AsyncClient):
     response = await client.put(
         "/users/1",
@@ -451,25 +424,21 @@ async def test_update_user_without_auth(client: AsyncClient):
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_soft_delete_user_without_auth(client: AsyncClient):
     response = await client.delete("/users/1")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_get_user_files_without_auth(client: AsyncClient):
     response = await client.get("/users/1/files")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_get_user_file_without_auth(client: AsyncClient):
     response = await client.get("/users/1/files/1")
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_get_user_files_user_not_found(client: AsyncClient, authenticated_user):
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     response = await client.get(f"/users/99999/files", headers=headers)
@@ -477,7 +446,6 @@ async def test_get_user_files_user_not_found(client: AsyncClient, authenticated_
     assert response.json()["detail"] == "User 99999 not found"
 
 
-@pytest.mark.asyncio
 async def test_get_user_file_user_not_found(client: AsyncClient, authenticated_user):
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     response = await client.get(f"/users/99999/files/1", headers=headers)
@@ -485,7 +453,6 @@ async def test_get_user_file_user_not_found(client: AsyncClient, authenticated_u
     assert response.json()["detail"] == "User 99999 not found"
 
 
-@pytest.mark.asyncio
 async def test_get_user_file_file_not_found(client: AsyncClient, authenticated_user):
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     response = await client.get(
@@ -495,7 +462,6 @@ async def test_get_user_file_file_not_found(client: AsyncClient, authenticated_u
     assert response.json()["detail"] == "File 99999 not found"
 
 
-@pytest.mark.asyncio
 async def test_get_profile_picture_invalid_data(
     client: AsyncClient, authenticated_user, db_session
 ):
@@ -520,7 +486,6 @@ async def test_get_profile_picture_invalid_data(
     assert response.json()["detail"] == "Invalid image data"
 
 
-@pytest.mark.asyncio
 async def test_upload_profile_picture_user_not_found(
     client: AsyncClient, authenticated_user, db_session
 ):
@@ -540,7 +505,6 @@ async def test_upload_profile_picture_user_not_found(
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_upload_profile_picture_db_error(
     client: AsyncClient, authenticated_user, db_session, monkeypatch
 ):
@@ -561,7 +525,6 @@ async def test_upload_profile_picture_db_error(
     assert response.json()["detail"] == "Failed to upload profile picture"
 
 
-@pytest.mark.asyncio
 async def test_get_profile_picture_user_not_found_after_deletion(
     client: AsyncClient, authenticated_user, db_session
 ):
@@ -577,7 +540,6 @@ async def test_get_profile_picture_user_not_found_after_deletion(
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_delete_profile_picture_user_not_found_after_deletion(
     client: AsyncClient, authenticated_user, db_session
 ):
@@ -595,7 +557,6 @@ async def test_delete_profile_picture_user_not_found_after_deletion(
     assert response.status_code == 401
 
 
-@pytest.mark.asyncio
 async def test_delete_profile_picture_db_error(
     client: AsyncClient, authenticated_user, db_session, monkeypatch
 ):
