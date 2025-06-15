@@ -125,6 +125,7 @@
     console.log("submit", inputText.value);
     const newAnnotation = { id: 999, content: inputText.value, type: "note" };
     annotations.push(newAnnotation);
+    visible.value = false;
   };
 </script>
 

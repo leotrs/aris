@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ref, nextTick } from 'vue';
+import { nextTick } from 'vue';
 import { mount } from '@vue/test-utils';
 import Avatar from '@/components/Avatar.vue';
 
@@ -21,12 +21,11 @@ describe('Avatar.vue', () => {
   });
 
   async function mountAvatarWith(userValue, apiMock) {
-    user = ref(userValue);
     api = apiMock;
     wrapper = mount(Avatar, {
+      props: { user: userValue },
       global: {
         provide: {
-          user,
           api,
         },
       },

@@ -49,12 +49,12 @@
     outline-color: transparent;
     outline-width: var(--border-extrathin);
     border-radius: 16px;
-    padding-block: 4px;
+    padding-block: 3px;
     padding-inline: 12px;
-    min-width: 240px;
+    min-width: 264px;
     position: relative;
     top: 100px;
-    z-index: 10000000;
+    z-index: 2;
     margin-inline: 8px;
     transition: outline-color 0.3s ease;
   }
@@ -72,6 +72,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    gap: 8px;
   }
 
   .timestamp {
@@ -96,6 +97,7 @@
     & :deep(.tabler-icon) {
       color: var(--dark);
       margin: 0 !important;
+      stroke-width: 1.75;
     }
   }
 
