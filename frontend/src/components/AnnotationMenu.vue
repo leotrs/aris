@@ -1,16 +1,29 @@
 <script setup>
-  import { ref, onMounted, onUnmounted, useTemplateRef } from "vue";
+  import { ref, computed, onMounted, onUnmounted, useTemplateRef } from "vue";
   import { useFloating, autoUpdate, offset, flip, shift } from "@floating-ui/vue";
 
   const selfRef = useTemplateRef("self-ref");
   const visible = ref(false);
   const virtualEl = ref(null);
 
-  const colors = {
-    purple: "var(--purple-300)",
-    orange: "var(--orange-300)",
-    green: "var(--green-300)",
-  };
+  const colors = computed(() => {
+    if (!expanded.value)
+      return {
+        purple: "var(--purple-300)",
+        orange: "var(--orange-300)",
+        green: "var(--green-300)",
+      };
+    else {
+      return {
+        purple: "var(--purple-300)",
+        orange: "var(--orange-300)",
+        green: "var(--green-300)",
+        red: "var(--red-300)",
+        pink: "var(--pink-300)",
+        yellow: "var(--yellow-300)",
+      };
+    }
+  });
 
   // Create a virtual element for Floating UI
   const getVirtualElementFromRange = (range) => {
@@ -90,7 +103,12 @@
         <AnnotationInputBox :expanded="expanded" />
       </div>
       <div class="right">
-        <Button kind="tertiary" size="sm" icon="ChevronDown" @click="expanded = !expanded" />
+        <Button
+          kind="tertiary"
+          size="sm"
+          :icon="expanded ? 'ChevronUp' : 'ChevronDown'"
+          @click="expanded = !expanded"
+        />
         <ButtonClose />
       </div>
     </div>
@@ -102,8 +120,9 @@
     position: absolute;
     background: var(--surface-page);
     border: var(--border-extrathin) solid var(--border-primary);
-    border-radius: 8px;
-    padding: 4px;
+    border-radius: 16px;
+    padding-block: 4px;
+    padding-inline: 8px;
     box-shadow: var(--shadow-soft);
     display: flex;
     gap: 24px;
@@ -115,7 +134,13 @@
     }
   }
 
+  .left {
+    width: 76px;
+  }
+
   .right {
+    margin: -4px;
+
     & :deep(.tabler-icon) {
       color: var(--dark) !important;
     }
