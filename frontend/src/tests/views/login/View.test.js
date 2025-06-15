@@ -1,8 +1,11 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { nextTick } from 'vue';
+import { nextTick, ref } from 'vue';
 import { mount, RouterLinkStub } from '@vue/test-utils';
 import LoginView from '@/views/login/View.vue';
 import Button from '@/components/Button.vue';
+
+// Utility to wait for pending promises (e.g. auto-login flow in dev mode)
+const flushPromises = () => new Promise(res => setTimeout(res, 0));
 
 // Stub useRouter to capture navigation calls
 const pushMock = vi.fn();
@@ -43,4 +46,33 @@ describe('LoginView', () => {
     await registerBtn.trigger('click');
     expect(pushMock).toHaveBeenCalledWith('/register');
   });
+
+  it('auto-prefills inputs and logs in on mount when isDev=true', async () => {
+    import.meta.env.VITE_DEV_LOGIN_EMAIL = 'dev@example.com';
+    import.meta.env.VITE_DEV_LOGIN_PASSWORD = 'secret';
+    const api = {
+      post: vi.fn().mockResolvedValue({ data: { access_token: 'tok', refresh_token: 'ref' } }),
+      get: vi.fn().mockResolvedValue({ data: {} }),
+    };
+    const user = ref(null);
+    const fileStore = { loadFiles: vi.fn().mockResolvedValue(), loadTags: vi.fn().mockResolvedValue() };
+    localStorage.clear();
+    wrapper = mount(LoginView, {
+      global: {
+        provide: { isDev: true, api, user, fileStore },
+        components: { Button },
+        stubs: { RouterLink: RouterLinkStub },
+      },
+    });
+    await flushPromises();
+    expect(api.post).toHaveBeenCalledWith('/login', {
+      email: 'dev@example.com',
+      password: 'secret',
+    });
+    const emailInput = wrapper.find('input[type="text"]');
+    const pwInput = wrapper.find('input[type="password"]');
+    expect(emailInput.element.value).toBe('dev@example.com');
+    expect(pwInput.element.value).toBe('secret');
+  });
+
 });
