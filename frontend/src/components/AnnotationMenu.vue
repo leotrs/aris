@@ -1,41 +1,36 @@
 <script setup>
-  import { ref, computed, toRef, onMounted, onUnmounted, useTemplateRef } from "vue";
+  import { ref, computed, onMounted, onUnmounted, useTemplateRef } from "vue";
   import { useFloating, autoUpdate, offset, flip, shift } from "@floating-ui/vue";
 
-  const selfRef = useTemplateRef("self-ref");
+  const selfRef = useTemplateRef("selfRef");
   const visible = ref(false);
   const virtualEl = ref(null);
-  const currentRange = ref(null); // Store the current range
+  const currentRange = ref(null);
+  const expanded = ref(false);
 
-  const colors = computed(() => {
-    if (!expanded.value)
-      return {
-        purple: "var(--purple-300)",
-        orange: "var(--orange-300)",
-        green: "var(--green-300)",
-      };
-    else {
-      return {
-        purple: "var(--purple-300)",
-        orange: "var(--orange-300)",
-        green: "var(--green-300)",
-        red: "var(--red-300)",
-        pink: "var(--pink-300)",
-        yellow: "var(--yellow-300)",
-      };
-    }
+  // Color state
+  const colors = computed(() =>
+    expanded.value
+      ? {
+          purple: "var(--purple-300)",
+          orange: "var(--orange-300)",
+          green: "var(--green-300)",
+          red: "var(--red-300)",
+          pink: "var(--pink-300)",
+          yellow: "var(--yellow-300)",
+        }
+      : {
+          purple: "var(--purple-300)",
+          orange: "var(--orange-300)",
+          green: "var(--green-300)",
+        }
+  );
+
+  // Create virtual element for Floating UI
+  const getVirtualElementFromRange = (range) => ({
+    getBoundingClientRect: () => range.getBoundingClientRect(),
+    contextElement: document.body,
   });
-
-  // Create a virtual element that updates dynamically with the range position
-  const getVirtualElementFromRange = (range) => {
-    return {
-      getBoundingClientRect: () => {
-        // Always get fresh bounding rect when called
-        return range.getBoundingClientRect();
-      },
-      contextElement: document.body,
-    };
-  };
 
   // Floating UI setup
   const { floatingStyles } = useFloating(virtualEl, selfRef, {
@@ -44,84 +39,63 @@
     middleware: [offset(8), shift(), flip()],
   });
 
-  // Show menu when user selects non-collapsed text
-  const updateSelection = () => {
-    const sel = window.getSelection();
-    if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
-      console.log("nothing to show");
-      visible.value = false;
-      virtualEl.value = null;
-      currentRange.value = null;
-      return;
-    }
+  // Range in viewport check
+  const isRangeInViewport = (range) => {
+    const rect = range.getBoundingClientRect();
+    const vh = window.innerHeight || document.documentElement.clientHeight;
+    const vw = window.innerWidth || document.documentElement.clientWidth;
 
-    const selectedRange = sel.getRangeAt(0);
-    if (!selectedRange || selectedRange.collapsed) {
-      visible.value = false;
-      virtualEl.value = null;
-      currentRange.value = null;
-      return;
-    }
-
-    currentRange.value = selectedRange;
-    virtualEl.value = getVirtualElementFromRange(selectedRange);
-    console.log(virtualEl.value.getBoundingClientRect());
-    console.log(floatingStyles.value);
-    visible.value = true;
+    return rect.bottom >= 0 && rect.right >= 0 && rect.top <= vh && rect.left <= vw;
   };
 
   const clearSelection = () => {
-    console.log("clearing");
     visible.value = false;
     virtualEl.value = null;
     currentRange.value = null;
-  };
 
-  // Check if range is visible in viewport
-  const isRangeInViewport = (range) => {
-    const rect = range.getBoundingClientRect();
-    const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-    const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-
-    return (
-      rect.bottom >= 0 &&
-      rect.right >= 0 &&
-      rect.top <= viewportHeight &&
-      rect.left <= viewportWidth
-    );
-  };
-
-  // Force floating UI to update position when scrolling
-  const updateFloatingPosition = () => {
-    if (visible.value && currentRange.value) {
-      // Check if the selected range is still visible
-      if (!isRangeInViewport(currentRange.value)) {
-        clearSelection();
-        return;
-      }
-
-      // Force a re-computation by updating the virtual element
-      virtualEl.value = getVirtualElementFromRange(currentRange.value);
+    const selection = window.getSelection();
+    if (selection && selection.removeAllRanges) {
+      selection.removeAllRanges();
     }
   };
 
-  onMounted(() => {
-    document.addEventListener("selectionchange", updateSelection);
-    document.addEventListener("scroll", updateFloatingPosition, true); // Use capture phase
-    window.addEventListener("resize", updateFloatingPosition);
-    window.addEventListener("mousedown", (e) => {
-      if (!selfRef.value?.contains(e.target)) {
-        clearSelection();
-      }
-    });
-  });
+  // Update floating position and hide if out of bounds
+  const updateFloatingPosition = () => {
+    if (!currentRange.value) return;
 
-  onUnmounted(() => {
-    document.removeEventListener("selectionchange", updateSelection);
-    document.removeEventListener("scroll", updateFloatingPosition, true);
-    window.removeEventListener("resize", updateFloatingPosition);
-    window.removeEventListener("mousedown", clearSelection);
-  });
+    virtualEl.value = getVirtualElementFromRange(currentRange.value);
+    if (!isRangeInViewport(currentRange.value)) {
+      clearSelection();
+    }
+  };
+
+  // Called only after user has finished selecting (mouseup)
+  const tryShowMenu = () => {
+    const sel = window.getSelection();
+    if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
+      clearSelection();
+      return;
+    }
+
+    const range = sel.getRangeAt(0);
+    if (!range || range.collapsed) {
+      clearSelection();
+      return;
+    }
+
+    currentRange.value = range;
+    virtualEl.value = getVirtualElementFromRange(range);
+    visible.value = true;
+    updateFloatingPosition();
+  };
+
+  // Listen for when user finishes text selection
+  const handleMouseUp = () => {
+    // Give time for DOM to update selection state
+    setTimeout(() => {
+      tryShowMenu();
+    }, 0);
+  };
 
   function onAddComment() {
     console.log("Add Comment");
@@ -133,12 +107,22 @@
     clearSelection();
   }
 
-  const expanded = ref(false);
+  onMounted(() => {
+    document.addEventListener("mouseup", handleMouseUp);
+    document.addEventListener("scroll", updateFloatingPosition, true);
+    window.addEventListener("resize", updateFloatingPosition);
+  });
+
+  onUnmounted(() => {
+    document.removeEventListener("mouseup", handleMouseUp);
+    document.removeEventListener("scroll", updateFloatingPosition, true);
+    window.removeEventListener("resize", updateFloatingPosition);
+  });
 </script>
 
 <template>
   <Teleport to="body">
-    <div v-if="visible" ref="self-ref" :style="floatingStyles" class="hl-menu">
+    <div v-if="visible" ref="selfRef" :style="floatingStyles" class="hl-menu" @mouseup.stop>
       <div class="left">
         <ColorPicker :colors="colors" :labels="false" />
       </div>
@@ -152,7 +136,7 @@
           :icon="expanded ? 'ChevronUp' : 'ChevronDown'"
           @click="expanded = !expanded"
         />
-        <ButtonClose />
+        <ButtonClose @click="clearSelection" />
       </div>
     </div>
   </Teleport>
@@ -169,7 +153,7 @@
     box-shadow: var(--shadow-soft);
     display: flex;
     gap: 24px;
-    z-index: 1;
+    z-index: 999;
 
     & > * {
       display: flex;
