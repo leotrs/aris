@@ -76,31 +76,60 @@
     console.log("Add Note");
     clearSelection();
   }
+
+  const expanded = ref(false);
 </script>
 
 <template>
   <Teleport to="body">
-    <div
-      v-if="visible"
-      ref="self-ref"
-      :style="floatingStyles"
-      class="floating-menu"
-      @mousedown.prevent
-    >
-      <Button kind="tertiary" size="sm" icon="Message" @click="onAddComment" />
-      <Button kind="tertiary" size="sm" icon="Note" @click="onAddNote" />
+    <div v-if="!visible" ref="self-ref" :style="floatingStyles" class="hl-menu">
+      <div class="left">
+        <ColorPicker :colors="colors" :labels="false" />
+      </div>
+      <div class="middle">
+        <AnnotationInputBox :expanded="expanded" />
+      </div>
+      <div class="right">
+        <Button kind="tertiary" size="sm" icon="ChevronDown" @click="expanded = !expanded" />
+        <ButtonClose />
+      </div>
     </div>
   </Teleport>
 </template>
 
 <style scoped>
-  .floating-menu {
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    padding: 4px 6px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  .hl-menu {
+    position: absolute;
+    background: var(--surface-page);
+    border: var(--border-extrathin) solid var(--border-primary);
+    border-radius: 8px;
+    padding: 4px;
+    box-shadow: var(--shadow-soft);
     display: flex;
-    gap: 6px;
+    gap: 24px;
+    z-index: 999;
+
+    & > * {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .right {
+    & :deep(.tabler-icon) {
+      color: var(--dark) !important;
+    }
+  }
+
+  .cp-wrapper :deep(.swatch) {
+    height: fit-content;
+    width: fit-content;
+    gap: 4px;
+    padding-inline: 2px;
+
+    & > button {
+      height: 16px;
+      width: 16px;
+    }
   }
 </style>
