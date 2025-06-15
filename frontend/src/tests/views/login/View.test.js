@@ -4,7 +4,8 @@ import { mount, RouterLinkStub } from '@vue/test-utils';
 import LoginView from '@/views/login/View.vue';
 import Button from '@/components/Button.vue';
 
-// Utility to wait for pending promises (e.g. auto-login flow in dev mode)
+
+// Utility to wait for pending promises (e.g. auto-focus flow in dev mode)
 const flushPromises = () => new Promise(res => setTimeout(res, 0));
 
 // Stub useRouter to capture navigation calls
@@ -47,17 +48,15 @@ describe('LoginView', () => {
     expect(pushMock).toHaveBeenCalledWith('/register');
   });
 
-  it('auto-prefills inputs and logs in on mount when isDev=true', async () => {
+  it('auto-prefills inputs and focuses login button on mount when isDev=true', async () => {
     import.meta.env.VITE_DEV_LOGIN_EMAIL = 'dev@example.com';
     import.meta.env.VITE_DEV_LOGIN_PASSWORD = 'secret';
-    const api = {
-      post: vi.fn().mockResolvedValue({ data: { access_token: 'tok', refresh_token: 'ref' } }),
-      get: vi.fn().mockResolvedValue({ data: {} }),
-    };
+    const api = { post: vi.fn(), get: vi.fn() };
     const user = ref(null);
-    const fileStore = { loadFiles: vi.fn().mockResolvedValue(), loadTags: vi.fn().mockResolvedValue() };
+    const fileStore = { loadFiles: vi.fn(), loadTags: vi.fn() };
     localStorage.clear();
     wrapper = mount(LoginView, {
+      attachTo: document.body,
       global: {
         provide: { isDev: true, api, user, fileStore },
         components: { Button },
@@ -65,14 +64,13 @@ describe('LoginView', () => {
       },
     });
     await flushPromises();
-    expect(api.post).toHaveBeenCalledWith('/login', {
-      email: 'dev@example.com',
-      password: 'secret',
-    });
     const emailInput = wrapper.find('input[type="text"]');
     const pwInput = wrapper.find('input[type="password"]');
     expect(emailInput.element.value).toBe('dev@example.com');
     expect(pwInput.element.value).toBe('secret');
+    const loginBtn = wrapper.findComponent(Button);
+    expect(document.activeElement).toBe(loginBtn.element);
+    expect(api.post).not.toHaveBeenCalled();
   });
 
 });

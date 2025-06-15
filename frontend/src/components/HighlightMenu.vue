@@ -1,70 +1,77 @@
 <script setup>
-  import { ref, toRef, onMounted, onUnmounted, useTemplateRef } from "vue";
+  import { ref, onMounted, onUnmounted, useTemplateRef } from "vue";
   import { useFloating, autoUpdate, offset, flip, shift } from "@floating-ui/vue";
 
   const selfRef = useTemplateRef("self-ref");
-  const range = ref(null);
   const visible = ref(false);
+  const virtualEl = ref(null);
+
+  const colors = {
+    purple: "var(--purple-300)",
+    orange: "var(--orange-300)",
+    green: "var(--green-300)",
+  };
+
+  // Create a virtual element for Floating UI
+  const getVirtualElementFromRange = (range) => {
+    const rect = range.getBoundingClientRect();
+    return {
+      getBoundingClientRect: () => rect,
+      contextElement: document.body,
+    };
+  };
 
   // Floating UI setup
-  const { floatingStyles } = useFloating(
-    toRef(() => range),
-    selfRef,
-    {
-      whileElementsMounted: autoUpdate,
-      placement: "top",
-      middleware: [offset(8), shift(), flip()],
-      anchor: () => range,
-    }
-  );
+  const { floatingStyles } = useFloating(virtualEl, selfRef, {
+    whileElementsMounted: autoUpdate,
+    placement: "top",
+    middleware: [offset(8), shift(), flip()],
+  });
 
   // Show menu when user selects non-collapsed text
   const updateSelection = () => {
-    console.log("updating");
     const sel = window.getSelection();
-    if (!sel || sel.isCollapsed) {
+    if (!sel || sel.isCollapsed || sel.rangeCount === 0) {
       visible.value = false;
-      range.value = null;
+      virtualEl.value = null;
       return;
     }
 
     const selectedRange = sel.getRangeAt(0);
     if (!selectedRange || selectedRange.collapsed) {
       visible.value = false;
-      range.value = null;
+      virtualEl.value = null;
       return;
     }
 
-    console.log(selectedRange);
-    range.value = selectedRange;
+    virtualEl.value = getVirtualElementFromRange(selectedRange);
     visible.value = true;
   };
 
   const clearSelection = () => {
-    console.log("clearing");
     visible.value = false;
-    range.value = null;
+    virtualEl.value = null;
   };
 
-  // Component life cycle
   onMounted(() => {
-    if (!selfRef) return;
-    console.log("setting");
-    document.addEventListener("selectionchange", updateSelection);
-    document.addEventListener("mousedown", (e) => {
-      if (!selfRef.value?.contains(e.target)) clearSelection();
+    window.addEventListener("selectionchange", updateSelection);
+    window.addEventListener("mousedown", (e) => {
+      if (!selfRef.value?.contains(e.target)) {
+        clearSelection();
+      }
     });
   });
+
   onUnmounted(() => {
-    document.removeEventListener("selectionchange", updateSelection);
-    document.removeEventListener("mousedown", clearSelection);
+    window.removeEventListener("selectionchange", updateSelection);
+    window.removeEventListener("mousedown", clearSelection);
   });
 
-  // Main action callbacks
   function onAddComment() {
     console.log("Add Comment");
     clearSelection();
   }
+
   function onAddNote() {
     console.log("Add Note");
     clearSelection();

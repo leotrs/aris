@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, computed, onMounted } from "vue";
+import { ref, inject, computed, onMounted, nextTick } from "vue";
   import { useRouter } from "vue-router";
   import { createFileStore } from "@/store/FileStore.js";
 
@@ -13,6 +13,7 @@
   const fileStore = inject("fileStore");
 
   const isDev = inject("isDev");
+  const loginButton = ref(null);
   const emailPlaceholder = computed(() =>
     isDev ? import.meta.env.VITE_DEV_LOGIN_EMAIL || "" : ""
   );
@@ -32,7 +33,10 @@
     if (isDev) {
       email.value = emailPlaceholder.value;
       password.value = passwordPlaceholder.value;
-      onLogin();
+      nextTick(() => {
+        const btn = loginButton.value;
+        (btn?.$el ?? btn)?.focus();
+      });
     }
   });
 
@@ -86,6 +90,7 @@
         <div class="bottom">
           <div v-if="error" class="error-message">{{ error }}</div>
           <Button
+            ref="loginButton"
             kind="primary"
             :text="isLoading ? 'Logging in...' : 'Login'"
             :disabled="isLoading"
