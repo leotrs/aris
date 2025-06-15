@@ -4,6 +4,10 @@
   const props = defineProps({
     expanded: { type: Boolean, default: true },
   });
+
+  const onSubmit = () => {
+    console.log("submit");
+  };
 </script>
 
 <template>
