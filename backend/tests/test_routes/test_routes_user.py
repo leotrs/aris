@@ -83,12 +83,10 @@ async def test_get_user_not_found(client: AsyncClient, authenticated_user):
     assert response.json()["detail"] == "User not found"
 
 
-async def test_get_user_route_crud_returns_none(monkeypatch, client: AsyncClient):
+async def test_delete_user_not_found(client: AsyncClient, authenticated_user):
     """Test GET /users/{user_id} returns 404 when crud.get_user returns None."""
-    # Bypass authentication by overriding current_user dependency
-    app.dependency_overrides[current_user] = lambda: None
-
-    response = await client.get("/users/-999")
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    response = await client.delete("/users/99999", headers=headers)
     assert response.status_code == 404
     assert response.json()["detail"] == "User not found"
 
