@@ -4,6 +4,7 @@
   const props = defineProps({
     colors: { type: Object, required: true },
     defaultActive: { type: String, default: "" },
+    labels: { type: Boolean, default: true },
   });
   const emit = defineEmits(["change"]);
 
@@ -31,7 +32,7 @@
         @keydown.enter.prevent="onClick(name)"
         @keydown.space.prevent="onClick(name)"
       />
-      <span class="label text-caption">{{ name }}</span>
+      <span v-if="labels" class="label text-caption">{{ name }}</span>
     </div>
   </span>
 </template>
