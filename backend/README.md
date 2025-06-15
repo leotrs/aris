@@ -54,3 +54,14 @@ The FastAPI app is deployed on fly.io via the command `fly deploy`, which uses t
 `Dockerfile` in this directory. Use `fly logs` to stream the live logs.
 
 The database is hosted on Supabase, and `alembic` is used to control its schema.
+
+## Utility Scripts
+
+Helper scripts are available in the `scripts/` directory for common maintenance tasks:
+
+| Script               | Description                                                                                             |
+| -------------------- | ------------------------------------------------------------------------------------------------------- |
+| `init_db.py`         | Create all tables in the database using the models’ metadata (i.e., `Base.metadata.create_all`).        |
+| `add_mock_data.py`   | Populate the database with mock users, files, and tags for testing purposes.                            |
+| `add_example_data.py`| Load example `.rsm` documents into the database from the `rsm-examples` package.                        |
+| `sync_columns.py`    | Sync specified columns from one Postgres database to another, skipping duplicates.                      |
