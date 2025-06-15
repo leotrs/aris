@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, onMounted } from "vue";
+  import { ref, inject, computed, onMounted } from "vue";
   import { useRouter } from "vue-router";
   import { createFileStore } from "@/store/FileStore.js";
 
@@ -12,12 +12,27 @@
   const user = inject("user");
   const fileStore = inject("fileStore");
 
+  const isDev = inject("isDev");
+  const emailPlaceholder = computed(() =>
+    isDev ? import.meta.env.VITE_DEV_LOGIN_EMAIL || "" : ""
+  );
+  const passwordPlaceholder = computed(() =>
+    isDev ? import.meta.env.VITE_DEV_LOGIN_PASSWORD || "" : ""
+  );
+
   onMounted(() => {
     const token = localStorage.getItem("accessToken");
     const storedUser = JSON.parse(localStorage.getItem("user"));
     if (token && storedUser) {
       if (!user.value) user.value = storedUser;
       router.push("/");
+      return;
+    }
+
+    if (isDev) {
+      email.value = emailPlaceholder.value;
+      password.value = passwordPlaceholder.value;
+      onLogin();
     }
   });
 
@@ -55,13 +70,6 @@
 
 <template>
   <div class="view" @keydown.enter="onLogin">
-    <!-- <div class="left">
-         <div class="logo"></div>
-         <div class="tagline">
-         <p>Scientific publishing.</p>
-         <p>Web-native. Human-first</p>
-         </div>
-         </div> -->
     <div class="right">
       <div class="wrapper">
         <div class="top">

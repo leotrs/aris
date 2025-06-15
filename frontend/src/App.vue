@@ -118,6 +118,7 @@
   provide("fileStore", fileStore);
 
   const isDev = import.meta.env.VITE_ENV === "DEV";
+  provide("isDev", isDev);
 
   // Shortcuts modal
   const showShortcutsModal = ref(false);
