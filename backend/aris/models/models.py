@@ -25,6 +25,7 @@ from sqlalchemy import (
 from sqlalchemy.sql import func
 from sqlalchemy.orm import relationship, declarative_base
 
+
 Base = declarative_base()
 
 
@@ -117,6 +118,9 @@ class User(Base):
     )
     file_assets = relationship("FileAsset", back_populates="owner", cascade="all, delete-orphan")
     profile_picture = relationship("ProfilePicture", back_populates="user")
+    annotation_messages = relationship(
+        "AnnotationMessage", back_populates="owner", cascade="all, delete-orphan"
+    )
 
 
 class ProfilePicture(Base):
@@ -224,6 +228,7 @@ class File(Base):
 
     owner = relationship("User", back_populates="files")
     tags = relationship("Tag", secondary=file_tags, back_populates="files")
+    annotations = relationship("Annotation", back_populates="file", cascade="all, delete-orphan")
     file_assets = relationship("FileAsset", back_populates="file", cascade="all, delete-orphan")
     file_settings = relationship(
         "FileSettings", back_populates="file", cascade="all, delete-orphan"
@@ -384,3 +389,37 @@ class FileSettings(Base):
 
     file = relationship("File", back_populates="file_settings")
     user = relationship("User", back_populates="file_settings")
+
+
+class AnnotationType(str, enum.Enum):
+    NOTE = "note"
+    COMMENT = "comment"
+
+
+class Annotation(Base):
+    __tablename__ = "annotation"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    file_id = Column(Integer, ForeignKey("files.id"), nullable=False)
+    type = Column(Enum(AnnotationType), nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
+
+    messages = relationship(
+        "AnnotationMessage", back_populates="annotation", cascade="all, delete-orphan"
+    )
+    file = relationship("File", back_populates="annotations")
+
+
+class AnnotationMessage(Base):
+    __tablename__ = "annotation_message"
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    annotation_id = Column(Integer, ForeignKey("annotation.id"), nullable=False)
+    owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    content = Column(Text, nullable=False)
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
+
+    annotation = relationship("Annotation", back_populates="messages")
+    owner = relationship("User", back_populates="annotation_messages")
