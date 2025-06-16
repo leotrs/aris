@@ -22,7 +22,7 @@
   <div class="um-wrapper" @click.stop="onClick">
     <ContextMenu ref="menu-ref" icon="">
       <template #trigger>
-        <Avatar :user="user" />
+        <Avatar :user="user" :tooltip="false" />
       </template>
       <ContextMenuItem icon="User" caption="Account" @click="() => goTo('account')" />
       <ContextMenuItem icon="Settings" caption="Settings" @click="() => goTo('settings')" />

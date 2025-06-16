@@ -1,9 +1,10 @@
 <script setup>
-  import { inject, computed, ref, onMounted } from "vue";
+  import { inject, computed, ref, onMounted, useTemplateRef } from "vue";
 
   const props = defineProps({
     size: { type: String, default: "md" },
     user: { type: Object, required: true },
+    tooltip: { type: Boolean, default: true },
   });
   const api = inject("api");
 
@@ -37,10 +38,13 @@
       backgroundImage: hasAvatar.value ? `url(${avatarUrl.value})` : "none",
     };
   });
+
+  const selfRef = useTemplateRef("self-ref");
 </script>
 
 <template>
   <div
+    ref="self-ref"
     class="av-wrapper"
     :class="[hasAvatar ? 'has-avatar' : '', `size-${props.size}`]"
     :style="style"
@@ -48,6 +52,7 @@
     <span v-if="!hasAvatar && props.size !== 'sm'" class="av-name">
       {{ initials }}
     </span>
+    <Tooltip v-if="tooltip" :anchor="selfRef" :content="user.name" />
   </div>
 </template>
 
@@ -77,7 +82,7 @@
     user-select: none;
   }
 
-  .has-avatar {
+  .av-wrapper.has-avatar:not(.size-sm) {
     border: 2px solid v-bind(props.user.color);
     box-shadow: var(--shadow-soft);
   }

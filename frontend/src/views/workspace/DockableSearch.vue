@@ -23,6 +23,11 @@
     if (searchInfo.matches.length < 1) return "0 matches";
     return `match ${searchInfo.lastMatchScrolledTo + 1} of ${searchInfo.matches.length}`;
   });
+  const simpleMatchText = computed(() => {
+    if (!searchInfo.isSearching || searchInfo.matches.length === 0) return '';
+    const idx = (searchInfo.lastMatchScrolledTo ?? 0) + 1;
+    return `${idx}/${searchInfo.matches.length} document matches`;
+  });
 
   const startSearch = () => {
     searchInfo.matches = highlightSearchMatches(manuscriptRef.value.$el, searchInfo.searchString);
@@ -117,6 +122,9 @@
           />
         </template>
       </SearchBar>
+      <span v-if="searchInfo.isSearching" class="match-count text-caption">
+        {{ simpleMatchText }}
+      </span>
     </div>
 
     <template v-if="advanced">
