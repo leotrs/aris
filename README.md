@@ -1,5 +1,11 @@
 # Aris: Research publications. Web-native. Human-first.
 
+[![CI](https://github.com/leotrs/aris/actions/workflows/ci.yml/badge.svg)](https://github.com/leotrs/aris/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/leotrs/aris/branch/main/graph/badge.svg)](https://codecov.io/gh/leotrs/aris)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.13+](https://img.shields.io/badge/python-3.13+-blue.svg)](https://www.python.org/downloads/)
+[![Node.js 23+](https://img.shields.io/badge/node.js-23+-green.svg)](https://nodejs.org/)
+
 **Aris** is a web-native scientific publishing platform that replaces static PDFs with
 interactive, accessible HTML documents. Built for researchers, academics, scientists,
 and students, Aris makes it easy to write, revise, collaborate, and publish work that’s
@@ -19,7 +25,7 @@ readable on any device, bringing scientific publications to the web. See more at
 1. **Clone the repository**
 
    ```bash
-   git clone https://github.com/your-org/aris.git
+   git clone https://github.com/leotrs/aris.git
    cd aris
    ```
 
@@ -35,9 +41,7 @@ readable on any device, bringing scientific publications to the web. See more at
 
    ```bash
    cd backend
-   python -m venv venv
-   source venv/bin/activate
-   pip install -r requirements.txt
+   uv sync
    uvicorn main:app --reload
    ```
 
@@ -75,11 +79,13 @@ aris/
 └── README.md
 ```
 
-### Contributing
-We welcome contributions! Please open an issue or submit a pull request.
+## Contributing
 
-<!-- ### License -->
-<!-- MIT -->
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ### Authors
 Made with <3 by [leotrs](https://leotrs.com).

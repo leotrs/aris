@@ -1,7 +1,8 @@
 export const highlightClass = "search-result";
+export const currentHighlightClass = "search-result-current";
 
 export function clearHighlights(rootEl) {
-  const marks = rootEl.querySelectorAll(`mark.${highlightClass}`);
+  const marks = rootEl.querySelectorAll(`mark.${highlightClass}, mark.${currentHighlightClass}`);
   for (const mark of marks) {
     const parent = mark.parentNode;
     // Use document fragment for better performance
@@ -13,6 +14,27 @@ export function clearHighlights(rootEl) {
   }
   // Normalize at the root level once rather than per node
   rootEl.normalize();
+}
+
+/**
+ * Updates the current search match to have special highlighting
+ * @param {Array} matches - Array of match objects
+ * @param {number} currentIndex - Index of the current match to highlight
+ */
+export function updateCurrentMatch(matches, currentIndex) {
+  // Remove current highlight class from all matches
+  matches.forEach(match => {
+    if (match.mark) {
+      match.mark.classList.remove(currentHighlightClass);
+      match.mark.classList.add(highlightClass);
+    }
+  });
+
+  // Add current highlight class to the current match
+  if (currentIndex >= 0 && currentIndex < matches.length && matches[currentIndex].mark) {
+    matches[currentIndex].mark.classList.remove(highlightClass);
+    matches[currentIndex].mark.classList.add(currentHighlightClass);
+  }
 }
 
 /**

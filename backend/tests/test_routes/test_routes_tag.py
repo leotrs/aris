@@ -5,27 +5,6 @@ from unittest.mock import patch
 from httpx import AsyncClient
 
 
-@pytest.fixture
-async def authenticated_user(client: AsyncClient):
-    """Create a user and return auth token."""
-    response = await client.post(
-        "/register",
-        json={
-            "email": "testuser@example.com",
-            "name": "Test User",
-            "initials": "TU",
-            "password": "testpass123",
-        },
-    )
-    token = response.json()["access_token"]
-    user_id = response.json()["user"]["id"]
-    return {"token": token, "user_id": user_id}
-
-
-@pytest.fixture
-def auth_headers(authenticated_user):
-    """Return authorization headers."""
-    return {"Authorization": f"Bearer {authenticated_user['token']}"}
 
 
 @pytest.fixture

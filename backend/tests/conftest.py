@@ -1,4 +1,18 @@
-"""Global test fixtures and other config."""
+"""Global test fixtures and configuration.
+
+This module provides centralized testing infrastructure for the Aris backend,
+following FastAPI testing best practices. It includes:
+
+- Database setup with proper isolation
+- Authentication fixtures for API testing  
+- Test data factories for consistent test data
+- Utility functions for common test operations
+
+Usage:
+    Test files can import fixtures directly from conftest.py via pytest's
+    automatic fixture discovery. Import TestConstants and TestDataFactory
+    for standardized test data.
+"""
 
 import pytest_asyncio
 import httpx
@@ -70,6 +84,11 @@ async def client(db_session):
 
 @pytest_asyncio.fixture
 async def test_user(db_session):
+    """Create a test user directly in the database.
+    
+    This is different from authenticated_user which creates a user 
+    through the API and includes auth tokens.
+    """
     user = User(
         id="10",
         name="foo bar",
@@ -84,6 +103,7 @@ async def test_user(db_session):
 
 @pytest_asyncio.fixture
 async def test_file(db_session, test_user):
+    """Create a test file directly in the database."""
     file = File(
         owner_id=test_user.id,
         id="1234",
@@ -93,3 +113,156 @@ async def test_file(db_session, test_user):
     await db_session.commit()
     await db_session.refresh(file)
     return file
+
+
+class TestConstants:
+    """Centralized test constants to avoid magic numbers and strings."""
+    
+    DEFAULT_USER_EMAIL = "testuser@example.com"
+    DEFAULT_USER_NAME = "Test User"
+    DEFAULT_USER_INITIALS = "TU"
+    DEFAULT_PASSWORD = "testpass123"
+    
+    SECOND_USER_EMAIL = "testuser2@example.com"
+    SECOND_USER_NAME = "Test User 2"
+    SECOND_USER_INITIALS = "TU2"
+    
+    UPDATED_NAME = "Updated Name"
+    UPDATED_INITIALS = "UN" 
+    UPDATED_EMAIL = "updated@example.com"
+    
+    TEST_FILE_TITLE = "Test Document"
+    TEST_FILE_ABSTRACT = "A test document"
+    TEST_FILE_SOURCE = ":rsm:test content::"
+    
+    IMAGE_SIZE = (100, 100)
+    IMAGE_COLOR = "red"
+    MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
+    LARGE_FILE_SIZE = 6 * 1024 * 1024  # 6MB
+    
+    NONEXISTENT_ID = 99999
+
+
+@pytest_asyncio.fixture
+async def authenticated_user(client: AsyncClient):
+    """Create a user and return auth token and user info.
+    
+    This fixture consolidates the authentication pattern used across
+    multiple test files to reduce duplication and ensure consistency.
+    """
+    response = await client.post(
+        "/register",
+        json={
+            "email": TestConstants.DEFAULT_USER_EMAIL,
+            "name": TestConstants.DEFAULT_USER_NAME,  
+            "initials": TestConstants.DEFAULT_USER_INITIALS,
+            "password": TestConstants.DEFAULT_PASSWORD,
+        },
+    )
+    assert response.status_code == 200, f"Registration failed: {response.json()}"
+    
+    token = response.json()["access_token"]
+    user_id = response.json()["user"]["id"]
+    user_data = response.json()["user"]
+    
+    return {
+        "token": token,
+        "user_id": user_id,
+        "user": user_data,
+        "email": TestConstants.DEFAULT_USER_EMAIL,
+        "password": TestConstants.DEFAULT_PASSWORD,
+    }
+
+
+@pytest_asyncio.fixture
+def auth_headers(authenticated_user):
+    """Return authorization headers for authenticated requests.
+    
+    Provides consistent header format across all test files.
+    """
+    return {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+
+@pytest_asyncio.fixture
+def second_auth_headers(second_authenticated_user):
+    """Return authorization headers for the second user."""
+    return {"Authorization": f"Bearer {second_authenticated_user['token']}"}
+
+
+@pytest_asyncio.fixture
+async def second_authenticated_user(client: AsyncClient):
+    """Create a second user for multi-user testing scenarios."""
+    response = await client.post(
+        "/register",
+        json={
+            "email": TestConstants.SECOND_USER_EMAIL,
+            "name": TestConstants.SECOND_USER_NAME,
+            "initials": TestConstants.SECOND_USER_INITIALS,
+            "password": TestConstants.DEFAULT_PASSWORD,
+        },
+    )
+    assert response.status_code == 200, f"Second user registration failed: {response.json()}"
+    
+    token = response.json()["access_token"]
+    user_id = response.json()["user"]["id"]
+    user_data = response.json()["user"]
+    
+    return {
+        "token": token,
+        "user_id": user_id,
+        "user": user_data,
+        "email": TestConstants.SECOND_USER_EMAIL,
+        "password": TestConstants.DEFAULT_PASSWORD,
+    }
+
+
+class TestDataFactory:
+    """Factory class for creating consistent test data across test files."""
+    
+    @staticmethod
+    def user_registration_data(
+        email=None,
+        name=None,
+        initials=None,
+        password=None
+    ):
+        """Generate user registration data with optional overrides."""
+        return {
+            "email": email or TestConstants.DEFAULT_USER_EMAIL,
+            "name": name or TestConstants.DEFAULT_USER_NAME,
+            "initials": initials or TestConstants.DEFAULT_USER_INITIALS,
+            "password": password or TestConstants.DEFAULT_PASSWORD,
+        }
+    
+    @staticmethod
+    def file_creation_data(
+        title=None,
+        abstract=None,
+        source=None,
+        owner_id=None,
+        **kwargs
+    ):
+        """Generate file creation data with optional overrides."""
+        data = {
+            "title": title or TestConstants.TEST_FILE_TITLE,
+            "abstract": abstract or TestConstants.TEST_FILE_ABSTRACT,
+            "source": source or TestConstants.TEST_FILE_SOURCE,
+        }
+        if owner_id is not None:
+            data["owner_id"] = owner_id
+        data.update(kwargs)
+        return data
+    
+    @staticmethod
+    def tag_creation_data(
+        name=None,
+        color=None,
+        **kwargs
+    ):
+        """Generate tag creation data with optional overrides."""
+        data = {
+            "name": name or "Test Tag",
+            "color": color or "#FF0000",
+        }
+        data.update(kwargs)
+        return data

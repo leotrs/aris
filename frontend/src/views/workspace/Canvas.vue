@@ -42,30 +42,28 @@
 
   // Expose some of the geometry
   const innerRef = useTemplateRef("inner-right-ref");
-  const lftColRef = useTemplateRef("leftColumnRef");
-  const midColRef = useTemplateRef("middleColumnRef");
-  const rgtColRef = useTemplateRef("rightColumnRef");
+  const lftColRef = useTemplateRef("left-column-ref");
+  const midColRef = useTemplateRef("middle-column-ref");
+  const rgtColRef = useTemplateRef("right-column-ref");
   const columnSizes = reactive({
     left: { width: 0, height: 0 },
     middle: { width: 0, height: 0 },
     right: { width: 0, height: 0 },
     inner: { width: 0, height: 0 },
   });
-  onMounted(async () => {
-    await nextTick();
-    const { width: lftColW, height: lftColH } = useElementSize(lftColRef);
-    const { width: midColW, height: midColH } = useElementSize(midColRef);
-    const { width: rgtColW, height: rgtColH } = useElementSize(rgtColRef);
-    watch(lftColW, (w) => (columnSizes.left.width = w), { immediate: true });
-    watch(midColW, (w) => (columnSizes.middle.width = w), { immediate: true });
-    watch(rgtColW, (w) => (columnSizes.right.width = w), { immediate: true });
-    watch(lftColH, (h) => (columnSizes.left.height = h), { immediate: true });
-    watch(midColH, (h) => (columnSizes.middle.height = h), { immediate: true });
-    watch(rgtColH, (h) => (columnSizes.right.height = h), { immediate: true });
-
-    const { width: innerW, height: innerH } = useElementSize(innerRef);
-    watch(innerW, (w) => (columnSizes.inner.width = w));
-    watch(innerH, (h) => (columnSizes.inner.height = h));
+  const { width: lftColW, height: lftColH } = useElementSize(lftColRef);
+  const { width: midColW, height: midColH } = useElementSize(midColRef);
+  const { width: rgtColW, height: rgtColH } = useElementSize(rgtColRef);
+  const { width: innerW, height: innerH } = useElementSize(innerRef);
+  watchEffect(() => {
+    columnSizes.left.width = lftColW.value;
+    columnSizes.left.height = lftColH.value;
+    columnSizes.middle.width = midColW.value;
+    columnSizes.middle.height = midColH.value;
+    columnSizes.right.width = rgtColW.value;
+    columnSizes.right.height = rgtColH.value;
+    columnSizes.inner.width = innerW.value;
+    columnSizes.inner.height = innerH.value;
   });
   provide("columnSizes", columnSizes);
 
@@ -131,6 +129,7 @@
   const mobileMode = inject("mobileMode");
   const focusMode = inject("focusMode");
   const drawerOpen = inject("drawerOpen");
+  const middleTopWidth = computed(() => `${columnSizes.middle.width + 8}px`);
 </script>
 
 <template>
@@ -270,24 +269,24 @@
   }
 
   .inner.right .middle-column {
-    width: 100%;
+    width: calc(100% - 8px);
     height: fit-content;
     scrollbar-gutter: stable;
   }
 
-  .inner.right .dock.top.middle {
-    max-width: calc(720px + 48px);
+  .inner.right .middle-column .dock.top.middle {
     position: sticky;
     top: 0;
     z-index: 2;
-    margin: 0 auto;
+    padding-inline: 4px;
+    min-width: v-bind(middleTopWidth);
+    transform: translateX(-4px);
+
     background: v-bind(fileSettings.background) !important;
 
     will-change: opacity;
     transition: opacity 0.3s ease;
-  }
 
-  .inner.right .middle-column .middle.top {
     &:has(+ .middle.main .rsm-manuscript.title-visible) {
       height: 2px;
       opacity: 0;

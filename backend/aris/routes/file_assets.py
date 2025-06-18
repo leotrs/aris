@@ -1,3 +1,5 @@
+"""Routes to manage file assets (pictures, extra rsm files, etc)."""
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List

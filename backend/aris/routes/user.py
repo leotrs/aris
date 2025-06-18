@@ -19,6 +19,29 @@ router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(curren
 
 @router.get("/{user_id}")
 async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
+    """Retrieve a specific user by ID.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user to retrieve.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+
+    Returns
+    -------
+    User
+        The user object if found.
+
+    Raises
+    ------
+    HTTPException
+        404 error if user is not found or has been deleted.
+
+    Notes
+    -----
+    Requires authentication. Only returns non-deleted users.
+    """
     user = await crud.get_user(user_id, db)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -37,6 +60,31 @@ async def update_user(
     update: UserUpdate,
     db: AsyncSession = Depends(get_db),
 ):
+    """Update user profile information.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user to update.
+    update : UserUpdate
+        Updated user data including name, initials, and email.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+
+    Returns
+    -------
+    User
+        The updated user object.
+
+    Raises
+    ------
+    HTTPException
+        404 error if user is not found.
+
+    Notes
+    -----
+    Requires authentication. Updates only the provided fields.
+    """
     user = await crud.update_user(user_id, update.name, update.initials, update.email, db)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -45,6 +93,30 @@ async def update_user(
 
 @router.delete("/{user_id}")
 async def soft_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
+    """Soft delete a user account.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user to delete.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+
+    Returns
+    -------
+    dict
+        Success message confirming the deletion.
+
+    Raises
+    ------
+    HTTPException
+        404 error if user is not found.
+
+    Notes
+    -----
+    Requires authentication. Sets deleted_at timestamp instead of
+    permanently removing the record.
+    """
     user = await crud.soft_delete_user(user_id, db)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
@@ -57,6 +129,31 @@ async def get_user_files(
     with_tags: bool = True,
     db: AsyncSession = Depends(get_db),
 ):
+    """Retrieve all files owned by a user.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user whose files to retrieve.
+    with_tags : bool, optional
+        Whether to include tag information for each file (default: True).
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+
+    Returns
+    -------
+    list of dict
+        List of file objects with metadata and optional tags.
+
+    Raises
+    ------
+    HTTPException
+        404 error if user is not found.
+
+    Notes
+    -----
+    Requires authentication. Returns files ordered by last edited date.
+    """
     try:
         return await crud.get_user_files(user_id, with_tags, db)
     except ValueError as e:
@@ -71,6 +168,35 @@ async def get_user_file(
     with_minimap: bool = True,
     db: AsyncSession = Depends(get_db),
 ):
+    """Retrieve a specific file owned by a user.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user who owns the file.
+    file_id : int
+        The unique identifier of the file to retrieve.
+    with_tags : bool, optional
+        Whether to include tag information (default: True).
+    with_minimap : bool, optional
+        Whether to include minimap section content (default: True).
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+
+    Returns
+    -------
+    dict
+        File object with metadata, content, and optional tags/minimap.
+
+    Raises
+    ------
+    HTTPException
+        404 error if user or file is not found.
+
+    Notes
+    -----
+    Requires authentication. Includes extracted title and optional metadata.
+    """
     try:
         return await crud.get_user_file(user_id, file_id, with_tags, with_minimap, db)
     except ValueError as e:
@@ -90,7 +216,38 @@ async def upload_profile_picture(
     db: AsyncSession = Depends(get_db),
     current_user: User = Depends(current_user),
 ):
-    """Upload or update a user's profile picture."""
+    """Upload or update a user's profile picture.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user whose avatar to update.
+    avatar : UploadFile
+        Image file upload (JPEG, PNG, GIF, or WebP format).
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+    current_user : User
+        Current authenticated user dependency.
+
+    Returns
+    -------
+    dict
+        Success message with new picture ID.
+
+    Raises
+    ------
+    HTTPException
+        403 error if user is not authorized to update this profile.
+        400 error if file type is invalid or file is too large.
+        404 error if user is not found.
+        500 error if upload fails.
+
+    Notes
+    -----
+    Maximum file size is 5MB. Allowed formats: JPEG, PNG, GIF, WebP.
+    Soft deletes existing profile picture before creating new one.
+    Stores image as base64-encoded content in database.
+    """
     if current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not authorized to update this profile")
     if avatar.content_type not in ALLOWED_MIME_TYPES:
@@ -148,7 +305,35 @@ async def upload_profile_picture(
 async def get_profile_picture(
     user_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(current_user)
 ):
-    """Retrieve a user's profile picture."""
+    """Retrieve a user's profile picture.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user whose avatar to retrieve.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+    current_user : User
+        Current authenticated user dependency.
+
+    Returns
+    -------
+    Response
+        Image file response with appropriate Content-Type and caching headers.
+
+    Raises
+    ------
+    HTTPException
+        403 error if user is not authorized to retrieve this profile.
+        404 error if user or profile picture is not found.
+        500 error if image data is corrupted.
+
+    Notes
+    -----
+    Returns binary image data with appropriate MIME type.
+    Includes caching headers for better performance.
+    Only allows users to retrieve their own profile pictures.
+    """
     if current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not authorized to retrieve this profile")
 
@@ -184,7 +369,35 @@ async def get_profile_picture(
 async def delete_profile_picture(
     user_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(current_user)
 ):
-    """Delete a user's profile picture (soft delete)."""
+    """Delete a user's profile picture (soft delete).
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user whose avatar to delete.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+    current_user : User
+        Current authenticated user dependency.
+
+    Returns
+    -------
+    dict
+        Success message confirming the deletion.
+
+    Raises
+    ------
+    HTTPException
+        403 error if user is not authorized to delete this profile.
+        404 error if user or profile picture is not found.
+        500 error if deletion fails.
+
+    Notes
+    -----
+    Performs soft delete by setting deleted_at timestamp.
+    Clears the profile_picture_id reference from the user record.
+    Only allows users to delete their own profile pictures.
+    """
     if current_user.id != user_id:
         raise HTTPException(status_code=403, detail="Not authorized to delete this profile")
 

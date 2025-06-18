@@ -6,6 +6,7 @@
     highlightSearchMatches,
     highlightSearchMatchesSource,
     clearHighlights,
+    updateCurrentMatch,
   } from "@/utils/highlightSearchMatches.js";
 
   const props = defineProps({});
@@ -24,7 +25,7 @@
     return `match ${searchInfo.lastMatchScrolledTo + 1} of ${searchInfo.matches.length}`;
   });
   const simpleMatchText = computed(() => {
-    if (!searchInfo.isSearching || searchInfo.matches.length === 0) return '';
+    if (!searchInfo.isSearching || searchInfo.matches.length === 0) return "";
     const idx = (searchInfo.lastMatchScrolledTo ?? 0) + 1;
     return `${idx}/${searchInfo.matches.length} document matches`;
   });
@@ -67,6 +68,9 @@
     const scrollTo = (lastMatchScrolledTo + 1) % searchInfo.matches.length;
     searchInfo.matches[scrollTo].mark.scrollIntoView({ behavior: "smooth", block: "center" });
     searchInfo.lastMatchScrolledTo = scrollTo;
+
+    // Update current match highlighting
+    updateCurrentMatch(searchInfo.matches, scrollTo);
   };
 
   const onPrev = () => {
@@ -79,6 +83,9 @@
       (lastMatchScrolledTo - 1 + searchInfo.matches.length) % searchInfo.matches.length;
     searchInfo.matches[scrollTo].mark.scrollIntoView({ behavior: "smooth", block: "center" });
     searchInfo.lastMatchScrolledTo = scrollTo;
+
+    // Update current match highlighting
+    updateCurrentMatch(searchInfo.matches, scrollTo);
   };
 
   const advanced = ref(false);
@@ -349,5 +356,9 @@
 <style>
   .search-result {
     background-color: var(--secondary-200);
+  }
+
+  .search-result-current {
+    background-color: var(--orange-300);
   }
 </style>

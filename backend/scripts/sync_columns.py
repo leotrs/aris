@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 Sync specified columns from one Postgres database to another, avoiding duplicate rows.
 
@@ -6,7 +5,7 @@ Supports SQLAlchemy asyncpg URLs (e.g. postgresql+asyncpg://...).
 
 Usage:
     python scripts/sync_columns.py --table TABLE \
-        --columns filename,mime_type,content,uploaded_at,deleted_at \
+        [--columns filename,mime_type,content,uploaded_at,deleted_at] \
         [--source-url-key DB_URL_LOCAL] [--dest-url-key DB_URL_PROD] [--dry-run]
 """
 
@@ -27,11 +26,24 @@ def _load_connection_url(key: str) -> str:
 
 
 def _get_connection(url: str):
-    # Support SQLAlchemy asyncpg URLs (e.g. postgresql+asyncpg://...)
     if url.startswith("postgresql+asyncpg://"):
-        # strip the '+asyncpg' driver segment for psycopg2
         url = "postgresql://" + url.split("://", 1)[1]
     return psycopg2.connect(url)
+
+
+def _get_all_columns(conn, table: str) -> List[str]:
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            SELECT column_name
+            FROM information_schema.columns
+            WHERE table_name = %s
+              AND column_name != 'id'
+            ORDER BY ordinal_position
+        """,
+            (table,),
+        )
+        return [row[0] for row in cur.fetchall()]
 
 
 def _fetch_rows(conn, table: str, columns: List[str]) -> List[Tuple]:
@@ -60,10 +72,9 @@ def main() -> None:
     parser.add_argument(
         "--columns",
         "-c",
-        required=True,
         help=(
-            "Comma-separated list of columns to sync, e.g. "
-            "filename,mime_type,content,uploaded_at,deleted_at"
+            "Comma-separated list of columns to sync. "
+            "If omitted, all columns except 'id' will be synced."
         ),
     )
     parser.add_argument(
@@ -85,16 +96,24 @@ def main() -> None:
 
     load_dotenv()
 
-    columns = [c.strip() for c in args.columns.split(",") if c.strip()]
-    if not columns:
-        sys.exit("Error: no columns specified")
-
     src_url = _load_connection_url(args.source_url_key)
     dst_url = _load_connection_url(args.dest_url_key)
 
     src_conn = _get_connection(src_url)
     dst_conn = _get_connection(dst_url)
+
     try:
+        if args.columns:
+            columns = [c.strip() for c in args.columns.split(",") if c.strip()]
+        else:
+            print(
+                f"No columns specified, syncing all columns from table '{args.table}' except 'id'"
+            )
+            columns = _get_all_columns(src_conn, args.table)
+            if not columns:
+                sys.exit(f"Error: could not fetch columns for table '{args.table}'")
+            print(f"Columns to sync: {', '.join(columns)}")
+
         src_rows = _fetch_rows(src_conn, args.table, columns)
         dst_rows = _fetch_rows(dst_conn, args.table, columns)
 

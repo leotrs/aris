@@ -12,7 +12,6 @@
   const newInitials = ref(null);
   const newEmail = ref(null);
   const onSave = async () => {
-    console.log(newName.value, newInitials.value, newEmail.value);
     try {
       const payload = {
         name: newName.value || user.value.name,
@@ -149,11 +148,9 @@
                 <div id="username" class="text-h6">{{ user.name }}</div>
                 <div>{{ user.email }}</div>
                 <div>Prestigious University or Institute</div>
-                <div id="since">
-                  <em
-                    >Aris user since
-                    {{ new Date(user.created_at).toLocaleString(undefined, {}) }}</em
-                  >
+                <div id="since" class="text-caption">
+                  <span id="Aris">Aris</span>
+                  <em> user since {{ new Date(user.created_at).toLocaleDateString() }} </em>
                 </div>
               </div>
             </template>
@@ -254,7 +251,8 @@
   }
 
   #pic {
-    height: 150px;
+    min-height: 150px;
+    height: 100%;
     width: 150px;
     flex-shrink: 0;
     border-radius: calc(16px - var(--border-thin));
@@ -291,7 +289,13 @@
   }
 
   #since {
-    font-size: 14px;
+    font-size: 12px;
+    margin-top: 8px;
+  }
+
+  #Aris {
+    font-weight: var(--weight-semi);
+    color: var(--primary-700);
   }
 
   .main.mobile #pic {
@@ -301,19 +305,21 @@
   }
 
   .profile-card > .content > .info {
-    padding-inline: 32px;
+    magin: 0 auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
 
     & > * {
       margin-bottom: 4px;
-      white-space: nowrap;
     }
   }
 
   .main.xs .profile-card > :deep(.content) {
     flex-direction: column;
+    align-items: center;
+    padding-block: 8px;
+    text-align: center;
   }
 
   .main.xs #pic {

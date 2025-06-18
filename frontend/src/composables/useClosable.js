@@ -44,7 +44,6 @@ export default function ({
     if (!closeButtonSelector || !instance || !instance.proxy.$el) return null;
     const closeButton = instance.proxy.$el.querySelector(closeButtonSelector);
     if (!closeButton) {
-      console.error("No close button found");
       return null;
     }
     return closeButton;

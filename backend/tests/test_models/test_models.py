@@ -1,8 +1,16 @@
 """Unit tests for model-level logic in aris.models.models."""
 
 import random
-import pytest
-from aris.models.models import AvatarColor, FileStatus, FileSettings
+from aris.models.models import (
+    AvatarColor,
+    FileStatus,
+    FileSettings,
+    File,
+    User,
+    Annotation,
+    AnnotationType,
+    AnnotationMessage,
+)
 
 
 def test_avatar_color_values():
@@ -49,3 +57,69 @@ def test_file_settings_column_defaults():
     assert table.columns["margin_width"].default.arg == "16px"
     # columns count
     assert table.columns["columns"].default.arg == 1
+
+
+async def test_annotation_creation(db_session):
+    """Test basic creation of an Annotation."""
+    file = File(
+        owner_id=1,
+        source=":rsm: Test content ::"
+    )
+    db_session.add(file)
+    await db_session.commit()
+    await db_session.refresh(file)
+
+    annotation = Annotation(
+        file_id=file.id,
+        type=AnnotationType.NOTE
+    )
+    db_session.add(annotation)
+    await db_session.commit()
+    await db_session.refresh(annotation)
+
+    assert annotation.id is not None
+    assert annotation.file_id == file.id
+    assert annotation.type == AnnotationType.NOTE
+    assert annotation.created_at is not None
+
+
+async def test_annotation_message_creation(db_session):
+    """Test creating an AnnotationMessage and linking it to Annotation and User."""
+    user = User(
+        name="Test User",
+        email="test@example.com",
+        password_hash="test_hash"
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    
+    file = File(
+        owner_id=user.id,
+        source=":rsm: Test content ::"
+    )
+    db_session.add(file)
+    await db_session.commit()
+    await db_session.refresh(file)
+
+    annotation = Annotation(
+        file_id=file.id,
+        type=AnnotationType.NOTE
+    )
+    db_session.add(annotation)
+    await db_session.commit()
+    await db_session.refresh(annotation)
+
+    msg = AnnotationMessage(
+        annotation_id=annotation.id,
+        owner_id=user.id,
+        content="Sample note",
+    )
+    db_session.add(msg)
+    await db_session.commit()
+    await db_session.refresh(msg)
+
+    assert msg.id is not None
+    assert msg.content == "Sample note"
+    assert msg.annotation_id == annotation.id
+    assert msg.owner_id == user.id

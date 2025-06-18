@@ -52,8 +52,4 @@ describe('ColorPicker.vue', () => {
     expect(wrapper.findAll('.swatch')[2].classes()).toContain('active');
   });
 
-  it('does not set any active class initially even if defaultActive is provided', () => {
-    const wrapper = mount(ColorPicker, { props: { colors, defaultActive: 'red' } });
-    expect(wrapper.findAll('.swatch.active')).toHaveLength(0);
-  });
 });

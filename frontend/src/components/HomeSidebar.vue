@@ -80,7 +80,7 @@
         :shadow="true"
         :placement="mobileMode ? 'top-end' : 'bottom'"
         btn-component="Button"
-        kind="secondary"
+        :kind="mobileMode ? 'primary' : 'secondary'"
         :class="{ collapsed }"
         @click="onCTAClick"
       >
@@ -311,6 +311,7 @@
   }
 
   .sb-menu > .recent-file > :deep(.sb-text) {
+    max-width: calc(var(--expanded-width) - 32px - 4px - 16px - 4px) !important;
     overflow-x: clip;
     text-overflow: ellipsis;
   }
