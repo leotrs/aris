@@ -29,7 +29,7 @@
       : "minmax(144px, 2fr) minmax(96px, 1.5fr) 8px 104px 16px 8px";
   });
   const shouldShowColumn = (columnName, mode) => {
-    if (["Spacer"].includes(columnName) && xsMode.value) return false;
+    if (["Spacer", "Tags"].includes(columnName) && xsMode.value) return false;
     return true;
   };
   provide("shouldShowColumn", shouldShowColumn);
@@ -64,7 +64,6 @@
   .files-wrapper {
     display: flex;
     flex-direction: column;
-    padding-bottom: 16px;
     overflow-y: auto;
     width: 100%;
     height: 100%;
