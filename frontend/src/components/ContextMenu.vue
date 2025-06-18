@@ -1,8 +1,18 @@
 <script setup>
-  import { ref, computed, watch, provide, useTemplateRef, useSlots } from "vue";
+  import {
+    ref,
+    computed,
+    watch,
+    provide,
+    inject,
+    useTemplateRef,
+    useSlots,
+    nextTick,
+  } from "vue";
   import { useFloating, autoUpdate, flip, offset, shift } from "@floating-ui/vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
+  import { useDebounceFn } from "@vueuse/core";
 
   const props = defineProps({
     icon: { type: String, default: "Dots" },
