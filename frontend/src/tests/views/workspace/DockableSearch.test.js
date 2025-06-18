@@ -65,20 +65,20 @@ describe('DockableSearch.vue', () => {
       file.value.source,
       query.trim(),
     );
-    const countLabel = wrapper.find('.match-count .text-caption').text();
+    const countLabel = wrapper.find('.match-count').text();
     expect(countLabel).toBe(`1/${stubMatches.length} document matches`);
 
     await wrapper.findComponent(SearchBarStub).vm.$emit('next');
     await nextTick();
     expect(stubMatches[1].mark.scrollIntoView).toHaveBeenCalled();
-    expect(wrapper.find('.match-count .text-caption').text()).toBe(
+    expect(wrapper.find('.match-count').text()).toBe(
       `2/${stubMatches.length} document matches`,
     );
 
     await wrapper.findComponent(SearchBarStub).vm.$emit('prev');
     await nextTick();
     expect(stubMatches[0].mark.scrollIntoView).toHaveBeenCalled();
-    expect(wrapper.find('.match-count .text-caption').text()).toBe(
+    expect(wrapper.find('.match-count').text()).toBe(
       `1/${stubMatches.length} document matches`,
     );
 

@@ -5,9 +5,11 @@
   const props = defineProps({
     withButtons: { type: Boolean, default: false },
     placeholder: { type: String, default: "Search..." },
+    placeholderText: { type: String, default: "" },
     hintText: { type: String, default: "" },
     showIcon: { type: Boolean, default: true },
     buttonClose: { type: Boolean, default: false },
+    buttonsDisabled: { type: Boolean, default: false },
   });
   const emit = defineEmits(["submit", "cancel", "next", "prev"]);
   const searchText = ref("");
@@ -47,7 +49,7 @@
       ref="inputRef"
       v-model="searchText"
       type="text"
-      :placeholder="placeholder"
+      :placeholder="placeholderText || placeholder"
       @keyup.enter.stop="onEnter"
       @keyup.escape="onEscape"
       @click.stop
@@ -55,12 +57,12 @@
     />
 
     <div v-if="withButtons" class="match-buttons">
-      <Button kind="tertiary" icon="ChevronLeft" size="sm" @click.stop="emit('prev')" />
+      <Button kind="tertiary" icon="ChevronLeft" size="sm" :disabled="buttonsDisabled" @click.stop="emit('prev')" />
       <div v-if="hintText" class="hint">
         <span class="text-caption">{{ hintText }}</span>
         <Icon name="ArrowsHorizontal" />
       </div>
-      <Button kind="tertiary" icon="ChevronRight" size="sm" @click.stop="emit('next')" />
+      <Button kind="tertiary" icon="ChevronRight" size="sm" :disabled="buttonsDisabled" @click.stop="emit('next')" />
     </div>
 
     <div v-if="$slots.buttons" class="buttons">
