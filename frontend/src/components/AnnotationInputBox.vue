@@ -14,7 +14,7 @@
 
 <template>
   <div class="ann-input-box" :class="expanded ? 'expanded' : ''">
-    <InputText v-model="value" @keyup.enter="onSubmit" />
+    <InputText v-model="value" placeholder="What's on your mind?" @keyup.enter="onSubmit" />
     <div class="buttons">
       <Button v-if="expanded" class="edit" kind="tertiary" size="sm" icon="Edit" />
       <Button class="send" kind="tertiary" size="sm" icon="Send2" @click="onSubmit" />
@@ -45,6 +45,10 @@
 
   .input-text {
     height: 32px;
+  }
+
+  .input-text :deep(input) {
+    width: 204px;
   }
 
   .ann-input-box.expanded .input-text {

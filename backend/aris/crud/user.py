@@ -11,11 +11,50 @@ from .utils import extract_title
 
 
 async def get_user(user_id: int, db: AsyncSession):
+    """Retrieve a user by ID, excluding soft-deleted users.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user to retrieve.
+    db : AsyncSession
+        SQLAlchemy async database session.
+
+    Returns
+    -------
+    User or None
+        The user object if found and not deleted, None otherwise.
+    """
     result = await db.execute(select(User).where(User.id == user_id, User.deleted_at.is_(None)))
     return result.scalars().first()
 
 
 async def create_user(name: str, initials: str, email: str, password_hash: str, db: AsyncSession):
+    """Create a new user with default settings.
+
+    Parameters
+    ----------
+    name : str
+        Full name of the user.
+    initials : str
+        User initials. If empty, will be generated from first letters of name words.
+    email : str
+        Unique email address for the user.
+    password_hash : str
+        Bcrypt-hashed password.
+    db : AsyncSession
+        SQLAlchemy async database session.
+
+    Returns
+    -------
+    User
+        The newly created user object with default file settings.
+
+    Notes
+    -----
+    Creates default FileSettings for the user with standard display preferences.
+    The function commits the transaction and refreshes the user object before returning.
+    """
     if not initials:
         initials = "".join([w[0].upper() for w in name.split()])
 
@@ -42,6 +81,31 @@ async def create_user(name: str, initials: str, email: str, password_hash: str, 
 
 
 async def update_user(user_id: int, name: str, initials: str, email: str, db: AsyncSession):
+    """Update user information.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user to update.
+    name : str
+        New full name for the user.
+    initials : str
+        New initials for the user.
+    email : str
+        New email address for the user.
+    db : AsyncSession
+        SQLAlchemy async database session.
+
+    Returns
+    -------
+    User or None
+        The updated user object if found, None if user doesn't exist.
+
+    Notes
+    -----
+    Only updates fields that have changed from their current values.
+    Commits the transaction and refreshes the user object before returning.
+    """
     user = await get_user(user_id, db)
     if not user:
         return None
@@ -57,6 +121,25 @@ async def update_user(user_id: int, name: str, initials: str, email: str, db: As
 
 
 async def soft_delete_user(user_id: int, db: AsyncSession):
+    """Soft delete a user by setting deleted_at timestamp.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user to delete.
+    db : AsyncSession
+        SQLAlchemy async database session.
+
+    Returns
+    -------
+    User or None
+        The soft-deleted user object if found, None if user doesn't exist.
+
+    Notes
+    -----
+    Sets the deleted_at field to current UTC timestamp instead of actually
+    deleting the record. This preserves data integrity and allows for recovery.
+    """
     user = await get_user(user_id, db)
     if not user:
         return None
@@ -66,6 +149,34 @@ async def soft_delete_user(user_id: int, db: AsyncSession):
 
 
 async def get_user_files(user_id: int, with_tags: bool, db: AsyncSession):
+    """Retrieve all files owned by a user with optional tag information.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user whose files to retrieve.
+    with_tags : bool
+        Whether to include tag information for each file.
+    db : AsyncSession
+        SQLAlchemy async database session.
+
+    Returns
+    -------
+    list of dict
+        List of file dictionaries containing id, title, source, last_edited_at,
+        and tags (if with_tags=True).
+
+    Raises
+    ------
+    ValueError
+        If the user is not found.
+
+    Notes
+    -----
+    Files are ordered by last edited date (descending) then by source content.
+    Titles are extracted asynchronously from RSM content using extract_title.
+    Tags are fetched concurrently if requested to optimize performance.
+    """
     user = await get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")
@@ -100,6 +211,38 @@ async def get_user_files(user_id: int, with_tags: bool, db: AsyncSession):
 async def get_user_file(
     user_id: int, file_id: int, with_tags: bool, with_minimap: bool, db: AsyncSession
 ):
+    """Retrieve a specific file owned by a user with optional metadata.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user who owns the file.
+    file_id : int
+        The unique identifier of the file to retrieve.
+    with_tags : bool
+        Whether to include tag information for the file.
+    with_minimap : bool
+        Whether to include minimap section content.
+    db : AsyncSession
+        SQLAlchemy async database session.
+
+    Returns
+    -------
+    dict
+        File dictionary containing id, title, source, last_edited_at, tags,
+        and minimap (if requested).
+
+    Raises
+    ------
+    ValueError
+        If the user or file is not found.
+
+    Notes
+    -----
+    Validates that both user and file exist before processing.
+    Title is extracted from RSM content and minimap is retrieved from
+    file sections if requested.
+    """
     user = await get_user(user_id, db)
     if not user:
         raise ValueError(f"User {user_id} not found")

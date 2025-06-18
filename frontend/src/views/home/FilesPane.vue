@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, toRef, computed, inject, provide, watch, useTemplateRef, onMounted } from "vue";
+  import { ref, computed, inject, provide, watch, useTemplateRef } from "vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import Topbar from "./FilesTopbar.vue";
   import FilesHeader from "./FilesHeader.vue";
@@ -8,7 +8,7 @@
   const props = defineProps({});
   const fileStore = inject("fileStore");
 
-  /* Selected file */
+  // Selected file
   const filesRef = useTemplateRef("files-ref");
   const visibleFiles = computed(
     () => fileStore.value?.files?.filter((file) => !file.filtered) ?? []
@@ -21,20 +21,22 @@
     if (newVal === null) return;
     if (visibleFiles.value[newVal]) visibleFiles.value[newVal].focused = true;
   });
-  /* Breakpoints */
+
+  // Breakpoints
   const xsMode = inject("xsMode");
+  const panePadding = computed(() => (xsMode.value ? "8px" : "16px"));
   const gridTemplateColumns = computed(() => {
     return xsMode.value
       ? "minmax(144px, 2fr) 104px 16px 8px"
       : "minmax(144px, 2fr) minmax(96px, 1.5fr) 8px 104px 16px 8px";
   });
   const shouldShowColumn = (columnName, mode) => {
-    if (["Spacer"].includes(columnName) && xsMode.value) return false;
+    if (["Spacer", "Tags"].includes(columnName) && xsMode.value) return false;
     return true;
   };
   provide("shouldShowColumn", shouldShowColumn);
 
-  /* Mode: list or cards */
+  // Mode: list or cards
   const mode = ref("list");
 </script>
 
@@ -64,7 +66,6 @@
   .files-wrapper {
     display: flex;
     flex-direction: column;
-    padding-bottom: 16px;
     overflow-y: auto;
     width: 100%;
     height: 100%;
@@ -103,6 +104,10 @@
   .pane-header.list > *:last-child,
   .files.list .item > *:last-child {
     padding-right: 8px;
+  }
+
+  .pane :deep(.content) {
+    padding-block: v-bind(panePadding) !important;
   }
 
   .files-wrapper.cards {

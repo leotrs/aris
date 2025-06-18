@@ -18,15 +18,35 @@ const SearchBarStub = defineComponent({
 
 describe('DockableSearch.vue', () => {
   const stubMatches = [
-    { mark: { scrollIntoView: vi.fn() } },
-    { mark: { scrollIntoView: vi.fn() } },
+    {
+      mark: {
+        scrollIntoView: vi.fn(),
+        classList: {
+          remove: vi.fn(),
+          add: vi.fn()
+        }
+      }
+    },
+    {
+      mark: {
+        scrollIntoView: vi.fn(),
+        classList: {
+          remove: vi.fn(),
+          add: vi.fn()
+        }
+      }
+    },
   ];
 
   beforeEach(() => {
     vi.spyOn(HSM, 'highlightSearchMatches').mockReturnValue(stubMatches);
     vi.spyOn(HSM, 'highlightSearchMatchesSource').mockReturnValue([]);
     vi.spyOn(HSM, 'clearHighlights').mockImplementation(() => {});
-    vi.spyOn(KSMod, 'useKeyboardShortcuts').mockImplementation(() => {});
+    vi.spyOn(HSM, 'updateCurrentMatch').mockImplementation(() => {});
+    vi.spyOn(KSMod, 'useKeyboardShortcuts').mockImplementation(() => ({
+      activate: vi.fn(),
+      deactivate: vi.fn(),
+    }));
   });
 
   afterEach(() => {
@@ -65,20 +85,20 @@ describe('DockableSearch.vue', () => {
       file.value.source,
       query.trim(),
     );
-    const countLabel = wrapper.find('.match-count .text-caption').text();
+    const countLabel = wrapper.find('.match-count').text();
     expect(countLabel).toBe(`1/${stubMatches.length} document matches`);
 
     await wrapper.findComponent(SearchBarStub).vm.$emit('next');
     await nextTick();
     expect(stubMatches[1].mark.scrollIntoView).toHaveBeenCalled();
-    expect(wrapper.find('.match-count .text-caption').text()).toBe(
+    expect(wrapper.find('.match-count').text()).toBe(
       `2/${stubMatches.length} document matches`,
     );
 
     await wrapper.findComponent(SearchBarStub).vm.$emit('prev');
     await nextTick();
     expect(stubMatches[0].mark.scrollIntoView).toHaveBeenCalled();
-    expect(wrapper.find('.match-count .text-caption').text()).toBe(
+    expect(wrapper.find('.match-count').text()).toBe(
       `1/${stubMatches.length} document matches`,
     );
 

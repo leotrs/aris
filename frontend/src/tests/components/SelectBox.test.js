@@ -14,11 +14,10 @@ describe('SelectBox.vue', () => {
     props: ['caption'],
     template: '<button class="item"><span class="cmi-caption">{{ caption }}</span></button>',
   };
-  it('renders label and trigger button in row direction with options and attributes', async () => {
+  it('renders current label and trigger button in row direction with options and attributes', async () => {
     const wrapper = mount(SelectBox, {
       props: {
         modelValue: 'b',
-        label: 'Choice',
         direction: 'row',
         options: [
           { value: 'a', label: 'Option A' },
@@ -30,11 +29,10 @@ describe('SelectBox.vue', () => {
     });
     const container = wrapper.get('.select-box');
     expect(container.classes()).toContain('row');
-    const label = wrapper.get('label.text-label');
-    expect(label.text()).toBe('Choice:');
+    const currentLabel = wrapper.get('.current-label');
+    expect(currentLabel.text()).toBe('Option B');
     await nextTick();
     const trigger = wrapper.get('.cm-btn');
-    expect(trigger.text()).toBe('Option B');
     expect(trigger.attributes('disabled')).toBeDefined();
 
     await trigger.trigger('click');
@@ -45,7 +43,7 @@ describe('SelectBox.vue', () => {
     expect(items[1].text()).toBe('Option B');
   });
 
-  it('renders without label in column direction and shows one option', async () => {
+  it('renders current label in column direction and shows one option', async () => {
     const wrapper = mount(SelectBox, {
       props: {
         modelValue: 'x',
@@ -56,11 +54,11 @@ describe('SelectBox.vue', () => {
     });
     const container = wrapper.get('.select-box');
     expect(container.classes()).toContain('column');
-    expect(wrapper.find('label').exists()).toBe(false);
+    const currentLabel = wrapper.get('.current-label');
+    expect(currentLabel.text()).toBe('X');
     await nextTick();
-    const trigger = wrapper.get('.cm-btn');
-    expect(trigger.text()).toBe('X');
 
+    const trigger = wrapper.get('.cm-btn');
     await trigger.trigger('click');
     await nextTick();
     const items = wrapper.findAll('.cm-menu .item .cmi-caption');
@@ -94,9 +92,10 @@ describe('SelectBox.vue', () => {
       global: { stubs: { Teleport: TeleportStub, ContextMenu: ContextMenuStub, ContextMenuItem: itemStub } },
     });
     await nextTick();
-    const trigger = wrapper.get('.cm-btn');
-    expect(trigger.text()).toBe('foo');
+    const currentLabel = wrapper.get('.current-label');
+    expect(currentLabel.text()).toBe('foo');
 
+    const trigger = wrapper.get('.cm-btn');
     await trigger.trigger('click');
     await nextTick();
     const items = wrapper.findAll('.cm-menu .item .cmi-caption');

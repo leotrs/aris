@@ -133,7 +133,7 @@
   <Teleport to="body">
     <div v-if="visible" ref="selfRef" :style="floatingStyles" class="hl-menu" @mouseup.stop>
       <div class="left">
-        <ColorPicker :colors="colors" :labels="false" />
+        <ColorPicker :colors="colors" :labels="false" :default-active="Object.keys(colors)[0]" />
       </div>
       <div class="middle">
         <AnnotationInputBox v-model="inputText" :expanded="expanded" @submit="onSubmit" />
@@ -161,7 +161,7 @@
     padding-inline: 8px;
     box-shadow: var(--shadow-soft);
     display: flex;
-    gap: 24px;
+    gap: 16px;
     z-index: 999;
 
     & > * {
@@ -171,7 +171,7 @@
   }
 
   .left {
-    width: 76px;
+    width: 88px;
   }
 
   .right {
@@ -185,11 +185,15 @@
     }
   }
 
+  .cp-wrapper {
+    gap: 2px !important;
+  }
+
   .cp-wrapper :deep(.swatch) {
     height: fit-content;
     width: fit-content;
-    gap: 4px;
-    padding-inline: 2px;
+    padding-inline: 6px;
+    padding-block: 6px;
 
     & > button {
       height: 16px;
