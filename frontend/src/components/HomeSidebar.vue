@@ -80,7 +80,7 @@
         :shadow="true"
         :placement="mobileMode ? 'top-end' : 'bottom'"
         btn-component="Button"
-        kind="secondary"
+        :kind="mobileMode ? 'primary' : 'secondary'"
         :class="{ collapsed }"
         @click="onCTAClick"
       >
