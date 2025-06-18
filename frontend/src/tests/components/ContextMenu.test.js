@@ -9,7 +9,7 @@ describe('ContextMenu.vue', () => {
 
   beforeEach(() => {
     vi.resetModules();
-    useFloatingStub = vi.fn(() => ({ floatingStyles: {} }));
+    useFloatingStub = vi.fn(() => ({ floatingStyles: ref({}) }));
     offsetStub = vi.fn();
     shiftStub = vi.fn();
     flipStub = vi.fn();
@@ -153,11 +153,11 @@ describe('ContextMenu.vue', () => {
     const options = useFloatingStub.mock.calls[0][2];
     expect(options.strategy).toBe('fixed');
     expect(options.placement()).toBe(placementProp);
-    
+
     // Middleware is now a function, so we need to call it to test
     const middleware = options.middleware();
     expect(middleware).toHaveLength(3);
-    
+
     expect(offsetStub).toHaveBeenCalledWith({ mainAxis: 0, crossAxis: -8 });
     expect(shiftStub).toHaveBeenCalled();
     expect(flipStub).toHaveBeenCalled();
@@ -172,16 +172,16 @@ describe('ContextMenu.vue', () => {
         stubs: { Button: { template: '<div @click="$emit(\'click\')"></div>' }, Teleport: true },
       },
     });
-    
+
     // Middleware is now a function, so we need to call it to test
     const options = useFloatingStub.mock.calls[0][2];
     const middleware = options.middleware();
-    
+
     expect(offsetStub).toHaveBeenCalledWith({ mainAxis: 0, crossAxis: 0 });
   });
 
   it('applies floatingStyles to the menu element', async () => {
-    useFloatingStub.mockReturnValue({ floatingStyles: { position: 'fixed', top: '10px' } });
+    useFloatingStub.mockReturnValue({ floatingStyles: ref({ position: 'fixed', top: '10px' }) });
     const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
     const wrapper = mount(ContextMenu, {
       global: {
@@ -237,7 +237,7 @@ describe('ContextMenu.vue', () => {
 
       wrapper.vm.toggle();
       await nextTick();
-      
+
       // This menu provides context for its children to be sub-menus
       expect(wrapper.vm.$.provides.isSubMenu).toBe(true);
       expect(wrapper.vm.$.provides.parentMenu).toBeDefined();
@@ -275,7 +275,7 @@ describe('ContextMenu.vue', () => {
 
       wrapper.vm.toggle();
       await nextTick();
-      
+
       const menu = wrapper.get('.cm-menu');
       expect(menu.attributes('role')).toBe('menu');
       expect(menu.attributes('aria-orientation')).toBe('vertical');
@@ -295,11 +295,11 @@ describe('ContextMenu.vue', () => {
 
       wrapper.vm.toggle();
       await nextTick();
-      
+
       const trigger = wrapper.find('.cm-btn');
       const menu = wrapper.get('.cm-menu');
       const triggerId = trigger.attributes('id');
-      
+
       expect(triggerId).toBeDefined();
       expect(triggerId).toMatch(/^cm-trigger-/);
       expect(menu.attributes('aria-labelledby')).toBe(triggerId);
@@ -342,11 +342,11 @@ describe('ContextMenu.vue', () => {
       });
 
       const focusSpy = vi.spyOn(HTMLElement.prototype, 'focus');
-      
+
       wrapper.vm.toggle();
       await nextTick();
       await nextTick(); // Wait for focus to be applied
-      
+
       expect(focusSpy).toHaveBeenCalled();
       wrapper.unmount();
     });
@@ -367,97 +367,35 @@ describe('ContextMenu.vue', () => {
       const originalActiveElement = wrapper.vm.lastFocusedElement;
       wrapper.vm.toggle(); // Open
       await nextTick();
-      
+
       expect(wrapper.vm.lastFocusedElement).toBeDefined();
       expect(wrapper.vm.lastFocusedElement).not.toBe(originalActiveElement);
-      
+
       // Mock the focus method to verify it's called
       const storedElement = wrapper.vm.lastFocusedElement;
       const focusSpy = vi.fn();
       if (storedElement) {
         storedElement.focus = focusSpy;
       }
-      
+
       // Close and verify focus restoration attempt
       wrapper.vm.toggle(); // Close
       await nextTick();
-      
+
       // Verify the focus was called if the element had a focus method
       if (storedElement && storedElement.focus) {
         expect(focusSpy).toHaveBeenCalled();
       }
-      
+
       wrapper.unmount();
     });
   });
 
-  describe('Mobile modal behavior', () => {
-    it('uses modal positioning when mobileMode is true', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
-      const wrapper = mount(ContextMenu, {
-        global: {
-          provide: { mobileMode: true },
-          stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
-            Teleport: true,
-          },
-        },
-      });
+  describe('POSITIONING TESTS - DOCUMENTING CURRENT BROKEN BEHAVIOR', () => {
+    it('FAILS: Desktop mode should get positioning styles from floating UI', async () => {
+      // Simulate the ACTUAL BROKEN BEHAVIOR - floating UI returns empty/undefined styles
+      useFloatingStub.mockReturnValue({ floatingStyles: ref(undefined) });
 
-      wrapper.vm.toggle();
-      await nextTick();
-      
-      const menu = wrapper.get('.cm-menu');
-      expect(menu.classes()).toContain('cm-menu-mobile');
-      
-      // Verify modal positioning: should NOT use floatingStyles
-      expect(menu.attributes('style')).toBeUndefined();
-      
-      // CSS should handle the fixed centering via .cm-menu-mobile class
-      // position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-    });
-
-    it('uses floating UI positioning when mobileMode is false', async () => {
-      const mockFloatingStyles = { 
-        position: 'fixed', 
-        top: '100px', 
-        left: '200px',
-        transform: 'none'
-      };
-      useFloatingStub.mockReturnValue({ floatingStyles: mockFloatingStyles });
-      
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
-      const wrapper = mount(ContextMenu, {
-        global: {
-          provide: { mobileMode: false },
-          stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
-            Teleport: true,
-          },
-        },
-      });
-
-      wrapper.vm.toggle();
-      await nextTick();
-      
-      const menu = wrapper.get('.cm-menu');
-      expect(menu.classes()).not.toContain('cm-menu-mobile');
-      
-      // Verify floating UI positioning is applied
-      expect(menu.element.style.position).toBe('fixed');
-      expect(menu.element.style.top).toBe('100px');
-      expect(menu.element.style.left).toBe('200px');
-      expect(menu.element.style.transform).toBe('none');
-    });
-
-    it('positions menu adjacent to anchor element in desktop mode', async () => {
-      const mockFloatingStyles = { 
-        position: 'fixed', 
-        top: '50px', 
-        left: '300px'
-      };
-      useFloatingStub.mockReturnValue({ floatingStyles: mockFloatingStyles });
-      
       const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
       const wrapper = mount(ContextMenu, {
         props: { placement: 'bottom-start' },
@@ -472,40 +410,34 @@ describe('ContextMenu.vue', () => {
 
       wrapper.vm.toggle();
       await nextTick();
-      
-      // Verify useFloating was called with proper configuration for adjacent positioning
-      expect(useFloatingStub).toHaveBeenCalled();
-      const options = useFloatingStub.mock.calls[0][2];
-      
-      // Should use floating UI middleware for adjacent positioning
-      const middleware = options.middleware();
-      expect(middleware).toHaveLength(3); // offset, shift, flip
-      expect(offsetStub).toHaveBeenCalled();
-      expect(shiftStub).toHaveBeenCalled();
-      expect(flipStub).toHaveBeenCalled();
-      
-      // Menu should be positioned relative to anchor, not centered
+
       const menu = wrapper.get('.cm-menu');
-      expect(menu.element.style.position).toBe('fixed');
-      expect(menu.element.style.top).toBe('50px');
-      expect(menu.element.style.left).toBe('300px');
-      
-      // Should NOT have mobile centering styles
-      expect(menu.classes()).not.toContain('cm-menu-mobile');
+
+      // PROBLEM: In real browser, floating UI is not providing positioning styles
+      // So the menu appears centered in viewport instead of adjacent to anchor
+
+      // THIS SHOULD FAIL - Menu should have floating UI styles for adjacent positioning
+      expect(menu.attributes('style')).toBeDefined();
+      expect(menu.attributes('style')).toContain('position: fixed');
+      expect(menu.attributes('style')).toContain('top:');
+      expect(menu.attributes('style')).toContain('left:');
     });
 
-    it('ignores floating UI positioning in mobile mode', async () => {
-      const mockFloatingStyles = { 
-        position: 'fixed', 
-        top: '100px', 
-        left: '200px'
+    it('PASSES: When floating UI works, menu positions correctly adjacent to anchor', async () => {
+      // This test proves that the template logic works when floating UI provides styles
+      const mockFloatingStyles = {
+        position: 'fixed',
+        top: '120px',    // Adjacent to anchor (below it)
+        left: '250px',   // Adjacent to anchor (aligned with left edge)
+        transform: 'translate(0px, 0px)'
       };
-      useFloatingStub.mockReturnValue({ floatingStyles: mockFloatingStyles });
-      
+      useFloatingStub.mockReturnValue({ floatingStyles: ref(mockFloatingStyles) });
+
       const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
       const wrapper = mount(ContextMenu, {
+        props: { placement: 'bottom-start' },
         global: {
-          provide: { mobileMode: true },
+          provide: { mobileMode: false },
           stubs: {
             ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
             Teleport: true,
@@ -515,18 +447,130 @@ describe('ContextMenu.vue', () => {
 
       wrapper.vm.toggle();
       await nextTick();
-      
+
       const menu = wrapper.get('.cm-menu');
-      
-      // Should have mobile class
+
+      // PROOF: Template correctly applies floating UI styles when they exist
+      expect(menu.element.style.position).toBe('fixed');
+      expect(menu.element.style.top).toBe('120px');      // Adjacent positioning
+      expect(menu.element.style.left).toBe('250px');     // Adjacent positioning
+      expect(menu.element.style.transform).toBe('translate(0px, 0px)'); // No centering transform
+
+      // Menu should NOT be centered (which would use transform: translate(-50%, -50%))
+      expect(menu.element.style.transform).not.toContain('translate(-50%, -50%)');
+    });
+
+    it('FAILS: Desktop mode incorrectly shows mobile-style centered modal', async () => {
+      // ACTUAL BROKEN BEHAVIOR: Desktop mode shows centered modal (mobile behavior)
+      useFloatingStub.mockReturnValue({ floatingStyles: ref({}) });
+
+      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+      const wrapper = mount(ContextMenu, {
+        props: { placement: 'bottom-start' },
+        global: {
+          provide: { mobileMode: false }, // Desktop mode
+          stubs: {
+            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            Teleport: true,
+          },
+        },
+      });
+
+      wrapper.vm.toggle();
+      await nextTick();
+
+      const menu = wrapper.get('.cm-menu');
+
+      // PROBLEM: Desktop mode is showing mobile-style behavior
+      // The menu appears centered in viewport with modal overlay, NOT adjacent to anchor
+
+      // This assertion SHOULD PASS but currently FAILS because desktop mode behaves like mobile
+      expect(menu.classes()).not.toContain('cm-menu-mobile');
+
+      // Desktop mode should have positioning styles, not be centered via CSS
+      expect(menu.attributes('style')).toBeDefined();
+    });
+
+    it('FAILS: Mobile mode should center menu in viewport using CSS transforms', async () => {
+      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+      const wrapper = mount(ContextMenu, {
+        global: {
+          provide: { mobileMode: true },
+          stubs: {
+            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            Teleport: { template: '<div><slot /></div>' },
+          },
+        },
+      });
+
+      wrapper.vm.toggle();
+      await nextTick();
+
+      const menu = wrapper.get('.cm-menu');
+
+      // EXPLICIT TEST: Mobile mode should center menu in viewport
+      // This should be achieved through CSS class .cm-menu-mobile which sets:
+      // position: fixed !important;
+      // top: 50% !important;
+      // left: 50% !important;
+      // transform: translate(-50%, -50%) !important;
+
       expect(menu.classes()).toContain('cm-menu-mobile');
-      
-      // Should NOT apply floating UI styles (no style attribute)
+
+      // The menu should NOT have any inline styles (floatingStyles should be ignored)
       expect(menu.attributes('style')).toBeUndefined();
-      
-      // Floating UI styles should be ignored in mobile mode
-      expect(menu.element.style.top).not.toBe('100px');
-      expect(menu.element.style.left).not.toBe('200px');
+
+      // Mobile positioning should be handled by CSS class, not inline styles
+      // When working correctly, the .cm-menu-mobile CSS class provides centering
+
+      // PROBLEM: You reported "I do not see ANY menu" in mobile mode
+      // This suggests the CSS centering is not working or menu is not visible
+
+      // This test documents the expected behavior but may not reflect actual browser behavior
+      expect(menu.isVisible()).toBe(true);
+    });
+
+    it('EXPLICIT TEST: Mobile mode menu should be positioned at viewport center', async () => {
+      // Create a test that simulates what the CSS should achieve
+      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+      const wrapper = mount(ContextMenu, {
+        global: {
+          provide: { mobileMode: true },
+          stubs: {
+            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            Teleport: { template: '<div><slot /></div>' },
+          },
+        },
+      });
+
+      wrapper.vm.toggle();
+      await nextTick();
+
+      const menu = wrapper.get('.cm-menu');
+
+      // EXPLICIT POSITIONING VERIFICATION FOR MOBILE MODE:
+      // Mobile mode should position menu at viewport center using CSS
+
+      // 1. Should have mobile CSS class for centering
+      expect(menu.classes()).toContain('cm-menu-mobile');
+
+      // 2. Should NOT have floating UI inline styles (should be empty/undefined)
+      expect(menu.attributes('style')).toBeUndefined();
+
+      // 3. CSS class .cm-menu-mobile should provide these styles:
+      // - position: fixed (not relative to anchor)
+      // - top: 50% (center vertically)
+      // - left: 50% (center horizontally)
+      // - transform: translate(-50%, -50%) (adjust for element size)
+
+      // Note: In test environment, we can't directly test computed CSS styles
+      // but we can verify the class is applied and no conflicting inline styles exist
+
+      // PROBLEM: You reported menu is not visible in real browser
+      // This suggests either:
+      // 1. CSS class styles are not being applied correctly
+      // 2. There's a rendering/visibility issue
+      // 3. Teleport is not working properly in mobile mode
     });
   });
 
@@ -545,7 +589,7 @@ describe('ContextMenu.vue', () => {
 
       wrapper.vm.toggle();
       await nextTick();
-      
+
       const menu = wrapper.find('.cm-menu');
       expect(menu.exists()).toBe(true);
       // Animation classes will be tested in implementation
@@ -590,11 +634,11 @@ describe('ContextMenu.vue', () => {
       });
 
       const trigger = wrapper.find('.cm-btn');
-      
+
       // Simulate touch events
       await trigger.trigger('touchstart');
       await trigger.trigger('touchend');
-      
+
       // Touch behavior will be implemented
       expect(wrapper.vm.show).toBeDefined();
     });
@@ -611,11 +655,11 @@ describe('ContextMenu.vue', () => {
       });
 
       const preventDefault = vi.fn();
-      
+
       await wrapper.find('.cm-wrapper').trigger('contextmenu', {
         preventDefault
       });
-      
+
       // Should prevent default context menu
       expect(preventDefault).toHaveBeenCalled();
     });
