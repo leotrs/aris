@@ -57,7 +57,7 @@ jobs:
         DB_URL_LOCAL: "postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris"
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         file: ./backend/coverage.xml
         flags: backend
@@ -96,7 +96,7 @@ jobs:
       run: npm run test:coverage
 
     - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v5
       with:
         file: ./frontend/coverage/lcov.info
         flags: frontend
