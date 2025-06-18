@@ -31,6 +31,23 @@ router = APIRouter()
 
 @router.get("/me")
 async def me(user: User = Depends(current_user)):
+    """Get current authenticated user information.
+
+    Parameters
+    ----------
+    user : User
+        Current authenticated user from JWT token dependency.
+
+    Returns
+    -------
+    dict
+        User information including email, id, name, initials, created_at, and avatar color.
+
+    Notes
+    -----
+    Requires valid JWT token in Authorization header.
+    Returns a subset of user fields suitable for client display.
+    """
     return {
         "email": user.email,
         "id": user.id,
@@ -43,6 +60,30 @@ async def me(user: User = Depends(current_user)):
 
 @router.post("/login", response_model=Token)
 async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
+    """Authenticate user and return access tokens.
+
+    Parameters
+    ----------
+    user_data : UserLogin
+        Login credentials containing email and password.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+
+    Returns
+    -------
+    Token
+        Dictionary containing access_token, refresh_token, and token_type.
+
+    Raises
+    ------
+    HTTPException
+        400 error if credentials are invalid or user not found.
+
+    Notes
+    -----
+    Verifies password using bcrypt and creates both access and refresh tokens.
+    Only allows login for non-deleted users.
+    """
     result = await db.execute(
         select(User).where(User.email == user_data.email, User.deleted_at.is_(None))
     )
@@ -57,6 +98,31 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
 
 @router.post("/register")
 async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
+    """Register a new user account.
+
+    Parameters
+    ----------
+    user_data : UserCreate
+        User registration data including email, name, initials, and password.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+
+    Returns
+    -------
+    dict
+        Registration response containing tokens and user information.
+
+    Raises
+    ------
+    HTTPException
+        409 error if email is already registered.
+
+    Notes
+    -----
+    Creates user with hashed password and default settings.
+    Returns both access and refresh tokens for immediate authentication.
+    Includes user profile data in response for client initialization.
+    """
     result = await db.execute(select(User).where(User.email == user_data.email))
     existing_user = result.scalars().first()
     if existing_user:
