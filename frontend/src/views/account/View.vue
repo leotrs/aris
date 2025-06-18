@@ -12,7 +12,6 @@
   const newInitials = ref(null);
   const newEmail = ref(null);
   const onSave = async () => {
-    console.log(newName.value, newInitials.value, newEmail.value);
     try {
       const payload = {
         name: newName.value || user.value.name,
