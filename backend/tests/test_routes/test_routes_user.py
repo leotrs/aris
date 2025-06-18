@@ -1,13 +1,16 @@
-import pytest
 import io
-import sys
 import os
+import sys
+
+import pytest
 from httpx import AsyncClient
 from PIL import Image
 
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
-from aris.models import User, ProfilePicture
 from conftest import TestConstants
+
+from aris.models import ProfilePicture, User
 
 
 def create_test_image(format="PNG", size=TestConstants.IMAGE_SIZE, color=TestConstants.IMAGE_COLOR):
@@ -230,7 +233,9 @@ class TestProfilePicture:
         self, client: AsyncClient, second_authenticated_user, auth_headers
     ):
         """Test uploading profile picture for another user (unauthorized)."""
-        response = await upload_profile_picture(client, auth_headers, second_authenticated_user["user_id"])
+        response = await upload_profile_picture(
+            client, auth_headers, second_authenticated_user["user_id"]
+        )
         assert response.status_code == 403
         assert response.json()["detail"] == "Not authorized to update this profile"
 
@@ -281,7 +286,9 @@ class TestProfilePicture:
         self, client: AsyncClient, second_authenticated_user, auth_headers
     ):
         """Test getting profile picture for another user (unauthorized)."""
-        response = await client.get(f"/users/{second_authenticated_user['user_id']}/avatar", headers=auth_headers)
+        response = await client.get(
+            f"/users/{second_authenticated_user['user_id']}/avatar", headers=auth_headers
+        )
         assert response.status_code == 403
         assert response.json()["detail"] == "Not authorized to retrieve this profile"
 

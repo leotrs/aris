@@ -1,12 +1,13 @@
-import pytest
-from datetime import datetime
 import base64
+from datetime import datetime
+
+import pytest
+
 from aris.crud.file_assets import (
     FileAssetCreate,
-    FileAssetUpdate,
     FileAssetDB,
+    FileAssetUpdate,
 )
-from aris.models import FileAsset
 
 
 async def test_create_asset(db_session, test_user):

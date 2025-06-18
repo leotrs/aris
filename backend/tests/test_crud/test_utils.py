@@ -1,10 +1,8 @@
-import asyncio
 from types import SimpleNamespace
 
-import pytest
 import rsm
 
-from aris.crud.utils import extract_title, extract_section
+from aris.crud.utils import extract_section, extract_title
 
 
 class DummyParser:

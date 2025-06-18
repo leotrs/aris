@@ -1,12 +1,14 @@
 import base64
-from datetime import datetime, UTC
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Response
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from sqlalchemy.orm import selectinload
+from datetime import UTC, datetime
+
+from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
 from pydantic import BaseModel
-from .. import crud, get_db, current_user
-from ..models import File, User, ProfilePicture
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+
+from .. import crud, current_user, get_db
+from ..models import File, ProfilePicture, User
 
 
 router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(current_user)])

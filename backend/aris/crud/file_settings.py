@@ -1,11 +1,13 @@
 """CRUD operations for file settings."""
 
-from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-from pydantic import BaseModel, ConfigDict
+from datetime import UTC, datetime
 from typing import Optional
-from datetime import datetime, UTC
-from ..models import FileSettings, File
+
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy import select
+from sqlalchemy.ext.asyncio import AsyncSession
+
+from ..models import File, FileSettings
 
 
 class FileSettingsBase(BaseModel):

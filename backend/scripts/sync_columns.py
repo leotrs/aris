@@ -14,8 +14,8 @@ import os
 import sys
 from typing import List, Tuple
 
-from dotenv import load_dotenv
 import psycopg2
+from dotenv import load_dotenv
 
 
 def _load_connection_url(key: str) -> str:

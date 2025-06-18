@@ -4,7 +4,7 @@ This module provides centralized testing infrastructure for the Aris backend,
 following FastAPI testing best practices. It includes:
 
 - Database setup with proper isolation
-- Authentication fixtures for API testing  
+- Authentication fixtures for API testing
 - Test data factories for consistent test data
 - Utility functions for common test operations
 
@@ -14,19 +14,21 @@ Usage:
     for standardized test data.
 """
 
-import pytest_asyncio
-import httpx
-from httpx import AsyncClient
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker
-from sqlalchemy.pool import StaticPool
 import os
 import sys
 import uuid
 
+import httpx
+import pytest_asyncio
+from httpx import AsyncClient
+from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from sqlalchemy.pool import StaticPool
+
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from main import app
-from aris.models import Base, User, File
 from aris.deps import get_db
+from aris.models import Base, File, User
+from main import app
 
 
 def get_test_database_url():
@@ -85,8 +87,8 @@ async def client(db_session):
 @pytest_asyncio.fixture
 async def test_user(db_session):
     """Create a test user directly in the database.
-    
-    This is different from authenticated_user which creates a user 
+
+    This is different from authenticated_user which creates a user
     through the API and includes auth tokens.
     """
     user = User(
@@ -117,36 +119,36 @@ async def test_file(db_session, test_user):
 
 class TestConstants:
     """Centralized test constants to avoid magic numbers and strings."""
-    
+
     DEFAULT_USER_EMAIL = "testuser@example.com"
     DEFAULT_USER_NAME = "Test User"
     DEFAULT_USER_INITIALS = "TU"
     DEFAULT_PASSWORD = "testpass123"
-    
+
     SECOND_USER_EMAIL = "testuser2@example.com"
     SECOND_USER_NAME = "Test User 2"
     SECOND_USER_INITIALS = "TU2"
-    
+
     UPDATED_NAME = "Updated Name"
-    UPDATED_INITIALS = "UN" 
+    UPDATED_INITIALS = "UN"
     UPDATED_EMAIL = "updated@example.com"
-    
+
     TEST_FILE_TITLE = "Test Document"
     TEST_FILE_ABSTRACT = "A test document"
     TEST_FILE_SOURCE = ":rsm:test content::"
-    
+
     IMAGE_SIZE = (100, 100)
     IMAGE_COLOR = "red"
     MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
     LARGE_FILE_SIZE = 6 * 1024 * 1024  # 6MB
-    
+
     NONEXISTENT_ID = 99999
 
 
 @pytest_asyncio.fixture
 async def authenticated_user(client: AsyncClient):
     """Create a user and return auth token and user info.
-    
+
     This fixture consolidates the authentication pattern used across
     multiple test files to reduce duplication and ensure consistency.
     """
@@ -154,17 +156,17 @@ async def authenticated_user(client: AsyncClient):
         "/register",
         json={
             "email": TestConstants.DEFAULT_USER_EMAIL,
-            "name": TestConstants.DEFAULT_USER_NAME,  
+            "name": TestConstants.DEFAULT_USER_NAME,
             "initials": TestConstants.DEFAULT_USER_INITIALS,
             "password": TestConstants.DEFAULT_PASSWORD,
         },
     )
     assert response.status_code == 200, f"Registration failed: {response.json()}"
-    
+
     token = response.json()["access_token"]
     user_id = response.json()["user"]["id"]
     user_data = response.json()["user"]
-    
+
     return {
         "token": token,
         "user_id": user_id,
@@ -177,7 +179,7 @@ async def authenticated_user(client: AsyncClient):
 @pytest_asyncio.fixture
 def auth_headers(authenticated_user):
     """Return authorization headers for authenticated requests.
-    
+
     Provides consistent header format across all test files.
     """
     return {"Authorization": f"Bearer {authenticated_user['token']}"}
@@ -202,11 +204,11 @@ async def second_authenticated_user(client: AsyncClient):
         },
     )
     assert response.status_code == 200, f"Second user registration failed: {response.json()}"
-    
+
     token = response.json()["access_token"]
     user_id = response.json()["user"]["id"]
     user_data = response.json()["user"]
-    
+
     return {
         "token": token,
         "user_id": user_id,
@@ -218,14 +220,9 @@ async def second_authenticated_user(client: AsyncClient):
 
 class TestDataFactory:
     """Factory class for creating consistent test data across test files."""
-    
+
     @staticmethod
-    def user_registration_data(
-        email=None,
-        name=None,
-        initials=None,
-        password=None
-    ):
+    def user_registration_data(email=None, name=None, initials=None, password=None):
         """Generate user registration data with optional overrides."""
         return {
             "email": email or TestConstants.DEFAULT_USER_EMAIL,
@@ -233,15 +230,9 @@ class TestDataFactory:
             "initials": initials or TestConstants.DEFAULT_USER_INITIALS,
             "password": password or TestConstants.DEFAULT_PASSWORD,
         }
-    
+
     @staticmethod
-    def file_creation_data(
-        title=None,
-        abstract=None,
-        source=None,
-        owner_id=None,
-        **kwargs
-    ):
+    def file_creation_data(title=None, abstract=None, source=None, owner_id=None, **kwargs):
         """Generate file creation data with optional overrides."""
         data = {
             "title": title or TestConstants.TEST_FILE_TITLE,
@@ -252,13 +243,9 @@ class TestDataFactory:
             data["owner_id"] = owner_id
         data.update(kwargs)
         return data
-    
+
     @staticmethod
-    def tag_creation_data(
-        name=None,
-        color=None,
-        **kwargs
-    ):
+    def tag_creation_data(name=None, color=None, **kwargs):
         """Generate tag creation data with optional overrides."""
         data = {
             "name": name or "Test Tag",

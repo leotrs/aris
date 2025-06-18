@@ -4,8 +4,8 @@ Implemented as a Pydantic model that is then read by FastAPI.
 
 """
 
+from pydantic import ConfigDict, Field
 from pydantic_settings import BaseSettings
-from pydantic import Field, ConfigDict
 
 
 class Settings(BaseSettings):
@@ -47,5 +47,6 @@ class Settings(BaseSettings):
     """Expiration time in minutes for JWT access tokens (default: 30)."""
 
     model_config = ConfigDict(extra="forbid")
+
 
 settings = Settings(_env_file=".env")

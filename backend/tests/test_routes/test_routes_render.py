@@ -1,6 +1,5 @@
 """Test render routes."""
 
-import pytest
 from httpx import AsyncClient
 
 

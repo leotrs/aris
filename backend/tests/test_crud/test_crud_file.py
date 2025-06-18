@@ -1,17 +1,16 @@
 """Test CRUD operations for files."""
 
-import pytest
 from unittest.mock import AsyncMock, patch
 
 from aris.crud.file import (
     create_file,
-    get_file,
-    get_files,
-    update_file,
-    soft_delete_file,
     duplicate_file,
+    get_file,
     get_file_html,
     get_file_section,
+    get_files,
+    soft_delete_file,
+    update_file,
 )
 
 

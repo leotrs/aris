@@ -1,15 +1,16 @@
 import pytest
-from sqlalchemy import select, insert
-from aris.models import Tag, File, file_tags
+from sqlalchemy import insert, select
+
 from aris.crud.tag import (
-    create_tag,
-    get_user_tags,
-    update_tag,
-    soft_delete_tag,
-    get_user_file_tags,
     add_tag_to_file,
+    create_tag,
+    get_user_file_tags,
+    get_user_tags,
     remove_tag_from_file,
+    soft_delete_tag,
+    update_tag,
 )
+from aris.models import File, Tag, file_tags
 
 
 async def test_create_tag_success(db_session, test_user):
@@ -95,10 +96,9 @@ async def test_get_user_file_tags(db_session, test_user):
     assert tag_names == {"T1", "T2"}
 
 
-import pytest
-from sqlalchemy.exc import SQLAlchemyError
 from unittest.mock import AsyncMock, patch
-from datetime import datetime
+
+from sqlalchemy.exc import SQLAlchemyError
 
 
 async def test_create_tag_without_name_raises(db_session, test_user):

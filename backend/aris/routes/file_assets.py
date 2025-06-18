@@ -1,10 +1,12 @@
 """Routes to manage file assets (pictures, extra rsm files, etc)."""
 
+from typing import List
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
-from .. import get_db, current_user
-from ..crud import FileAssetCreate, FileAssetUpdate, FileAssetOut, FileAssetDB
+
+from .. import current_user, get_db
+from ..crud import FileAssetCreate, FileAssetDB, FileAssetOut, FileAssetUpdate
 
 
 router = APIRouter(prefix="/assets", tags=["files", "assets"], dependencies=[Depends(current_user)])

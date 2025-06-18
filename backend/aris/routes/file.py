@@ -1,13 +1,13 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
-
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .. import crud, get_db, current_user
+from .. import crud, current_user, get_db
 from ..models import FileAsset
 from .file_assets import FileAssetOut
+
 
 router = APIRouter(prefix="/files", tags=["files"], dependencies=[Depends(current_user)])
 

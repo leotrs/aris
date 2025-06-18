@@ -1,19 +1,20 @@
 """Tests for user CRUD operations."""
 
-import pytest
-from unittest.mock import patch
 from datetime import datetime
-from sqlalchemy import select, func
+from unittest.mock import patch
 
-from aris.models import FileSettings
+import pytest
+from sqlalchemy import func, select
+
 from aris.crud.user import (
-    get_user,
     create_user,
-    update_user,
-    soft_delete_user,
-    get_user_files,
+    get_user,
     get_user_file,
+    get_user_files,
+    soft_delete_user,
+    update_user,
 )
+from aris.models import FileSettings
 
 
 async def test_get_user_returns_correct_user(db_session, test_user):
@@ -82,18 +83,7 @@ async def test_get_user_file_full_bundle(db_session, test_user):
     assert result["minimap"] == "Mocked Minimap"
 
 
-import pytest
-from datetime import datetime
 from sqlalchemy.exc import IntegrityError
-
-from aris.crud.user import (
-    get_user,
-    create_user,
-    update_user,
-    soft_delete_user,
-    get_user_files,
-    get_user_file,
-)
 
 
 async def test_get_user_returns_none_for_missing_user(db_session):
@@ -159,8 +149,9 @@ async def test_soft_delete_user_sets_deleted_at_value(db_session, test_user):
 
 
 async def test_get_user_files_with_tags_returns_tags(db_session, test_user):
-    from aris.crud.file import create_file
     from unittest.mock import patch
+
+    from aris.crud.file import create_file
 
     file = await create_file("source", test_user.id, "Title", db=db_session)
 
@@ -174,8 +165,9 @@ async def test_get_user_files_with_tags_returns_tags(db_session, test_user):
 
 
 async def test_get_user_files_without_tags_returns_empty_list(db_session, test_user):
-    from aris.crud.file import create_file
     from unittest.mock import patch
+
+    from aris.crud.file import create_file
 
     file = await create_file("source", test_user.id, "Title", db=db_session)
 

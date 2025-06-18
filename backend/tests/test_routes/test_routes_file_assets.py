@@ -1,10 +1,9 @@
 # backend/tests/test_routes/test_assets.py
-import pytest
 import base64
-from datetime import datetime, timezone, UTC
+from datetime import datetime, timezone
+
+import pytest
 from httpx import AsyncClient
-
-
 
 
 @pytest.fixture

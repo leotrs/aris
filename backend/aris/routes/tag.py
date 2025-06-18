@@ -1,9 +1,9 @@
-from aris.models import File, Tag
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .. import crud, get_db, current_user
+from .. import crud, current_user, get_db
+
 
 router = APIRouter(prefix="/users", tags=["users", "tags"], dependencies=[Depends(current_user)])
 
