@@ -56,12 +56,24 @@
     />
 
     <div v-if="withButtons" class="match-buttons">
-      <Button kind="tertiary" icon="ChevronLeft" size="sm" :disabled="buttonsDisabled" @click.stop="emit('prev')" />
+      <Button
+        kind="tertiary"
+        icon="ChevronLeft"
+        size="sm"
+        :disabled="buttonsDisabled"
+        @click.stop="emit('prev')"
+      />
       <div v-if="hintText" class="hint">
         <span class="text-caption">{{ hintText }}</span>
         <Icon name="ArrowsHorizontal" />
       </div>
-      <Button kind="tertiary" icon="ChevronRight" size="sm" :disabled="buttonsDisabled" @click.stop="emit('next')" />
+      <Button
+        kind="tertiary"
+        icon="ChevronRight"
+        size="sm"
+        :disabled="buttonsDisabled"
+        @click.stop="emit('next')"
+      />
     </div>
 
     <div v-if="$slots.buttons" class="buttons">

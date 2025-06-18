@@ -24,7 +24,7 @@
     return `match ${searchInfo.lastMatchScrolledTo + 1} of ${searchInfo.matches.length}`;
   });
   const simpleMatchText = computed(() => {
-    if (!searchInfo.isSearching || searchInfo.matches.length === 0) return '';
+    if (!searchInfo.isSearching || searchInfo.matches.length === 0) return "";
     const idx = (searchInfo.lastMatchScrolledTo ?? 0) + 1;
     return `${idx}/${searchInfo.matches.length} document matches`;
   });
