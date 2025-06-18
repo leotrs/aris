@@ -30,15 +30,14 @@
     position: relative;
     border: var(--border-extrathin) solid transparent;
     border-radius: 8px 8px 0 0;
-    opacity: 1;
     transform: translateY(0);
     will-change: opacity, transform, width;
     background-color: transparent;
     z-index: 9999;
 
+    opacity: 1;
     max-width: 720px;
     margin: 0 auto;
-
     transition:
       opacity var(--transition-duration) ease,
       transform var(--transition-duration) ease,
