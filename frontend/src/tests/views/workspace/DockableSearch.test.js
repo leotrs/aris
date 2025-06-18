@@ -26,7 +26,10 @@ describe('DockableSearch.vue', () => {
     vi.spyOn(HSM, 'highlightSearchMatches').mockReturnValue(stubMatches);
     vi.spyOn(HSM, 'highlightSearchMatchesSource').mockReturnValue([]);
     vi.spyOn(HSM, 'clearHighlights').mockImplementation(() => {});
-    vi.spyOn(KSMod, 'useKeyboardShortcuts').mockImplementation(() => {});
+    vi.spyOn(KSMod, 'useKeyboardShortcuts').mockImplementation(() => ({
+      activate: vi.fn(),
+      deactivate: vi.fn(),
+    }));
   });
 
   afterEach(() => {
