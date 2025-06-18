@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, toRef, computed, inject, provide, watch, useTemplateRef, onMounted } from "vue";
+  import { ref, computed, inject, provide, watch, useTemplateRef } from "vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import Topbar from "./FilesTopbar.vue";
   import FilesHeader from "./FilesHeader.vue";
@@ -8,7 +8,7 @@
   const props = defineProps({});
   const fileStore = inject("fileStore");
 
-  /* Selected file */
+  // Selected file
   const filesRef = useTemplateRef("files-ref");
   const visibleFiles = computed(
     () => fileStore.value?.files?.filter((file) => !file.filtered) ?? []
@@ -21,8 +21,10 @@
     if (newVal === null) return;
     if (visibleFiles.value[newVal]) visibleFiles.value[newVal].focused = true;
   });
-  /* Breakpoints */
+
+  // Breakpoints
   const xsMode = inject("xsMode");
+  const panePadding = computed(() => (xsMode.value ? "8px" : "16px"));
   const gridTemplateColumns = computed(() => {
     return xsMode.value
       ? "minmax(144px, 2fr) 104px 16px 8px"
@@ -34,7 +36,7 @@
   };
   provide("shouldShowColumn", shouldShowColumn);
 
-  /* Mode: list or cards */
+  // Mode: list or cards
   const mode = ref("list");
 </script>
 
@@ -102,6 +104,10 @@
   .pane-header.list > *:last-child,
   .files.list .item > *:last-child {
     padding-right: 8px;
+  }
+
+  .pane :deep(.content) {
+    padding-block: v-bind(panePadding) !important;
   }
 
   .files-wrapper.cards {
