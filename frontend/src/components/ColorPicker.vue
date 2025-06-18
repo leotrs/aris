@@ -8,7 +8,7 @@
   });
   const emit = defineEmits(["change"]);
 
-  const activeColor = ref("");
+  const activeColor = ref(props.defaultActive);
 
   const onClick = (name) => {
     activeColor.value = name;
