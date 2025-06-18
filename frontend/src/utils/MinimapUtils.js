@@ -66,13 +66,10 @@ export async function getSections(file) {
   let sections = [];
 
   if (file.isMountedAt) {
-    console.log("extracting sections from mounted html");
     sections = await getSectionsFromHTML(file);
   } else if (file.html) {
-    console.log("extracting sections from html string");
     sections = await getSectionsFromHTMLString(file.html);
   } else if (file.source) {
-    console.log("extracting sections from source");
     sections = await getSectionsFromSource(file.source);
   } else {
     console.warn(`No way to get sections for file with id ${file.id}, skipping`);

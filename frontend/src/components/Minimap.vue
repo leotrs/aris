@@ -140,7 +140,6 @@
       async (newIcons) => {
         if (!wrapperRef.value || !newIcons || !props.file.isMountedAt) return;
         icons.value = await makeIcons(newIcons, props.file.isMountedAt, wrapperRef.value);
-        console.log(icons.value);
       },
       { immediate: true }
     );

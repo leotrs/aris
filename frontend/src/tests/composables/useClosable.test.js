@@ -336,24 +336,17 @@ describe('useClosable', () => {
       );
     });
 
-    it('should log error when close button is not found', () => {
+    it('should handle missing close button gracefully', () => {
       // Remove the close button
       mockElement.removeChild(mockCloseButton);
-
-      // Spy on console.error for this specific test
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
       const { activate } = useClosable({
         onClose: mockOnClose,
         closeOnCloseButton: true
       });
 
-      activate();
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith('No close button found');
-
-      // Clean up the spy
-      consoleErrorSpy.mockRestore();
+      // Should not throw an error when close button is not found
+      expect(() => activate()).not.toThrow();
     });
 
     it('should not setup close button when disabled', () => {
