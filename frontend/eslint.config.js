@@ -1,23 +1,27 @@
-// eslint.config.js
-import js from "@eslint/js";
+// eslint.config.js - Frontend-specific ESLint configuration
 import pluginVue from "eslint-plugin-vue";
 import prettierConfig from "eslint-config-prettier";
 import prettierPlugin from "eslint-plugin-prettier";
 import babelParser from "@babel/eslint-parser";
 import globals from "globals";
 
+// Import shared configuration
+import { jsConfig, baseRules, globalIgnores } from "../eslint.config.shared.js";
+
 export default [
-  js.configs.recommended,
+  // Use shared JS config as base
+  ...jsConfig,
+  
+  // Vue-specific configuration
   ...pluginVue.configs["flat/recommended"],
   prettierConfig,
 
-  // config for .js files
+  // Frontend JavaScript files
   {
-    files: ["**/*.js"],
+    files: ["**/*.js", "**/*.mjs"],
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.jquery,
         ...globals.node,
       },
       parser: babelParser,
@@ -33,19 +37,26 @@ export default [
     plugins: {
       prettier: prettierPlugin,
     },
-
+    rules: {
+      ...baseRules,
+      // Frontend-specific overrides
+      "no-unused-vars": ["error", { 
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "destructuredArrayIgnorePattern": "^_"
+      }]
+    },
   },
 
-  // config for .vue files
+  // Vue files
   {
     files: ["**/*.vue"],
     languageOptions: {
       globals: {
         ...globals.browser,
-        ...globals.jquery,
         ...globals.node,
       },
-      parser: pluginVue.parser, // NOTE: NOT babelParser!
+      parser: pluginVue.parser,
       parserOptions: {
         ecmaVersion: 2022,
         sourceType: "module",
@@ -56,20 +67,22 @@ export default [
       prettier: prettierPlugin,
     },
     rules: {
-      // let prettier handle indentation
-      indent: "off",
+      ...baseRules,
+      // Vue-specific rules
       "vue/script-indent": "off",
       "vue/html-indent": "off",
-
-      // everything prettier complains about is an error
-      "prettier/prettier": "error",
-
-      // this is just silly
-      "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
-      "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-
-      // general customization
-      "vue/multi-word-component-names": "off"
+      "vue/multi-word-component-names": "off",
+      "vue/no-unused-vars": "error",
     },
-  }
+  },
+
+  // Global ignores
+  {
+    ignores: [
+      ...globalIgnores,
+      // Frontend-specific ignores
+      "dist/**",
+      "public/**",
+    ],
+  },
 ];
