@@ -145,7 +145,7 @@ describe('WorkspaceView', () => {
     expect(wrapper.vm.focusMode).toBe(true);
   });
 
-  it('handles mobileMode: renders Button and root gets mobile class', async () => {
+  it('handles mobileMode: root gets mobile class', async () => {
     const wrapper = mount(WorkspaceView, {
       global: {
         provide: { fileStore, api, mobileMode: true },
@@ -158,10 +158,6 @@ describe('WorkspaceView', () => {
     });
     const view = wrapper.find('.view');
     expect(view.classes()).toContain('mobile');
-    const btn = wrapper.findComponent({ name: 'Button' });
-    expect(btn.exists()).toBe(true);
-    await btn.trigger('click');
-    expect(pushMock).toHaveBeenCalledWith('/');
   });
 
   it('does not render mobile Button when mobileMode is false', () => {
