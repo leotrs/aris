@@ -25,7 +25,7 @@ describe('SearchBar.vue', () => {
   it('allows customizing placeholder text via prop', () => {
     const placeholder = 'Find me';
     const wrapper = shallowMount(SearchBar, {
-      props: { placeholderText: placeholder },
+      props: { placeholder: placeholder },
       global: { stubs: { IconSearch: IconSearchStub } },
     });
     expect(wrapper.find('input').attributes('placeholder')).toBe(placeholder);

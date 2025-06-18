@@ -5,7 +5,6 @@
   const props = defineProps({
     withButtons: { type: Boolean, default: false },
     placeholder: { type: String, default: "Search..." },
-    placeholderText: { type: String, default: "" },
     hintText: { type: String, default: "" },
     showIcon: { type: Boolean, default: true },
     buttonClose: { type: Boolean, default: false },
@@ -49,7 +48,7 @@
       ref="inputRef"
       v-model="searchText"
       type="text"
-      :placeholder="placeholderText || placeholder"
+      :placeholder="placeholder"
       @keyup.enter.stop="onEnter"
       @keyup.escape="onEscape"
       @click.stop
