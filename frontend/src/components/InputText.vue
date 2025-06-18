@@ -13,7 +13,9 @@
 
 <template>
   <div class="input-text" :class="direction">
-    <label v-if="label" class="text-label">{{ label }}<span v-if="direction === 'row'">:</span></label>
+    <label v-if="label" class="text-label"
+      >{{ label }}<span v-if="direction === 'row'">:</span></label
+    >
     <input
       v-bind="$attrs"
       v-model="value"
@@ -43,7 +45,8 @@
   input {
     background: transparent;
     border: none;
-    padding: 4px;
+    padding-block: 4px;
+    padding-inline: 8px;
     margin: 0;
     outline: none;
     width: fit-content;
