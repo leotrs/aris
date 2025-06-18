@@ -10,7 +10,6 @@ from aris.models.models import (
     Annotation,
     AnnotationType,
     AnnotationMessage,
-    Note,
 )
 
 
@@ -60,71 +59,67 @@ def test_file_settings_column_defaults():
     assert table.columns["columns"].default.arg == 1
 
 
-def test_annotation_creation(db_session):
+async def test_annotation_creation(db_session):
     """Test basic creation of an Annotation."""
-    file = File()
+    file = File(
+        owner_id=1,
+        source=":rsm: Test content ::"
+    )
     db_session.add(file)
-    db_session.commit()
+    await db_session.commit()
+    await db_session.refresh(file)
 
-    annotation = Annotation(file_id=file.id)
+    annotation = Annotation(
+        file_id=file.id,
+        type=AnnotationType.NOTE
+    )
     db_session.add(annotation)
-    db_session.commit()
+    await db_session.commit()
+    await db_session.refresh(annotation)
 
     assert annotation.id is not None
     assert annotation.file_id == file.id
+    assert annotation.type == AnnotationType.NOTE
     assert annotation.created_at is not None
 
 
-def test_annotation_message_creation(db_session):
+async def test_annotation_message_creation(db_session):
     """Test creating an AnnotationMessage and linking it to Annotation and User."""
-    file = File()
-    user = User()
-    db_session.add_all([file, user])
-    db_session.commit()
+    user = User(
+        name="Test User",
+        email="test@example.com",
+        password_hash="test_hash"
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    
+    file = File(
+        owner_id=user.id,
+        source=":rsm: Test content ::"
+    )
+    db_session.add(file)
+    await db_session.commit()
+    await db_session.refresh(file)
 
-    annotation = Annotation(file_id=file.id)
+    annotation = Annotation(
+        file_id=file.id,
+        type=AnnotationType.NOTE
+    )
     db_session.add(annotation)
-    db_session.commit()
+    await db_session.commit()
+    await db_session.refresh(annotation)
 
     msg = AnnotationMessage(
         annotation_id=annotation.id,
         owner_id=user.id,
-        type=AnnotationType.NOTE,
         content="Sample note",
     )
     db_session.add(msg)
-    db_session.commit()
+    await db_session.commit()
+    await db_session.refresh(msg)
 
     assert msg.id is not None
     assert msg.content == "Sample note"
     assert msg.annotation_id == annotation.id
     assert msg.owner_id == user.id
-
-
-def test_note_creation(db_session):
-    """Test that a Note can be created and linked to an AnnotationMessage."""
-    file = File()
-    user = User()
-    db_session.add_all([file, user])
-    db_session.commit()
-
-    annotation = Annotation(file_id=file.id)
-    db_session.add(annotation)
-    db_session.commit()
-
-    msg = AnnotationMessage(
-        annotation_id=annotation.id,
-        owner_id=user.id,
-        type=AnnotationType.NOTE,
-        content="Top-level note",
-    )
-    db_session.add(msg)
-    db_session.commit()
-
-    note = Note(message_id=msg.id)
-    db_session.add(note)
-    db_session.commit()
-
-    assert note.message_id == msg.id
-    assert note.message.id == msg.id
-    assert note.message.content == "Top-level note"

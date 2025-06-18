@@ -1,84 +1,13 @@
 import pytest
 import io
+import sys
+import os
 from httpx import AsyncClient
 from PIL import Image
+
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 from aris.models import User, ProfilePicture
-
-
-class TestConstants:
-    """Test constants to avoid magic numbers and strings."""
-
-    DEFAULT_USER_EMAIL = "testuser@example.com"
-    DEFAULT_USER_NAME = "Test User"
-    DEFAULT_USER_INITIALS = "TU"
-    DEFAULT_PASSWORD = "testpass123"
-
-    SECOND_USER_EMAIL = "testuser2@example.com"
-    SECOND_USER_NAME = "Test User 2"
-    SECOND_USER_INITIALS = "TU2"
-
-    UPDATED_NAME = "Updated Name"
-    UPDATED_INITIALS = "UN"
-    UPDATED_EMAIL = "updated@example.com"
-
-    TEST_FILE_TITLE = "Test Document"
-    TEST_FILE_ABSTRACT = "A test document"
-    TEST_FILE_SOURCE = ":rsm:test content::"
-
-    IMAGE_SIZE = (100, 100)
-    IMAGE_COLOR = "red"
-    MAX_FILE_SIZE = 5 * 1024 * 1024  # 5MB
-    LARGE_FILE_SIZE = 6 * 1024 * 1024  # 6MB
-
-    NONEXISTENT_ID = 99999
-
-
-@pytest.fixture
-async def authenticated_user(client: AsyncClient):
-    """Create a user and return auth token."""
-    response = await client.post(
-        "/register",
-        json={
-            "email": TestConstants.DEFAULT_USER_EMAIL,
-            "name": TestConstants.DEFAULT_USER_NAME,
-            "initials": TestConstants.DEFAULT_USER_INITIALS,
-            "password": TestConstants.DEFAULT_PASSWORD,
-        },
-    )
-    assert response.status_code == 200, f"Registration failed: {response.json()}"
-    token = response.json()["access_token"]
-    user_id = response.json()["user"]["id"]
-    return {"token": token, "user_id": user_id}
-
-
-@pytest.fixture
-async def second_user(client: AsyncClient):
-    """Create a second user for authorization testing."""
-    response = await client.post(
-        "/register",
-        json={
-            "email": TestConstants.SECOND_USER_EMAIL,
-            "name": TestConstants.SECOND_USER_NAME,
-            "initials": TestConstants.SECOND_USER_INITIALS,
-            "password": TestConstants.DEFAULT_PASSWORD,
-        },
-    )
-    assert response.status_code == 200, f"Second user registration failed: {response.json()}"
-    token = response.json()["access_token"]
-    user_id = response.json()["user"]["id"]
-    return {"token": token, "user_id": user_id}
-
-
-@pytest.fixture
-def auth_headers(authenticated_user):
-    """Return authorization headers."""
-    return {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-
-@pytest.fixture
-def second_auth_headers(second_user):
-    """Return authorization headers for second user."""
-    return {"Authorization": f"Bearer {second_user['token']}"}
+from conftest import TestConstants
 
 
 def create_test_image(format="PNG", size=TestConstants.IMAGE_SIZE, color=TestConstants.IMAGE_COLOR):
@@ -298,10 +227,10 @@ class TestProfilePicture:
         assert "picture_id" in data
 
     async def test_upload_profile_picture_unauthorized(
-        self, client: AsyncClient, second_user, auth_headers
+        self, client: AsyncClient, second_authenticated_user, auth_headers
     ):
         """Test uploading profile picture for another user (unauthorized)."""
-        response = await upload_profile_picture(client, auth_headers, second_user["user_id"])
+        response = await upload_profile_picture(client, auth_headers, second_authenticated_user["user_id"])
         assert response.status_code == 403
         assert response.json()["detail"] == "Not authorized to update this profile"
 
@@ -349,10 +278,10 @@ class TestProfilePicture:
         assert "Cache-Control" in response.headers
 
     async def test_get_profile_picture_unauthorized(
-        self, client: AsyncClient, second_user, auth_headers
+        self, client: AsyncClient, second_authenticated_user, auth_headers
     ):
         """Test getting profile picture for another user (unauthorized)."""
-        response = await client.get(f"/users/{second_user['user_id']}/avatar", headers=auth_headers)
+        response = await client.get(f"/users/{second_authenticated_user['user_id']}/avatar", headers=auth_headers)
         assert response.status_code == 403
         assert response.json()["detail"] == "Not authorized to retrieve this profile"
 
@@ -390,11 +319,11 @@ class TestProfilePicture:
         assert response.json()["message"] == "Profile picture deleted successfully"
 
     async def test_delete_profile_picture_unauthorized(
-        self, client: AsyncClient, second_user, auth_headers
+        self, client: AsyncClient, second_authenticated_user, auth_headers
     ):
         """Test deleting profile picture for another user (unauthorized)."""
         response = await client.delete(
-            f"/users/{second_user['user_id']}/avatar", headers=auth_headers
+            f"/users/{second_authenticated_user['user_id']}/avatar", headers=auth_headers
         )
         assert response.status_code == 403
         assert response.json()["detail"] == "Not authorized to delete this profile"
