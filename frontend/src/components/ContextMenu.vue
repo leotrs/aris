@@ -78,12 +78,12 @@
   // Debounced floating update
   const updateFloating = useDebounceFn(() => {
     // Trigger re-computation of floating styles
-    if (menuRef.value && btnRef.value) {
-      // Force update by changing a dependency
+    if (menuRef.value && btnRef.value && update) {
+      update();
     }
   }, 100);
 
-  const { floatingStyles } = useFloating(btnRef, menuRef, {
+  const { floatingStyles, update } = useFloating(btnRef, menuRef, {
     strategy: "fixed",
     placement: () => effectivePlacement.value,
     middleware: () => [
@@ -93,6 +93,18 @@
     ],
     whileElementsMounted: autoUpdate,
   });
+
+  // Computed property to handle menu styles
+  const menuStyles = computed(() => {
+    if (shouldUseMobileMode.value) {
+      // Mobile mode: use CSS class for centering, no inline styles
+      return {};
+    } else {
+      // Desktop mode: use floating UI styles for adjacent positioning
+      return (floatingStyles && floatingStyles.value) || {};
+    }
+  });
+
 
   /* Keys */
   const numItems = computed(() => menuRef.value?.querySelectorAll(".item").length || 0);
@@ -132,13 +144,23 @@
         lastFocusedElement.value = document.activeElement;
         activateClosable();
         activateNav();
-        // Focus first menu item
+
+        // Wait for DOM to be fully rendered
         await nextTick();
+
+        // Ensure refs are available before updating floating UI
+        if (!shouldUseMobileMode.value && update && btnRef.value && menuRef.value) {
+          // Double nextTick to ensure DOM is fully settled
+          await nextTick();
+          update();
+        }
+
+        // Focus first menu item
         const firstItem = menuRef.value?.querySelector('.item[tabindex="0"], .item');
         if (firstItem && firstItem.focus) {
           firstItem.focus();
         }
-        
+
       } else {
         deactivateNav();
         deactivateClosable();
@@ -243,7 +265,7 @@
           role="menu"
           aria-orientation="vertical"
           :aria-labelledby="triggerId"
-          :style="shouldUseMobileMode ? {} : floatingStyles"
+          :style="menuStyles"
         >
           <slot />
         </div>
@@ -259,7 +281,7 @@
   }
 
   .cm-menu {
-    position: fixed;
+    /* Position will be set by floating UI or mobile mode CSS */
     overflow: hidden;
     z-index: 999;
     background-color: var(--surface-primary);
