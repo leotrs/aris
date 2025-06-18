@@ -9,21 +9,22 @@ All models use timezone-aware timestamps and cascade deletion where appropriate.
 """
 
 import enum
+
 from sqlalchemy import (
     Column,
     DateTime,
     Enum,
     ForeignKey,
+    Index,
     Integer,
     String,
     Table,
     Text,
     UniqueConstraint,
-    Index,
     text,
 )
+from sqlalchemy.orm import declarative_base, relationship
 from sqlalchemy.sql import func
-from sqlalchemy.orm import relationship, declarative_base
 
 
 Base = declarative_base()

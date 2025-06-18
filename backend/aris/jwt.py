@@ -1,7 +1,9 @@
 """JWT management."""
 
 from datetime import UTC, datetime, timedelta
+
 from jose import JWTError, jwt
+
 from .config import settings
 
 

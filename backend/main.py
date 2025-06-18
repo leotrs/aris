@@ -5,14 +5,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from aris.routes import (
-    file_router,
-    tag_router,
-    user_router,
+    auth_router,
     file_assets_router,
+    file_router,
     file_settings_router,
     render_router,
-    auth_router,
+    tag_router,
+    user_router,
 )
+
 
 # API metadata for documentation
 app = FastAPI(
@@ -62,44 +63,32 @@ app = FastAPI(
     openapi_tags=[
         {
             "name": "authentication",
-            "description": "User authentication and registration operations"
+            "description": "User authentication and registration operations",
         },
-        {
-            "name": "users",
-            "description": "User profile management and user-specific operations"
-        },
+        {"name": "users", "description": "User profile management and user-specific operations"},
         {
             "name": "files",
-            "description": "Research document management (create, read, update, delete)"
+            "description": "Research document management (create, read, update, delete)",
         },
-        {
-            "name": "tags",
-            "description": "Document organization with custom tags"
-        },
+        {"name": "tags", "description": "Document organization with custom tags"},
         {
             "name": "file-assets",
-            "description": "Upload and manage document assets (images, data files)"
+            "description": "Upload and manage document assets (images, data files)",
         },
         {
             "name": "file-settings",
-            "description": "User preferences for document display and formatting"
+            "description": "User preferences for document display and formatting",
         },
-        {
-            "name": "render",
-            "description": "Convert RSM markup to rendered HTML output"
-        },
-        {
-            "name": "health",
-            "description": "System health and status monitoring"
-        }
-    ]
+        {"name": "render", "description": "Convert RSM markup to rendered HTML output"},
+        {"name": "health", "description": "System health and status monitoring"},
+    ],
 )
 
 
 @app.get("/health", tags=["health"], summary="Health Check")
 async def health_check():
     """Check the health status of the API.
-    
+
     Returns a simple status message to verify the API is running correctly.
     This endpoint does not require authentication.
     """

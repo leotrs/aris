@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
 import rsm
 from sqlalchemy import select

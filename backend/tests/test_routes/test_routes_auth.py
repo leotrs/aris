@@ -1,6 +1,5 @@
 """Test auth_router routes."""
 
-import pytest
 from httpx import AsyncClient
 
 

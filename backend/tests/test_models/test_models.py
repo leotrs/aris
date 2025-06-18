@@ -1,15 +1,16 @@
 """Unit tests for model-level logic in aris.models.models."""
 
 import random
+
 from aris.models.models import (
-    AvatarColor,
-    FileStatus,
-    FileSettings,
-    File,
-    User,
     Annotation,
-    AnnotationType,
     AnnotationMessage,
+    AnnotationType,
+    AvatarColor,
+    File,
+    FileSettings,
+    FileStatus,
+    User,
 )
 
 
@@ -61,18 +62,12 @@ def test_file_settings_column_defaults():
 
 async def test_annotation_creation(db_session):
     """Test basic creation of an Annotation."""
-    file = File(
-        owner_id=1,
-        source=":rsm: Test content ::"
-    )
+    file = File(owner_id=1, source=":rsm: Test content ::")
     db_session.add(file)
     await db_session.commit()
     await db_session.refresh(file)
 
-    annotation = Annotation(
-        file_id=file.id,
-        type=AnnotationType.NOTE
-    )
+    annotation = Annotation(file_id=file.id, type=AnnotationType.NOTE)
     db_session.add(annotation)
     await db_session.commit()
     await db_session.refresh(annotation)
@@ -85,27 +80,17 @@ async def test_annotation_creation(db_session):
 
 async def test_annotation_message_creation(db_session):
     """Test creating an AnnotationMessage and linking it to Annotation and User."""
-    user = User(
-        name="Test User",
-        email="test@example.com",
-        password_hash="test_hash"
-    )
+    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
     db_session.add(user)
     await db_session.commit()
     await db_session.refresh(user)
-    
-    file = File(
-        owner_id=user.id,
-        source=":rsm: Test content ::"
-    )
+
+    file = File(owner_id=user.id, source=":rsm: Test content ::")
     db_session.add(file)
     await db_session.commit()
     await db_session.refresh(file)
 
-    annotation = Annotation(
-        file_id=file.id,
-        type=AnnotationType.NOTE
-    )
+    annotation = Annotation(file_id=file.id, type=AnnotationType.NOTE)
     db_session.add(annotation)
     await db_session.commit()
     await db_session.refresh(annotation)

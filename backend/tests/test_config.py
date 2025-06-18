@@ -1,4 +1,3 @@
-import os
 import pytest
 from pydantic import ValidationError
 
@@ -32,7 +31,13 @@ def test_settings_defaults_and_env_override(monkeypatch):
 
 def test_missing_required_env_vars(monkeypatch):
     # Remove all required env vars to trigger validation error
-    for key in ("DB_URL_LOCAL", "DB_URL_PROD", "ALEMBIC_DB_URL_LOCAL", "ALEMBIC_DB_URL_PROD", "JWT_SECRET_KEY"):
+    for key in (
+        "DB_URL_LOCAL",
+        "DB_URL_PROD",
+        "ALEMBIC_DB_URL_LOCAL",
+        "ALEMBIC_DB_URL_PROD",
+        "JWT_SECRET_KEY",
+    ):
         monkeypatch.delenv(key, raising=False)
     with pytest.raises(ValidationError):
         Settings()

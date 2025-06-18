@@ -15,19 +15,19 @@ Environment variables:
 """
 
 import os
+from typing import AsyncGenerator
 from uuid import UUID
 
 from dotenv import load_dotenv
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
-from pydantic import BaseModel, EmailStr, ConfigDict
-from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
-from typing import AsyncGenerator
-
+from pydantic import BaseModel, ConfigDict, EmailStr
+from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from . import crud
 from .config import settings
+
 
 load_dotenv()
 

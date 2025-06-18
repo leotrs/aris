@@ -21,7 +21,7 @@ def hash_password(password: str) -> str:
     Uses bcrypt.gensalt() to generate a random salt for each password,
     ensuring that identical passwords produce different hashes.
     """
-    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+    return bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt()).decode("utf-8")
 
 
 def verify_password(password: str, hashed: str) -> bool:
@@ -44,4 +44,4 @@ def verify_password(password: str, hashed: str) -> bool:
     This function is safe against timing attacks as bcrypt.checkpw()
     performs constant-time comparison.
     """
-    return bcrypt.checkpw(password.encode('utf-8'), hashed.encode('utf-8'))
+    return bcrypt.checkpw(password.encode("utf-8"), hashed.encode("utf-8"))

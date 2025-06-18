@@ -1,9 +1,6 @@
 """Test file routes."""
 
-import pytest
 from httpx import AsyncClient
-
-
 
 
 async def test_get_files_without_auth(client: AsyncClient):

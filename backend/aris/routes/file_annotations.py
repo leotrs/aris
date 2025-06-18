@@ -5,8 +5,8 @@ from typing import Optional
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .. import get_db, current_user
-from ..models import Annotation, AnnotationType, AnnotationMessage
+from .. import current_user, get_db
+from ..models import Annotation, AnnotationMessage, AnnotationType
 
 
 router = APIRouter(

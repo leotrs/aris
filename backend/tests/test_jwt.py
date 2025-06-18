@@ -1,13 +1,13 @@
 """Test JWT management."""
 
+from datetime import UTC, datetime, timedelta
+
 import pytest
-from datetime import datetime, timedelta, UTC
+from freezegun import freeze_time
 from jose import jwt
 
-from aris.jwt import create_access_token, create_refresh_token, decode_token
 from aris.config import settings
-
-from freezegun import freeze_time
+from aris.jwt import create_access_token, create_refresh_token, decode_token
 
 
 @pytest.fixture

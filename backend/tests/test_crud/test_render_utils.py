@@ -1,7 +1,6 @@
 import asyncio
 import logging
 
-import pytest
 import rsm
 
 from aris.crud.render import render

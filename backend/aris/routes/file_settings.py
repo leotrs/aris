@@ -1,16 +1,18 @@
 """Routes for file settings."""
 
+from datetime import UTC, datetime
+
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from datetime import datetime, UTC
-from ..models import User
-from .. import get_db, current_user
+
+from .. import current_user, get_db
 from ..crud import (
-    FileSettingsBase,
-    FileSettingsResponse,
     DefaultSettingsResponse,
+    FileSettingsBase,
     FileSettingsDB,
+    FileSettingsResponse,
 )
+from ..models import User
 
 
 router = APIRouter(prefix="/settings", tags=["file", "settings"])

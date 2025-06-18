@@ -1,1 +1,1 @@
-from .deps import get_db, current_user, ArisSession
+from .deps import ArisSession, current_user, get_db

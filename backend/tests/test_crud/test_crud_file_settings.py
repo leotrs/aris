@@ -1,10 +1,10 @@
-import pytest
 from datetime import datetime
-from aris.models import File, User
+
 from aris.crud.file_settings import (
     FileSettingsBase,
     FileSettingsDB,
 )
+from aris.models import File, User
 
 
 async def test_get_default_settings_not_found(db_session, test_user):

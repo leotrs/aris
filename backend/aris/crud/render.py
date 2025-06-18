@@ -1,7 +1,7 @@
 import logging
-from sqlalchemy.ext.asyncio import AsyncSession
 
 import rsm
+from sqlalchemy.ext.asyncio import AsyncSession
 
 
 logger = logging.getLogger("RSM")

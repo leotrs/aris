@@ -6,12 +6,13 @@ Will read ../alembic.ini and whatever is inside .env files in this dir or up.
 
 import os
 from logging.config import fileConfig
-from dotenv import load_dotenv
 
-from aris.models import Base
+from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
 
 from alembic import context
+from aris.models import Base
+
 
 load_dotenv()
 

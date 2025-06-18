@@ -1,7 +1,7 @@
-from datetime import datetime, UTC
 import itertools
+from datetime import UTC, datetime
 
-from sqlalchemy import delete, select, insert
+from sqlalchemy import delete, insert, select
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 

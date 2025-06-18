@@ -1,10 +1,10 @@
 import asyncio
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
-from sqlalchemy import select, desc, asc
+from sqlalchemy import asc, desc, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models import File, User, FileSettings
+from ..models import File, FileSettings, User
 from .file import get_file, get_file_section
 from .tag import get_user_file_tags
 from .utils import extract_title
