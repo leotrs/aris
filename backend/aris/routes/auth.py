@@ -9,27 +9,64 @@ from ..security import verify_password, hash_password
 
 
 class UserLogin(BaseModel):
+    """User login credentials."""
     email: EmailStr
     password: str
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "email": "user@example.com",
+                "password": "securepassword123"
+            }
+        }
+    }
 
 
 class UserCreate(BaseModel):
+    """User registration data."""
     email: EmailStr
     name: str
     initials: str = ""
     password: str
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "email": "newuser@example.com",
+                "name": "Jane Doe",
+                "initials": "JD",
+                "password": "securepassword123"
+            }
+        }
+    }
 
 
 class Token(BaseModel):
+    """JWT authentication tokens."""
     access_token: str
     refresh_token: str
     token_type: str = "bearer"
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                "refresh_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+                "token_type": "bearer"
+            }
+        }
+    }
 
 
 router = APIRouter()
 
 
-@router.get("/me")
+@router.get("/me", 
+    summary="Get Current User",
+    description="Retrieve the profile information of the currently authenticated user.",
+    response_description="User profile information"
+)
 async def me(user: User = Depends(current_user)):
     """Get current authenticated user information.
 
@@ -58,7 +95,12 @@ async def me(user: User = Depends(current_user)):
     }
 
 
-@router.post("/login", response_model=Token)
+@router.post("/login", 
+    response_model=Token,
+    summary="User Login",
+    description="Authenticate a user with email and password to receive access tokens.",
+    response_description="JWT access and refresh tokens"
+)
 async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
     """Authenticate user and return access tokens.
 
@@ -96,7 +138,11 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
     return {"token_type": "bearer", "access_token": access, "refresh_token": refresh}
 
 
-@router.post("/register")
+@router.post("/register",
+    summary="User Registration",
+    description="Create a new user account and receive authentication tokens.",
+    response_description="User account details with authentication tokens"
+)
 async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
     """Register a new user account.
 
