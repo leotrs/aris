@@ -18,14 +18,31 @@ const SearchBarStub = defineComponent({
 
 describe('DockableSearch.vue', () => {
   const stubMatches = [
-    { mark: { scrollIntoView: vi.fn() } },
-    { mark: { scrollIntoView: vi.fn() } },
+    { 
+      mark: { 
+        scrollIntoView: vi.fn(),
+        classList: {
+          remove: vi.fn(),
+          add: vi.fn()
+        }
+      } 
+    },
+    { 
+      mark: { 
+        scrollIntoView: vi.fn(),
+        classList: {
+          remove: vi.fn(),
+          add: vi.fn()
+        }
+      } 
+    },
   ];
 
   beforeEach(() => {
     vi.spyOn(HSM, 'highlightSearchMatches').mockReturnValue(stubMatches);
     vi.spyOn(HSM, 'highlightSearchMatchesSource').mockReturnValue([]);
     vi.spyOn(HSM, 'clearHighlights').mockImplementation(() => {});
+    vi.spyOn(HSM, 'updateCurrentMatch').mockImplementation(() => {});
     vi.spyOn(KSMod, 'useKeyboardShortcuts').mockImplementation(() => ({
       activate: vi.fn(),
       deactivate: vi.fn(),
