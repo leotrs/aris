@@ -1,5 +1,5 @@
 <script setup>
-import { ref, inject, computed, onMounted, nextTick } from "vue";
+  import { ref, inject, computed, onMounted, nextTick } from "vue";
   import { useRouter } from "vue-router";
   import { createFileStore } from "@/store/FileStore.js";
 
