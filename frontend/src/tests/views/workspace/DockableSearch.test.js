@@ -18,23 +18,23 @@ const SearchBarStub = defineComponent({
 
 describe('DockableSearch.vue', () => {
   const stubMatches = [
-    { 
-      mark: { 
+    {
+      mark: {
         scrollIntoView: vi.fn(),
         classList: {
           remove: vi.fn(),
           add: vi.fn()
         }
-      } 
+      }
     },
-    { 
-      mark: { 
+    {
+      mark: {
         scrollIntoView: vi.fn(),
         classList: {
           remove: vi.fn(),
           add: vi.fn()
         }
-      } 
+      }
     },
   ];
 

@@ -68,7 +68,7 @@
     const scrollTo = (lastMatchScrolledTo + 1) % searchInfo.matches.length;
     searchInfo.matches[scrollTo].mark.scrollIntoView({ behavior: "smooth", block: "center" });
     searchInfo.lastMatchScrolledTo = scrollTo;
-    
+
     // Update current match highlighting
     updateCurrentMatch(searchInfo.matches, scrollTo);
   };
@@ -83,7 +83,7 @@
       (lastMatchScrolledTo - 1 + searchInfo.matches.length) % searchInfo.matches.length;
     searchInfo.matches[scrollTo].mark.scrollIntoView({ behavior: "smooth", block: "center" });
     searchInfo.lastMatchScrolledTo = scrollTo;
-    
+
     // Update current match highlighting
     updateCurrentMatch(searchInfo.matches, scrollTo);
   };

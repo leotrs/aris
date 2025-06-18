@@ -29,7 +29,7 @@ export function updateCurrentMatch(matches, currentIndex) {
       match.mark.classList.add(highlightClass);
     }
   });
-  
+
   // Add current highlight class to the current match
   if (currentIndex >= 0 && currentIndex < matches.length && matches[currentIndex].mark) {
     matches[currentIndex].mark.classList.remove(highlightClass);
