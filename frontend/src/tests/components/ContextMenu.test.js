@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { ref, nextTick, defineComponent } from 'vue';
-import { mount } from '@vue/test-utils';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ref, nextTick, defineComponent } from "vue";
+import { mount } from "@vue/test-utils";
 
-describe('ContextMenu.vue', () => {
+describe("ContextMenu.vue", () => {
   let useFloatingStub, offsetStub, shiftStub, flipStub, autoUpdateStub;
   let useFloatingUIStub;
   let useListKeyboardNavigationStub;
@@ -10,23 +10,23 @@ describe('ContextMenu.vue', () => {
 
   beforeEach(() => {
     vi.resetModules();
-    
+
     // Mock the new useFloatingUI composable instead of @floating-ui/vue directly
-    useFloatingUIStub = vi.fn(() => ({ 
-      floatingStyles: ref({ position: 'fixed', top: '10px' }),
-      update: vi.fn()
+    useFloatingUIStub = vi.fn(() => ({
+      floatingStyles: ref({ position: "fixed", top: "10px" }),
+      update: vi.fn(),
     }));
-    vi.doMock('@/composables/useFloatingUI.js', () => ({
+    vi.doMock("@/composables/useFloatingUI.js", () => ({
       useFloatingUI: useFloatingUIStub,
     }));
-    
+
     // Keep the old mocks for backwards compatibility in case any tests need them
     useFloatingStub = vi.fn(() => ({ floatingStyles: ref({}) }));
     offsetStub = vi.fn();
     shiftStub = vi.fn();
     flipStub = vi.fn();
-    autoUpdateStub = Symbol('autoUpdate');
-    vi.doMock('@floating-ui/vue', () => ({
+    autoUpdateStub = Symbol("autoUpdate");
+    vi.doMock("@floating-ui/vue", () => ({
       useFloating: useFloatingStub,
       offset: offsetStub,
       shift: shiftStub,
@@ -44,7 +44,7 @@ describe('ContextMenu.vue', () => {
       activate: activateNav,
       deactivate: deactivateNav,
     }));
-    vi.doMock('@/composables/useListKeyboardNavigation.js', () => ({
+    vi.doMock("@/composables/useListKeyboardNavigation.js", () => ({
       useListKeyboardNavigation: useListKeyboardNavigationStub,
     }));
 
@@ -54,26 +54,29 @@ describe('ContextMenu.vue', () => {
       activate: activateClosable,
       deactivate: deactivateClosable,
     }));
-    vi.doMock('@/composables/useClosable.js', () => ({ default: useClosableStub }));
+    vi.doMock("@/composables/useClosable.js", () => ({ default: useClosableStub }));
   });
 
-  it('toggles menu visibility and calls composables on open/close', async () => {
-    const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  it("toggles menu visibility and calls composables on open/close", async () => {
+    const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
     const wrapper = mount(ContextMenu, {
       global: {
         stubs: {
-          ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+          ButtonDots: {
+            template:
+              '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+          },
           Teleport: true,
         },
       },
     });
 
-    expect(wrapper.find('.context-menu').exists()).toBe(false);
+    expect(wrapper.find(".context-menu").exists()).toBe(false);
     expect(useFloatingUIStub).toHaveBeenCalled();
 
     wrapper.vm.toggle();
     await nextTick();
-    expect(wrapper.find('.context-menu').exists()).toBe(true);
+    expect(wrapper.find(".context-menu").exists()).toBe(true);
     const closableInstance = useClosableStub.mock.results[0].value;
     expect(closableInstance.activate).toHaveBeenCalled();
     const navInstance = useListKeyboardNavigationStub.mock.results[0].value;
@@ -81,17 +84,20 @@ describe('ContextMenu.vue', () => {
 
     wrapper.vm.toggle();
     await nextTick();
-    expect(wrapper.find('.context-menu').exists()).toBe(false);
+    expect(wrapper.find(".context-menu").exists()).toBe(false);
     expect(closableInstance.deactivate).toHaveBeenCalled();
     expect(navInstance.deactivate).toHaveBeenCalled();
   });
 
-  it('renders default Dots button and shows slot content', async () => {
-    const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  it("renders default Dots button and shows slot content", async () => {
+    const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
     const wrapper = mount(ContextMenu, {
       global: {
         stubs: {
-          ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+          ButtonDots: {
+            template:
+              '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+          },
           Teleport: true,
         },
       },
@@ -100,19 +106,19 @@ describe('ContextMenu.vue', () => {
       },
     });
 
-    expect(wrapper.find('.btn-dots').exists()).toBe(true);
-    await wrapper.find('.btn-dots').trigger('click');
+    expect(wrapper.find(".btn-dots").exists()).toBe(true);
+    await wrapper.find(".btn-dots").trigger("click");
     await nextTick();
-    expect(wrapper.find('.item-slot').exists()).toBe(true);
+    expect(wrapper.find(".item-slot").exists()).toBe(true);
   });
 
-  it('uses custom trigger slot to toggle menu', async () => {
-    const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  it("uses custom trigger slot to toggle menu", async () => {
+    const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
     const wrapper = mount(ContextMenu, {
       global: {
         stubs: {
           Button: defineComponent({
-            emits: ['click'],
+            emits: ["click"],
             template: '<div class="btn-trigger" @click="$emit(\'click\')"><slot/></div>',
           }),
           Teleport: true,
@@ -124,38 +130,43 @@ describe('ContextMenu.vue', () => {
       },
     });
 
-    expect(wrapper.find('.custom-trigger').exists()).toBe(true);
+    expect(wrapper.find(".custom-trigger").exists()).toBe(true);
     wrapper.vm.toggle();
     await nextTick();
-    expect(wrapper.find('.content').exists()).toBe(true);
+    expect(wrapper.find(".content").exists()).toBe(true);
   });
 
-  it('renders custom btnComponent when icon is not Dots', async () => {
-    const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  it("renders custom btnComponent when icon is not Dots", async () => {
+    const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
     const wrapper = mount(ContextMenu, {
-      props: { icon: 'Star', text: 'Label', btnComponent: 'MyButton', iconClass: 'cls' },
+      props: { icon: "Star", text: "Label", btnComponent: "MyButton", iconClass: "cls" },
       global: {
         stubs: {
-          MyButton: { template: '<div class="btn-comp" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+          MyButton: {
+            template:
+              '<div class="btn-comp" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+          },
           Teleport: true,
         },
       },
     });
 
-    expect(wrapper.find('.btn-comp').exists()).toBe(true);
+    expect(wrapper.find(".btn-comp").exists()).toBe(true);
     wrapper.vm.toggle();
     await nextTick();
-    expect(wrapper.find('.context-menu').exists()).toBe(true);
+    expect(wrapper.find(".context-menu").exists()).toBe(true);
   });
 
-  it('passes placement and middleware options to useFloatingUI', async () => {
-    const placementProp = 'bottom-end';
-    const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  it("passes placement and middleware options to useFloatingUI", async () => {
+    const placementProp = "bottom-end";
+    const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
     mount(ContextMenu, {
       props: { placement: placementProp },
       global: {
         stubs: {
-          ButtonDots: { template: '<div @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+          ButtonDots: {
+            template: "<div @click=\"$emit('update:modelValue', !modelValue)\"></div>",
+          },
           Teleport: true,
         },
       },
@@ -163,42 +174,45 @@ describe('ContextMenu.vue', () => {
 
     expect(useFloatingUIStub).toHaveBeenCalled();
     const [reference, floating, options] = useFloatingUIStub.mock.calls[0];
-    
+
     // Test that the new useFloatingUI composable is called with correct options
     expect(options.placement).toBe(placementProp);
-    expect(options.strategy).toBe('fixed');
+    expect(options.strategy).toBe("fixed");
     expect(options.offset).toBe(4); // Default offset for dots variant
   });
 
-  it('uses zero offset when variant is not dots', async () => {
-    const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  it("uses zero offset when variant is not dots", async () => {
+    const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
     mount(ContextMenu, {
-      props: { variant: 'close' },
+      props: { variant: "close" },
       global: {
-        stubs: { 
-          ButtonClose: { template: '<div @click="$emit(\'click\')"></div>' }, 
-          Teleport: true 
+        stubs: {
+          ButtonClose: { template: "<div @click=\"$emit('click')\"></div>" },
+          Teleport: true,
         },
       },
     });
 
     expect(useFloatingUIStub).toHaveBeenCalled();
     const [reference, floating, options] = useFloatingUIStub.mock.calls[0];
-    
+
     // Close variant should have 0 offset
     expect(options.offset).toBe(0);
   });
 
-  it('applies floatingStyles to the menu element', async () => {
-    useFloatingUIStub.mockReturnValue({ 
-      floatingStyles: ref({ position: 'fixed', top: '10px' }),
-      update: vi.fn()
+  it("applies floatingStyles to the menu element", async () => {
+    useFloatingUIStub.mockReturnValue({
+      floatingStyles: ref({ position: "fixed", top: "10px" }),
+      update: vi.fn(),
     });
-    const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+    const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
     const wrapper = mount(ContextMenu, {
       global: {
         stubs: {
-          ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+          ButtonDots: {
+            template:
+              '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+          },
           Teleport: true,
         },
       },
@@ -206,19 +220,22 @@ describe('ContextMenu.vue', () => {
 
     wrapper.vm.toggle();
     await nextTick();
-    const menu = wrapper.get('.context-menu');
-    expect(menu.element.style.position).toBe('fixed');
-    expect(menu.element.style.top).toBe('10px');
+    const menu = wrapper.get(".context-menu");
+    expect(menu.element.style.position).toBe("fixed");
+    expect(menu.element.style.top).toBe("10px");
   });
 
-  describe('Sub-menu support', () => {
-    it('detects nested ContextMenu components as sub-menus', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  describe("Sub-menu support", () => {
+    it("detects nested ContextMenu components as sub-menus", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
-            Teleport: { template: '<div><slot /></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
+            Teleport: { template: "<div><slot /></div>" },
           },
         },
         slots: {
@@ -231,17 +248,20 @@ describe('ContextMenu.vue', () => {
 
       wrapper.vm.toggle();
       await nextTick();
-      expect(wrapper.find('.context-menu').exists()).toBe(true);
-      expect(wrapper.text()).toContain('Item 1');
-      expect(wrapper.text()).toContain('Sub Menu');
+      expect(wrapper.find(".context-menu").exists()).toBe(true);
+      expect(wrapper.text()).toContain("Item 1");
+      expect(wrapper.text()).toContain("Sub Menu");
     });
 
-    it('provides sub-menu context to child ContextMenu components', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+    it("provides sub-menu context to child ContextMenu components", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
@@ -255,14 +275,17 @@ describe('ContextMenu.vue', () => {
       expect(wrapper.vm.$.provides.parentMenu).toBeDefined();
     });
 
-    it('uses different placement logic for sub-menus', async () => {
+    it("uses different placement logic for sub-menus", async () => {
       // This will be tested when we implement the sub-menu positioning
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
-          provide: { isSubMenu: true, parentMenu: { placement: 'right-start' } },
+          provide: { isSubMenu: true, parentMenu: { placement: "right-start" } },
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
@@ -273,13 +296,16 @@ describe('ContextMenu.vue', () => {
     });
   });
 
-  describe('Enhanced ARIA support', () => {
-    it('sets proper ARIA attributes on menu container', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  describe("Enhanced ARIA support", () => {
+    it("sets proper ARIA attributes on menu container", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
@@ -288,18 +314,21 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.context-menu');
-      expect(menu.attributes('role')).toBe('menu');
-      expect(menu.attributes('aria-orientation')).toBe('vertical');
-      expect(menu.attributes('aria-labelledby')).toBeDefined();
+      const menu = wrapper.get(".context-menu");
+      expect(menu.attributes("role")).toBe("menu");
+      expect(menu.attributes("aria-orientation")).toBe("vertical");
+      expect(menu.attributes("aria-labelledby")).toBeDefined();
     });
 
-    it('generates unique ID for trigger and references it in menu', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+    it("generates unique ID for trigger and references it in menu", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
@@ -308,52 +337,59 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const trigger = wrapper.find('.cm-btn');
-      const menu = wrapper.get('.context-menu');
-      const triggerId = trigger.attributes('id');
+      const trigger = wrapper.find(".cm-btn");
+      const menu = wrapper.get(".context-menu");
+      const triggerId = trigger.attributes("id");
 
       expect(triggerId).toBeDefined();
       expect(triggerId).toMatch(/^cm-trigger-/);
-      expect(menu.attributes('aria-labelledby')).toBe(triggerId);
+      expect(menu.attributes("aria-labelledby")).toBe(triggerId);
     });
 
-    it('sets aria-expanded on trigger button', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+    it("sets aria-expanded on trigger button", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
       });
 
-      const trigger = wrapper.find('.cm-btn');
-      expect(trigger.attributes('aria-expanded')).toBe('false');
+      const trigger = wrapper.find(".cm-btn");
+      expect(trigger.attributes("aria-expanded")).toBe("false");
 
       wrapper.vm.toggle();
       await nextTick();
-      expect(trigger.attributes('aria-expanded')).toBe('true');
+      expect(trigger.attributes("aria-expanded")).toBe("true");
     });
   });
 
-  describe('Better focus management', () => {
-    it('focuses first menu item when menu opens', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  describe("Better focus management", () => {
+    it("focuses first menu item when menu opens", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         attachTo: document.body,
         global: {
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
         slots: {
-          default: '<div class="item" tabindex="0">Item 1</div><div class="item" tabindex="0">Item 2</div>',
+          default:
+            '<div class="item" tabindex="0">Item 1</div><div class="item" tabindex="0">Item 2</div>',
         },
       });
 
-      const focusSpy = vi.spyOn(HTMLElement.prototype, 'focus');
+      const focusSpy = vi.spyOn(HTMLElement.prototype, "focus");
 
       wrapper.vm.toggle();
       await nextTick();
@@ -363,13 +399,16 @@ describe('ContextMenu.vue', () => {
       wrapper.unmount();
     });
 
-    it('restores focus to trigger when menu closes', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+    it("restores focus to trigger when menu closes", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         attachTo: document.body,
         global: {
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
@@ -403,18 +442,21 @@ describe('ContextMenu.vue', () => {
     });
   });
 
-  describe('POSITIONING TESTS - DOCUMENTING CURRENT BROKEN BEHAVIOR', () => {
-    it('FAILS: Desktop mode should get positioning styles from floating UI', async () => {
+  describe("POSITIONING TESTS - DOCUMENTING CURRENT BROKEN BEHAVIOR", () => {
+    it("FAILS: Desktop mode should get positioning styles from floating UI", async () => {
       // Simulate the ACTUAL BROKEN BEHAVIOR - floating UI returns empty/undefined styles
       useFloatingStub.mockReturnValue({ floatingStyles: ref(undefined) });
 
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
-        props: { placement: 'bottom-start' },
+        props: { placement: "bottom-start" },
         global: {
           provide: { mobileMode: false },
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
@@ -423,35 +465,38 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.context-menu');
+      const menu = wrapper.get(".context-menu");
 
       // PROBLEM: In real browser, floating UI is not providing positioning styles
       // So the menu appears centered in viewport instead of adjacent to anchor
 
       // THIS SHOULD FAIL - Menu should have floating UI styles for adjacent positioning
-      expect(menu.attributes('style')).toBeDefined();
-      expect(menu.attributes('style')).toContain('position: fixed');
-      expect(menu.attributes('style')).toContain('top:');
-      expect(menu.attributes('style')).toContain('left:');
+      expect(menu.attributes("style")).toBeDefined();
+      expect(menu.attributes("style")).toContain("position: fixed");
+      expect(menu.attributes("style")).toContain("top:");
+      expect(menu.attributes("style")).toContain("left:");
     });
 
-    it('PASSES: When floating UI works, menu positions correctly adjacent to anchor', async () => {
+    it("PASSES: When floating UI works, menu positions correctly adjacent to anchor", async () => {
       // This test proves that the template logic works when floating UI provides styles
       const mockFloatingStyles = {
-        position: 'fixed',
-        top: '120px',    // Adjacent to anchor (below it)
-        left: '250px',   // Adjacent to anchor (aligned with left edge)
-        transform: 'translate(0px, 0px)'
+        position: "fixed",
+        top: "120px", // Adjacent to anchor (below it)
+        left: "250px", // Adjacent to anchor (aligned with left edge)
+        transform: "translate(0px, 0px)",
       };
       useFloatingStub.mockReturnValue({ floatingStyles: ref(mockFloatingStyles) });
 
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
-        props: { placement: 'bottom-start' },
+        props: { placement: "bottom-start" },
         global: {
           provide: { mobileMode: false },
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
@@ -460,29 +505,32 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.context-menu');
+      const menu = wrapper.get(".context-menu");
 
       // PROOF: Template correctly applies floating UI styles when they exist
-      expect(menu.element.style.position).toBe('fixed');
-      expect(menu.element.style.top).toBe('120px');      // Adjacent positioning
-      expect(menu.element.style.left).toBe('250px');     // Adjacent positioning
-      expect(menu.element.style.transform).toBe('translate(0px, 0px)'); // No centering transform
+      expect(menu.element.style.position).toBe("fixed");
+      expect(menu.element.style.top).toBe("120px"); // Adjacent positioning
+      expect(menu.element.style.left).toBe("250px"); // Adjacent positioning
+      expect(menu.element.style.transform).toBe("translate(0px, 0px)"); // No centering transform
 
       // Menu should NOT be centered (which would use transform: translate(-50%, -50%))
-      expect(menu.element.style.transform).not.toContain('translate(-50%, -50%)');
+      expect(menu.element.style.transform).not.toContain("translate(-50%, -50%)");
     });
 
-    it('FAILS: Desktop mode incorrectly shows mobile-style centered modal', async () => {
+    it("FAILS: Desktop mode incorrectly shows mobile-style centered modal", async () => {
       // ACTUAL BROKEN BEHAVIOR: Desktop mode shows centered modal (mobile behavior)
       useFloatingStub.mockReturnValue({ floatingStyles: ref({}) });
 
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
-        props: { placement: 'bottom-start' },
+        props: { placement: "bottom-start" },
         global: {
           provide: { mobileMode: false }, // Desktop mode
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
@@ -491,26 +539,29 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.context-menu');
+      const menu = wrapper.get(".context-menu");
 
       // PROBLEM: Desktop mode is showing mobile-style behavior
       // The menu appears centered in viewport with modal overlay, NOT adjacent to anchor
 
       // This assertion SHOULD PASS but currently FAILS because desktop mode behaves like mobile
-      expect(menu.classes()).not.toContain('cm-menu-mobile');
+      expect(menu.classes()).not.toContain("cm-menu-mobile");
 
       // Desktop mode should have positioning styles, not be centered via CSS
-      expect(menu.attributes('style')).toBeDefined();
+      expect(menu.attributes("style")).toBeDefined();
     });
 
-    it('FAILS: Mobile mode should center menu in viewport using CSS transforms', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+    it("FAILS: Mobile mode should center menu in viewport using CSS transforms", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           provide: { mobileMode: true },
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
-            Teleport: { template: '<div><slot /></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
+            Teleport: { template: "<div><slot /></div>" },
           },
         },
       });
@@ -518,7 +569,7 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.context-menu');
+      const menu = wrapper.get(".context-menu");
 
       // EXPLICIT TEST: Mobile mode should center menu in viewport
       // This should be achieved through CSS class .cm-menu-mobile which sets:
@@ -527,10 +578,10 @@ describe('ContextMenu.vue', () => {
       // left: 50% !important;
       // transform: translate(-50%, -50%) !important;
 
-      expect(menu.classes()).toContain('cm-menu-mobile');
+      expect(menu.classes()).toContain("cm-menu-mobile");
 
       // The menu should NOT have any inline styles (floatingStyles should be ignored)
-      expect(menu.attributes('style')).toBeUndefined();
+      expect(menu.attributes("style")).toBeUndefined();
 
       // Mobile positioning should be handled by CSS class, not inline styles
       // When working correctly, the .cm-menu-mobile CSS class provides centering
@@ -542,15 +593,18 @@ describe('ContextMenu.vue', () => {
       expect(menu.isVisible()).toBe(true);
     });
 
-    it('EXPLICIT TEST: Mobile mode menu should be positioned at viewport center', async () => {
+    it("EXPLICIT TEST: Mobile mode menu should be positioned at viewport center", async () => {
       // Create a test that simulates what the CSS should achieve
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           provide: { mobileMode: true },
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
-            Teleport: { template: '<div><slot /></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
+            Teleport: { template: "<div><slot /></div>" },
           },
         },
       });
@@ -558,16 +612,16 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.context-menu');
+      const menu = wrapper.get(".context-menu");
 
       // EXPLICIT POSITIONING VERIFICATION FOR MOBILE MODE:
       // Mobile mode should position menu at viewport center using CSS
 
       // 1. Should have mobile CSS class for centering
-      expect(menu.classes()).toContain('cm-menu-mobile');
+      expect(menu.classes()).toContain("cm-menu-mobile");
 
       // 2. Should NOT have floating UI inline styles (should be empty/undefined)
-      expect(menu.attributes('style')).toBeUndefined();
+      expect(menu.attributes("style")).toBeUndefined();
 
       // 3. CSS class .cm-menu-mobile should provide these styles:
       // - position: fixed (not relative to anchor)
@@ -586,15 +640,18 @@ describe('ContextMenu.vue', () => {
     });
   });
 
-  describe('CSS Animations', () => {
-    it('applies transition classes to menu', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  describe("CSS Animations", () => {
+    it("applies transition classes to menu", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
-            Teleport: { template: '<div><slot /></div>' }, // Render content without teleporting
-            Transition: { template: '<div><slot /></div>' }, // Render content without transitions
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
+            Teleport: { template: "<div><slot /></div>" }, // Render content without teleporting
+            Transition: { template: "<div><slot /></div>" }, // Render content without transitions
           },
         },
       });
@@ -602,29 +659,32 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.find('.context-menu');
+      const menu = wrapper.find(".context-menu");
       expect(menu.exists()).toBe(true);
       // Animation classes will be tested in implementation
     });
   });
 
-  describe('Debounced positioning', () => {
-    it('debounces position updates when props change rapidly', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  describe("Debounced positioning", () => {
+    it("debounces position updates when props change rapidly", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
-        props: { placement: 'left-start' },
+        props: { placement: "left-start" },
         global: {
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
       });
 
       // Rapidly change placement
-      await wrapper.setProps({ placement: 'right-start' });
-      await wrapper.setProps({ placement: 'bottom-start' });
-      await wrapper.setProps({ placement: 'top-start' });
+      await wrapper.setProps({ placement: "right-start" });
+      await wrapper.setProps({ placement: "bottom-start" });
+      await wrapper.setProps({ placement: "top-start" });
 
       // Should only update position once after debounce
       // This will be verified in implementation
@@ -632,35 +692,41 @@ describe('ContextMenu.vue', () => {
     });
   });
 
-  describe('Touch interactions', () => {
-    it('handles touch events on mobile devices', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+  describe("Touch interactions", () => {
+    it("handles touch events on mobile devices", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           provide: { mobileMode: true },
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
       });
 
-      const trigger = wrapper.find('.cm-btn');
+      const trigger = wrapper.find(".cm-btn");
 
       // Simulate touch events
-      await trigger.trigger('touchstart');
-      await trigger.trigger('touchend');
+      await trigger.trigger("touchstart");
+      await trigger.trigger("touchend");
 
       // Touch behavior will be implemented
       expect(wrapper.vm.show).toBeDefined();
     });
 
-    it('prevents context menu on long press', async () => {
-      const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
+    it("prevents context menu on long press", async () => {
+      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            ButtonDots: { template: '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>' },
+            ButtonDots: {
+              template:
+                '<div class="btn-dots" @click="$emit(\'update:modelValue\', !modelValue)"></div>',
+            },
             Teleport: true,
           },
         },
@@ -668,8 +734,8 @@ describe('ContextMenu.vue', () => {
 
       const preventDefault = vi.fn();
 
-      await wrapper.find('.cm-wrapper').trigger('contextmenu', {
-        preventDefault
+      await wrapper.find(".cm-wrapper").trigger("contextmenu", {
+        preventDefault,
       });
 
       // Should prevent default context menu

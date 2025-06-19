@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { mount } from '@vue/test-utils';
-import { nextTick } from 'vue';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { mount } from "@vue/test-utils";
+import { nextTick } from "vue";
 
-describe('Modal.vue', () => {
+describe("Modal.vue", () => {
   let useClosableStub, closableOptions;
 
   beforeEach(() => {
@@ -11,13 +11,13 @@ describe('Modal.vue', () => {
       closableOptions = options;
       return {};
     });
-    vi.doMock('@/composables/useClosable.js', () => ({
+    vi.doMock("@/composables/useClosable.js", () => ({
       default: useClosableStub,
     }));
   });
 
-  it('uses useClosable with proper options and emits close on onClose', async () => {
-    const { default: Modal } = await import('@/components/Modal.vue');
+  it("uses useClosable with proper options and emits close on onClose", async () => {
+    const { default: Modal } = await import("@/components/Modal.vue");
     const wrapper = mount(Modal, {
       global: {
         stubs: {
@@ -34,11 +34,11 @@ describe('Modal.vue', () => {
     });
     closableOptions.onClose();
     await nextTick();
-    expect(wrapper.emitted('close')).toBeDefined();
+    expect(wrapper.emitted("close")).toBeDefined();
   });
 
-  it('renders header and default slot content', async () => {
-    const { default: Modal } = await import('@/components/Modal.vue');
+  it("renders header and default slot content", async () => {
+    const { default: Modal } = await import("@/components/Modal.vue");
     const wrapper = mount(Modal, {
       global: {
         stubs: {
@@ -48,11 +48,11 @@ describe('Modal.vue', () => {
         },
       },
       slots: {
-        header: '<h3>Custom Header</h3>',
-        default: '<p>Body text</p>',
+        header: "<h3>Custom Header</h3>",
+        default: "<p>Body text</p>",
       },
     });
-    expect(wrapper.html()).toContain('<h3>Custom Header</h3>');
-    expect(wrapper.html()).toContain('<p>Body text</p>');
+    expect(wrapper.html()).toContain("<h3>Custom Header</h3>");
+    expect(wrapper.html()).toContain("<p>Body text</p>");
   });
 });

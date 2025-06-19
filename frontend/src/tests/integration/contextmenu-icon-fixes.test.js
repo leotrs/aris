@@ -1,190 +1,195 @@
-import { describe, it, expect, vi } from 'vitest';
-import { mount } from '@vue/test-utils';
-import ContextMenu from '@/components/ContextMenu.vue';
+import { describe, it, expect, vi } from "vitest";
+import { mount } from "@vue/test-utils";
+import ContextMenu from "@/components/ContextMenu.vue";
 
-describe('ContextMenu Icon Fixes - Integration Tests', () => {
-  
-  describe('Bug Fix 1: Tag Icon Should Use Custom Variant', () => {
-    it('should render custom component when icon is "Tag"', () => {
+describe("ContextMenu Icon Fixes - Integration Tests", () => {
+  describe("Bug Fix 1: Tag Icon Should Use Custom Variant", () => {
+    it("should render custom variant correctly", () => {
       const wrapper = mount(ContextMenu, {
         props: {
-          icon: 'Tag',
-          btnComponent: 'ButtonToggle'
+          variant: "custom",
         },
         global: {
           stubs: {
-            ButtonToggle: {
-              template: '<button data-testid="custom-button">Tag Button</button>',
-              props: ['icon']
+            ContextMenuTrigger: {
+              template:
+                '<button data-testid="trigger-button" :class="$attrs.class">Custom Button</button>',
+              props: ["variant", "component", "icon", "text", "size", "isOpen"],
+              emits: ["toggle"],
             },
-            ButtonDots: {
-              template: '<button data-testid="dots-button">Dots Button</button>'
-            },
-            Teleport: true
-          }
-        }
+            Teleport: true,
+          },
+        },
       });
 
-      // Should use custom variant for Tag icon, not dots variant
+      // Should render custom variant correctly
       const triggerButton = wrapper.find('[data-testid="trigger-button"]');
       expect(triggerButton.exists()).toBe(true);
-      expect(triggerButton.text()).toBe('Tag Button');
-      expect(triggerButton.classes()).toContain('variant-custom');
+      expect(triggerButton.text()).toBe("Custom Button");
+      expect(triggerButton.classes()).toContain("variant-custom");
     });
 
-    it('should render custom component when icon is "CirclePlus"', () => {
+    it("should render close variant correctly", () => {
       const wrapper = mount(ContextMenu, {
         props: {
-          icon: 'CirclePlus',
-          btnComponent: 'Button'
+          variant: "close",
         },
         global: {
           stubs: {
-            Button: {
-              template: '<button data-testid="custom-button" :class="kind">{{ icon }}</button>',
-              props: ['icon', 'kind']
+            ContextMenuTrigger: {
+              template:
+                '<button data-testid="trigger-button" :class="$attrs.class">Close Button</button>',
+              props: ["variant", "component", "icon", "text", "size", "isOpen"],
+              emits: ["toggle"],
             },
-            ButtonDots: {
-              template: '<button data-testid="dots-button">Dots</button>'
-            },
-            Teleport: true
-          }
-        }
+            Teleport: true,
+          },
+        },
       });
 
-      // Should render the custom Button component, not ButtonDots
+      // Should render close variant correctly
       const triggerButton = wrapper.find('[data-testid="trigger-button"]');
       expect(triggerButton.exists()).toBe(true);
-      expect(triggerButton.text()).toBe('CirclePlus');
-      expect(triggerButton.classes()).toContain('variant-custom');
+      expect(triggerButton.text()).toBe("Close Button");
+      expect(triggerButton.classes()).toContain("variant-close");
     });
 
-    it('should still render ButtonDots for "Dots" icon', () => {
+    it("should render dots variant by default", () => {
       const wrapper = mount(ContextMenu, {
         props: {
-          icon: 'Dots'
+          // No variant specified - should default to 'dots'
         },
         global: {
           stubs: {
-            ButtonDots: {
-              template: '<button data-testid="dots-button">Dots</button>'
+            ContextMenuTrigger: {
+              template: '<button data-testid="trigger-button" :class="$attrs.class">Dots</button>',
+              props: ["variant", "component", "icon", "text", "size", "isOpen"],
+              emits: ["toggle"],
             },
-            Button: {
-              template: '<button data-testid="custom-button">Custom</button>'
-            },
-            Teleport: true
-          }
-        }
+            Teleport: true,
+          },
+        },
       });
 
-      // Should still render ButtonDots for "Dots" icon
+      // Should render dots variant by default
       const triggerButton = wrapper.find('[data-testid="trigger-button"]');
       expect(triggerButton.exists()).toBe(true);
-      expect(triggerButton.text()).toBe('Dots');
-      expect(triggerButton.classes()).toContain('variant-dots');
+      expect(triggerButton.text()).toBe("Dots");
+      expect(triggerButton.classes()).toContain("variant-dots");
     });
   });
 
-  describe('Bug Fix 2: CSS Class Structure Update', () => {
-    it('should have context-menu-trigger class on trigger button', () => {
+  describe("Bug Fix 2: CSS Class Structure Update", () => {
+    it("should have context-menu-trigger class on trigger button", () => {
       const wrapper = mount(ContextMenu, {
         props: {
-          icon: 'Dots'
+          icon: "Dots",
         },
         global: {
           stubs: {
             ButtonDots: {
-              template: '<button data-testid="trigger-button" :class="$attrs.class">Dots</button>'
+              template: '<button data-testid="trigger-button" :class="$attrs.class">Dots</button>',
             },
-            Teleport: true
-          }
-        }
+            Teleport: true,
+          },
+        },
       });
 
       const triggerButton = wrapper.find('[data-testid="trigger-button"]');
       expect(triggerButton.exists()).toBe(true);
-      
+
       // Should have the new context-menu-trigger class
       const classes = triggerButton.classes();
-      expect(classes).toContain('context-menu-trigger');
-      expect(classes).toContain('variant-dots');
-      expect(classes).toContain('size-md'); // default size
+      expect(classes).toContain("context-menu-trigger");
+      expect(classes).toContain("variant-dots");
+      expect(classes).toContain("size-md"); // default size
     });
 
-    it('should have context-menu-trigger class on custom button component', () => {
+    it("should have context-menu-trigger class on custom button component", () => {
       const wrapper = mount(ContextMenu, {
         props: {
-          icon: 'Tag',
-          btnComponent: 'Button'
+          variant: "custom",
+          size: "lg",
         },
         global: {
           stubs: {
-            Button: {
-              template: '<button data-testid="trigger-button" :class="$attrs.class">Tag</button>',
-              props: ['icon']
+            ContextMenuTrigger: {
+              template:
+                '<button data-testid="trigger-button" :class="$attrs.class">Custom</button>',
+              props: ["variant", "component", "icon", "text", "size", "isOpen"],
+              emits: ["toggle"],
             },
-            Teleport: true
-          }
-        }
+            Teleport: true,
+          },
+        },
       });
 
       const triggerButton = wrapper.find('[data-testid="trigger-button"]');
       expect(triggerButton.exists()).toBe(true);
-      
+
       // Should have the new context-menu-trigger class for CSS targeting
       const classes = triggerButton.classes();
-      expect(classes).toContain('context-menu-trigger');
-      expect(classes).toContain('variant-custom');
+      expect(classes).toContain("context-menu-trigger");
+      expect(classes).toContain("variant-custom");
+      expect(classes).toContain("size-lg");
     });
   });
 
-  describe('Backwards Compatibility', () => {
-    it('should show deprecation warnings for old icon prop', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      
+  describe("Modern API Only", () => {
+    it("should work with new variant prop without warnings", () => {
+      const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
+
       mount(ContextMenu, {
         props: {
-          icon: 'Tag' // Using deprecated icon prop
+          variant: "dots",
         },
         global: {
           stubs: {
-            ButtonToggle: {
-              template: '<button>Tag</button>',
-              props: ['icon']
+            ContextMenuTrigger: {
+              template: '<button data-testid="trigger-button">Dots</button>',
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
-            Teleport: true
-          }
-        }
+            Teleport: true,
+          },
+        },
       });
 
-      expect(consoleSpy).toHaveBeenCalledWith(
-        'ContextMenu: "icon" prop is deprecated. Use "variant" instead.'
-      );
-      
+      // Should not show any warnings with modern API
+      expect(consoleSpy).not.toHaveBeenCalled();
+
       consoleSpy.mockRestore();
     });
 
-    it('should work with new variant prop without warnings', () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      
-      mount(ContextMenu, {
+    it("should have clean modern API without deprecated props", () => {
+      const wrapper = mount(ContextMenu, {
         props: {
-          variant: 'dots'
+          variant: "dots",
+          placement: "bottom-start",
+          size: "sm",
         },
         global: {
           stubs: {
-            ButtonDots: {
-              template: '<button>Dots</button>'
+            ContextMenuTrigger: {
+              template:
+                '<button data-testid="trigger-button" :class="$attrs.class">Modern</button>',
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
-            Teleport: true
-          }
-        }
+            Teleport: true,
+          },
+        },
       });
 
-      // Should not show deprecation warnings for new API
-      expect(consoleSpy).not.toHaveBeenCalled();
-      
-      consoleSpy.mockRestore();
+      // Should work with modern props only
+      expect(wrapper.props("variant")).toBe("dots");
+      expect(wrapper.props("placement")).toBe("bottom-start");
+      expect(wrapper.props("size")).toBe("sm");
+
+      // Should not have deprecated props
+      expect(wrapper.props("icon")).toBeUndefined();
+      expect(wrapper.props("btnComponent")).toBeUndefined();
+      expect(wrapper.props("text")).toBeUndefined();
     });
   });
 });
