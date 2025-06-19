@@ -90,3 +90,4 @@ def validation_exception(field: str, message: str) -> HTTPException:
     """
     detail = f"Validation error for {field}: {message}"
     return HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, detail=detail)
+

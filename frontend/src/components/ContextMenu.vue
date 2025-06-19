@@ -43,6 +43,10 @@
     // Map old icon prop to new variant prop
     if (props.icon === 'Dots') return 'dots';
     if (props.icon === 'X') return 'close';
+    // If a custom btnComponent is specified, use 'custom' variant
+    if (props.btnComponent !== 'ButtonToggle') return 'custom';
+    // Handle other icons like 'Tag' by using custom variant to preserve icon
+    if (props.icon && props.icon !== 'Dots') return 'custom';
     return 'dots';
   });
 
@@ -293,6 +297,22 @@
       />
     </template>
     <!-- Backwards compatibility for old props -->
+    <template v-else-if="variant === 'custom' || computedVariant === 'custom'">
+      <component
+        :is="btnComponent"
+        :id="triggerId"
+        ref="comp-ref"
+        v-model="show"
+        :icon="icon"
+        :text="text"
+        :class="triggerClasses"
+        hover-color="var(--surface-hint)"
+        :aria-expanded="show"
+        data-testid="trigger-button"
+        v-bind="$attrs"
+      />
+    </template>
+    <!-- Fallback for any remaining cases -->
     <template v-else>
       <component
         :is="btnComponent"

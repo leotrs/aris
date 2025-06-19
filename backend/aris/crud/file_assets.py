@@ -1,10 +1,11 @@
 import base64
 import binascii
 from datetime import UTC, datetime
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from pydantic import BaseModel, field_validator
 from sqlalchemy import select
+from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import FileAsset
@@ -92,10 +93,10 @@ class FileAssetDB:
     @staticmethod
     async def list_user_assets(user_id: int, db: AsyncSession) -> List[FileAsset]:
         """List all non-deleted assets for a user"""
-        result = await db.execute(
+        result: Result[Any] = await db.execute(
             select(FileAsset).where(FileAsset.owner_id == user_id, FileAsset.deleted_at.is_(None))
         )
-        return result.scalars().all()
+        return list(result.scalars().all())
 
     @staticmethod
     async def update_asset(
