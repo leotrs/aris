@@ -45,9 +45,6 @@ jobs:
     - name: Sync dependencies
       run: uv sync
 
-    - name: Install ruff
-      run: uv pip install --dev ruff
-
     - name: Run linting (ruff)
       run: uv run ruff check
 
@@ -82,9 +79,6 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
-
-    - name: Ensure @eslint/js is installed
-      run: npm install --save-dev @eslint/js
 
     - name: Check for missing packages
       run: npm ls --depth=0
