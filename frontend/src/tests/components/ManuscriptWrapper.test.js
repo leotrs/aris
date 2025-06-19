@@ -1,30 +1,36 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { nextTick, defineComponent } from 'vue';
-import { mount } from '@vue/test-utils';
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { nextTick, defineComponent } from "vue";
+import { mount } from "@vue/test-utils";
 
 // Stub dynamic imports for onBeforeMount hook
 const onloadStub = vi.fn();
-vi.mock('/static/jquery-3.6.0.js', () => ({}), { virtual: true });
-vi.mock('/static/tooltipster.bundle.js', () => ({}), { virtual: true });
-vi.mock('/static/onload.js', () => ({ onload: onloadStub }), { virtual: true });
+vi.mock("/static/jquery-3.6.0.js", () => ({}), { virtual: true });
+vi.mock("/static/tooltipster.bundle.js", () => ({}), { virtual: true });
+vi.mock("/static/onload.js", () => ({ onload: onloadStub }), { virtual: true });
 
-import ManuscriptWrapper from '@/components/ManuscriptWrapper.vue';
+import ManuscriptWrapper from "@/components/ManuscriptWrapper.vue";
 
 // Helper to flush pending promise callbacks
-const flushPromises = () => new Promise(resolve => setTimeout(resolve, 0));
+const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));
 
-describe('ManuscriptWrapper.vue', () => {
+describe("ManuscriptWrapper.vue", () => {
   beforeEach(() => {
     vi.resetModules();
     onloadStub.mockReset();
   });
 
-  it('renders Manuscript component with given htmlString and settings', async () => {
-    const html = '<div>content</div>';
-    const settings = { background: 'bg', fontSize: 'fs', lineHeight: 'lh', fontFamily: 'ff', marginWidth: 'mw' };
-    const api = { getUri: () => '' };
+  it("renders Manuscript component with given htmlString and settings", async () => {
+    const html = "<div>content</div>";
+    const settings = {
+      background: "bg",
+      fontSize: "fs",
+      lineHeight: "lh",
+      fontFamily: "ff",
+      marginWidth: "mw",
+    };
+    const api = { getUri: () => "" };
     const stubManuscript = defineComponent({
-      props: ['htmlString', 'settings'],
+      props: ["htmlString", "settings"],
       template: '<div data-test="manuscript">{{ htmlString }}</div>',
     });
     const wrapper = mount(ManuscriptWrapper, {
@@ -39,14 +45,17 @@ describe('ManuscriptWrapper.vue', () => {
     const ms = wrapper.find('[data-test="manuscript"]');
     expect(ms.exists()).toBe(true);
     expect(ms.text()).toBe(html);
-    expect(wrapper.findComponent(stubManuscript).props('htmlString')).toBe(html);
-    expect(wrapper.findComponent(stubManuscript).props('settings')).toStrictEqual(settings);
+    expect(wrapper.findComponent(stubManuscript).props("htmlString")).toBe(html);
+    expect(wrapper.findComponent(stubManuscript).props("settings")).toStrictEqual(settings);
   });
 
-it.skip('calls onload with element and keys option', async () => {
-    const html = '<p>test</p>';
-    const api = { getUri: () => '' };
-    const stubManuscript = defineComponent({ props: ['htmlString', 'settings'], template: '<div/>' });
+  it.skip("calls onload with element and keys option", async () => {
+    const html = "<p>test</p>";
+    const api = { getUri: () => "" };
+    const stubManuscript = defineComponent({
+      props: ["htmlString", "settings"],
+      template: "<div/>",
+    });
     const wrapper = mount(ManuscriptWrapper, {
       props: { htmlString: html, keys: false },
       global: {
@@ -61,28 +70,28 @@ it.skip('calls onload with element and keys option', async () => {
     expect(opts).toEqual({ keys: false });
   });
 
-  it('renders footer when showFooter is true', () => {
-    const api = { getUri: () => '' };
+  it("renders footer when showFooter is true", () => {
+    const api = { getUri: () => "" };
     const wrapper = mount(ManuscriptWrapper, {
-      props: { htmlString: '', keys: false, showFooter: true },
+      props: { htmlString: "", keys: false, showFooter: true },
       global: {
         provide: { api },
         stubs: { Manuscript: true, Teleport: true },
       },
     });
-    expect(wrapper.find('.middle-footer').exists()).toBe(true);
-    expect(wrapper.find('.footer-logo img').attributes('src')).toContain('logo-32px.svg');
+    expect(wrapper.find(".middle-footer").exists()).toBe(true);
+    expect(wrapper.find(".footer-logo img").attributes("src")).toContain("logo-32px.svg");
   });
 
-  it('does not render footer when showFooter is false', () => {
-    const api = { getUri: () => '' };
+  it("does not render footer when showFooter is false", () => {
+    const api = { getUri: () => "" };
     const wrapper = mount(ManuscriptWrapper, {
-      props: { htmlString: '', keys: false, showFooter: false },
+      props: { htmlString: "", keys: false, showFooter: false },
       global: {
         provide: { api },
         stubs: { Manuscript: true, Teleport: true },
       },
     });
-    expect(wrapper.find('.middle-footer').exists()).toBe(false);
+    expect(wrapper.find(".middle-footer").exists()).toBe(false);
   });
 });

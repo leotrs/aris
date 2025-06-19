@@ -1,8 +1,8 @@
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 
 // Mock Vue lifecycle hooks to avoid warnings when running composables outside component setup
-vi.mock('vue', async () => {
-  const actual = await vi.importActual('vue');
+vi.mock("vue", async () => {
+  const actual = await vi.importActual("vue");
   return {
     ...actual,
     onMounted: vi.fn(),
@@ -10,10 +10,10 @@ vi.mock('vue', async () => {
   };
 });
 
-import { ref, nextTick } from 'vue';
-import { useAutoSave } from '@/composables/useAutoSave.js';
+import { ref, nextTick } from "vue";
+import { useAutoSave } from "@/composables/useAutoSave.js";
 
-describe('useAutoSave', () => {
+describe("useAutoSave", () => {
   let mockSaveFunction;
   let mockCompileFunction;
   let mockFile;
@@ -33,11 +33,11 @@ describe('useAutoSave', () => {
 
     // Create mock file ref
     mockFile = ref({
-      source: 'initial content'
+      source: "initial content",
     });
 
     // Spy on console.error
-    consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
@@ -45,26 +45,26 @@ describe('useAutoSave', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  it('should initialize with correct default values', () => {
+  it("should initialize with correct default values", () => {
     const { saveStatus, lastSaved } = useAutoSave({
       file: mockFile,
-      saveFunction: mockSaveFunction
+      saveFunction: mockSaveFunction,
     });
 
-    expect(saveStatus.value).toBe('idle');
-    expect(typeof lastSaved.value).toBe('number');
+    expect(saveStatus.value).toBe("idle");
+    expect(typeof lastSaved.value).toBe("number");
     expect(lastSaved.value).toBeLessThanOrEqual(Date.now());
   });
 
-  it('should clear previous debounce timeout on subsequent inputs', async () => {
+  it("should clear previous debounce timeout on subsequent inputs", async () => {
     const { onInput } = useAutoSave({
       file: mockFile,
       saveFunction: mockSaveFunction,
-      debounceTime: 1000
+      debounceTime: 1000,
     });
 
-    const mockEvent1 = { target: { value: 'content 1' } };
-    const mockEvent2 = { target: { value: 'content 2' } };
+    const mockEvent1 = { target: { value: "content 1" } };
+    const mockEvent2 = { target: { value: "content 2" } };
 
     await onInput(mockEvent1);
     vi.advanceTimersByTime(500);
@@ -80,39 +80,41 @@ describe('useAutoSave', () => {
 
     // Should only call save once with the final content
     expect(mockSaveFunction).toHaveBeenCalledTimes(1);
-    expect(mockSaveFunction).toHaveBeenCalledWith(expect.objectContaining({
-      source: 'content 2'
-    }));
+    expect(mockSaveFunction).toHaveBeenCalledWith(
+      expect.objectContaining({
+        source: "content 2",
+      })
+    );
   });
 
-  it('should handle save errors', async () => {
-    const saveError = new Error('Save failed');
+  it("should handle save errors", async () => {
+    const saveError = new Error("Save failed");
     const failingSaveFunction = vi.fn().mockRejectedValue(saveError);
 
     const { saveStatus, manualSave } = useAutoSave({
       file: mockFile,
-      saveFunction: failingSaveFunction
+      saveFunction: failingSaveFunction,
     });
 
     await manualSave();
     await nextTick();
 
-    expect(saveStatus.value).toBe('error');
-    expect(consoleErrorSpy).toHaveBeenCalledWith('Error saving file:', saveError);
+    expect(saveStatus.value).toBe("error");
+    expect(consoleErrorSpy).toHaveBeenCalledWith("Error saving file:", saveError);
 
     // Should reset to pending after 5 seconds
     vi.advanceTimersByTime(5000);
     await nextTick();
 
-    expect(saveStatus.value).toBe('pending');
+    expect(saveStatus.value).toBe("pending");
   });
 
-  it('should not save if file has no source', async () => {
-    const emptyFile = ref({ source: '' });
+  it("should not save if file has no source", async () => {
+    const emptyFile = ref({ source: "" });
 
     const { manualSave } = useAutoSave({
       file: emptyFile,
-      saveFunction: mockSaveFunction
+      saveFunction: mockSaveFunction,
     });
 
     await manualSave();
@@ -121,12 +123,12 @@ describe('useAutoSave', () => {
     expect(mockSaveFunction).not.toHaveBeenCalled();
   });
 
-  it('should not save if file is null', async () => {
+  it("should not save if file is null", async () => {
     const nullFile = ref(null);
 
     const { manualSave } = useAutoSave({
       file: nullFile,
-      saveFunction: mockSaveFunction
+      saveFunction: mockSaveFunction,
     });
 
     await manualSave();
@@ -135,14 +137,14 @@ describe('useAutoSave', () => {
     expect(mockSaveFunction).not.toHaveBeenCalled();
   });
 
-  it('should handle manual save and clear debounce timeout', async () => {
+  it("should handle manual save and clear debounce timeout", async () => {
     const { onInput, manualSave } = useAutoSave({
       file: mockFile,
       saveFunction: mockSaveFunction,
-      debounceTime: 2000
+      debounceTime: 2000,
     });
 
-    const mockEvent = { target: { value: 'manual save content' } };
+    const mockEvent = { target: { value: "manual save content" } };
 
     await onInput(mockEvent);
 
@@ -159,16 +161,16 @@ describe('useAutoSave', () => {
     expect(mockSaveFunction).toHaveBeenCalledTimes(1);
   });
 
-  it('should set up auto-save interval', async () => {
+  it("should set up auto-save interval", async () => {
     const composable = useAutoSave({
       file: mockFile,
       saveFunction: mockSaveFunction,
-      autoSaveInterval: 10000
+      autoSaveInterval: 10000,
     });
     composable.startAutoSave();
 
     // Set status to pending to trigger auto-save
-    composable.saveStatus.value = 'pending';
+    composable.saveStatus.value = "pending";
 
     // Advance by auto-save interval
     vi.advanceTimersByTime(10000);
@@ -177,11 +179,11 @@ describe('useAutoSave', () => {
     expect(mockSaveFunction).toHaveBeenCalled();
   });
 
-  it('should auto-save when enough time has passed since last save', async () => {
+  it("should auto-save when enough time has passed since last save", async () => {
     const composable = useAutoSave({
       file: mockFile,
       saveFunction: mockSaveFunction,
-      autoSaveInterval: 5000
+      autoSaveInterval: 5000,
     });
     composable.startAutoSave();
 
@@ -195,14 +197,14 @@ describe('useAutoSave', () => {
     expect(mockSaveFunction).toHaveBeenCalled();
   });
 
-  it('should work without compile function', async () => {
+  it("should work without compile function", async () => {
     const { onInput } = useAutoSave({
       file: mockFile,
       saveFunction: mockSaveFunction,
-      debounceTime: 1000
+      debounceTime: 1000,
     });
 
-    const mockEvent = { target: { value: 'no compile test' } };
+    const mockEvent = { target: { value: "no compile test" } };
 
     await onInput(mockEvent);
     vi.advanceTimersByTime(1000);
@@ -212,7 +214,7 @@ describe('useAutoSave', () => {
     // Should not throw error when compileFunction is null
   });
 
-  it('should use custom debounce and auto-save intervals', async () => {
+  it("should use custom debounce and auto-save intervals", async () => {
     const customDebounce = 3000;
     const customAutoSave = 60000;
 
@@ -221,10 +223,10 @@ describe('useAutoSave', () => {
       saveFunction: mockSaveFunction,
       compileFunction: mockCompileFunction, // Add compile function to avoid the error
       debounceTime: customDebounce,
-      autoSaveInterval: customAutoSave
+      autoSaveInterval: customAutoSave,
     });
 
-    const mockEvent = { target: { value: 'custom timing test' } };
+    const mockEvent = { target: { value: "custom timing test" } };
 
     await onInput(mockEvent);
 
@@ -238,47 +240,47 @@ describe('useAutoSave', () => {
     expect(mockSaveFunction).toHaveBeenCalled();
   });
 
-  it('should not change status from saved to idle if status changed', async () => {
+  it("should not change status from saved to idle if status changed", async () => {
     const { saveStatus, manualSave } = useAutoSave({
       file: mockFile,
-      saveFunction: mockSaveFunction
+      saveFunction: mockSaveFunction,
     });
 
     await manualSave();
     await nextTick();
 
-    expect(saveStatus.value).toBe('saved');
+    expect(saveStatus.value).toBe("saved");
 
     // Change status before timeout
-    saveStatus.value = 'pending';
+    saveStatus.value = "pending";
 
     vi.advanceTimersByTime(3000);
     await nextTick();
 
     // Should remain 'pending', not change to 'idle'
-    expect(saveStatus.value).toBe('pending');
+    expect(saveStatus.value).toBe("pending");
   });
 
-  it('should not change status from error to pending if status changed', async () => {
-    const failingSaveFunction = vi.fn().mockRejectedValue(new Error('Test error'));
+  it("should not change status from error to pending if status changed", async () => {
+    const failingSaveFunction = vi.fn().mockRejectedValue(new Error("Test error"));
 
     const { saveStatus, manualSave } = useAutoSave({
       file: mockFile,
-      saveFunction: failingSaveFunction
+      saveFunction: failingSaveFunction,
     });
 
     await manualSave();
     await nextTick();
 
-    expect(saveStatus.value).toBe('error');
+    expect(saveStatus.value).toBe("error");
 
     // Change status before timeout
-    saveStatus.value = 'saving';
+    saveStatus.value = "saving";
 
     vi.advanceTimersByTime(5000);
     await nextTick();
 
     // Should remain 'saving', not change to 'pending'
-    expect(saveStatus.value).toBe('saving');
+    expect(saveStatus.value).toBe("saving");
   });
 });
