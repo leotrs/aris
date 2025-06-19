@@ -61,10 +61,10 @@
   // Handle keydown events in input field
   const handleKeydown = (event) => {
     // Only prevent space bar from bubbling up to parent button
-    console.log("handleKeyDown")
+    console.log("handleKeyDown");
     // Allow ESC, ENTER, and other keys to work normally
-    if (event.key === ' ') {
-      console.log('stopping');
+    if (event.key === " ") {
+      console.log("stopping");
       event.stopPropagation();
     }
   };
