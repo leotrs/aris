@@ -2,7 +2,6 @@ import { useFloating, offset, flip, shift, autoUpdate } from "@floating-ui/vue";
 
 /**
  * Composable for standardized floating UI configuration
- * Extracts common floating UI patterns used across ContextMenu, AnnotationMenu, Tooltip
  */
 export function useFloatingUI(reference, floating, options = {}) {
   const {
@@ -13,9 +12,7 @@ export function useFloatingUI(reference, floating, options = {}) {
     ...restOptions
   } = options;
 
-  // Build middleware array with defaults + custom middleware
   const defaultMiddleware = [offset(offsetValue), flip(), shift()];
-
   const combinedMiddleware = [...defaultMiddleware, ...middleware];
 
   return useFloating(reference, floating, {

@@ -51,6 +51,10 @@ describe("ContextMenu Simplified API", () => {
     useMobileMenu.mockReturnValue(mockMobileMenu);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   describe("Simplified Props Interface", () => {
     it("should accept only essential props", () => {
       const wrapper = mount(ContextMenu, {
@@ -276,10 +280,15 @@ describe("ContextMenu Simplified API", () => {
 
       const contextMenuEvent = new Event("contextmenu");
       const preventDefaultSpy = vi.spyOn(contextMenuEvent, "preventDefault");
+      const element = wrapper.find(".cm-wrapper").element;
 
-      wrapper.find(".cm-wrapper").element.dispatchEvent(contextMenuEvent);
+      element.dispatchEvent(contextMenuEvent);
 
       expect(preventDefaultSpy).toHaveBeenCalled();
+      
+      // Clean up spies and event listeners
+      preventDefaultSpy.mockRestore();
+      element.removeEventListener("contextmenu", wrapper.vm.handleContextMenu);
     });
   });
 

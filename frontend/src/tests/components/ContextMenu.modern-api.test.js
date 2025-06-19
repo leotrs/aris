@@ -50,6 +50,10 @@ describe("ContextMenu Modern API (Post-Migration)", () => {
     useMobileMenu.mockReturnValue(mockMobileMenu);
   });
 
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
+
   describe("Modern Props Only", () => {
     it("should only accept modern props (variant, placement, size)", () => {
       const wrapper = mount(ContextMenu, {
