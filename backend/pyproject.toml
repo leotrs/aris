@@ -24,11 +24,8 @@ dependencies = [
     "pytest>=8.4.0",
     "pytest-asyncio>=1.0.0",
     "httpx>=0.28.1",
-    "pytest-postgresql>=7.0.2",
     "aiosqlite>=0.21.0",
     "pytest-xdist>=3.7.0",
-    "types-pillow>=10.2.0.20240822",
-    "types-psycopg2>=2.9.21.20250516",
 ]
 
 [dependency-groups]
@@ -41,6 +38,9 @@ dev = [
     "ruff>=0.8.0",
     "mypy>=0.991,<0.992",
     "types-python-jose>=3.5.0.20250531",
+    "types-pillow>=10.2.0.20240822",
+    "types-psycopg2>=2.9.21.20250516",
+    "pytest-postgresql>=7.0.2",
 ]
 
 [tool.setuptools]
