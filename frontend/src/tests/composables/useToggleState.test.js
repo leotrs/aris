@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { nextTick, watch } from 'vue';
-import { mount, defineComponent } from '@vue/test-utils';
+import { nextTick, watch, defineComponent } from 'vue';
+import { mount } from '@vue/test-utils';
 import { useToggleState } from '@/composables/useToggleState.js';
 
 // Test component that uses the composable
@@ -10,7 +10,11 @@ const TestComponent = defineComponent({
   },
   emits: ['update:modelValue', 'on', 'off'],
   setup(props, { emit }) {
-    const { active, toggle } = useToggleState();
+    const { active, toggle } = useToggleState({ 
+      defaultValue: props.modelValue, 
+      props, 
+      emit 
+    });
 
     // Expose for testing
     return {
@@ -130,7 +134,7 @@ describe('useToggleState composable', () => {
 
     const TestWatcherComponent = defineComponent({
       setup() {
-        const { active, toggle } = useToggleState();
+        const { active, toggle } = useToggleState({ defaultValue: false });
 
         // Watch the active state
         watch(active, mockWatcher);
@@ -145,6 +149,6 @@ describe('useToggleState composable', () => {
     wrapper.vm.toggle();
     await nextTick();
 
-    expect(mockWatcher).toHaveBeenCalledWith(true, false);
+    expect(mockWatcher).toHaveBeenCalledWith(true, false, expect.any(Function));
   });
 });

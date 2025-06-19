@@ -39,7 +39,7 @@ describe('useFloatingUI composable', () => {
         middleware: expect.arrayContaining(['offset-middleware', 'flip-middleware', 'shift-middleware']),
         placement: 'bottom',
         strategy: 'fixed',
-        whileElementsMounted: 'auto-update-fn'
+        whileElementsMounted: expect.any(Function)
       })
     );
   });

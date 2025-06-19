@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { nextTick, ref } from 'vue';
-import { mount, defineComponent } from '@vue/test-utils';
+import { nextTick, ref, defineComponent } from 'vue';
+import { mount } from '@vue/test-utils';
 import { useFormField } from '@/composables/useFormField.js';
 
 // Test component that uses the composable
@@ -9,14 +9,18 @@ const TestFormComponent = defineComponent({
     modelValue: { type: String, default: '' },
     direction: { type: String, default: 'row' },
     required: { type: Boolean, default: false },
-    validator: { type: Function, default: null }
+    validator: { type: Function, default: null },
+    validateOnBlur: { type: Boolean, default: false }
   },
   emits: ['update:modelValue', 'focus', 'blur', 'validation'],
   setup(props, { emit }) {
     const fieldOptions = {
       direction: props.direction,
       required: props.required,
-      validator: props.validator
+      validator: props.validator,
+      validateOnBlur: props.validateOnBlur,
+      props,
+      emit
     };
 
     const {
@@ -134,11 +138,17 @@ describe('useFormField composable', () => {
       }
     });
 
-    await wrapper.vm.$nextTick();
+    // First test with empty value (required takes precedence)
+    wrapper.vm.validate();
+    await nextTick();
+    expect(wrapper.vm.error).toBe('This field is required');
+
+    // Then test with value (custom validator should be called)
+    wrapper.vm.value = 'test';
     wrapper.vm.validate();
     await nextTick();
 
-    expect(mockValidator).toHaveBeenCalledWith('');
+    expect(mockValidator).toHaveBeenCalledWith('test');
     expect(wrapper.vm.error).toBe('Field is invalid');
     expect(wrapper.find('[data-testid="error"]').text()).toBe('Field is invalid');
   });

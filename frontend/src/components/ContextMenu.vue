@@ -9,17 +9,23 @@
     useSlots,
     nextTick,
   } from "vue";
-  import { useFloating, autoUpdate, flip, offset, shift } from "@floating-ui/vue";
+  import { useFloatingUI } from "@/composables/useFloatingUI.js";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
   import { useDebounceFn } from "@vueuse/core";
 
   const props = defineProps({
+    // New simplified props
+    variant: { type: String, default: null }, // 'dots', 'close', 'custom'
+    placement: { type: String, default: "left-start" },
+    floatingOptions: { type: Object, default: () => ({}) },
+    size: { type: String, default: "md" },
+    
+    // Deprecated props (maintain backwards compatibility)
     icon: { type: String, default: "Dots" },
     text: { type: String, default: "" },
     btnComponent: { type: String, default: "ButtonToggle" },
     iconClass: { type: String, default: "" },
-    placement: { type: String, default: "left-start" },
   });
   defineOptions({ inheritAttrs: false });
 
@@ -30,6 +36,46 @@
 
   // Generate unique ID for ARIA
   const triggerId = `cm-trigger-${Math.random().toString(36).substr(2, 9)}`;
+
+  // Backwards compatibility and computed variant
+  const computedVariant = computed(() => {
+    if (props.variant) return props.variant;
+    // Map old icon prop to new variant prop
+    if (props.icon === 'Dots') return 'dots';
+    if (props.icon === 'X') return 'close';
+    return 'dots';
+  });
+
+  // Deprecation warnings for old props
+  if (import.meta.env.DEV) {
+    if (props.icon !== 'Dots') {
+      console.warn('ContextMenu: "icon" prop is deprecated. Use "variant" instead.');
+    }
+    if (props.text) {
+      console.warn('ContextMenu: "text" prop is deprecated.');
+    }
+    if (props.btnComponent !== 'ButtonToggle') {
+      console.warn('ContextMenu: "btnComponent" prop is deprecated. Use "variant" or trigger slot instead.');
+    }
+  }
+
+  // Computed classes for trigger button
+  const triggerClasses = computed(() => [
+    'context-menu-trigger',
+    `variant-${computedVariant.value}`,
+    `size-${props.size}`,
+  ]);
+
+  // Computed classes for menu
+  const menuClasses = computed(() => [
+    'context-menu',
+    `placement-${props.placement}`,
+    {
+      'is-open': show.value,
+      'mobile-mode': mobileMode.value,
+      'desktop-mode': !mobileMode.value,
+    }
+  ]);
 
   // Provide context for child menus (this menu provides context for its children)
   provide("isSubMenu", true);
@@ -75,6 +121,14 @@
   // Mobile mode overrides positioning
   const shouldUseMobileMode = computed(() => mobileMode);
 
+  // Use new floating UI composable
+  const { floatingStyles, update } = useFloatingUI(btnRef, menuRef, {
+    placement: effectivePlacement.value,
+    strategy: "fixed",
+    offset: computedVariant.value === "dots" ? 4 : 0,
+    ...props.floatingOptions
+  });
+
   // Debounced floating update
   const updateFloating = useDebounceFn(() => {
     // Trigger re-computation of floating styles
@@ -82,17 +136,6 @@
       update();
     }
   }, 100);
-
-  const { floatingStyles, update } = useFloating(btnRef, menuRef, {
-    strategy: "fixed",
-    placement: () => effectivePlacement.value,
-    middleware: () => [
-      offset({ mainAxis: 0, crossAxis: props.icon == "Dots" ? -8 : 0 }),
-      shift(),
-      flip(),
-    ],
-    whileElementsMounted: autoUpdate,
-  });
 
   // Computed property to handle menu styles
   const menuStyles = computed(() => {
@@ -214,27 +257,42 @@
     @touchstart="handleTouchStart"
     @touchend="handleTouchEnd"
   >
+    <!-- Custom trigger slot (new preferred way) -->
     <template v-if="$slots.trigger">
       <Button
         :id="triggerId"
         ref="slot-ref"
         kind="tertiary"
-        class="cm-btn"
+        :class="triggerClasses"
         :aria-expanded="show"
+        data-testid="trigger-button"
         @click.stop="show = !show"
       >
         <slot name="trigger" />
       </Button>
     </template>
-    <template v-else-if="icon == 'Dots'">
+    <!-- New variant-based system -->
+    <template v-else-if="variant === 'dots' || (variant === null && computedVariant === 'dots')">
       <ButtonDots
         :id="triggerId"
         ref="dots-ref"
         v-model="show"
-        class="cm-btn"
+        :class="triggerClasses"
         :aria-expanded="show"
+        data-testid="trigger-button"
       />
     </template>
+    <template v-else-if="variant === 'close' || computedVariant === 'close'">
+      <ButtonClose
+        :id="triggerId"
+        ref="comp-ref"
+        :class="triggerClasses"
+        :aria-expanded="show"
+        data-testid="trigger-button"
+        @click.stop="show = !show"
+      />
+    </template>
+    <!-- Backwards compatibility for old props -->
     <template v-else>
       <component
         :is="btnComponent"
@@ -243,9 +301,10 @@
         v-model="show"
         :icon="icon"
         :text="text"
-        class="cm-btn"
+        :class="triggerClasses"
         hover-color="var(--surface-hint)"
         :aria-expanded="show"
+        data-testid="trigger-button"
         v-bind="$attrs"
       />
     </template>
@@ -260,12 +319,12 @@
         <div
           v-if="show"
           ref="menu-ref"
-          class="cm-menu"
-          :class="{ 'cm-menu-mobile': shouldUseMobileMode }"
+          :class="menuClasses"
           role="menu"
           aria-orientation="vertical"
           :aria-labelledby="triggerId"
           :style="menuStyles"
+          data-testid="context-menu"
         >
           <slot />
         </div>
@@ -345,6 +404,71 @@
 
     .cm-btn {
       touch-action: manipulation;
+    }
+  }
+
+  /* New variant-based classes */
+  .context-menu-trigger {
+    /* Base trigger styles */
+    transition: all 0.2s ease;
+    
+    &.variant-dots {
+      /* Dots variant specific styles */
+    }
+    
+    &.variant-close {
+      /* Close variant specific styles */
+    }
+    
+    &.size-sm {
+      /* Small size variant */
+    }
+    
+    &.size-md {
+      /* Medium size variant */
+    }
+    
+    &.size-lg {
+      /* Large size variant */
+    }
+  }
+
+  .context-menu {
+    /* Inherit all base cm-menu styles */
+    overflow: hidden;
+    z-index: 999;
+    background-color: var(--surface-primary);
+    padding-block: 8px;
+    border-radius: 16px;
+    min-width: fit-content;
+    box-shadow: var(--shadow-strong), var(--shadow-soft);
+
+    & > *:not(:last-child) {
+      margin-bottom: 8px;
+    }
+    
+    &.placement-bottom-start {
+      /* Placement-specific adjustments */
+    }
+    
+    &.is-open {
+      /* Open state styles */
+    }
+    
+    &.mobile-mode {
+      /* Mobile mode styles */
+      position: fixed !important;
+      top: 50% !important;
+      left: 50% !important;
+      transform: translate(-50%, -50%) !important;
+      width: 90vw;
+      max-width: 320px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    &.desktop-mode {
+      /* Desktop mode styles */
     }
   }
 </style>
