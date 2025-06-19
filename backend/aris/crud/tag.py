@@ -1,7 +1,10 @@
 import itertools
 from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy import delete, insert, select
+from sqlalchemy.engine import Result
+from sqlalchemy.engine.cursor import CursorResult
 from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,7 +16,7 @@ COLORS = itertools.cycle(["red", "purple", "green", "orange"])
 
 async def create_tag(user_id: int, name: str, color: str, db: AsyncSession):
     """Create a new tag for the user."""
-    result = await db.execute(select(User).where(User.id == user_id, User.deleted_at.is_(None)))
+    result: Result[Any] = await db.execute(select(User).where(User.id == user_id, User.deleted_at.is_(None)))
     user = result.scalars().first()
 
     if not user:
@@ -36,7 +39,7 @@ async def create_tag(user_id: int, name: str, color: str, db: AsyncSession):
 
 async def get_user_tags(user_id: int, db: AsyncSession):
     """Get all tags for a user."""
-    result = await db.execute(
+    result: Result[Any] = await db.execute(
         select(Tag)
         .where(Tag.user_id == user_id, Tag.deleted_at.is_(None))
         .order_by(Tag.created_at.asc(), Tag.name.asc())
@@ -47,7 +50,7 @@ async def get_user_tags(user_id: int, db: AsyncSession):
 
 async def update_tag(_id: int, user_id: int, new_name: str, new_color: str, db: AsyncSession):
     """Update the name and/or color of a tag."""
-    result = await db.execute(
+    result: Result[Any] = await db.execute(
         select(Tag).where(Tag.id == _id, Tag.user_id == user_id, Tag.deleted_at.is_(None))
     )
     tag_to_update = result.scalars().first()
@@ -63,7 +66,7 @@ async def update_tag(_id: int, user_id: int, new_name: str, new_color: str, db: 
 
 async def soft_delete_tag(_id: int, user_id: int, db: AsyncSession):
     """Soft delete a tag for a user."""
-    result = await db.execute(
+    result: Result[Any] = await db.execute(
         select(Tag).where(Tag.id == _id, Tag.user_id == user_id, Tag.deleted_at.is_(None))
     )
     tag_to_delete = result.scalars().first()
@@ -77,7 +80,7 @@ async def soft_delete_tag(_id: int, user_id: int, db: AsyncSession):
 
 async def get_user_file_tags(user_id: int, doc_id: int, db: AsyncSession):
     # First check if the file exists and belongs to the user
-    file_result = await db.execute(
+    file_result: Result[Any] = await db.execute(
         select(File).where(
             File.id == doc_id,
             File.owner_id == user_id,
@@ -90,7 +93,7 @@ async def get_user_file_tags(user_id: int, doc_id: int, db: AsyncSession):
         raise ValueError(f"File with id {doc_id} not found or does not belong to user {user_id}")
 
     # If file exists, get the tags
-    result = await db.execute(
+    result: Result[Any] = await db.execute(
         select(Tag)
         .join(file_tags, Tag.id == file_tags.c.tag_id)
         .where(
@@ -114,7 +117,7 @@ async def add_tag_to_file(user_id: int, file_id: int, tag_id: str, db: AsyncSess
     exists_stmt = select(file_tags).where(
         (file_tags.c.file_id == file_id) & (file_tags.c.tag_id == tag_id)
     )
-    result = await db.execute(exists_stmt)
+    result: Result[Any] = await db.execute(exists_stmt)
     if result.first():
         raise ValueError("Tag already assigned")
 
@@ -133,7 +136,7 @@ async def remove_tag_from_file(user_id: int, file_id: int, tag_id: str, db: Asyn
     delete_stmt = delete(file_tags).where(
         (file_tags.c.file_id == file_id) & (file_tags.c.tag_id == tag_id)
     )
-    result = await db.execute(delete_stmt)
+    result: CursorResult[Any] = await db.execute(delete_stmt)
     if result.rowcount == 0:
         raise ValueError("Tag not assigned to this file")
 

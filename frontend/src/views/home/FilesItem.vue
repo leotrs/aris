@@ -265,12 +265,12 @@
     }
   }
 
-  .item .fm-wrapper :deep(.cm-btn) {
+  .item .fm-wrapper :deep(.context-menu-trigger) {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
-  :is(.item:hover, .item.focused, .item.hovered) .fm-wrapper :deep(.cm-btn) {
+  :is(.item:hover, .item.focused, .item.hovered) .fm-wrapper :deep(.context-menu-trigger) {
     opacity: 1;
   }
 </style>

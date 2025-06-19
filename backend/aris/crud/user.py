@@ -1,7 +1,9 @@
 import asyncio
 from datetime import UTC, datetime
+from typing import Any
 
 from sqlalchemy import asc, desc, select
+from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import File, FileSettings, User
@@ -25,7 +27,7 @@ async def get_user(user_id: int, db: AsyncSession):
     User or None
         The user object if found and not deleted, None otherwise.
     """
-    result = await db.execute(select(User).where(User.id == user_id, User.deleted_at.is_(None)))
+    result: Result[Any] = await db.execute(select(User).where(User.id == user_id, User.deleted_at.is_(None)))
     return result.scalars().first()
 
 
@@ -181,17 +183,17 @@ async def get_user_files(user_id: int, with_tags: bool, db: AsyncSession):
     if not user:
         raise ValueError(f"User {user_id} not found")
 
-    result = await db.execute(
+    result: Result[Any] = await db.execute(
         select(File)
         .where(File.owner_id == user_id, File.deleted_at.is_(None))
         .order_by(desc(File.last_edited_at), asc(File.source))
     )
     docs = result.scalars().all()
 
-    titles = await asyncio.gather(*(extract_title(d) for d in docs))
-    titles = dict(zip(docs, titles))
+    titles_list = await asyncio.gather(*(extract_title(d) for d in docs))
+    titles = dict(zip(docs, titles_list))
 
-    tags = None
+    tags: dict[Any, Any] = {}
     if with_tags:
         tags_list = await asyncio.gather(*(get_user_file_tags(user_id, d.id, db) for d in docs))
         tags = dict(zip(docs, tags_list))
@@ -202,7 +204,7 @@ async def get_user_files(user_id: int, with_tags: bool, db: AsyncSession):
             "title": titles[doc],
             "source": doc.source,
             "last_edited_at": doc.last_edited_at,
-            "tags": tags[doc] if tags else [],
+            "tags": tags.get(doc, []),
         }
         for doc in docs
     ]

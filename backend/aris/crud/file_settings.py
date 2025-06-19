@@ -1,10 +1,11 @@
 """CRUD operations for file settings."""
 
 from datetime import UTC, datetime
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import select
+from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import File, FileSettings
@@ -43,7 +44,7 @@ class FileSettingsDB:
             FileSettings.user_id == user_id,
             FileSettings.deleted_at.is_(None),
         )
-        result = await db.execute(query)
+        result: Result[Any] = await db.execute(query)
         return result.scalar_one_or_none()
 
     @staticmethod
@@ -81,7 +82,7 @@ class FileSettingsDB:
             FileSettings.user_id == user_id,
             FileSettings.deleted_at.is_(None),
         )
-        result = await db.execute(query)
+        result: Result[Any] = await db.execute(query)
         return result.scalar_one_or_none()
 
     @staticmethod
@@ -90,7 +91,7 @@ class FileSettingsDB:
         file_query = select(File).where(
             File.id == file_id, File.owner_id == user_id, File.deleted_at.is_(None)
         )
-        file_result = await db.execute(file_query)
+        file_result: Result[Any] = await db.execute(file_query)
         return file_result.scalar_one_or_none() is not None
 
     @staticmethod
