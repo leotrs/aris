@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { ref } from "vue";
 import ContextMenu from "@/components/ContextMenu.vue";
 import { useDesktopMenu } from "@/composables/useDesktopMenu.js";
 import { useMobileMenu } from "@/composables/useMobileMenu.js";
@@ -32,16 +31,16 @@ describe("ContextMenu Modern API (Post-Migration)", () => {
     vi.clearAllMocks();
 
     mockDesktopMenu = {
-      menuStyles: ref({}),
+      menuStyles: { value: {} },
       updatePosition: vi.fn(),
       activate: vi.fn(),
       deactivate: vi.fn(),
-      effectivePlacement: ref("bottom-start"),
+      effectivePlacement: { value: "bottom-start" },
     };
 
     mockMobileMenu = {
-      menuStyles: ref({}),
-      menuClasses: ref(["context-menu", "mobile-mode"]),
+      menuStyles: { value: {} },
+      menuClasses: { value: ["context-menu", "mobile-mode"] },
       activate: vi.fn(),
       deactivate: vi.fn(),
     };
