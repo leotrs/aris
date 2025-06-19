@@ -85,11 +85,11 @@ async def get_file_html(file_id: int, db: AsyncSession):
     result = await db.execute(
         select(File.source).where(File.id == file_id, File.deleted_at.is_(None))
     )
-    src = result.scalars().first()
-    if not src:
+    source = result.scalars().first()
+    if not source:
         return None
 
-    return rsm.render(src, handrails=True)
+    return rsm.render(source, handrails=True)
 
 
 async def create_file(
