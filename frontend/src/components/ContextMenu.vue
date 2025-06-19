@@ -1,162 +1,83 @@
 <script setup>
-  import {
-    ref,
-    computed,
-    watch,
-    provide,
-    inject,
-    useTemplateRef,
-    useSlots,
-    nextTick,
-  } from "vue";
-  import { useFloatingUI } from "@/composables/useFloatingUI.js";
+  import { ref, computed, watch, provide, inject, useTemplateRef, useSlots } from "vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
-  import { useDebounceFn } from "@vueuse/core";
+  import { useDesktopMenu } from "@/composables/useDesktopMenu.js";
+  import { useMobileMenu } from "@/composables/useMobileMenu.js";
+  import ContextMenuTrigger from "./ContextMenuTrigger.vue";
 
   const props = defineProps({
-    // New simplified props
-    variant: { type: String, default: null }, // 'dots', 'close', 'custom'
+    variant: { type: String, default: "dots" }, // 'dots', 'close', 'custom'
     placement: { type: String, default: "left-start" },
     floatingOptions: { type: Object, default: () => ({}) },
     size: { type: String, default: "md" },
-    
-    // Deprecated props (maintain backwards compatibility)
-    icon: { type: String, default: "Dots" },
-    text: { type: String, default: "" },
-    btnComponent: { type: String, default: "ButtonToggle" },
-    iconClass: { type: String, default: "" },
   });
   defineOptions({ inheritAttrs: false });
+  const mobileMode = inject("mobileMode", false);
+  const currentVariant = computed(() => props.variant);
 
-  // Sub-menu and mobile mode support
+  // Sub-menu setup
+  // This menu provides context for its children:
+  provide("isSubMenu", true);
+  provide("parentMenu", { placement: props.placement });
+  // This menu receives context from its parent:
   const isSubMenu = inject("isSubMenu", false);
   const parentMenu = inject("parentMenu", null);
-  const mobileMode = inject("mobileMode", false);
 
-  // Generate unique ID for ARIA
-  const triggerId = `cm-trigger-${Math.random().toString(36).substr(2, 9)}`;
-
-  // Backwards compatibility and computed variant
-  const computedVariant = computed(() => {
-    if (props.variant) return props.variant;
-    // Map old icon prop to new variant prop
-    if (props.icon === 'Dots') return 'dots';
-    if (props.icon === 'X') return 'close';
-    // If a custom btnComponent is specified, use 'custom' variant
-    if (props.btnComponent !== 'ButtonToggle') return 'custom';
-    // Handle other icons like 'Tag' by using custom variant to preserve icon
-    if (props.icon && props.icon !== 'Dots') return 'custom';
-    return 'dots';
-  });
-
-  // Deprecation warnings for old props
-  if (import.meta.env.DEV) {
-    if (props.icon !== 'Dots') {
-      console.warn('ContextMenu: "icon" prop is deprecated. Use "variant" instead.');
-    }
-    if (props.text) {
-      console.warn('ContextMenu: "text" prop is deprecated.');
-    }
-    if (props.btnComponent !== 'ButtonToggle') {
-      console.warn('ContextMenu: "btnComponent" prop is deprecated. Use "variant" or trigger slot instead.');
-    }
-  }
-
-  // Computed classes for trigger button
+  // Consolidated computed properties
   const triggerClasses = computed(() => [
-    'context-menu-trigger',
-    `variant-${computedVariant.value}`,
+    "context-menu-trigger",
+    `variant-${currentVariant.value}`,
     `size-${props.size}`,
   ]);
 
-  // Computed classes for menu
-  const menuClasses = computed(() => [
-    'context-menu',
-    `placement-${props.placement}`,
-    {
-      'is-open': show.value,
-      'mobile-mode': mobileMode.value,
-      'desktop-mode': !mobileMode.value,
-    }
-  ]);
+  const menuClasses = computed(() => {
+    return mobileMode.value
+      ? mobileMenu.menuClasses.value
+      : ["context-menu", `placement-${props.placement}`, "desktop-mode", { "is-open": show.value }];
+  });
 
-  // Provide context for child menus (this menu provides context for its children)
-  provide("isSubMenu", true);
-  provide("parentMenu", { placement: props.placement });
-
-  /* State */
+  // State
   const show = ref(false);
   const lastFocusedElement = ref(null);
   defineExpose({
     toggle: () => (show.value = !show.value),
-    effectivePlacement: computed(() => effectivePlacement.value),
+    effectivePlacement: computed(() => desktopMenu.effectivePlacement?.value || props.placement),
   });
 
   // Floating styles
-  const slots = useSlots();
-  const slotRef = useTemplateRef("slot-ref");
-  const dotsRef = useTemplateRef("dots-ref");
-  const compRef = useTemplateRef("comp-ref");
+  const triggerRef = useTemplateRef("trigger-ref");
   const btnRef = computed(() => {
-    let element = null;
-    if (slots.trigger) {
-      element = slotRef.value?.$el || slotRef.value;
-    } else if (props.icon == "Dots") {
-      element = dotsRef.value?.$el || dotsRef.value;
-    } else {
-      element = compRef.value?.$el || compRef.value;
-    }
-    return element;
+    return triggerRef.value?.triggerRef;
   });
   const menuRef = useTemplateRef("menu-ref");
 
-  // Smart placement for sub-menus
-  const effectivePlacement = computed(() => {
-    if (isSubMenu && parentMenu) {
-      const parentPlacement = parentMenu.placement;
-      if (parentPlacement.includes("right")) return "right-start";
-      if (parentPlacement.includes("left")) return "left-start";
-      return "right-start"; // Default for sub-menus
-    }
-    return props.placement;
-  });
-
-  // Mobile mode overrides positioning
-  const shouldUseMobileMode = computed(() => mobileMode);
-
-  // Use new floating UI composable
-  const { floatingStyles, update } = useFloatingUI(btnRef, menuRef, {
-    placement: effectivePlacement.value,
+  // Initialize positioning systems
+  const positioningOptions = computed(() => ({
+    placement: props.placement,
     strategy: "fixed",
-    offset: computedVariant.value === "dots" ? 4 : 0,
-    ...props.floatingOptions
+    variant: currentVariant.value,
+    offset: currentVariant.value === "dots" ? 4 : 0,
+    isSubMenu,
+    parentPlacement: parentMenu?.placement,
+    ...props.floatingOptions,
+  }));
+
+  const desktopMenu = useDesktopMenu(btnRef, menuRef, positioningOptions.value);
+  const mobileMenu = useMobileMenu(mobileMode, {
+    placement: computed(() => props.placement),
+    isOpen: show,
   });
 
-  // Debounced floating update
-  const updateFloating = useDebounceFn(() => {
-    // Trigger re-computation of floating styles
-    if (menuRef.value && btnRef.value && update) {
-      update();
-    }
-  }, 100);
+  // Consolidated positioning interface
+  const menuStyles = computed(() =>
+    mobileMode.value ? mobileMenu.menuStyles.value : desktopMenu.menuStyles.value
+  );
+  const updatePosition = () => !mobileMode.value && desktopMenu.updatePosition();
+  watch(() => props.placement, updatePosition);
 
-  // Computed property to handle menu styles
-  const menuStyles = computed(() => {
-    if (shouldUseMobileMode.value) {
-      // Mobile mode: use CSS class for centering, no inline styles
-      return {};
-    } else {
-      // Desktop mode: use floating UI styles for adjacent positioning
-      return (floatingStyles && floatingStyles.value) || {};
-    }
-  });
-
-
-  /* Keys */
+  // Keys
   const numItems = computed(() => menuRef.value?.querySelectorAll(".item").length || 0);
-
-  // List keyboard navigation for the context menu items
   const {
     activeIndex,
     clearSelection: clearMenuSelection,
@@ -164,7 +85,7 @@
     deactivate: deactivateNav,
   } = useListKeyboardNavigation(numItems, menuRef, false, false);
 
-  /* Closable */
+  // Closable
   const close = () => {
     show.value = false;
     clearMenuSelection();
@@ -183,36 +104,34 @@
   });
   provide("closeMenu", close);
 
+  // Menu lifecycle management
   watch(
     show,
     async (isShown) => {
       if (isShown) {
-        // Store current focus for restoration later
+        // Opening sequence
         lastFocusedElement.value = document.activeElement;
         activateClosable();
         activateNav();
 
-        // Wait for DOM to be fully rendered
-        await nextTick();
+        // Activate positioning system
+        const positioningSystem = mobileMode.value ? mobileMenu : desktopMenu;
+        await positioningSystem.activate();
 
-        // Ensure refs are available before updating floating UI
-        if (!shouldUseMobileMode.value && update && btnRef.value && menuRef.value) {
-          // Double nextTick to ensure DOM is fully settled
-          await nextTick();
-          update();
-        }
-
-        // Focus first menu item
+        // Focus management
         const firstItem = menuRef.value?.querySelector('.item[tabindex="0"], .item');
-        if (firstItem && firstItem.focus) {
-          firstItem.focus();
-        }
-
+        firstItem?.focus?.();
       } else {
+        // Closing sequence
         deactivateNav();
         deactivateClosable();
-        // Restore focus when closing via watcher
-        if (lastFocusedElement.value && lastFocusedElement.value.focus) {
+
+        // Deactivate positioning system
+        const positioningSystem = mobileMode.value ? mobileMenu : desktopMenu;
+        await positioningSystem.deactivate();
+
+        // Restore focus
+        if (lastFocusedElement.value?.focus) {
           lastFocusedElement.value.focus();
           lastFocusedElement.value = null;
         }
@@ -220,6 +139,7 @@
     },
     { immediate: true }
   );
+
   // Focus the menu item when navigated via keyboard
   watch(activeIndex, (newIndex) => {
     const menuEl = menuRef.value;
@@ -229,105 +149,21 @@
       items[newIndex].focus();
     }
   });
-
-  // Watch for prop changes and debounce updates
-  watch(() => props.placement, updateFloating);
-
-  // Touch interaction handling
-  const touchStartTime = ref(0);
-  const handleTouchStart = () => {
-    touchStartTime.value = Date.now();
-  };
-
-  const handleTouchEnd = () => {
-    const touchDuration = Date.now() - touchStartTime.value;
-    if (touchDuration < 300) {
-      // Short tap
-      show.value = !show.value;
-    }
-  };
-
-  const handleContextMenu = (event) => {
-    event.preventDefault(); // Prevent browser context menu
-  };
 </script>
 
 <template>
-  <div
-    class="cm-wrapper"
-    @click.stop
-    @dblclick.stop
-    @contextmenu="handleContextMenu"
-    @touchstart="handleTouchStart"
-    @touchend="handleTouchEnd"
-  >
-    <!-- Custom trigger slot (new preferred way) -->
-    <template v-if="$slots.trigger">
-      <Button
-        :id="triggerId"
-        ref="slot-ref"
-        kind="tertiary"
-        :class="triggerClasses"
-        :aria-expanded="show"
-        data-testid="trigger-button"
-        @click.stop="show = !show"
-      >
-        <slot name="trigger" />
-      </Button>
-    </template>
-    <!-- New variant-based system -->
-    <template v-else-if="variant === 'dots' || (variant === null && computedVariant === 'dots')">
-      <ButtonDots
-        :id="triggerId"
-        ref="dots-ref"
-        v-model="show"
-        :class="triggerClasses"
-        :aria-expanded="show"
-        data-testid="trigger-button"
-      />
-    </template>
-    <template v-else-if="variant === 'close' || computedVariant === 'close'">
-      <ButtonClose
-        :id="triggerId"
-        ref="comp-ref"
-        :class="triggerClasses"
-        :aria-expanded="show"
-        data-testid="trigger-button"
-        @click.stop="show = !show"
-      />
-    </template>
-    <!-- Backwards compatibility for old props -->
-    <template v-else-if="variant === 'custom' || computedVariant === 'custom'">
-      <component
-        :is="btnComponent"
-        :id="triggerId"
-        ref="comp-ref"
-        v-model="show"
-        :icon="icon"
-        :text="text"
-        :class="triggerClasses"
-        hover-color="var(--surface-hint)"
-        :aria-expanded="show"
-        data-testid="trigger-button"
-        v-bind="$attrs"
-      />
-    </template>
-    <!-- Fallback for any remaining cases -->
-    <template v-else>
-      <component
-        :is="btnComponent"
-        :id="triggerId"
-        ref="comp-ref"
-        v-model="show"
-        :icon="icon"
-        :text="text"
-        :class="triggerClasses"
-        hover-color="var(--surface-hint)"
-        :aria-expanded="show"
-        data-testid="trigger-button"
-        v-bind="$attrs"
-      />
-    </template>
+  <div class="cm-wrapper" @click.stop @dblclick.stop>
+    <ContextMenuTrigger
+      ref="trigger-ref"
+      :variant="currentVariant"
+      :size="size"
+      :is-open="show"
+      :class="triggerClasses"
+      v-bind="$attrs"
+      @toggle="show = !show"
+    >
+      <slot v-if="$slots.trigger" name="trigger" />
+    </ContextMenuTrigger>
     <Teleport to="body">
       <Transition
         name="cm-menu"
@@ -342,7 +178,7 @@
           :class="menuClasses"
           role="menu"
           aria-orientation="vertical"
-          :aria-labelledby="triggerId"
+          :aria-labelledby="triggerRef?.triggerId"
           :style="menuStyles"
           data-testid="context-menu"
         >
@@ -360,7 +196,7 @@
   }
 
   .cm-menu {
-    /* Position will be set by floating UI or mobile mode CSS */
+    position: fixed;
     overflow: hidden;
     z-index: 999;
     background-color: var(--surface-primary);
@@ -427,34 +263,11 @@
     }
   }
 
-  /* New variant-based classes */
   .context-menu-trigger {
-    /* Base trigger styles */
-    transition: all 0.2s ease;
-    
-    &.variant-dots {
-      /* Dots variant specific styles */
-    }
-    
-    &.variant-close {
-      /* Close variant specific styles */
-    }
-    
-    &.size-sm {
-      /* Small size variant */
-    }
-    
-    &.size-md {
-      /* Medium size variant */
-    }
-    
-    &.size-lg {
-      /* Large size variant */
-    }
+    transition: all 0.3s ease;
   }
 
   .context-menu {
-    /* Inherit all base cm-menu styles */
     overflow: hidden;
     z-index: 999;
     background-color: var(--surface-primary);
@@ -466,17 +279,8 @@
     & > *:not(:last-child) {
       margin-bottom: 8px;
     }
-    
-    &.placement-bottom-start {
-      /* Placement-specific adjustments */
-    }
-    
-    &.is-open {
-      /* Open state styles */
-    }
-    
+
     &.mobile-mode {
-      /* Mobile mode styles */
       position: fixed !important;
       top: 50% !important;
       left: 50% !important;
@@ -486,9 +290,8 @@
       max-height: 80vh;
       overflow-y: auto;
     }
-    
+
     &.desktop-mode {
-      /* Desktop mode styles */
     }
   }
 </style>
