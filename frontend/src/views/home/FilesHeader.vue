@@ -31,7 +31,7 @@
     } else if (mode == "desc") {
       fileStore.value.sortFiles((a, b) => b[sortKey].localeCompare(a[sortKey]));
     }
-    for (let name in columnState) {
+    for (const name in columnState) {
       if (name == columnName) continue;
       if (columnInfo[name]["sortable"]) {
         columnState[name] = "";

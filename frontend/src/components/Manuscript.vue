@@ -45,7 +45,7 @@
             const compProps = {};
 
             // Check if this is a div with a class that should be replaced
-            let replacementComponent = null;
+            const replacementComponent = null;
             let isHrInfo = false;
 
             if (node.tagName.toLowerCase() === "div" && node.hasAttribute("class")) {

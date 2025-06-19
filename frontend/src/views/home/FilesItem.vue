@@ -24,7 +24,7 @@
   const user = inject("user");
   const onRename = () => fileTitleRef.value?.startEditing();
   const onDuplicate = () => {
-    let fileData = {
+    const fileData = {
       ...File.toJSON(file.value),
       id: null,
       owner_id: user.value.id,

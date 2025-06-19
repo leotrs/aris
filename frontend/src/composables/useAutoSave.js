@@ -6,7 +6,7 @@ export function useAutoSave({
   saveFunction,
   compileFunction = null,
   debounceTime = 2000,
-  autoSaveInterval = 30000
+  autoSaveInterval = 30000,
 }) {
   const saveStatus = ref("idle");
   const lastSaved = ref(Date.now());
@@ -97,6 +97,6 @@ export function useAutoSave({
     manualSave,
     // Expose these for testing purposes
     startAutoSave,
-    stopAutoSave
+    stopAutoSave,
   };
 }

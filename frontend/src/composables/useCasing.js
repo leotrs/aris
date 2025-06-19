@@ -4,7 +4,7 @@ const toCamelCase = (str) => {
 };
 
 const toSnakeCase = (str) => {
-  return str.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+  return str.replace(/[A-Z]/g, (letter) => `_${letter.toLowerCase()}`);
 };
 
 export function useCamelCase(obj) {
@@ -13,7 +13,7 @@ export function useCamelCase(obj) {
     converted[toCamelCase(key)] = value;
   }
   return converted;
-};
+}
 
 export function useSnakeCase(obj) {
   const converted = {};
@@ -21,4 +21,4 @@ export function useSnakeCase(obj) {
     converted[toSnakeCase(key)] = value;
   }
   return converted;
-};
+}

@@ -23,7 +23,7 @@ export function clearHighlights(rootEl) {
  */
 export function updateCurrentMatch(matches, currentIndex) {
   // Remove current highlight class from all matches
-  matches.forEach(match => {
+  matches.forEach((match) => {
     if (match.mark) {
       match.mark.classList.remove(currentHighlightClass);
       match.mark.classList.add(highlightClass);
@@ -130,7 +130,7 @@ export function highlightSearchMatches(rootEl, searchTerm, options = {}) {
   // Process matches in reverse order to avoid offset issues when modifying the DOM
   matches.sort((a, b) => b.start - a.start);
 
-  for (let match of matches) {
+  for (const match of matches) {
     try {
       // Find nodes containing the start and end of match
       let startNodeInfo = null;

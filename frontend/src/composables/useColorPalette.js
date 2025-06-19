@@ -1,21 +1,17 @@
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
 /**
  * Composable for standardized color palette management
  * Extracts color logic from ColorPicker, Tag, TagControl and provides
  * consistent color management across components
- * 
+ *
  * @param {Object} options - Configuration options
  * @param {number} options.intensity - Color intensity level (default: 300)
  * @param {Object} options.customColors - Custom color definitions
  * @param {boolean} options.mergeWithDefaults - Whether to merge custom colors with defaults
  */
 export function useColorPalette(options = {}) {
-  const {
-    intensity = 300,
-    customColors = null,
-    mergeWithDefaults = false
-  } = options;
+  const { intensity = 300, customColors = null, mergeWithDefaults = false } = options;
 
   // Default color palette from design system
   const defaultColors = {
@@ -26,7 +22,7 @@ export function useColorPalette(options = {}) {
     blue: `var(--blue-${intensity})`,
     yellow: `var(--yellow-${intensity})`,
     gray: `var(--gray-${intensity})`,
-    pink: `var(--pink-${intensity})`
+    pink: `var(--pink-${intensity})`,
   };
 
   // Compute final colors
@@ -40,7 +36,7 @@ export function useColorPalette(options = {}) {
   const colorNames = computed(() => Object.keys(colors.value));
 
   // Selected color state
-  const selectedColor = ref('gray');
+  const selectedColor = ref("gray");
 
   // Color utilities
   const getColor = (colorName) => {
@@ -49,7 +45,7 @@ export function useColorPalette(options = {}) {
 
   const getColorName = (colorValue) => {
     const entry = Object.entries(colors.value).find(([_, value]) => value === colorValue);
-    return entry ? entry[0] : 'gray';
+    return entry ? entry[0] : "gray";
   };
 
   const getLighterColor = (colorName) => {
@@ -64,7 +60,7 @@ export function useColorPalette(options = {}) {
 
   // Validation
   const isValidColor = (colorName) => {
-    return Boolean(colorName && typeof colorName === 'string' && colors.value[colorName]);
+    return Boolean(colorName && typeof colorName === "string" && colors.value[colorName]);
   };
 
   const isValidColorValue = (colorValue) => {
@@ -73,23 +69,23 @@ export function useColorPalette(options = {}) {
 
   // CSS class utilities
   const getColorClass = (colorName) => {
-    return isValidColor(colorName) ? `color-${colorName}` : 'color-gray';
+    return isValidColor(colorName) ? `color-${colorName}` : "color-gray";
   };
 
   const getBackgroundClass = (colorName) => {
-    return isValidColor(colorName) ? `bg-${colorName}` : 'bg-gray';
+    return isValidColor(colorName) ? `bg-${colorName}` : "bg-gray";
   };
 
   // Contrast for accessibility
   const getContrastColor = (colorName) => {
     // Light colors get dark text, dark colors get light text
-    const lightColors = ['yellow', 'green', 'orange'];
-    return lightColors.includes(colorName) ? 'var(--gray-900)' : 'var(--gray-100)';
+    const lightColors = ["yellow", "green", "orange"];
+    return lightColors.includes(colorName) ? "var(--gray-900)" : "var(--gray-100)";
   };
 
   // Reactive color selection
   const setSelectedColor = (colorName) => {
-    selectedColor.value = isValidColor(colorName) ? colorName : 'gray';
+    selectedColor.value = isValidColor(colorName) ? colorName : "gray";
   };
 
   const isSelected = (colorName) => {
@@ -184,6 +180,6 @@ export function useColorPalette(options = {}) {
     getTagBackgroundColor,
     getTagBorderColor,
     getTagHoverColor,
-    getTagActiveColor
+    getTagActiveColor,
   };
 }
