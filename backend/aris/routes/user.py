@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from .. import crud, current_user, get_db
-from ..models import File, ProfilePicture, User
+from ..models import ProfilePicture, User
 
 
 router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(current_user)])

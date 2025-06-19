@@ -121,7 +121,7 @@ async def test_list_user_assets_excludes_soft_deleted(db_session, test_user):
         filename="delete.txt", mime_type="text/plain", content="ZGVsZXRl", file_id=2
     )
 
-    asset1 = await FileAssetDB.create_asset(payload1, test_user.id, db_session)
+    _asset1 = await FileAssetDB.create_asset(payload1, test_user.id, db_session)
     asset2 = await FileAssetDB.create_asset(payload2, test_user.id, db_session)
 
     # Soft delete one asset

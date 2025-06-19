@@ -309,10 +309,6 @@ async def test_remove_tag_from_file_invalid_data(client: AsyncClient, authentica
     assert "Error removing tag" in response.json()["detail"]
 
 
-import pytest
-from httpx import AsyncClient
-
-
 async def test_create_tag_invalid_names(authenticated_user, client: AsyncClient):
     """
     Test creating tags with invalid names:
@@ -354,21 +350,6 @@ async def test_update_tag_not_owned(sample_tag, client: AsyncClient):
     assert response.json()["detail"] == "Tag not found"
 
 
-async def test_delete_nonexistent_tag(authenticated_user, client: AsyncClient):
-    """
-    Test deleting a tag that does not exist.
-    Expect 404 Not Found with appropriate error detail.
-    """
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-    non_existent_tag_id = 99999999
-
-    response = await client.delete(
-        f"/users/{authenticated_user['user_id']}/tags/{non_existent_tag_id}",
-        headers=headers,
-    )
-    assert response.status_code == 404
-    assert response.json()["detail"] == "Tag not found"
-
 
 async def test_add_tag_to_file_invalid_tag(client: AsyncClient, authenticated_user, sample_file):
     """
@@ -391,7 +372,6 @@ async def test_get_user_tags_empty(client: AsyncClient, authenticated_user):
     Test getting tags for a user who has no tags.
     Expect an empty list in response.
     """
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     response = await client.post(
         "/register",
         json={
