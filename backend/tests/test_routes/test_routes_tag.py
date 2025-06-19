@@ -87,7 +87,7 @@ async def test_create_tag_nonexistent_user(client: AsyncClient, authenticated_us
         },
     )
     assert response.status_code == 404
-    assert "User not found" in response.json()["detail"]
+    assert "User with id 99999 not found" == response.json()["detail"]
 
 
 async def test_create_tag_invalid_data(client: AsyncClient, authenticated_user):
@@ -178,7 +178,7 @@ async def test_update_nonexistent_tag(client: AsyncClient, authenticated_user):
         },
     )
     assert response.status_code == 404
-    assert "Tag not found" in response.json()["detail"]
+    assert "Tag with id 99999 not found" == response.json()["detail"]
 
 
 async def test_delete_tag_without_auth(client: AsyncClient):
@@ -206,7 +206,7 @@ async def test_delete_nonexistent_tag(client: AsyncClient, authenticated_user):
         headers=headers,
     )
     assert response.status_code == 404
-    assert "Tag not found" in response.json()["detail"]
+    assert "Tag with id 99999 not found" == response.json()["detail"]
 
 
 # File-Tag Association Tests
@@ -347,7 +347,8 @@ async def test_update_tag_not_owned(sample_tag, client: AsyncClient):
         json=fake_tag,
     )
     assert response.status_code == 404
-    assert response.json()["detail"] == "Tag not found"
+    # The exact tag ID will vary based on the test data, so check for the pattern
+    assert "Tag with id" in response.json()["detail"] and "not found" in response.json()["detail"]
 
 
 
@@ -491,7 +492,7 @@ async def test_update_tag_crud_error(
         },
     )
     assert response.status_code == 400
-    assert response.json()["detail"] == "Error updating tag update failed"
+    assert response.json()["detail"] == "Error updating tag: update failed"
 
 
 async def test_delete_tag_crud_error(

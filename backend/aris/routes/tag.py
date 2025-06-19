@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, status
 from pydantic import BaseModel, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import crud, current_user, get_db
+from ..exceptions import bad_request_exception, not_found_exception
 
 
 router = APIRouter(prefix="/users", tags=["users", "tags"], dependencies=[Depends(current_user)])
@@ -41,11 +42,11 @@ async def create_tag(user_id: int, tag: TagCreate, db: AsyncSession = Depends(ge
     """Create a new tag for the user."""
     user = await crud.get_user(user_id, db)
     if user is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise not_found_exception("User", user_id)
 
     tag = await crud.create_tag(user_id, tag.name, tag.color, db)
     if tag is None:
-        raise HTTPException(status_code=400, detail="Error creating tag")
+        raise bad_request_exception("Error creating tag")
     return tag
 
 
@@ -60,23 +61,23 @@ async def get_user_tags(user_id: int, db: AsyncSession = Depends(get_db)):
 async def update_tag(tag: TagRetrieveOrUpdate, db: AsyncSession = Depends(get_db)):
     """Update the name of a tag."""
     if tag.id not in (t["id"] for t in await crud.get_user_tags(tag.user_id, db)):
-        raise HTTPException(status_code=404, detail="Tag not found")
+        raise not_found_exception("Tag", tag.id)
     try:
         updated_tag = await crud.update_tag(tag.id, tag.user_id, tag.name, tag.color, db)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail="Error updating tag " + str(e))
+        raise bad_request_exception(f"Error updating tag: {e}")
     return updated_tag
 
 
-@router.delete("/{user_id}/tags/{_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_tag(_id: int, user_id: int, db: AsyncSession = Depends(get_db)):
+@router.delete("/{user_id}/tags/{tag_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_tag(tag_id: int, user_id: int, db: AsyncSession = Depends(get_db)):
     """Delete a tag for a user."""
-    if _id not in (t["id"] for t in await crud.get_user_tags(user_id, db)):
-        raise HTTPException(status_code=404, detail="Tag not found")
+    if tag_id not in (t["id"] for t in await crud.get_user_tags(user_id, db)):
+        raise not_found_exception("Tag", tag_id)
 
-    deleted_tag = await crud.soft_delete_tag(_id, user_id, db)
+    deleted_tag = await crud.soft_delete_tag(tag_id, user_id, db)
     if deleted_tag is None:
-        raise HTTPException(status_code=400, detail="Error deleting tag: " + str(_id))
+        raise bad_request_exception(f"Error deleting tag: {tag_id}")
     return deleted_tag
 
 
@@ -86,30 +87,27 @@ async def get_user_file_tags(user_id: int, file_id: int, db: AsyncSession = Depe
     try:
         result = await crud.get_user_file_tags(user_id, file_id, db)
     except ValueError as e:
-        raise HTTPException(
-            status_code=400,
-            detail=f"Error fetching tags for file {file_id}: " + str(e),
-        )
+        raise bad_request_exception(f"Error fetching tags for file {file_id}: {e}")
     return result
 
 
-@router.post("/{user_id}/files/{doc_id}/tags/{_id}")
-async def add_tag_to_file(user_id: int, doc_id: int, _id: int, db: AsyncSession = Depends(get_db)):
+@router.post("/{user_id}/files/{file_id}/tags/{tag_id}")
+async def add_tag_to_file(user_id: int, file_id: int, tag_id: int, db: AsyncSession = Depends(get_db)):
     """Assign a tag to a file."""
     try:
-        await crud.add_tag_to_file(user_id, doc_id, _id, db)
+        await crud.add_tag_to_file(user_id, file_id, tag_id, db)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail="Error adding tag: " + str(e))
+        raise bad_request_exception(f"Error adding tag: {e}")
     return {"message": "Tag added successfully"}
 
 
-@router.delete("/{user_id}/files/{doc_id}/tags/{_id}")
+@router.delete("/{user_id}/files/{file_id}/tags/{tag_id}")
 async def remove_tag_from_file(
-    user_id: int, doc_id: int, _id: int, db: AsyncSession = Depends(get_db)
+    user_id: int, file_id: int, tag_id: int, db: AsyncSession = Depends(get_db)
 ):
     """Remove a tag from a file."""
     try:
-        await crud.remove_tag_from_file(user_id, doc_id, _id, db)
+        await crud.remove_tag_from_file(user_id, file_id, tag_id, db)
     except ValueError as e:
-        raise HTTPException(status_code=400, detail="Error removing tag: " + str(e))
+        raise bad_request_exception(f"Error removing tag: {e}")
     return {"message": "Tag removed successfully"}
