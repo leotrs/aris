@@ -1,4 +1,5 @@
 // eslint.config.js - Frontend-specific ESLint configuration
+import js from "@eslint/js";
 import pluginVue from "eslint-plugin-vue";
 import prettierConfig from "eslint-config-prettier";
 import prettierPlugin from "eslint-plugin-prettier";
@@ -6,12 +7,21 @@ import babelParser from "@babel/eslint-parser";
 import globals from "globals";
 
 // Import shared configuration
-import { jsConfig, baseRules, globalIgnores } from "../eslint.config.shared.js";
+import { baseRules, baseConfig, globalIgnores } from "../eslint.config.shared.js";
+
+// Create JS config using local @eslint/js import
+const jsConfig = [
+  js.configs.recommended,
+  {
+    files: ["**/*.js", "**/*.mjs"],
+    ...baseConfig,
+  },
+];
 
 export default [
   // Use shared JS config as base
   ...jsConfig,
-  
+
   // Vue-specific configuration
   ...pluginVue.configs["flat/recommended"],
   prettierConfig,
@@ -40,11 +50,14 @@ export default [
     rules: {
       ...baseRules,
       // Frontend-specific overrides
-      "no-unused-vars": ["error", { 
-        "argsIgnorePattern": "^_",
-        "varsIgnorePattern": "^_",
-        "destructuredArrayIgnorePattern": "^_"
-      }]
+      "no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+        },
+      ],
     },
   },
 
