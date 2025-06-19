@@ -1,7 +1,12 @@
 import { ref, watch, nextTick } from "vue";
 import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
-export function useListKeyboardNavigation(listLengthRef, rootElementRef, useEscape = false, autoActivate = true) {
+export function useListKeyboardNavigation(
+  listLengthRef,
+  rootElementRef,
+  useEscape = false,
+  autoActivate = true
+) {
   const activeIndex = ref(null);
 
   const nextItem = (ev) => {
@@ -12,9 +17,7 @@ export function useListKeyboardNavigation(listLengthRef, rootElementRef, useEsca
       return;
     }
 
-    const newIndex = activeIndex.value === null
-      ? 0
-      : (activeIndex.value + 1) % listLengthRef.value;
+    const newIndex = activeIndex.value === null ? 0 : (activeIndex.value + 1) % listLengthRef.value;
     activeIndex.value = newIndex;
     // console.log("Updating activeIndex to:", newIndex);
   };
@@ -32,9 +35,10 @@ export function useListKeyboardNavigation(listLengthRef, rootElementRef, useEsca
       return;
     }
 
-    const newIndex = activeIndex.value === null
-      ? 0
-      : (activeIndex.value + listLengthRef.value - 1) % listLengthRef.value;
+    const newIndex =
+      activeIndex.value === null
+        ? 0
+        : (activeIndex.value + listLengthRef.value - 1) % listLengthRef.value;
     activeIndex.value = newIndex;
     // console.log("Updating activeIndex to:", newIndex);
   };

@@ -13,9 +13,7 @@ export default function ({
   const instance = getCurrentInstance();
 
   // Handle ESC key press
-  const keyController = closeOnEsc
-    ? useKeyboardShortcuts({ escape: onClose }, autoActivate)
-    : null;
+  const keyController = closeOnEsc ? useKeyboardShortcuts({ escape: onClose }, autoActivate) : null;
   const setupEscKey = () => keyController.activate();
   const tearDownEscKey = () => keyController.deactivate();
 
@@ -33,11 +31,8 @@ export default function ({
     // listener was being called on the very same click that opened the component in the
     // first place, immediately closing it, and thus it would never show. Waiting for
     // "two ticks" is enough to fix this.
-    nextTick(() =>
-      setTimeout(() => document.addEventListener("click", handleOutsideClick), 0)
-    );
-  const tearDownOutsideClick = () =>
-    document.removeEventListener("click", handleOutsideClick);
+    nextTick(() => setTimeout(() => document.addEventListener("click", handleOutsideClick), 0));
+  const tearDownOutsideClick = () => document.removeEventListener("click", handleOutsideClick);
 
   // Handle clicking the close button
   const getCloseButton = () => {
@@ -49,8 +44,7 @@ export default function ({
     return closeButton;
   };
   const setupCloseButton = () => getCloseButton()?.addEventListener("click", onClose);
-  const tearDownCloseButton = () =>
-    getCloseButton()?.removeEventListener("click", onClose);
+  const tearDownCloseButton = () => getCloseButton()?.removeEventListener("click", onClose);
 
   // General handlers
   const activate = () => {

@@ -74,7 +74,7 @@ export class File {
    */
   static async save(file, api, user) {
     try {
-      let fileData = File.toJSON(file);
+      const fileData = File.toJSON(file);
 
       // The backend expects owner_id and not ownerId
       fileData.owner_id = user.id;

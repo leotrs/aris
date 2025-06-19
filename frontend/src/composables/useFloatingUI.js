@@ -1,4 +1,4 @@
-import { useFloating, offset, flip, shift, autoUpdate } from '@floating-ui/vue';
+import { useFloating, offset, flip, shift, autoUpdate } from "@floating-ui/vue";
 
 /**
  * Composable for standardized floating UI configuration
@@ -6,19 +6,15 @@ import { useFloating, offset, flip, shift, autoUpdate } from '@floating-ui/vue';
  */
 export function useFloatingUI(reference, floating, options = {}) {
   const {
-    placement = 'bottom',
-    strategy = 'fixed',
+    placement = "bottom",
+    strategy = "fixed",
     middleware = [],
     offset: offsetValue = 4,
     ...restOptions
   } = options;
 
   // Build middleware array with defaults + custom middleware
-  const defaultMiddleware = [
-    offset(offsetValue),
-    flip(),
-    shift()
-  ];
+  const defaultMiddleware = [offset(offsetValue), flip(), shift()];
 
   const combinedMiddleware = [...defaultMiddleware, ...middleware];
 
@@ -27,6 +23,6 @@ export function useFloatingUI(reference, floating, options = {}) {
     placement,
     strategy,
     whileElementsMounted: autoUpdate,
-    ...restOptions
+    ...restOptions,
   });
 }

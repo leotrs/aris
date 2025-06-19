@@ -216,7 +216,7 @@ export async function _makeMinimap(sections, isHorizontal, containerSize = 400, 
   const lineSize = (containerSize || 400) - 8;
 
   // Create shapes based on orientation
-  let shapes = createShapesData(sections, lineSize, isHorizontal, options);
+  const shapes = createShapesData(sections, lineSize, isHorizontal, options);
 
   // Store initial data for future resizing
   const svgInitialData = {
@@ -331,8 +331,8 @@ export async function resizeMinimap(
   // console.log([...paths].map((s) => s.dataset), initialShapes);
   paths.forEach((path, index) => {
     const shape = initialShapes[index];
-    let newCx = isHorizontal ? shape.cx * scaleFactor : shape.cx;
-    let newCy = isHorizontal ? shape.cy : shape.cy * scaleFactor;
+    const newCx = isHorizontal ? shape.cx * scaleFactor : shape.cx;
+    const newCy = isHorizontal ? shape.cy : shape.cy * scaleFactor;
     path.setAttribute(
       "d",
       createShapePath(newCx, newCy, shape.r, options.side, options.shape, options.offset)

@@ -11,7 +11,7 @@
   const emit = defineEmits(["mounted-at"]);
 
   const api = inject("api");
-  let onload = ref(null);
+  const onload = ref(null);
   onBeforeMount(async () => {
     const base = api.getUri();
     try {
