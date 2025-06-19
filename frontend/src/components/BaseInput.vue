@@ -1,168 +1,157 @@
 <script setup>
-import { computed, useTemplateRef, nextTick } from 'vue';
-import { useFormField } from '@/composables/useFormField.js';
+  import { computed, useTemplateRef, nextTick } from "vue";
+  import { useFormField } from "@/composables/useFormField.js";
 
-const props = defineProps({
-  modelValue: { type: String, default: '' },
-  placeholder: { type: String, default: '' },
-  direction: { type: String, default: 'row' },
-  size: { type: String, default: 'md' },
-  required: { type: Boolean, default: false },
-  disabled: { type: Boolean, default: false },
-  readonly: { type: Boolean, default: false },
-  validator: { type: Function, default: null },
-  validateOnBlur: { type: Boolean, default: false },
-  variant: { type: String, default: 'input' }, // 'input' or 'search'
-  
-  // Search variant specific props
-  withButtons: { type: Boolean, default: false },
-  showIcon: { type: Boolean, default: false },
-  buttonClose: { type: Boolean, default: false },
-  buttonsDisabled: { type: Boolean, default: false },
-  
-  // Accessibility
-  id: { type: String, default: null },
-  ariaLabel: { type: String, default: null },
-  ariaDescribedby: { type: String, default: null },
-  
-  // Error prop for external error handling
-  error: { type: String, default: null },
-  
-  // Label
-  label: { type: String, default: null }
-});
+  const props = defineProps({
+    modelValue: { type: String, default: "" },
+    placeholder: { type: String, default: "" },
+    direction: { type: String, default: "row" },
+    size: { type: String, default: "md" },
+    required: { type: Boolean, default: false },
+    disabled: { type: Boolean, default: false },
+    readonly: { type: Boolean, default: false },
+    validator: { type: Function, default: null },
+    validateOnBlur: { type: Boolean, default: false },
+    variant: { type: String, default: "input" }, // 'input' or 'search'
 
-const emit = defineEmits([
-  'update:modelValue', 
-  'focus', 
-  'blur', 
-  'validation',
-  'submit', 
-  'next', 
-  'prev', 
-  'cancel'
-]);
+    // Search variant specific props
+    withButtons: { type: Boolean, default: false },
+    showIcon: { type: Boolean, default: false },
+    buttonClose: { type: Boolean, default: false },
+    buttonsDisabled: { type: Boolean, default: false },
 
-// Use form field composable
-const {
-  value,
-  focused,
-  error,
-  inputClass,
-  validate,
-  setFocus,
-  setBlur,
-  clearError
-} = useFormField({
-  direction: props.direction,
-  required: props.required,
-  validator: props.validator,
-  validateOnBlur: props.validateOnBlur,
-  props,
-  emit
-});
+    // Accessibility
+    id: { type: String, default: null },
+    ariaLabel: { type: String, default: null },
+    ariaDescribedby: { type: String, default: null },
 
-// Template refs
-const inputRef = useTemplateRef('input');
+    // Error prop for external error handling
+    error: { type: String, default: null },
 
-// Computed properties
-const inputId = computed(() => props.id || `base-input-${Math.random().toString(36).substr(2, 9)}`);
+    // Label
+    label: { type: String, default: null },
+  });
 
-const componentClasses = computed(() => [
-  'base-input',
-  `variant-${props.variant}`,
-  `direction-${props.direction}`,
-  `size-${props.size}`,
-  {
-    'focused': focused.value,
-    'error': Boolean(currentError.value),
-    'disabled': props.disabled,
-    'readonly': props.readonly
-  }
-]);
+  const emit = defineEmits([
+    "update:modelValue",
+    "focus",
+    "blur",
+    "validation",
+    "submit",
+    "next",
+    "prev",
+    "cancel",
+  ]);
 
-// Use external error prop if provided, otherwise use internal error
-const currentError = computed(() => props.error || error.value);
+  // Use form field composable
+  const { value, focused, error, inputClass, validate, setFocus, setBlur, clearError } =
+    useFormField({
+      direction: props.direction,
+      required: props.required,
+      validator: props.validator,
+      validateOnBlur: props.validateOnBlur,
+      props,
+      emit,
+    });
 
-const inputAttributes = computed(() => ({
-  id: inputId.value,
-  placeholder: props.placeholder,
-  disabled: props.disabled,
-  readonly: props.readonly,
-  required: props.required,
-  'aria-label': props.ariaLabel,
-  'aria-describedby': currentError.value ? `${inputId.value}-error` : props.ariaDescribedby,
-  'aria-invalid': Boolean(currentError.value)
-}));
+  // Template refs
+  const inputRef = useTemplateRef("input");
 
-// Methods
-const focus = async () => {
-  await nextTick();
-  if (inputRef.value) {
-    inputRef.value.focus();
-  }
-};
+  // Computed properties
+  const inputId = computed(
+    () => props.id || `base-input-${Math.random().toString(36).substr(2, 9)}`
+  );
 
-const blur = async () => {
-  await nextTick();
-  if (inputRef.value) {
-    inputRef.value.blur();
-  }
-};
+  const componentClasses = computed(() => [
+    "base-input",
+    `variant-${props.variant}`,
+    `direction-${props.direction}`,
+    `size-${props.size}`,
+    {
+      focused: focused.value,
+      error: Boolean(currentError.value),
+      disabled: props.disabled,
+      readonly: props.readonly,
+    },
+  ]);
 
-const handleFocus = () => {
-  setFocus();
-};
+  // Use external error prop if provided, otherwise use internal error
+  const currentError = computed(() => props.error || error.value);
 
-const handleBlur = () => {
-  setBlur();
-};
+  const inputAttributes = computed(() => ({
+    id: inputId.value,
+    placeholder: props.placeholder,
+    disabled: props.disabled,
+    readonly: props.readonly,
+    required: props.required,
+    "aria-label": props.ariaLabel,
+    "aria-describedby": currentError.value ? `${inputId.value}-error` : props.ariaDescribedby,
+    "aria-invalid": Boolean(currentError.value),
+  }));
 
-// Search variant methods
-const handleSubmit = () => {
-  if (props.variant === 'search') {
-    emit('submit', value.value);
-  }
-};
+  // Methods
+  const focus = async () => {
+    await nextTick();
+    if (inputRef.value) {
+      inputRef.value.focus();
+    }
+  };
 
-const handleNext = () => {
-  if (props.variant === 'search') {
-    emit('next');
-  }
-};
+  const blur = async () => {
+    await nextTick();
+    if (inputRef.value) {
+      inputRef.value.blur();
+    }
+  };
 
-const handlePrev = () => {
-  if (props.variant === 'search') {
-    emit('prev');
-  }
-};
+  const handleFocus = () => {
+    setFocus();
+  };
 
-const handleCancel = () => {
-  if (props.variant === 'search') {
-    value.value = '';
-    emit('cancel');
-  }
-};
+  const handleBlur = () => {
+    setBlur();
+  };
 
-// Expose methods for parent components
-defineExpose({
-  focus,
-  blur,
-  validate,
-  clearError,
-  inputId
-});
+  // Search variant methods
+  const handleSubmit = () => {
+    if (props.variant === "search") {
+      emit("submit", value.value);
+    }
+  };
+
+  const handleNext = () => {
+    if (props.variant === "search") {
+      emit("next");
+    }
+  };
+
+  const handlePrev = () => {
+    if (props.variant === "search") {
+      emit("prev");
+    }
+  };
+
+  const handleCancel = () => {
+    if (props.variant === "search") {
+      value.value = "";
+      emit("cancel");
+    }
+  };
+
+  // Expose methods for parent components
+  defineExpose({
+    focus,
+    blur,
+    validate,
+    clearError,
+    inputId,
+  });
 </script>
 
 <template>
   <div :class="componentClasses">
     <!-- Label -->
-    <label 
-      v-if="label" 
-      :for="inputId" 
-      class="base-input-label"
-      data-testid="label"
-    >
+    <label v-if="label" :for="inputId" class="base-input-label" data-testid="label">
       {{ label }}
     </label>
 
@@ -174,8 +163,8 @@ defineExpose({
       </div>
 
       <!-- Search icon for search variant -->
-      <div 
-        v-if="variant === 'search' && showIcon" 
+      <div
+        v-if="variant === 'search' && showIcon"
         class="base-input-search-icon"
         data-testid="search-icon"
       >
@@ -195,32 +184,17 @@ defineExpose({
       />
 
       <!-- Search buttons for search variant -->
-      <div 
-        v-if="variant === 'search' && withButtons" 
-        class="base-input-search-buttons"
-      >
-        <slot 
+      <div v-if="variant === 'search' && withButtons" class="base-input-search-buttons">
+        <slot
           name="search-buttons"
           :emit="emit"
-          :handleNext="handleNext"
-          :handlePrev="handlePrev"
-          :handleSubmit="handleSubmit"
-          :handleCancel="handleCancel"
+          :handle-next="handleNext"
+          :handle-prev="handlePrev"
+          :handle-submit="handleSubmit"
+          :handle-cancel="handleCancel"
         >
-          <button 
-            type="button"
-            :disabled="buttonsDisabled"
-            @click="handlePrev"
-          >
-            Previous
-          </button>
-          <button 
-            type="button"
-            :disabled="buttonsDisabled"
-            @click="handleNext"
-          >
-            Next
-          </button>
+          <button type="button" :disabled="buttonsDisabled" @click="handlePrev">Previous</button>
+          <button type="button" :disabled="buttonsDisabled" @click="handleNext">Next</button>
         </slot>
       </div>
 
@@ -242,7 +216,7 @@ defineExpose({
     </div>
 
     <!-- Error display -->
-    <div 
+    <div
       v-if="currentError"
       :id="`${inputId}-error`"
       class="base-input-error"
@@ -256,176 +230,178 @@ defineExpose({
 </template>
 
 <style scoped>
-.base-input {
-  display: flex;
-  
-  &.direction-row {
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  &.direction-column {
-    flex-direction: column;
-    gap: 4px;
-  }
-  
-  &.focused .base-input-field {
-    border-color: var(--primary-500);
-    outline: 2px solid var(--primary-100);
-  }
-  
-  &.error .base-input-field {
-    border-color: var(--red-500);
-  }
-  
-  &.disabled {
-    opacity: 0.6;
-    pointer-events: none;
-  }
-}
+  .base-input {
+    display: flex;
 
-.base-input-label {
-  font-weight: var(--weight-medium);
-  color: var(--text-primary);
-  font-size: 14px;
-}
-
-.base-input-wrapper {
-  display: flex;
-  align-items: center;
-  position: relative;
-  border: 1px solid var(--border-primary);
-  border-radius: 8px;
-  background-color: var(--surface-page);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-  
-  &:hover {
-    border-color: var(--border-hover);
-  }
-}
-
-.base-input-field {
-  flex: 1;
-  padding: 8px 12px;
-  border: none;
-  background: transparent;
-  font-size: 14px;
-  color: var(--text-primary);
-  outline: none;
-  
-  &::placeholder {
-    color: var(--text-secondary);
-  }
-  
-  &:disabled {
-    cursor: not-allowed;
-  }
-  
-  &:readonly {
-    cursor: default;
-  }
-}
-
-.base-input-prepend,
-.base-input-append {
-  padding: 0 8px;
-  display: flex;
-  align-items: center;
-  color: var(--text-secondary);
-}
-
-.base-input-search-icon {
-  padding: 0 0 0 8px;
-  display: flex;
-  align-items: center;
-  color: var(--text-secondary);
-}
-
-.base-input-search-buttons {
-  display: flex;
-  gap: 4px;
-  padding: 0 8px;
-  
-  button {
-    padding: 4px 8px;
-    border: 1px solid var(--border-primary);
-    border-radius: 4px;
-    background: var(--surface-page);
-    color: var(--text-primary);
-    font-size: 12px;
-    cursor: pointer;
-    
-    &:hover:not(:disabled) {
-      background: var(--surface-hover);
+    &.direction-row {
+      flex-direction: row;
+      align-items: center;
+      gap: 8px;
     }
-    
-    &:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+
+    &.direction-column {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    &.focused .base-input-field {
+      border-color: var(--primary-500);
+      outline: 2px solid var(--primary-100);
+    }
+
+    &.error .base-input-field {
+      border-color: var(--red-500);
+    }
+
+    &.disabled {
+      opacity: 0.6;
+      pointer-events: none;
     }
   }
-}
 
-.base-input-close {
-  padding: 4px;
-  border: none;
-  background: transparent;
-  color: var(--text-secondary);
-  cursor: pointer;
-  border-radius: 4px;
-  margin-right: 4px;
-  
-  &:hover {
-    background: var(--surface-hover);
+  .base-input-label {
+    font-weight: var(--weight-medium);
     color: var(--text-primary);
-  }
-}
-
-.base-input-error {
-  font-size: 12px;
-  color: var(--red-600);
-  margin-top: 4px;
-}
-
-/* Size variants */
-.size-sm {
-  .base-input-field {
-    padding: 6px 10px;
-    font-size: 12px;
-  }
-  
-  .base-input-wrapper {
-    min-height: 32px;
-  }
-}
-
-.size-md {
-  .base-input-field {
-    padding: 8px 12px;
     font-size: 14px;
   }
-  
-  .base-input-wrapper {
-    min-height: 36px;
-  }
-}
 
-.size-lg {
-  .base-input-field {
-    padding: 12px 16px;
-    font-size: 16px;
-  }
-  
   .base-input-wrapper {
-    min-height: 44px;
-  }
-}
-
-/* Search variant styles */
-.variant-search {
-  &.direction-row .base-input-wrapper {
+    display: flex;
+    align-items: center;
+    position: relative;
+    border: 1px solid var(--border-primary);
     border-radius: 8px;
+    background-color: var(--surface-page);
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+
+    &:hover {
+      border-color: var(--border-hover);
+    }
   }
-}
+
+  .base-input-field {
+    flex: 1;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    font-size: 14px;
+    color: var(--text-primary);
+    outline: none;
+
+    &::placeholder {
+      color: var(--text-secondary);
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+
+    &:readonly {
+      cursor: default;
+    }
+  }
+
+  .base-input-prepend,
+  .base-input-append {
+    padding: 0 8px;
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+  }
+
+  .base-input-search-icon {
+    padding: 0 0 0 8px;
+    display: flex;
+    align-items: center;
+    color: var(--text-secondary);
+  }
+
+  .base-input-search-buttons {
+    display: flex;
+    gap: 4px;
+    padding: 0 8px;
+
+    button {
+      padding: 4px 8px;
+      border: 1px solid var(--border-primary);
+      border-radius: 4px;
+      background: var(--surface-page);
+      color: var(--text-primary);
+      font-size: 12px;
+      cursor: pointer;
+
+      &:hover:not(:disabled) {
+        background: var(--surface-hover);
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .base-input-close {
+    padding: 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    border-radius: 4px;
+    margin-right: 4px;
+
+    &:hover {
+      background: var(--surface-hover);
+      color: var(--text-primary);
+    }
+  }
+
+  .base-input-error {
+    font-size: 12px;
+    color: var(--red-600);
+    margin-top: 4px;
+  }
+
+  /* Size variants */
+  .size-sm {
+    .base-input-field {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .base-input-wrapper {
+      min-height: 32px;
+    }
+  }
+
+  .size-md {
+    .base-input-field {
+      padding: 8px 12px;
+      font-size: 14px;
+    }
+
+    .base-input-wrapper {
+      min-height: 36px;
+    }
+  }
+
+  .size-lg {
+    .base-input-field {
+      padding: 12px 16px;
+      font-size: 16px;
+    }
+
+    .base-input-wrapper {
+      min-height: 44px;
+    }
+  }
+
+  /* Search variant styles */
+  .variant-search {
+    &.direction-row .base-input-wrapper {
+      border-radius: 8px;
+    }
+  }
 </style>
