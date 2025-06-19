@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { ref } from "vue";
 import ContextMenu from "@/components/ContextMenu.vue";
+import { useDesktopMenu } from "@/composables/useDesktopMenu.js";
+import { useMobileMenu } from "@/composables/useMobileMenu.js";
 
 // Mock positioning composables
 vi.mock("@/composables/useDesktopMenu.js", () => ({
@@ -26,7 +28,7 @@ const commonStubs = {
 describe("ContextMenu Modern API (Post-Migration)", () => {
   let mockDesktopMenu, mockMobileMenu;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     mockDesktopMenu = {
@@ -43,9 +45,6 @@ describe("ContextMenu Modern API (Post-Migration)", () => {
       activate: vi.fn(),
       deactivate: vi.fn(),
     };
-
-    const { useDesktopMenu } = await import("@/composables/useDesktopMenu.js");
-    const { useMobileMenu } = await import("@/composables/useMobileMenu.js");
 
     useDesktopMenu.mockReturnValue(mockDesktopMenu);
     useMobileMenu.mockReturnValue(mockMobileMenu);
@@ -213,8 +212,7 @@ describe("ContextMenu Modern API (Post-Migration)", () => {
   });
 
   describe("Modern Positioning API", () => {
-    it("should use clean positioning composable interface", async () => {
-      const { useDesktopMenu } = await import("@/composables/useDesktopMenu.js");
+    it("should use clean positioning composable interface", () => {
 
       mount(ContextMenu, {
         props: {
@@ -236,8 +234,7 @@ describe("ContextMenu Modern API (Post-Migration)", () => {
       );
     });
 
-    it("should handle floating options cleanly", async () => {
-      const { useDesktopMenu } = await import("@/composables/useDesktopMenu.js");
+    it("should handle floating options cleanly", () => {
 
       const floatingOptions = {
         middleware: ["offset", "flip"],

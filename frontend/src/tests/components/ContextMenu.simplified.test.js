@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { ref, nextTick } from "vue";
 import ContextMenu from "@/components/ContextMenu.vue";
+import { useDesktopMenu } from "@/composables/useDesktopMenu.js";
+import { useMobileMenu } from "@/composables/useMobileMenu.js";
 
 // Mock positioning composables
 vi.mock("@/composables/useDesktopMenu.js", () => ({
@@ -27,7 +29,7 @@ const commonStubs = {
 describe("ContextMenu Simplified API", () => {
   let mockDesktopMenu, mockMobileMenu;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     vi.clearAllMocks();
 
     mockDesktopMenu = {
@@ -44,9 +46,6 @@ describe("ContextMenu Simplified API", () => {
       activate: vi.fn(),
       deactivate: vi.fn(),
     };
-
-    const { useDesktopMenu } = await import("@/composables/useDesktopMenu.js");
-    const { useMobileMenu } = await import("@/composables/useMobileMenu.js");
 
     useDesktopMenu.mockReturnValue(mockDesktopMenu);
     useMobileMenu.mockReturnValue(mockMobileMenu);
@@ -94,9 +93,7 @@ describe("ContextMenu Simplified API", () => {
   });
 
   describe("Positioning System Integration", () => {
-    it("should initialize both desktop and mobile positioning systems", async () => {
-      const { useDesktopMenu } = await import("@/composables/useDesktopMenu.js");
-      const { useMobileMenu } = await import("@/composables/useMobileMenu.js");
+    it("should initialize both desktop and mobile positioning systems", () => {
 
       mount(ContextMenu, {
         props: { variant: "dots" },
@@ -333,8 +330,7 @@ describe("ContextMenu Simplified API", () => {
       expect(providedValues.parentMenu).toEqual({ placement: "right-start" });
     });
 
-    it("should configure positioning for sub-menus correctly", async () => {
-      const { useDesktopMenu } = await import("@/composables/useDesktopMenu.js");
+    it("should configure positioning for sub-menus correctly", () => {
 
       mount(ContextMenu, {
         props: { placement: "right-start" },
