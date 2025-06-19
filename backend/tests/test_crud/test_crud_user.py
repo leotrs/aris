@@ -5,6 +5,7 @@ from unittest.mock import patch
 
 import pytest
 from sqlalchemy import func, select
+from sqlalchemy.exc import IntegrityError
 
 from aris.crud.user import (
     create_user,
@@ -83,8 +84,6 @@ async def test_get_user_file_full_bundle(db_session, test_user):
     assert result["minimap"] == "Mocked Minimap"
 
 
-from sqlalchemy.exc import IntegrityError
-
 
 async def test_get_user_returns_none_for_missing_user(db_session):
     user = await get_user(999999, db_session)
@@ -153,7 +152,7 @@ async def test_get_user_files_with_tags_returns_tags(db_session, test_user):
 
     from aris.crud.file import create_file
 
-    file = await create_file("source", test_user.id, "Title", db=db_session)
+    _file = await create_file("source", test_user.id, "Title", db=db_session)
 
     with (
         patch("aris.crud.user.extract_title", return_value="Mock Title"),
@@ -169,7 +168,7 @@ async def test_get_user_files_without_tags_returns_empty_list(db_session, test_u
 
     from aris.crud.file import create_file
 
-    file = await create_file("source", test_user.id, "Title", db=db_session)
+    _file = await create_file("source", test_user.id, "Title", db=db_session)
 
     with patch("aris.crud.user.extract_title", return_value="Mock Title"):
         files = await get_user_files(test_user.id, with_tags=False, db=db_session)
