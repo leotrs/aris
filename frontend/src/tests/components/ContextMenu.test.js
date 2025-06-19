@@ -4,11 +4,23 @@ import { mount } from '@vue/test-utils';
 
 describe('ContextMenu.vue', () => {
   let useFloatingStub, offsetStub, shiftStub, flipStub, autoUpdateStub;
+  let useFloatingUIStub;
   let useListKeyboardNavigationStub;
   let useClosableStub;
 
   beforeEach(() => {
     vi.resetModules();
+    
+    // Mock the new useFloatingUI composable instead of @floating-ui/vue directly
+    useFloatingUIStub = vi.fn(() => ({ 
+      floatingStyles: ref({ position: 'fixed', top: '10px' }),
+      update: vi.fn()
+    }));
+    vi.doMock('@/composables/useFloatingUI.js', () => ({
+      useFloatingUI: useFloatingUIStub,
+    }));
+    
+    // Keep the old mocks for backwards compatibility in case any tests need them
     useFloatingStub = vi.fn(() => ({ floatingStyles: ref({}) }));
     offsetStub = vi.fn();
     shiftStub = vi.fn();
@@ -56,12 +68,12 @@ describe('ContextMenu.vue', () => {
       },
     });
 
-    expect(wrapper.find('.cm-menu').exists()).toBe(false);
-    expect(useFloatingStub).toHaveBeenCalled();
+    expect(wrapper.find('.context-menu').exists()).toBe(false);
+    expect(useFloatingUIStub).toHaveBeenCalled();
 
     wrapper.vm.toggle();
     await nextTick();
-    expect(wrapper.find('.cm-menu').exists()).toBe(true);
+    expect(wrapper.find('.context-menu').exists()).toBe(true);
     const closableInstance = useClosableStub.mock.results[0].value;
     expect(closableInstance.activate).toHaveBeenCalled();
     const navInstance = useListKeyboardNavigationStub.mock.results[0].value;
@@ -69,7 +81,7 @@ describe('ContextMenu.vue', () => {
 
     wrapper.vm.toggle();
     await nextTick();
-    expect(wrapper.find('.cm-menu').exists()).toBe(false);
+    expect(wrapper.find('.context-menu').exists()).toBe(false);
     expect(closableInstance.deactivate).toHaveBeenCalled();
     expect(navInstance.deactivate).toHaveBeenCalled();
   });
@@ -133,10 +145,10 @@ describe('ContextMenu.vue', () => {
     expect(wrapper.find('.btn-comp').exists()).toBe(true);
     wrapper.vm.toggle();
     await nextTick();
-    expect(wrapper.find('.cm-menu').exists()).toBe(true);
+    expect(wrapper.find('.context-menu').exists()).toBe(true);
   });
 
-  it('passes placement and middleware options to useFloating', async () => {
+  it('passes placement and middleware options to useFloatingUI', async () => {
     const placementProp = 'bottom-end';
     const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
     mount(ContextMenu, {
@@ -149,39 +161,39 @@ describe('ContextMenu.vue', () => {
       },
     });
 
-    expect(useFloatingStub).toHaveBeenCalled();
-    const options = useFloatingStub.mock.calls[0][2];
+    expect(useFloatingUIStub).toHaveBeenCalled();
+    const [reference, floating, options] = useFloatingUIStub.mock.calls[0];
+    
+    // Test that the new useFloatingUI composable is called with correct options
+    expect(options.placement).toBe(placementProp);
     expect(options.strategy).toBe('fixed');
-    expect(options.placement()).toBe(placementProp);
-
-    // Middleware is now a function, so we need to call it to test
-    const middleware = options.middleware();
-    expect(middleware).toHaveLength(3);
-
-    expect(offsetStub).toHaveBeenCalledWith({ mainAxis: 0, crossAxis: -8 });
-    expect(shiftStub).toHaveBeenCalled();
-    expect(flipStub).toHaveBeenCalled();
-    expect(options.whileElementsMounted).toBe(autoUpdateStub);
+    expect(options.offset).toBe(4); // Default offset for dots variant
   });
 
-  it('uses zero crossAxis offset when icon prop is not Dots', async () => {
+  it('uses zero offset when variant is not dots', async () => {
     const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
     mount(ContextMenu, {
-      props: { icon: 'Other' },
+      props: { variant: 'close' },
       global: {
-        stubs: { Button: { template: '<div @click="$emit(\'click\')"></div>' }, Teleport: true },
+        stubs: { 
+          ButtonClose: { template: '<div @click="$emit(\'click\')"></div>' }, 
+          Teleport: true 
+        },
       },
     });
 
-    // Middleware is now a function, so we need to call it to test
-    const options = useFloatingStub.mock.calls[0][2];
-    const middleware = options.middleware();
-
-    expect(offsetStub).toHaveBeenCalledWith({ mainAxis: 0, crossAxis: 0 });
+    expect(useFloatingUIStub).toHaveBeenCalled();
+    const [reference, floating, options] = useFloatingUIStub.mock.calls[0];
+    
+    // Close variant should have 0 offset
+    expect(options.offset).toBe(0);
   });
 
   it('applies floatingStyles to the menu element', async () => {
-    useFloatingStub.mockReturnValue({ floatingStyles: ref({ position: 'fixed', top: '10px' }) });
+    useFloatingUIStub.mockReturnValue({ 
+      floatingStyles: ref({ position: 'fixed', top: '10px' }),
+      update: vi.fn()
+    });
     const { default: ContextMenu } = await import('@/components/ContextMenu.vue');
     const wrapper = mount(ContextMenu, {
       global: {
@@ -194,7 +206,7 @@ describe('ContextMenu.vue', () => {
 
     wrapper.vm.toggle();
     await nextTick();
-    const menu = wrapper.get('.cm-menu');
+    const menu = wrapper.get('.context-menu');
     expect(menu.element.style.position).toBe('fixed');
     expect(menu.element.style.top).toBe('10px');
   });
@@ -219,7 +231,7 @@ describe('ContextMenu.vue', () => {
 
       wrapper.vm.toggle();
       await nextTick();
-      expect(wrapper.find('.cm-menu').exists()).toBe(true);
+      expect(wrapper.find('.context-menu').exists()).toBe(true);
       expect(wrapper.text()).toContain('Item 1');
       expect(wrapper.text()).toContain('Sub Menu');
     });
@@ -276,7 +288,7 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.cm-menu');
+      const menu = wrapper.get('.context-menu');
       expect(menu.attributes('role')).toBe('menu');
       expect(menu.attributes('aria-orientation')).toBe('vertical');
       expect(menu.attributes('aria-labelledby')).toBeDefined();
@@ -297,7 +309,7 @@ describe('ContextMenu.vue', () => {
       await nextTick();
 
       const trigger = wrapper.find('.cm-btn');
-      const menu = wrapper.get('.cm-menu');
+      const menu = wrapper.get('.context-menu');
       const triggerId = trigger.attributes('id');
 
       expect(triggerId).toBeDefined();
@@ -411,7 +423,7 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.cm-menu');
+      const menu = wrapper.get('.context-menu');
 
       // PROBLEM: In real browser, floating UI is not providing positioning styles
       // So the menu appears centered in viewport instead of adjacent to anchor
@@ -448,7 +460,7 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.cm-menu');
+      const menu = wrapper.get('.context-menu');
 
       // PROOF: Template correctly applies floating UI styles when they exist
       expect(menu.element.style.position).toBe('fixed');
@@ -479,7 +491,7 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.cm-menu');
+      const menu = wrapper.get('.context-menu');
 
       // PROBLEM: Desktop mode is showing mobile-style behavior
       // The menu appears centered in viewport with modal overlay, NOT adjacent to anchor
@@ -506,7 +518,7 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.cm-menu');
+      const menu = wrapper.get('.context-menu');
 
       // EXPLICIT TEST: Mobile mode should center menu in viewport
       // This should be achieved through CSS class .cm-menu-mobile which sets:
@@ -546,7 +558,7 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.get('.cm-menu');
+      const menu = wrapper.get('.context-menu');
 
       // EXPLICIT POSITIONING VERIFICATION FOR MOBILE MODE:
       // Mobile mode should position menu at viewport center using CSS
@@ -590,7 +602,7 @@ describe('ContextMenu.vue', () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const menu = wrapper.find('.cm-menu');
+      const menu = wrapper.find('.context-menu');
       expect(menu.exists()).toBe(true);
       // Animation classes will be tested in implementation
     });

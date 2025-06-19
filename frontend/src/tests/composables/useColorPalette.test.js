@@ -157,7 +157,7 @@ describe('useColorPalette composable', () => {
     });
 
     it('should provide random color selection', () => {
-      const { getRandomColor, setRandomColor } = useColorPalette();
+      const { getRandomColor, setRandomColor, selectedColor } = useColorPalette();
 
       const randomColor = getRandomColor();
       expect(['red', 'purple', 'green', 'orange', 'blue', 'yellow', 'gray', 'pink']).toContain(randomColor);
