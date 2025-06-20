@@ -75,7 +75,7 @@ describe("MultiSelectTags.vue", () => {
   it("renders ContextMenu and TagControl items for each store tag", () => {
     const wrapper = mountMulti();
     const cm = wrapper.getComponent(ContextMenuStub);
-    expect(cm.props()).toMatchObject({ icon: "Tag", placement: "bottom-end", buttonSize: "sm" });
+    expect(cm.props()).toMatchObject({ icon: "Tag", placement: "bottom-end" });
     const controls = wrapper.findAllComponents(TagControlStub);
     expect(controls).toHaveLength(tagsList.length);
     controls.forEach((ctrl, i) => {

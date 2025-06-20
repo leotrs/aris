@@ -3,19 +3,35 @@ import { ref, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 
 describe("ContextMenu.vue", () => {
-  let useFloatingUIStub;
+  let useDesktopMenuStub;
+  let useMobileMenuStub;
   let useListKeyboardNavigationStub;
   let useClosableStub;
 
   beforeEach(() => {
     vi.resetModules();
 
-    useFloatingUIStub = vi.fn(() => ({
-      floatingStyles: ref({ position: "fixed", top: "10px" }),
-      update: vi.fn(),
+    // Mock the desktop menu composable
+    useDesktopMenuStub = vi.fn(() => ({
+      menuStyles: ref({ position: "fixed", top: "10px", left: "10px" }),
+      effectivePlacement: ref("bottom-start"),
+      activate: vi.fn(),
+      deactivate: vi.fn(),
+      updatePosition: vi.fn(),
     }));
-    vi.doMock("@/composables/useFloatingUI.js", () => ({
-      useFloatingUI: useFloatingUIStub,
+    vi.doMock("@/composables/useDesktopMenu.js", () => ({
+      useDesktopMenu: useDesktopMenuStub,
+    }));
+
+    // Mock the mobile menu composable
+    useMobileMenuStub = vi.fn(() => ({
+      menuStyles: ref({}),
+      menuClasses: ref(["mobile-menu"]),
+      activate: vi.fn(),
+      deactivate: vi.fn(),
+    }));
+    vi.doMock("@/composables/useMobileMenu.js", () => ({
+      useMobileMenu: useMobileMenuStub,
     }));
 
     const activeIndex = ref(null);
@@ -50,20 +66,27 @@ describe("ContextMenu.vue", () => {
       global: {
         stubs: {
           ContextMenuTrigger: {
+            name: "ContextMenuTrigger",
             template: "<button @click=\"$emit('toggle')\">Trigger</button>",
             props: ["variant", "size", "isOpen"],
             emits: ["toggle"],
           },
           Teleport: true,
         },
+        provide: {
+          mobileMode: ref(false),
+        },
       },
     });
 
+    // Check that ContextMenuTrigger is rendered
     expect(wrapper.findComponent({ name: "ContextMenuTrigger" }).exists()).toBe(true);
 
+    // Toggle menu open
     wrapper.vm.toggle();
     await nextTick();
 
+    // Check that slot content is rendered in the menu
     expect(wrapper.find(".menu-item").exists()).toBe(true);
     expect(wrapper.find(".menu-item").text()).toBe("Test Item");
   });
@@ -76,11 +99,15 @@ describe("ContextMenu.vue", () => {
         global: {
           stubs: {
             ContextMenuTrigger: {
+              name: "ContextMenuTrigger",
               template: "<button @click=\"$emit('toggle')\">Trigger</button>",
               props: ["variant", "size", "isOpen"],
               emits: ["toggle"],
             },
             Teleport: true,
+          },
+          provide: {
+            mobileMode: ref(false),
           },
         },
       });
@@ -90,7 +117,7 @@ describe("ContextMenu.vue", () => {
       await wrapper.setProps({ placement: "bottom-start" });
       await wrapper.setProps({ placement: "top-start" });
 
-      expect(useFloatingUIStub).toHaveBeenCalled();
+      expect(useDesktopMenuStub).toHaveBeenCalled();
     });
   });
 });
