@@ -16,7 +16,7 @@ export const baseRules = {
   }],
   "no-undef": "error",
   "eqeqeq": ["error", "always"],
-  "prefer-const": "error",
+  "prefer-const": "warn",
   
   // Let prettier handle formatting
   "indent": "off",

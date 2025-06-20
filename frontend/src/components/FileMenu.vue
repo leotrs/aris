@@ -24,8 +24,15 @@
 
 <template>
   <div class="fm-wrapper" :class="mode">
-    <component :is="mode" ref="menu-ref" :icon="icon" button-size="btn-md">
-      <template v-if="mode == 'ContextMenu'">
+    <component
+      :is="mode"
+      ref="menu-ref"
+      variant="custom"
+      component="ButtonToggle"
+      :icon="icon"
+      size="md"
+    >
+      <template v-if="mode === 'ContextMenu'">
         <!-- <component :is="comp" v-bind="childProps('Bolt', 'Activity')" /> -->
         <!-- <component :is="comp" v-bind="childProps('Clock', 'History')" /> -->
       </template>

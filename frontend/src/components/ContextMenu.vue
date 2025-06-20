@@ -24,26 +24,9 @@
   const isSubMenu = inject("isSubMenu", false);
   const parentMenu = inject("parentMenu", null);
 
-  // Consolidated computed properties
-  const triggerClasses = computed(() => [
-    "context-menu-trigger",
-    `variant-${currentVariant.value}`,
-    `size-${props.size}`,
-  ]);
-
-  const menuClasses = computed(() => {
-    return mobileMode.value
-      ? mobileMenu.menuClasses.value
-      : ["context-menu", `placement-${props.placement}`, "desktop-mode", { "is-open": show.value }];
-  });
-
   // State
   const show = ref(false);
   const lastFocusedElement = ref(null);
-  defineExpose({
-    toggle: () => (show.value = !show.value),
-    effectivePlacement: computed(() => desktopMenu.effectivePlacement?.value || props.placement),
-  });
 
   // Floating styles
   const triggerRef = useTemplateRef("trigger-ref");
@@ -69,11 +52,29 @@
     isOpen: show,
   });
 
+  // Consolidated computed properties
+  const triggerClasses = computed(() => [
+    "context-menu-trigger",
+    `variant-${currentVariant.value}`,
+    `size-${props.size}`,
+  ]);
+
+  const menuClasses = computed(() => {
+    return mobileMode.value
+      ? mobileMenu.menuClasses.value
+      : ["context-menu", `placement-${props.placement}`, "desktop-mode", { "is-open": show.value }];
+  });
+
   // Consolidated positioning interface
   const menuStyles = computed(() =>
     mobileMode.value ? mobileMenu.menuStyles.value : desktopMenu.menuStyles.value
   );
   const updatePosition = () => !mobileMode.value && desktopMenu.updatePosition();
+
+  defineExpose({
+    toggle: () => (show.value = !show.value),
+    effectivePlacement: computed(() => desktopMenu.effectivePlacement?.value || props.placement),
+  });
   watch(() => props.placement, updatePosition);
 
   // Keys

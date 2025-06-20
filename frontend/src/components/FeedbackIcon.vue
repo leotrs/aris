@@ -59,8 +59,9 @@
   <div ref="self-ref" class="feedback" :style="{ visibility }">
     <ContextMenu
       ref="menu-ref"
+      variant="custom"
+      component="ButtonToggle"
       :icon="activeObj?.icon || 'MoodPlus'"
-      :icon-class="activeObj?.class || ''"
       placement="left-start"
     >
       <ContextMenuItem

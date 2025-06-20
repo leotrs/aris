@@ -20,7 +20,7 @@
 
 <template>
   <div class="um-wrapper" @click.stop="onClick">
-    <ContextMenu ref="menu-ref" icon="">
+    <ContextMenu ref="menu-ref">
       <template #trigger>
         <Avatar :user="user" :tooltip="false" />
       </template>
