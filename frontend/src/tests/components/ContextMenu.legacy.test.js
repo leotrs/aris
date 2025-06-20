@@ -48,9 +48,9 @@ describe("ContextMenu.vue - Legacy API Tests", () => {
       global: {
         stubs: {
           ContextMenuTrigger: {
-            template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-            props: ['variant', 'size', 'isOpen'],
-            emits: ['toggle']
+            template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+            props: ["variant", "size", "isOpen"],
+            emits: ["toggle"],
           },
           Teleport: true,
         },
@@ -83,9 +83,9 @@ describe("ContextMenu.vue - Legacy API Tests", () => {
       global: {
         stubs: {
           ContextMenuTrigger: {
-            template: '<div><slot /></div>',
-            props: ['variant', 'size', 'isOpen'],
-            emits: ['toggle']
+            template: "<div><slot /></div>",
+            props: ["variant", "size", "isOpen"],
+            emits: ["toggle"],
           },
           Teleport: true,
         },
@@ -93,8 +93,8 @@ describe("ContextMenu.vue - Legacy API Tests", () => {
     });
 
     expect(wrapper.find(".custom-trigger").exists()).toBe(true);
-    
-    wrapper.findComponent({ name: 'ContextMenuTrigger' }).vm.$emit('toggle');
+
+    wrapper.findComponent({ name: "ContextMenuTrigger" }).vm.$emit("toggle");
     await nextTick();
     expect(wrapper.find(".context-menu").exists()).toBe(true);
   });
@@ -111,9 +111,9 @@ describe("ContextMenu.vue - Legacy API Tests", () => {
       global: {
         stubs: {
           ContextMenuTrigger: {
-            template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-            props: ['variant', 'size', 'isOpen'],
-            emits: ['toggle']
+            template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+            props: ["variant", "size", "isOpen"],
+            emits: ["toggle"],
           },
           Teleport: true,
         },

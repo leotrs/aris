@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
-import { defineComponent, h } from "vue";
+import { describe, it, expect, afterEach as _afterEach } from "vitest";
+import { defineComponent, h, ref as _ref } from "vue";
 import { mount } from "@vue/test-utils";
 import Tab from "@/components/Tab.vue";
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ref, nextTick } from "vue";
+import { ref } from "vue";
 import { mount } from "@vue/test-utils";
 
 describe("ContextMenu.vue - Core Functionality", () => {
@@ -43,14 +43,14 @@ describe("ContextMenu.vue - Core Functionality", () => {
 
   it("passes placement and middleware options to useFloatingUI", async () => {
     const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
-    const wrapper = mount(ContextMenu, {
+    mount(ContextMenu, {
       props: { placement: "bottom-start" },
       global: {
         stubs: {
           ContextMenuTrigger: {
-            template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-            props: ['variant', 'size', 'isOpen'],
-            emits: ['toggle']
+            template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+            props: ["variant", "size", "isOpen"],
+            emits: ["toggle"],
           },
           Teleport: true,
         },
@@ -74,9 +74,9 @@ describe("ContextMenu.vue - Core Functionality", () => {
       global: {
         stubs: {
           ContextMenuTrigger: {
-            template: '<button @click="$emit(\'toggle\')">Close</button>',
-            props: ['variant', 'size', 'isOpen'],
-            emits: ['toggle']
+            template: "<button @click=\"$emit('toggle')\">Close</button>",
+            props: ["variant", "size", "isOpen"],
+            emits: ["toggle"],
           },
           Teleport: true,
         },
@@ -99,9 +99,9 @@ describe("ContextMenu.vue - Core Functionality", () => {
         global: {
           stubs: {
             ContextMenuTrigger: {
-              template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle']
+              template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
             Teleport: true,
           },
@@ -109,11 +109,11 @@ describe("ContextMenu.vue - Core Functionality", () => {
       });
 
       // Find the Transition component
-      const transition = wrapper.findComponent({ name: 'Transition' });
+      const transition = wrapper.findComponent({ name: "Transition" });
       expect(transition.exists()).toBe(true);
-      expect(transition.props('name')).toBe('cm-menu');
-      expect(transition.props('enterActiveClass')).toBe('cm-menu-enter-active');
-      expect(transition.props('leaveActiveClass')).toBe('cm-menu-leave-active');
+      expect(transition.props("name")).toBe("cm-menu");
+      expect(transition.props("enterActiveClass")).toBe("cm-menu-enter-active");
+      expect(transition.props("leaveActiveClass")).toBe("cm-menu-leave-active");
     });
   });
 
@@ -124,9 +124,9 @@ describe("ContextMenu.vue - Core Functionality", () => {
         global: {
           stubs: {
             ContextMenuTrigger: {
-              template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle']
+              template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
             Teleport: true,
           },

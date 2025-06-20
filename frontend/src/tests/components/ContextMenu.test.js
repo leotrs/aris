@@ -50,16 +50,16 @@ describe("ContextMenu.vue", () => {
       global: {
         stubs: {
           ContextMenuTrigger: {
-            template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-            props: ['variant', 'size', 'isOpen'],
-            emits: ['toggle']
+            template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+            props: ["variant", "size", "isOpen"],
+            emits: ["toggle"],
           },
           Teleport: true,
         },
       },
     });
 
-    expect(wrapper.findComponent({ name: 'ContextMenuTrigger' }).exists()).toBe(true);
+    expect(wrapper.findComponent({ name: "ContextMenuTrigger" }).exists()).toBe(true);
 
     wrapper.vm.toggle();
     await nextTick();
@@ -76,9 +76,9 @@ describe("ContextMenu.vue", () => {
         global: {
           stubs: {
             ContextMenuTrigger: {
-              template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle']
+              template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
             Teleport: true,
           },

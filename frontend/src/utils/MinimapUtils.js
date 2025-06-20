@@ -124,9 +124,12 @@ const createShapesData = (sections, lineSize, isHorizontal, options) => {
 // SVG Layout
 export async function getLayoutParametersHorizontal(lineSize, options) {
   const { side, lineY, strokeWidth, trackWidth, offset } = options;
+
   let minX, maxX, minY, maxY;
 
+  // eslint-disable-next-line prefer-const
   minX = -strokeWidth;
+  // eslint-disable-next-line prefer-const
   maxX = lineSize + strokeWidth;
   const width = maxX - minX;
 
@@ -150,6 +153,7 @@ export async function getLayoutParametersHorizontal(lineSize, options) {
 
 export async function getLayoutParametersVertical(lineSize, options) {
   const { side, lineX, strokeWidth, trackWidth, offset } = options;
+
   let minX, maxX, minY, maxY;
 
   if (side === "left") {
@@ -163,7 +167,9 @@ export async function getLayoutParametersVertical(lineSize, options) {
   }
   const width = maxX - minX;
 
+  // eslint-disable-next-line prefer-const
   minY = -strokeWidth;
+  // eslint-disable-next-line prefer-const
   maxY = lineSize + strokeWidth;
   const height = maxY - minY;
 

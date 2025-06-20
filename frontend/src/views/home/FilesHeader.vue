@@ -53,7 +53,7 @@
 
 <template>
   <Header :class="mode">
-    <template v-for="name in Object.keys(columnInfo)">
+    <template v-for="name in Object.keys(columnInfo)" :key="name">
       <template v-if="shouldShowColumn(name, mode)">
         <div v-if="name === 'Spacer'" class="spacer"></div>
         <HeaderLabel

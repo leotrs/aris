@@ -18,7 +18,9 @@ describe("useKeyboardShortcuts", () => {
   let getActiveComponents;
   let getRegisteredComponents;
   let getComponentMetadata;
+  let _registerAsFallback;
   let getCurrentInstance;
+  let _onMounted;
   let onBeforeUnmount;
 
   beforeEach(async () => {
@@ -29,7 +31,7 @@ describe("useKeyboardShortcuts", () => {
 
     const vue = await import("vue");
     getCurrentInstance = vue.getCurrentInstance;
-    onMounted = vue.onMounted;
+    _onMounted = vue.onMounted;
     onBeforeUnmount = vue.onBeforeUnmount;
 
     // Provide a fake component instance
@@ -47,7 +49,7 @@ describe("useKeyboardShortcuts", () => {
       getActiveComponents,
       getRegisteredComponents,
       getComponentMetadata,
-      registerAsFallback,
+      registerAsFallback: _registerAsFallback,
     } = await import("@/composables/useKeyboardShortcuts.js"));
   });
 
