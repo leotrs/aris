@@ -12,9 +12,9 @@
   const file = computed(() => {
     const files = fileStore?.value?.files;
     const fileId = route?.params?.file_id;
-    if (!files || files.length == 0 || !fileId) return {};
+    if (!files || files.length === 0 || !fileId) return {};
 
-    const found = files.find((f) => f.id == fileId);
+    const found = files.find((f) => f.id === fileId);
     return found || {};
   });
   provide("file", file);
@@ -46,19 +46,19 @@
   const showEditor = ref(false);
   const showSearch = ref(false);
   const showComponent = (compName) => {
-    if (compName == "DockableEditor") {
+    if (compName === "DockableEditor") {
       showEditor.value = true;
       return;
-    } else if (compName == "DockableSearch") {
+    } else if (compName === "DockableSearch") {
       showSearch.value = true;
       return;
     }
   };
   const hideComponent = (compName) => {
-    if (compName == "DockableEditor") {
+    if (compName === "DockableEditor") {
       showEditor.value = false;
       return;
-    } else if (compName == "DockableSearch") {
+    } else if (compName === "DockableSearch") {
       showSearch.value = false;
       return;
     }
