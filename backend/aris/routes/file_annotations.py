@@ -4,7 +4,7 @@ from datetime import datetime
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from sqlalchemy import and_
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -30,8 +30,7 @@ class AnnotationMessageResponse(BaseModel):
     created_at: datetime
     deleted_at: Optional[datetime] = None
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 class AnnotationCreate(BaseModel):
@@ -51,8 +50,7 @@ class AnnotationResponse(BaseModel):
     deleted_at: Optional[datetime] = None
     messages: list[AnnotationMessageResponse] = []
 
-    class Config:
-        from_attributes = True
+    model_config = ConfigDict(from_attributes=True)
 
 
 @router.post("/", response_model=AnnotationResponse, status_code=status.HTTP_201_CREATED)
