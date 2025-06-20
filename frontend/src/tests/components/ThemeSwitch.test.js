@@ -1,17 +1,22 @@
-import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
-import { mount } from '@vue/test-utils';
-import { defineComponent } from 'vue';
+import { describe, it, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from "vitest";
+import { mount } from "@vue/test-utils";
+import { defineComponent } from "vue";
 
 // Import inside tests to allow window.matchMedia to be stubbed before script setup
 
 const SegmentedControlStub = defineComponent({
-  name: 'SegmentedControl',
-  props: ['modelValue', 'icons', 'labels', 'defaultActive'],
-  emits: ['update:modelValue'],
-  template: '<div />',
+  name: "SegmentedControl",
+  props: {
+    modelValue: { type: Number },
+    icons: { type: Array },
+    labels: { type: Array },
+    defaultActive: { type: Number },
+  },
+  emits: ["update:modelValue"],
+  template: "<div />",
 });
 
-describe('ThemeSwitch.vue', () => {
+describe("ThemeSwitch.vue", () => {
   let originalMatchMedia;
   let listeners;
   let matches;
@@ -33,13 +38,13 @@ describe('ThemeSwitch.vue', () => {
         return matches;
       },
       addEventListener: (event, cb) => {
-        if (event === 'change') listeners.push(cb);
+        if (event === "change") listeners.push(cb);
       },
       removeEventListener: (event, cb) => {
-        if (event === 'change') listeners = listeners.filter((fn) => fn !== cb);
+        if (event === "change") listeners = listeners.filter((fn) => fn !== cb);
       },
     }));
-    document.documentElement.classList.remove('theme-transition', 'dark-theme');
+    document.documentElement.classList.remove("theme-transition", "dark-theme");
     vi.useFakeTimers();
   });
 
@@ -47,51 +52,51 @@ describe('ThemeSwitch.vue', () => {
     vi.useRealTimers();
   });
 
-  it('forwards correct props to SegmentedControl without labels', async () => {
-    const { default: ThemeSwitch } = await import('@/components/ThemeSwitch.vue');
+  it("forwards correct props to SegmentedControl without labels", async () => {
+    const { default: ThemeSwitch } = await import("@/components/ThemeSwitch.vue");
     const wrapper = mount(ThemeSwitch, {
       global: { stubs: { SegmentedControl: SegmentedControlStub } },
     });
     const seg = wrapper.getComponent(SegmentedControlStub);
     expect(seg.props()).toMatchObject({
-      icons: ['Sun', 'SunMoon', 'Moon'],
+      icons: ["Sun", "SunMoon", "Moon"],
       labels: null,
       defaultActive: 1,
       modelValue: -1,
     });
   });
 
-  it('forwards correct labels when labels prop is true', async () => {
-    const { default: ThemeSwitch } = await import('@/components/ThemeSwitch.vue');
+  it("forwards correct labels when labels prop is true", async () => {
+    const { default: ThemeSwitch } = await import("@/components/ThemeSwitch.vue");
     const wrapper = mount(ThemeSwitch, {
       props: { labels: true },
       global: { stubs: { SegmentedControl: SegmentedControlStub } },
     });
     const seg = wrapper.getComponent(SegmentedControlStub);
-    expect(seg.props('labels')).toEqual(['Light', 'System', 'Dark']);
+    expect(seg.props("labels")).toEqual(["Light", "System", "Dark"]);
   });
 
-  it('toggles dark-theme class based on mode changes', async () => {
-    const { default: ThemeSwitch } = await import('@/components/ThemeSwitch.vue');
+  it("toggles dark-theme class based on mode changes", async () => {
+    const { default: ThemeSwitch } = await import("@/components/ThemeSwitch.vue");
     const wrapper = mount(ThemeSwitch, {
       global: { stubs: { SegmentedControl: SegmentedControlStub } },
     });
     // system mode, matches=false => light theme
-    expect(document.documentElement.classList.contains('dark-theme')).toBe(false);
+    expect(document.documentElement.classList.contains("dark-theme")).toBe(false);
 
     // dark mode
     wrapper.vm.mode = 2;
     await wrapper.vm.$nextTick();
-    expect(document.documentElement.classList.contains('dark-theme')).toBe(true);
+    expect(document.documentElement.classList.contains("dark-theme")).toBe(true);
 
     // light mode
     wrapper.vm.mode = 0;
     await wrapper.vm.$nextTick();
-    expect(document.documentElement.classList.contains('dark-theme')).toBe(false);
+    expect(document.documentElement.classList.contains("dark-theme")).toBe(false);
   });
 
-  it('updates theme on media query changes in system mode', async () => {
-    const { default: ThemeSwitch } = await import('@/components/ThemeSwitch.vue');
+  it("updates theme on media query changes in system mode", async () => {
+    const { default: ThemeSwitch } = await import("@/components/ThemeSwitch.vue");
     matches = true;
     const wrapper = mount(ThemeSwitch, {
       global: { stubs: { SegmentedControl: SegmentedControlStub } },
@@ -99,21 +104,21 @@ describe('ThemeSwitch.vue', () => {
     // switch to system mode
     wrapper.vm.mode = 1;
     await wrapper.vm.$nextTick();
-    expect(document.documentElement.classList.contains('dark-theme')).toBe(true);
+    expect(document.documentElement.classList.contains("dark-theme")).toBe(true);
 
     matches = false;
     listeners.forEach((cb) => cb());
     await wrapper.vm.$nextTick();
-    expect(document.documentElement.classList.contains('dark-theme')).toBe(false);
+    expect(document.documentElement.classList.contains("dark-theme")).toBe(false);
   });
 
-  it('adds and removes theme-transition class on theme updates', async () => {
-    const { default: ThemeSwitch } = await import('@/components/ThemeSwitch.vue');
+  it("adds and removes theme-transition class on theme updates", async () => {
+    const { default: ThemeSwitch } = await import("@/components/ThemeSwitch.vue");
     mount(ThemeSwitch, {
       global: { stubs: { SegmentedControl: SegmentedControlStub } },
     });
-    expect(document.documentElement.classList.contains('theme-transition')).toBe(true);
+    expect(document.documentElement.classList.contains("theme-transition")).toBe(true);
     vi.advanceTimersByTime(300);
-    expect(document.documentElement.classList.contains('theme-transition')).toBe(false);
+    expect(document.documentElement.classList.contains("theme-transition")).toBe(false);
   });
 });

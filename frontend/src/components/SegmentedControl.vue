@@ -17,13 +17,14 @@
     } else if (props.icons !== null && props.labels === null) {
       return props.icons.length;
     } else if (props.icons !== null && props.labels !== null) {
-      if (props.icons.length != props.labels.length) {
+      if (props.icons.length !== props.labels.length) {
         console.error("Lengths of icons and labels must match");
         return 0;
       } else {
         return props.icons.length;
       }
     }
+    return 0;
   });
 
   const buttonRefs = ref([]);
@@ -43,7 +44,7 @@
         :ref="(el) => setButtonRef(el, idx - 1)"
         type="button"
         class="sc-item sc-btn"
-        :class="{ active: idx - 1 == active }"
+        :class="{ active: idx - 1 === active }"
         @click="click(idx - 1)"
       >
         <Icon v-if="icons" :name="icons[idx - 1]" class="sc-icon" />

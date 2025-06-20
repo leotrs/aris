@@ -6,7 +6,7 @@
 
   /* View mode segmented control */
   const controlState = ref(0);
-  watch(controlState, (newVal) => emit(newVal == 0 ? "list" : "cards"));
+  watch(controlState, (newVal) => emit(newVal === 0 ? "list" : "cards"));
 
   /* Search */
   const fileStore = inject("fileStore");

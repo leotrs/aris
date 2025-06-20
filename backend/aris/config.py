@@ -4,6 +4,9 @@ Implemented as a Pydantic model that is then read by FastAPI.
 
 """
 
+import os
+from pathlib import Path
+
 from pydantic import ConfigDict, Field
 from pydantic_settings import BaseSettings
 
@@ -49,4 +52,9 @@ class Settings(BaseSettings):
     model_config = ConfigDict(extra="forbid")
 
 
-settings = Settings(_env_file=".env")
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_file = BASE_DIR / (".env.ci" if os.getenv("ENV") == "CI" else ".env")
+print(f"Using env file: {env_file}")
+settings = Settings(_env_file=str(env_file))
+print(f"DB_URL_PROD={settings.DB_URL_PROD}")
+print(f"ALEMBIC_DB_URL_LOCAL={settings.ALEMBIC_DB_URL_LOCAL}")

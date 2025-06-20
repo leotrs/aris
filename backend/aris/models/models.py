@@ -23,11 +23,13 @@ from sqlalchemy import (
     UniqueConstraint,
     text,
 )
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy.orm import DeclarativeBase, relationship
 from sqlalchemy.sql import func
 
 
-Base = declarative_base()
+class Base(DeclarativeBase):
+    """Base class for all SQLAlchemy models."""
+    pass
 
 
 class AvatarColor(enum.Enum):
@@ -109,7 +111,7 @@ class User(Base):
     initials = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     last_login = Column(DateTime(timezone=True), nullable=True)
-    avatar_color = Column(Enum(AvatarColor), nullable=True, default=AvatarColor.BLUE)
+    avatar_color: Column[AvatarColor] = Column(Enum(AvatarColor), nullable=True, default=AvatarColor.BLUE)
     profile_picture_id = Column(Integer, ForeignKey("profile_pictures.id"), nullable=True)
 
     files = relationship("File", back_populates="owner")
@@ -219,7 +221,7 @@ class File(Base):
     title = Column(String, nullable=True)
     abstract = Column(Text, nullable=True)
     keywords = Column(String, nullable=True)
-    status = Column(Enum(FileStatus, name="filestatus"), nullable=False, default=FileStatus.DRAFT)
+    status: Column[FileStatus] = Column(Enum(FileStatus, name="filestatus"), nullable=False, default=FileStatus.DRAFT)
     last_edited_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     doi = Column(String, unique=True, nullable=True)
@@ -402,7 +404,7 @@ class Annotation(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     file_id = Column(Integer, ForeignKey("files.id"), nullable=False)
-    type = Column(Enum(AnnotationType), nullable=False)
+    type: Column[AnnotationType] = Column(Enum(AnnotationType), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     deleted_at = Column(DateTime(timezone=True), nullable=True)
 

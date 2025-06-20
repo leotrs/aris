@@ -24,7 +24,7 @@
   const user = inject("user");
   const onRename = () => fileTitleRef.value?.startEditing();
   const onDuplicate = () => {
-    let fileData = {
+    const fileData = {
       ...File.toJSON(file.value),
       id: null,
       owner_id: user.value.id,
@@ -56,8 +56,8 @@
     role="button"
     tabindex="0"
     :class="{
-      list: mode == 'list',
-      cards: mode == 'cards',
+      list: mode === 'list',
+      cards: mode === 'cards',
       active: file.selected,
       focused: file.focused,
       hovered: hovered,
@@ -68,10 +68,14 @@
     @dblclick="open"
   >
     <template v-if="!!file">
-      <template v-if="mode == 'cards'"> </template>
+      <template v-if="mode === 'cards'"> </template>
 
-      <template v-if="mode == 'list'">
-        <FileTitle ref="file-title-ref" :file="file" :class="mode == 'cards' ? 'text-label' : ''" />
+      <template v-if="mode === 'list'">
+        <FileTitle
+          ref="file-title-ref"
+          :file="file"
+          :class="mode === 'cards' ? 'text-label' : ''"
+        />
 
         <template v-if="!xsMode">
           <TagRow :file="file" />
@@ -265,12 +269,12 @@
     }
   }
 
-  .item .fm-wrapper :deep(.cm-btn) {
+  .item .fm-wrapper :deep(.context-menu-trigger) {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
-  :is(.item:hover, .item.focused, .item.hovered) .fm-wrapper :deep(.cm-btn) {
+  :is(.item:hover, .item.focused, .item.hovered) .fm-wrapper :deep(.context-menu-trigger) {
     opacity: 1;
   }
 </style>

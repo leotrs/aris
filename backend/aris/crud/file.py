@@ -1,8 +1,10 @@
 import asyncio
 from datetime import UTC, datetime
+from typing import Any, Optional
 
 import rsm
 from sqlalchemy import select
+from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..models import File, FileStatus, file_tags
@@ -27,7 +29,7 @@ async def get_files(db: AsyncSession):
     Titles are extracted asynchronously from RSM source content using
     extract_title and assigned to each file object's title attribute.
     """
-    result = await db.execute(select(File).where(File.deleted_at.is_(None)))
+    result: Result[Any] = await db.execute(select(File).where(File.deleted_at.is_(None)))
     files = result.scalars().all()
     titles = await asyncio.gather(*(extract_title(f) for f in files))
     for file, title in zip(files, titles):
@@ -55,7 +57,7 @@ async def get_file(file_id: int, db: AsyncSession):
     The title is extracted from RSM source content and assigned to the
     file object's title attribute before returning.
     """
-    result = await db.execute(select(File).where(File.id == file_id, File.deleted_at.is_(None)))
+    result: Result[Any] = await db.execute(select(File).where(File.id == file_id, File.deleted_at.is_(None)))
     file = result.scalars().first()
     if file:
         file.title = await extract_title(file)
@@ -82,14 +84,14 @@ async def get_file_html(file_id: int, db: AsyncSession):
     Uses the rsm.render() function with handrails=True for enhanced navigation.
     Only retrieves the source field from the database for efficiency.
     """
-    result = await db.execute(
+    result: Result[Any] = await db.execute(
         select(File.source).where(File.id == file_id, File.deleted_at.is_(None))
     )
-    src = result.scalars().first()
-    if not src:
+    source = result.scalars().first()
+    if not source:
         return None
 
-    return rsm.render(src, handrails=True)
+    return rsm.render(source, handrails=True)
 
 
 async def create_file(
@@ -97,7 +99,7 @@ async def create_file(
     owner_id: int,
     title: str = "",
     abstract: str = "",
-    db: AsyncSession = None,
+    db: Optional[AsyncSession] = None,
 ):
     """Create a new file with RSM source content.
 
@@ -131,6 +133,9 @@ async def create_file(
         source=source,
         status=FileStatus.DRAFT,
     )
+    if db is None:
+        raise ValueError("Database session is required")
+    
     now = datetime.now(UTC)
     file.created_at = now
     file.last_edited_at = now
@@ -247,7 +252,7 @@ async def duplicate_file(file_id: int, db: AsyncSession):
     db.add(new_file)
     await db.flush()
 
-    tag_ids = (
+    tag_ids: Any = (
         await db.execute(file_tags.select().where(file_tags.c.file_id == file_id))
     ).fetchall()
     if tag_ids:
@@ -291,7 +296,7 @@ async def get_file_section(
     Uses extract_section utility to parse RSM content and extract the
     specified section before rendering to HTML.
     """
-    result = await db.execute(select(File).where(File.id == file_id))
+    result: Result[Any] = await db.execute(select(File).where(File.id == file_id))
     file = result.scalars().first()
     if not file:
         raise ValueError(f"File {file_id} not found")

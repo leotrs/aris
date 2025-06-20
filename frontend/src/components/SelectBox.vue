@@ -43,7 +43,13 @@
 <template>
   <div class="select-box" :class="direction">
     <span class="current-label">{{ currentLabel }}</span>
-    <ContextMenu icon="CaretDownFilled" placement="bottom-start" v-bind="$attrs">
+    <ContextMenu
+      variant="custom"
+      component="ButtonToggle"
+      icon="CaretDownFilled"
+      placement="bottom-start"
+      v-bind="$attrs"
+    >
       <ContextMenuItem
         v-for="opt in normalizedOptions"
         :key="opt.value"

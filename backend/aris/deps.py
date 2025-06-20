@@ -14,7 +14,6 @@ Environment variables:
 
 """
 
-import os
 from typing import AsyncGenerator
 from uuid import UUID
 
@@ -32,10 +31,8 @@ from .config import settings
 load_dotenv()
 
 
-DB_URL_LOCAL = os.getenv("DB_URL_LOCAL")
-DB_URL_PROD = os.getenv("DB_URL_PROD")
 ENGINE = create_async_engine(
-    DB_URL_PROD if os.getenv("ENV") == "PROD" else DB_URL_LOCAL,
+    settings.DB_URL_PROD if settings.ENV == "PROD" else settings.DB_URL_LOCAL,
     future=True,
 )
 ArisSession = async_sessionmaker(ENGINE, expire_on_commit=False)

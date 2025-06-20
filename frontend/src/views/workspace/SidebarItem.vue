@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, inject, onBeforeUnmount } from "vue";
+  import { ref, inject, onBeforeUnmount } from "vue";
 
   const props = defineProps({
     icon: { type: String, required: true },
@@ -55,7 +55,7 @@
         :aria-pressed="buttonState"
         tabindex="0"
         :button-size="mobileMode ? 'sm' : 'md'"
-        :active-color="type == 'outline' ? 'var(--purple-300)' : 'var(--surface-hint)'"
+        :active-color="type === 'outline' ? 'var(--purple-300)' : 'var(--surface-hint)'"
         :type="type"
         @mouseenter="onMouseEnterButton"
         @mouseleave="onMouseLeaveButton"

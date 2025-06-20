@@ -58,6 +58,7 @@
       () => [props.file.id, props.file.isMountedAt, watchedSize.value],
       (value, _, onInvalidate) => {
         let canceled = false;
+        // eslint-disable-next-line prefer-const
         let timer;
         onInvalidate(() => {
           canceled = true;
@@ -180,6 +181,7 @@
 
 <template>
   <div ref="mm-wrapper" class="mm-wrapper" :class="[orientation, side]">
+    <!-- eslint-disable-next-line vue/no-v-html -->
     <div class="mm-main" v-html="html"></div>
     <div class="mm-icons">
       <component
