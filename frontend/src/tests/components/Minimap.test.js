@@ -3,8 +3,7 @@ import { ref, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 
 // Stub useElementSize and useTemplateRef from @vueuse/core
-const widthRef = ref(200);
-const heightRef = ref(400);
+let widthRef, heightRef;
 vi.mock("@vueuse/core", () => ({
   useElementSize: () => ({ width: widthRef, height: heightRef }),
   useTemplateRef: () => ({ value: {} }),
@@ -40,6 +39,13 @@ const flushAll = async () => {
   await nextTick();
   await nextTick();
 };
+
+// Global setup to prevent memory leaks
+beforeEach(() => {
+  // Reset refs for each test to prevent memory accumulation
+  widthRef = ref(200);
+  heightRef = ref(400);
+});
 
 describe("Minimap.vue - immediate and debounced rebuild", () => {
   beforeEach(() => {

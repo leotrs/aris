@@ -8,8 +8,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix",
-    "test": "vitest",
-    "test:run": "vitest run",
+    "test": "node --max-old-space-size=4096 ./node_modules/vitest/vitest.mjs",
+    "test:run": "node --max-old-space-size=4096 ./node_modules/vitest/vitest.mjs run",
     "test:coverage": "vitest run --coverage",
     "test:coverage:ui": "vitest --coverage --ui"
   },

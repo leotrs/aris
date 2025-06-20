@@ -1,43 +1,51 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { ref, nextTick, watch, h, computed } from "vue";
 import BaseInput from "@/components/BaseInput.vue";
 
+// Mock objects to be reused
+let mockValue, mockFocused, mockError, mockInputClass;
+
 // Mock the useFormField composable
 vi.mock("@/composables/useFormField.js", () => ({
   useFormField: vi.fn((options) => {
-    const value = ref(options?.props?.modelValue || "");
-    const focused = ref(false);
-    const error = ref("");
-    const inputClass = computed(() => ({
-      focused: focused.value,
-      error: Boolean(error.value),
-      [options?.direction || "row"]: true,
-    }));
+    // Use pre-created mock objects instead of creating new refs every time
+    mockValue.value = options?.props?.modelValue || "";
+    mockFocused.value = false;
+    mockError.value = "";
+    
+    // Update the computed class
+    Object.assign(mockInputClass, {
+      value: {
+        focused: mockFocused.value,
+        error: Boolean(mockError.value),
+        [options?.direction || "row"]: true,
+      }
+    });
 
     const validate = vi.fn();
     const setFocus = vi.fn(() => {
-      focused.value = true;
+      mockFocused.value = true;
       if (options?.emit) options.emit("focus");
     });
     const setBlur = vi.fn(() => {
-      focused.value = false;
+      mockFocused.value = false;
       if (options?.emit) options.emit("blur");
     });
     const clearError = vi.fn();
 
     // Watch value changes and emit updates
-    watch(value, (newValue) => {
+    watch(mockValue, (newValue) => {
       if (options?.emit) {
         options.emit("update:modelValue", newValue);
       }
     });
 
     return {
-      value,
-      focused,
-      error,
-      inputClass,
+      value: mockValue,
+      focused: mockFocused,
+      error: mockError,
+      inputClass: mockInputClass,
       validate,
       setFocus,
       setBlur,
@@ -45,6 +53,19 @@ vi.mock("@/composables/useFormField.js", () => ({
     };
   }),
 }));
+
+// Global setup to prevent memory leaks
+beforeEach(() => {
+  // Reset mock objects for each test
+  mockValue = ref("");
+  mockFocused = ref(false);
+  mockError = ref("");
+  mockInputClass = { value: {} };
+});
+
+afterEach(() => {
+  vi.clearAllMocks();
+});
 
 describe("BaseInput.vue (New Component)", () => {
   describe("Basic Functionality", () => {
