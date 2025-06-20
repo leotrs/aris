@@ -102,7 +102,7 @@ export class File {
    * @param {Object} api - API instance
    * @param {Object} user - User information
    */
-  static async delete(file, api, user) {
+  static async delete(file, api, _user) {
     try {
       if (!file.id) return true; // Nothing to delete
 
@@ -130,13 +130,13 @@ export class File {
    * @param {Object} user - User information
    */
   static async addTag(file, tagId, api, user) {
-    if (file.tags.some((t) => t.id == tagId)) return false;
+    if (file.tags.some((t) => t.id === tagId)) return false;
 
     try {
       await api.post(`/users/${user.id}/files/${file.id}/tags/${tagId}`);
 
       // (Optimistically) add tag from file object
-      const tagToAdd = fileStore?.tags.value.find((t) => t.id == tagId);
+      const tagToAdd = fileStore?.tags.value.find((t) => t.id === tagId);
       if (!tagToAdd) console.error("Something went horribly wrong.");
       file.tags.push(tagToAdd);
       file.tags.sort((a, b) => a.created_at - b.created_at);
@@ -156,13 +156,13 @@ export class File {
    * @param {Object} user - User information
    */
   static async removeTag(file, tagId, api, user) {
-    if (!file.tags.some((t) => t.id == tagId)) return false;
+    if (!file.tags.some((t) => t.id === tagId)) return false;
 
     try {
       await api.delete(`/users/${user.id}/files/${file.id}/tags/${tagId}`);
 
       // (Optimistically) remove tag from file object
-      const tagIndex = file.tags.findIndex((tag) => tag.id == tagId);
+      const tagIndex = file.tags.findIndex((tag) => tag.id === tagId);
       if (tagIndex !== -1) file.tags.splice(tagIndex, 1);
 
       return true;

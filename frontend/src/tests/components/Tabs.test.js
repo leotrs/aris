@@ -7,7 +7,11 @@ import TabPage from "@/components/TabPage.vue";
 describe.skip("Tabs.vue", () => {
   const TabStub = defineComponent({
     name: "Tab",
-    props: ["modelValue", "label", "icon"],
+    props: {
+      modelValue: { type: Boolean },
+      label: { type: String },
+      icon: { type: String },
+    },
     emits: ["update:modelValue"],
     setup(props, { emit }) {
       return () =>

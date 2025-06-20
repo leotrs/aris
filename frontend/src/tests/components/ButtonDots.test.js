@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import { nextTick } from "vue";
 import { shallowMount } from "@vue/test-utils";
 import ButtonDots from "@/components/ButtonDots.vue";
-import { IconDotsVertical } from "@tabler/icons-vue";
 
 describe("ButtonDots.vue", () => {
   it("emits on when active becomes true and off when becomes false", async () => {

@@ -130,10 +130,10 @@ export async function getLayoutParametersHorizontal(lineSize, options) {
   maxX = lineSize + strokeWidth;
   const width = maxX - minX;
 
-  if (side == "top") {
+  if (side === "top") {
     minY = lineY - offset - 20; // 20 = 2 * (radiusDelta * (6-1))
     maxY = lineY + trackWidth;
-  } else if (side == "bottom") {
+  } else if (side === "bottom") {
     minY = lineY - trackWidth;
     maxY = lineY + offset + 20; // 20 = 2 * (radiusDelta * (6-1))
   } else {
@@ -152,10 +152,10 @@ export async function getLayoutParametersVertical(lineSize, options) {
   const { side, lineX, strokeWidth, trackWidth, offset } = options;
   let minX, maxX, minY, maxY;
 
-  if (side == "left") {
+  if (side === "left") {
     minX = lineX - offset - 24; // 24 = 2 * (radiusDelta * (6-1)) + 4 extra
     maxX = lineX + trackWidth;
-  } else if (side == "right") {
+  } else if (side === "right") {
     minX = lineX - trackWidth;
     maxX = lineX + offset + 24; // 24 = 2 * (radiusDelta * (6-1)) + 4 extra
   } else {
@@ -355,7 +355,7 @@ export async function highlightScrollPos(
   wrapperWidth,
   wrapperHeight,
   svg,
-  options = { trackWidth: 3 }
+  _options = { trackWidth: 3 }
 ) {
   if (!svg) return;
   const scrollPercent = pos / 100;

@@ -56,8 +56,8 @@
     role="button"
     tabindex="0"
     :class="{
-      list: mode == 'list',
-      cards: mode == 'cards',
+      list: mode === 'list',
+      cards: mode === 'cards',
       active: file.selected,
       focused: file.focused,
       hovered: hovered,
@@ -68,10 +68,14 @@
     @dblclick="open"
   >
     <template v-if="!!file">
-      <template v-if="mode == 'cards'"> </template>
+      <template v-if="mode === 'cards'"> </template>
 
-      <template v-if="mode == 'list'">
-        <FileTitle ref="file-title-ref" :file="file" :class="mode == 'cards' ? 'text-label' : ''" />
+      <template v-if="mode === 'list'">
+        <FileTitle
+          ref="file-title-ref"
+          :file="file"
+          :class="mode === 'cards' ? 'text-label' : ''"
+        />
 
         <template v-if="!xsMode">
           <TagRow :file="file" />

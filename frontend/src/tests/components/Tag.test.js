@@ -8,7 +8,12 @@ describe("Tag.vue", () => {
   let startEditingMock;
   const EditableTextStub = defineComponent({
     name: "EditableText",
-    props: ["modelValue", "editOnClick", "clearOnStart", "preserveWidth"],
+    props: {
+      modelValue: { type: String },
+      editOnClick: { type: Boolean },
+      clearOnStart: { type: Boolean },
+      preserveWidth: { type: Boolean },
+    },
     emits: ["update:modelValue", "save"],
     setup(props, { expose }) {
       startEditingMock = vi.fn();

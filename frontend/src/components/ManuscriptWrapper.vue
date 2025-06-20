@@ -19,7 +19,9 @@
       await import(/* @vite-ignore */ `${base}/static/tooltipster.bundle.js`);
       const module = await import(/* @vite-ignore */ `${base}/static/onload.js`);
       onload.value = module.onload;
-    } catch {}
+    } catch (error) {
+      console.error(error);
+    }
   });
 
   const selfRef = useTemplateRef("self-ref");

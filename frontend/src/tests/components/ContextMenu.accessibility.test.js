@@ -48,9 +48,9 @@ describe("ContextMenu.vue - Accessibility Tests", () => {
         global: {
           stubs: {
             ContextMenuTrigger: {
-              template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle']
+              template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
             Teleport: true,
           },
@@ -72,13 +72,13 @@ describe("ContextMenu.vue - Accessibility Tests", () => {
           stubs: {
             ContextMenuTrigger: {
               template: '<button :id="triggerId" @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle'],
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
               setup() {
                 return {
-                  triggerId: 'test-trigger-id'
+                  triggerId: "test-trigger-id",
                 };
-              }
+              },
             },
             Teleport: true,
           },
@@ -88,9 +88,9 @@ describe("ContextMenu.vue - Accessibility Tests", () => {
       wrapper.vm.toggle();
       await nextTick();
 
-      const trigger = wrapper.findComponent({ name: 'ContextMenuTrigger' });
+      const trigger = wrapper.findComponent({ name: "ContextMenuTrigger" });
       const menu = wrapper.get(".context-menu");
-      
+
       expect(trigger.vm.triggerId).toBeDefined();
       expect(menu.attributes("aria-labelledby")).toBe(trigger.vm.triggerId);
     });
@@ -101,21 +101,22 @@ describe("ContextMenu.vue - Accessibility Tests", () => {
         global: {
           stubs: {
             ContextMenuTrigger: {
-              template: '<button :aria-expanded="isOpen" @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle']
+              template:
+                '<button :aria-expanded="isOpen" @click="$emit(\'toggle\')">Trigger</button>',
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
             Teleport: true,
           },
         },
       });
 
-      const trigger = wrapper.findComponent({ name: 'ContextMenuTrigger' });
-      expect(trigger.props('isOpen')).toBe(false);
+      const trigger = wrapper.findComponent({ name: "ContextMenuTrigger" });
+      expect(trigger.props("isOpen")).toBe(false);
 
       wrapper.vm.toggle();
       await nextTick();
-      expect(trigger.props('isOpen')).toBe(true);
+      expect(trigger.props("isOpen")).toBe(true);
     });
   });
 
@@ -123,17 +124,18 @@ describe("ContextMenu.vue - Accessibility Tests", () => {
     it("focuses first menu item when menu opens", async () => {
       const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
       const focusSpy = vi.fn();
-      
+
       const wrapper = mount(ContextMenu, {
         slots: {
-          default: '<div class="item" tabindex="0">Item 1</div><div class="item" tabindex="-1">Item 2</div>',
+          default:
+            '<div class="item" tabindex="0">Item 1</div><div class="item" tabindex="-1">Item 2</div>',
         },
         global: {
           stubs: {
             ContextMenuTrigger: {
-              template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle']
+              template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
             Teleport: true,
           },
@@ -143,11 +145,11 @@ describe("ContextMenu.vue - Accessibility Tests", () => {
       // Mock querySelector and focus
       const mockFirstItem = { focus: focusSpy };
       const mockQuerySelector = vi.fn().mockReturnValue(mockFirstItem);
-      
+
       // Mock the menu ref
-      Object.defineProperty(wrapper.vm, 'menuRef', {
+      Object.defineProperty(wrapper.vm, "menuRef", {
         value: ref({ querySelector: mockQuerySelector }),
-        writable: true
+        writable: true,
       });
 
       wrapper.vm.toggle();
@@ -162,18 +164,18 @@ describe("ContextMenu.vue - Accessibility Tests", () => {
       const mockTriggerElement = { focus: focusSpy };
 
       // Mock document.activeElement
-      Object.defineProperty(document, 'activeElement', {
+      Object.defineProperty(document, "activeElement", {
         value: mockTriggerElement,
-        writable: true
+        writable: true,
       });
 
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {
             ContextMenuTrigger: {
-              template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle']
+              template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
             Teleport: true,
           },

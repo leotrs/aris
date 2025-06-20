@@ -21,7 +21,10 @@ describe("Abstract.vue", () => {
   it("renders loading state when file has no id", async () => {
     const stubMw = defineComponent({
       name: "ManuscriptWrapper",
-      props: ["htmlString", "keys"],
+      props: {
+        htmlString: { type: String },
+        keys: { type: Array },
+      },
       template: '<div data-test="mw">{{ htmlString }}</div>',
     });
     const api = { get: vi.fn() };
@@ -45,7 +48,10 @@ describe("Abstract.vue", () => {
   it("fetches and displays abstract content", async () => {
     const stubMw = defineComponent({
       name: "ManuscriptWrapper",
-      props: ["htmlString", "keys"],
+      props: {
+        htmlString: { type: String },
+        keys: { type: Array },
+      },
       template: '<div data-test="mw">{{ htmlString }}</div>',
     });
     const get = vi.fn(() => Promise.resolve({ data: "Hello world" }));
@@ -68,7 +74,10 @@ describe("Abstract.vue", () => {
   it("truncates long abstract content", async () => {
     const stubMw = defineComponent({
       name: "ManuscriptWrapper",
-      props: ["htmlString", "keys"],
+      props: {
+        htmlString: { type: String },
+        keys: { type: Array },
+      },
       template: '<div data-test="mw">{{ htmlString }}</div>',
     });
     const longText = "a".repeat(500);
@@ -92,7 +101,10 @@ describe("Abstract.vue", () => {
   it("displays an error message when fetch fails", async () => {
     const stubMw = defineComponent({
       name: "ManuscriptWrapper",
-      props: ["htmlString", "keys"],
+      props: {
+        htmlString: { type: String },
+        keys: { type: Array },
+      },
       template: '<div data-test="mw">{{ htmlString }}</div>',
     });
     const get = vi.fn(() => Promise.reject(new Error("fail")));
@@ -114,7 +126,10 @@ describe("Abstract.vue", () => {
   it("re-fetches when file prop changes", async () => {
     const stubMw = defineComponent({
       name: "ManuscriptWrapper",
-      props: ["htmlString", "keys"],
+      props: {
+        htmlString: { type: String },
+        keys: { type: Array },
+      },
       template: '<div data-test="mw">{{ htmlString }}</div>',
     });
     const get = vi.fn((url) => {

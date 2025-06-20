@@ -41,7 +41,7 @@
   };
   const saveChanges = async () => {
     if (!isEditing.value) return;
-    if (text.value == inputValue.value) {
+    if (text.value === inputValue.value) {
       isEditing.value = false;
       return;
     }

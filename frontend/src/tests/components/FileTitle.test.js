@@ -14,7 +14,9 @@ describe("FileTitle.vue", () => {
     // prepare stub for EditableText
     EditableTextStub = defineComponent({
       name: "EditableText",
-      props: ["modelValue"],
+      props: {
+        modelValue: { type: String },
+      },
       emits: ["update:modelValue", "save"],
       setup(props, { attrs }) {
         return () => h("div", { ...attrs }, props.modelValue);

@@ -38,7 +38,7 @@ describe("TagControl.vue", () => {
 
   const ContextMenuItemStub = defineComponent({
     name: "ContextMenuItem",
-    props: ["icon", "caption"],
+    props: { icon: { type: String }, caption: { type: String } },
     emits: ["click"],
     setup(props, { emit, attrs }) {
       return () => h("button", { class: attrs.class, onClick: () => emit("click") }, props.caption);

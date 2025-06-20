@@ -91,7 +91,7 @@
   const advanced = ref(false);
   const selectScope = ref("both views");
   const selectMode = ref("exact match");
-  const replaceMode = computed(() => selectMode.value == "replace");
+  const replaceMode = computed(() => selectMode.value === "replace");
   const searchBar = useTemplateRef("searchBar");
   const replaceValue = ref("");
   onMounted(() => searchBar.value?.focusInput());

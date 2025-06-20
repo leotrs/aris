@@ -18,9 +18,7 @@ describe("useKeyboardShortcuts", () => {
   let getActiveComponents;
   let getRegisteredComponents;
   let getComponentMetadata;
-  let registerAsFallback;
   let getCurrentInstance;
-  let onMounted;
   let onBeforeUnmount;
 
   beforeEach(async () => {

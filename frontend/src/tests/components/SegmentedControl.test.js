@@ -106,7 +106,7 @@ describe("SegmentedControl.vue", () => {
     const rendered = tips
       .map((t, i) => (t && wrapper.vm.buttonRefs[i] ? [t, i] : null))
       .filter(Boolean);
-    rendered.forEach(([content, idx]) => {
+    rendered.forEach(([content, _idx]) => {
       const stub = tt.shift();
       expect(stub.props("content")).toBe(content);
       const anchor = stub.props("anchor");
