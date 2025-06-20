@@ -124,11 +124,13 @@ export default [
     },
     rules: {
       ...baseRules,
-      // Disable component naming rules for test stubs
+      // Disable component naming and structure rules for test stubs
       "vue/multi-word-component-names": "off",
       "vue/no-reserved-component-names": "off",
-      // Allow single-word component names in tests
-      "vue/require-prop-types": "warn", // Downgrade to warning for tests
+      "vue/one-component-per-file": "off",
+      // Disable prop validation rules for test stubs
+      "vue/require-prop-types": "off",
+      "vue/require-default-prop": "off",
       "prefer-const": [
         "error",
         {
