@@ -51,7 +51,7 @@ jobs:
     - name: Run tests
       run: uv run python -m pytest --cov=aris --cov-report=xml
       env:
-        DB_URL_LOCAL: "postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris"
+        ENV: CI
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
