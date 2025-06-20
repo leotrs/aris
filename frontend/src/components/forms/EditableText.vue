@@ -1,6 +1,6 @@
 <script setup>
   import { ref, nextTick, useTemplateRef, watch } from "vue";
-  import { useKeyboardShortcuts } from "../composables/useKeyboardShortcuts.js";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   const props = defineProps({
     inputClass: { type: [String, Object, Array], default: "" },
     textClass: { type: [String, Object, Array], default: "" },

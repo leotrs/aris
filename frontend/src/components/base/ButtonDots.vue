@@ -1,6 +1,6 @@
 <script setup>
   import { watch } from "vue";
-  import ButtonToggle from "@/components/ButtonToggle.vue";
+  import ButtonToggle from "@/components/base/ButtonToggle.vue";
   import { IconDotsVertical } from "@tabler/icons-vue";
 
   const props = defineProps({
