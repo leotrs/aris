@@ -50,6 +50,12 @@ jobs:
     - name: Run linting (ruff)
       run: uv run ruff check
 
+    - name: Debug env & .env.ci file
+      run: |
+        echo "ENV=$ENV"
+        ls -l backend/.env.ci
+        cat backend/.env.ci
+
     - name: Run tests
       run: uv run python -m pytest --cov=aris --cov-report=xml
 
