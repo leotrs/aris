@@ -4,6 +4,8 @@
   import { File } from "@/models/File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./HomeSidebarItem.vue";
+  import logoSmall from "@/assets/logo-32px.svg";
+  import logoFull from "@/assets/logotype.svg";
 
   const props = defineProps({
     active: { type: String, default: "" },
@@ -67,8 +69,7 @@
   >
     <template v-if="!mobileMode">
       <div id="logo">
-        <img v-if="collapsed" src="../assets/logo-32px.svg" />
-        <img v-else src="../assets/logotype.svg" />
+        <img :src="collapsed ? logoSmall : logoFull" alt="Aris logo" />
       </div>
     </template>
 
