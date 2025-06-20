@@ -16,8 +16,10 @@ const routes = [
   { path: "/file/:file_id", component: WorkspaceView },
   { path: "/account", component: AccountView },
   { path: "/settings", component: SettingsView },
-  // catch-all route: 404
-  { path: "/:pathMatch(.*)*", name: "NotFound", component: NotFoundView },
+  // dedicated 404 route
+  { path: "/404", name: "NotFound", component: NotFoundView },
+  // catch-all route: redirect to 404
+  { path: "/:pathMatch(.*)*", redirect: "/404" },
 ];
 
 const router = createRouter({

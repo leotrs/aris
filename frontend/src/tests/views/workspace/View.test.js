@@ -22,7 +22,7 @@ describe("WorkspaceView", () => {
   beforeEach(() => {
     getSettingsSpy = vi.spyOn(File, "getSettings").mockResolvedValue({ theme: "dark" });
     useKSSpy = vi.spyOn(KSMod, "useKeyboardShortcuts").mockImplementation(() => {});
-    fileStore = { value: { files: [{ id: "42", content: "abc" }] } };
+    fileStore = { value: { files: { "42": { id: 42, content: "abc" } } } };
   });
 
   afterEach(() => {
@@ -176,7 +176,7 @@ describe("WorkspaceView", () => {
     expect(wrapper.findComponent({ name: "Button" }).exists()).toBe(false);
   });
 
-  it("redirects to 404 when file not found", () => {
+  it("does not redirect when fileStore is empty (no files loaded)", () => {
     pushMock.mockClear();
     const emptyStore = { value: { files: [] } };
     mount(WorkspaceView, {
@@ -185,6 +185,107 @@ describe("WorkspaceView", () => {
         stubs: { Sidebar: true, Canvas: true, Button: true },
       },
     });
-    expect(pushMock).toHaveBeenCalledWith({ name: "NotFound" });
+    // Empty fileStore should NOT redirect (might be due to API failure)
+    expect(pushMock).not.toHaveBeenCalledWith({ name: "NotFound" });
+  });
+
+  describe("graceful file loading behavior", () => {
+    beforeEach(() => {
+      pushMock.mockClear();
+    });
+
+    it("should not redirect when fileStore is null/undefined", () => {
+      const nullStore = { value: null };
+      mount(WorkspaceView, {
+        global: {
+          provide: { fileStore: nullStore, api, mobileMode: false },
+          stubs: { Sidebar: true, Canvas: true, Button: true },
+        },
+      });
+      expect(pushMock).not.toHaveBeenCalledWith({ name: "NotFound" });
+    });
+
+    it("should not redirect when fileStore is loading", () => {
+      const loadingStore = {
+        value: {
+          files: [],
+          isLoading: true,
+        },
+      };
+      mount(WorkspaceView, {
+        global: {
+          provide: { fileStore: loadingStore, api, mobileMode: false },
+          stubs: { Sidebar: true, Canvas: true, Button: true },
+        },
+      });
+      expect(pushMock).not.toHaveBeenCalledWith({ name: "NotFound" });
+    });
+
+    it("should show loading state when files are being loaded", () => {
+      const loadingStore = {
+        value: {
+          files: [],
+          isLoading: true,
+        },
+      };
+      const wrapper = mount(WorkspaceView, {
+        global: {
+          provide: { fileStore: loadingStore, api, mobileMode: false },
+          stubs: { Sidebar: true, Canvas: true, Button: true },
+        },
+      });
+      expect(wrapper.text()).toContain("Loading");
+    });
+
+    it("should show error state when there's an API error", () => {
+      const errorStore = {
+        value: {
+          files: [],
+          isLoading: false,
+          error: "Failed to load files",
+        },
+      };
+      const wrapper = mount(WorkspaceView, {
+        global: {
+          provide: { fileStore: errorStore, api, mobileMode: false },
+          stubs: { Sidebar: true, Canvas: true, Button: true },
+        },
+      });
+      expect(wrapper.text()).toContain("Error loading files");
+      expect(pushMock).not.toHaveBeenCalledWith({ name: "NotFound" });
+    });
+
+    it("should redirect to 404 only when files are loaded but target file not found", () => {
+      const loadedStoreWithoutTargetFile = {
+        value: {
+          files: [{ id: "123", title: "Other File" }],
+          isLoading: false,
+        },
+      };
+      mount(WorkspaceView, {
+        global: {
+          provide: { fileStore: loadedStoreWithoutTargetFile, api, mobileMode: false },
+          stubs: { Sidebar: true, Canvas: true, Button: true },
+        },
+      });
+      expect(pushMock).toHaveBeenCalledWith({ name: "NotFound" });
+    });
+
+    it("should NOT redirect when fileStore is empty (API failure case)", () => {
+      const emptyStoreAfterFailure = {
+        value: {
+          files: [], // Empty due to API failure
+          isLoading: false,
+        },
+      };
+      mount(WorkspaceView, {
+        global: {
+          provide: { fileStore: emptyStoreAfterFailure, api, mobileMode: false },
+          stubs: { Sidebar: true, Canvas: true, Button: true },
+        },
+      });
+      // Should NOT redirect when files array is empty (likely due to API failure)
+      expect(pushMock).not.toHaveBeenCalledWith({ name: "NotFound" });
+    });
   });
 });
