@@ -52,7 +52,8 @@ class Settings(BaseSettings):
     model_config = ConfigDict(extra="forbid")
 
 
-env_file = Path(__file__).parent.parent / (".env.ci" if os.getenv("ENV") == "CI" else ".env")
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_file = BASE_DIR / (".env.ci" if os.getenv("ENV") == "CI" else ".env")
 print(f"Using env file: {env_file}")
 settings = Settings(_env_file=str(env_file))
 print(f"DB_URL_PROD={settings.DB_URL_PROD}")

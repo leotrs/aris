@@ -53,8 +53,8 @@ jobs:
     - name: Debug env & .env.ci file
       run: |
         echo "ENV=$ENV"
-        ls -l backend/.env.ci
-        cat backend/.env.ci
+        ls -l .env.ci
+        cat .env.ci
 
     - name: Run tests
       run: uv run python -m pytest --cov=aris --cov-report=xml
