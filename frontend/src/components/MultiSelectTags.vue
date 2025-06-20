@@ -70,7 +70,13 @@
 </script>
 
 <template>
-  <ContextMenu :icon="icon" placement="bottom-end" button-size="sm">
+  <ContextMenu
+    variant="custom"
+    component="ButtonToggle"
+    :icon="icon"
+    placement="bottom-end"
+    size="sm"
+  >
     <TagControl
       v-for="(tag, idx) in fileStore.tags"
       :key="tag.id"

@@ -23,6 +23,7 @@
       <span class="s-track"></span>
       <button
         v-for="idx in Array(numberStops).keys()"
+        :key="idx"
         type="button"
         class="s-stop"
         :class="{ active: idx === active }"
