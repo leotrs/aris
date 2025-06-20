@@ -22,7 +22,7 @@
       v-for="(color, name) in colors"
       :key="name"
       class="swatch"
-      :class="[name, activeColor == name ? 'active' : '']"
+      :class="[name, activeColor === name ? 'active' : '']"
       @click="onClick(name)"
     >
       <button

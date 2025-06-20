@@ -9,7 +9,7 @@ vi.mock("@/composables/useFloatingUI.js", () => ({
 
 // Mock useDebounceFn from VueUse
 vi.mock("@vueuse/core", () => ({
-  useDebounceFn: vi.fn((fn, delay) => fn),
+  useDebounceFn: vi.fn((fn, _delay) => fn),
 }));
 
 describe("useDesktopMenu", () => {

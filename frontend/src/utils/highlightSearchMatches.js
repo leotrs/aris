@@ -164,7 +164,7 @@ export function highlightSearchMatches(rootEl, searchTerm, options = {}) {
       // Try to surround with the highlight
       try {
         range.surroundContents(mark);
-      } catch (e) {
+      } catch {
         // Handle case where match spans multiple nodes
         if (startNodeInfo !== endNodeInfo) {
           // Extract and highlight content in multiple fragments

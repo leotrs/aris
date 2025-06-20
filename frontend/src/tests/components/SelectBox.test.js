@@ -12,7 +12,7 @@ describe("SelectBox.vue", () => {
       '<div class="cm-wrapper"><button class="cm-btn" :disabled="$attrs.disabled">{{ text }}</button><div class="cm-menu"><slot/></div></div>',
   };
   const itemStub = {
-    props: ["caption"],
+    props: { caption: { type: String } },
     template: '<button class="item"><span class="cmi-caption">{{ caption }}</span></button>',
   };
   it("renders current label and trigger button in row direction with options and attributes", async () => {

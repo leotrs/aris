@@ -25,7 +25,7 @@
   };
   const activate = (objToActivate) => {
     for (var i = 0; i < icons.length; i++) {
-      if (icons[i].icon == objToActivate.icon) {
+      if (icons[i].icon === objToActivate.icon) {
         icons[i].active = true;
         break;
       } else {

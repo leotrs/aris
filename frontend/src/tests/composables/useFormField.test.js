@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { nextTick, ref, defineComponent } from "vue";
+import { nextTick, defineComponent } from "vue";
 import { mount } from "@vue/test-utils";
 import { useFormField } from "@/composables/useFormField.js";
 

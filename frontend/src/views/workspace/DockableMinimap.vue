@@ -9,11 +9,11 @@
   // The props to be passed on to the minimap
   const minimapProps = reactive({
     file: props.file,
-    orientation: props.side == "top" ? "horizontal" : "vertical",
+    orientation: props.side === "top" ? "horizontal" : "vertical",
     side: "left",
     highlightScroll: true,
     shape: "line",
-    trackWidth: props.side == "right" ? 8 : 3,
+    trackWidth: props.side === "right" ? 8 : 3,
   });
 
   // Positioning, size, and other styles

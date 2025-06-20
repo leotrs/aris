@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, beforeEach } from "vitest";
 import { ref, defineComponent } from "vue";
 import { mount } from "@vue/test-utils";
 
@@ -7,7 +7,11 @@ import FeedbackIcon from "@/components/FeedbackIcon.vue";
 // Stub ContextMenu and its items for interaction
 const ContextMenu = defineComponent({
   name: "ContextMenu",
-  props: ["icon", "iconClass", "placement"],
+  props: {
+    icon: { type: String },
+    iconClass: { type: String },
+    placement: { type: String },
+  },
   methods: { toggle() {} },
   template: "<div><slot/></div>",
 });

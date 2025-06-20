@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import MultiSelectTags from "@/components/MultiSelectTags.vue";
 
@@ -19,7 +19,7 @@ describe("MultiSelectTags.vue - Bug: Tag Icon Issue", () => {
                 <div v-else data-testid="unknown-icon">{{ icon }}</div>
               </div>
             `,
-            props: ["icon"],
+            props: { icon: { type: String } },
           },
           TagControl: {
             template: '<div data-testid="tag-control"><slot /></div>',
@@ -52,7 +52,7 @@ describe("MultiSelectTags.vue - Bug: Tag Icon Issue", () => {
                 <div data-testid="icon-display">{{ icon }}</div>
               </div>
             `,
-            props: ["icon"],
+            props: { icon: { type: String } },
           },
           TagControl: {
             template: '<div data-testid="tag-control"><slot /></div>',

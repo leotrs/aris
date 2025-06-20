@@ -11,7 +11,6 @@ vi.stubGlobal("URL", {
 });
 
 describe("Avatar.vue", () => {
-  let user;
   let api;
   let wrapper;
 

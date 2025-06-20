@@ -6,7 +6,7 @@ import FileMenu from "@/components/FileMenu.vue";
 describe("FileMenu.vue", () => {
   const ContextMenuStub = defineComponent({
     name: "ContextMenu",
-    props: ["icon", "buttonSize"],
+    props: { icon: { type: String }, buttonSize: { type: String } },
     setup(_, { expose, slots }) {
       const toggle = vi.fn();
       expose({ toggle });
@@ -15,7 +15,7 @@ describe("FileMenu.vue", () => {
   });
   const ContextMenuItemStub = defineComponent({
     name: "ContextMenuItem",
-    props: ["icon", "caption"],
+    props: { icon: { type: String }, caption: { type: String } },
     emits: ["click"],
     template: '<button @click="$emit(\'click\')" class="item">{{ caption }}</button>',
   });
@@ -46,7 +46,7 @@ describe("FileMenu.vue", () => {
     const toggle = vi.fn();
     const ContextMenuToggleStub = defineComponent({
       name: "ContextMenu",
-      props: ["icon", "buttonSize"],
+      props: { icon: { type: String }, buttonSize: { type: String } },
       setup(_, { expose, slots }) {
         expose({ toggle });
         return () => slots.default && slots.default();

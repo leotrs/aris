@@ -30,7 +30,7 @@ describe("ManuscriptWrapper.vue", () => {
     };
     const api = { getUri: () => "" };
     const stubManuscript = defineComponent({
-      props: ["htmlString", "settings"],
+      props: { htmlString: { type: String }, settings: { type: Object } },
       template: '<div data-test="manuscript">{{ htmlString }}</div>',
     });
     const wrapper = mount(ManuscriptWrapper, {
@@ -53,7 +53,7 @@ describe("ManuscriptWrapper.vue", () => {
     const html = "<p>test</p>";
     const api = { getUri: () => "" };
     const stubManuscript = defineComponent({
-      props: ["htmlString", "settings"],
+      props: { htmlString: { type: String }, settings: { type: Object } },
       template: "<div/>",
     });
     const wrapper = mount(ManuscriptWrapper, {

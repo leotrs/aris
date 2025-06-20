@@ -203,7 +203,7 @@ describe("Minimap.vue - makeMinimap parameters and html update", () => {
     makeMinimap.mockResolvedValue({ svg: "", svgInitialData: {} });
     makeIcons.mockResolvedValue([]);
     const fileA = { id: 0, isMountedAt: true, html: "", icons: [] };
-    const wrapperA = mount(Minimap, {
+    mount(Minimap, {
       props: { file: fileA },
       global: { stubs: ICON_COMPONENT_STUBS },
     });
@@ -212,7 +212,7 @@ describe("Minimap.vue - makeMinimap parameters and html update", () => {
     expect(makeMinimap).not.toHaveBeenCalled();
 
     const fileB = { id: 1, isMountedAt: false, html: "", icons: [] };
-    const wrapperB = mount(Minimap, {
+    mount(Minimap, {
       props: { file: fileB },
       global: { stubs: ICON_COMPONENT_STUBS },
     });

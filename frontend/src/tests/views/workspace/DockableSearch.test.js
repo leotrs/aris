@@ -7,7 +7,10 @@ import * as KSMod from "@/composables/useKeyboardShortcuts.js";
 
 const SearchBarStub = defineComponent({
   name: "SearchBar",
-  props: ["withButtons", "placeholder"],
+  props: {
+    withButtons: { type: Boolean },
+    placeholder: { type: String },
+  },
   emits: ["submit", "next", "prev", "cancel"],
   setup(_, { expose, slots }) {
     const focusInput = vi.fn();

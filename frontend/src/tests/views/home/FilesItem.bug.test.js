@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import FilesItem from "@/views/home/FilesItem.vue";
@@ -43,7 +43,7 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
 
     // Check computed styles for opacity
     const menuElement = fileMenu.element;
-    const computedStyle = getComputedStyle(menuElement);
+    // const computedStyle = getComputedStyle(menuElement);
 
     // Should be hidden by default (opacity: 0)
     // Note: This might need adjustment based on actual CSS implementation

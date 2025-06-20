@@ -6,7 +6,12 @@ import { defineComponent } from "vue";
 
 const SegmentedControlStub = defineComponent({
   name: "SegmentedControl",
-  props: ["modelValue", "icons", "labels", "defaultActive"],
+  props: {
+    modelValue: { type: Number },
+    icons: { type: Array },
+    labels: { type: Array },
+    defaultActive: { type: Number },
+  },
   emits: ["update:modelValue"],
   template: "<div />",
 });

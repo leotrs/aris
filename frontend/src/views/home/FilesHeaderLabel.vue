@@ -13,7 +13,7 @@
   const sortState = defineModel({ type: String, default: "" });
   const nextSortState = () => {
     if (!props.sortable) return;
-    sortState.value = sortState.value == "asc" ? "desc" : "asc";
+    sortState.value = sortState.value === "asc" ? "desc" : "asc";
     emit("sort", sortState.value);
   };
 
@@ -40,8 +40,8 @@
     >
       <span class="col-header-label text-label">{{ name }}</span>
       <component :is="IconArrowsSort" v-if="!sortState" class="no-sort" />
-      <component :is="IconArrowNarrowDown" v-if="sortState == 'desc'" />
-      <component :is="IconArrowNarrowUp" v-if="sortState == 'asc'" />
+      <component :is="IconArrowNarrowDown" v-if="sortState === 'desc'" />
+      <component :is="IconArrowNarrowUp" v-if="sortState === 'asc'" />
     </button>
   </template>
 

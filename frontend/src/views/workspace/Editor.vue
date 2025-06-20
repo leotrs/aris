@@ -79,13 +79,13 @@
     <EditorTopbar v-model="tabIndex" @compile="onCompile" @upload="onUpload" />
     <div class="content">
       <EditorSource
-        v-if="tabIndex == 0"
+        v-if="tabIndex === 0"
         ref="editor-source-ref"
         v-model="file"
         :save-status="saveStatus"
         @input="onInput"
       />
-      <EditorFiles v-if="tabIndex == 1" v-model="file" />
+      <EditorFiles v-if="tabIndex === 1" v-model="file" />
     </div>
   </div>
 </template>

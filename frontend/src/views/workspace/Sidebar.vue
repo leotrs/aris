@@ -162,7 +162,7 @@
     <div class="sb-menu">
       <div v-if="!mobileMode" class="sb-menu-std">
         <template v-for="(it, idx) in items" :key="it">
-          <Separator v-if="it.name == 'Separator'" />
+          <Separator v-if="it.name === 'Separator'" />
           <SidebarItem
             v-else-if="it.type === 'toggle'"
             v-model="items[idx].state"
@@ -187,7 +187,7 @@
         <UserMenu ref="user-menu" />
       </div>
 
-      <Drawer :component="items.find((it) => it.type == 'drawer' && it.state)?.name ?? ''" />
+      <Drawer :component="items.find((it) => it.type === 'drawer' && it.state)?.name ?? ''" />
 
       <div v-if="mobileMode" class="sb-menu-mobile" :class="{ xs: xsMode }">
         <SidebarItem

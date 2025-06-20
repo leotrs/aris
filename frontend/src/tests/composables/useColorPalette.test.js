@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from "vitest";
-import { ref, computed } from "vue";
+import { describe, it, expect } from "vitest";
+import { ref } from "vue";
 import { useColorPalette } from "@/composables/useColorPalette.js";
 
 describe("useColorPalette composable", () => {
@@ -254,7 +254,7 @@ describe("useColorPalette composable", () => {
         custom2: "var(--custom2-300)",
       };
 
-      const { colors, colorNames } = useColorPalette({
+      const { colors } = useColorPalette({
         customColors,
         mergeWithDefaults: true,
       });
