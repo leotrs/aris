@@ -1,37 +1,58 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { nextTick } from "vue";
+import { nextTick, ref } from "vue";
 import FilesItem from "@/views/home/FilesItem.vue";
 
 describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
-  const mockFile = {
-    id: "test-file-1",
-    title: "Test File",
-    selected: false,
-    lastModified: new Date().toISOString(),
-    tags: ["math", "science"],
-  };
+  let mockFile;
+  let mockProvides;
+
+  beforeEach(() => {
+    mockFile = ref({
+      id: "test-file-1",
+      title: "Test File",
+      selected: false,
+      focused: false,
+      lastModified: new Date().toISOString(),
+      tags: ["math", "science"],
+    });
+
+    mockProvides = {
+      fileStore: ref({
+        createFile: vi.fn(),
+        deleteFile: vi.fn(),
+      }),
+      xsMode: ref(false),
+      user: ref({ id: "user-1" }),
+      shouldShowColumn: vi.fn(() => true),
+    };
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+  });
 
   it("should hide FileMenu by default (not selected, not hovered)", () => {
     const wrapper = mount(FilesItem, {
       props: {
-        file: mockFile,
-        mode: "ContextMenu",
+        modelValue: mockFile.value,
+        mode: "list",
       },
       global: {
+        provide: mockProvides,
         stubs: {
           FileMenu: {
             template:
               '<div data-testid="file-menu" class="fm-wrapper"><div class="context-menu-trigger">⋮</div></div>',
           },
-          EditableText: {
-            template: '<div data-testid="editable-text">{{ modelValue }}</div>',
-            props: ["modelValue"],
+          FileTitle: {
+            template: '<div data-testid="file-title">{{ file.title }}</div>',
+            props: ["file"],
           },
           TagRow: {
             template: '<div data-testid="tag-row"></div>',
           },
-          FilesItemDate: {
+          Date: {
             template: '<div data-testid="files-item-date"></div>',
           },
         },
@@ -53,23 +74,24 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
   it("should show FileMenu on hover", async () => {
     const wrapper = mount(FilesItem, {
       props: {
-        file: mockFile,
-        mode: "ContextMenu",
+        modelValue: mockFile.value,
+        mode: "list",
       },
       global: {
+        provide: mockProvides,
         stubs: {
           FileMenu: {
             template:
               '<div data-testid="file-menu" class="fm-wrapper"><div class="context-menu-trigger">⋮</div></div>',
           },
-          EditableText: {
-            template: '<div data-testid="editable-text">{{ modelValue }}</div>',
-            props: ["modelValue"],
+          FileTitle: {
+            template: '<div data-testid="file-title">{{ file.title }}</div>',
+            props: ["file"],
           },
           TagRow: {
             template: '<div data-testid="tag-row"></div>',
           },
-          FilesItemDate: {
+          Date: {
             template: '<div data-testid="files-item-date"></div>',
           },
         },
@@ -90,23 +112,24 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
   it("should show FileMenu when file is focused", async () => {
     const wrapper = mount(FilesItem, {
       props: {
-        file: mockFile,
-        mode: "ContextMenu",
+        modelValue: mockFile.value,
+        mode: "list",
       },
       global: {
+        provide: mockProvides,
         stubs: {
           FileMenu: {
             template:
               '<div data-testid="file-menu" class="fm-wrapper"><div class="context-menu-trigger">⋮</div></div>',
           },
-          EditableText: {
-            template: '<div data-testid="editable-text">{{ modelValue }}</div>',
-            props: ["modelValue"],
+          FileTitle: {
+            template: '<div data-testid="file-title">{{ file.title }}</div>',
+            props: ["file"],
           },
           TagRow: {
             template: '<div data-testid="tag-row"></div>',
           },
-          FilesItemDate: {
+          Date: {
             template: '<div data-testid="files-item-date"></div>',
           },
         },
@@ -116,8 +139,8 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
     const itemRow = wrapper.find(".item");
     expect(itemRow.exists()).toBe(true);
 
-    // Trigger focus
-    await itemRow.trigger("focus");
+    // Set file as focused
+    mockFile.value.focused = true;
     await nextTick();
 
     // Should have focused class
@@ -125,27 +148,28 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
   });
 
   it("should not render FileMenu when file is selected", () => {
-    const selectedFile = { ...mockFile, selected: true };
+    const selectedFile = ref({ ...mockFile.value, selected: true });
 
     const wrapper = mount(FilesItem, {
       props: {
-        file: selectedFile,
-        mode: "ContextMenu",
+        modelValue: selectedFile.value,
+        mode: "list",
       },
       global: {
+        provide: mockProvides,
         stubs: {
           FileMenu: {
             template:
               '<div data-testid="file-menu" class="fm-wrapper"><div class="context-menu-trigger">⋮</div></div>',
           },
-          EditableText: {
-            template: '<div data-testid="editable-text">{{ modelValue }}</div>',
-            props: ["modelValue"],
+          FileTitle: {
+            template: '<div data-testid="file-title">{{ file.title }}</div>',
+            props: ["file"],
           },
           TagRow: {
             template: '<div data-testid="tag-row"></div>',
           },
-          FilesItemDate: {
+          Date: {
             template: '<div data-testid="files-item-date"></div>',
           },
         },
@@ -160,23 +184,24 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
   it("should have correct CSS classes for hover states", () => {
     const wrapper = mount(FilesItem, {
       props: {
-        file: mockFile,
-        mode: "ContextMenu",
+        modelValue: mockFile.value,
+        mode: "list",
       },
       global: {
+        provide: mockProvides,
         stubs: {
           FileMenu: {
             template:
               '<div data-testid="file-menu" class="fm-wrapper"><div class="context-menu-trigger">⋮</div></div>',
           },
-          EditableText: {
-            template: '<div data-testid="editable-text">{{ modelValue }}</div>',
-            props: ["modelValue"],
+          FileTitle: {
+            template: '<div data-testid="file-title">{{ file.title }}</div>',
+            props: ["file"],
           },
           TagRow: {
             template: '<div data-testid="tag-row"></div>',
           },
-          FilesItemDate: {
+          Date: {
             template: '<div data-testid="files-item-date"></div>',
           },
         },

@@ -125,13 +125,13 @@ async def create_file(
     return {"id": result.id}
 
 
-@router.get("/{doc_id}")
-async def get_file(doc_id: int, db: AsyncSession = Depends(get_db)):
+@router.get("/{file_id}")
+async def get_file(file_id: int, db: AsyncSession = Depends(get_db)):
     """Retrieve a specific file by ID.
 
     Parameters
     ----------
-    doc_id : int
+    file_id : int
         The unique identifier of the file to retrieve.
     db : AsyncSession
         SQLAlchemy async database session dependency.
@@ -150,11 +150,11 @@ async def get_file(doc_id: int, db: AsyncSession = Depends(get_db)):
     -----
     Requires authentication. Returns file with extracted title.
     """
-    doc = await crud.get_file(doc_id, db)
+    doc = await crud.get_file(file_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
     return {
-        "id": doc_id,
+        "id": file_id,
         "title": doc.title,
         "abstract": doc.abstract,
         "last_edited_at": doc.last_edited_at,
@@ -163,9 +163,9 @@ async def get_file(doc_id: int, db: AsyncSession = Depends(get_db)):
     }
 
 
-@router.put("/{doc_id}")
+@router.put("/{file_id}")
 async def update_file(
-    doc_id: int,
+    file_id: int,
     file_data: FileUpdate,
     db: AsyncSession = Depends(get_db),
 ):
@@ -173,7 +173,7 @@ async def update_file(
 
     Parameters
     ----------
-    doc_id : int
+    file_id : int
         The unique identifier of the file to update.
     file_data : FileUpdate
         Updated file data including title, abstract, and source.
@@ -194,19 +194,19 @@ async def update_file(
     -----
     Requires authentication. Updates last_edited_at timestamp.
     """
-    doc = await crud.update_file(doc_id, file_data.title, file_data.source, db)
+    doc = await crud.update_file(file_id, file_data.title, file_data.source, db)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
     return doc
 
 
-@router.delete("/{doc_id}")
-async def soft_delete_file(doc_id: int, db: AsyncSession = Depends(get_db)):
+@router.delete("/{file_id}")
+async def soft_delete_file(file_id: int, db: AsyncSession = Depends(get_db)):
     """Soft delete a file by setting deleted_at timestamp.
 
     Parameters
     ----------
-    doc_id : int
+    file_id : int
         The unique identifier of the file to delete.
     db : AsyncSession
         SQLAlchemy async database session dependency.
@@ -225,19 +225,19 @@ async def soft_delete_file(doc_id: int, db: AsyncSession = Depends(get_db)):
     -----
     Requires authentication. Preserves data integrity by using soft delete.
     """
-    doc = await crud.soft_delete_file(doc_id, db)
+    doc = await crud.soft_delete_file(file_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
-    return {"message": f"File {doc_id} soft deleted"}
+    return {"message": f"File {file_id} soft deleted"}
 
 
-@router.post("/{doc_id}/duplicate")
-async def duplicate_file(doc_id: int, db: AsyncSession = Depends(get_db)):
+@router.post("/{file_id}/duplicate")
+async def duplicate_file(file_id: int, db: AsyncSession = Depends(get_db)):
     """Create a duplicate copy of an existing file.
 
     Parameters
     ----------
-    doc_id : int
+    file_id : int
         The unique identifier of the file to duplicate.
     db : AsyncSession
         SQLAlchemy async database session dependency.
@@ -257,17 +257,17 @@ async def duplicate_file(doc_id: int, db: AsyncSession = Depends(get_db)):
     Requires authentication. Copies all content and associated tags.
     New file title includes '(copy)' suffix.
     """
-    new_doc = await crud.duplicate_file(doc_id, db)
+    new_doc = await crud.duplicate_file(file_id, db)
     return {"id": new_doc.id, "message": "File duplicated successfully"}
 
 
-@router.get("/{doc_id}/content", response_class=HTMLResponse)
-async def get_file_html(doc_id: int, db: AsyncSession = Depends(get_db)):
+@router.get("/{file_id}/content", response_class=HTMLResponse)
+async def get_file_html(file_id: int, db: AsyncSession = Depends(get_db)):
     """Retrieve rendered HTML content for a file.
 
     Parameters
     ----------
-    doc_id : int
+    file_id : int
         The unique identifier of the file to render.
     db : AsyncSession
         SQLAlchemy async database session dependency.
@@ -286,15 +286,15 @@ async def get_file_html(doc_id: int, db: AsyncSession = Depends(get_db)):
     -----
     Requires authentication. Converts RSM source to HTML using rsm.render().
     """
-    doc = await crud.get_file_html(doc_id, db)
+    doc = await crud.get_file_html(file_id, db)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
     return doc
 
 
-@router.get("/{doc_id}/content/{section_name}", response_class=HTMLResponse)
+@router.get("/{file_id}/content/{section_name}", response_class=HTMLResponse)
 async def get_file_section(
-    doc_id: int,
+    file_id: int,
     section_name: str,
     handrails: bool = True,
     db: AsyncSession = Depends(get_db),
@@ -303,7 +303,7 @@ async def get_file_section(
 
     Parameters
     ----------
-    doc_id : int
+    file_id : int
         The unique identifier of the file.
     section_name : str
         Name of the section to extract (e.g., 'minimap', 'abstract').
@@ -327,7 +327,7 @@ async def get_file_section(
     Requires authentication. Extracts specific sections from RSM content.
     """
     try:
-        html = await crud.get_file_section(doc_id, section_name, db, handrails)
+        html = await crud.get_file_section(file_id, section_name, db, handrails)
     except ValueError:
         raise HTTPException(status_code=404, detail=f"Section {section_name} not found")
     return HTMLResponse(content=html)
