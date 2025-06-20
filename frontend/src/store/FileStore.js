@@ -16,6 +16,7 @@ export function createFileStore(api, user) {
   const syncInProgress = ref(false);
 
   // Forward declare store for circular reference
+  // eslint-disable-next-line prefer-const
   let store;
 
   /**

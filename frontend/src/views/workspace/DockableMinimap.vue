@@ -23,6 +23,7 @@
       const height = sizes.inner.height;
       return height ? `${height}px` : "100%";
     }
+    return "100%";
   });
 
   const mobileMode = inject("mobileMode");

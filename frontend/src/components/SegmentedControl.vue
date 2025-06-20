@@ -24,6 +24,7 @@
         return props.icons.length;
       }
     }
+    return 0;
   });
 
   const buttonRefs = ref([]);

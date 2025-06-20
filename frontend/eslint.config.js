@@ -85,7 +85,65 @@ export default [
       "vue/script-indent": "off",
       "vue/html-indent": "off",
       "vue/multi-word-component-names": "off",
-      "vue/no-unused-vars": "error",
+      "vue/no-reserved-component-names": "warn",
+      "vue/no-unused-vars": ["error", { ignorePattern: "^props$|^emit$" }],
+      "no-unused-vars": "off",
+    },
+  },
+
+  // Test files - specific overrides for test files
+  {
+    files: ["**/*.test.js", "**/*.spec.js", "src/tests/**/*"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        // Test globals
+        beforeAll: "readonly",
+        afterAll: "readonly",
+        afterEach: "readonly",
+        beforeEach: "readonly",
+        describe: "readonly",
+        it: "readonly",
+        expect: "readonly",
+        vi: "readonly",
+        test: "readonly",
+      },
+      parser: babelParser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: "module",
+        requireConfigFile: false,
+        babelOptions: {
+          plugins: ["@babel/plugin-syntax-import-assertions"],
+        },
+      },
+    },
+    plugins: {
+      prettier: prettierPlugin,
+    },
+    rules: {
+      ...baseRules,
+      // Disable component naming rules for test stubs
+      "vue/multi-word-component-names": "off",
+      "vue/no-reserved-component-names": "off",
+      // Allow single-word component names in tests
+      "vue/require-prop-types": "warn", // Downgrade to warning for tests
+      "prefer-const": [
+        "error",
+        {
+          destructuring: "any",
+          ignoreReadBeforeAssign: true,
+        },
+      ],
+      "no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+        },
+      ],
     },
   },
 

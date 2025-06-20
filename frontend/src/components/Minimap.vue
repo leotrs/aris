@@ -58,6 +58,7 @@
       () => [props.file.id, props.file.isMountedAt, watchedSize.value],
       (value, _, onInvalidate) => {
         let canceled = false;
+        // eslint-disable-next-line prefer-const
         let timer;
         onInvalidate(() => {
           canceled = true;

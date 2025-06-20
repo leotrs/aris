@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import ContextMenu from "@/components/ContextMenu.vue";
 import { useDesktopMenu } from "@/composables/useDesktopMenu.js";
@@ -70,28 +70,34 @@ describe("ContextMenu Modern API (Post-Migration)", () => {
     });
 
     it("should not accept deprecated props", () => {
-      // This test verifies that deprecated props are removed from the component
+      // This test verifies that deprecated props are completely removed from the component
       const consoleWarnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
       const wrapper = mount(ContextMenu, {
         props: {
           variant: "dots",
-          // These should not exist after migration:
-          icon: "Dots", // deprecated
-          btnComponent: "ButtonToggle", // deprecated
-          text: "Some text", // deprecated
-          iconClass: "custom-icon", // deprecated
+          // These legacy props should be completely ignored:
+          icon: "Dots", // deprecated - use variant="custom" with component-specific icon
+          btnComponent: "ButtonToggle", // deprecated - use variant="custom" with component prop
+          text: "Some text", // deprecated - use variant="custom" with component-specific text
+          iconClass: "custom-icon", // deprecated - styling should be handled by component
+          buttonSize: "lg", // deprecated - use size prop instead
+          kind: "primary", // deprecated - use component-specific styling
+          shadow: true, // deprecated - styling handled by component
         },
         global: { stubs: commonStubs },
       });
 
-      // Should not have deprecated prop accessors
+      // Legacy props should not be accessible via component props interface
       expect(wrapper.props("icon")).toBeUndefined();
       expect(wrapper.props("btnComponent")).toBeUndefined();
       expect(wrapper.props("text")).toBeUndefined();
       expect(wrapper.props("iconClass")).toBeUndefined();
+      expect(wrapper.props("buttonSize")).toBeUndefined();
+      expect(wrapper.props("kind")).toBeUndefined();
+      expect(wrapper.props("shadow")).toBeUndefined();
 
-      // Should not show deprecation warnings since props are removed
+      // Should not show deprecation warnings since props are removed entirely
       expect(consoleWarnSpy).not.toHaveBeenCalled();
 
       consoleWarnSpy.mockRestore();
@@ -216,7 +222,6 @@ describe("ContextMenu Modern API (Post-Migration)", () => {
 
   describe("Modern Positioning API", () => {
     it("should use clean positioning composable interface", () => {
-
       mount(ContextMenu, {
         props: {
           variant: "close",
@@ -238,7 +243,6 @@ describe("ContextMenu Modern API (Post-Migration)", () => {
     });
 
     it("should handle floating options cleanly", () => {
-
       const floatingOptions = {
         middleware: ["offset", "flip"],
         strategy: "absolute",

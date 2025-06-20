@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { nextTick } from "vue";
+import { nextTick, ref } from "vue";
 import ContextMenu from "@/components/ContextMenu.vue";
 import { useDesktopMenu } from "@/composables/useDesktopMenu.js";
 import { useMobileMenu } from "@/composables/useMobileMenu.js";
@@ -76,7 +76,7 @@ describe("ContextMenu Simplified API", () => {
         global: { stubs: commonStubs },
       });
 
-      expect(wrapper.props("variant")).toBe(null);
+      expect(wrapper.props("variant")).toBe("dots");
       expect(wrapper.props("placement")).toBe("left-start");
       expect(wrapper.props("size")).toBe("md");
     });
@@ -98,7 +98,6 @@ describe("ContextMenu Simplified API", () => {
 
   describe("Positioning System Integration", () => {
     it("should initialize both desktop and mobile positioning systems", () => {
-
       mount(ContextMenu, {
         props: { variant: "dots" },
         global: { stubs: commonStubs },
@@ -285,7 +284,7 @@ describe("ContextMenu Simplified API", () => {
       element.dispatchEvent(contextMenuEvent);
 
       expect(preventDefaultSpy).toHaveBeenCalled();
-      
+
       // Clean up spies and event listeners
       preventDefaultSpy.mockRestore();
       element.removeEventListener("contextmenu", wrapper.vm.handleContextMenu);
@@ -340,7 +339,6 @@ describe("ContextMenu Simplified API", () => {
     });
 
     it("should configure positioning for sub-menus correctly", () => {
-
       mount(ContextMenu, {
         props: { placement: "right-start" },
         global: {

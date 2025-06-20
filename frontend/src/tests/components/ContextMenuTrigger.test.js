@@ -149,7 +149,7 @@ describe("ContextMenuTrigger.vue", () => {
     it("should handle touch events on mobile", async () => {
       const wrapper = mountComponent();
 
-      const trigger = wrapper.find("div").element;
+      // const trigger = wrapper.find("div").element;
       await wrapper.find("div").trigger("touchstart");
       await wrapper.find("div").trigger("touchend");
 

@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ref, nextTick } from "vue";
+import { ref } from "vue";
 import { mount } from "@vue/test-utils";
 
 describe("ContextMenu.vue - Sub-menu Tests", () => {
@@ -49,9 +49,9 @@ describe("ContextMenu.vue - Sub-menu Tests", () => {
           provide: { isSubMenu: false },
           stubs: {
             ContextMenuTrigger: {
-              template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle']
+              template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
             Teleport: true,
           },
@@ -69,9 +69,9 @@ describe("ContextMenu.vue - Sub-menu Tests", () => {
         global: {
           stubs: {
             ContextMenuTrigger: {
-              template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle']
+              template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
             Teleport: true,
           },
@@ -88,15 +88,15 @@ describe("ContextMenu.vue - Sub-menu Tests", () => {
       const wrapper = mount(ContextMenu, {
         props: { placement: "right-start" },
         global: {
-          provide: { 
+          provide: {
             isSubMenu: true,
-            parentMenu: { placement: "left-start" }
+            parentMenu: { placement: "left-start" },
           },
           stubs: {
             ContextMenuTrigger: {
-              template: '<button @click="$emit(\'toggle\')">Trigger</button>',
-              props: ['variant', 'size', 'isOpen'],
-              emits: ['toggle']
+              template: "<button @click=\"$emit('toggle')\">Trigger</button>",
+              props: ["variant", "size", "isOpen"],
+              emits: ["toggle"],
             },
             Teleport: true,
           },
