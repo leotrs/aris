@@ -25,7 +25,7 @@
   };
   const activate = (objToActivate) => {
     for (var i = 0; i < icons.length; i++) {
-      if (icons[i].icon == objToActivate.icon) {
+      if (icons[i].icon === objToActivate.icon) {
         icons[i].active = true;
         break;
       } else {
@@ -59,8 +59,9 @@
   <div ref="self-ref" class="feedback" :style="{ visibility }">
     <ContextMenu
       ref="menu-ref"
+      variant="custom"
+      component="ButtonToggle"
       :icon="activeObj?.icon || 'MoodPlus'"
-      :icon-class="activeObj?.class || ''"
       placement="left-start"
     >
       <ContextMenuItem

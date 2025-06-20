@@ -75,14 +75,13 @@
     <div v-if="!mobileMode || (mobileMode && fab)" class="cta" :class="{ fab: mobileMode }">
       <ContextMenu
         ref="menu-ref"
+        variant="custom"
+        component="Button"
         icon="CirclePlus"
         :text="mobileMode ? '' : 'New File'"
-        :shadow="true"
         :placement="mobileMode ? 'top-end' : 'bottom'"
-        btn-component="Button"
         :kind="mobileMode ? 'primary' : 'secondary'"
         :class="{ collapsed }"
-        @click="onCTAClick"
       >
         <ContextMenuItem icon="File" caption="Empty file" @click="emit('newEmptyFile')" />
         <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />

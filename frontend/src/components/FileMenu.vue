@@ -11,10 +11,10 @@
     emit_(event);
   };
 
-  const comp = computed(() => (props.mode == "ContextMenu" ? "ContextMenuItem" : "Button"));
+  const comp = computed(() => (props.mode === "ContextMenu" ? "ContextMenuItem" : "Button"));
   const childProps = (icon, caption) => {
-    if (props.mode == "ContextMenu") return { icon: icon, caption: caption };
-    else if (props.mode == "ButtonRow")
+    if (props.mode === "ContextMenu") return { icon: icon, caption: caption };
+    else if (props.mode === "ButtonRow")
       return { icon: icon, caption: caption, kind: "tertiary", size: "sm", textFloat: "bottom" };
   };
 
@@ -24,8 +24,15 @@
 
 <template>
   <div class="fm-wrapper" :class="mode">
-    <component :is="mode" ref="menu-ref" :icon="icon" button-size="btn-md">
-      <template v-if="mode == 'ContextMenu'">
+    <component
+      :is="mode"
+      ref="menu-ref"
+      variant="custom"
+      component="ButtonToggle"
+      :icon="icon"
+      size="md"
+    >
+      <template v-if="mode === 'ContextMenu'">
         <!-- <component :is="comp" v-bind="childProps('Bolt', 'Activity')" /> -->
         <!-- <component :is="comp" v-bind="childProps('Clock', 'History')" /> -->
       </template>

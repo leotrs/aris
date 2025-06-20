@@ -1,5 +1,7 @@
 <script setup></script>
 
-<template></template>
+<template>
+  <div><!-- Placeholder for citation preview --></div>
+</template>
 
 <style scoped></style>

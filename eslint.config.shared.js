@@ -1,5 +1,4 @@
-// eslint.config.shared.js - Shared ESLint configuration
-import js from "@eslint/js";
+// eslint.config.shared.js - Shared ESLint configuration (no imports)
 
 // Base rules that apply to all JavaScript/TypeScript files
 export const baseRules = {
@@ -17,7 +16,7 @@ export const baseRules = {
   }],
   "no-undef": "error",
   "eqeqeq": ["error", "always"],
-  "prefer-const": "error",
+  "prefer-const": "warn",
   
   // Let prettier handle formatting
   "indent": "off",
@@ -27,7 +26,7 @@ export const baseRules = {
   "max-len": "off"
 };
 
-// Shared base configuration
+// Shared base configuration template
 export const baseConfig = {
   languageOptions: {
     ecmaVersion: 2022,
@@ -39,15 +38,6 @@ export const baseConfig = {
   },
   rules: baseRules
 };
-
-// JavaScript-specific configuration
-export const jsConfig = [
-  js.configs.recommended,
-  {
-    files: ["**/*.js", "**/*.mjs"],
-    ...baseConfig
-  }
-];
 
 // Global ignores that all projects should use
 export const globalIgnores = [

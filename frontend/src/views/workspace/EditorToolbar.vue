@@ -20,7 +20,7 @@
         <Button kind="tertiary" size="sm" icon="LayoutGrid" />
       </template>
       <HSeparator />
-      <ContextMenu icon="" text="Insert" placement="bottom-start">
+      <ContextMenu variant="custom" component="ButtonToggle" text="Insert" placement="bottom-start">
         <template v-if="mini">
           <ContextMenuItem caption="Block Tag" icon="LayoutRows" />
           <ContextMenuItem caption="Inline Tag" icon="LayoutGrid" />
@@ -37,7 +37,13 @@
         <ContextMenuItem caption="Citation" icon="Quote" />
         <ContextMenuItem caption="URL" icon="Link" />
       </ContextMenu>
-      <ContextMenu v-if="!mini" icon="" text="Sections" placement="bottom-start">
+      <ContextMenu
+        v-if="!mini"
+        variant="custom"
+        component="ButtonToggle"
+        text="Sections"
+        placement="bottom-start"
+      >
         <ContextMenuItem caption="Author" icon="UserEdit" />
         <ContextMenuItem caption="Abstract" icon="FileDescription" />
         <ContextMenuItem caption="Table of Contents" icon="ListDetails" />
@@ -47,11 +53,17 @@
         <ContextMenuItem caption="Bibliography" icon="Books" />
         <ContextMenuItem caption="Bibliography Item" icon="Book2" />
       </ContextMenu>
-      <ContextMenu icon="" text="Math" placement="bottom-start">
+      <ContextMenu variant="custom" component="ButtonToggle" text="Math" placement="bottom-start">
         <ContextMenuItem caption="Math Block" icon="LayoutRows" />
         <ContextMenuItem caption="Math Inline" icon="LayoutGrid" />
         <Separator />
-        <ContextMenu icon="Therefore" text="Theorems" placement="right-start">
+        <ContextMenu
+          variant="custom"
+          component="ButtonToggle"
+          icon="Therefore"
+          text="Theorems"
+          placement="right-start"
+        >
           <ContextMenuItem caption="Proof" icon="" />
           <ContextMenuItem caption="Proof Step" icon="" />
           <ContextMenuItem caption="Subproof" icon="" />
@@ -63,7 +75,14 @@
           <ContextMenuItem caption="Problem" icon="" />
           <ContextMenuItem caption="Exercise" icon="" />
         </ContextMenu>
-        <ContextMenu icon="Sum" text="Constructs" class="constructs" placement="right-start">
+        <ContextMenu
+          variant="custom"
+          component="ButtonToggle"
+          icon="Sum"
+          text="Constructs"
+          class="constructs"
+          placement="right-start"
+        >
           <ContextMenuItem caption="Assumption" icon="" />
           <ContextMenuItem caption="Case" icon="" />
           <ContextMenuItem caption="Claim" icon="" />

@@ -26,20 +26,20 @@
 
   const handleColumnSortEvent = (columnName, mode) => {
     const sortKey = columnInfo[columnName]["sortKey"];
-    if (mode == "asc") {
+    if (mode === "asc") {
       fileStore.value.sortFiles((a, b) => a[sortKey].localeCompare(b[sortKey]));
-    } else if (mode == "desc") {
+    } else if (mode === "desc") {
       fileStore.value.sortFiles((a, b) => b[sortKey].localeCompare(a[sortKey]));
     }
-    for (let name in columnState) {
-      if (name == columnName) continue;
+    for (const name in columnState) {
+      if (name === columnName) continue;
       if (columnInfo[name]["sortable"]) {
         columnState[name] = "";
       }
     }
   };
   const handleColumnFilterEvent = (columnName, tags) => {
-    if (tags.length == 0) {
+    if (tags.length === 0) {
       fileStore.value.clearFilters();
     } else {
       fileStore.value.filterFiles((file) => {
@@ -53,9 +53,9 @@
 
 <template>
   <Header :class="mode">
-    <template v-for="name in Object.keys(columnInfo)">
+    <template v-for="name in Object.keys(columnInfo)" :key="name">
       <template v-if="shouldShowColumn(name, mode)">
-        <div v-if="name == 'Spacer'" class="spacer"></div>
+        <div v-if="name === 'Spacer'" class="spacer"></div>
         <HeaderLabel
           v-else
           v-model="columnState[name]"
@@ -68,7 +68,7 @@
       </template>
     </template>
     <!-- to complete the grid -->
-    <span v-if="mode == 'list'" class="spacer spacer-1"></span>
+    <span v-if="mode === 'list'" class="spacer spacer-1"></span>
   </Header>
 </template>
 

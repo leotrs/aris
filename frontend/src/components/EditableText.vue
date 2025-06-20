@@ -41,7 +41,7 @@
   };
   const saveChanges = async () => {
     if (!isEditing.value) return;
-    if (text.value == inputValue.value) {
+    if (text.value === inputValue.value) {
       isEditing.value = false;
       return;
     }
@@ -57,6 +57,17 @@
     },
     false
   );
+
+  // Handle keydown events in input field
+  const handleKeydown = (event) => {
+    // Only prevent space bar from bubbling up to parent button
+    console.log("handleKeyDown");
+    // Allow ESC, ENTER, and other keys to work normally
+    if (event.key === " ") {
+      console.log("stopping");
+      event.stopPropagation();
+    }
+  };
 
   // Watch for input changes and adjust width dynamically
   watch(inputValue, () => {
@@ -103,6 +114,7 @@
       @blur="saveChanges"
       @click.stop
       @dblclick.stop
+      @keydown="handleKeydown"
     />
   </span>
 </template>

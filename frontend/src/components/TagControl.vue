@@ -43,7 +43,7 @@
       @click.stop="state = !state"
       @rename="renameTag"
     />
-    <ContextMenu placement="right-start">
+    <ContextMenu variant="dots" placement="right-start">
       <ColorPicker :colors="colors" @change="setColor" />
       <ContextMenuItem
         icon="Edit"

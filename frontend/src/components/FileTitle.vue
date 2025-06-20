@@ -13,7 +13,7 @@
   );
 
   const saveTitle = () => {
-    if (currentTitle.value == props.file.title) return;
+    if (currentTitle.value === props.file.title) return;
     File.update(props.file, { title: currentTitle.value });
   };
 

@@ -1,4 +1,4 @@
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted } from "vue";
 
 /**
  * Composable for managing dynamic scroll shadows on horizontally scrollable elements
@@ -21,7 +21,7 @@ export function useScrollShadows() {
     showLeftShadow.value = scrollLeft > 0;
 
     // Show right shadow when there's more content to scroll right
-    showRightShadow.value = scrollLeft < (scrollWidth - clientWidth);
+    showRightShadow.value = scrollLeft < scrollWidth - clientWidth;
   };
 
   const setupScrollShadows = () => {
@@ -31,10 +31,10 @@ export function useScrollShadows() {
     updateShadows();
 
     // Listen for scroll events
-    scrollElementRef.value.addEventListener('scroll', updateShadows);
+    scrollElementRef.value.addEventListener("scroll", updateShadows);
 
     // Listen for resize events to handle dynamic content changes
-    window.addEventListener('resize', updateShadows);
+    window.addEventListener("resize", updateShadows);
 
     // Use ResizeObserver to detect element size changes
     if (window.ResizeObserver) {
@@ -45,10 +45,10 @@ export function useScrollShadows() {
 
   const cleanupScrollShadows = () => {
     if (scrollElementRef.value) {
-      scrollElementRef.value.removeEventListener('scroll', updateShadows);
+      scrollElementRef.value.removeEventListener("scroll", updateShadows);
     }
 
-    window.removeEventListener('resize', updateShadows);
+    window.removeEventListener("resize", updateShadows);
 
     if (resizeObserver) {
       resizeObserver.disconnect();
@@ -70,6 +70,6 @@ export function useScrollShadows() {
     showRightShadow,
     updateShadows,
     setupScrollShadows,
-    cleanupScrollShadows
+    cleanupScrollShadows,
   };
 }

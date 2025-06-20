@@ -67,7 +67,7 @@ class TestUserEndpoints:
         """Test getting non-existent user."""
         response = await client.get(f"/users/{TestConstants.NONEXISTENT_ID}", headers=auth_headers)
         assert response.status_code == 404
-        assert response.json()["detail"] == "User not found"
+        assert response.json()["detail"] == f"User with id {TestConstants.NONEXISTENT_ID} not found"
 
     async def test_update_user_success(self, client: AsyncClient, authenticated_user, auth_headers):
         """Test updating user details."""
@@ -96,7 +96,7 @@ class TestUserEndpoints:
             f"/users/{TestConstants.NONEXISTENT_ID}", headers=auth_headers, json=update_data
         )
         assert response.status_code == 404
-        assert response.json()["detail"] == "User not found"
+        assert response.json()["detail"] == f"User with id {TestConstants.NONEXISTENT_ID} not found"
 
     async def test_update_user_without_auth(self, client: AsyncClient):
         """Test updating user without authentication."""
@@ -122,7 +122,7 @@ class TestUserEndpoints:
             f"/users/{TestConstants.NONEXISTENT_ID}", headers=auth_headers
         )
         assert response.status_code == 404
-        assert response.json()["detail"] == "User not found"
+        assert response.json()["detail"] == f"User with id {TestConstants.NONEXISTENT_ID} not found"
 
     async def test_soft_delete_user_without_auth(self, client: AsyncClient):
         """Test soft deleting user without authentication."""
@@ -164,7 +164,7 @@ class TestUserFiles:
             f"/users/{TestConstants.NONEXISTENT_ID}/files", headers=auth_headers
         )
         assert response.status_code == 404
-        assert response.json()["detail"] == f"User {TestConstants.NONEXISTENT_ID} not found"
+        assert response.json()["detail"] == f"User with id {TestConstants.NONEXISTENT_ID} not found"
 
     async def test_get_user_file_success(
         self, client: AsyncClient, authenticated_user, auth_headers
@@ -202,7 +202,7 @@ class TestUserFiles:
             f"/users/{TestConstants.NONEXISTENT_ID}/files/1", headers=auth_headers
         )
         assert response.status_code == 404
-        assert response.json()["detail"] == f"User {TestConstants.NONEXISTENT_ID} not found"
+        assert response.json()["detail"] == f"User with id {TestConstants.NONEXISTENT_ID} not found"
 
     async def test_get_user_file_file_not_found(
         self, client: AsyncClient, authenticated_user, auth_headers
@@ -213,7 +213,7 @@ class TestUserFiles:
             headers=auth_headers,
         )
         assert response.status_code == 404
-        assert response.json()["detail"] == f"File {TestConstants.NONEXISTENT_ID} not found"
+        assert response.json()["detail"] == f"File with id {TestConstants.NONEXISTENT_ID} not found"
 
 
 class TestProfilePicture:

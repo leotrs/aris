@@ -1,27 +1,27 @@
 // src/tests/unit/useScrollShadows.test.js
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { nextTick } from 'vue';
-import { mount } from '@vue/test-utils';
-import { useScrollShadows } from '@/composables/useScrollShadows.js';
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
+import { nextTick } from "vue";
+import { mount } from "@vue/test-utils";
+import { useScrollShadows } from "@/composables/useScrollShadows.js";
 
 // Mock Vue lifecycle hooks for direct composable testing
-vi.mock('vue', async () => {
-  const actual = await vi.importActual('vue');
+vi.mock("vue", async () => {
+  const actual = await vi.importActual("vue");
   return {
     ...actual,
     onMounted: vi.fn((callback) => {
       // In tests, we can choose to call the callback immediately or not at all
       // For most cases, we'll call it immediately to simulate mounted state
-      if (typeof callback === 'function') {
+      if (typeof callback === "function") {
         callback();
       }
     }),
     onUnmounted: vi.fn((callback) => {
       // Store cleanup function for manual cleanup in tests
-      if (typeof callback === 'function') {
+      if (typeof callback === "function") {
         // We don't call this automatically - tests can call it manually if needed
       }
-    })
+    }),
   };
 });
 
@@ -64,10 +64,10 @@ const TestComponent = {
   setup() {
     const composableResult = useScrollShadows();
     return { ...composableResult };
-  }
+  },
 };
 
-describe('useScrollShadows', () => {
+describe("useScrollShadows", () => {
   let mockResizeObserver;
   let originalResizeObserver;
 
@@ -78,7 +78,7 @@ describe('useScrollShadows', () => {
     // Mock ResizeObserver
     mockResizeObserver = MockResizeObserver;
     global.ResizeObserver = mockResizeObserver;
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       window.ResizeObserver = mockResizeObserver;
     }
   });
@@ -87,30 +87,30 @@ describe('useScrollShadows', () => {
     vi.restoreAllMocks();
     // Restore original ResizeObserver
     global.ResizeObserver = originalResizeObserver;
-    if (typeof window !== 'undefined') {
+    if (typeof window !== "undefined") {
       window.ResizeObserver = originalResizeObserver;
     }
   });
 
-  describe('Initialization', () => {
-    it('returns expected reactive refs and methods', () => {
+  describe("Initialization", () => {
+    it("returns expected reactive refs and methods", () => {
       // Create a temporary component to test the composable in proper Vue context
       const TestWrapper = {
         setup() {
           return useScrollShadows();
         },
-        template: '<div></div>'
+        template: "<div></div>",
       };
 
       const wrapper = mount(TestWrapper);
       const result = wrapper.vm;
 
-      expect(result).toHaveProperty('scrollElementRef');
-      expect(result).toHaveProperty('showLeftShadow');
-      expect(result).toHaveProperty('showRightShadow');
-      expect(result).toHaveProperty('updateShadows');
-      expect(result).toHaveProperty('setupScrollShadows');
-      expect(result).toHaveProperty('cleanupScrollShadows');
+      expect(result).toHaveProperty("scrollElementRef");
+      expect(result).toHaveProperty("showLeftShadow");
+      expect(result).toHaveProperty("showRightShadow");
+      expect(result).toHaveProperty("updateShadows");
+      expect(result).toHaveProperty("setupScrollShadows");
+      expect(result).toHaveProperty("cleanupScrollShadows");
 
       expect(result.showLeftShadow).toBe(false);
       expect(result.showRightShadow).toBe(false);
@@ -120,7 +120,7 @@ describe('useScrollShadows', () => {
     });
   });
 
-  describe('Shadow Logic', () => {
+  describe("Shadow Logic", () => {
     let wrapper;
     let scrollElement;
 
@@ -134,18 +134,18 @@ describe('useScrollShadows', () => {
         scrollLeft: {
           value: 0,
           writable: true,
-          configurable: true
+          configurable: true,
         },
         scrollWidth: {
           value: 400,
           writable: true,
-          configurable: true
+          configurable: true,
         },
         clientWidth: {
           value: 200,
           writable: true,
-          configurable: true
-        }
+          configurable: true,
+        },
       });
 
       // Ensure scrollElementRef is connected to the actual element
@@ -156,7 +156,7 @@ describe('useScrollShadows', () => {
       if (wrapper) wrapper.unmount();
     });
 
-    it('correct shadows shown when at start position', async () => {
+    it("correct shadows shown when at start position", async () => {
       scrollElement.scrollLeft = 0;
       wrapper.vm.updateShadows();
       await nextTick();
@@ -165,7 +165,7 @@ describe('useScrollShadows', () => {
       expect(wrapper.vm.showRightShadow).toBe(true);
     });
 
-    it('shows left shadow when scrolled right', async () => {
+    it("shows left shadow when scrolled right", async () => {
       scrollElement.scrollLeft = 50;
       wrapper.vm.updateShadows();
       await nextTick();
@@ -174,7 +174,7 @@ describe('useScrollShadows', () => {
       expect(wrapper.vm.showRightShadow).toBe(true);
     });
 
-    it('shows only left shadow when scrolled to end', async () => {
+    it("shows only left shadow when scrolled to end", async () => {
       scrollElement.scrollLeft = 200; // scrollWidth (400) - clientWidth (200)
       wrapper.vm.updateShadows();
       await nextTick();
@@ -183,10 +183,10 @@ describe('useScrollShadows', () => {
       expect(wrapper.vm.showRightShadow).toBe(false);
     });
 
-    it('shows no shadows when content fits entirely', async () => {
+    it("shows no shadows when content fits entirely", async () => {
       // Make content fit entirely
-      Object.defineProperty(scrollElement, 'scrollWidth', { value: 200, configurable: true });
-      Object.defineProperty(scrollElement, 'clientWidth', { value: 200, configurable: true });
+      Object.defineProperty(scrollElement, "scrollWidth", { value: 200, configurable: true });
+      Object.defineProperty(scrollElement, "clientWidth", { value: 200, configurable: true });
       scrollElement.scrollLeft = 0;
 
       wrapper.vm.updateShadows();
@@ -196,7 +196,7 @@ describe('useScrollShadows', () => {
       expect(wrapper.vm.showRightShadow).toBe(false);
     });
 
-    it('handles edge case where scrollLeft equals scrollable distance', async () => {
+    it("handles edge case where scrollLeft equals scrollable distance", async () => {
       scrollElement.scrollLeft = 199; // Just before the end
       wrapper.vm.updateShadows();
       await nextTick();
@@ -206,7 +206,7 @@ describe('useScrollShadows', () => {
     });
   });
 
-  describe('Event Handling', () => {
+  describe("Event Handling", () => {
     let wrapper;
     let scrollElement;
     let scrollEventSpy;
@@ -221,15 +221,15 @@ describe('useScrollShadows', () => {
       Object.defineProperties(scrollElement, {
         scrollLeft: { value: 0, writable: true, configurable: true },
         scrollWidth: { value: 400, writable: true, configurable: true },
-        clientWidth: { value: 200, writable: true, configurable: true }
+        clientWidth: { value: 200, writable: true, configurable: true },
       });
 
       // Ensure scrollElementRef is connected
       wrapper.vm.scrollElementRef = scrollElement;
 
       // Set up spies before calling setupScrollShadows
-      scrollEventSpy = vi.spyOn(scrollElement, 'addEventListener');
-      windowEventSpy = vi.spyOn(window, 'addEventListener');
+      scrollEventSpy = vi.spyOn(scrollElement, "addEventListener");
+      windowEventSpy = vi.spyOn(window, "addEventListener");
 
       // Initialize the composable
       wrapper.vm.setupScrollShadows();
@@ -240,15 +240,15 @@ describe('useScrollShadows', () => {
       if (wrapper) wrapper.unmount();
     });
 
-    it('adds scroll event listener to element', () => {
-      expect(scrollEventSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
+    it("adds scroll event listener to element", () => {
+      expect(scrollEventSpy).toHaveBeenCalledWith("scroll", expect.any(Function));
     });
 
-    it('adds resize event listener to window', () => {
-      expect(windowEventSpy).toHaveBeenCalledWith('resize', expect.any(Function));
+    it("adds resize event listener to window", () => {
+      expect(windowEventSpy).toHaveBeenCalledWith("resize", expect.any(Function));
     });
 
-    it('updates shadows on scroll event', async () => {
+    it("updates shadows on scroll event", async () => {
       // Force initial update
       wrapper.vm.updateShadows();
       await nextTick();
@@ -266,8 +266,8 @@ describe('useScrollShadows', () => {
       expect(wrapper.vm.showRightShadow).toBe(true);
     });
 
-    it('updates shadows on window resize', async () => {
-      const updateShadowsSpy = vi.spyOn(wrapper.vm, 'updateShadows');
+    it("updates shadows on window resize", async () => {
+      const updateShadowsSpy = vi.spyOn(wrapper.vm, "updateShadows");
 
       // Simulate window resize by calling updateShadows directly
       // (since the actual resize event handling is complex to test)
@@ -278,7 +278,7 @@ describe('useScrollShadows', () => {
     });
   });
 
-  describe('ResizeObserver Integration', () => {
+  describe("ResizeObserver Integration", () => {
     let wrapper;
     let mockObserver;
 
@@ -287,13 +287,13 @@ describe('useScrollShadows', () => {
       mockObserver = {
         observe: vi.fn(),
         disconnect: vi.fn(),
-        unobserve: vi.fn()
+        unobserve: vi.fn(),
       };
 
       // Mock the constructor to return our mock instance
       const MockConstructor = vi.fn(() => mockObserver);
       global.ResizeObserver = MockConstructor;
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         window.ResizeObserver = MockConstructor;
       }
 
@@ -313,7 +313,7 @@ describe('useScrollShadows', () => {
       if (wrapper) wrapper.unmount();
     });
 
-    it('creates and observes element with ResizeObserver', () => {
+    it("creates and observes element with ResizeObserver", () => {
       // Check if ResizeObserver was called
       expect(global.ResizeObserver).toHaveBeenCalledWith(expect.any(Function));
 
@@ -321,7 +321,7 @@ describe('useScrollShadows', () => {
       expect(mockObserver.observe).toHaveBeenCalledWith(expect.any(Element));
     });
 
-    it('disconnects ResizeObserver on cleanup', async () => {
+    it("disconnects ResizeObserver on cleanup", async () => {
       // Trigger cleanup
       wrapper.vm.cleanupScrollShadows();
       await nextTick();
@@ -330,7 +330,7 @@ describe('useScrollShadows', () => {
     });
   });
 
-  describe('Cleanup', () => {
+  describe("Cleanup", () => {
     let wrapper;
     let scrollElement;
     let removeScrollEventSpy;
@@ -345,8 +345,8 @@ describe('useScrollShadows', () => {
       wrapper.vm.scrollElementRef = scrollElement;
 
       // Set up spies
-      removeScrollEventSpy = vi.spyOn(scrollElement, 'removeEventListener');
-      removeWindowEventSpy = vi.spyOn(window, 'removeEventListener');
+      removeScrollEventSpy = vi.spyOn(scrollElement, "removeEventListener");
+      removeWindowEventSpy = vi.spyOn(window, "removeEventListener");
 
       // Setup the composable
       wrapper.vm.setupScrollShadows();
@@ -357,25 +357,25 @@ describe('useScrollShadows', () => {
       if (wrapper) wrapper.unmount();
     });
 
-    it('removes all event listeners on unmount', async () => {
+    it("removes all event listeners on unmount", async () => {
       wrapper.unmount();
       await nextTick();
 
-      expect(removeScrollEventSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
+      expect(removeScrollEventSpy).toHaveBeenCalledWith("scroll", expect.any(Function));
       // expect(removeWindowEventSpy).toHaveBeenCalledWith('resize', expect.any(Function));
     });
 
-    it('can be cleaned up manually', async () => {
+    it("can be cleaned up manually", async () => {
       wrapper.vm.cleanupScrollShadows();
       await nextTick();
 
-      expect(removeScrollEventSpy).toHaveBeenCalledWith('scroll', expect.any(Function));
-      expect(removeWindowEventSpy).toHaveBeenCalledWith('resize', expect.any(Function));
+      expect(removeScrollEventSpy).toHaveBeenCalledWith("scroll", expect.any(Function));
+      expect(removeWindowEventSpy).toHaveBeenCalledWith("resize", expect.any(Function));
     });
   });
 
-  describe('Edge Cases', () => {
-    it('handles missing element gracefully', () => {
+  describe("Edge Cases", () => {
+    it("handles missing element gracefully", () => {
       // Test within a component context to avoid lifecycle warnings
       const TestWrapper = {
         setup() {
@@ -385,18 +385,18 @@ describe('useScrollShadows', () => {
           expect(() => composable.setupScrollShadows()).not.toThrow();
           return composable;
         },
-        template: '<div></div>'
+        template: "<div></div>",
       };
 
       const wrapper = mount(TestWrapper);
       wrapper.unmount();
     });
 
-    it('handles ResizeObserver not being available', async () => {
+    it("handles ResizeObserver not being available", async () => {
       // Temporarily remove ResizeObserver
       const originalResizeObserver = global.ResizeObserver;
       delete global.ResizeObserver;
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         delete window.ResizeObserver;
       }
 
@@ -412,14 +412,14 @@ describe('useScrollShadows', () => {
 
       // Restore ResizeObserver
       global.ResizeObserver = originalResizeObserver;
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         window.ResizeObserver = originalResizeObserver;
       }
 
       wrapper.unmount();
     });
 
-    it('handles cleanup when element is already null', () => {
+    it("handles cleanup when element is already null", () => {
       // Test within a component context to avoid lifecycle warnings
       const TestWrapper = {
         setup() {
@@ -428,7 +428,7 @@ describe('useScrollShadows', () => {
           expect(() => composable.cleanupScrollShadows()).not.toThrow();
           return composable;
         },
-        template: '<div></div>'
+        template: "<div></div>",
       };
 
       const wrapper = mount(TestWrapper);
@@ -436,8 +436,8 @@ describe('useScrollShadows', () => {
     });
   });
 
-  describe('Manual Setup and Cleanup', () => {
-    it('allows manual setup after initial mount', async () => {
+  describe("Manual Setup and Cleanup", () => {
+    it("allows manual setup after initial mount", async () => {
       const wrapper = mount(TestComponent);
       await nextTick();
 
@@ -447,7 +447,7 @@ describe('useScrollShadows', () => {
       Object.defineProperties(scrollElement, {
         scrollLeft: { value: 0, writable: true, configurable: true },
         scrollWidth: { value: 400, writable: true, configurable: true },
-        clientWidth: { value: 200, writable: true, configurable: true }
+        clientWidth: { value: 200, writable: true, configurable: true },
       });
 
       // Ensure the ref is connected to the element

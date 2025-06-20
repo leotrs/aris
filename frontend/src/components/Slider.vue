@@ -23,9 +23,10 @@
       <span class="s-track"></span>
       <button
         v-for="idx in Array(numberStops).keys()"
+        :key="idx"
         type="button"
         class="s-stop"
-        :class="{ active: idx == active }"
+        :class="{ active: idx === active }"
         @click="active = idx"
         @keydown.enter.prevent="active = idx"
         @keydown.space.prevent="active = idx"

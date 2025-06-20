@@ -8,6 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
 from .. import crud, current_user, get_db
+from ..exceptions import bad_request_exception, not_found_exception
 from ..models import ProfilePicture, User
 
 
@@ -46,7 +47,7 @@ async def get_user(user_id: int, db: AsyncSession = Depends(get_db)):
     """
     user = await crud.get_user(user_id, db)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise not_found_exception("User", user_id)
     return user
 
 
@@ -89,7 +90,7 @@ async def update_user(
     """
     user = await crud.update_user(user_id, update.name, update.initials, update.email, db)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise not_found_exception("User", user_id)
     return user
 
 
@@ -121,7 +122,7 @@ async def soft_delete_user(user_id: int, db: AsyncSession = Depends(get_db)):
     """
     user = await crud.soft_delete_user(user_id, db)
     if not user:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise not_found_exception("User", user_id)
     return {"message": f"User {user_id} soft deleted"}
 
 
@@ -158,8 +159,8 @@ async def get_user_files(
     """
     try:
         return await crud.get_user_files(user_id, with_tags, db)
-    except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError:
+        raise not_found_exception("User", user_id)
 
 
 @router.get("/{user_id}/files/{file_id}")
@@ -202,7 +203,13 @@ async def get_user_file(
     try:
         return await crud.get_user_file(user_id, file_id, with_tags, with_minimap, db)
     except ValueError as e:
-        raise HTTPException(status_code=404, detail=str(e))
+        # The ValueError from CRUD contains specific information about what wasn't found
+        if "User" in str(e):
+            raise not_found_exception("User", user_id)
+        elif "File" in str(e):
+            raise not_found_exception("File", file_id)
+        else:
+            raise bad_request_exception(str(e))
 
 
 # Maximum file size (5MB)
