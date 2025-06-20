@@ -1,8 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { defineComponent, h } from "vue";
 import { mount } from "@vue/test-utils";
-import Tabs from "@/components/Tabs.vue";
-import TabPage from "@/components/TabPage.vue";
+import Tabs from "@/components/navigation/Tabs.vue";
+import TabPage from "@/components/navigation/TabPage.vue";
 
 describe.skip("Tabs.vue", () => {
   const TabStub = defineComponent({

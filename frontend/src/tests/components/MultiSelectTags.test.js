@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { defineComponent, h, ref, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
-import MultiSelectTags from "@/components/MultiSelectTags.vue";
+import MultiSelectTags from "@/components/tags/MultiSelectTags.vue";
 
 describe("MultiSelectTags.vue", () => {
   let fileStore;

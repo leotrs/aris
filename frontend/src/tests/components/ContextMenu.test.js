@@ -58,7 +58,7 @@ describe("ContextMenu.vue", () => {
   });
 
   it("renders default Dots button and shows slot content", async () => {
-    const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+    const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
     const wrapper = mount(ContextMenu, {
       slots: {
         default: '<div class="menu-item">Test Item</div>',
@@ -93,7 +93,7 @@ describe("ContextMenu.vue", () => {
 
   describe("Debounced positioning", () => {
     it("debounces position updates when props change rapidly", async () => {
-      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+      const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         props: { placement: "left-start" },
         global: {

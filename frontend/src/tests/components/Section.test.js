@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 
-import Section from "@/components/Section.vue";
+import Section from "@/components/layout/Section.vue";
 
 describe("Section.vue", () => {
   it("renders content slot inside .content", () => {

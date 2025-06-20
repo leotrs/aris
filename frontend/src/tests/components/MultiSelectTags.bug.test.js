@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import MultiSelectTags from "@/components/MultiSelectTags.vue";
+import MultiSelectTags from "@/components/tags/MultiSelectTags.vue";
 
 describe("MultiSelectTags.vue - Bug: Tag Icon Issue", () => {
   it("should render Tag icon instead of three dots in ContextMenu", () => {

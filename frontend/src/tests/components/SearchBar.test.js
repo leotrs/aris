@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from "vitest";
 import { mount, shallowMount } from "@vue/test-utils";
 import { defineComponent } from "vue";
 
-import SearchBar from "@/components/SearchBar.vue";
+import SearchBar from "@/components/utility/SearchBar.vue";
 
 // Stub child components
 const IconSearchStub = defineComponent({ name: "IconSearch", template: "<div />" });

@@ -28,7 +28,7 @@ vi.mock("@/utils/MinimapUtils.js", () => ({
   makeIcons: vi.fn().mockResolvedValue([]),
 }));
 import { makeMinimap, resizeMinimap, highlightScrollPos, makeIcons } from "@/utils/MinimapUtils.js";
-import Minimap from "@/components/Minimap.vue";
+import Minimap from "@/components/manuscript/Minimap.vue";
 
 // Helper to flush pending promise callbacks (microtasks)
 const flushPromises = () => Promise.resolve();

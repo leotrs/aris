@@ -14,7 +14,7 @@ describe("Icon.vue", () => {
     });
     vi.doMock("@tabler/icons-vue", () => ({ IconFoo: FooIcon }));
 
-    const { default: Icon } = await import("@/components/Icon.vue");
+    const { default: Icon } = await import("@/components/base/Icon.vue");
     const wrapper = mount(Icon, {
       props: { name: "Foo", iconClass: "custom-class" },
     });
@@ -30,9 +30,9 @@ describe("Icon.vue", () => {
       name: "IconTherefore",
       template: '<div data-test="icon-therefore"><slot/></div>',
     });
-    vi.doMock("@/components/IconTherefore.vue", () => ({ default: ThereforeIcon }));
+    vi.doMock("@/components/icons/IconTherefore.vue", () => ({ default: ThereforeIcon }));
 
-    const { default: Icon } = await import("@/components/Icon.vue");
+    const { default: Icon } = await import("@/components/base/Icon.vue");
     const wrapper = mount(Icon, {
       props: { name: "Therefore" },
     });

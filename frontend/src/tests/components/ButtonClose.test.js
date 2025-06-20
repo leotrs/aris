@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import ButtonClose from "@/components/ButtonClose.vue";
+import ButtonClose from "@/components/base/ButtonClose.vue";
 
 describe("ButtonClose.vue", () => {
   it("emits close event on click", async () => {

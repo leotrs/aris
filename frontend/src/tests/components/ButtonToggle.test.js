@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { nextTick } from "vue";
 import { mount } from "@vue/test-utils";
-import ButtonToggle from "@/components/ButtonToggle.vue";
+import ButtonToggle from "@/components/base/ButtonToggle.vue";
 
 describe("ButtonToggle.vue", () => {
   it("renders slot content and toggles active class and emits events on click", async () => {

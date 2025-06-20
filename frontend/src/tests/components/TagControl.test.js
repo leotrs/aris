@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { defineComponent, h, ref } from "vue";
 import { mount } from "@vue/test-utils";
-import TagControl from "@/components/TagControl.vue";
+import TagControl from "@/components/tags/TagControl.vue";
 
 describe("TagControl.vue", () => {
   const tag = { id: 1, name: "Tag1", color: "red" };

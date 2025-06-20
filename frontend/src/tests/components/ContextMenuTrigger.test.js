@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
-import ContextMenuTrigger from "@/components/ContextMenuTrigger.vue";
+import ContextMenuTrigger from "@/components/navigation/ContextMenuTrigger.vue";
 
 // Common test stubs
 const commonStubs = {

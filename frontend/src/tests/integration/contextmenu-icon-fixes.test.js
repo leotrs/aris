@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { mount } from "@vue/test-utils";
-import ContextMenu from "@/components/ContextMenu.vue";
+import ContextMenu from "@/components/navigation/ContextMenu.vue";
 
 describe("ContextMenu Icon Fixes - Integration Tests", () => {
   describe("Bug Fix 1: Tag Icon Should Use Custom Variant", () => {
