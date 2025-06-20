@@ -5,6 +5,7 @@ Implemented as a Pydantic model that is then read by FastAPI.
 """
 
 import os
+from pathlib import Path
 
 from pydantic import ConfigDict, Field
 from pydantic_settings import BaseSettings
@@ -51,4 +52,5 @@ class Settings(BaseSettings):
     model_config = ConfigDict(extra="forbid")
 
 
-settings = Settings(_env_file=(".env.ci" if os.getenv("ENV") == "CI" else ".env"))
+env_file = Path(__file__).parent.parent / (".env.ci" if os.getenv("ENV") == "CI" else ".env")
+settings = Settings(_env_file=str(env_file))
