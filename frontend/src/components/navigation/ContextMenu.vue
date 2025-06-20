@@ -50,7 +50,7 @@
    * </ContextMenu>
    */
 
-  import { ref, computed, watch, provide, inject, useTemplateRef, useSlots } from "vue";
+  import { ref, computed, watch, provide, inject, useTemplateRef, useSlots, nextTick } from "vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
   import { useDesktopMenu } from "@/composables/useDesktopMenu.js";

@@ -196,8 +196,23 @@
           :with-side-control="false"
           @click="router.push('/')"
         />
-
-        <SidebarItem icon="Share3" label="share" :with-side-control="false" />
+        <template v-for="(it, idx) in items" :key="it">
+          <Separator v-if="it.name === 'Separator'" />
+          <SidebarItem
+            v-else-if="it.type === 'toggle'"
+            v-model="items[idx].state"
+            :icon="it.icon"
+            :label="it.label"
+          />
+          <SidebarItem
+            v-else-if="it.type === 'drawer'"
+            :model-value="items[idx].state"
+            :icon="it.icon"
+            :label="it.label"
+            type="outline"
+            @click.stop="handleDrawerClick(idx)"
+          />
+        </template>
       </div>
     </div>
   </div>
@@ -296,7 +311,7 @@
 
   .sb-wrapper.mobile {
     padding: 0;
-    height: calc(64px);
+    height: 48px;
     width: 100%;
     top: unset;
     bottom: 0;
@@ -312,16 +327,16 @@
     max-width: 100%;
     width: 100%;
     opacity: 1;
+    height: 100%;
   }
 
   .sb-menu-mobile {
     display: flex;
     width: 100%;
-    padding-inline: 24px;
+    padding-inline: 8px;
     justify-content: space-between;
 
     & .sb-item {
-      padding-block: 8px;
       padding-inline: 0;
       align-items: center;
     }
@@ -335,7 +350,6 @@
   }
 
   .sb-menu-mobile.xs {
-    padding-inline: 16px;
   }
 
   .sep {
