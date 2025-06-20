@@ -28,7 +28,7 @@ describe("Abstract.vue", () => {
       template: '<div data-test="mw">{{ htmlString }}</div>',
     });
     const api = { get: vi.fn() };
-    const { default: Abstract } = await import("@/components/Abstract.vue");
+    const { default: Abstract } = await import("@/components/manuscript/Abstract.vue");
     const wrapper = mount(Abstract, {
       props: { file: {} },
       global: {
@@ -56,7 +56,7 @@ describe("Abstract.vue", () => {
     });
     const get = vi.fn(() => Promise.resolve({ data: "Hello world" }));
     const api = { get };
-    const { default: Abstract } = await import("@/components/Abstract.vue");
+    const { default: Abstract } = await import("@/components/manuscript/Abstract.vue");
     const wrapper = mount(Abstract, {
       props: { file: { id: "123" } },
       global: {
@@ -83,7 +83,7 @@ describe("Abstract.vue", () => {
     const longText = "a".repeat(500);
     const get = vi.fn(() => Promise.resolve({ data: longText }));
     const api = { get };
-    const { default: Abstract } = await import("@/components/Abstract.vue");
+    const { default: Abstract } = await import("@/components/manuscript/Abstract.vue");
     const wrapper = mount(Abstract, {
       props: { file: { id: "456" } },
       global: {
@@ -109,7 +109,7 @@ describe("Abstract.vue", () => {
     });
     const get = vi.fn(() => Promise.reject(new Error("fail")));
     const api = { get };
-    const { default: Abstract } = await import("@/components/Abstract.vue");
+    const { default: Abstract } = await import("@/components/manuscript/Abstract.vue");
     const wrapper = mount(Abstract, {
       props: { file: { id: "789" } },
       global: {
@@ -137,7 +137,7 @@ describe("Abstract.vue", () => {
       return Promise.resolve({ data: "two" });
     });
     const api = { get };
-    const { default: Abstract } = await import("@/components/Abstract.vue");
+    const { default: Abstract } = await import("@/components/manuscript/Abstract.vue");
     const wrapper = mount(Abstract, {
       props: { file: { id: "1" } },
       global: {

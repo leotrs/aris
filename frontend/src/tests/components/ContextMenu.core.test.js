@@ -58,7 +58,7 @@ describe("ContextMenu.vue - Core Functionality", () => {
   });
 
   it("passes placement and middleware options to useDesktopMenu", async () => {
-    const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+    const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
     mount(ContextMenu, {
       props: { placement: "bottom-start" },
       global: {
@@ -81,7 +81,7 @@ describe("ContextMenu.vue - Core Functionality", () => {
   });
 
   it("uses zero offset when variant is not dots", async () => {
-    const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+    const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
     mount(ContextMenu, {
       props: { variant: "close" },
       global: {
@@ -106,7 +106,7 @@ describe("ContextMenu.vue - Core Functionality", () => {
 
   describe("CSS Animations", () => {
     it("applies transition classes to menu", async () => {
-      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+      const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {

@@ -59,7 +59,7 @@ describe("ContextMenu.vue - Accessibility Tests", () => {
 
   describe("ARIA support", () => {
     it("sets proper ARIA attributes on menu container", async () => {
-      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+      const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {
@@ -86,7 +86,7 @@ describe("ContextMenu.vue - Accessibility Tests", () => {
     });
 
     it("passes isOpen state to trigger for ARIA attributes", async () => {
-      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+      const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {
@@ -116,7 +116,7 @@ describe("ContextMenu.vue - Accessibility Tests", () => {
 
   describe("Focus management", () => {
     it("restores focus to trigger when menu closes", async () => {
-      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+      const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           stubs: {

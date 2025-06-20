@@ -53,7 +53,7 @@ describe("ThemeSwitch.vue", () => {
   });
 
   it("forwards correct props to SegmentedControl without labels", async () => {
-    const { default: ThemeSwitch } = await import("@/components/ThemeSwitch.vue");
+    const { default: ThemeSwitch } = await import("@/components/base/ThemeSwitch.vue");
     const wrapper = mount(ThemeSwitch, {
       global: { stubs: { SegmentedControl: SegmentedControlStub } },
     });
@@ -67,7 +67,7 @@ describe("ThemeSwitch.vue", () => {
   });
 
   it("forwards correct labels when labels prop is true", async () => {
-    const { default: ThemeSwitch } = await import("@/components/ThemeSwitch.vue");
+    const { default: ThemeSwitch } = await import("@/components/base/ThemeSwitch.vue");
     const wrapper = mount(ThemeSwitch, {
       props: { labels: true },
       global: { stubs: { SegmentedControl: SegmentedControlStub } },
@@ -77,7 +77,7 @@ describe("ThemeSwitch.vue", () => {
   });
 
   it("toggles dark-theme class based on mode changes", async () => {
-    const { default: ThemeSwitch } = await import("@/components/ThemeSwitch.vue");
+    const { default: ThemeSwitch } = await import("@/components/base/ThemeSwitch.vue");
     const wrapper = mount(ThemeSwitch, {
       global: { stubs: { SegmentedControl: SegmentedControlStub } },
     });
@@ -96,7 +96,7 @@ describe("ThemeSwitch.vue", () => {
   });
 
   it("updates theme on media query changes in system mode", async () => {
-    const { default: ThemeSwitch } = await import("@/components/ThemeSwitch.vue");
+    const { default: ThemeSwitch } = await import("@/components/base/ThemeSwitch.vue");
     matches = true;
     const wrapper = mount(ThemeSwitch, {
       global: { stubs: { SegmentedControl: SegmentedControlStub } },
@@ -113,7 +113,7 @@ describe("ThemeSwitch.vue", () => {
   });
 
   it("adds and removes theme-transition class on theme updates", async () => {
-    const { default: ThemeSwitch } = await import("@/components/ThemeSwitch.vue");
+    const { default: ThemeSwitch } = await import("@/components/base/ThemeSwitch.vue");
     mount(ThemeSwitch, {
       global: { stubs: { SegmentedControl: SegmentedControlStub } },
     });

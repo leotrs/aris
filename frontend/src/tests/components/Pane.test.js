@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 
-import Pane from "@/components/Pane.vue";
+import Pane from "@/components/layout/Pane.vue";
 
 describe("Pane.vue", () => {
   it("renders default slot content inside .content", () => {

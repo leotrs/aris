@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { ref, watch, h } from "vue";
-import BaseInput from "@/components/BaseInput.vue";
+import BaseInput from "@/components/forms/BaseInput.vue";
 
 // Mock objects to be reused
 let mockValue, mockFocused, mockError, mockInputClass;

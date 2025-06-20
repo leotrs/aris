@@ -2,8 +2,8 @@ import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ref, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
 import RegisterView from "@/views/register/View.vue";
-import InputText from "@/components/InputText.vue";
-import Button from "@/components/Button.vue";
+import InputText from "@/components/forms/InputText.vue";
+import Button from "@/components/base/Button.vue";
 
 const pushMock = vi.fn();
 vi.mock("vue-router", () => ({ useRouter: () => ({ push: pushMock }) }));

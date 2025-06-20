@@ -1,7 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-
-import Header from "@/components/Header.vue";
+import Header from "@/components/layout/Header.vue";
 
 describe("Header.vue", () => {
   it("renders default slot content inside .pane-header", () => {

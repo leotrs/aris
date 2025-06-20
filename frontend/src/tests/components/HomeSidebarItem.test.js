@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { shallowMount } from "@vue/test-utils";
-import HomeSidebarItem from "@/components/HomeSidebarItem.vue";
+import HomeSidebarItem from "@/components/layout/HomeSidebarItem.vue";
 
 describe("HomeSidebarItem.vue", () => {
   it("renders icon and text when not collapsed", () => {

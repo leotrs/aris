@@ -19,7 +19,7 @@ describe("HomeSidebar.vue", () => {
     push = vi.fn();
     route = { fullPath: "/" };
     openFile = vi.fn();
-    const mod = await import("@/components/HomeSidebar.vue");
+    const mod = await import("@/components/layout/HomeSidebar.vue");
     HomeSidebar = mod.default;
   });
 

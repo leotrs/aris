@@ -19,7 +19,7 @@ describe("EditableText.vue", () => {
   });
 
   it("renders the text and enters editing mode on click", async () => {
-    const { default: EditableText } = await import("@/components/EditableText.vue");
+    const { default: EditableText } = await import("@/components/forms/EditableText.vue");
     const wrapper = mount(EditableText, {
       props: { modelValue: "Hello World" },
     });
@@ -36,7 +36,7 @@ describe("EditableText.vue", () => {
   });
 
   it("starts editing on Enter and Space keydown events", async () => {
-    const { default: EditableText } = await import("@/components/EditableText.vue");
+    const { default: EditableText } = await import("@/components/forms/EditableText.vue");
     const wrapper = mount(EditableText, {
       props: { modelValue: "Key Test" },
     });
@@ -56,7 +56,7 @@ describe("EditableText.vue", () => {
   });
 
   it("clears the input on start if clearOnStart is true", async () => {
-    const { default: EditableText } = await import("@/components/EditableText.vue");
+    const { default: EditableText } = await import("@/components/forms/EditableText.vue");
     const wrapper = mount(EditableText, {
       props: { modelValue: "DropMe", clearOnStart: true },
     });
@@ -70,7 +70,7 @@ describe("EditableText.vue", () => {
   });
 
   it("preserves the width if preserveWidth is true", async () => {
-    const { default: EditableText } = await import("@/components/EditableText.vue");
+    const { default: EditableText } = await import("@/components/forms/EditableText.vue");
     const wrapper = mount(EditableText, {
       props: { modelValue: "Wide Text", preserveWidth: true },
       attachTo: document.body,
@@ -90,7 +90,7 @@ describe("EditableText.vue", () => {
   });
 
   it("emits save only when the value has changed on blur", async () => {
-    const { default: EditableText } = await import("@/components/EditableText.vue");
+    const { default: EditableText } = await import("@/components/forms/EditableText.vue");
     const wrapper = mount(EditableText, {
       props: { modelValue: "SameValue" },
     });
@@ -114,7 +114,7 @@ describe("EditableText.vue", () => {
   });
 
   it("emits cancel when cancelEditing is called", async () => {
-    const { default: EditableText } = await import("@/components/EditableText.vue");
+    const { default: EditableText } = await import("@/components/forms/EditableText.vue");
     const wrapper = mount(EditableText, {
       props: { modelValue: "CancelMe" },
     });
