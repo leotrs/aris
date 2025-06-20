@@ -27,21 +27,13 @@
     <component
       :is="mode"
       ref="menu-ref"
-      variant="custom"
+      variant="dots"
       component="ButtonToggle"
       :icon="icon"
       size="md"
     >
-      <template v-if="mode === 'ContextMenu'">
-        <!-- <component :is="comp" v-bind="childProps('Bolt', 'Activity')" /> -->
-        <!-- <component :is="comp" v-bind="childProps('Clock', 'History')" /> -->
-      </template>
-      <!-- <Separator /> -->
       <component :is="comp" v-bind="childProps('Share3', 'Share')" />
-      <!-- <component :is="comp" v-bind="childProps('UserPlus', 'Collaborate')" /> -->
-      <!-- <Separator /> -->
       <component :is="comp" v-bind="childProps('Download', 'Download')" />
-      <!-- <component :is="comp" v-bind="childProps('FileExport', 'Export')" /> -->
       <Separator />
       <component :is="comp" v-bind="childProps('Edit', 'Rename')" @click="emit('rename')" />
       <component :is="comp" v-bind="childProps('Copy', 'Duplicate')" @click="emit('duplicate')" />
