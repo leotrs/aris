@@ -48,7 +48,7 @@
     <Manuscript ref="manuscript-ref" :html-string="htmlString" :settings="settings" />
 
     <div v-if="showFooter" class="middle-footer">
-      <div class="footer-logo"><img src="../assets/logo-32px.svg" /></div>
+      <div class="footer-logo"><img src="@/assets/logo-32px.svg" /></div>
     </div>
 
     <AnnotationMenu />
