@@ -1,16 +1,103 @@
 <script setup>
+  /**
+   * Button component with multiple variants, sizes, and styling options.
+   *
+   * Provides primary, secondary, tertiary, and danger button styles with support for icons,
+   * text, floating text labels, and customizable sizing. Includes accessibility features
+   * and focus management.
+   *
+   * @displayName Button
+   * @example
+   * // Primary button with text
+   * <Button kind="primary" text="Save Changes" />
+   *
+   * @example
+   * // Secondary button with icon and text
+   * <Button kind="secondary" icon="Plus" text="Add Item" size="md" />
+   *
+   * @example
+   * // Icon-only button with floating text
+   * <Button kind="tertiary" icon="Settings" text="Settings" textFloat="bottom" size="sm" />
+   *
+   * @example
+   * // Custom content via slot
+   * <Button kind="primary" size="lg">
+   *   <span>Custom Content</span>
+   * </Button>
+   */
+
   import { useTemplateRef } from "vue";
 
   const props = defineProps({
-    kind: { type: String, required: true },
-    size: { type: String, default: "md" },
-    icon: { type: String, default: null },
-    text: { type: String, default: "" },
-    textFloat: { type: String, default: "" },
-    disabled: { type: Boolean, default: false },
-    shadow: { type: Boolean, default: false },
+    /**
+     * Visual style variant of the button
+     * @values 'primary', 'secondary', 'tertiary', 'danger'
+     */
+    kind: {
+      type: String,
+      required: true,
+      validator: (value) => ["primary", "secondary", "tertiary", "danger"].includes(value),
+    },
+
+    /**
+     * Size of the button affecting padding and border radius
+     * @values 'sm', 'md', 'lg'
+     */
+    size: {
+      type: String,
+      default: "md",
+      validator: (value) => ["sm", "md", "lg"].includes(value),
+    },
+
+    /**
+     * Icon name from Tabler Icons to display in the button
+     * @see https://tabler-icons.io/
+     */
+    icon: {
+      type: String,
+      default: null,
+    },
+
+    /**
+     * Text content to display in the button
+     */
+    text: {
+      type: String,
+      default: "",
+    },
+
+    /**
+     * Position for floating text label (requires both icon and text)
+     * @values 'bottom'
+     */
+    textFloat: {
+      type: String,
+      default: "",
+    },
+
+    /**
+     * Whether the button is disabled and non-interactive
+     */
+    disabled: {
+      type: Boolean,
+      default: false,
+    },
+
+    /**
+     * Whether to apply drop shadow styling
+     */
+    shadow: {
+      type: Boolean,
+      default: false,
+    },
   });
+
   const btnRef = useTemplateRef("btn-ref");
+
+  /**
+   * Exposes the button DOM element reference for parent components
+   * @expose {HTMLButtonElement} btn - The button DOM element
+   */
   defineExpose({ btn: btnRef });
 </script>
 
@@ -32,6 +119,13 @@
     <span v-if="text" class="btn-text" :class="textFloat ? 'text-caption' : 'text-h6'">
       {{ text }}
     </span>
+    <!-- 
+      @slot default - Custom button content (only used when no icon or text provided)
+      @example
+      <Button kind="primary">
+        <span class="custom-content">Custom</span>
+      </Button>
+    -->
     <slot v-if="!icon && !text"></slot>
   </button>
 </template>

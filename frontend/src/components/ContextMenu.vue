@@ -1,4 +1,55 @@
 <script setup>
+  /**
+   * ContextMenu - Flexible dropdown menu component with multiple trigger variants
+   *
+   * Provides context-sensitive dropdown menus with support for dots, close, custom button,
+   * and slot-based triggers. Features responsive mobile/desktop positioning, keyboard navigation,
+   * focus management, and nested sub-menu support. Uses Floating UI for precise positioning.
+   *
+   * @displayName ContextMenu
+   * @example
+   * // Basic dots menu
+   * <ContextMenu variant="dots" placement="bottom-start">
+   *   <ContextMenuItem>Edit</ContextMenuItem>
+   *   <ContextMenuItem>Delete</ContextMenuItem>
+   * </ContextMenu>
+   *
+   * @example
+   * // Custom button trigger
+   * <ContextMenu variant="custom" component="Button" text="Actions" icon="Plus">
+   *   <ContextMenuItem>New Item</ContextMenuItem>
+   *   <ContextMenuItem>Import</ContextMenuItem>
+   * </ContextMenu>
+   *
+   * @example
+   * // Close button variant
+   * <ContextMenu variant="close" placement="left-start">
+   *   <ContextMenuItem>Save</ContextMenuItem>
+   *   <ContextMenuItem>Cancel</ContextMenuItem>
+   * </ContextMenu>
+   *
+   * @example
+   * // Custom trigger via slot
+   * <ContextMenu variant="slot">
+   *   <template #trigger="{ toggle, isOpen }">
+   *     <button @click="toggle" :class="{ active: isOpen }">
+   *       Custom Trigger
+   *     </button>
+   *   </template>
+   *   <ContextMenuItem>Option 1</ContextMenuItem>
+   * </ContextMenu>
+   *
+   * @example
+   * // Nested sub-menu
+   * <ContextMenu variant="dots">
+   *   <ContextMenuItem>Edit</ContextMenuItem>
+   *   <ContextMenu variant="custom" text="More Actions" placement="right-start">
+   *     <ContextMenuItem>Advanced Edit</ContextMenuItem>
+   *     <ContextMenuItem>Export</ContextMenuItem>
+   *   </ContextMenu>
+   * </ContextMenu>
+   */
+
   import { ref, computed, watch, provide, inject, useTemplateRef, useSlots } from "vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
@@ -7,10 +58,44 @@
   import ContextMenuTrigger from "./ContextMenuTrigger.vue";
 
   const props = defineProps({
-    variant: { type: String, default: "dots" }, // 'dots', 'close', 'custom'
-    placement: { type: String, default: "left-start" },
-    floatingOptions: { type: Object, default: () => ({}) },
-    size: { type: String, default: "md" },
+    /**
+     * Menu trigger variant type
+     * @values 'dots', 'close', 'custom', 'slot'
+     */
+    variant: {
+      type: String,
+      default: "dots",
+      validator: (value) => ["dots", "close", "custom", "slot"].includes(value),
+    },
+
+    /**
+     * Floating UI placement string for menu positioning relative to trigger
+     * @see https://floating-ui.com/docs/tutorial#placements
+     * @values 'top', 'top-start', 'top-end', 'right', 'right-start', 'right-end', 'bottom', 'bottom-start', 'bottom-end', 'left', 'left-start', 'left-end'
+     */
+    placement: {
+      type: String,
+      default: "left-start",
+    },
+
+    /**
+     * Additional Floating UI configuration options
+     * @see https://floating-ui.com/docs/tutorial
+     */
+    floatingOptions: {
+      type: Object,
+      default: () => ({}),
+    },
+
+    /**
+     * Size of the menu trigger (affects custom and dots variants)
+     * @values 'sm', 'md', 'lg'
+     */
+    size: {
+      type: String,
+      default: "md",
+      validator: (value) => ["sm", "md", "lg"].includes(value),
+    },
   });
   defineOptions({ inheritAttrs: false });
   const mobileMode = inject("mobileMode", false);
@@ -71,6 +156,11 @@
   );
   const updatePosition = () => !mobileMode.value && desktopMenu.updatePosition();
 
+  /**
+   * Exposes methods and computed properties for parent components
+   * @expose {Function} toggle - Toggle menu open/closed state
+   * @expose {ComputedRef<string>} effectivePlacement - The actual placement used by Floating UI
+   */
   defineExpose({
     toggle: () => (show.value = !show.value),
     effectivePlacement: computed(() => desktopMenu.effectivePlacement?.value || props.placement),
@@ -163,6 +253,17 @@
       v-bind="$attrs"
       @toggle="show = !show"
     >
+      <!-- 
+        @slot trigger - Custom trigger element (only used when variant="slot")
+        @binding {Function} toggle - Function to toggle menu open/closed
+        @binding {boolean} isOpen - Whether the menu is currently open
+        @example
+        <template #trigger="{ toggle, isOpen }">
+          <button @click="toggle" :class="{ active: isOpen }">
+            Custom Trigger
+          </button>
+        </template>
+      -->
       <slot v-if="$slots.trigger" name="trigger" />
     </ContextMenuTrigger>
     <Teleport to="body">
@@ -183,6 +284,16 @@
           :style="menuStyles"
           data-testid="context-menu"
         >
+          <!-- 
+            @slot default - Menu content (typically ContextMenuItem components)
+            @binding {Function} close - Function to close the menu programmatically
+            @example
+            <ContextMenuItem @click="handleEdit">Edit</ContextMenuItem>
+            <ContextMenuItem @click="handleDelete">Delete</ContextMenuItem>
+            <ContextMenu variant="custom" text="More">
+              <ContextMenuItem>Nested Option</ContextMenuItem>
+            </ContextMenu>
+          -->
           <slot />
         </div>
       </Transition>
