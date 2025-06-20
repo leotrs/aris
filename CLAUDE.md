@@ -146,6 +146,13 @@ npm test -- --grep "ContextMenu"
 - **@vueuse/core**: Vue composition utilities
 - **axios**: HTTP client for API requests
 
+### Component Documentation
+Components use comprehensive JSDoc documentation compatible with Vue Styleguidist:
+- **Pattern**: Follow `frontend/COMPONENT_DOCS_TEMPLATE.md` for consistent documentation
+- **JSDoc tags**: @displayName, @example, @values, @slot, @binding, @expose
+- **Examples**: Multiple usage examples from basic to advanced
+- **Migration ready**: Documentation is fully compatible with future Vue Styleguidist adoption
+
 ## Key Patterns
 
 ### Backend Authentication
@@ -180,9 +187,10 @@ npm test -- --grep "ContextMenu"
 
 ### Adding a New Frontend Component
 1. Create component in `src/components/` (automatically registered globally)
-2. Create tests in `tests/` directory
-3. Update routing if it's a page component
-4. Run linting and tests
+2. Add comprehensive JSDoc documentation following `COMPONENT_DOCS_TEMPLATE.md` pattern
+3. Create tests in `tests/` directory
+4. Update routing if it's a page component
+5. Run linting and tests
 
 ### Database Changes
 1. Modify models in `aris/models/models.py`
