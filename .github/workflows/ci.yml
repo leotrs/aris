@@ -9,6 +9,8 @@ on:
 jobs:
   backend-test:
     runs-on: ubuntu-latest
+    env:
+      ENV: CI
 
     services:
       postgres:
@@ -50,8 +52,7 @@ jobs:
 
     - name: Run tests
       run: uv run python -m pytest --cov=aris --cov-report=xml
-      env:
-        ENV: CI
+
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
