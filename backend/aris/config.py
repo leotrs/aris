@@ -51,4 +51,4 @@ class Settings(BaseSettings):
     model_config = ConfigDict(extra="forbid")
 
 
-settings = Settings(_env_file=".env.ci" if os.getenv("ENV") == "CI" else ".env")
+settings = Settings(_env_file=(".env.ci" if os.getenv("ENV") == "CI" else ".env"))
