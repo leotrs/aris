@@ -188,12 +188,12 @@
 
     display: flex;
     flex-direction: column;
-    gap: 16px;
     z-index: 1;
     box-shadow: var(--shadow-soft);
     background-color: v-bind(fileSettings.background);
     border-radius: 16px;
     width: 100%;
+    padding-top: 16px;
     will-change: width, left, border-radius;
     transition:
       width var(--transition-duration) ease,
@@ -248,6 +248,12 @@
       padding-bottom: 16px;
       display: flex;
     }
+  }
+
+  .outer.mobile {
+    padding-top: 0;
+    height: calc(100% - 48px + 12px);
+    border-radius: 0;
   }
 
   .outer.mobile > .inner {
@@ -310,6 +316,10 @@
       min-height: 100%;
       max-width: 720px;
     }
+  }
+
+  .outer.mobile .inner.right {
+    padding: 0;
   }
 
   .outer.mobile .inner.right .dock.main.middle {
