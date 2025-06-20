@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, inject, onMounted, onUnmounted, useTemplateRef } from "vue";
+  import { ref, reactive, computed, inject, onMounted, onUnmounted, useTemplateRef } from "vue";
   import { useFloating, autoUpdate, offset, flip, shift } from "@floating-ui/vue";
 
   const selfRef = useTemplateRef("selfRef");
@@ -120,7 +120,7 @@
   });
 
   const inputText = ref("");
-  const annotations = inject("annotations");
+  const annotations = inject("annotations", reactive([]));
   const onSubmit = () => {
     console.log("submit", inputText.value);
     const newAnnotation = { id: 999, content: inputText.value, type: "note" };

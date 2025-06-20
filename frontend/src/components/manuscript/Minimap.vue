@@ -16,7 +16,7 @@
     highlightScrollPos,
     makeIcons,
   } from "@/utils/MinimapUtils.js";
-  import Tooltip from "./Tooltip.vue";
+  import Tooltip from "@/components/base/Tooltip.vue";
 
   const props = defineProps({
     file: { type: Object, required: true },

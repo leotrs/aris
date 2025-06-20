@@ -1,7 +1,7 @@
 <script setup>
   import { ref, computed, watch } from "vue";
-  import ContextMenu from "@/components/ContextMenu.vue";
-  import ContextMenuItem from "@/components/ContextMenuItem.vue";
+  import ContextMenu from "@/components/navigation/ContextMenu.vue";
+  import ContextMenuItem from "@/components/navigation/ContextMenuItem.vue";
 
   const props = defineProps({
     modelValue: { type: [String, Number], default: null },

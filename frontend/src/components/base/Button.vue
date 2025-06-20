@@ -31,12 +31,12 @@
   const props = defineProps({
     /**
      * Visual style variant of the button
-     * @values 'primary', 'secondary', 'tertiary', 'danger'
+     * @values 'primary', 'secondary', 'tertiary'
      */
     kind: {
       type: String,
       required: true,
-      validator: (value) => ["primary", "secondary", "tertiary", "danger"].includes(value),
+      validator: (value) => ["primary", "secondary", "tertiary"].includes(value),
     },
 
     /**
@@ -119,7 +119,7 @@
     <span v-if="text" class="btn-text" :class="textFloat ? 'text-caption' : 'text-h6'">
       {{ text }}
     </span>
-    <!-- 
+    <!--
       @slot default - Custom button content (only used when no icon or text provided)
       @example
       <Button kind="primary">

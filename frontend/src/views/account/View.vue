@@ -200,7 +200,7 @@
               </div>
             </template>
             <template #footer>
-              <Button id="danger" kind="primary danger">Delete account</Button>
+              <Button id="danger" kind="primary" class="danger">Delete account</Button>
             </template>
           </Section>
         </div>
