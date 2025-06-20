@@ -57,7 +57,7 @@ jobs:
         cat .env.ci
 
     - name: Run tests
-      run: uv run pytest --cov=aris --cov-report=xml
+      run: uv run pytest -n8 --cov=aris --cov-report=xml
 
 
     - name: Upload coverage to Codecov
