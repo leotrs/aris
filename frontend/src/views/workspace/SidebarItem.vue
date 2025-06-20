@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, inject, onBeforeUnmount } from "vue";
+  import { ref, inject, onBeforeUnmount } from "vue";
 
   const props = defineProps({
     icon: { type: String, required: true },

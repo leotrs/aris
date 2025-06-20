@@ -13,14 +13,14 @@ vi.mock("@/composables/useFormField.js", () => ({
     mockValue.value = options?.props?.modelValue || "";
     mockFocused.value = false;
     mockError.value = "";
-    
+
     // Update the computed class
     Object.assign(mockInputClass, {
       value: {
         focused: mockFocused.value,
         error: Boolean(mockError.value),
         [options?.direction || "row"]: true,
-      }
+      },
     });
 
     const validate = vi.fn();
