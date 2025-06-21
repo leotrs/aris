@@ -139,6 +139,8 @@ npm test --grep "ContextMenu"
 - **Parallelism**: Limited to 2 threads to prevent memory exhaustion
 - **Coverage thresholds**: 80% for branches, functions, lines, and statements
 - **Setup**: Global test setup in `src/tests/setup.ts`
+- **Puppeteer**: Use puppeteer to replicate what users see - always in headless mode
+- **Playwright**: For e2e testing -- always in headless mode
 
 ### Key Dependencies
 - **@floating-ui/vue**: Floating UI positioning
