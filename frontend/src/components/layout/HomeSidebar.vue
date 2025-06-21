@@ -81,7 +81,7 @@
       <ContextMenu
         ref="menu-ref"
         variant="custom"
-        component="Button"
+        component="ButtonToggle"
         icon="CirclePlus"
         :text="mobileMode ? '' : 'New File'"
         :placement="mobileMode ? 'top-end' : 'bottom'"

@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, ref, useTemplateRef, useSlots } from "vue";
+  import { computed, ref, useTemplateRef, useSlots, Comment } from "vue";
   import ButtonDots from "@/components/base/ButtonDots.vue";
   import ButtonClose from "@/components/base/ButtonClose.vue";
   import Button from "@/components/base/Button.vue";
@@ -20,9 +20,13 @@
 
   // Determine effective variant
   const effectiveVariant = computed(() => {
-    // Only use slot variant if there's actually slot content for the trigger
-    // The default slot is for trigger content, so prioritize it over variant prop
-    return slots.default ? "slot" : props.variant;
+    // Only use slot variant if there's actually meaningful slot content
+    // Check if slot exists and has actual content (not just whitespace or comments)
+    const hasSlotContent = slots.default && slots.default().some(vnode => 
+      vnode.type !== Comment && 
+      (typeof vnode.type === 'string' || typeof vnode.type === 'object' || typeof vnode.type === 'function')
+    );
+    return hasSlotContent ? "slot" : props.variant;
   });
 
   // Computed classes for trigger button

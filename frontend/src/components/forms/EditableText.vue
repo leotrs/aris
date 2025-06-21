@@ -155,20 +155,33 @@
   watch(inputValue, () => {
     if (!props.preserveWidth || !isEditing.value || !inputRef.value) return;
 
-    // Create a temporary element to measure the text width
-    const temp = document.createElement("span");
-    temp.style.position = "absolute";
-    temp.style.visibility = "hidden";
-    temp.style.whiteSpace = "pre";
-    temp.style.font = window.getComputedStyle(inputRef.value).font;
-    temp.textContent = inputValue.value || " ";
-    document.body.appendChild(temp);
+    try {
+      // Create a temporary element to measure the text width
+      const temp = document.createElement("span");
+      temp.style.position = "absolute";
+      temp.style.visibility = "hidden";
+      temp.style.whiteSpace = "pre";
+      temp.style.font = window.getComputedStyle(inputRef.value).font;
+      temp.textContent = inputValue.value || " ";
+      document.body.appendChild(temp);
 
-    const textWidth = temp.offsetWidth + 20; // Add some padding
-    currentInputWidth.value = Math.max(capturedWidth.value, textWidth);
+      const textWidth = temp.offsetWidth + 20; // Add some padding
+      currentInputWidth.value = Math.max(capturedWidth.value, textWidth);
 
-    document.body.removeChild(temp);
+      document.body.removeChild(temp);
+    } catch (error) {
+      // Gracefully handle DOM operation errors
+      console.warn("[EditableText] Width calculation failed:", error);
+      // Fall back to captured width or reasonable default
+      currentInputWidth.value = capturedWidth.value || 100;
+    }
   });
+
+  /**
+   * Exposes methods for programmatic control
+   * @expose {Function} startEditing - Programmatically activate edit mode
+   * @expose {Function} cancelEditing - Programmatically cancel editing and revert changes
+   */
   defineExpose({ startEditing, cancelEditing });
 </script>
 <template>
