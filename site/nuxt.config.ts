@@ -10,5 +10,5 @@ export default defineNuxtConfig({
       ],
     },
   },
-  css: ['./assets/rsm.css'],
+  css: ['./assets/rsm.css', './assets/main.css'],
 })

@@ -1,6 +1,13 @@
+<script setup>
+  import logoFull from "@/assets/logo-32px.svg";
+</script>
+
 <template>
   <nav class="nav">
-    <a href="/" class="logo">Aris</a>
+    <a href="/" class="logo-wrapper">
+      <img id="logo" :src="logoFull" alt="Aris logo" />
+      <span id="type">Aris</span>
+    </a>
     <a href="/demo" class="link">Try the Demo</a>
   </nav>
 </template>
@@ -11,18 +18,24 @@
     justify-content: space-between;
     padding: 1rem 2rem;
     background: white;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow-soft);
   }
 
-  .logo {
-    font-weight: bold;
-    font-size: 1.25rem;
-    text-decoration: none;
+  #logo {
+    height: 30px;
+    width: 30px;
+    margin-bottom: -8px;
+  }
+
+  #type {
+    font-weight: var(--weight-bold);
+    margin-left: 8px;
+    font-size: 24px;
+    color: var(--information-700);
   }
 
   .link {
-    color: #3b82f6;
-    text-decoration: none;
-    font-weight: 500;
+    color: var(--information-600);
+    font-weight: var(--weight-regular);
   }
 </style>
