@@ -1,4 +1,3 @@
-<!-- components/NavBar.vue -->
 <template>
   <nav class="nav">
     <a href="/" class="logo">Aris</a>
@@ -14,11 +13,13 @@
     background: white;
     box-shadow: 0 1px 4px rgba(0,0,0,0.05);
   }
+
   .logo {
     font-weight: bold;
     font-size: 1.25rem;
     text-decoration: none;
   }
+
   .link {
     color: #3b82f6;
     text-decoration: none;
