@@ -69,7 +69,7 @@ describe("ContextMenuTrigger.vue", () => {
   });
 
   describe("Slot System", () => {
-    it("should render trigger slot when provided", () => {
+    it("should render trigger slot when provided with actual content", () => {
       const wrapper = mountComponent(
         {},
         {
@@ -83,7 +83,7 @@ describe("ContextMenuTrigger.vue", () => {
       expect(wrapper.find('[data-testid="trigger-button"]').classes()).toContain("variant-slot");
     });
 
-    it("should prioritize slot over variant prop", () => {
+    it("should prioritize slot over variant prop when slot has content", () => {
       const wrapper = mountComponent(
         { variant: "dots" },
         {
@@ -94,6 +94,62 @@ describe("ContextMenuTrigger.vue", () => {
       );
 
       expect(wrapper.find('[data-testid="slot-content"]').exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "ButtonDots" }).exists()).toBe(false);
+    });
+
+    it("should NOT use slot variant for empty slots", () => {
+      const wrapper = mountComponent(
+        { variant: "dots" },
+        {
+          slots: {
+            default: '',
+          },
+        }
+      );
+
+      expect(wrapper.find('[data-testid="trigger-button"]').classes()).toContain("variant-dots");
+      expect(wrapper.findComponent({ name: "ButtonDots" }).exists()).toBe(true);
+    });
+
+    it("should NOT use slot variant for comment-only slots", () => {
+      const wrapper = mountComponent(
+        { variant: "dots" },
+        {
+          slots: {
+            default: '<!-- just a comment -->',
+          },
+        }
+      );
+
+      expect(wrapper.find('[data-testid="trigger-button"]').classes()).toContain("variant-dots");
+      expect(wrapper.findComponent({ name: "ButtonDots" }).exists()).toBe(true);
+    });
+
+    it("should NOT use slot variant for whitespace-only slots", () => {
+      const wrapper = mountComponent(
+        { variant: "dots" },
+        {
+          slots: {
+            default: '   \n   ',
+          },
+        }
+      );
+
+      expect(wrapper.find('[data-testid="trigger-button"]').classes()).toContain("variant-dots");
+      expect(wrapper.findComponent({ name: "ButtonDots" }).exists()).toBe(true);
+    });
+
+    it("should use slot variant for slots with meaningful content", () => {
+      const wrapper = mountComponent(
+        { variant: "dots" },
+        {
+          slots: {
+            default: '<div>Real content</div>',
+          },
+        }
+      );
+
+      expect(wrapper.find('[data-testid="trigger-button"]').classes()).toContain("variant-slot");
       expect(wrapper.findComponent({ name: "ButtonDots" }).exists()).toBe(false);
     });
   });

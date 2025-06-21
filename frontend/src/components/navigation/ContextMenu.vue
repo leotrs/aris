@@ -194,6 +194,15 @@
   });
   provide("closeMenu", close);
 
+  // Pre-position the menu before showing to prevent fly-in animation
+  const positionBeforeShow = async () => {
+    if (!show.value) return;
+
+    // Activate positioning system immediately after menu appears in DOM
+    const positioningSystem = mobileMode.value ? mobileMenu : desktopMenu;
+    await positioningSystem.activate();
+  };
+
   // Menu lifecycle management
   watch(
     show,
@@ -204,11 +213,11 @@
         activateClosable();
         activateNav();
 
-        // Activate positioning system
-        const positioningSystem = mobileMode.value ? mobileMenu : desktopMenu;
-        await positioningSystem.activate();
+        // Position will be handled by the template's @vue:mounted
+        // This prevents the fly-in effect by positioning before animation starts
 
-        // Focus management
+        // Focus management - delay to allow positioning to complete
+        await nextTick();
         const firstItem = menuRef.value?.querySelector('.item[tabindex="0"], .item');
         firstItem?.focus?.();
       } else {
@@ -263,7 +272,7 @@
           </button>
         </template>
       -->
-      <slot v-if="$slots.trigger" name="trigger" />
+      <slot v-if="$slots.trigger && currentVariant === 'slot'" name="trigger" />
     </ContextMenuTrigger>
     <Teleport to="body">
       <Transition
@@ -272,6 +281,7 @@
         leave-active-class="cm-menu-leave-active"
         enter-from-class="cm-menu-enter-from"
         leave-to-class="cm-menu-leave-to"
+        @before-enter="positionBeforeShow"
       >
         <div
           v-if="show"

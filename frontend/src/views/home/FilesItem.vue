@@ -35,11 +35,12 @@
    * })
    */
 
-  import { ref, inject, watch, useTemplateRef } from "vue";
+  import { ref, inject, watch, useTemplateRef, computed } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { File } from "@/models/File.js";
   import Date from "./FilesItemDate.vue";
+  import ConfirmationModal from "@/components/ConfirmationModal.vue";
 
   const props = defineProps({
     /**
@@ -60,6 +61,7 @@
   // State
   const hovered = ref(false);
   const router = useRouter();
+  const showDeleteModal = ref(false);
 
   // Breakpoints
   const shouldShowColumn = inject("shouldShowColumn");
@@ -79,7 +81,41 @@
     };
     fileStore.value.createFile(fileData);
   };
-  const onDelete = () => fileStore.value.deleteFile(file.value);
+  const onDelete = () => {
+    if (!file.value) return;
+    showDeleteModal.value = true;
+  };
+
+  // Confirmation modal handlers
+  const handleDeleteConfirm = async () => {
+    // Prevent deletion if modal is not shown (race condition protection)
+    if (!showDeleteModal.value) return;
+
+    try {
+      const success = await fileStore.value.deleteFile(file.value);
+      if (success) {
+        showDeleteModal.value = false;
+      }
+      // If deletion fails, keep modal open so user can try again or cancel
+    } catch (error) {
+      console.error("Failed to delete file:", error);
+      // Keep modal open on error
+    }
+  };
+
+  const handleDeleteCancel = () => {
+    showDeleteModal.value = false;
+  };
+
+  const handleDeleteClose = () => {
+    showDeleteModal.value = false;
+  };
+
+  // Generate confirmation message with file name
+  const deleteMessage = computed(() => {
+    const fileName = file.value?.title || "this file";
+    return `Are you sure you want to delete "${fileName}"? This action cannot be undone.`;
+  });
 
   // Keyboard shortcuts - activated when file is focused
   const { activate, deactivate } = useKeyboardShortcuts(
@@ -165,6 +201,20 @@
         <span class="spacer"></span>
       </template>
     </template>
+
+    <!-- Delete confirmation modal -->
+    <ConfirmationModal
+      :show="showDeleteModal"
+      title="Delete File?"
+      :message="deleteMessage"
+      confirm-text="Delete"
+      cancel-text="Cancel"
+      variant="danger"
+      :file-data="file"
+      @confirm="handleDeleteConfirm"
+      @cancel="handleDeleteCancel"
+      @close="handleDeleteClose"
+    />
   </div>
 </template>
 
@@ -344,5 +394,11 @@
 
   :is(.item:hover, .item.focused, .item.hovered) .fm-wrapper :deep(.context-menu-trigger) {
     opacity: 1;
+  }
+
+  /* MultiSelectTags icon color behavior - dark on hover, focus, or when menu is open */
+  :is(.item:hover, .item.focused, .item.hovered) :deep(.cm-btn svg),
+  :deep(.cm-open .cm-btn svg) {
+    color: var(--extra-dark);
   }
 </style>

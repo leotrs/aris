@@ -12,11 +12,15 @@
   });
   const emit_ = defineEmits(["rename", "duplicate", "delete"]);
   const emit = (event) => {
-    menuRef.value?.toggle();
+    // Only try to toggle if the ref is available and has the toggle method
+    if (menuRef.value && typeof menuRef.value.toggle === "function") {
+      menuRef.value.toggle();
+    }
     emit_(event);
   };
 
   const comp = computed(() => (props.mode === "ContextMenu" ? "ContextMenuItem" : "Button"));
+  const menuComponent = computed(() => (props.mode === "ContextMenu" ? ContextMenu : "div"));
   const childProps = (icon, caption) => {
     if (props.mode === "ContextMenu") return { icon: icon, caption: caption };
     else if (props.mode === "ButtonRow")

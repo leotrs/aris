@@ -77,7 +77,27 @@
 </script>
 
 <template>
-  <div class="modal">
+  <!--
+    @slot header - Modal header content (title, close button, etc.)
+    @example
+    <template #header>
+      <h2>Modal Title</h2>
+    </template>
+  -->
+  <!--
+    @slot default - Main modal content body
+    @example
+    <Modal>
+      <p>Your modal content here</p>
+    </Modal>
+  -->
+  <div
+    class="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modal-title"
+    aria-describedby="modal-content"
+  >
     <div class="content">
       <Pane>
         <template #header>
