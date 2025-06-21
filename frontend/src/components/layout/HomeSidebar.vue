@@ -87,6 +87,7 @@
     <div v-if="!mobileMode || (mobileMode && fab)" class="cta" :class="{ fab: mobileMode }">
       <ContextMenu
         ref="menu-ref"
+        data-testid="create-file-button"
         variant="custom"
         component="Button"
         icon="CirclePlus"

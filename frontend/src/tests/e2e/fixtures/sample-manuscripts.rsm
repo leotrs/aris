@@ -1,0 +1,59 @@
+:rsm:
+
+# Sample Research Manuscript
+
+## Abstract
+
+This is a sample RSM (Research Source Markup) document for testing the Aris platform. It demonstrates various RSM features including headers, paragraphs, citations, and mathematical expressions.
+
+## Introduction
+
+Research manuscripts are the cornerstone of scientific communication. The RSM format provides a structured way to write and format research documents that can be rendered as interactive, web-native publications.
+
+### Key Features
+
+The RSM format supports:
+
+- **Structured content** with semantic markup
+- **Citations** and reference management  
+- **Mathematical expressions** and equations
+- **Interactive elements** for web-native publishing
+- **Collaborative editing** and version control
+
+## Methodology
+
+Our approach involves creating a markup language that bridges the gap between traditional academic publishing and modern web technologies. The methodology includes:
+
+1. Define core RSM syntax
+2. Implement parser and renderer
+3. Create collaborative editing interface
+4. Test with real research content
+
+### Mathematical Expressions
+
+The quadratic formula is given by:
+
+x = (-b ± √(b² - 4ac)) / 2a
+
+## Results
+
+Initial testing shows that RSM provides a significant improvement over traditional PDF-based publishing:
+
+- **50% faster** content creation
+- **75% better** accessibility compliance
+- **90% improved** cross-device compatibility
+
+## Discussion
+
+The results demonstrate the viability of RSM for scientific publishing. Future work will focus on expanding the markup syntax and improving collaborative features.
+
+## Conclusion
+
+RSM represents a paradigm shift in scientific publishing, enabling truly web-native research documents that maintain the rigor of traditional academic publishing while embracing modern web technologies.
+
+## References
+
+1. Sample Reference (2023). "Web-native Publishing for Academia." *Journal of Digital Scholarship*, 15(2), 45-62.
+2. Another Author (2023). "The Future of Research Communication." *Academic Computing Review*, 8(1), 12-28.
+
+::

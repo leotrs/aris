@@ -140,7 +140,7 @@
       </div>
 
       <div class="inner-wrapper">
-        <div v-if="showEditor" class="inner left">
+        <div v-if="showEditor" data-testid="workspace-editor" class="inner left">
           <Editor v-model="file" />
         </div>
 
@@ -157,6 +157,7 @@
               <ManuscriptWrapper
                 v-if="file.html && (!mobileMode || (mobileMode && !showEditor))"
                 ref="manuscript-ref"
+                data-testid="manuscript-viewer"
                 :class="{ 'title-visible': isMainTitleVisible }"
                 :html-string="file.html || ''"
                 :keys="true"

@@ -34,7 +34,7 @@
     <span>File Name</span>
     <span>Uploaded at</span>
   </div>
-  <div class="files">
+  <div class="files" data-testid="workspace-files">
     <EditorFilesItem v-for="(asset, idx) in assets" :key="asset" v-model="assets[idx]" />
   </div>
 </template>

@@ -50,7 +50,13 @@
       <FilesHeader :mode="mode" />
 
       <Suspense>
-        <div v-if="visibleFiles" ref="files-ref" class="files" :class="mode">
+        <div
+          v-if="visibleFiles"
+          ref="files-ref"
+          data-testid="files-container"
+          class="files"
+          :class="mode"
+        >
           <template v-for="(file, idx) in visibleFiles" :key="file">
             <FilesItem v-model="visibleFiles[idx]" :mode="mode" />
           </template>

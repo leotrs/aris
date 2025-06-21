@@ -79,24 +79,33 @@
         <div class="top">
           <div class="text-input">
             <label class="text-label">Email</label>
-            <input v-model="email" type="text" />
+            <input v-model="email" data-testid="email-input" type="text" />
           </div>
           <div class="text-input">
             <label class="text-label">Password</label>
-            <input v-model="password" type="password" />
+            <input v-model="password" data-testid="password-input" type="password" />
             <div class="footer text-caption"><p>Forgot password?</p></div>
           </div>
         </div>
         <div class="bottom">
-          <div v-if="error" class="error-message">{{ error }}</div>
+          <div v-if="error" data-testid="login-error" class="error-message">{{ error }}</div>
+          <div v-if="isLoading" data-testid="login-loading" class="loading-indicator">
+            Logging in...
+          </div>
           <Button
             ref="loginButton"
+            data-testid="login-button"
             kind="primary"
             :text="isLoading ? 'Logging in...' : 'Login'"
             :disabled="isLoading"
             @click="onLogin"
           />
-          <Button kind="secondary" text="Register" @click="router.push('/register')" />
+          <Button
+            data-testid="register-link"
+            kind="secondary"
+            text="Register"
+            @click="router.push('/register')"
+          />
         </div>
       </div>
     </div>

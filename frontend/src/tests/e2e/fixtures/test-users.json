@@ -1,0 +1,33 @@
+{
+  "testUsers": {
+    "defaultUser": {
+      "email": "test@example.com",
+      "password": "testpassword123",
+      "name": "Test User"
+    },
+    "adminUser": {
+      "email": "admin@example.com", 
+      "password": "adminpassword123",
+      "name": "Admin User"
+    },
+    "collaboratorUser": {
+      "email": "collaborator@example.com",
+      "password": "collaboratorpassword123", 
+      "name": "Collaborator User"
+    }
+  },
+  "invalidCredentials": {
+    "wrongPassword": {
+      "email": "test@example.com",
+      "password": "wrongpassword"
+    },
+    "nonExistentUser": {
+      "email": "nonexistent@example.com",
+      "password": "somepassword"
+    },
+    "invalidEmail": {
+      "email": "invalid-email",
+      "password": "somepassword"
+    }
+  }
+}
