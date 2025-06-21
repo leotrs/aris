@@ -144,7 +144,7 @@
           <Editor v-model="file" />
         </div>
 
-        <div ref="inner-right-ref" class="inner right">
+        <div v-if="!mobileMode || !showEditor" ref="inner-right-ref" class="inner right">
           <div ref="left-column-ref" class="left-column">
             <Dock class="dock left top"> </Dock>
             <Dock class="dock left main"> </Dock>
@@ -174,7 +174,7 @@
         </div>
       </div>
 
-      <DockableMinimap :file="file" side="right" />
+      <DockableMinimap v-if="!showEditor" :file="file" side="right" />
 
       <!-- <Drawer :class="{ focus: focusMode, mobile: mobileMode }" /> -->
     </div>
@@ -214,6 +214,7 @@
 
   .inner-wrapper {
     position: relative;
+    height: 100%;
     display: flex;
     overflow-y: hidden;
     background-color: v-bind(fileSettings.background);
@@ -256,15 +257,10 @@
     border-radius: 0;
   }
 
-  .outer.mobile > .inner {
-    padding: 0;
-    padding-left: 8px; /* match the scrollbar gutter */
-    border-radius: 0px;
-  }
-
-  .outer.mobile > .inner.left {
+  .outer.mobile .inner.left {
     width: 100%;
-    padding-inline: 0;
+    padding: 8px;
+    margin-inline: 0;
   }
 
   .inner.focus {
