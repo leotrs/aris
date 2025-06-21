@@ -222,8 +222,7 @@
     #logo img {
       transition:
         width var(--transition-duration) ease-out,
-        height var(--transition-duration) ease-out,
-        margin var(--transition-duration) ease-out;
+        margin-inline var(--transition-duration) ease-out;
     }
   }
 
