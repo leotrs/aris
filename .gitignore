@@ -58,6 +58,7 @@ yarn-error.log*
 
 # IDE and editor files
 .idea/
+.fleet
 *.swp
 *.swo
 *~
@@ -91,3 +92,11 @@ temp/
 
 # Deployment
 fly.toml.local
+
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
