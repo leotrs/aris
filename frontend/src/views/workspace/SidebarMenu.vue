@@ -68,15 +68,14 @@
     <template v-if="mobileMode">
       <SidebarItem icon="Home" label="Home" @click="router.push('/')" />
       <template v-for="(it, idx) in items" :key="it.name + idx">
-        <Separator v-if="it.name === 'Separator'" />
         <SidebarItem
-          v-else-if="it.type === 'toggle'"
+          v-if="it.type === 'toggle'"
           v-model="items[idx].state"
           :icon="it.icon"
           :label="it.label"
         />
       </template>
-      <ContextMenu variant="dots">
+      <ContextMenu variant="custom" icon="Menu3">
         <template v-for="(it, idx) in items" :key="it.name + idx">
           <ContextMenuItem
             v-if="it.type === 'drawer'"
@@ -93,10 +92,8 @@
 <style scoped>
   .sb-menu {
     position: fixed;
-    max-width: 64px;
     padding-bottom: 16px;
     left: 0;
-    width: 64px;
     opacity: 1;
     will-change: opacity;
     height: calc(100% - 64px);
@@ -110,6 +107,7 @@
 
   .sb-menu:not(.mobile) {
     height: 100%;
+    width: 64px;
     padding-inline: 8px;
     flex-direction: column;
 
@@ -132,7 +130,7 @@
   .sb-menu.mobile {
     display: flex;
     width: 100%;
-    padding-inline: 8px;
+    padding-inline: 16px;
     justify-content: space-between;
     position: fixed;
     left: 0;
