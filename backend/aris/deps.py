@@ -34,6 +34,7 @@ load_dotenv()
 ENGINE = create_async_engine(
     settings.DB_URL_PROD if settings.ENV == "PROD" else settings.DB_URL_LOCAL,
     future=True,
+    connect_args={"statement_cache_size": 0},
 )
 ArisSession = async_sessionmaker(ENGINE, expire_on_commit=False)
 
