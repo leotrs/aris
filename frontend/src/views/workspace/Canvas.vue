@@ -252,7 +252,7 @@
 
   .outer.mobile {
     padding-top: 0;
-    height: calc(100% - 48px + 12px);
+    height: calc(100% - 48px);
     border-radius: 0;
   }
 
@@ -278,6 +278,10 @@
     width: calc(100% - 8px);
     height: fit-content;
     scrollbar-gutter: stable;
+  }
+
+  .outer.mobile .inner.right .middle-column {
+    width: 100%;
   }
 
   .inner.right .middle-column .dock.top.middle {

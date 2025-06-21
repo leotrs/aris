@@ -28,6 +28,10 @@
 
   import { useTemplateRef } from "vue";
 
+  defineOptions({
+    name: "Button",
+  });
+
   const props = defineProps({
     /**
      * Visual style variant of the button

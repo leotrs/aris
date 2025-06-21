@@ -1,6 +1,10 @@
 <script setup>
   import { ref, watchEffect, computed } from "vue";
 
+  defineOptions({
+    name: "TagRow",
+  });
+
   const props = defineProps({
     file: { type: Object, required: true },
     maxTags: { type: Number, default: 3 },

@@ -3,6 +3,10 @@
   import ButtonToggle from "@/components/base/ButtonToggle.vue";
   import { IconDotsVertical } from "@tabler/icons-vue";
 
+  defineOptions({
+    name: "ButtonDots",
+  });
+
   const props = defineProps({
     hoverColor: { type: String, default: "var(--surface-hint)" },
     activeColor: { type: String, default: "var(--surface-hint)" },
