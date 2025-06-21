@@ -1,14 +1,98 @@
 <script setup>
+  /**
+   * EditableText - An inline text editing component with click-to-edit functionality
+   *
+   * A versatile component that displays text normally and switches to an input field
+   * when clicked or activated. Supports keyboard shortcuts (Enter to save, Escape to cancel),
+   * automatic width preservation, and custom styling. Perfect for inline editing workflows
+   * like form labels, table cells, or any text that needs quick editing capabilities.
+   *
+   * Features:
+   * - Click-to-edit with keyboard accessibility (Enter/Space to activate)
+   * - Keyboard shortcuts: Enter to save, Escape to cancel
+   * - Auto-save on blur with validation
+   * - Dynamic width preservation during editing
+   * - Customizable CSS classes for both display and input modes
+   * - Emits save/cancel events for custom handling
+   * - Accessible with proper ARIA roles and tabindex
+   *
+   * @displayName EditableText
+   * @example
+   * // Basic usage
+   * <EditableText v-model="title" />
+   *
+   * @example
+   * // With custom styling
+   * <EditableText
+   *   v-model="label"
+   *   text-class="text-lg font-semibold"
+   *   input-class="border-2 border-blue-500"
+   * />
+   *
+   * @example
+   * // With width preservation and clear-on-start
+   * <EditableText
+   *   v-model="description"
+   *   :preserve-width="true"
+   *   :clear-on-start="true"
+   *   @save="handleSave"
+   *   @cancel="handleCancel"
+   * />
+   *
+   * @example
+   * // Read-only mode (click disabled)
+   * <EditableText
+   *   v-model="readonlyText"
+   *   :edit-on-click="false"
+   *   ref="editableRef"
+   * />
+   * <!-- Use ref.startEditing() to programmatically activate -->
+   */
+
   import { ref, nextTick, useTemplateRef, watch } from "vue";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+
+  defineOptions({
+    name: "EditableText",
+  });
   const props = defineProps({
+    /**
+     * CSS classes to apply to the input field when in editing mode
+     * @example "border-2 border-blue-500 rounded-md"
+     */
     inputClass: { type: [String, Object, Array], default: "" },
+
+    /**
+     * CSS classes to apply to the text display when not editing
+     * @example "text-lg font-semibold text-gray-800"
+     */
     textClass: { type: [String, Object, Array], default: "" },
+
+    /**
+     * Whether clicking the text should activate edit mode
+     * Set to false for programmatic activation only
+     */
     editOnClick: { type: Boolean, default: true },
+
+    /**
+     * Whether to clear the input field when editing starts
+     * Useful for placeholder-style editing workflows
+     */
     clearOnStart: { type: Boolean, default: false },
+
+    /**
+     * Whether to preserve and dynamically adjust the input width during editing
+     * Maintains visual consistency by measuring text width and expanding as needed
+     */
     preserveWidth: { type: Boolean, default: false },
   });
   const text = defineModel({ type: String, default: "" });
+
+  /**
+   * Component events
+   * @event save - Emitted when text is saved (Enter key, blur, or programmatic save)
+   * @event cancel - Emitted when editing is cancelled (Escape key or programmatic cancel)
+   */
   const emit = defineEmits(["save", "cancel"]);
   const isEditing = ref(false);
   const inputRef = useTemplateRef("inputRef");
@@ -61,10 +145,8 @@
   // Handle keydown events in input field
   const handleKeydown = (event) => {
     // Only prevent space bar from bubbling up to parent button
-    console.log("handleKeyDown");
     // Allow ESC, ENTER, and other keys to work normally
     if (event.key === " ") {
-      console.log("stopping");
       event.stopPropagation();
     }
   };

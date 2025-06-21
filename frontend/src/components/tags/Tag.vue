@@ -1,15 +1,106 @@
 <script setup>
+  /**
+   * Tag - A versatile tag component with color theming and optional inline editing
+   *
+   * A flexible tag component that displays categorization labels with visual states
+   * (active/inactive) and color theming. Supports inline editing through integration
+   * with EditableText component, making it perfect for tag management interfaces.
+   * The component follows checkbox accessibility patterns and includes focus management.
+   *
+   * Features:
+   * - Visual states: active (filled) and inactive (outlined) modes
+   * - Color theming: red, purple, green, orange, and new-tag-color
+   * - Inline editing with customizable behavior (click-to-edit, clear-on-start)
+   * - Accessibility: proper ARIA attributes and keyboard navigation
+   * - Programmatic editing control via exposed methods
+   * - Integration with EditableText for seamless rename functionality
+   * - Responsive design with CSS custom properties
+   *
+   * @displayName Tag
+   * @example
+   * // Basic tag display
+   * <Tag :tag="{ name: 'Frontend', color: 'blue' }" />
+   *
+   * @example
+   * // Active tag with color
+   * <Tag
+   *   :tag="{ name: 'Important', color: 'red' }"
+   *   :active="true"
+   * />
+   *
+   * @example
+   * // Editable tag with rename functionality
+   * <Tag
+   *   :tag="{ name: 'Editable Tag', color: 'green' }"
+   *   :editable="true"
+   *   :edit-on-click="true"
+   *   @rename="handleRename"
+   * />
+   *
+   * @example
+   * // Programmatic editing control
+   * <Tag
+   *   ref="tagRef"
+   *   :tag="{ name: 'Click to Edit', color: 'purple' }"
+   *   :editable="true"
+   *   :edit-on-click="false"
+   *   :clear-on-start-renaming="true"
+   * />
+   * <!-- Use tagRef.startEditing() to activate editing -->
+   */
+
   import { ref, useTemplateRef } from "vue";
+
+  defineOptions({
+    name: "Tag",
+  });
+
   const props = defineProps({
-    tag: { type: Object, required: true },
+    /**
+     * Tag data object containing name and color information
+     * @example { name: "Frontend", color: "blue" }
+     */
+    tag: {
+      type: Object,
+      required: true,
+      validator: (tag) => {
+        return tag && typeof tag.name === "string" && typeof tag.color === "string";
+      },
+    },
+
+    /**
+     * Whether the tag is in active (filled) or inactive (outlined) state
+     */
     active: { type: Boolean, default: false },
+
+    /**
+     * Whether the tag name can be edited inline
+     */
     editable: { type: Boolean, default: false },
+
+    /**
+     * Whether clicking the tag should activate edit mode (when editable is true)
+     */
     editOnClick: { type: Boolean, default: false },
+
+    /**
+     * Whether the input field should be cleared when editing starts
+     */
     clearOnStartRenaming: { type: Boolean, default: false },
   });
+  /**
+   * Component events
+   * @event rename - Emitted when tag name is changed via inline editing
+   */
   const emit = defineEmits(["rename"]);
+
   const newName = ref(props.tag.name);
   const editableTextRef = useTemplateRef("editableTextRef");
+
+  /**
+   * Exposes methods for programmatic control
+   * @expose {Function} startEditing - Programmatically activate edit mode (only if editable is true)
+   */
   defineExpose({
     startEditing: () => {
       props.editable && editableTextRef.value?.startEditing();

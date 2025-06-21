@@ -235,7 +235,7 @@ npm run lint
 - Use soft deletes for data preservation
 - Follow Vue 3 Composition API best practices
 - Use shared formatting configurations for consistency
-- Don't leave trailing whitespace in lines
+- Don't leave trailing whitespace in lines, and never leave lines that only contain whitespace
 - Always insert a blank line at the end of all files
 
 ## Utility Scripts (Backend)

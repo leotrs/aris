@@ -21,14 +21,15 @@
   // Determine effective variant
   const effectiveVariant = computed(() => {
     // Only use slot variant if there's actually slot content for the trigger
-    // The default slot is for menu content, not trigger content
-    return slots.default && props.variant === "slot" ? "slot" : props.variant;
+    // The default slot is for trigger content, so prioritize it over variant prop
+    return slots.default ? "slot" : props.variant;
   });
 
   // Computed classes for trigger button
   const triggerClasses = computed(() => [
     "context-menu-trigger",
     `variant-${effectiveVariant.value}`,
+    `size-${props.size}`,
   ]);
 
   // Correct trigger ref depends on variant

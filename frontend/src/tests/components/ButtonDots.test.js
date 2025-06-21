@@ -5,7 +5,7 @@ import ButtonDots from "@/components/base/ButtonDots.vue";
 
 describe("ButtonDots.vue", () => {
   // Note: Icon sizing and positioning regression tests are in ButtonDots.regression.test.js
-  
+
   it("emits on when active becomes true and off when becomes false", async () => {
     const wrapper = shallowMount(ButtonDots, {
       global: { stubs: { IconDotsVertical: true } },
