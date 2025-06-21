@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, provide, watchEffect, useTemplateRef } from "vue";
+  import { ref, computed, inject, provide, watchEffect, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { File } from "@/models/File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
@@ -65,12 +65,19 @@
     true,
     "Main"
   );
+
+  const ctaAttrs = computed(() => {
+    return {
+      text: mobileMode.value || collapsed.value ? "" : "New File",
+      placement: mobileMode.value ? "top-end" : "bottom",
+      kind: mobileMode.value ? "primary" : "secondary",
+      class: collapsed.value ? "collapsed" : "",
+    };
+  });
 </script>
 
 <template>
-  <div
-    :class="['sb-wrapper', mobileMode ? 'mobile' : '', !mobileMode && collapsed ? 'collapsed' : '']"
-  >
+  <div class="sb-wrapper" :class="{ mobile: mobileMode, collapsed: collapsed }">
     <template v-if="!mobileMode">
       <div id="logo">
         <img :src="collapsed ? logoSmall : logoFull" alt="Aris logo" />
@@ -81,12 +88,9 @@
       <ContextMenu
         ref="menu-ref"
         variant="custom"
-        component="ButtonToggle"
+        component="Button"
         icon="CirclePlus"
-        :text="mobileMode ? '' : 'New File'"
-        :placement="mobileMode ? 'top-end' : 'bottom'"
-        :kind="mobileMode ? 'primary' : 'secondary'"
-        :class="{ collapsed }"
+        v-bind="ctaAttrs"
       >
         <ContextMenuItem icon="File" caption="Empty file" @click="emit('newEmptyFile')" />
         <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />
@@ -169,11 +173,7 @@
       width: 100%;
     }
 
-    & .cta > .cm-wrapper > {
-      width: 100%;
-    }
-
-    & .cta > .cm-wrapper > :deep(button) {
+    & .cta > .cm-wrapper :deep(button) {
       padding-left: 24px !important;
       padding-right: 30px !important;
       width: 100%;
