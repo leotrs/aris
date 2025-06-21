@@ -22,7 +22,7 @@ describe("WorkspaceView", () => {
   beforeEach(() => {
     getSettingsSpy = vi.spyOn(File, "getSettings").mockResolvedValue({ theme: "dark" });
     useKSSpy = vi.spyOn(KSMod, "useKeyboardShortcuts").mockImplementation(() => {});
-    fileStore = { value: { files: { "42": { id: 42, content: "abc" } } } };
+    fileStore = { value: { files: { 42: { id: 42, content: "abc" } } } };
   });
 
   afterEach(() => {
@@ -34,7 +34,11 @@ describe("WorkspaceView", () => {
       global: {
         provide: { fileStore, api, mobileMode: false },
         stubs: {
-          Sidebar: { name: "Sidebar", template: "<div />" },
+          Sidebar: {
+            name: "Sidebar",
+            template: "<div />",
+            emits: ["show-component", "hide-component"],
+          },
           Canvas: {
             name: "Canvas",
             props: ["modelValue", "showEditor", "showSearch"],
