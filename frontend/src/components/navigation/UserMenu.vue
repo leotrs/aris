@@ -3,7 +3,6 @@
   import { useRouter } from "vue-router";
 
   const menuRef = useTemplateRef("menu-ref");
-  const onClick = () => menuRef.value.toggle();
 
   const router = useRouter();
   const goTo = (page) => router.push(`/${page}`);
@@ -19,8 +18,8 @@
 </script>
 
 <template>
-  <div class="um-wrapper" @click.stop="onClick">
-    <ContextMenu ref="menu-ref">
+  <div class="um-wrapper">
+    <ContextMenu ref="menu-ref" variant="slot">
       <template #trigger>
         <Avatar :user="user" :tooltip="false" />
       </template>

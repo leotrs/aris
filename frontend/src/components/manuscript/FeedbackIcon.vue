@@ -63,6 +63,7 @@
       component="ButtonToggle"
       :icon="activeObj?.icon || 'MoodPlus'"
       placement="left-start"
+      size="sm"
     >
       <ContextMenuItem
         v-for="obj in icons"

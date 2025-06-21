@@ -283,7 +283,7 @@
           :style="menuStyles"
           data-testid="context-menu"
         >
-          <!-- 
+          <!--
             @slot default - Menu content (typically ContextMenuItem components)
             @binding {Function} close - Function to close the menu programmatically
             @example
@@ -344,23 +344,27 @@
 
   .cm-menu-enter-from {
     opacity: 0;
-    transform: scale(0.95) translateY(-8px);
+    transform: scaleY(0.8) scaleX(0.95);
+    transform-origin: top center;
   }
 
   .cm-menu-leave-to {
     opacity: 0;
-    transform: scale(0.95) translateY(-8px);
+    transform: scaleY(0.8) scaleX(0.95);
+    transform-origin: top center;
   }
 
   /* Mobile modal animations */
   .cm-menu-mobile.cm-menu-enter-from {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9);
+    transform: translate(-50%, -50%) scaleY(0.8) scaleX(0.95);
+    transform-origin: center center;
   }
 
   .cm-menu-mobile.cm-menu-leave-to {
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.9);
+    transform: translate(-50%, -50%) scaleY(0.8) scaleX(0.95);
+    transform-origin: center center;
   }
 
   /* Touch interactions */
