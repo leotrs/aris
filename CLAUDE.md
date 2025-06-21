@@ -127,10 +127,10 @@ npm test
 npm run test:coverage
 
 # Run single test file
-npm test -- tests/components/SpecificComponent.test.js
+npm test tests/components/SpecificComponent.test.js
 
 # Run tests matching pattern
-npm test -- --grep "ContextMenu"
+npm test --grep "ContextMenu"
 ```
 
 ### Test Configuration
