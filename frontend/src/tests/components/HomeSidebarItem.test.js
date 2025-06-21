@@ -24,7 +24,7 @@ describe("HomeSidebarItem.vue", () => {
     });
     expect(wrapper.classes()).toContain("collapsed");
     const icon = wrapper.find("icon-stub");
-    expect(icon.attributes("name")).toBe("X");
+    expect(icon.attributes("name")).toBe("Y");
     const tooltip = wrapper.find("tooltip-stub");
     expect(tooltip.exists()).toBe(true);
     expect(tooltip.attributes("content")).toBe("Tip");
