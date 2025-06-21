@@ -3,6 +3,7 @@
   import ButtonDots from "@/components/base/ButtonDots.vue";
   import ButtonClose from "@/components/base/ButtonClose.vue";
   import Button from "@/components/base/Button.vue";
+  import ButtonToggle from "@/components/base/ButtonToggle.vue";
 
   const props = defineProps({
     variant: { type: String, default: "dots" }, // 'dots', 'close', 'custom', 'slot'
@@ -22,10 +23,17 @@
   const effectiveVariant = computed(() => {
     // Only use slot variant if there's actually meaningful slot content
     // Check if slot exists and has actual content (not just whitespace or comments)
-    const hasSlotContent = slots.default && slots.default().some(vnode => 
-      vnode.type !== Comment && 
-      (typeof vnode.type === 'string' || typeof vnode.type === 'object' || typeof vnode.type === 'function')
-    );
+    const hasSlotContent =
+      slots.default &&
+      slots
+        .default()
+        .some(
+          (vnode) =>
+            vnode.type !== Comment &&
+            (typeof vnode.type === "string" ||
+              typeof vnode.type === "object" ||
+              typeof vnode.type === "function")
+        );
     return hasSlotContent ? "slot" : props.variant;
   });
 

@@ -142,12 +142,13 @@ describe("ContextMenu Icon Fixes - Integration Tests", () => {
           variant: "dots",
         },
         slots: {
-          default: '', // Empty slot content should not trigger slot variant
+          default: "", // Empty slot content should not trigger slot variant
         },
         global: {
           stubs: {
             ContextMenuTrigger: {
-              template: '<button data-testid="trigger-button" :class="$attrs.class">{{ $attrs.variant }}</button>',
+              template:
+                '<button data-testid="trigger-button" :class="$attrs.class">{{ $attrs.variant }}</button>',
               props: ["variant", "component", "icon", "text", "size", "isOpen"],
               emits: ["toggle"],
             },
@@ -168,12 +169,13 @@ describe("ContextMenu Icon Fixes - Integration Tests", () => {
           variant: "dots",
         },
         slots: {
-          default: '<!-- ContextMenuItem components will go here -->', // Comments should not trigger slot variant
+          default: "<!-- ContextMenuItem components will go here -->", // Comments should not trigger slot variant
         },
         global: {
           stubs: {
             ContextMenuTrigger: {
-              template: '<button data-testid="trigger-button" :class="$attrs.class">{{ $attrs.variant }}</button>',
+              template:
+                '<button data-testid="trigger-button" :class="$attrs.class">{{ $attrs.variant }}</button>',
               props: ["variant", "component", "icon", "text", "size", "isOpen"],
               emits: ["toggle"],
             },
@@ -195,7 +197,7 @@ describe("ContextMenu Icon Fixes - Integration Tests", () => {
         },
         slots: {
           trigger: '<span data-testid="custom-trigger">Custom Trigger</span>',
-          default: '<div>Menu content</div>',
+          default: "<div>Menu content</div>",
         },
         global: {
           stubs: {

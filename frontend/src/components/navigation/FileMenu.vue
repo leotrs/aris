@@ -32,7 +32,7 @@
 </script>
 
 <template>
-  <div class="fm-wrapper" :class="mode">
+  <div class="fm-wrapper" data-testid="file-menu" :class="mode">
     <component
       :is="menuComponent"
       ref="menu-ref"

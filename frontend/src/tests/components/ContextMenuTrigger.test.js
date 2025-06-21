@@ -102,7 +102,7 @@ describe("ContextMenuTrigger.vue", () => {
         { variant: "dots" },
         {
           slots: {
-            default: '',
+            default: "",
           },
         }
       );
@@ -116,7 +116,7 @@ describe("ContextMenuTrigger.vue", () => {
         { variant: "dots" },
         {
           slots: {
-            default: '<!-- just a comment -->',
+            default: "<!-- just a comment -->",
           },
         }
       );
@@ -130,7 +130,7 @@ describe("ContextMenuTrigger.vue", () => {
         { variant: "dots" },
         {
           slots: {
-            default: '   \n   ',
+            default: "   \n   ",
           },
         }
       );
@@ -144,7 +144,7 @@ describe("ContextMenuTrigger.vue", () => {
         { variant: "dots" },
         {
           slots: {
-            default: '<div>Real content</div>',
+            default: "<div>Real content</div>",
           },
         }
       );

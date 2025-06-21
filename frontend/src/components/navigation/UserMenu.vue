@@ -19,7 +19,7 @@
 
 <template>
   <div class="um-wrapper">
-    <ContextMenu ref="menu-ref" variant="slot">
+    <ContextMenu ref="menu-ref" data-testid="user-menu" variant="slot">
       <template #trigger>
         <Avatar :user="user" :tooltip="false" />
       </template>

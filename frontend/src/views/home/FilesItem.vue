@@ -151,6 +151,7 @@
     class="item"
     role="button"
     tabindex="0"
+    :data-testid="`file-item-${file?.id || 'unknown'}`"
     :class="{
       list: mode === 'list',
       cards: mode === 'cards',
