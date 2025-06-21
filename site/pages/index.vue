@@ -1,5 +1,9 @@
 <script setup>
   import NavBar from '@/components/NavBar.vue'
+  import logoFull from "@/assets/logo-32px.svg";
+
+  const demoCopy = "Explore the Demo";
+  const betaCopy = "Get Beta Access";
 </script>
 
 <template>
@@ -10,9 +14,9 @@
       <div class="hero-content">
         <div class="hero-image"></div>
         <div class="hero-text">
-          <h1>Transforming Research Publishing for the Digital Age</h1>
+          <h1>Scientific publishing, reimagined for the web</h1>
           <p>
-            Experience the future of research publishing with Aris. Join a community that values accessibility, clarity, and innovation.
+            Aris is a new way to author and publish research — clear, interactive, and designed for modern communication.
           </p>
         </div>
       </div>
@@ -20,37 +24,39 @@
 
     <!-- Dark Banner CTA -->
     <section class="banner-cta">
-      <h2>Experience the Future of Publishing</h2>
-      <p>Transform your research into interactive, accessible publications that engage readers worldwide.</p>
+      <h2>Web-native. Human-first. Built for science.</h2>
+      <p>
+        Create research documents that are readable, dynamic, and easy to write and share — no barriers, no friction.
+      </p>
       <div class="buttons">
-        <a href="/demo" class="btn primary">Try</a>
-        <a href="#signup" class="btn secondary">Join</a>
+        <a href="/demo" class="btn primary">{{ demoCopy }}</a>
+        <a href="#signup" class="btn secondary">{{ betaCopy }}</a>
       </div>
     </section>
 
     <!-- Visual Features -->
     <section class="features">
-      <h2>Discover the future of research publishing with Aris's innovative platform.</h2>
+      <h2>Designed for how research is written — and read</h2>
       <p>
-        Aris transforms traditional publishing into a dynamic, web-native experience. Designed for seamless collaboration, immersive content, and broad accessibility.
+        Aris combines structure, clarity, and flexibility to make your work easier to publish and easier to understand.
       </p>
       <div class="feature-grid">
         <div class="feature-box">
           <div class="image-placeholder" />
-          <h3>Responsive by Design</h3>
-          <p>Research that looks great on every screen, from desktop to mobile.</p>
+          <h3>Fluid, Responsive Design</h3>
+          <p>Your document adapts to any screen — beautifully and effortlessly.</p>
           <a href="#">Demo →</a>
         </div>
         <div class="feature-box">
           <div class="image-placeholder" />
-          <h3>Interactive & Immersive</h3>
-          <p>Engage your audience with live visuals and dynamic content.</p>
+          <h3>Interactive by Nature</h3>
+          <p>Add live visuals, embedded tools, and custom components to explain your work clearly.</p>
           <a href="#">Explore →</a>
         </div>
         <div class="feature-box">
           <div class="image-placeholder" />
-          <h3>Accessible to All</h3>
-          <p>Inclusive and readable, making your work available to everyone.</p>
+          <h3>Inclusive & Accessible</h3>
+          <p>Readable typography, semantic structure, and adaptive layouts — for every reader, everywhere.</p>
           <a href="#">Join →</a>
         </div>
       </div>
@@ -58,32 +64,36 @@
 
     <!-- Process Section -->
     <section class="process">
-      <p class="label">Process</p>
-      <h2>Transform Your Research into Impactful Publications</h2>
-      <p>We streamline your publishing journey: from draft to publication, Aris empowers you every step of the way.</p>
+      <p class="label text-label">Process</p>
+      <h2>From idea to publication — all in one space</h2>
+      <p>
+        Aris supports your research from first draft to final release, with built-in tools for writing, reviewing, and sharing.
+      </p>
       <div class="steps">
         <div class="step">
-          <h3>Step 1: Author Your Work</h3>
-          <p>Begin by writing your research using Aris or importing from other tools.</p>
+          <h3>Step 1: Write</h3>
+          <p>Start with a clean editor built for research. No templates or hacks required.</p>
         </div>
         <div class="step">
-          <h3>Step 2: Iterate for Perfection</h3>
-          <p>Collaborate with peers, add interactivity, and polish your findings.</p>
+          <h3>Step 2: Collaborate</h3>
+          <p>Invite co-authors, reviewers, and colleagues to read and comment in real time.</p>
         </div>
         <div class="step">
-          <h3>Step 3: Publish with Ease</h3>
-          <p>Share your work with the world — accessible, beautiful, and web-native.</p>
+          <h3>Step 3: Share</h3>
+          <p>Publish a polished document that's accessible to everyone — instantly and online.</p>
         </div>
       </div>
     </section>
 
     <!-- Final CTA -->
     <section class="cta">
-      <h2>Start Your Publishing Journey Today</h2>
-      <p>Experience the future of scientific publishing with Aris.</p>
+      <h2>Publish research that speaks for itself</h2>
+      <p>
+        With Aris, your published manuscript is more than a file — it's a living, accessible, and beautifully presented document.
+      </p>
       <div class="buttons">
-        <a href="/demo" class="btn primary">Try</a>
-        <a href="#signup" class="btn secondary">Join</a>
+        <a href="/demo" class="btn primary">{{ demoCopy }}</a>
+        <a href="#signup" class="btn secondary">{{ betaCopy }}</a>
       </div>
     </section>
 
@@ -91,7 +101,6 @@
     <footer class="footer">
       <div class="footer-content">
         <div>
-          <p><strong>Logo</strong></p>
           <p>Subscribe to get the latest Aris features and updates.</p>
           <form class="newsletter">
             <input type="email" placeholder="Your email" />
@@ -109,19 +118,26 @@
         <div>
           <p><strong>Connect</strong></p>
           <ul>
-            <li><a href="#">Twitter</a></li>
-            <li><a href="#">Mastodon</a></li>
+            <li><a href="#">Bluesky</a></li>
+            <li><a href="#">LinkedIn</a></li>
             <li><a href="#">GitHub</a></li>
           </ul>
         </div>
       </div>
       <div class="footer-bottom">
-        <p>© 2025 Aris. All rights reserved.</p>
-        <ul>
-          <li><a href="#">Privacy</a></li>
-          <li><a href="#">Terms</a></li>
-          <li><a href="#">Cookies</a></li>
-        </ul>
+        <div>
+          <p>© 2025 Aris. All rights reserved.</p>
+        </div>
+        <div>
+          <img id="logo" :src="logoFull" alt="Aris logo" />
+        </div>
+        <div>
+          <ul>
+            <li><a href="#">Privacy</a></li>
+            <li><a href="#">Terms</a></li>
+            <li><a href="#">Cookies</a></li>
+          </ul>
+        </div>
       </div>
     </footer>
   </div>
@@ -149,6 +165,7 @@
     gap: 1rem;
     flex-wrap: wrap;
     margin-top: 1rem;
+    justify-content: center;
   }
 
   .btn {
@@ -160,22 +177,26 @@
   }
 
   .btn.primary {
-    background: #3b82f6;
+    background: var(--primary-500);
     color: white;
   }
 
   .btn.primary:hover {
-    background: #2563eb;
+    background: var(--primary-600);
   }
 
   .btn.secondary {
-    background: #f3f4f6;
-    color: #111827;
+    background: var(--gray-50);
+    color: var(--primary-800);
+  }
+
+  .btn.secondary:hover {
+    background: var(--gray-200);
   }
 
   .btn.link {
     background: transparent;
-    color: #3b82f6;
+    color: var(--primary-500);
   }
 
   /* Hero */
@@ -189,7 +210,7 @@
   .hero-image {
     flex: 1;
     min-height: 200px;
-    background: #e2e8f0;
+    background: var(--extra-light);
     border-radius: 8px;
   }
 
@@ -200,13 +221,9 @@
   /* Banner CTA */
   .banner-cta {
     text-align: center;
-    background: #1f2937;
+    background: var(--primary-950);
     color: white;
     padding: 4rem 1rem;
-  }
-
-  .banner-cta .buttons {
-    justify-content: center;
   }
 
   /* Features Grid */
@@ -224,7 +241,7 @@
 
   .feature-box {
     flex: 1 1 250px;
-    background: #f9fafb;
+    background: var(--gray-75);
     padding: 2rem;
     border-radius: 8px;
     text-align: left;
@@ -233,7 +250,7 @@
   .image-placeholder {
     width: 100%;
     height: 150px;
-    background: #d1d5db;
+    background: var(--medium);
     border-radius: 6px;
     margin-bottom: 1rem;
   }
@@ -249,9 +266,7 @@
   }
 
   .label {
-    font-size: 0.75rem;
     text-transform: uppercase;
-    color: #6b7280;
     margin-bottom: 0.5rem;
   }
 
@@ -265,7 +280,7 @@
 
   .step {
     flex: 1 1 250px;
-    background: #f9fafb;
+    background: var(--gray-75);
     padding: 1.5rem;
     border-radius: 8px;
     text-align: left;
@@ -274,14 +289,14 @@
   /* CTA */
   .cta {
     text-align: center;
-    background: #f3f4f6;
+    background-color: var(--gray-100);
     padding: 4rem 1rem;
   }
 
   /* Footer */
   .footer {
-    background: #1f2937;
-    color: #e5e7eb;
+    background: var(--primary-950);
+    color: var(--almost-white);
     padding: 3rem 1rem;
     font-size: 0.9rem;
   }
@@ -304,12 +319,17 @@
   }
 
   .footer a {
-    color: #e5e7eb;
+    color: var(--light);
     text-decoration: none;
   }
 
   .footer a:hover {
     text-decoration: underline;
+  }
+
+  .footer #logo {
+    width: 30px;
+    height: 30px;
   }
 
   .newsletter {
@@ -327,7 +347,7 @@
 
   .newsletter button {
     padding: 0.5rem 1rem;
-    background: #3b82f6;
+    background: var(--primary-500);
     border: none;
     color: white;
     border-radius: 4px;
@@ -339,8 +359,30 @@
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 1rem;
-    border-top: 1px solid #374151;
+    border-top: var(--border-extrathin) solid var(--gray-700);
     padding-top: 1rem;
+  }
+
+  .footer-bottom > div {
+    flex:1;
+    display: flex;
+    align-items: center;
+
+    &:nth-child(1) {
+      justify-content: left;
+    }
+
+    &:nth-child(2) {
+      justify-content: center;
+    }
+
+    &:nth-child(3) {
+      justify-content: right;
+    }
+  }
+
+  .footer-bottom p {
+    margin-bottom: 0;
   }
 
   .footer-bottom ul {
