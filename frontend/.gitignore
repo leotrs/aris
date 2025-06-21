@@ -90,3 +90,11 @@ lerna-debug.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Debug files
+debug-menus.js
+debug-menus.png
+
+# Test reports and results
+playwright-report/
+test-results/
