@@ -141,7 +141,6 @@
   const triggerClasses = computed(() => [
     "context-menu-trigger",
     `variant-${currentVariant.value}`,
-    `size-${props.size}`,
   ]);
 
   const menuClasses = computed(() => {
@@ -253,7 +252,7 @@
       v-bind="$attrs"
       @toggle="show = !show"
     >
-      <!-- 
+      <!--
         @slot trigger - Custom trigger element (only used when variant="slot")
         @binding {Function} toggle - Function to toggle menu open/closed
         @binding {boolean} isOpen - Whether the menu is currently open

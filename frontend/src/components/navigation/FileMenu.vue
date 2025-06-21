@@ -25,7 +25,7 @@
 <template>
   <div class="fm-wrapper" :class="mode">
     <component
-      :is="mode"
+      :is="menuComponent"
       ref="menu-ref"
       variant="dots"
       component="ButtonToggle"

@@ -1,11 +1,15 @@
 <script setup>
   import { watch } from "vue";
 
+  defineOptions({
+    name: "ButtonToggle",
+  });
+
   const props = defineProps({
     text: { type: String, default: "" },
     icon: { type: String, default: "" },
     iconClass: { type: String, default: "" },
-    buttonSize: { type: String, default: "md" },
+    size: { type: String, default: "md" },
     hoverColor: { type: String, default: "var(--gray-50)" },
     activeColor: { type: String, default: "var(--surface-hint)" },
     type: { type: String, default: "filled" },
@@ -19,7 +23,7 @@
 <template>
   <button
     class="text-h6 btn-toggle"
-    :class="[type, `btn-${buttonSize}`, active ? 'active' : '']"
+    :class="[type, `btn-${size}`, active ? 'active' : '']"
     @click="active = !active"
   >
     <template v-if="icon">
