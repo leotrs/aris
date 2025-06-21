@@ -3,7 +3,7 @@
   import logoFull from "@/assets/logo-32px.svg";
 
   const demoCopy = "Explore the Demo";
-  const betaCopy = "Get Beta Access";
+  const betaCopy = "Get Early Access";
 </script>
 
 <template>
@@ -16,7 +16,7 @@
         <div class="hero-text">
           <h1>Scientific publishing, reimagined for the web</h1>
           <p>
-            Aris is a new way to author and publish research — clear, interactive, and designed for modern communication.
+            Aris is a new way to author and publish research — clear, interactive, and designed for modern science.
           </p>
         </div>
       </div>
@@ -26,38 +26,51 @@
     <section class="banner-cta">
       <h2>Web-native. Human-first. Built for science.</h2>
       <p>
-        Create research documents that are readable, dynamic, and easy to write and share — no barriers, no friction.
+        Create research documents that are readable, dynamic, and personalized — made for how you write, read, and collaborate.
       </p>
       <div class="buttons">
         <a href="/demo" class="btn primary">{{ demoCopy }}</a>
-        <a href="#signup" class="btn secondary">{{ betaCopy }}</a>
       </div>
     </section>
 
     <!-- Visual Features -->
     <section class="features">
-      <h2>Designed for how research is written — and read</h2>
+      <p class="label text-label">Features</p>
+      <h2>Built for every part of the research journey</h2>
       <p>
-        Aris combines structure, clarity, and flexibility to make your work easier to publish and easier to understand.
+        Aris adapts to how you write, review, and read — so science flows better for everyone.
       </p>
       <div class="feature-grid">
         <div class="feature-box">
           <div class="image-placeholder" />
-          <h3>Fluid, Responsive Design</h3>
-          <p>Your document adapts to any screen — beautifully and effortlessly.</p>
-          <a href="#">Demo →</a>
+          <h3>For Authors</h3>
+          <p>Write together. Communicate clearly. Publish fast.</p>
+          <ul>
+            <li>Real-time collaboration</li>
+            <li>Interactive figures</li>
+            <li>Instant reader feedback</li>
+          </ul>
         </div>
         <div class="feature-box">
           <div class="image-placeholder" />
-          <h3>Interactive by Nature</h3>
-          <p>Add live visuals, embedded tools, and custom components to explain your work clearly.</p>
-          <a href="#">Explore →</a>
+          <h3>For Reviewers</h3>
+          <p>Focus on the science, not the formatting.</p>
+          <ul>
+            <li>Comment threads</li>
+            <li>Change tracking</li>
+            <li>Compare versions with diff views</li>
+          </ul>
+
         </div>
         <div class="feature-box">
           <div class="image-placeholder" />
-          <h3>Inclusive & Accessible</h3>
-          <p>Readable typography, semantic structure, and adaptive layouts — for every reader, everywhere.</p>
-          <a href="#">Join →</a>
+          <h3>For Readers</h3>
+          <p>Research that fits your screen, your pace, your needs.</p>
+          <ul>
+            <li>Responsive on any device</li>
+            <li>Accessibility features like font and layout controls</li>
+            <li>Clean, intuitive navigation</li>
+          </ul>
         </div>
       </div>
     </section>
@@ -72,7 +85,7 @@
       <div class="steps">
         <div class="step">
           <h3>Step 1: Write</h3>
-          <p>Start with a clean editor built for research. No templates or hacks required.</p>
+          <p>Start with a clean editor built for research. No templates or formatting battles.</p>
         </div>
         <div class="step">
           <h3>Step 2: Collaborate</h3>
@@ -80,21 +93,22 @@
         </div>
         <div class="step">
           <h3>Step 3: Share</h3>
-          <p>Publish a polished document that's accessible to everyone — instantly and online.</p>
+          <p>Publish a polished document that’s accessible and professional — instantly and online.</p>
         </div>
       </div>
     </section>
 
     <!-- Final CTA -->
     <section class="cta">
-      <h2>Publish research that speaks for itself</h2>
+      <h2>Experience what research should <em>feel</em> like</h2>
       <p>
-        With Aris, your published manuscript is more than a file — it's a living, accessible, and beautifully presented document.
+        Every Aris document is an interactive, readable, and beautifully rendered scientific
+        manuscript — a modern interface between researcher and audience.
       </p>
       <div class="buttons">
-        <a href="/demo" class="btn primary">{{ demoCopy }}</a>
-        <a href="#signup" class="btn secondary">{{ betaCopy }}</a>
+        <a href="#signup" class="btn primary">{{ betaCopy }}</a>
       </div>
+      <a href="#signup" class="">Or explore the demo</a>
     </section>
 
     <!-- Footer -->
@@ -144,6 +158,17 @@
 </template>
 
 <style scoped>
+
+
+
+
+
+
+
+
+
+
+
   /* Shared */
   section {
     padding: 4rem 1rem;
@@ -164,7 +189,7 @@
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
-    margin-top: 1rem;
+    margin-top: 2rem;
     justify-content: center;
   }
 
@@ -270,6 +295,11 @@
     margin-bottom: 0.5rem;
   }
 
+  .feature-box p,
+  .step p {
+    line-height: 1.6;
+  }
+
   .steps {
     display: flex;
     flex-wrap: wrap;
@@ -291,6 +321,7 @@
     text-align: center;
     background-color: var(--gray-100);
     padding: 4rem 1rem;
+    border-top: var(--border-extrathin) solid var(--gray-200);
   }
 
   /* Footer */
