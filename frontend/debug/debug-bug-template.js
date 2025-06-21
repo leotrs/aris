@@ -1,9 +1,9 @@
 /**
  * Puppeteer Bug Reproduction Template
- * 
+ *
  * Use this template to replicate user interaction bugs in the Aris frontend.
  * Always run in headless mode as specified in CLAUDE.md.
- * 
+ *
  * Usage:
  * 1. Copy this template
  * 2. Modify the steps in replicateBug() to match the reported bug

@@ -118,7 +118,11 @@
 </script>
 
 <template>
-  <div class="view" data-testid="workspace-view" :class="{ focus: focusMode, mobile: mobileMode }">
+  <div
+    class="view"
+    data-testid="workspace-container"
+    :class="{ focus: focusMode, mobile: mobileMode }"
+  >
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
 
     <!-- Loading state -->
