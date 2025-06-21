@@ -24,7 +24,7 @@
       <Icon v-if="icon" :name="icon" class="sb-icon" />
     </template>
     <template v-else-if="iconCollapsed">
-      <Icon :name="icon" class="sb-icon" />
+      <Icon :name="iconCollapsed" class="sb-icon" />
     </template>
     <template v-else>
       <Icon v-if="icon" :name="icon" class="sb-icon" />

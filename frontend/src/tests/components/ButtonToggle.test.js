@@ -6,7 +6,7 @@ import ButtonToggle from "@/components/base/ButtonToggle.vue";
 describe("ButtonToggle.vue", () => {
   it("renders slot content and toggles active class and emits events on click", async () => {
     const wrapper = mount(ButtonToggle, {
-      props: { text: "Toggle", buttonSize: "sm", type: "outline" },
+      props: { text: "Toggle", size: "sm", type: "outline" },
       global: { stubs: ["Icon"] },
       slots: { default: "<span>inner</span>" },
     });
@@ -33,7 +33,7 @@ describe("ButtonToggle.vue", () => {
 
   it("renders text and icon props when provided", () => {
     const wrapper = mount(ButtonToggle, {
-      props: { text: "Press", icon: "dots", buttonSize: "lg" },
+      props: { text: "Press", icon: "dots", size: "lg" },
       global: { stubs: ["Icon"] },
     });
     const span = wrapper.get("span.btn-text");
