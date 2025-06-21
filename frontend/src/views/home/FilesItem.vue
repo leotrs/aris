@@ -40,7 +40,7 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { File } from "@/models/File.js";
   import Date from "./FilesItemDate.vue";
-  import ConfirmationModal from "@/components/ConfirmationModal.vue";
+  // import ConfirmationModal from "@/components/ConfirmationModal.vue"; // Component doesn't exist
 
   const props = defineProps({
     /**
@@ -203,19 +203,8 @@
       </template>
     </template>
 
-    <!-- Delete confirmation modal -->
-    <ConfirmationModal
-      :show="showDeleteModal"
-      title="Delete File?"
-      :message="deleteMessage"
-      confirm-text="Delete"
-      cancel-text="Cancel"
-      variant="danger"
-      :file-data="file"
-      @confirm="handleDeleteConfirm"
-      @cancel="handleDeleteCancel"
-      @close="handleDeleteClose"
-    />
+    <!-- TODO: Delete confirmation modal (ConfirmationModal component doesn't exist) -->
+    <!-- <ConfirmationModal ... /> -->
   </div>
 </template>
 
