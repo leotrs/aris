@@ -1,5 +1,8 @@
 <script setup>
   import { computed, ref, useTemplateRef, useSlots } from "vue";
+  import ButtonDots from "@/components/base/ButtonDots.vue";
+  import ButtonClose from "@/components/base/ButtonClose.vue";
+  import Button from "@/components/base/Button.vue";
 
   const props = defineProps({
     variant: { type: String, default: "dots" }, // 'dots', 'close', 'custom', 'slot'
@@ -17,14 +20,15 @@
 
   // Determine effective variant
   const effectiveVariant = computed(() => {
-    return slots.default ? "slot" : props.variant;
+    // Only use slot variant if there's actually slot content for the trigger
+    // The default slot is for menu content, not trigger content
+    return slots.default && props.variant === "slot" ? "slot" : props.variant;
   });
 
   // Computed classes for trigger button
   const triggerClasses = computed(() => [
     "context-menu-trigger",
     `variant-${effectiveVariant.value}`,
-    `size-${props.size}`,
   ]);
 
   // Correct trigger ref depends on variant
@@ -68,6 +72,7 @@
         :aria-expanded="isOpen"
         data-testid="trigger-button"
         v-bind="$attrs"
+        :size="size"
         @click.stop="handleToggle"
       >
         <slot />
@@ -111,6 +116,7 @@
         :model-value="isOpen"
         :icon="icon"
         :text="text"
+        :size="size"
         :class="triggerClasses"
         hover-color="var(--surface-hint)"
         :aria-expanded="isOpen"
