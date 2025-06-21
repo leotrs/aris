@@ -127,10 +127,10 @@ npm test
 npm run test:coverage
 
 # Run single test file
-npm test -- tests/components/SpecificComponent.test.js
+npm test tests/components/SpecificComponent.test.js
 
 # Run tests matching pattern
-npm test -- --grep "ContextMenu"
+npm test --grep "ContextMenu"
 ```
 
 ### Test Configuration
@@ -139,12 +139,21 @@ npm test -- --grep "ContextMenu"
 - **Parallelism**: Limited to 2 threads to prevent memory exhaustion
 - **Coverage thresholds**: 80% for branches, functions, lines, and statements
 - **Setup**: Global test setup in `src/tests/setup.ts`
+- **Puppeteer**: Use puppeteer to replicate what users see - always in headless mode
+- **Playwright**: For e2e testing -- always in headless mode
 
 ### Key Dependencies
 - **@floating-ui/vue**: Floating UI positioning
 - **@tabler/icons-vue**: Icon library
 - **@vueuse/core**: Vue composition utilities
 - **axios**: HTTP client for API requests
+
+### Component Documentation
+Components use comprehensive JSDoc documentation compatible with Vue Styleguidist:
+- **Pattern**: Follow `frontend/COMPONENT_DOCS_TEMPLATE.md` for consistent documentation
+- **JSDoc tags**: @displayName, @example, @values, @slot, @binding, @expose
+- **Examples**: Multiple usage examples from basic to advanced
+- **Migration ready**: Documentation is fully compatible with future Vue Styleguidist adoption
 
 ## Key Patterns
 
@@ -180,9 +189,10 @@ npm test -- --grep "ContextMenu"
 
 ### Adding a New Frontend Component
 1. Create component in `src/components/` (automatically registered globally)
-2. Create tests in `tests/` directory
-3. Update routing if it's a page component
-4. Run linting and tests
+2. Add comprehensive JSDoc documentation following `COMPONENT_DOCS_TEMPLATE.md` pattern
+3. Create tests in `tests/` directory
+4. Update routing if it's a page component
+5. Run linting and tests
 
 ### Database Changes
 1. Modify models in `aris/models/models.py`
@@ -227,7 +237,7 @@ npm run lint
 - Use soft deletes for data preservation
 - Follow Vue 3 Composition API best practices
 - Use shared formatting configurations for consistency
-- Don't leave trailing whitespace in lines
+- Don't leave trailing whitespace in lines, and never leave lines that only contain whitespace
 - Always insert a blank line at the end of all files
 
 ## Utility Scripts (Backend)

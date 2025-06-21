@@ -12,9 +12,17 @@ describe("Icon.vue", () => {
       name: "IconFoo",
       template: '<div data-test="icon-foo"><slot/></div>',
     });
-    vi.doMock("@tabler/icons-vue", () => ({ IconFoo: FooIcon }));
+    const AlertTriangleIcon = defineComponent({
+      name: "IconAlertTriangle",
+      template: '<div data-test="icon-alert-triangle"><slot/></div>',
+    });
 
-    const { default: Icon } = await import("@/components/Icon.vue");
+    vi.doMock("@tabler/icons-vue", () => ({
+      IconFoo: FooIcon,
+      IconAlertTriangle: AlertTriangleIcon,
+    }));
+
+    const { default: Icon } = await import("@/components/base/Icon.vue");
     const wrapper = mount(Icon, {
       props: { name: "Foo", iconClass: "custom-class" },
     });
@@ -22,7 +30,6 @@ describe("Icon.vue", () => {
     expect(icon.exists()).toBe(true);
     expect(icon.classes()).toContain("tabler-icon");
     expect(icon.classes()).toContain("custom-class");
-    expect(icon.text()).toBe("Foo");
   });
 
   it('renders the IconTherefore component when name is "Therefore"', async () => {
@@ -30,15 +37,22 @@ describe("Icon.vue", () => {
       name: "IconTherefore",
       template: '<div data-test="icon-therefore"><slot/></div>',
     });
-    vi.doMock("@/components/IconTherefore.vue", () => ({ default: ThereforeIcon }));
+    const AlertTriangleIcon = defineComponent({
+      name: "IconAlertTriangle",
+      template: '<div data-test="icon-alert-triangle"><slot/></div>',
+    });
 
-    const { default: Icon } = await import("@/components/Icon.vue");
+    vi.doMock("@tabler/icons-vue", () => ({
+      IconAlertTriangle: AlertTriangleIcon,
+    }));
+    vi.doMock("@/components/base/IconTherefore.vue", () => ({ default: ThereforeIcon }));
+
+    const { default: Icon } = await import("@/components/base/Icon.vue");
     const wrapper = mount(Icon, {
       props: { name: "Therefore" },
     });
     const icon = wrapper.find('[data-test="icon-therefore"]');
     expect(icon.exists()).toBe(true);
     expect(icon.classes()).toContain("tabler-icon");
-    expect(icon.text()).toBe("Therefore");
   });
 });

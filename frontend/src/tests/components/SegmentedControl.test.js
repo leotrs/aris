@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { nextTick, defineComponent } from "vue";
 import { mount } from "@vue/test-utils";
-import SegmentedControl from "@/components/SegmentedControl.vue";
+import SegmentedControl from "@/components/forms/SegmentedControl.vue";
 
 const IconStub = defineComponent({
   name: "Icon",

@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import TabPage from "@/components/TabPage.vue";
+import TabPage from "@/components/navigation/TabPage.vue";
 
 describe("TabPage.vue", () => {
   it("renders default slot inside wrapper with proper class", () => {

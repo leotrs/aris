@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { defineComponent } from "vue";
 import { mount } from "@vue/test-utils";
-import TagRow from "@/components/TagRow.vue";
+import TagRow from "@/components/tags/TagRow.vue";
 
 describe("TagRow.vue", () => {
   const tags = [

@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { nextTick } from "vue";
 import { shallowMount } from "@vue/test-utils";
 
-import Manuscript from "@/components/Manuscript.vue";
+import Manuscript from "@/components/manuscript/Manuscript.vue";
 
 describe("Manuscript.vue", () => {
   it("renders basic HTML string", async () => {

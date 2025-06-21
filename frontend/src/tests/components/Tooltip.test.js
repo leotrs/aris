@@ -22,7 +22,7 @@ describe("Tooltip.vue", () => {
   });
 
   it("initializes floating UI with correct options", async () => {
-    const { default: Tooltip } = await import("@/components/Tooltip.vue");
+    const { default: Tooltip } = await import("@/components/base/Tooltip.vue");
     const anchor = document.createElement("div");
     anchor.matches = vi.fn(() => false);
     mount(Tooltip, {
@@ -41,7 +41,7 @@ describe("Tooltip.vue", () => {
   });
 
   it("renders default slot over content prop", async () => {
-    const { default: Tooltip } = await import("@/components/Tooltip.vue");
+    const { default: Tooltip } = await import("@/components/base/Tooltip.vue");
     const anchor = document.createElement("div");
     anchor.matches = vi.fn(() => false);
     const wrapper = mount(Tooltip, {
@@ -55,7 +55,7 @@ describe("Tooltip.vue", () => {
   });
 
   it("registers hover event listeners on anchor", async () => {
-    const { default: Tooltip } = await import("@/components/Tooltip.vue");
+    const { default: Tooltip } = await import("@/components/base/Tooltip.vue");
     const anchor = document.createElement("div");
     anchor.matches = vi.fn(() => false);
     anchor.addEventListener = vi.fn();
@@ -69,7 +69,7 @@ describe("Tooltip.vue", () => {
   });
 
   it("shows tooltip initially if anchor matches :hover", async () => {
-    const { default: Tooltip } = await import("@/components/Tooltip.vue");
+    const { default: Tooltip } = await import("@/components/base/Tooltip.vue");
     const anchor = document.createElement("div");
     anchor.matches = vi.fn(() => true);
     const wrapper = mount(Tooltip, {
@@ -83,7 +83,7 @@ describe("Tooltip.vue", () => {
   });
 
   it("does not render when anchor is null", async () => {
-    const { default: Tooltip } = await import("@/components/Tooltip.vue");
+    const { default: Tooltip } = await import("@/components/base/Tooltip.vue");
     const wrapper = mount(Tooltip, {
       props: { anchor: null },
       global: { stubs: { Teleport: { template: "<div><slot/></div>" } } },

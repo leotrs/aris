@@ -8,7 +8,7 @@ vi.mock("/static/jquery-3.6.0.js", () => ({}), { virtual: true });
 vi.mock("/static/tooltipster.bundle.js", () => ({}), { virtual: true });
 vi.mock("/static/onload.js", () => ({ onload: onloadStub }), { virtual: true });
 
-import ManuscriptWrapper from "@/components/ManuscriptWrapper.vue";
+import ManuscriptWrapper from "@/components/manuscript/ManuscriptWrapper.vue";
 
 // Helper to flush pending promise callbacks
 const flushPromises = () => new Promise((resolve) => setTimeout(resolve, 0));

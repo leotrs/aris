@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { shallowMount } from "@vue/test-utils";
-import HomeSidebarItem from "@/components/HomeSidebarItem.vue";
+import HomeSidebarItem from "@/components/layout/HomeSidebarItem.vue";
 
 describe("HomeSidebarItem.vue", () => {
   it("renders icon and text when not collapsed", () => {
@@ -24,7 +24,7 @@ describe("HomeSidebarItem.vue", () => {
     });
     expect(wrapper.classes()).toContain("collapsed");
     const icon = wrapper.find("icon-stub");
-    expect(icon.attributes("name")).toBe("X");
+    expect(icon.attributes("name")).toBe("Y");
     const tooltip = wrapper.find("tooltip-stub");
     expect(tooltip.exists()).toBe(true);
     expect(tooltip.attributes("content")).toBe("Tip");

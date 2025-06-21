@@ -9,11 +9,12 @@
   const fileSettings = inject("fileSettings");
 
   const focusMode = inject("focusMode");
+  const mobileMode = inject("mobileMode");
   const isActive = computed(() => props.showTitle || props.component);
 </script>
 
 <template>
-  <div class="topbar" :class="{ active: isActive, focus: focusMode }">
+  <div class="topbar" :class="{ active: isActive, focus: focusMode, mobile: mobileMode }">
     <FileTitle v-if="!component && showTitle" :file="file" class="text-h6" />
     <component :is="component" v-if="component" ref="middle-comp" :file="file" side="top" />
   </div>
@@ -21,9 +22,6 @@
 
 <style scoped>
   .topbar {
-    --sidebar-width: 64px;
-    --links-width: 120px;
-
     display: flex;
     justify-content: center;
     align-items: center;
@@ -54,5 +52,13 @@
   .topbar.focus {
     opacity: 0;
     transform: translateY(-100%);
+  }
+
+  .topbar.mobile {
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border: var(--border-extrathin) solid transparent;
+    border-radius: 8px 8px 0 0;
   }
 </style>

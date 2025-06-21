@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mount, RouterLinkStub } from "@vue/test-utils";
 import NotFoundView from "@/views/notfound/View.vue";
-import Button from "@/components/Button.vue";
+import Button from "@/components/base/Button.vue";
 
 describe("NotFoundView", () => {
   it("renders the 404 heading and message", () => {

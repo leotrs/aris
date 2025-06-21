@@ -9,12 +9,35 @@
   // Load and provide file
   const fileStore = inject("fileStore");
   const route = useRoute();
+
+  // Computed properties for different states
+  const isFileStoreLoading = computed(() => {
+    // If fileStore itself is null, we're still loading
+    return fileStore?.value === null || fileStore?.value?.isLoading === true;
+  });
+
+  const hasFileStoreError = computed(() => {
+    return fileStore?.value?.error !== undefined;
+  });
+
+  const isFileStoreLoaded = computed(() => {
+    // FileStore is loaded when it exists, has a files array, and is not loading
+    return (
+      fileStore?.value !== null &&
+      fileStore?.value !== undefined &&
+      Array.isArray(fileStore.value.files) &&
+      !isFileStoreLoading.value
+    );
+  });
+
   const file = computed(() => {
     const files = fileStore?.value?.files;
-    const fileId = route?.params?.file_id;
-    if (!files || files.length === 0 || !fileId) return {};
+    const fileId = parseInt(route?.params?.file_id);
 
-    const found = files.find((f) => f.id === fileId);
+    // Return empty object if we don't have the necessary data yet
+    if (!files || !fileId) return {};
+
+    const found = Object.values(files).find((f) => f.id === fileId);
     return found || {};
   });
   provide("file", file);
@@ -22,12 +45,22 @@
   const annotations = reactive([]);
   provide("annotations", annotations);
 
-  // If no file matches the route param, redirect to 404
+  // Only redirect to 404 when fileStore is loaded but file is not found
   const router = useRouter();
   watch(
-    () => file.value.id,
-    (id) => {
-      if (route.params.file_id && id === undefined) {
+    [() => file.value.id, isFileStoreLoaded, hasFileStoreError, isFileStoreLoading],
+    ([fileId, isLoaded, hasError, isLoading]) => {
+      const routeFileId = route.params.file_id;
+
+      // Only redirect if:
+      // 1. We have a route file_id to look for
+      // 2. FileStore is loaded (not loading)
+      // 3. No API error occurred
+      // 4. Not currently loading
+      // 5. FileStore has at least some files (not empty due to API failure)
+      // 6. File with that ID was not found
+      const hasFiles = fileStore?.value?.files?.length > 0;
+      if (routeFileId && isLoaded && !hasError && !isLoading && hasFiles && fileId === undefined) {
         router.push({ name: "NotFound" });
       }
     },
@@ -87,7 +120,33 @@
 <template>
   <div class="view" :class="{ focus: focusMode, mobile: mobileMode }">
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
-    <Canvas v-if="file" v-model="file" :show-editor="showEditor" :show-search="showSearch" />
+
+    <!-- Loading state -->
+    <div v-if="isFileStoreLoading" class="state-message">
+      <p>Loading files...</p>
+    </div>
+
+    <!-- Error state -->
+    <div v-else-if="hasFileStoreError" class="state-message error">
+      <p>Error loading files: {{ fileStore.value.error }}</p>
+      <Button kind="secondary" @click="$router.push('/')">Go back home</Button>
+    </div>
+
+    <!-- Normal state -->
+    <Canvas
+      v-else-if="file && file.id"
+      v-model="file"
+      :show-editor="showEditor"
+      :show-search="showSearch"
+    />
+
+    <!-- No file found state (after files loaded but target file not found) -->
+    <div v-else-if="isFileStoreLoaded" class="state-message">
+      <p>File not found</p>
+      <p>The file you're looking for doesn't exist or you don't have access to it.</p>
+      <Button kind="secondary" @click="$router.push('/')">Go back home</Button>
+    </div>
+
     <!-- <div class="menus" :class="{ focus: focusMode, mobile: mobileMode }">
          <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
          <UserMenu />
@@ -155,5 +214,25 @@
   .menus.focus {
     opacity: 0;
     transform: translateX(100%);
+  }
+
+  .state-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: calc(100% - 64px);
+    text-align: center;
+    padding: 32px;
+    gap: 16px;
+    position: relative;
+    left: 64px;
+    background: v-bind(fileSettings.background);
+    border-radius: 16px;
+  }
+
+  .state-message.error {
+    color: var(--error);
   }
 </style>

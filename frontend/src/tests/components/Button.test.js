@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
-import Button from "@/components/Button.vue";
+import Button from "@/components/base/Button.vue";
 
 describe("Button.vue", () => {
   it("renders slot content when neither icon nor text provided", () => {

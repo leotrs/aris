@@ -173,5 +173,6 @@
     padding: 4px;
     border-radius: 16px;
     z-index: 999;
+    pointer-events: none;
   }
 </style>

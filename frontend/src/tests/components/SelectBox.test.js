@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
 
-import SelectBox from "@/components/SelectBox.vue";
+import SelectBox from "@/components/forms/SelectBox.vue";
 
 describe("SelectBox.vue", () => {
   const TeleportStub = { props: ["to"], template: "<div><slot/></div>" };

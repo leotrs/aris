@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import ContextMenuItem from "@/components/ContextMenuItem.vue";
+import ContextMenuItem from "@/components/navigation/ContextMenuItem.vue";
 
 describe("ContextMenuItem.vue", () => {
   let closeMenu;

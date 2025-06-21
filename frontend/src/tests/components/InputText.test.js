@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 
-import InputText from "@/components/InputText.vue";
+import InputText from "@/components/forms/InputText.vue";
 
 describe("InputText.vue", () => {
   it("renders label and input in row direction", () => {

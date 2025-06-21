@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { nextTick } from "vue";
 import { mount } from "@vue/test-utils";
-import Avatar from "@/components/Avatar.vue";
+import Avatar from "@/components/base/Avatar.vue";
 
 const createObjectURLMock = vi.fn(() => "blob-url");
 const revokeObjectURLMock = vi.fn();

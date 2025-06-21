@@ -26,7 +26,7 @@ describe("FileTitle.vue", () => {
 
   it("passes the file title to EditableText and disables click editing", async () => {
     const file = { title: "Doc Title" };
-    const { default: FileTitle } = await import("@/components/FileTitle.vue");
+    const { default: FileTitle } = await import("@/components/manuscript/FileTitle.vue");
     const wrapper = mount(FileTitle, {
       props: { file },
       global: { stubs: { EditableText: EditableTextStub } },
@@ -37,7 +37,7 @@ describe("FileTitle.vue", () => {
 
   it("calls File.update when the title is changed and saved", async () => {
     const file = { title: "Old Title" };
-    const { default: FileTitle } = await import("@/components/FileTitle.vue");
+    const { default: FileTitle } = await import("@/components/manuscript/FileTitle.vue");
     const wrapper = mount(FileTitle, {
       props: { file },
       global: { stubs: { EditableText: EditableTextStub } },
@@ -53,7 +53,7 @@ describe("FileTitle.vue", () => {
 
   it("does not call File.update when save is emitted but title unchanged", async () => {
     const file = { title: "Same Title" };
-    const { default: FileTitle } = await import("@/components/FileTitle.vue");
+    const { default: FileTitle } = await import("@/components/manuscript/FileTitle.vue");
     const wrapper = mount(FileTitle, {
       props: { file },
       global: { stubs: { EditableText: EditableTextStub } },

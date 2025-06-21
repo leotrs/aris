@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { defineComponent } from "vue";
 import { mount } from "@vue/test-utils";
-import FileMenu from "@/components/FileMenu.vue";
+import FileMenu from "@/components/navigation/FileMenu.vue";
 
 describe("FileMenu.vue", () => {
   const ContextMenuStub = defineComponent({

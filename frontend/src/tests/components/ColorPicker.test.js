@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { mount } from "@vue/test-utils";
 
-import ColorPicker from "@/components/ColorPicker.vue";
+import ColorPicker from "@/components/forms/ColorPicker.vue";
 
 describe("ColorPicker.vue", () => {
   const colors = { red: "#f00", green: "#0f0", blue: "#00f" };

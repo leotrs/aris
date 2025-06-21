@@ -34,7 +34,7 @@ async def test_extract_title_existing_title():
 
 
 async def test_extract_title_parsed(monkeypatch):
-    file = SimpleNamespace(title="", source="some source")
+    file = SimpleNamespace(title=None, source="some source")
     monkeypatch.setattr(rsm.app, "ParserApp", DummyParser)
     result = await extract_title(file)
     assert result == "ParsedTitle"
@@ -43,9 +43,9 @@ async def test_extract_title_parsed(monkeypatch):
 async def test_extract_section_found(monkeypatch):
     file = SimpleNamespace(source="dummy")
     monkeypatch.setattr(rsm.app, "ProcessorApp", DummyProcessor)
-    element = await extract_section(file, "sec", handrails=False)
-    assert element.name == "div"
-    assert "Content" in element.text
+    result = await extract_section(file, "sec", handrails=False)
+    assert '<div class="sec">Content</div>' in result
+    assert "Content" in result
 
 
 async def test_extract_section_not_found(monkeypatch):
@@ -58,5 +58,5 @@ async def test_extract_section_not_found(monkeypatch):
 
     monkeypatch.setattr(rsm.app, "ProcessorApp", NoSectionProcessor)
     file = SimpleNamespace(source="dummy")
-    element = await extract_section(file, "sec")
-    assert element is None
+    result = await extract_section(file, "sec")
+    assert result == ""

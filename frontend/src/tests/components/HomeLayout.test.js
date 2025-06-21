@@ -9,7 +9,7 @@ vi.mock("vue-router", () => ({
   useRoute: () => route,
 }));
 
-import HomeLayout from "@/components/HomeLayout.vue";
+import HomeLayout from "@/components/layout/HomeLayout.vue";
 
 // Helper to flush pending promise callbacks
 const flushPromises = () => Promise.resolve();

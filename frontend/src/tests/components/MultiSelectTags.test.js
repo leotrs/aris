@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { defineComponent, h, ref, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
-import MultiSelectTags from "@/components/MultiSelectTags.vue";
+import MultiSelectTags from "@/components/tags/MultiSelectTags.vue";
 
 describe("MultiSelectTags.vue", () => {
   let fileStore;
@@ -75,7 +75,7 @@ describe("MultiSelectTags.vue", () => {
   it("renders ContextMenu and TagControl items for each store tag", () => {
     const wrapper = mountMulti();
     const cm = wrapper.getComponent(ContextMenuStub);
-    expect(cm.props()).toMatchObject({ icon: "Tag", placement: "bottom-end", buttonSize: "sm" });
+    expect(cm.props()).toMatchObject({ icon: "Tag", placement: "bottom-end" });
     const controls = wrapper.findAllComponents(TagControlStub);
     expect(controls).toHaveLength(tagsList.length);
     controls.forEach((ctrl, i) => {

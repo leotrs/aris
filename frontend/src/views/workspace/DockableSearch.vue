@@ -205,7 +205,7 @@
       width: fit-content;
       max-width: 720px;
       margin-inline: auto;
-      margin-top: 16px;
+      margin-block: 16px;
     }
 
     &.simple {
