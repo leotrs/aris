@@ -98,3 +98,8 @@ debug-menus.png
 # Test reports and results
 playwright-report/
 test-results/
+
+# Debug folder (except README)
+debug/*
+!debug/debug-*-template.js
+!debug/README.md
