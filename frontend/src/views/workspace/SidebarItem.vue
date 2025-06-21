@@ -4,7 +4,6 @@
   const props = defineProps({
     icon: { type: String, required: true },
     label: { type: String, default: "" },
-    withSideControl: { type: Boolean, default: true },
     preferredSide: {
       type: String,
       default: "left",
@@ -14,7 +13,6 @@
     hideDelay: { type: Number, default: 300 },
     type: { type: String, default: "filled" },
   });
-
   const emit = defineEmits(["on", "off"]);
   const buttonState = defineModel({ type: Boolean, default: false });
 

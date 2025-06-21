@@ -1,5 +1,6 @@
 <script setup>
   import { inject, useTemplateRef } from "vue";
+  import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
 
@@ -39,6 +40,7 @@
   const focusMode = inject("focusMode");
   const mobileMode = inject("mobileMode");
   const xsMode = inject("xsMode");
+  const router = useRouter();
 </script>
 
 <template>
@@ -64,7 +66,7 @@
     </template>
 
     <template v-if="mobileMode">
-      <SidebarItem icon="Home" label="Home" />
+      <SidebarItem icon="Home" label="Home" @click="router.push('/')" />
       <template v-for="(it, idx) in items" :key="it.name + idx">
         <Separator v-if="it.name === 'Separator'" />
         <SidebarItem
