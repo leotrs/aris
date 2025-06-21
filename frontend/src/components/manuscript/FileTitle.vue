@@ -2,6 +2,10 @@
   import { watch, useTemplateRef } from "vue";
   import { File } from "@/models/File.js";
 
+  defineOptions({
+    name: "FileTitle",
+  });
+
   const props = defineProps({
     file: { type: Object, required: true },
   });

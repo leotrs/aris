@@ -1,6 +1,10 @@
 <script setup>
   import { ref, reactive, inject, watch, watchEffect, nextTick, computed } from "vue";
 
+  defineOptions({
+    name: "MultiSelectTags",
+  });
+
   const props = defineProps({
     file: { type: Object, default: null },
     icon: { type: String, default: "Tag" },

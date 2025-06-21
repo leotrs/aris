@@ -94,7 +94,7 @@
 
   // Watch file focus state to enable/disable keyboard shortcuts
   watch(
-    () => file.value.focused,
+    () => file.value?.focused,
     (newVal) => (newVal ? activate() : deactivate())
   );
 </script>
@@ -118,8 +118,8 @@
     :class="{
       list: mode === 'list',
       cards: mode === 'cards',
-      active: file.selected,
-      focused: file.focused,
+      active: file?.selected,
+      focused: file?.focused,
       hovered: hovered,
     }"
     @mouseenter="hovered = true"

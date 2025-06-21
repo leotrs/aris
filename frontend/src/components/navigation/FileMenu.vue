@@ -1,5 +1,10 @@
 <script setup>
   import { computed, useTemplateRef } from "vue";
+  import ContextMenu from "./ContextMenu.vue";
+
+  defineOptions({
+    name: "FileMenu",
+  });
 
   const props = defineProps({
     icon: { type: String, default: "Dots" },

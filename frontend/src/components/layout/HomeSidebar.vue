@@ -7,6 +7,10 @@
   import logoSmall from "@/assets/logo-32px.svg";
   import logoFull from "@/assets/logotype.svg";
 
+  defineOptions({
+    name: "HomeSidebar",
+  });
+
   const props = defineProps({
     active: { type: String, default: "" },
     fab: { type: Boolean, default: true },
