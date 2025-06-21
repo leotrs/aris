@@ -1,7 +1,7 @@
 import { describe, it, expect, afterEach as _afterEach } from "vitest";
 import { defineComponent, h, ref as _ref } from "vue";
 import { mount } from "@vue/test-utils";
-import Tab from "@/components/Tab.vue";
+import Tab from "@/components/navigation/Tab.vue";
 
 describe("Tab.vue", () => {
   const IconStub = defineComponent({

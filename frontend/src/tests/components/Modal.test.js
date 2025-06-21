@@ -17,7 +17,7 @@ describe("Modal.vue", () => {
   });
 
   it("uses useClosable with proper options and emits close on onClose", async () => {
-    const { default: Modal } = await import("@/components/Modal.vue");
+    const { default: Modal } = await import("@/components/base/Modal.vue");
     const wrapper = mount(Modal, {
       global: {
         stubs: {
@@ -38,7 +38,7 @@ describe("Modal.vue", () => {
   });
 
   it("renders header and default slot content", async () => {
-    const { default: Modal } = await import("@/components/Modal.vue");
+    const { default: Modal } = await import("@/components/base/Modal.vue");
     const wrapper = mount(Modal, {
       global: {
         stubs: {

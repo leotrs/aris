@@ -16,7 +16,7 @@ describe("ModalShortcuts.vue", () => {
   });
 
   it("renders shortcut sections and propagates close event", async () => {
-    const { default: ModalShortcuts } = await import("@/components/ModalShortcuts.vue");
+    const { default: ModalShortcuts } = await import("@/components/utility/ModalShortcuts.vue");
     // Prepare stub data
     getRegisteredComponentsStub.mockReturnValue({
       comp1: {

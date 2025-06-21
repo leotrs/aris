@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { mount, shallowMount } from "@vue/test-utils";
 import { defineComponent } from "vue";
 
-import FileSettings from "@/components/FileSettings.vue";
+import FileSettings from "@/components/manuscript/FileSettings.vue";
 
 // Stub child components
 const PaneStub = defineComponent({

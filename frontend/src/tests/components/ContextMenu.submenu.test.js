@@ -43,7 +43,7 @@ describe("ContextMenu.vue - Sub-menu Tests", () => {
 
   describe("Sub-menu support", () => {
     it("detects nested ContextMenu components as sub-menus", async () => {
-      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+      const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         global: {
           provide: { isSubMenu: false },
@@ -63,7 +63,7 @@ describe("ContextMenu.vue - Sub-menu Tests", () => {
     });
 
     it("provides sub-menu context to child ContextMenu components", async () => {
-      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+      const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         props: { placement: "right-start" },
         global: {
@@ -84,7 +84,7 @@ describe("ContextMenu.vue - Sub-menu Tests", () => {
     });
 
     it("uses different placement logic for sub-menus", async () => {
-      const { default: ContextMenu } = await import("@/components/ContextMenu.vue");
+      const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
       const wrapper = mount(ContextMenu, {
         props: { placement: "right-start" },
         global: {

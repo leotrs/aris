@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach } from "vitest";
 import { ref, defineComponent } from "vue";
 import { mount } from "@vue/test-utils";
 
-import FeedbackIcon from "@/components/FeedbackIcon.vue";
+import FeedbackIcon from "@/components/manuscript/FeedbackIcon.vue";
 
 // Stub ContextMenu and its items for interaction
 const ContextMenu = defineComponent({

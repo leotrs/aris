@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { defineComponent, h } from "vue";
 import { mount } from "@vue/test-utils";
-import Tag from "@/components/Tag.vue";
+import Tag from "@/components/tags/Tag.vue";
 
 describe("Tag.vue", () => {
   const tag = { id: 1, name: "TestTag", color: "purple" };
