@@ -7,7 +7,7 @@ const mockInjects = {
   drawerOpen: { value: false },
   focusMode: { value: false },
   mobileMode: { value: false },
-  xsMode: { value: false }
+  xsMode: { value: false },
 };
 
 const createWrapper = (overrides = {}) => {
@@ -15,7 +15,7 @@ const createWrapper = (overrides = {}) => {
     global: {
       provide: mockInjects,
       mocks: {
-        $router: { push: vi.fn() }
+        $router: { push: vi.fn() },
       },
       stubs: {
         Icon: true,
@@ -26,56 +26,56 @@ const createWrapper = (overrides = {}) => {
         Separator: true,
         ContextMenu: true,
         ContextMenuItem: true,
-        Drawer: true
-      }
+        Drawer: true,
+      },
     },
-    ...overrides
+    ...overrides,
   });
 };
 
 describe("Sidebar Drawer Toggle", () => {
   it("should have drawer items with correct initial state", () => {
     const wrapper = createWrapper();
-    
+
     // Find the drawer items
-    const drawerItems = wrapper.vm.items.filter(item => item.type === "drawer");
+    const drawerItems = wrapper.vm.items.filter((item) => item.type === "drawer");
     expect(drawerItems.length).toBeGreaterThan(0);
-    
+
     // All drawer items should start closed
-    drawerItems.forEach(item => {
+    drawerItems.forEach((item) => {
       expect(item.state).toBe(false);
     });
   });
 
   it("should update item state when handleItemOn is called", async () => {
     const wrapper = createWrapper();
-    
+
     // Find the settings drawer item
-    const settingsIndex = wrapper.vm.items.findIndex(item => item.name === "DrawerSettings");
+    const settingsIndex = wrapper.vm.items.findIndex((item) => item.name === "DrawerSettings");
     expect(settingsIndex).toBeGreaterThan(-1);
-    
+
     // Initially closed
     expect(wrapper.vm.items[settingsIndex].state).toBe(false);
-    
+
     // Open the drawer
     wrapper.vm.handleItemOn(settingsIndex);
     await wrapper.vm.$nextTick();
-    
+
     // Should now be open
     expect(wrapper.vm.items[settingsIndex].state).toBe(true);
   });
 
   it("should update item state when handleItemOff is called", async () => {
     const wrapper = createWrapper();
-    
+
     // Find the settings drawer item
-    const settingsIndex = wrapper.vm.items.findIndex(item => item.name === "DrawerSettings");
-    
+    const settingsIndex = wrapper.vm.items.findIndex((item) => item.name === "DrawerSettings");
+
     // Open it first
     wrapper.vm.handleItemOn(settingsIndex);
     await wrapper.vm.$nextTick();
     expect(wrapper.vm.items[settingsIndex].state).toBe(true);
-    
+
     // Close it
     wrapper.vm.handleItemOff(settingsIndex);
     await wrapper.vm.$nextTick();

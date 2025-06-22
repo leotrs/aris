@@ -140,10 +140,11 @@ describe("UserMenu.vue - Regression Tests", () => {
         mocks: { $router: mockRouter },
         stubs: {
           ContextMenu: {
-            template: '<div data-testid="user-menu"><slot name="trigger" :toggle="() => {}" /></div>',
+            template:
+              '<div data-testid="user-menu"><slot name="trigger" :toggle="() => {}" /></div>',
           },
           Button: {
-            template: '<button><slot /></button>',
+            template: "<button><slot /></button>",
             props: ["kind"],
           },
           Avatar: true,

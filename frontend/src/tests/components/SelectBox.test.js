@@ -35,11 +35,11 @@ describe("SelectBox.vue", () => {
       },
       attrs: { disabled: true },
       global: {
-        stubs: { 
-          Teleport: TeleportStub, 
-          ContextMenu: ContextMenuStub, 
+        stubs: {
+          Teleport: TeleportStub,
+          ContextMenu: ContextMenuStub,
           ButtonToggle: ButtonToggleStub,
-          ContextMenuItem: itemStub 
+          ContextMenuItem: itemStub,
         },
       },
     });
@@ -67,11 +67,11 @@ describe("SelectBox.vue", () => {
         options: [{ value: "x", label: "X" }],
       },
       global: {
-        stubs: { 
-          Teleport: TeleportStub, 
-          ContextMenu: ContextMenuStub, 
+        stubs: {
+          Teleport: TeleportStub,
+          ContextMenu: ContextMenuStub,
           ButtonToggle: ButtonToggleStub,
-          ContextMenuItem: itemStub 
+          ContextMenuItem: itemStub,
         },
       },
     });
@@ -99,11 +99,11 @@ describe("SelectBox.vue", () => {
         ],
       },
       global: {
-        stubs: { 
-          Teleport: TeleportStub, 
-          ContextMenu: ContextMenuStub, 
+        stubs: {
+          Teleport: TeleportStub,
+          ContextMenu: ContextMenuStub,
           ButtonToggle: ButtonToggleStub,
-          ContextMenuItem: itemStub 
+          ContextMenuItem: itemStub,
         },
       },
     });
@@ -120,11 +120,11 @@ describe("SelectBox.vue", () => {
     const wrapper = mount(SelectBox, {
       props: { modelValue: "foo", options: ["foo", "bar"] },
       global: {
-        stubs: { 
-          Teleport: TeleportStub, 
-          ContextMenu: ContextMenuStub, 
+        stubs: {
+          Teleport: TeleportStub,
+          ContextMenu: ContextMenuStub,
           ButtonToggle: ButtonToggleStub,
-          ContextMenuItem: itemStub 
+          ContextMenuItem: itemStub,
         },
       },
     });

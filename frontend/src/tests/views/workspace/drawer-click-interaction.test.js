@@ -62,7 +62,7 @@ describe("Drawer Click Interaction", () => {
             template: `<div class="drawer-margins">Margins Content</div>`,
           },
           DrawerActivity: {
-            name: "DrawerActivity", 
+            name: "DrawerActivity",
             template: `<div class="drawer-activity">Activity Content</div>`,
           },
           DrawerSettings: {
@@ -85,7 +85,7 @@ describe("Drawer Click Interaction", () => {
     expect(sidebarMenu.exists()).toBe(true);
 
     // Find the margins item in the items array
-    const marginsItem = wrapper.vm.items.find(item => item.name === "DrawerMargins");
+    const marginsItem = wrapper.vm.items.find((item) => item.name === "DrawerMargins");
     expect(marginsItem).toBeDefined();
     expect(marginsItem.state).toBe(false);
 
@@ -115,7 +115,7 @@ describe("Drawer Click Interaction", () => {
     expect(drawerOpenRef.value).toBe(false);
 
     // Find the settings item
-    const settingsItem = wrapper.vm.items.find(item => item.name === "DrawerSettings");
+    const settingsItem = wrapper.vm.items.find((item) => item.name === "DrawerSettings");
     expect(settingsItem).toBeDefined();
     expect(settingsItem.state).toBe(false);
 
@@ -135,7 +135,7 @@ describe("Drawer Click Interaction", () => {
   it("should close drawer when same drawer button is clicked twice", async () => {
     const wrapper = createWrapper();
 
-    const marginsItem = wrapper.vm.items.find(item => item.name === "DrawerMargins");
+    const marginsItem = wrapper.vm.items.find((item) => item.name === "DrawerMargins");
     const marginsIndex = wrapper.vm.items.indexOf(marginsItem);
 
     // First click - open drawer
@@ -160,8 +160,8 @@ describe("Drawer Click Interaction", () => {
   it("should switch from one drawer to another when different drawer button is clicked", async () => {
     const wrapper = createWrapper();
 
-    const marginsItem = wrapper.vm.items.find(item => item.name === "DrawerMargins");
-    const settingsItem = wrapper.vm.items.find(item => item.name === "DrawerSettings");
+    const marginsItem = wrapper.vm.items.find((item) => item.name === "DrawerMargins");
+    const settingsItem = wrapper.vm.items.find((item) => item.name === "DrawerSettings");
     const marginsIndex = wrapper.vm.items.indexOf(marginsItem);
     const settingsIndex = wrapper.vm.items.indexOf(settingsItem);
 
@@ -180,7 +180,7 @@ describe("Drawer Click Interaction", () => {
     // First simulate closing margins (this happens in SidebarMenu)
     wrapper.vm.handleItemOff(marginsIndex);
     await nextTick();
-    
+
     // Then open settings
     wrapper.vm.handleItemOn(settingsIndex);
     await nextTick();
@@ -193,15 +193,15 @@ describe("Drawer Click Interaction", () => {
 
   it("should render drawer content when drawer is open", async () => {
     const wrapper = createWrapper();
-    
-    const marginsItem = wrapper.vm.items.find(item => item.name === "DrawerMargins");
+
+    const marginsItem = wrapper.vm.items.find((item) => item.name === "DrawerMargins");
     wrapper.vm.handleItemOn(wrapper.vm.items.indexOf(marginsItem));
     await nextTick();
 
     // Check that the drawer component is rendered with content
     const drawerComponent = wrapper.findComponent(Drawer);
     expect(drawerComponent.exists()).toBe(true);
-    
+
     // The DrawerMargins stub should be rendered inside the drawer
     const marginsContent = drawerComponent.findComponent({ name: "DrawerMargins" });
     expect(marginsContent.exists()).toBe(true);
