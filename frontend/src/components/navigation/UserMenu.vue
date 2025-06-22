@@ -21,8 +21,8 @@
   <div class="um-wrapper">
     <ContextMenu ref="menu-ref" data-testid="user-menu" variant="slot">
       <template #trigger="{ toggle }">
-        <Button kind="tertiary">
-          <Avatar :user="user" :tooltip="false" @click="toggle" />
+        <Button kind="tertiary" @click="toggle">
+          <Avatar :user="user" :tooltip="false" />
         </Button>
       </template>
       <ContextMenuItem icon="User" caption="Account" @click="() => goTo('account')" />
