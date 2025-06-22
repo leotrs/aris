@@ -149,9 +149,9 @@
 </script>
 
 <template>
-  <!-- 
+  <!--
     Dynamic icon component that renders either the requested icon or fallback error icon.
-    
+
     The component attribute is determined by iconComponent computed property, which handles
     validation and fallback logic. CSS classes include 'tabler-icon' base class plus any
     custom classes from iconClass prop, and 'icon-error-fallback' when showing fallback.
@@ -160,16 +160,16 @@
 </template>
 
 <style scoped>
-  /* 
+  /*
     Base icon styles - commented out to inherit from Tabler defaults.
-    
+
     TODO: Address this later - consider whether default sizing should be restored
     for consistency across the application. The commented styles represent
     standard Tabler icon dimensions and stroke properties.
-    
+
     Original styles:
     - width: 24px
-    - height: 24px  
+    - height: 24px
     - stroke-width: 1.75px
     - stroke-linecap: round
     - stroke-linejoin: round
@@ -180,7 +180,7 @@
 
   /*
     Error fallback icon styling hook.
-    
+
     The 'icon-error-fallback' class is automatically added when an invalid
     icon name is provided and the AlertTriangle fallback is shown. This can
     be used for:

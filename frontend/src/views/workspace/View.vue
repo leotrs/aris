@@ -118,7 +118,11 @@
 </script>
 
 <template>
-  <div class="view" :class="{ focus: focusMode, mobile: mobileMode }">
+  <div
+    class="view"
+    data-testid="workspace-container"
+    :class="{ focus: focusMode, mobile: mobileMode }"
+  >
     <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
 
     <!-- Loading state -->
@@ -136,6 +140,7 @@
     <Canvas
       v-else-if="file && file.id"
       v-model="file"
+      data-testid="workspace-canvas"
       :show-editor="showEditor"
       :show-search="showSearch"
     />

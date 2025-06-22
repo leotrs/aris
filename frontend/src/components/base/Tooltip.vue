@@ -152,7 +152,7 @@
         visibility: isVisible ? 'visible' : 'hidden',
       }"
     >
-      <!-- 
+      <!--
         @slot default - Custom tooltip content (overrides content prop)
         @example
         <Tooltip :anchor="buttonRef">

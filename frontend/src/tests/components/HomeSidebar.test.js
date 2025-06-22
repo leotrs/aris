@@ -80,9 +80,9 @@ describe("HomeSidebar.vue", () => {
       });
 
       // Check that the CTA div renders
-      const cta = wrapper.find('.cta');
+      const cta = wrapper.find(".cta");
       expect(cta.exists()).toBe(true);
-      
+
       // Check that ContextMenu component is present
       const contextMenu = wrapper.findComponent({ name: "ContextMenu" });
       expect(contextMenu.exists()).toBe(true);
@@ -102,7 +102,7 @@ describe("HomeSidebar.vue", () => {
           :class="{ collapsed }"
         >
       `;
-      
+
       // This is a meta-test: we verify that our source code changes were applied correctly
       expect(fileContent).toContain('component="ButtonToggle"');
       expect(fileContent).not.toContain('component="Button"');
@@ -117,11 +117,12 @@ describe("HomeSidebar.vue", () => {
           provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
           stubs: {
             ContextMenu: {
-              template: '<div><slot /></div>',
+              template: "<div><slot /></div>",
               emits: ["click"],
             },
             ContextMenuItem: {
-              template: '<div @click="$emit(\'click\')" data-testid="context-menu-item"><slot /></div>',
+              template:
+                '<div @click="$emit(\'click\')" data-testid="context-menu-item"><slot /></div>',
               emits: ["click"],
             },
             SidebarItem: true,
@@ -132,7 +133,7 @@ describe("HomeSidebar.vue", () => {
 
       const menuItems = wrapper.findAll('[data-testid="context-menu-item"]');
       expect(menuItems.length).toBeGreaterThanOrEqual(1);
-      
+
       // Trigger the first menu item (Empty file)
       await menuItems[0].trigger("click");
       expect(wrapper.emitted("newEmptyFile")).toHaveLength(1);
@@ -147,10 +148,11 @@ describe("HomeSidebar.vue", () => {
           provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
           stubs: {
             ContextMenu: {
-              template: '<div><slot /></div>',
+              template: "<div><slot /></div>",
             },
             ContextMenuItem: {
-              template: '<div @click="$emit(\'click\')" data-testid="context-menu-item"><slot /></div>',
+              template:
+                '<div @click="$emit(\'click\')" data-testid="context-menu-item"><slot /></div>',
               emits: ["click"],
             },
             SidebarItem: true,
@@ -161,7 +163,7 @@ describe("HomeSidebar.vue", () => {
 
       const menuItems = wrapper.findAll('[data-testid="context-menu-item"]');
       expect(menuItems.length).toBeGreaterThanOrEqual(2);
-      
+
       // Trigger the second menu item (Upload)
       await menuItems[1].trigger("click");
       expect(wrapper.emitted("showFileUploadModal")).toHaveLength(1);

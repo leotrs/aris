@@ -176,7 +176,7 @@ describe("Workspace SidebarMenu", () => {
 
       // Should render context menu for drawer items
       expect(wrapper.findComponent({ name: "ContextMenu" }).exists()).toBe(true);
-      expect(wrapper.findComponent({ name: "ContextMenu" }).props("variant")).toBe("dots");
+      expect(wrapper.findComponent({ name: "ContextMenu" }).props("variant")).toBe("slot");
 
       // Should render drawer items in context menu
       expect(wrapper.findAllComponents({ name: "ContextMenuItem" })).toHaveLength(2);

@@ -94,6 +94,7 @@
 <template>
   <div
     ref="sidebar-ref"
+    data-testid="workspace-sidebar"
     class="sb-wrapper"
     :class="{ focus: focusMode, mobile: mobileMode, xs: xsMode }"
   >

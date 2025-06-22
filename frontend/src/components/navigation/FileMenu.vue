@@ -32,15 +32,8 @@
 </script>
 
 <template>
-  <div class="fm-wrapper" :class="mode">
-    <component
-      :is="menuComponent"
-      ref="menu-ref"
-      variant="dots"
-      component="ButtonToggle"
-      :icon="icon"
-      size="md"
-    >
+  <div class="fm-wrapper" data-testid="file-menu" :class="mode">
+    <component :is="menuComponent" ref="menu-ref" variant="dots">
       <component :is="comp" v-bind="childProps('Share3', 'Share')" />
       <component :is="comp" v-bind="childProps('Download', 'Download')" />
       <Separator />

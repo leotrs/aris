@@ -49,6 +49,12 @@ class Settings(BaseSettings):
     )
     """Expiration time in minutes for JWT access tokens (default: 30)."""
 
+    TEST_USER_EMAIL: str = Field("testuser@aris.pub", json_schema_extra={"env": "TEST_USER_EMAIL"})
+    """Test user for E2E tests."""
+
+    TEST_USER_PASSWORD: str = Field(..., json_schema_extra={"env": "TEST_USER_PASSWORD"})
+    """Password for test user."""
+
     model_config = ConfigDict(extra="forbid")
 
 

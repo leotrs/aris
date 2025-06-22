@@ -57,14 +57,10 @@
 
 <template>
   <div ref="self-ref" class="feedback" :style="{ visibility }">
-    <ContextMenu
-      ref="menu-ref"
-      variant="custom"
-      component="ButtonToggle"
-      :icon="activeObj?.icon || 'MoodPlus'"
-      placement="left-start"
-      size="sm"
-    >
+    <ContextMenu ref="menu-ref" variant="slot" placement="left-start">
+      <template #trigger="{ toggle }">
+        <ButtonToggle :icon="activeObj?.icon || 'MoodPlus'" size="sm" @click="toggle" />
+      </template>
       <ContextMenuItem
         v-for="obj in icons"
         :key="obj"
