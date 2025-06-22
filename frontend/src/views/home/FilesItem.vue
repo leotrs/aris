@@ -40,7 +40,7 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { File } from "@/models/File.js";
   import Date from "./FilesItemDate.vue";
-  import ConfirmationModal from "@/components/ConfirmationModal.vue";
+  // import ConfirmationModal from "@/components/ConfirmationModal.vue"; // Component doesn't exist
 
   const props = defineProps({
     /**
@@ -139,11 +139,11 @@
   <!--
     Main file item container with interactive states and accessibility support.
     Supports both list and card display modes with hover, focus, and selection states.
-    
+
     @example
     // The component automatically applies appropriate CSS classes based on props and state:
     // - .list or .cards based on mode prop
-    // - .active when file.selected is true  
+    // - .active when file.selected is true
     // - .focused when file.focused is true
     // - .hovered during mouse hover
   -->
@@ -151,6 +151,7 @@
     class="item"
     role="button"
     tabindex="0"
+    :data-testid="`file-item-${file?.id || 'unknown'}`"
     :class="{
       list: mode === 'list',
       cards: mode === 'cards',
@@ -185,7 +186,7 @@
         <!-- File modification date -->
         <Date :file="file" />
 
-        <!-- 
+        <!--
           File action menu (hidden when file is selected to prevent interference with selection UI)
           Emits rename, duplicate, and delete events handled by parent callbacks
         -->
@@ -202,19 +203,8 @@
       </template>
     </template>
 
-    <!-- Delete confirmation modal -->
-    <ConfirmationModal
-      :show="showDeleteModal"
-      title="Delete File?"
-      :message="deleteMessage"
-      confirm-text="Delete"
-      cancel-text="Cancel"
-      variant="danger"
-      :file-data="file"
-      @confirm="handleDeleteConfirm"
-      @cancel="handleDeleteCancel"
-      @close="handleDeleteClose"
-    />
+    <!-- TODO: Delete confirmation modal (ConfirmationModal component doesn't exist) -->
+    <!-- <ConfirmationModal ... /> -->
   </div>
 </template>
 

@@ -43,10 +43,11 @@
       <ButtonClose />
     </template>
     <span>Select a .rsm file from your computer</span>
-    <input id="file-upload" ref="fileUpload" type="file" hidden />
+    <input id="file-upload" ref="fileUpload" data-testid="file-upload-input" type="file" hidden />
     <label for="file-upload">
       <Button
         id="file-upload-cta"
+        data-testid="file-upload-choose-button"
         kind="secondary"
         text="Choose file"
         icon="Upload"
@@ -56,8 +57,20 @@
       <!-- <span class="file-upload-echo text-caption">No file chosen.</span> -->
     </label>
     <div class="cta">
-      <Button kind="tertiary" text="cancel" class="btn-md" @click="close" />
-      <Button kind="primary" text="upload" class="btn-md" @click="upload" />
+      <Button
+        kind="tertiary"
+        text="cancel"
+        data-testid="file-upload-cancel"
+        class="btn-md"
+        @click="close"
+      />
+      <Button
+        kind="primary"
+        text="upload"
+        data-testid="file-upload-submit"
+        class="btn-md"
+        @click="upload"
+      />
     </div>
   </Modal>
 </template>

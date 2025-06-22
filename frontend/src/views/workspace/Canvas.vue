@@ -125,6 +125,16 @@
   // Keyboard shortcuts
   registerAsFallback(manuscriptRef);
 
+  // Focus management for Page Up/Down keys
+  onMounted(async () => {
+    await nextTick();
+    // Ensure the manuscript container can receive focus for keyboard events
+    if (innerRef.value) {
+      innerRef.value.setAttribute("tabindex", "-1");
+      innerRef.value.focus();
+    }
+  });
+
   // Responsiveness to viewport and various modes
   const mobileMode = inject("mobileMode");
   const focusMode = inject("focusMode");
@@ -140,11 +150,16 @@
       </div>
 
       <div class="inner-wrapper">
-        <div v-if="showEditor" class="inner left">
+        <div v-if="showEditor" data-testid="workspace-editor" class="inner left">
           <Editor v-model="file" />
         </div>
 
-        <div v-if="!mobileMode || !showEditor" ref="inner-right-ref" class="inner right">
+        <div
+          v-if="!mobileMode || !showEditor"
+          ref="inner-right-ref"
+          data-testid="manuscript-container"
+          class="inner right"
+        >
           <div ref="left-column-ref" class="left-column">
             <Dock class="dock left top"> </Dock>
             <Dock class="dock left main"> </Dock>
@@ -157,6 +172,7 @@
               <ManuscriptWrapper
                 v-if="file.html && (!mobileMode || (mobileMode && !showEditor))"
                 ref="manuscript-ref"
+                data-testid="manuscript-viewer"
                 :class="{ 'title-visible': isMainTitleVisible }"
                 :html-string="file.html || ''"
                 :keys="true"

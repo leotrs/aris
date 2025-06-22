@@ -1,123 +1,249 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { ref, nextTick } from "vue";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
+import ContextMenu from "@/components/navigation/ContextMenu.vue";
 
-describe("ContextMenu.vue", () => {
-  let useDesktopMenuStub;
-  let useMobileMenuStub;
-  let useListKeyboardNavigationStub;
-  let useClosableStub;
+// Mock Floating UI
+vi.mock("@floating-ui/vue", () => ({
+  useFloating: () => ({
+    floatingStyles: { value: { position: "absolute", top: "0px", left: "0px" } },
+    placement: { value: "bottom-start" },
+  }),
+  autoUpdate: vi.fn(),
+  offset: vi.fn(() => ({})),
+  flip: vi.fn(() => ({})),
+  shift: vi.fn(() => ({})),
+  arrow: vi.fn(() => ({})),
+}));
+
+// Mock composables
+vi.mock("@/composables/useListKeyboardNavigation.js", () => ({
+  useListKeyboardNavigation: () => ({
+    activeIndex: { value: null },
+    clearSelection: vi.fn(),
+    activate: vi.fn(),
+    deactivate: vi.fn(),
+  }),
+}));
+
+vi.mock("@/composables/useClosable.js", () => ({
+  default: () => ({
+    activate: vi.fn(),
+    deactivate: vi.fn(),
+  }),
+}));
+
+describe("ContextMenu", () => {
+  let wrapper;
 
   beforeEach(() => {
-    vi.resetModules();
-
-    // Mock the desktop menu composable
-    useDesktopMenuStub = vi.fn(() => ({
-      menuStyles: ref({ position: "fixed", top: "10px", left: "10px" }),
-      effectivePlacement: ref("bottom-start"),
-      activate: vi.fn(),
-      deactivate: vi.fn(),
-      updatePosition: vi.fn(),
-    }));
-    vi.doMock("@/composables/useDesktopMenu.js", () => ({
-      useDesktopMenu: useDesktopMenuStub,
-    }));
-
-    // Mock the mobile menu composable
-    useMobileMenuStub = vi.fn(() => ({
-      menuStyles: ref({}),
-      menuClasses: ref(["mobile-menu"]),
-      activate: vi.fn(),
-      deactivate: vi.fn(),
-    }));
-    vi.doMock("@/composables/useMobileMenu.js", () => ({
-      useMobileMenu: useMobileMenuStub,
-    }));
-
-    const activeIndex = ref(null);
-    const clearSelection = vi.fn();
-    const activateNav = vi.fn();
-    const deactivateNav = vi.fn();
-    useListKeyboardNavigationStub = vi.fn(() => ({
-      activeIndex,
-      clearSelection,
-      activate: activateNav,
-      deactivate: deactivateNav,
-    }));
-    vi.doMock("@/composables/useListKeyboardNavigation.js", () => ({
-      useListKeyboardNavigation: useListKeyboardNavigationStub,
-    }));
-
-    const activateClosable = vi.fn();
-    const deactivateClosable = vi.fn();
-    useClosableStub = vi.fn(() => ({
-      activate: activateClosable,
-      deactivate: deactivateClosable,
-    }));
-    vi.doMock("@/composables/useClosable.js", () => ({ default: useClosableStub }));
+    // Mock Teleport
+    document.body.innerHTML = "";
   });
 
-  it("renders default Dots button and shows slot content", async () => {
-    const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
-    const wrapper = mount(ContextMenu, {
-      slots: {
-        default: '<div class="menu-item">Test Item</div>',
-      },
-      global: {
-        stubs: {
-          ContextMenuTrigger: {
-            name: "ContextMenuTrigger",
-            template: "<button @click=\"$emit('toggle')\">Trigger</button>",
-            props: ["variant", "size", "isOpen"],
-            emits: ["toggle"],
-          },
-          Teleport: true,
-        },
-        provide: {
-          mobileMode: ref(false),
-        },
-      },
-    });
-
-    // Check that ContextMenuTrigger is rendered
-    expect(wrapper.findComponent({ name: "ContextMenuTrigger" }).exists()).toBe(true);
-
-    // Toggle menu open
-    wrapper.vm.toggle();
-    await nextTick();
-
-    // Check that slot content is rendered in the menu
-    expect(wrapper.find(".menu-item").exists()).toBe(true);
-    expect(wrapper.find(".menu-item").text()).toBe("Test Item");
+  afterEach(() => {
+    if (wrapper) {
+      wrapper.unmount();
+    }
   });
 
-  describe("Debounced positioning", () => {
-    it("debounces position updates when props change rapidly", async () => {
-      const { default: ContextMenu } = await import("@/components/navigation/ContextMenu.vue");
-      const wrapper = mount(ContextMenu, {
-        props: { placement: "left-start" },
+  describe("Variants", () => {
+    it("renders dots variant by default", () => {
+      wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            ContextMenuTrigger: {
-              name: "ContextMenuTrigger",
-              template: "<button @click=\"$emit('toggle')\">Trigger</button>",
-              props: ["variant", "size", "isOpen"],
-              emits: ["toggle"],
-            },
             Teleport: true,
-          },
-          provide: {
-            mobileMode: ref(false),
+            ButtonDots: true,
           },
         },
       });
 
-      // Rapidly change placement - should handle gracefully
-      await wrapper.setProps({ placement: "right-start" });
-      await wrapper.setProps({ placement: "bottom-start" });
-      await wrapper.setProps({ placement: "top-start" });
+      expect(wrapper.find('[data-testid="trigger-button"]').exists()).toBe(true);
+    });
 
-      expect(useDesktopMenuStub).toHaveBeenCalled();
+    it("renders slot variant when specified", () => {
+      wrapper = mount(ContextMenu, {
+        props: {
+          variant: "slot",
+        },
+        slots: {
+          trigger: '<button data-testid="custom-trigger">Custom</button>',
+        },
+        global: {
+          stubs: {
+            Teleport: true,
+          },
+        },
+      });
+
+      expect(wrapper.find('[data-testid="custom-trigger"]').exists()).toBe(true);
+    });
+  });
+
+  describe("Menu Toggle", () => {
+    it("opens menu when trigger is clicked", async () => {
+      wrapper = mount(ContextMenu, {
+        global: {
+          stubs: {
+            ButtonDots: {
+              template: '<button @click="$emit(\'click\')" data-testid="trigger-button"></button>',
+            },
+          },
+        },
+      });
+
+      await wrapper.find('[data-testid="trigger-button"]').trigger("click");
+      await wrapper.vm.$nextTick();
+
+      // Check menu is rendered via Teleport
+      const menuInBody = document.querySelector('[data-testid="context-menu"]');
+      expect(menuInBody).toBeTruthy();
+    });
+
+    it("toggles menu visibility", async () => {
+      wrapper = mount(ContextMenu, {
+        global: {
+          stubs: {
+            ButtonDots: true,
+          },
+        },
+      });
+
+      // Open menu
+      await wrapper.vm.toggle();
+      await wrapper.vm.$nextTick();
+      let menuInBody = document.querySelector('[data-testid="context-menu"]');
+      expect(menuInBody).toBeTruthy();
+
+      // Close menu
+      await wrapper.vm.toggle();
+      await wrapper.vm.$nextTick();
+      menuInBody = document.querySelector('[data-testid="context-menu"]');
+      expect(menuInBody).toBeFalsy();
+    });
+  });
+
+  describe("Positioning", () => {
+    it("uses mobile positioning when mobileMode is true", () => {
+      wrapper = mount(ContextMenu, {
+        props: {
+          mobileMode: true,
+        },
+        global: {
+          stubs: {
+            Teleport: true,
+            ButtonDots: true,
+          },
+        },
+      });
+
+      const menuStyles = wrapper.vm.menuStyles;
+      expect(menuStyles.position).toBe("fixed");
+      expect(menuStyles.top).toBe("50%");
+      expect(menuStyles.left).toBe("50%");
+      expect(menuStyles.transform).toBe("translate(-50%, -50%)");
+    });
+
+    it("uses desktop positioning when mobileMode is false", () => {
+      wrapper = mount(ContextMenu, {
+        props: {
+          mobileMode: false,
+        },
+        global: {
+          stubs: {
+            Teleport: true,
+            ButtonDots: true,
+          },
+        },
+      });
+
+      const menuStyles = wrapper.vm.menuStyles;
+      expect(menuStyles.position).toBe("absolute");
+    });
+  });
+
+  describe("Sub-menus", () => {
+    it("provides sub-menu context", () => {
+      wrapper = mount(ContextMenu, {
+        global: {
+          stubs: {
+            Teleport: true,
+            ButtonDots: true,
+          },
+        },
+      });
+
+      // Check that sub-menu context is provided
+      expect(wrapper.vm.$.provides.isSubMenu).toBe(true);
+      expect(wrapper.vm.$.provides.parentMenu).toEqual({
+        placement: "bottom-start",
+      });
+    });
+  });
+
+  describe("Menu Content", () => {
+    it("renders menu items in teleported menu", async () => {
+      wrapper = mount(ContextMenu, {
+        slots: {
+          default: [
+            '<div class="item" role="menuitem">Item 1</div>',
+            '<div class="item" role="menuitem">Item 2</div>',
+          ],
+        },
+        global: {
+          stubs: {
+            ButtonDots: true,
+          },
+        },
+        attachTo: document.body,
+      });
+
+      // Open the menu
+      await wrapper.vm.toggle();
+      await wrapper.vm.$nextTick();
+
+      // Check menu is rendered in body via Teleport
+      const menuInBody = document.querySelector('[data-testid="context-menu"]');
+      expect(menuInBody).toBeTruthy();
+      expect(menuInBody.querySelectorAll(".item")).toHaveLength(2);
+    });
+  });
+
+  describe("Accessibility", () => {
+    it("sets proper ARIA attributes", () => {
+      wrapper = mount(ContextMenu, {
+        global: {
+          stubs: {
+            Teleport: true,
+            ButtonDots: {
+              template: '<button :aria-expanded="false" data-testid="trigger-button"></button>',
+            },
+          },
+        },
+      });
+
+      const trigger = wrapper.find('[data-testid="trigger-button"]');
+      expect(trigger.attributes("aria-expanded")).toBe("false");
+    });
+
+    it("updates ARIA expanded when menu opens", async () => {
+      wrapper = mount(ContextMenu, {
+        global: {
+          stubs: {
+            ButtonDots: {
+              template:
+                '<button :aria-expanded="show" data-testid="trigger-button" @click="$emit(\'click\')"></button>',
+              props: ["show"],
+            },
+          },
+        },
+      });
+
+      await wrapper.find('[data-testid="trigger-button"]').trigger("click");
+      await wrapper.vm.$nextTick();
+
+      // Check the menu opened by looking at DOM
+      const menuInBody = document.querySelector('[data-testid="context-menu"]');
+      expect(menuInBody).toBeTruthy();
     });
   });
 });

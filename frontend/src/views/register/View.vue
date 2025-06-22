@@ -66,20 +66,43 @@
     <div class="right">
       <div class="wrapper">
         <div class="top">
-          <InputText v-model="name" direction="column" label="Full name" />
-          <InputText v-model="email" direction="column" label="Email" />
-          <InputText v-model="pwd" direction="column" label="Password" type="password" />
+          <InputText v-model="name" data-testid="name-input" direction="column" label="Full name" />
+          <InputText v-model="email" data-testid="email-input" direction="column" label="Email" />
+          <InputText
+            v-model="pwd"
+            data-testid="password-input"
+            direction="column"
+            label="Password"
+            type="password"
+          />
           <InputText
             v-model="pwdAgain"
+            data-testid="confirm-password-input"
             direction="column"
             label="Confirm password"
             type="password"
           />
         </div>
         <div class="bottom">
-          <div v-if="error" class="error-message">{{ error }}</div>
-          <Button kind="primary" text="Register" @click="onRegister" />
-          <div class="footer text-caption"><p>Already registered? Login here.</p></div>
+          <div v-if="error" data-testid="registration-error" class="error-message">{{ error }}</div>
+          <Button
+            data-testid="register-button"
+            kind="primary"
+            text="Register"
+            @click="onRegister"
+          />
+          <div class="footer text-caption">
+            <p>
+              Already registered?
+              <span
+                data-testid="login-link"
+                style="cursor: pointer; text-decoration: underline"
+                @click="router.push('/login')"
+              >
+                Login here.
+              </span>
+            </p>
+          </div>
         </div>
       </div>
     </div>
