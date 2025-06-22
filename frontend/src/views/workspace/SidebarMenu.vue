@@ -75,7 +75,10 @@
           :label="it.label"
         />
       </template>
-      <ContextMenu variant="custom" icon="Menu3">
+      <ContextMenu variant="slot">
+        <template #trigger="{ toggle }">
+          <Button icon="Menu3" @click="toggle" />
+        </template>
         <template v-for="(it, idx) in items" :key="it.name + idx">
           <ContextMenuItem
             v-if="it.type === 'drawer'"
