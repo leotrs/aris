@@ -27,6 +27,7 @@
     showSearch: { type: Boolean, default: false },
   });
   const file = defineModel({ type: Object });
+  defineOptions({ inheritAttrs: false });
 
   // Mount the manuscript
   const manuscriptRef = useTemplateRef("manuscript-ref");
@@ -144,7 +145,7 @@
 
 <template>
   <Suspense>
-    <div class="outer" :class="{ focus: focusMode, mobile: mobileMode, narrow: drawerOpen }">
+    <div class="outer" :class="{ focus: focusMode, mobile: mobileMode, narrow: drawerOpen }" :data-testid="$attrs['data-testid']">
       <div class="outer-topbar">
         <DockableSearch v-if="showSearch" />
       </div>
