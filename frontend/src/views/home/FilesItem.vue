@@ -139,11 +139,11 @@
   <!--
     Main file item container with interactive states and accessibility support.
     Supports both list and card display modes with hover, focus, and selection states.
-    
+
     @example
     // The component automatically applies appropriate CSS classes based on props and state:
     // - .list or .cards based on mode prop
-    // - .active when file.selected is true  
+    // - .active when file.selected is true
     // - .focused when file.focused is true
     // - .hovered during mouse hover
   -->
@@ -186,7 +186,7 @@
         <!-- File modification date -->
         <Date :file="file" />
 
-        <!-- 
+        <!--
           File action menu (hidden when file is selected to prevent interference with selection UI)
           Emits rename, duplicate, and delete events handled by parent callbacks
         -->

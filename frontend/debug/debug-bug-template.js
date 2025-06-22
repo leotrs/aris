@@ -112,15 +112,15 @@ async function loginAsTestUser(page, email = 'test@example.com', password = 'tes
 }
 
 async function navigateToWorkspace(page, fileId) {
-  await page.goto(`http://localhost:5173/file/${fileId}`, { 
-    waitUntil: 'networkidle2' 
+  await page.goto(`http://localhost:5173/file/${fileId}`, {
+    waitUntil: "networkidle2",
   });
 }
 
 async function waitForComponentToLoad(page, testId, timeout = 5000) {
-  await page.waitForSelector(`[data-testid="${testId}"]`, { 
-    visible: true, 
-    timeout 
+  await page.waitForSelector(`[data-testid="${testId}"]`, {
+    visible: true,
+    timeout,
   });
 }
 
@@ -133,5 +133,5 @@ module.exports = {
   replicateBug,
   loginAsTestUser,
   navigateToWorkspace,
-  waitForComponentToLoad
+  waitForComponentToLoad,
 };

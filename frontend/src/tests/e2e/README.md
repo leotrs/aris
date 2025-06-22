@@ -213,9 +213,35 @@ await deleteFile(page, 'My Paper');
 
 ## Test Data and Fixtures
 
+### Stable Test User Strategy
+
+For **visual regression testing**, we use a dedicated test user with stable, predictable data:
+
+- **Email**: `testuser@aris.test`
+- **Password**: Stored in `.env` files (both frontend and backend)
+- **Purpose**: Provides consistent test environment for visual comparisons
+
+**Setup**:
+```bash
+# Reset test user to known state (run from backend directory)
+python3 scripts/reset_test_user.py
+
+# Setup test environment for visual tests (run from puppeteer directory)
+node setup-test-environment.js
+
+# Run visual tests with stable user
+node test-stable-user.js
+```
+
+**Benefits**:
+- Screenshots remain consistent across test runs
+- No dependency on personal user accounts
+- Predictable file list and UI state
+- Team members get identical visual test results
+
 ### Test Users (`fixtures/test-users.json`)
 
-Predefined user accounts for testing:
+Predefined user accounts for functional testing:
 - `defaultUser`: Standard test account
 - `adminUser`: Admin privileges
 - `collaboratorUser`: Collaboration testing
