@@ -93,7 +93,7 @@ describe("ContextMenu", () => {
 
       await wrapper.find('[data-testid="trigger-button"]').trigger("click");
       await wrapper.vm.$nextTick();
-      
+
       // Check menu is rendered via Teleport
       const menuInBody = document.querySelector('[data-testid="context-menu"]');
       expect(menuInBody).toBeTruthy();
@@ -215,8 +215,7 @@ describe("ContextMenu", () => {
           stubs: {
             Teleport: true,
             ButtonDots: {
-              template:
-                '<button :aria-expanded="false" data-testid="trigger-button"></button>',
+              template: '<button :aria-expanded="false" data-testid="trigger-button"></button>',
             },
           },
         },
