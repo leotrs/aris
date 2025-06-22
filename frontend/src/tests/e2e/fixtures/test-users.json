@@ -1,24 +1,24 @@
 {
   "testUsers": {
     "defaultUser": {
-      "email": "test@example.com",
-      "password": "testpassword123",
+      "email": "${VITE_DEV_LOGIN_EMAIL}",
+      "password": "${VITE_DEV_LOGIN_PASSWORD}",
       "name": "Test User"
     },
     "adminUser": {
-      "email": "admin@example.com", 
+      "email": "admin@example.com",
       "password": "adminpassword123",
       "name": "Admin User"
     },
     "collaboratorUser": {
       "email": "collaborator@example.com",
-      "password": "collaboratorpassword123", 
+      "password": "collaboratorpassword123",
       "name": "Collaborator User"
     }
   },
   "invalidCredentials": {
     "wrongPassword": {
-      "email": "testuser@aris.pub",
+      "email": "${VITE_DEV_LOGIN_EMAIL}",
       "password": "wrongpassword"
     },
     "nonExistentUser": {

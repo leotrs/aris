@@ -135,8 +135,20 @@ async def test_login_invalid_password(client: AsyncClient):
     assert response.json()["detail"] == "Invalid credentials"
 
 
-async def test_e2e_test_user_login(client: AsyncClient):
+async def test_e2e_test_user_login(client: AsyncClient, db_session):
     """Test that the E2E test user can login successfully."""
+    # First create the test user in the database
+    from aris.models import User
+    
+    test_user = User(
+        name="Test User",
+        email="testuser@aris.pub",
+        password_hash="$2b$12$TVuqGqn6SWbVFres301hUu6BtCWQHa.xpGPK4EwAKZo8mw50WXKBW",
+    )
+    db_session.add(test_user)
+    await db_session.commit()
+    
+    # Now attempt to login
     login_response = await client.post(
         "/login",
         json={

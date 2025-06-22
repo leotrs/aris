@@ -1,8 +1,14 @@
 import { test, expect } from "@playwright/test";
 import { loginUser, logoutUser, isUserAuthenticated } from "../../utils/auth-helpers.js";
-import testUsers from "../../fixtures/test-users.json" with { type: "json" };
+import { getTestUsers } from "../../utils/test-config.js";
 
 test.describe("Login Flow", () => {
+  let testUsers;
+
+  test.beforeAll(() => {
+    testUsers = getTestUsers();
+  });
+
   test.beforeEach(async ({ page }) => {
     // Ensure we start from a clean slate
     await page.goto("/");
