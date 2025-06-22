@@ -29,8 +29,8 @@ test.describe("Login Flow", () => {
     // Verify successful login
     expect(await isUserAuthenticated(page)).toBe(true);
 
-    // Should be redirected to home or workspace
-    expect(page.url()).toMatch(/\/(home|workspace)/);
+    // Should be redirected to root
+    expect(page.url()).toBe("http://localhost:5173/");
   });
 
   test("should show error with invalid password", async ({ page }) => {
@@ -44,7 +44,7 @@ test.describe("Login Flow", () => {
     // Should show error message
     await expect(page.locator('[data-testid="login-error"]')).toBeVisible();
     await expect(page.locator('[data-testid="login-error"]')).toContainText(
-      /invalid|incorrect|wrong/i
+      "Invalid credentials"
     );
 
     // Should remain on login page
@@ -62,6 +62,9 @@ test.describe("Login Flow", () => {
 
     // Should show error message
     await expect(page.locator('[data-testid="login-error"]')).toBeVisible();
+    await expect(page.locator('[data-testid="login-error"]')).toContainText(
+      "Invalid credentials"
+    );
     expect(await isUserAuthenticated(page)).toBe(false);
   });
 
@@ -120,13 +123,13 @@ test.describe("Login Flow", () => {
     await page.keyboard.press("Enter");
 
     // Should successfully login
-    await page.waitForURL(/\/(home|workspace)/);
+    await page.waitForURL("/");
     expect(await isUserAuthenticated(page)).toBe(true);
   });
 
   test("should redirect to intended page after login", async ({ page }) => {
-    // Try to access a protected page
-    await page.goto("/workspace");
+    // Try to access a protected page  
+    await page.goto("/account");
 
     // Should be redirected to login
     await page.waitForURL("/login");
@@ -135,8 +138,8 @@ test.describe("Login Flow", () => {
     const user = testUsers.testUsers.defaultUser;
     await loginUser(page, user);
 
-    // Should redirect back to workspace
-    await page.waitForURL("/workspace");
+    // Should redirect back to account page
+    await page.waitForURL("/account");
   });
 
   test('should have "Remember me" functionality', async ({ page }) => {
