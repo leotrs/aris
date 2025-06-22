@@ -79,7 +79,7 @@
         <div class="top">
           <div class="text-input">
             <label class="text-label">Email</label>
-            <input v-model="email" data-testid="email-input" type="text" />
+            <input v-model="email" data-testid="email-input" type="email" />
           </div>
           <div class="text-input">
             <label class="text-label">Password</label>

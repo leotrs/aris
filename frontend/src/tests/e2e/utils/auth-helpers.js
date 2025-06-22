@@ -19,8 +19,8 @@ export async function loginUser(page, { email, password }) {
   // Submit form
   await page.click('[data-testid="login-button"]');
 
-  // Wait for successful login (redirect to home or workspace)
-  await page.waitForURL(/\/(home|workspace)/);
+  // Wait for successful login (redirect to root)
+  await page.waitForURL("/");
 
   // Verify user is logged in (check for user menu or logout button)
   await page.waitForSelector('[data-testid="user-menu"]', { timeout: 5000 });
@@ -85,8 +85,8 @@ export async function isUserAuthenticated(page) {
  */
 export async function setupAuthenticatedSession(page, credentials = null) {
   const defaultCredentials = {
-    email: "test@example.com",
-    password: "testpassword123",
+    email: "testuser@aris.pub",
+    password: "eIrdA38eW1guWTVpJNlS3VwP6eszUIGOiWqj1re3inM",
   };
 
   const creds = credentials || defaultCredentials;

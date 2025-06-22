@@ -135,6 +135,36 @@ async def test_login_invalid_password(client: AsyncClient):
     assert response.json()["detail"] == "Invalid credentials"
 
 
+async def test_e2e_test_user_login(client: AsyncClient):
+    """Test that the E2E test user can login successfully."""
+    login_response = await client.post(
+        "/login",
+        json={
+            "email": "testuser@aris.pub",
+            "password": "eIrdA38eW1guWTVpJNlS3VwP6eszUIGOiWqj1re3inM",
+        },
+    )
+
+    print(login_response.json())
+
+    assert login_response.status_code == 200
+    data = login_response.json()
+
+    # Verify token structure
+    assert "access_token" in data
+    assert "refresh_token" in data
+    assert data["token_type"] == "bearer"
+
+    # Verify user info
+    user_response = await client.get(
+        "/me", headers={"Authorization": f"Bearer {data['access_token']}"}
+    )
+    assert user_response.status_code == 200
+    user_data = user_response.json()
+    assert user_data["email"] == "testuser@aris.pub"
+    assert user_data["name"] == "Test User"
+
+
 async def test_me_endpoint_with_valid_token(client: AsyncClient):
     """Test /me endpoint with valid authentication."""
     # Register and get token
