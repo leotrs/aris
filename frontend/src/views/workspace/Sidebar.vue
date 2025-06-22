@@ -84,6 +84,15 @@
     ])
   );
 
+  // Event handlers for SidebarMenu
+  const handleItemOn = (index) => {
+    items[index].state = true;
+  };
+
+  const handleItemOff = (index) => {
+    items[index].state = false;
+  };
+
   // Context
   const layoutOnRef = useTemplateRef("layout-on-ref");
   const focusMode = inject("focusMode");
@@ -102,7 +111,7 @@
       <img src="@/assets/logo-32px.svg" />
     </div>
 
-    <SidebarMenu v-model="items" />
+    <SidebarMenu :items="items" @on="handleItemOn" @off="handleItemOff" />
     <Drawer :component="items.find((it) => it.type === 'drawer' && it.state)?.name ?? ''" />
 
     <Button
