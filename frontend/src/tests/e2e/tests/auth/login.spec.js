@@ -49,9 +49,7 @@ test.describe("Login Flow", () => {
 
     // Should show error message
     await expect(page.locator('[data-testid="login-error"]')).toBeVisible();
-    await expect(page.locator('[data-testid="login-error"]')).toContainText(
-      "Invalid credentials"
-    );
+    await expect(page.locator('[data-testid="login-error"]')).toContainText("Invalid credentials");
 
     // Should remain on login page
     expect(page.url()).toContain("/login");
@@ -68,9 +66,7 @@ test.describe("Login Flow", () => {
 
     // Should show error message
     await expect(page.locator('[data-testid="login-error"]')).toBeVisible();
-    await expect(page.locator('[data-testid="login-error"]')).toContainText(
-      "Invalid credentials"
-    );
+    await expect(page.locator('[data-testid="login-error"]')).toContainText("Invalid credentials");
     expect(await isUserAuthenticated(page)).toBe(false);
   });
 
@@ -134,7 +130,7 @@ test.describe("Login Flow", () => {
   });
 
   test("should redirect to intended page after login", async ({ page }) => {
-    // Try to access a protected page  
+    // Try to access a protected page
     await page.goto("/account");
 
     // Should be redirected to login
