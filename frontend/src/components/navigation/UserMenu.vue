@@ -20,8 +20,8 @@
 <template>
   <div class="um-wrapper">
     <ContextMenu ref="menu-ref" data-testid="user-menu" variant="slot">
-      <template #trigger>
-        <Avatar :user="user" :tooltip="false" />
+      <template #trigger="{ toggle }">
+        <Avatar :user="user" :tooltip="false" @click="toggle" />
       </template>
       <ContextMenuItem icon="User" caption="Account" @click="() => goTo('account')" />
       <ContextMenuItem icon="Settings" caption="Settings" @click="() => goTo('settings')" />

@@ -74,13 +74,10 @@
 </script>
 
 <template>
-  <ContextMenu
-    variant="custom"
-    component="ButtonToggle"
-    :icon="icon"
-    placement="bottom-end"
-    size="sm"
-  >
+  <ContextMenu variant="slot" placement="bottom-end">
+    <template #trigger="{ toggle }">
+      <ButtonToggle :icon="icon" size="sm" @click="toggle" />
+    </template>
     <TagControl
       v-for="(tag, idx) in fileStore.tags"
       :key="tag.id"
