@@ -74,7 +74,7 @@
 </script>
 
 <template>
-  <ContextMenu variant="slot" placement="bottom-end">
+  <ContextMenu variant="slot" placement="bottom-end" menu-class="ms-tags">
     <template #trigger="{ toggle }">
       <ButtonToggle :icon="icon" size="sm" @click="toggle" />
     </template>
@@ -99,22 +99,12 @@
   </ContextMenu>
 </template>
 
-<style scoped>
-  .cm-menu > .item {
+<style>
+  /** Note these are NOT scoped
+   *  Due to <Teleport> we cannot use scoped styles and instead must add a custom class
+   *  to ContextMenu (ms-tags).
+   **/
+  .ms-tags.context-menu {
     padding-inline: 8px;
-  }
-
-  :deep(.cm-btn svg) {
-    color: var(--light);
-  }
-
-  :deep(.cm-btn:hover svg) {
-    color: var(--extra-dark);
-  }
-
-  .new-tag {
-    &:hover {
-      background-color: var(--surface-hover);
-    }
   }
 </style>
