@@ -88,11 +88,12 @@
       <ContextMenu
         ref="menu-ref"
         data-testid="create-file-button"
-        variant="custom"
-        component="Button"
-        icon="CirclePlus"
-        v-bind="ctaAttrs"
+        variant="slot"
+        :placement="ctaAttrs.placement"
       >
+        <template #trigger="{ toggle }">
+          <Button :icon="'CirclePlus'" v-bind="ctaAttrs" @click="toggle" />
+        </template>
         <ContextMenuItem icon="File" caption="Empty file" @click="emit('newEmptyFile')" />
         <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />
       </ContextMenu>

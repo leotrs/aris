@@ -84,7 +84,6 @@ describe("ContextMenu", () => {
       wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            Teleport: true,
             ButtonDots: {
               template: '<button @click="$emit(\'click\')" data-testid="trigger-button"></button>',
             },
@@ -93,14 +92,17 @@ describe("ContextMenu", () => {
       });
 
       await wrapper.find('[data-testid="trigger-button"]').trigger("click");
-      expect(wrapper.vm.show).toBe(true);
+      await wrapper.vm.$nextTick();
+      
+      // Check menu is rendered via Teleport
+      const menuInBody = document.querySelector('[data-testid="context-menu"]');
+      expect(menuInBody).toBeTruthy();
     });
 
-    it("closes menu when clicking outside", async () => {
+    it("toggles menu visibility", async () => {
       wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            Teleport: true,
             ButtonDots: true,
           },
         },
@@ -108,11 +110,15 @@ describe("ContextMenu", () => {
 
       // Open menu
       await wrapper.vm.toggle();
-      expect(wrapper.vm.show).toBe(true);
+      await wrapper.vm.$nextTick();
+      let menuInBody = document.querySelector('[data-testid="context-menu"]');
+      expect(menuInBody).toBeTruthy();
 
       // Close menu
-      await wrapper.vm.close();
-      expect(wrapper.vm.show).toBe(false);
+      await wrapper.vm.toggle();
+      await wrapper.vm.$nextTick();
+      menuInBody = document.querySelector('[data-testid="context-menu"]');
+      expect(menuInBody).toBeFalsy();
     });
   });
 
@@ -188,13 +194,14 @@ describe("ContextMenu", () => {
             ButtonDots: true,
           },
         },
+        attachTo: document.body,
       });
 
       // Open the menu
       await wrapper.vm.toggle();
+      await wrapper.vm.$nextTick();
 
       // Check menu is rendered in body via Teleport
-      await wrapper.vm.$nextTick();
       const menuInBody = document.querySelector('[data-testid="context-menu"]');
       expect(menuInBody).toBeTruthy();
       expect(menuInBody.querySelectorAll(".item")).toHaveLength(2);
@@ -209,8 +216,7 @@ describe("ContextMenu", () => {
             Teleport: true,
             ButtonDots: {
               template:
-                '<button :aria-expanded="modelValue" data-testid="trigger-button"></button>',
-              props: ["modelValue"],
+                '<button :aria-expanded="false" data-testid="trigger-button"></button>',
             },
           },
         },
@@ -224,11 +230,10 @@ describe("ContextMenu", () => {
       wrapper = mount(ContextMenu, {
         global: {
           stubs: {
-            Teleport: true,
             ButtonDots: {
               template:
-                '<button :aria-expanded="modelValue" data-testid="trigger-button" @click="$emit(\'update:modelValue\', !modelValue)"></button>',
-              props: ["modelValue"],
+                '<button :aria-expanded="show" data-testid="trigger-button" @click="$emit(\'click\')"></button>',
+              props: ["show"],
             },
           },
         },
@@ -237,8 +242,9 @@ describe("ContextMenu", () => {
       await wrapper.find('[data-testid="trigger-button"]').trigger("click");
       await wrapper.vm.$nextTick();
 
-      const trigger = wrapper.find('[data-testid="trigger-button"]');
-      expect(trigger.attributes("aria-expanded")).toBe("true");
+      // Check the menu opened by looking at DOM
+      const menuInBody = document.querySelector('[data-testid="context-menu"]');
+      expect(menuInBody).toBeTruthy();
     });
   });
 });

@@ -221,8 +221,9 @@ describe("FileMenu - Delete Confirmation Integration", () => {
     it("maintains existing FileMenu API", () => {
       wrapper = createWrapper();
 
-      // Should still have all the same props and events
-      expect(wrapper.props("file")).toBeDefined();
+      // Should still have all the same props and events  
+      expect(wrapper.props("icon")).toBeDefined();
+      expect(wrapper.props("mode")).toBeDefined();
 
       // Should still emit delete event (not change existing behavior)
       const deleteItem = wrapper.find(".context-menu-item-stub.danger");
