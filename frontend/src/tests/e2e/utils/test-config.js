@@ -11,8 +11,8 @@ import testUsersTemplate from "../fixtures/test-users.json" with { type: "json" 
  * @returns {string} String with variables replaced
  */
 function replaceEnvVars(str) {
-  if (typeof str !== 'string') return str;
-  
+  if (typeof str !== "string") return str;
+
   return str.replace(/\$\{([^}]+)\}/g, (match, envVar) => {
     // Use Node.js process.env in test environment
     const env = process.env || {};
@@ -26,11 +26,11 @@ function replaceEnvVars(str) {
  * @returns {any} Processed object with env vars replaced
  */
 function processEnvVars(obj) {
-  if (typeof obj === 'string') {
+  if (typeof obj === "string") {
     return replaceEnvVars(obj);
   } else if (Array.isArray(obj)) {
-    return obj.map(item => processEnvVars(item));
-  } else if (obj && typeof obj === 'object') {
+    return obj.map((item) => processEnvVars(item));
+  } else if (obj && typeof obj === "object") {
     const processed = {};
     for (const [key, value] of Object.entries(obj)) {
       processed[key] = processEnvVars(value);
