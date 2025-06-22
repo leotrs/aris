@@ -217,7 +217,7 @@ await deleteFile(page, 'My Paper');
 
 For **visual regression testing**, we use a dedicated test user with stable, predictable data:
 
-- **Email**: `testuser@aris.test`
+- **Email**: `testuser@aris.pub`
 - **Password**: Stored in `.env` files (both frontend and backend)
 - **Purpose**: Provides consistent test environment for visual comparisons
 
@@ -356,7 +356,7 @@ npx playwright show-report
 The tests are configured for CI environments:
 
 - **Retry logic**: Automatic retries on failure
-- **Parallel execution**: Optimized for CI performance  
+- **Parallel execution**: Optimized for CI performance
 - **Artifact collection**: Screenshots and traces on failure
 - **Headless execution**: No GUI dependencies
 
