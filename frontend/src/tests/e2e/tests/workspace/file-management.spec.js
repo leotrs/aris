@@ -8,9 +8,15 @@ import {
   fileExists,
   addTagsToFile,
 } from "../../utils/manuscript-helpers.js";
-import testUsers from "../../fixtures/test-users.json" with { type: "json" };
+import { getTestUsers } from "../../utils/test-config.js";
 
 test.describe("File Management", () => {
+  let testUsers;
+
+  test.beforeAll(() => {
+    testUsers = getTestUsers();
+  });
+
   test.beforeEach(async ({ page }) => {
     await setupAuthenticatedSession(page, testUsers.testUsers.defaultUser);
   });

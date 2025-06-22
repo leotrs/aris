@@ -5,7 +5,7 @@ import {
   getEditorContent,
   setEditorContent,
 } from "../../utils/manuscript-helpers.js";
-import testUsers from "../../fixtures/test-users.json" with { type: "json" };
+import { getTestUsers } from "../../utils/test-config.js";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, join } from "path";
@@ -15,6 +15,12 @@ const __dirname = dirname(__filename);
 const sampleRSM = readFileSync(join(__dirname, "../../fixtures/sample-manuscripts.rsm"), "utf-8");
 
 test.describe("RSM Manuscript Editing", () => {
+  let testUsers;
+
+  test.beforeAll(() => {
+    testUsers = getTestUsers();
+  });
+
   test.beforeEach(async ({ page }) => {
     await setupAuthenticatedSession(page, testUsers.testUsers.defaultUser);
   });
