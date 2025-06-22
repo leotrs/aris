@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, inject, onBeforeUnmount } from "vue";
+  import { ref, watch, inject, onBeforeUnmount } from "vue";
 
   const props = defineProps({
     icon: { type: String, required: true },
@@ -15,6 +15,8 @@
   });
   const emit = defineEmits(["on", "off"]);
   const buttonState = defineModel({ type: Boolean, default: false });
+
+  watch(buttonState, (state) => (state ? emit("on") : emit("off")));
 
   const isHoveringButton = ref(false);
   const isHoveringControl = ref(false);
