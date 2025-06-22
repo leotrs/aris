@@ -14,8 +14,8 @@ function replaceEnvVars(str) {
   if (typeof str !== 'string') return str;
   
   return str.replace(/\$\{([^}]+)\}/g, (match, envVar) => {
-    // Try Vite env first, then Node.js process.env, then fallback
-    const env = (typeof import !== 'undefined' && import.meta?.env) || process.env || {};
+    // Use Node.js process.env in test environment
+    const env = process.env || {};
     return env[envVar] || match;
   });
 }

@@ -362,6 +362,84 @@ test.describe("Component Visual Regression @visual", () => {
     }
   });
 
+  test("FileMenu trigger visibility behavior", async ({ page }) => {
+    await page.goto("/home");
+
+    // Create a test page to verify file menu trigger visibility behavior
+    await page.evaluate(() => {
+      const container = document.createElement("div");
+      container.id = "filemenu-test-container";
+      container.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        background: white;
+        padding: 20px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        z-index: 9999;
+        width: 400px;
+      `;
+      document.body.appendChild(container);
+
+      container.innerHTML = `
+        <h3>FileMenu Trigger Visibility Test</h3>
+        <div class="test-container" style="border: 1px solid #ccc; padding: 20px; margin: 10px 0;">
+          <div class="item" style="display: grid; grid-template-columns: 1fr auto auto auto; gap: 16px; padding: 8px; transition: background-color 0.2s;">
+            <span>Test File 1</span>
+            <span>Tags</span>
+            <span>Date</span>
+            <div class="fm-wrapper">
+              <button class="context-menu-trigger" style="opacity: 0; transition: opacity 0.3s; background: none; border: none; font-size: 18px; cursor: pointer; padding: 4px;">⋮</button>
+            </div>
+          </div>
+        </div>
+        <style>
+          .item:hover {
+            background: #f5f5f5;
+          }
+          .item:hover .context-menu-trigger {
+            opacity: 1 !important;
+          }
+        </style>
+      `;
+    });
+
+    // Screenshot initial state (trigger should be hidden)
+    await expect(page.locator("#filemenu-test-container")).toHaveScreenshot(
+      "filemenu-initial-state.png"
+    );
+
+    // Test hover behavior - verify trigger becomes visible
+    await page.hover("#filemenu-test-container .item");
+    await page.waitForTimeout(500); // Wait for transition
+
+    // Get opacity values to verify behavior
+    const triggerOpacity = await page
+      .locator("#filemenu-test-container .context-menu-trigger")
+      .evaluate((el) => getComputedStyle(el).opacity);
+    expect(parseFloat(triggerOpacity)).toBeGreaterThan(0.5);
+
+    // Screenshot hover state (trigger should be visible)
+    await expect(page.locator("#filemenu-test-container")).toHaveScreenshot(
+      "filemenu-hover-state.png"
+    );
+
+    // Move away and verify trigger becomes hidden again
+    await page.hover("#filemenu-test-container h3");
+    await page.waitForTimeout(500);
+
+    const triggerOpacityAfter = await page
+      .locator("#filemenu-test-container .context-menu-trigger")
+      .evaluate((el) => getComputedStyle(el).opacity);
+    expect(parseFloat(triggerOpacityAfter)).toBeLessThan(0.5);
+
+    // Screenshot after hover (trigger should be hidden again)
+    await expect(page.locator("#filemenu-test-container")).toHaveScreenshot(
+      "filemenu-after-hover.png"
+    );
+  });
+
   test("Animation visual consistency", async ({ page }) => {
     await page.goto("/home");
 
