@@ -1,6 +1,6 @@
 """Reset test user to known state for visual regression tests.
 
-This script resets the test user (testuser@aris.test) to a known state
+This script resets the test user (testuser@aris.pub) to a known state
 with stable test data for visual regression testing.
 """
 
@@ -17,7 +17,7 @@ from aris.security import hash_password
 # Load environment variables
 load_dotenv()
 
-TEST_USER_EMAIL = os.getenv("TEST_USER_EMAIL", "testuser@aris.test")
+TEST_USER_EMAIL = os.getenv("TEST_USER_EMAIL", "testuser@aris.pub")
 TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
 
 if not TEST_USER_PASSWORD:

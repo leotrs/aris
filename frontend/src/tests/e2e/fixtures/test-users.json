@@ -18,7 +18,7 @@
   },
   "invalidCredentials": {
     "wrongPassword": {
-      "email": "test@example.com",
+      "email": "testuser@aris.pub",
       "password": "wrongpassword"
     },
     "nonExistentUser": {

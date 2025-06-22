@@ -19,7 +19,7 @@ MOCK_USERS = [
     ),
     User(
         name="Test User",
-        email="testuser@aris.test",
+        email="testuser@aris.pub",
         password_hash="$2b$12$KIXmjJ0/z3j7L9w6O1F.3eJ8jZ9Z7k7K3mE1n8L2J4F.7xG6Q2J4S",
     ),
 ]
@@ -81,16 +81,16 @@ MOCK_FILES = [
         source="""\
         :rsm:
         # Test Visual Regression File
-        
+
         This file is used for visual regression testing.
         Content should remain stable.
-        
+
         ## Section 1
         Lorem ipsum test content.
-        
-        ## Section 2  
+
+        ## Section 2
         More stable test content here.
-        
+
         ::""",
     ),
     File(
@@ -102,9 +102,9 @@ MOCK_FILES = [
         source="""\
         :rsm:
         # Another Test File
-        
+
         This is another stable test file for visual tests.
-        
+
         ::""",
     ),
 ]
