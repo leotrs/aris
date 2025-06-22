@@ -80,7 +80,9 @@ describe("ManuscriptWrapper.vue", () => {
       },
     });
     expect(wrapper.find(".middle-footer").exists()).toBe(true);
-    expect(wrapper.find(".footer-logo img").attributes("src")).toContain("logo-32px.svg");
+    // Vite inlines SVGs as data URLs, so check for SVG content instead of filename
+    const imgSrc = wrapper.find(".footer-logo img").attributes("src");
+    expect(imgSrc).toMatch(/^data:image\/svg\+xml/);
   });
 
   it("does not render footer when showFooter is false", () => {
