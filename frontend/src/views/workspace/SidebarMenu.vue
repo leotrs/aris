@@ -10,12 +10,10 @@
   const emit = defineEmits(["on", "off"]);
   const items = toRef(() => props.items);
 
-  const drawerOpen = inject("drawerOpen");
   const handleDrawerClick = (clickedIndex) => {
     const wasActive = items.value[clickedIndex].state;
     if (wasActive) {
       emit("off", clickedIndex);
-      drawerOpen.value = false;
     } else {
       // Emit events to close all other drawers first
       items.value.forEach((item, index) => {
@@ -25,7 +23,6 @@
       });
       // Then open the clicked drawer
       emit("on", clickedIndex);
-      drawerOpen.value = true;
     }
   };
 
