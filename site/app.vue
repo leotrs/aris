@@ -12,6 +12,7 @@
 <style>
   body {
     font-family: 'Source Sans Pro', sans-serif;
+    background: var(--surface-primary);    
   }
 
   h1, h2, h3 {
