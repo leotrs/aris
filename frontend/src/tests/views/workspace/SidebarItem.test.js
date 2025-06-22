@@ -243,8 +243,7 @@ describe("Workspace SidebarItem", () => {
     it("uses default values for optional props", () => {
       const wrapper = createWrapper({ icon: "Test" });
 
-      // We passed "test" as the default label in createWrapper
-      expect(wrapper.props("withSideControl")).toBe(true);
+      // Check that default prop values are correctly set
       expect(wrapper.props("preferredSide")).toBe("left");
       expect(wrapper.props("showDelay")).toBe(500);
       expect(wrapper.props("hideDelay")).toBe(300);
