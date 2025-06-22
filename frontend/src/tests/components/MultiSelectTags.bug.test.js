@@ -4,12 +4,13 @@ import { ref } from "vue";
 import MultiSelectTags from "@/components/tags/MultiSelectTags.vue";
 
 describe("MultiSelectTags.vue - Bug: Tag Icon Issue", () => {
-  const createMockFileStore = () => ref({
-    tags: [
-      { id: 1, name: "math", color: "blue" },
-      { id: 2, name: "science", color: "green" }
-    ]
-  });
+  const createMockFileStore = () =>
+    ref({
+      tags: [
+        { id: 1, name: "math", color: "blue" },
+        { id: 2, name: "science", color: "green" },
+      ],
+    });
 
   it("should render Tag icon instead of three dots in ContextMenu", () => {
     const wrapper = mount(MultiSelectTags, {
@@ -89,7 +90,9 @@ describe("MultiSelectTags.vue - Bug: Tag Icon Issue", () => {
       },
     });
 
-    expect(wrapper.find('[data-testid="button-toggle"]').attributes("data-icon")).toBe("CustomIcon");
+    expect(wrapper.find('[data-testid="button-toggle"]').attributes("data-icon")).toBe(
+      "CustomIcon"
+    );
     expect(wrapper.find('[data-testid="icon-display"]').text()).toBe("CustomIcon");
   });
 });

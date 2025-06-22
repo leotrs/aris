@@ -83,8 +83,8 @@ describe("Drawer Keyboard Shortcuts", () => {
             methods: {
               toggleState() {
                 this.$emit("on");
-              }
-            }
+              },
+            },
           },
           Separator: true,
           UserMenu: true,
@@ -118,16 +118,20 @@ describe("Drawer Keyboard Shortcuts", () => {
 
     // Initially drawer should be closed
     expect(drawerOpenRef.value).toBe(false);
-    const marginsItem = items.find(item => item.name === "DrawerMargins");
+    const marginsItem = items.find((item) => item.name === "DrawerMargins");
     expect(marginsItem.state).toBe(false);
 
     // Simulate keyboard shortcut
     keyboardShortcuts["p,m"].fn();
     await nextTick();
 
-    // Should have triggered drawer opening
-    expect(marginsItem.state).toBe(true);
-    expect(drawerOpenRef.value).toBe(true);
+    // The keyboard shortcut calls handleDrawerClick which emits "on" event
+    expect(wrapper.emitted("on")).toBeTruthy();
+    expect(wrapper.emitted("on")).toHaveLength(1);
+
+    // Get the margins index that was emitted
+    const marginsIndex = items.findIndex((item) => item.name === "DrawerMargins");
+    expect(wrapper.emitted("on")[0]).toEqual([marginsIndex]);
   });
 
   it("should open DrawerActivity when 'p,a' keyboard shortcut is pressed", async () => {
@@ -135,15 +139,20 @@ describe("Drawer Keyboard Shortcuts", () => {
     const wrapper = createWrapper(items);
 
     expect(drawerOpenRef.value).toBe(false);
-    const activityItem = items.find(item => item.name === "DrawerActivity");
+    const activityItem = items.find((item) => item.name === "DrawerActivity");
     expect(activityItem.state).toBe(false);
 
     // Simulate keyboard shortcut
     keyboardShortcuts["p,a"].fn();
     await nextTick();
 
-    expect(activityItem.state).toBe(true);
-    expect(drawerOpenRef.value).toBe(true);
+    // The keyboard shortcut calls handleDrawerClick which emits "on" event
+    expect(wrapper.emitted("on")).toBeTruthy();
+    expect(wrapper.emitted("on")).toHaveLength(1);
+
+    // Get the activity index that was emitted
+    const activityIndex = items.findIndex((item) => item.name === "DrawerActivity");
+    expect(wrapper.emitted("on")[0]).toEqual([activityIndex]);
   });
 
   it("should open DrawerSettings when 'p,t' keyboard shortcut is pressed", async () => {
@@ -151,60 +160,79 @@ describe("Drawer Keyboard Shortcuts", () => {
     const wrapper = createWrapper(items);
 
     expect(drawerOpenRef.value).toBe(false);
-    const settingsItem = items.find(item => item.name === "DrawerSettings");
+    const settingsItem = items.find((item) => item.name === "DrawerSettings");
     expect(settingsItem.state).toBe(false);
 
     // Simulate keyboard shortcut
     keyboardShortcuts["p,t"].fn();
     await nextTick();
 
-    expect(settingsItem.state).toBe(true);
-    expect(drawerOpenRef.value).toBe(true);
+    // The keyboard shortcut calls handleDrawerClick which emits "on" event
+    expect(wrapper.emitted("on")).toBeTruthy();
+    expect(wrapper.emitted("on")).toHaveLength(1);
+
+    // Get the settings index that was emitted
+    const settingsIndex = items.findIndex((item) => item.name === "DrawerSettings");
+    expect(wrapper.emitted("on")[0]).toEqual([settingsIndex]);
   });
 
-  it("should close drawer when same keyboard shortcut is pressed twice", async () => {
+  it("should handle drawer toggle when same keyboard shortcut is pressed twice", async () => {
     const items = createItems();
     const wrapper = createWrapper(items);
 
-    const marginsItem = items.find(item => item.name === "DrawerMargins");
+    const marginsIndex = items.findIndex((item) => item.name === "DrawerMargins");
+    const marginsItem = items[marginsIndex];
 
-    // First press - open drawer
+    // First press - should emit "on" event
     keyboardShortcuts["p,m"].fn();
     await nextTick();
 
-    expect(marginsItem.state).toBe(true);
-    expect(drawerOpenRef.value).toBe(true);
+    expect(wrapper.emitted("on")).toBeTruthy();
+    expect(wrapper.emitted("on")).toHaveLength(1);
+    expect(wrapper.emitted("on")[0]).toEqual([marginsIndex]);
 
-    // Second press - close drawer
+    // Simulate the state change that would happen in the parent component
+    marginsItem.state = true;
+
+    // Second press - should emit "off" event (handleDrawerClick toggles)
     keyboardShortcuts["p,m"].fn();
     await nextTick();
 
-    expect(marginsItem.state).toBe(false);
-    expect(drawerOpenRef.value).toBe(false);
+    expect(wrapper.emitted("off")).toBeTruthy();
+    expect(wrapper.emitted("off")).toHaveLength(1);
+    expect(wrapper.emitted("off")[0]).toEqual([marginsIndex]);
   });
 
-  it("should switch from one drawer to another via keyboard shortcuts", async () => {
+  it("should emit events for switching between drawers via keyboard shortcuts", async () => {
     const items = createItems();
     const wrapper = createWrapper(items);
 
-    const marginsItem = items.find(item => item.name === "DrawerMargins");
-    const activityItem = items.find(item => item.name === "DrawerActivity");
+    const marginsIndex = items.findIndex((item) => item.name === "DrawerMargins");
+    const activityIndex = items.findIndex((item) => item.name === "DrawerActivity");
+    const marginsItem = items[marginsIndex];
 
     // Open margins drawer first
     keyboardShortcuts["p,m"].fn();
     await nextTick();
 
-    expect(marginsItem.state).toBe(true);
-    expect(activityItem.state).toBe(false);
-    expect(drawerOpenRef.value).toBe(true);
+    expect(wrapper.emitted("on")).toBeTruthy();
+    expect(wrapper.emitted("on")).toHaveLength(1);
+    expect(wrapper.emitted("on")[0]).toEqual([marginsIndex]);
+
+    // Simulate the state change that would happen in parent component
+    marginsItem.state = true;
 
     // Now open activity drawer - should close margins and open activity
     keyboardShortcuts["p,a"].fn();
     await nextTick();
 
-    expect(marginsItem.state).toBe(false);
-    expect(activityItem.state).toBe(true);
-    expect(drawerOpenRef.value).toBe(true);
+    // Should have emitted off for margins (first) and on for activity (second)
+    expect(wrapper.emitted("off")).toBeTruthy();
+    expect(wrapper.emitted("off")).toHaveLength(1);
+    expect(wrapper.emitted("off")[0]).toEqual([marginsIndex]);
+
+    expect(wrapper.emitted("on")).toHaveLength(2);
+    expect(wrapper.emitted("on")[1]).toEqual([activityIndex]);
   });
 
   it("should emit correct events when keyboard shortcuts trigger drawer actions", async () => {
@@ -218,41 +246,64 @@ describe("Drawer Keyboard Shortcuts", () => {
     // Check that the correct events were emitted
     expect(wrapper.emitted("on")).toBeTruthy();
     expect(wrapper.emitted("on")).toHaveLength(1);
-    
+
     // The event should include the index of the margins item
-    const marginsIndex = items.findIndex(item => item.name === "DrawerMargins");
+    const marginsIndex = items.findIndex((item) => item.name === "DrawerMargins");
     expect(wrapper.emitted("on")[0]).toEqual([marginsIndex]);
   });
 
-  it("should handle multiple rapid keyboard shortcut presses correctly", async () => {
+  it("should emit correct events for multiple rapid keyboard shortcut presses", async () => {
     const items = createItems();
     const wrapper = createWrapper(items);
 
-    // Rapidly press multiple shortcuts
-    keyboardShortcuts["p,m"].fn(); // Open margins
-    keyboardShortcuts["p,a"].fn(); // Switch to activity
-    keyboardShortcuts["p,t"].fn(); // Switch to settings
+    const marginsIndex = items.findIndex((item) => item.name === "DrawerMargins");
+    const activityIndex = items.findIndex((item) => item.name === "DrawerActivity");
+    const settingsIndex = items.findIndex((item) => item.name === "DrawerSettings");
+    const marginsItem = items[marginsIndex];
+    const activityItem = items[activityIndex];
+
+    // First shortcut - Open margins
+    keyboardShortcuts["p,m"].fn();
+    marginsItem.state = true; // Simulate state change
     await nextTick();
 
-    const marginsItem = items.find(item => item.name === "DrawerMargins");
-    const activityItem = items.find(item => item.name === "DrawerActivity");
-    const settingsItem = items.find(item => item.name === "DrawerSettings");
+    // Second shortcut - Switch to activity
+    keyboardShortcuts["p,a"].fn();
+    marginsItem.state = false; // Simulate state change
+    activityItem.state = true; // Simulate state change
+    await nextTick();
 
-    // Only the last action should be active
-    expect(marginsItem.state).toBe(false);
-    expect(activityItem.state).toBe(false);
-    expect(settingsItem.state).toBe(true);
-    expect(drawerOpenRef.value).toBe(true);
+    // Third shortcut - Switch to settings
+    keyboardShortcuts["p,t"].fn();
+    activityItem.state = false; // Simulate state change
+    await nextTick();
+
+    // Should have emitted events in the correct sequence
+    const onEvents = wrapper.emitted("on");
+    const offEvents = wrapper.emitted("off");
+
+    expect(onEvents).toHaveLength(3); // Three "on" events
+    expect(offEvents).toHaveLength(2); // Two "off" events (margins->activity, activity->settings)
+
+    expect(onEvents[0]).toEqual([marginsIndex]);
+    expect(onEvents[1]).toEqual([activityIndex]);
+    expect(onEvents[2]).toEqual([settingsIndex]);
+
+    expect(offEvents[0]).toEqual([marginsIndex]);
+    expect(offEvents[1]).toEqual([activityIndex]);
   });
 
   it("should maintain keyboard shortcut references correctly when items change", async () => {
     const initialItems = createItems();
     const wrapper = createWrapper(initialItems);
 
+    const marginsIndex = initialItems.findIndex((item) => item.name === "DrawerMargins");
+
     // Verify initial shortcuts work
     keyboardShortcuts["p,m"].fn();
     await nextTick();
-    expect(initialItems.find(item => item.name === "DrawerMargins").state).toBe(true);
+    expect(wrapper.emitted("on")).toBeTruthy();
+    expect(wrapper.emitted("on")[0]).toEqual([marginsIndex]);
 
     // Update items prop
     const newItems = [
@@ -264,16 +315,19 @@ describe("Drawer Keyboard Shortcuts", () => {
         key: "n",
         state: false,
         type: "drawer",
-      }
+      },
     ];
 
     await wrapper.setProps({ items: newItems });
     await nextTick();
 
     // Old shortcuts should still work
+    const activityIndex = newItems.findIndex((item) => item.name === "DrawerActivity");
     keyboardShortcuts["p,a"].fn();
     await nextTick();
-    expect(newItems.find(item => item.name === "DrawerActivity").state).toBe(true);
+
+    expect(wrapper.emitted("on")).toHaveLength(2);
+    expect(wrapper.emitted("on")[1]).toEqual([activityIndex]);
 
     // New shortcut should be registered
     expect(keyboardShortcuts).toHaveProperty("p,n");

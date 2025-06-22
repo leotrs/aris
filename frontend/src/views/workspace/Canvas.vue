@@ -145,7 +145,11 @@
 
 <template>
   <Suspense>
-    <div class="outer" :class="{ focus: focusMode, mobile: mobileMode, narrow: drawerOpen }" :data-testid="$attrs['data-testid']">
+    <div
+      class="outer"
+      :class="{ focus: focusMode, mobile: mobileMode, narrow: drawerOpen }"
+      :data-testid="$attrs['data-testid']"
+    >
       <div class="outer-topbar">
         <DockableSearch v-if="showSearch" />
       </div>
