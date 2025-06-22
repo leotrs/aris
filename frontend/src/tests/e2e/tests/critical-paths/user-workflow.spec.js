@@ -1,9 +1,15 @@
 import { test, expect } from "@playwright/test";
 import { loginUser, logoutUser } from "../../utils/auth-helpers.js";
 import { createNewFile, addTagsToFile, deleteFile } from "../../utils/manuscript-helpers.js";
-import testUsers from "../../fixtures/test-users.json" with { type: "json" };
+import { getTestUsers } from "../../utils/test-config.js";
 
 test.describe("Critical User Workflows", () => {
+  let testUsers;
+
+  test.beforeAll(() => {
+    testUsers = getTestUsers();
+  });
+
   test("complete research workflow: login → create → edit → tag → save → logout", async ({
     page,
   }) => {
@@ -12,7 +18,7 @@ test.describe("Critical User Workflows", () => {
 
     // Step 1: Login
     await loginUser(page, user);
-    expect(page.url()).toMatch(/\/(home|workspace)/);
+    expect(page.url()).toBe("http://localhost:5173/");
 
     // Step 2: Navigate to home and create new file
     await page.goto("/home");

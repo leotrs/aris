@@ -5,9 +5,15 @@ import {
   isUserAuthenticated,
   setupAuthenticatedSession,
 } from "../../utils/auth-helpers.js";
-import testUsers from "../../fixtures/test-users.json" with { type: "json" };
+import { getTestUsers } from "../../utils/test-config.js";
 
 test.describe("Logout Flow", () => {
+  let testUsers;
+
+  test.beforeAll(() => {
+    testUsers = getTestUsers();
+  });
+
   test.beforeEach(async ({ page }) => {
     // Setup authenticated session before each test
     await setupAuthenticatedSession(page, testUsers.testUsers.defaultUser);

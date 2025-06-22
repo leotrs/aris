@@ -1,6 +1,7 @@
 /**
  * Authentication helpers for E2E tests
  */
+import { getTestUsers } from "./test-config.js";
 
 /**
  * Login a user with credentials
@@ -84,10 +85,8 @@ export async function isUserAuthenticated(page) {
  * @param {Object} credentials - User credentials (optional, uses default test user)
  */
 export async function setupAuthenticatedSession(page, credentials = null) {
-  const defaultCredentials = {
-    email: "testuser@aris.pub",
-    password: "eIrdA38eW1guWTVpJNlS3VwP6eszUIGOiWqj1re3inM",
-  };
+  const testUsers = getTestUsers();
+  const defaultCredentials = testUsers.testUsers.defaultUser;
 
   const creds = credentials || defaultCredentials;
 
