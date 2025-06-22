@@ -125,7 +125,8 @@
     return mw;
   });
 
-  const strategy = computed(() => (props.mobileMode ? "fixed" : "absolute"));
+  const mobileMode = inject("mobileMode");
+  const strategy = computed(() => (mobileMode?.value ? "fixed" : "absolute"));
   const { floatingStyles, placement: actualPlacement } = useFloating(triggerRef, menuRef, {
     placement: computed(() => props.placement),
     strategy,
@@ -135,7 +136,7 @@
 
   // Mobile positioning override
   const menuStyles = computed(() => {
-    if (props.mobileMode) {
+    if (mobileMode?.value) {
       return {
         position: "fixed",
         top: "50%",
