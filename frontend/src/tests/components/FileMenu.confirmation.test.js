@@ -221,7 +221,7 @@ describe("FileMenu - Delete Confirmation Integration", () => {
     it("maintains existing FileMenu API", () => {
       wrapper = createWrapper();
 
-      // Should still have all the same props and events  
+      // Should still have all the same props and events
       expect(wrapper.props("icon")).toBeDefined();
       expect(wrapper.props("mode")).toBeDefined();
 
