@@ -1,9 +1,15 @@
 import { test, expect } from "@playwright/test";
 import { setupAuthenticatedSession } from "../../utils/auth-helpers.js";
 import { createNewFile, openFile } from "../../utils/manuscript-helpers.js";
-import testUsers from "../../fixtures/test-users.json" with { type: "json" };
+import { getTestUsers } from "../../utils/test-config.js";
 
 test.describe("Workspace Keyboard Focus", () => {
+  let testUsers;
+
+  test.beforeAll(() => {
+    testUsers = getTestUsers();
+  });
+
   test.beforeEach(async ({ page }) => {
     await setupAuthenticatedSession(page, testUsers.testUsers.defaultUser);
   });
