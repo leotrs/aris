@@ -226,11 +226,11 @@ For **visual regression testing**, we use a dedicated test user with stable, pre
 # Reset test user to known state (run from backend directory)
 python3 scripts/reset_test_user.py
 
-# Setup test environment for visual tests (run from puppeteer directory)
-node setup-test-environment.js
+# Setup test environment for visual tests (run from debug directory)
+node debug/setup-test-environment.js
 
-# Run visual tests with stable user
-node test-stable-user.js
+# Run visual tests with Playwright
+npm run test:e2e -- --grep "@visual.*stable.*user"
 ```
 
 **Benefits**:
