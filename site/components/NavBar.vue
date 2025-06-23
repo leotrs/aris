@@ -72,38 +72,19 @@
       </svg>
     </button>
 
-    <div 
-      class="navbar-menu" 
-      :class="{ 'navbar-menu--open': isMenuOpen }"
-      id="navbar-menu"
-    >
+    <div id="navbar-menu" class="navbar-menu" :class="{ 'navbar-menu--open': isMenuOpen }">
       <nav class="navbar-nav" role="navigation" aria-label="Main navigation">
-        <NuxtLink to="/demo" @click="closeMenu" class="focus-visible">
-          Try the Demo
-        </NuxtLink>
-        <NuxtLink to="/docs" @click="closeMenu" class="focus-visible">
-          Documentation
-        </NuxtLink>
-        <NuxtLink to="/blog" @click="closeMenu" class="focus-visible">
-          Blog
-        </NuxtLink>
-        <a 
-          href="#signup" 
-          @click="closeMenu" 
-          class="btn btn-primary focus-visible"
-        >
+        <NuxtLink to="/demo" class="focus-visible" @click="closeMenu"> Try the Demo </NuxtLink>
+        <NuxtLink to="/docs" class="focus-visible" @click="closeMenu"> Documentation </NuxtLink>
+        <NuxtLink to="/blog" class="focus-visible" @click="closeMenu"> Blog </NuxtLink>
+        <a href="#signup" class="btn btn-primary focus-visible" @click="closeMenu">
           Get Early Access
         </a>
       </nav>
     </div>
 
     <!-- Mobile overlay -->
-    <div 
-      v-if="isMenuOpen" 
-      class="navbar-overlay"
-      @click="closeMenu"
-      aria-hidden="true"
-    ></div>
+    <div v-if="isMenuOpen" class="navbar-overlay" aria-hidden="true" @click="closeMenu"></div>
   </nav>
 </template>
 

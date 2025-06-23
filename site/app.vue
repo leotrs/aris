@@ -1,5 +1,5 @@
 <script setup>
-  import NavBar from '@/components/NavBar.vue'
+  import NavBar from "@/components/NavBar.vue";
 </script>
 
 <template>
@@ -11,12 +11,14 @@
 
 <style>
   body {
-    font-family: 'Source Sans Pro', sans-serif;
-    background: var(--surface-primary);    
+    font-family: "Source Sans Pro", sans-serif;
+    background: var(--surface-primary);
   }
 
-  h1, h2, h3 {
-    font-family: 'Montserrat', sans-serif;
+  h1,
+  h2,
+  h3 {
+    font-family: "Montserrat", sans-serif;
   }
 
   a {
