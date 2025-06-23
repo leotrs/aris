@@ -13,7 +13,7 @@
     <div class="btn-container">
       <a href="#signup" class="btn btn-primary">{{ betaCopy }}</a>
     </div>
-    <a href="#signup" class="btn btn-link">Or explore the demo</a>
+    <a href="/demo" class="btn btn-link">Or explore the demo</a>
   </section>
 </template>
 

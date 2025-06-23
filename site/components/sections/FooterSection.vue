@@ -1,80 +1,13 @@
 <script setup>
-  import { ref } from "vue";
   import logoFull from "@/assets/logo-32px.svg";
-
-  const email = ref("");
-  const isSubmitting = ref(false);
-  const message = ref("");
-
-  const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
-
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-
-    if (!email.value) {
-      message.value = "Please enter your email address";
-      return;
-    }
-
-    if (!validateEmail(email.value)) {
-      message.value = "Please enter a valid email address";
-      return;
-    }
-
-    isSubmitting.value = true;
-    message.value = "";
-
-    try {
-      // TODO: Replace with actual newsletter signup API
-      await new Promise((resolve) => setTimeout(resolve, 800));
-      message.value = "Thank you for subscribing!";
-      email.value = "";
-    } catch (error) {
-      message.value = "Something went wrong. Please try again.";
-    } finally {
-      isSubmitting.value = false;
-    }
-  };
 </script>
 
 <template>
   <footer class="footer">
     <div class="footer-content">
       <div>
-        <p>Subscribe to get the latest Aris features and updates.</p>
-        <form class="newsletter" @submit="handleSubmit">
-          <div class="form-group">
-            <input
-              v-model="email"
-              type="email"
-              placeholder="Your email"
-              :disabled="isSubmitting"
-              required
-              aria-label="Email address for newsletter"
-              class="form-input"
-            />
-            <button
-              type="submit"
-              :disabled="isSubmitting"
-              :aria-label="isSubmitting ? 'Subscribing...' : 'Subscribe to newsletter'"
-              class="btn btn-primary"
-            >
-              {{ isSubmitting ? "Subscribing..." : "Subscribe" }}
-            </button>
-          </div>
-          <div
-            v-if="message"
-            class="form-message"
-            :class="{
-              'form-message--error': message.includes('Please') || message.includes('wrong'),
-            }"
-          >
-            {{ message }}
-          </div>
-        </form>
+        <p><strong>Stay Updated</strong></p>
+        <p>Want updates on Aris development? <a href="#signup" class="footer-signup-link">Sign up for early access</a> and we'll keep you informed on our progress.</p>
       </div>
       <div>
         <p><strong>Resources</strong></p>
@@ -158,28 +91,13 @@
     height: 30px;
   }
 
-  .newsletter {
-    margin-top: 1rem;
+  .footer-signup-link {
+    color: var(--primary-300);
+    text-decoration: underline;
   }
 
-  .form-group {
-    display: flex;
-    gap: 0.5rem;
-  }
-
-  .newsletter .form-input {
-    border: none;
-  }
-
-  .newsletter .btn {
-    padding: 0.5rem 1rem;
-    font-weight: bold;
-  }
-
-  .form-message.form-message--error {
-    background: var(--red-50);
-    color: var(--red-700);
-    border-color: var(--red-200);
+  .footer-signup-link:hover {
+    color: var(--primary-200);
   }
 
   .footer-bottom {
