@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
+import { TEST_CREDENTIALS } from "./setup/test-data.js";
 
 test.describe("Login Flow Tests", () => {
   let authHelpers;
@@ -14,7 +15,7 @@ test.describe("Login Flow Tests", () => {
     page,
   }) => {
     // Use real valid credentials for testing
-    await authHelpers.login("test@example.com", "password");
+    await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
 
     // Verify redirect to home and user is logged in
     await authHelpers.expectToBeLoggedIn();
@@ -23,7 +24,7 @@ test.describe("Login Flow Tests", () => {
     const tokens = await authHelpers.getStoredTokens();
     expect(tokens.accessToken).toBeTruthy();
     expect(tokens.refreshToken).toBeTruthy();
-    expect(tokens.user.email).toBe("test@example.com");
+    expect(tokens.user.email).toBe(TEST_CREDENTIALS.valid.email);
 
     // Verify session persists after page refresh
     await page.reload();
@@ -31,7 +32,7 @@ test.describe("Login Flow Tests", () => {
   });
 
   test("invalid credentials - display appropriate error message", async ({ page }) => {
-    await authHelpers.login("test@example.com", "wrongpassword");
+    await authHelpers.login(TEST_CREDENTIALS.valid.email, "wrongpassword");
 
     // Verify error message is displayed
     await expect(page.locator('[data-testid="login-error"]')).toBeVisible();
@@ -56,7 +57,7 @@ test.describe("Login Flow Tests", () => {
     );
 
     // Test with only email filled
-    await page.fill('[data-testid="email-input"]', "test@example.com");
+    await page.fill('[data-testid="email-input"]', TEST_CREDENTIALS.valid.email);
     await page.click('[data-testid="login-button"]');
     await expect(page.locator('[data-testid="login-error"]')).toContainText(
       "Please fill in all fields"
@@ -76,7 +77,7 @@ test.describe("Login Flow Tests", () => {
     // This test requires the backend to be unavailable to properly test error handling
     test.skip(true, "Requires backend to be down for proper testing");
 
-    await authHelpers.login("test@example.com", "password");
+    await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
 
     // Verify generic error message is shown
     await expect(page.locator('[data-testid="login-error"]')).toBeVisible();
@@ -91,8 +92,8 @@ test.describe("Login Flow Tests", () => {
     // Set up existing session
     await authHelpers.setAuthState("existing-token", "existing-refresh-token", {
       id: 1,
-      email: "test@example.com",
-      name: "Test User",
+      email: TEST_CREDENTIALS.valid.email,
+      name: TEST_CREDENTIALS.valid.name,
     });
 
     // Try to navigate to login page
@@ -120,8 +121,8 @@ test.describe("Login Flow Tests", () => {
     await page.goto("/login");
 
     // Fill credentials and press Enter
-    await page.fill('[data-testid="email-input"]', "test@example.com");
-    await page.fill('[data-testid="password-input"]', "password");
+    await page.fill('[data-testid="email-input"]', TEST_CREDENTIALS.valid.email);
+    await page.fill('[data-testid="password-input"]', TEST_CREDENTIALS.valid.password);
     await page.press('[data-testid="password-input"]', "Enter");
 
     // Wait for login to complete (either success or error)
