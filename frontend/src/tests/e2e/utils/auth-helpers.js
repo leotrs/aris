@@ -1,99 +1,78 @@
-/**
- * Authentication helpers for E2E tests
- */
-import { getTestUsers } from "./test-config.js";
+import { expect } from "@playwright/test";
 
-/**
- * Login a user with credentials
- * @param {Page} page - Playwright page object
- * @param {Object} credentials - User credentials
- * @param {string} credentials.email - User email
- * @param {string} credentials.password - User password
- */
-export async function loginUser(page, { email, password }) {
-  await page.goto("/login");
-
-  // Fill login form
-  await page.fill('[data-testid="email-input"]', email);
-  await page.fill('[data-testid="password-input"]', password);
-
-  // Submit form
-  await page.click('[data-testid="login-button"]');
-
-  // Wait for successful login (redirect to root)
-  await page.waitForURL("/");
-
-  // Verify user is logged in (check for user menu or logout button)
-  await page.waitForSelector('[data-testid="user-menu"]', { timeout: 5000 });
-}
-
-/**
- * Register a new user
- * @param {Page} page - Playwright page object
- * @param {Object} userData - User registration data
- * @param {string} userData.email - User email
- * @param {string} userData.password - User password
- * @param {string} userData.name - User full name
- */
-export async function registerUser(page, { email, password, name }) {
-  await page.goto("/register");
-
-  // Fill registration form
-  await page.fill('[data-testid="name-input"]', name);
-  await page.fill('[data-testid="email-input"]', email);
-  await page.fill('[data-testid="password-input"]', password);
-
-  // Submit form
-  await page.click('[data-testid="register-button"]');
-
-  // Wait for successful registration
-  await page.waitForURL(/\/(home|workspace|login)/);
-}
-
-/**
- * Logout the current user
- * @param {Page} page - Playwright page object
- */
-export async function logoutUser(page) {
-  // Click user menu to open dropdown
-  await page.click('[data-testid="user-menu"]');
-
-  // Click logout option
-  await page.click('[data-testid="logout-button"]');
-
-  // Wait for redirect to login page
-  await page.waitForURL("/login");
-}
-
-/**
- * Check if user is authenticated
- * @param {Page} page - Playwright page object
- * @returns {boolean} - True if user is authenticated
- */
-export async function isUserAuthenticated(page) {
-  try {
-    await page.waitForSelector('[data-testid="user-menu"]', { timeout: 2000 });
-    return true;
-  } catch {
-    return false;
+export class AuthHelpers {
+  constructor(page) {
+    this.page = page;
   }
-}
 
-/**
- * Setup authenticated user session for tests
- * @param {Page} page - Playwright page object
- * @param {Object} credentials - User credentials (optional, uses default test user)
- */
-export async function setupAuthenticatedSession(page, credentials = null) {
-  const testUsers = getTestUsers();
-  const defaultCredentials = testUsers.testUsers.defaultUser;
+  async login(email, password) {
+    await this.page.goto("/login");
+    await this.page.fill('[data-testid="email-input"]', email);
+    await this.page.fill('[data-testid="password-input"]', password);
+    await this.page.click('[data-testid="login-button"]');
+  }
 
-  const creds = credentials || defaultCredentials;
+  async expectToBeLoggedIn() {
+    await expect(this.page).toHaveURL("/");
+    await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible();
+  }
 
-  // Check if already authenticated
-  const isAuthenticated = await isUserAuthenticated(page);
+  async expectToBeOnLoginPage() {
+    await expect(this.page).toHaveURL("/login");
+    await expect(this.page.locator('input[type="email"]')).toBeVisible();
+  }
 
-  if (!isAuthenticated) {
-    await loginUser(page, creds);
+  async logout() {
+    await this.page.click('[data-testid="user-menu"]');
+    await this.page.click("text=Logout");
+  }
+
+  async clearAuthState() {
+    try {
+      await this.page.evaluate(() => {
+        localStorage.clear();
+        sessionStorage.clear();
+      });
+      // Force a hard reload to ensure clean state
+      await this.page.goto("/login", { waitUntil: "load" });
+      await this.page.reload({ waitUntil: "load" });
+
+      // Double-check that tokens are actually cleared
+      const tokens = await this.getStoredTokens();
+      if (tokens.accessToken || tokens.refreshToken) {
+        await this.page.evaluate(() => {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
+        });
+        await this.page.reload({ waitUntil: "load" });
+      }
+    } catch {
+      // Ignore localStorage access errors in tests
+    }
+  }
+
+  async setAuthState(accessToken, refreshToken, user) {
+    await this.page.goto("/");
+    await this.page.evaluate(
+      ({ accessToken, refreshToken, user }) => {
+        if (accessToken) localStorage.setItem("accessToken", accessToken);
+        if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+        if (user) localStorage.setItem("user", JSON.stringify(user));
+      },
+      { accessToken, refreshToken, user }
+    );
+  }
+
+  async getStoredTokens() {
+    try {
+      return await this.page.evaluate(() => ({
+        accessToken: localStorage.getItem("accessToken"),
+        refreshToken: localStorage.getItem("refreshToken"),
+        user: JSON.parse(localStorage.getItem("user") || "null"),
+      }));
+    } catch {
+      return { accessToken: null, refreshToken: null, user: null };
+    }
   }
 }
