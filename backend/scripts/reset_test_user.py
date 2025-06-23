@@ -8,6 +8,7 @@ import asyncio
 import os
 
 from dotenv import load_dotenv
+from sqlalchemy import text
 
 from aris import ArisSession
 from aris.models.models import File, FileStatus, Tag, User
@@ -31,7 +32,7 @@ async def reset_test_user():
     try:
         # Find or create test user
         existing_user = await session.execute(
-            "SELECT * FROM users WHERE email = :email", {"email": TEST_USER_EMAIL}
+            text("SELECT * FROM users WHERE email = :email"), {"email": TEST_USER_EMAIL}
         )
         user_row = existing_user.first()
 
@@ -39,23 +40,24 @@ async def reset_test_user():
             user_id = user_row.id
             # Delete all existing data for test user
             await session.execute(
-                "DELETE FROM file_tags WHERE file_id IN (SELECT id FROM files WHERE owner_id = :user_id)",
+                text("DELETE FROM file_tags WHERE file_id IN (SELECT id FROM files WHERE owner_id = :user_id)"),
                 {"user_id": user_id},
             )
             await session.execute(
-                "DELETE FROM files WHERE owner_id = :user_id", {"user_id": user_id}
+                text("DELETE FROM files WHERE owner_id = :user_id"), {"user_id": user_id}
             )
-            await session.execute("DELETE FROM tags WHERE user_id = :user_id", {"user_id": user_id})
+            await session.execute(text("DELETE FROM tags WHERE user_id = :user_id"), {"user_id": user_id})
             await session.execute(
-                "DELETE FROM file_settings WHERE user_id = :user_id", {"user_id": user_id}
+                text("DELETE FROM file_settings WHERE user_id = :user_id"), {"user_id": user_id}
             )
 
             # Update user with fresh password hash
             password_hash = hash_password(TEST_USER_PASSWORD)
             await session.execute(
-                "UPDATE users SET password_hash = :password_hash, name = :name WHERE id = :user_id",
+                text("UPDATE users SET password_hash = :password_hash, name = :name WHERE id = :user_id"),
                 {"password_hash": password_hash, "name": "Test User", "user_id": user_id},
             )
+            await session.commit()
         else:
             # Create new test user
             password_hash = hash_password(TEST_USER_PASSWORD)
