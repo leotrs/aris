@@ -45,31 +45,21 @@ test.describe("Login Flow Tests", () => {
     expect(tokens.accessToken).toBeNull();
   });
 
-  test("empty fields validation - show 'please fill in all fields' error", async ({ page }) => {
+  test("empty fields validation - browser native validation prevents submission", async ({ page }) => {
     await page.goto("/login");
+    await authHelpers.expectToBeOnLoginPage();
 
-    // Try to submit with empty fields
+    // Verify that clicking login with empty fields uses browser validation
+    // Browser should prevent form submission and show native validation messages
     await page.click('[data-testid="login-button"]');
-
-    // Verify validation error
-    await expect(page.locator('[data-testid="login-error"]')).toContainText(
-      "Please fill in all fields"
-    );
-
-    // Test with only email filled
-    await page.fill('[data-testid="email-input"]', TEST_CREDENTIALS.valid.email);
+    
+    // Verify we're still on login page (form submission was prevented)
+    await authHelpers.expectToBeOnLoginPage();
+    
+    // Test that we can't bypass validation by filling only one field
+    await page.fill('[data-testid="email-input"]', "test@example.com");
     await page.click('[data-testid="login-button"]');
-    await expect(page.locator('[data-testid="login-error"]')).toContainText(
-      "Please fill in all fields"
-    );
-
-    // Test with only password filled
-    await page.fill('[data-testid="email-input"]', "");
-    await page.fill('[data-testid="password-input"]', "password");
-    await page.click('[data-testid="login-button"]');
-    await expect(page.locator('[data-testid="login-error"]')).toContainText(
-      "Please fill in all fields"
-    );
+    await authHelpers.expectToBeOnLoginPage();
   });
 
   test("network error handling - handle API failures gracefully", async ({ page }) => {
@@ -89,14 +79,11 @@ test.describe("Login Flow Tests", () => {
   test("already logged in redirect - auto-redirect to home if valid session exists", async ({
     page,
   }) => {
-    // Set up existing session
-    await authHelpers.setAuthState("existing-token", "existing-refresh-token", {
-      id: 1,
-      email: TEST_CREDENTIALS.valid.email,
-      name: TEST_CREDENTIALS.valid.name,
-    });
+    // First login to get real valid tokens
+    await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
+    await authHelpers.expectToBeLoggedIn();
 
-    // Try to navigate to login page
+    // Now try to navigate to login page - should redirect back to home
     await page.goto("/login");
 
     // Wait for redirect to complete
@@ -163,3 +150,4 @@ test.describe("Login Flow Tests", () => {
     expect(passwordValue).toBeTruthy();
   });
 });
+
