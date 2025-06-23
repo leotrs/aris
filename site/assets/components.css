@@ -490,3 +490,13 @@
     width: 24px;
   }
 }
+
+/* Smooth scrolling for anchor links */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Focus management for anchor navigation */
+:target {
+  scroll-margin-top: 100px; /* Account for sticky navbar */
+}
