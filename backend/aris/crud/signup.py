@@ -4,6 +4,7 @@ This module provides database operations for managing early access signups,
 including creation, retrieval, updates, and soft deletes.
 """
 
+import secrets
 from datetime import datetime
 from typing import Optional
 
@@ -11,7 +12,7 @@ from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models.models import Signup, SignupStatus, InterestLevel
+from ..models.models import InterestLevel, Signup, SignupStatus
 
 
 class SignupError(Exception):
@@ -22,6 +23,17 @@ class SignupError(Exception):
 class DuplicateEmailError(SignupError):
     """Raised when attempting to create a signup with an existing email."""
     pass
+
+
+def generate_unsubscribe_token() -> str:
+    """Generate a cryptographically secure unsubscribe token.
+    
+    Returns
+    -------
+    str
+        A URL-safe, 32-character random token.
+    """
+    return secrets.token_urlsafe(32)
 
 
 async def create_signup(
@@ -78,7 +90,8 @@ async def create_signup(
         user_agent=user_agent,
         source=source or "website",
         status=SignupStatus.ACTIVE,
-        consent_given=True
+        consent_given=True,
+        unsubscribe_token=generate_unsubscribe_token()
     )
 
     db.add(signup)
@@ -162,6 +175,8 @@ async def update_signup_status(
         return None
 
     signup.status = status
+    if status == SignupStatus.UNSUBSCRIBED:
+        signup.unsubscribed_at = datetime.utcnow()
     signup.updated_at = datetime.utcnow()
 
     await db.commit()
@@ -225,3 +240,52 @@ async def get_active_signups_count(db: AsyncSession) -> int:
         select(Signup.id).where(Signup.status == SignupStatus.ACTIVE)
     )
     return len(result.scalars().all())
+
+
+async def get_signup_by_token(token: str, db: AsyncSession) -> Optional[Signup]:
+    """Retrieve a signup by unsubscribe token.
+
+    Parameters
+    ----------
+    token : str
+        Unsubscribe token to search for.
+    db : AsyncSession
+        SQLAlchemy async database session.
+
+    Returns
+    -------
+    Signup or None
+        The signup record if found, None otherwise.
+    """
+    result = await db.execute(
+        select(Signup).where(Signup.unsubscribe_token == token)
+    )
+    return result.scalars().first()
+
+
+async def unsubscribe_by_token(token: str, db: AsyncSession) -> Optional[Signup]:
+    """Mark a signup as unsubscribed using the unsubscribe token.
+
+    Parameters
+    ----------
+    token : str
+        Unsubscribe token.
+    db : AsyncSession
+        SQLAlchemy async database session.
+
+    Returns
+    -------
+    Signup or None
+        The updated signup record if found, None otherwise.
+    """
+    signup = await get_signup_by_token(token, db)
+    if not signup:
+        return None
+    
+    signup.status = SignupStatus.UNSUBSCRIBED
+    signup.unsubscribed_at = datetime.utcnow()
+    signup.updated_at = datetime.utcnow()
+    
+    await db.commit()
+    await db.refresh(signup)
+    return signup

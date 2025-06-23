@@ -30,6 +30,7 @@ from sqlalchemy.sql import func
 
 class Base(DeclarativeBase):
     """Base class for all SQLAlchemy models."""
+
     pass
 
 
@@ -112,15 +113,21 @@ class User(Base):
     initials = Column(String, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     last_login = Column(DateTime(timezone=True), nullable=True)
-    avatar_color: Column[AvatarColor] = Column(Enum(AvatarColor), nullable=True, default=AvatarColor.BLUE)
-    profile_picture_id = Column(Integer, ForeignKey("profile_pictures.id"), nullable=True)
+    avatar_color: Column[AvatarColor] = Column(
+        Enum(AvatarColor), nullable=True, default=AvatarColor.BLUE
+    )
+    profile_picture_id = Column(
+        Integer, ForeignKey("profile_pictures.id"), nullable=True
+    )
 
     files = relationship("File", back_populates="owner")
     tags = relationship("Tag", back_populates="owner", cascade="all, delete-orphan")
     file_settings = relationship(
         "FileSettings", back_populates="user", cascade="all, delete-orphan"
     )
-    file_assets = relationship("FileAsset", back_populates="owner", cascade="all, delete-orphan")
+    file_assets = relationship(
+        "FileAsset", back_populates="owner", cascade="all, delete-orphan"
+    )
     profile_picture = relationship("ProfilePicture", back_populates="user")
     annotation_messages = relationship(
         "AnnotationMessage", back_populates="owner", cascade="all, delete-orphan"
@@ -167,8 +174,12 @@ class ProfilePicture(Base):
 file_tags = Table(
     "file_tags",
     Base.metadata,
-    Column("file_id", Integer, ForeignKey("files.id", ondelete="CASCADE"), primary_key=True),
-    Column("tag_id", Integer, ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True),
+    Column(
+        "file_id", Integer, ForeignKey("files.id", ondelete="CASCADE"), primary_key=True
+    ),
+    Column(
+        "tag_id", Integer, ForeignKey("tags.id", ondelete="CASCADE"), primary_key=True
+    ),
 )
 
 
@@ -222,8 +233,12 @@ class File(Base):
     title = Column(String, nullable=True)
     abstract = Column(Text, nullable=True)
     keywords = Column(String, nullable=True)
-    status: Column[FileStatus] = Column(Enum(FileStatus, name="filestatus"), nullable=False, default=FileStatus.DRAFT)
-    last_edited_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    status: Column[FileStatus] = Column(
+        Enum(FileStatus, name="filestatus"), nullable=False, default=FileStatus.DRAFT
+    )
+    last_edited_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     doi = Column(String, unique=True, nullable=True)
     source = Column(Text, nullable=True)
@@ -232,8 +247,12 @@ class File(Base):
 
     owner = relationship("User", back_populates="files")
     tags = relationship("Tag", secondary=file_tags, back_populates="files")
-    annotations = relationship("Annotation", back_populates="file", cascade="all, delete-orphan")
-    file_assets = relationship("FileAsset", back_populates="file", cascade="all, delete-orphan")
+    annotations = relationship(
+        "Annotation", back_populates="file", cascade="all, delete-orphan"
+    )
+    file_assets = relationship(
+        "FileAsset", back_populates="file", cascade="all, delete-orphan"
+    )
     file_settings = relationship(
         "FileSettings", back_populates="file", cascade="all, delete-orphan"
     )
@@ -265,7 +284,9 @@ class Tag(Base):
     __tablename__ = "tags"
 
     id = Column(Integer, primary_key=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
     name = Column(String, nullable=False)
     color = Column(String, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
@@ -317,8 +338,12 @@ class FileAsset(Base):
     uploaded_at = Column(DateTime(timezone=True), server_default=func.now())
     deleted_at = Column(DateTime(timezone=True), nullable=True)
 
-    owner_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
-    file_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"), nullable=False)
+    owner_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+    file_id = Column(
+        Integer, ForeignKey("files.id", ondelete="CASCADE"), nullable=False
+    )
 
     owner = relationship("User", back_populates="file_assets")
     file = relationship("File", back_populates="file_assets")
@@ -378,7 +403,9 @@ class FileSettings(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     file_id = Column(Integer, ForeignKey("files.id", ondelete="CASCADE"), nullable=True)
-    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
 
     background = Column(String, nullable=False, default="var(--surface-page)")
     font_size = Column(String, nullable=False, default="16px")
@@ -388,7 +415,9 @@ class FileSettings(Base):
     columns = Column(Integer, nullable=False, default=1)
 
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
     deleted_at = Column(DateTime(timezone=True), nullable=True)
 
     file = relationship("File", back_populates="file_settings")
@@ -431,7 +460,7 @@ class AnnotationMessage(Base):
 
 class InterestLevel(enum.Enum):
     """Enum for signup interest levels."""
-    
+
     EXPLORING = "exploring"
     PLANNING = "planning"
     READY = "ready"
@@ -440,7 +469,7 @@ class InterestLevel(enum.Enum):
 
 class SignupStatus(enum.Enum):
     """Enum for signup status tracking."""
-    
+
     ACTIVE = "active"
     UNSUBSCRIBED = "unsubscribed"
     CONVERTED = "converted"
@@ -476,6 +505,10 @@ class Signup(Base):
         User agent string for analytics.
     consent_given : bool
         Whether user consented to data processing.
+    unsubscribe_token : str
+        Unique token for unsubscribe functionality.
+    unsubscribed_at : datetime
+        Timestamp when user unsubscribed (nullable).
     created_at : datetime
         Timestamp of signup.
     updated_at : datetime
@@ -491,16 +524,24 @@ class Signup(Base):
     institution = Column(String, nullable=True)
     research_area = Column(String, nullable=True)
     interest_level: Column[InterestLevel] = Column(Enum(InterestLevel), nullable=True)
-    
+
     # Status and tracking
-    status: Column[SignupStatus] = Column(Enum(SignupStatus), nullable=False, default=SignupStatus.ACTIVE)
+    status: Column[SignupStatus] = Column(
+        Enum(SignupStatus), nullable=False, default=SignupStatus.ACTIVE
+    )
     source = Column(String, nullable=True)
-    
+
     # Compliance and analytics
     ip_address = Column(String, nullable=True)
     user_agent = Column(String, nullable=True)
     consent_given = Column(Boolean, nullable=False, default=True)
-    
+
+    # Unsubscribe functionality
+    unsubscribe_token = Column(String, unique=True, nullable=False, index=True)
+    unsubscribed_at = Column(DateTime(timezone=True), nullable=True)
+
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )

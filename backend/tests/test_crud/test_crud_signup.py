@@ -4,15 +4,14 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from aris.crud.signup import (
+    DuplicateEmailError,
     create_signup,
-    get_signup_by_email,
-    get_signup_by_id,
-    update_signup_status,
-    unsubscribe_signup,
     email_exists,
     get_active_signups_count,
-    DuplicateEmailError,
-    SignupError,
+    get_signup_by_email,
+    get_signup_by_id,
+    unsubscribe_signup,
+    update_signup_status,
 )
 from aris.models.models import InterestLevel, SignupStatus
 
