@@ -79,9 +79,115 @@ aris/
 └── README.md
 ```
 
+## Testing Infrastructure
+
+### Test Types
+
+**Backend Tests**
+- **Unit Tests**: `uv run pytest -n8` - Test individual functions and API endpoints
+- **Coverage**: Generated in `htmlcov/` directory
+
+**Frontend Tests**  
+- **Unit Tests**: `npm test` - Component and utility testing with Vitest
+- **E2E Tests**: `npm run test:e2e` - End-to-end browser testing with Playwright
+
+### E2E Test Setup
+
+E2E tests require both backend and frontend servers running with a complete test environment.
+
+#### Prerequisites
+1. **PostgreSQL Database**: Running locally with `aris` database created
+2. **Environment Variables**: 
+   - **Local Development**: Both frontend and backend `.env` files should contain test user credentials
+   - **CI Environment**: Requires GitHub repository secret `TEST_USER_PASSWORD`
+   - **Test User**: `testuser@aris.pub` (password stored securely in environment variables)
+
+#### Complete E2E Setup Process
+```bash
+# 1. Setup Backend
+cd backend
+uv sync --all-groups                    # Install dependencies
+alembic upgrade head                    # Run database migrations
+uv run python scripts/reset_test_user.py  # Create stable test data
+uvicorn main:app --reload               # Start backend server (localhost:8000)
+
+# 2. Setup Frontend (in new terminal)
+cd frontend  
+npm install                             # Install dependencies
+npm run dev                             # Start frontend server (localhost:5173)
+
+# 3. Run E2E Tests (in new terminal)
+cd frontend
+npm run test:e2e                        # Run Playwright tests
+```
+
+#### Test Data Management
+- **Test User**: `testuser@aris.pub` with stable test files and tags
+- **Reset Script**: Use `scripts/reset_test_user.py` to reset test environment to known state
+- **Credential Security**: Test user password stored in environment variables (never in version control)
+- **Single Source of Truth**: All E2E tests use centralized credentials from `frontend/src/tests/e2e/setup/test-data.js`
+- **Visual Regression**: Test data designed for consistent visual regression testing
+
+#### E2E Test Environment
+- **Backend**: FastAPI server on `http://localhost:8000`
+- **Frontend**: Vue.js dev server on `http://localhost:5173`  
+- **Database**: Local PostgreSQL with test user and stable data
+- **Authentication**: JWT-based auth with test user credentials
+- **CI Requirements**: GitHub repository secret `TEST_USER_PASSWORD` must be configured
+
+### CI Configuration
+
+#### Required GitHub Repository Secrets
+For E2E tests to run in CI, the following repository secret must be configured:
+
+- **`TEST_USER_PASSWORD`**: The password for `testuser@aris.pub` (secure test user credentials)
+
+#### Setting Up GitHub Secrets
+1. Go to your repository → Settings → Secrets and variables → Actions
+2. Click "New repository secret"
+3. Add `TEST_USER_PASSWORD` with the test user password value
+
+#### CI Test Coverage
+- **Backend**: Unit tests, linting (ruff), type checking (mypy)
+- **Frontend**: Unit tests, linting (eslint)  
+- **E2E**: Full integration tests with real backend (Playwright on multiple browsers)
+
+### Running Individual Test Suites
+
+```bash
+# Backend unit tests only
+cd backend && uv run pytest -n8
+
+# Frontend unit tests only  
+cd frontend && npm test
+
+# E2E tests only (requires both servers running)
+cd frontend && npm run test:e2e
+
+# Run all tests
+cd backend && uv run pytest -n8
+cd frontend && npm test && npm run test:e2e
+```
+
 ## Contributing
 
 We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
+
+Please ensure all tests pass and code is linted before submitting PRs:
+
+```bash
+# Backend checks
+cd backend
+uv run pytest -n8                       # All tests pass
+uv run ruff check                       # No linting errors
+uv run mypy aris/                       # No type errors
+
+# Frontend checks  
+cd frontend
+npm test                                # All unit tests pass
+npm run lint                            # No linting errors
+npm run test:e2e                        # All E2E tests pass (requires backend)
+```
 
 ## License
 

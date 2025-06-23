@@ -111,7 +111,12 @@
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
-      router.push("/login");
+
+      // Only redirect if not on a public page
+      const publicPages = ["/login", "/register"];
+      if (!publicPages.includes(router.currentRoute.value.path)) {
+        router.push("/login");
+      }
     }
   });
   provide("user", user);

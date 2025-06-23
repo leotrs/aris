@@ -119,13 +119,15 @@
   // Floating UI setup
   const middleware = computed(() => {
     const mw = [offset(4), flip(), shift({ padding: 8 })];
-    if (arrowRef.value) {
+    // Only add arrow middleware when menu is shown and arrow ref exists
+    if (show.value && arrowRef.value) {
       mw.push(arrow({ element: arrowRef.value }));
     }
     return mw;
   });
 
-  const strategy = computed(() => (props.mobileMode ? "fixed" : "absolute"));
+  const mobileMode = inject("mobileMode");
+  const strategy = computed(() => (mobileMode?.value ? "fixed" : "absolute"));
   const { floatingStyles, placement: actualPlacement } = useFloating(triggerRef, menuRef, {
     placement: computed(() => props.placement),
     strategy,
@@ -135,7 +137,7 @@
 
   // Mobile positioning override
   const menuStyles = computed(() => {
-    if (props.mobileMode) {
+    if (mobileMode.value) {
       return {
         position: "fixed",
         top: "50%",
@@ -206,10 +208,12 @@
 
   // Focus the menu item when navigated via keyboard
   watch(activeIndex, (newIndex) => {
+    // Only focus when menu is shown and index is valid
+    if (!show.value || newIndex === null) return;
     const menuEl = menuRef.value;
     if (!menuEl) return;
     const items = menuEl.querySelectorAll(".item");
-    if (newIndex !== null && newIndex >= 0 && newIndex < items.length) {
+    if (newIndex >= 0 && newIndex < items.length) {
       items[newIndex].focus();
     }
   });

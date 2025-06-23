@@ -377,12 +377,17 @@
     }
   }
 
-  .item .fm-wrapper :deep(.context-menu-trigger) {
+  .item :deep(.context-menu-trigger) {
     opacity: 0;
     transition: opacity 0.3s ease;
   }
 
-  :is(.item:hover, .item.focused, .item.hovered) .fm-wrapper :deep(.context-menu-trigger) {
+  :is(.item:hover, .item.focused, .item.hovered) :deep(.context-menu-trigger) {
+    opacity: 1;
+  }
+
+  .item :deep(.context-menu-trigger:has(> .active)),
+  .item :deep(.context-menu-trigger.active) {
     opacity: 1;
   }
 

@@ -1,22 +1,28 @@
 <script setup>
-  import { inject, useTemplateRef } from "vue";
+  import { toRef, watchEffect, inject, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
 
-  const props = defineProps({});
-  const items = defineModel({ type: Array });
+  const props = defineProps({
+    items: { type: Array, required: true },
+  });
+  const emit = defineEmits(["on", "off"]);
+  const items = toRef(() => props.items);
 
-  const drawerOpen = inject("drawerOpen");
   const handleDrawerClick = (clickedIndex) => {
-    const wasActive = items[clickedIndex].state;
+    const wasActive = items.value[clickedIndex].state;
     if (wasActive) {
-      items[clickedIndex].state = false;
-      drawerOpen.value = false;
+      emit("off", clickedIndex);
     } else {
-      items.value.forEach((item) => item.type === "drawer" && (item.state = false));
-      items[clickedIndex].state = true;
-      drawerOpen.value = true;
+      // Emit events to close all other drawers first
+      items.value.forEach((item, index) => {
+        if (item.type === "drawer" && item.state) {
+          emit("off", index);
+        }
+      });
+      // Then open the clicked drawer
+      emit("on", clickedIndex);
     }
   };
 
@@ -25,17 +31,20 @@
   const toggleUserMenu = () => {
     userMenuRef.value?.toggle();
   };
-  useKeyboardShortcuts(
-    Object.fromEntries([
-      ...items.value
-        .filter((obj) => obj.key && obj.type === "drawer")
-        .map((obj) => {
-          const index = items.value.indexOf(obj);
-          return [`p,${obj.key}`, { fn: () => handleDrawerClick(index) }];
-        }),
-      ["u", { fn: () => toggleUserMenu(), description: "Toggle user menu" }],
-    ])
-  );
+  watchEffect(() => {
+    if (!items.value) return;
+    useKeyboardShortcuts(
+      Object.fromEntries([
+        ...items.value
+          .filter((obj) => obj.key && obj.type === "drawer")
+          .map((obj) => {
+            const index = items.value.indexOf(obj);
+            return [`p,${obj.key}`, { fn: () => handleDrawerClick(index) }];
+          }),
+        ["u", { fn: () => toggleUserMenu(), description: "Toggle user menu" }],
+      ])
+    );
+  });
 
   const focusMode = inject("focusMode");
   const mobileMode = inject("mobileMode");
@@ -50,15 +59,17 @@
         <Separator v-if="it.name === 'Separator'" />
         <SidebarItem
           v-else-if="it.type === 'toggle'"
-          v-model="items[idx].state"
           :icon="it.icon"
           :label="it.label"
+          @on="emit('on', idx)"
+          @off="emit('off', idx)"
         />
         <SidebarItem
           v-else-if="it.type === 'drawer'"
-          v-model="items[idx].state"
           :icon="it.icon"
           :label="it.label"
+          @on="handleDrawerClick(idx)"
+          @off="handleDrawerClick(idx)"
         />
       </template>
       <SidebarItem v-model="focusMode" icon="LayoutOff" label="focus" />
@@ -70,9 +81,10 @@
       <template v-for="(it, idx) in items" :key="it.name + idx">
         <SidebarItem
           v-if="it.type === 'toggle'"
-          v-model="items[idx].state"
           :icon="it.icon"
           :label="it.label"
+          @on="emit('on', idx)"
+          @off="emit('off', idx)"
         />
       </template>
       <ContextMenu variant="slot">
@@ -82,9 +94,10 @@
         <template v-for="(it, idx) in items" :key="it.name + idx">
           <ContextMenuItem
             v-if="it.type === 'drawer'"
-            v-model="items[idx].state"
             :icon="it.icon"
             :caption="it.label"
+            @on="emit('on', idx)"
+            @off="emit('off', idx)"
           />
         </template>
       </ContextMenu>
