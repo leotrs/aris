@@ -31,8 +31,23 @@ export class AuthHelpers {
     try {
       await this.page.evaluate(() => {
         localStorage.clear();
+        sessionStorage.clear();
       });
-    } catch (_error) {
+      // Force a hard reload to ensure clean state
+      await this.page.goto("/login", { waitUntil: "load" });
+      await this.page.reload({ waitUntil: "load" });
+
+      // Double-check that tokens are actually cleared
+      const tokens = await this.getStoredTokens();
+      if (tokens.accessToken || tokens.refreshToken) {
+        await this.page.evaluate(() => {
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
+        });
+        await this.page.reload({ waitUntil: "load" });
+      }
+    } catch {
       // Ignore localStorage access errors in tests
     }
   }
@@ -56,7 +71,7 @@ export class AuthHelpers {
         refreshToken: localStorage.getItem("refreshToken"),
         user: JSON.parse(localStorage.getItem("user") || "null"),
       }));
-    } catch (_error) {
+    } catch {
       return { accessToken: null, refreshToken: null, user: null };
     }
   }

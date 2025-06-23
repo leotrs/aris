@@ -41,11 +41,6 @@
   });
 
   const onLogin = async () => {
-    if (!email.value || !password.value) {
-      error.value = "Please fill in all fields";
-      return;
-    }
-
     isLoading.value = true;
     error.value = "";
     try {
@@ -79,11 +74,11 @@
         <div class="top">
           <div class="text-input">
             <label class="text-label">Email</label>
-            <input v-model="email" data-testid="email-input" type="email" />
+            <input v-model="email" data-testid="email-input" type="email" required />
           </div>
           <div class="text-input">
             <label class="text-label">Password</label>
-            <input v-model="password" data-testid="password-input" type="password" />
+            <input v-model="password" data-testid="password-input" type="password" required />
             <div class="footer text-caption"><p>Forgot password?</p></div>
           </div>
         </div>

@@ -19,9 +19,9 @@
 
 <template>
   <div class="um-wrapper">
-    <ContextMenu ref="menu-ref" data-testid="user-menu" variant="slot">
+    <ContextMenu ref="menu-ref" variant="slot">
       <template #trigger="{ toggle }">
-        <Button kind="tertiary" @click="toggle">
+        <Button kind="tertiary" data-testid="user-menu" @click="toggle">
           <Avatar :user="user" :tooltip="false" />
         </Button>
       </template>
