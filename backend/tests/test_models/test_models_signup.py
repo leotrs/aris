@@ -1,9 +1,6 @@
 """Tests for signup model functionality."""
 
-import pytest
-from datetime import datetime, timezone
-
-from aris.models.models import Signup, InterestLevel, SignupStatus
+from aris.models.models import InterestLevel, Signup, SignupStatus
 
 
 class TestSignupModel:
@@ -21,9 +18,9 @@ class TestSignupModel:
             source="website",
             ip_address="192.168.1.1",
             user_agent="Mozilla/5.0",
-            consent_given=True
+            consent_given=True,
         )
-        
+
         assert signup.email == "test@example.com"
         assert signup.name == "Test User"
         assert signup.institution == "Test University"
@@ -37,11 +34,8 @@ class TestSignupModel:
 
     def test_signup_model_defaults(self):
         """Test signup model default values."""
-        signup = Signup(
-            email="defaults@example.com",
-            name="Defaults User"
-        )
-        
+        signup = Signup(email="defaults@example.com", name="Defaults User")
+
         # Check that defaults are set correctly
         assert signup.status == SignupStatus.ACTIVE
         assert signup.consent_given is True
@@ -62,9 +56,9 @@ class TestSignupModel:
             interest_level=None,
             source=None,
             ip_address=None,
-            user_agent=None
+            user_agent=None,
         )
-        
+
         assert signup.email == "optional@example.com"
         assert signup.name == "Optional User"
         assert signup.institution is None
@@ -89,7 +83,7 @@ class TestInterestLevelEnum:
         """Test that all expected enum members exist."""
         expected_members = ["EXPLORING", "PLANNING", "READY", "MIGRATING"]
         actual_members = [member.name for member in InterestLevel]
-        
+
         assert set(actual_members) == set(expected_members)
         assert len(actual_members) == len(expected_members)
 
@@ -112,7 +106,7 @@ class TestSignupStatusEnum:
         """Test that all expected enum members exist."""
         expected_members = ["ACTIVE", "UNSUBSCRIBED", "CONVERTED"]
         actual_members = [member.name for member in SignupStatus]
-        
+
         assert set(actual_members) == set(expected_members)
         assert len(actual_members) == len(expected_members)
 
@@ -131,7 +125,7 @@ class TestSignupModelValidation:
             signup = Signup(
                 email=f"{interest_level.value}@example.com",
                 name=f"{interest_level.value.title()} User",
-                interest_level=interest_level
+                interest_level=interest_level,
             )
             assert signup.interest_level == interest_level
 
@@ -141,7 +135,7 @@ class TestSignupModelValidation:
             signup = Signup(
                 email=f"{status.value}@example.com",
                 name=f"{status.value.title()} User",
-                status=status
+                status=status,
             )
             assert signup.status == status
 
@@ -149,17 +143,13 @@ class TestSignupModelValidation:
         """Test boolean field behavior."""
         # Test True
         signup_true = Signup(
-            email="true@example.com",
-            name="True User",
-            consent_given=True
+            email="true@example.com", name="True User", consent_given=True
         )
         assert signup_true.consent_given is True
 
         # Test False
         signup_false = Signup(
-            email="false@example.com",
-            name="False User",
-            consent_given=False
+            email="false@example.com", name="False User", consent_given=False
         )
         assert signup_false.consent_given is False
 
@@ -171,9 +161,9 @@ class TestSignupModelValidation:
             institution="École Polytechnique & MIT",
             research_area="AI/ML, NLP & Computer Vision",
             source="website/referral",
-            user_agent="Mozilla/5.0 (compatible; special-chars)"
+            user_agent="Mozilla/5.0 (compatible; special-chars)",
         )
-        
+
         assert "ü" in signup.email
         assert "José María" in signup.name
         assert "École" in signup.institution
@@ -187,15 +177,15 @@ class TestSignupModelValidation:
         long_institution = "B" * 500
         long_research_area = "C" * 500
         long_user_agent = "D" * 1000
-        
+
         signup = Signup(
             email="long@example.com",
             name=long_name,
             institution=long_institution,
             research_area=long_research_area,
-            user_agent=long_user_agent
+            user_agent=long_user_agent,
         )
-        
+
         assert len(signup.name) == 255
         assert len(signup.institution) == 500
         assert len(signup.research_area) == 500
@@ -210,9 +200,9 @@ class TestSignupModelValidation:
             research_area="",
             source="",
             ip_address="",
-            user_agent=""
+            user_agent="",
         )
-        
+
         # Empty strings should be preserved as-is
         assert signup.name == ""
         assert signup.institution == ""
