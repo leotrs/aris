@@ -1,71 +1,85 @@
 <script setup>
   /**
-   * ContextMenu - Flexible dropdown menu component with multiple trigger variants
+   * ContextMenu - Simplified dropdown menu component with Floating UI positioning
    *
-   * Provides context-sensitive dropdown menus with support for dots, close, custom button,
-   * and slot-based triggers. Features responsive mobile/desktop positioning, keyboard navigation,
-   * focus management, and nested sub-menu support. Uses Floating UI for precise positioning.
+   * A streamlined context menu component that provides dropdown menus with precise
+   * Floating UI positioning. Supports dots button and custom slot triggers with
+   * mobile-responsive positioning strategies and keyboard navigation.
+   *
+   * Key Features:
+   * - Two variants: 'dots' (default button) and 'slot' (custom trigger)
+   * - Floating UI positioning with automatic placement adjustment
+   * - Mobile-responsive positioning (centered modal vs. anchored desktop)
+   * - Keyboard navigation with arrow keys (j/k and arrow up/down)
+   * - Sub-menu support with automatic context providing
+   * - Click-outside and ESC key closing
+   * - Teleported to body for proper z-index layering
    *
    * @displayName ContextMenu
    * @example
-   * // Basic dots menu
-   * <ContextMenu variant="dots" placement="bottom-start">
-   *   <ContextMenuItem>Edit</ContextMenuItem>
-   *   <ContextMenuItem>Delete</ContextMenuItem>
+   * // Basic dots menu (most common usage)
+   * <ContextMenu>
+   *   <ContextMenuItem icon="edit" caption="Edit" />
+   *   <ContextMenuItem icon="trash" caption="Delete" />
    * </ContextMenu>
    *
    * @example
-   * // Custom button trigger
-   * <ContextMenu variant="custom" component="Button" text="Actions" icon="Plus">
-   *   <ContextMenuItem>New Item</ContextMenuItem>
-   *   <ContextMenuItem>Import</ContextMenuItem>
+   * // Custom placement
+   * <ContextMenu placement="right-start">
+   *   <ContextMenuItem icon="copy" caption="Copy" />
+   *   <ContextMenuItem icon="paste" caption="Paste" />
    * </ContextMenu>
    *
    * @example
-   * // Close button variant
-   * <ContextMenu variant="close" placement="left-start">
-   *   <ContextMenuItem>Save</ContextMenuItem>
-   *   <ContextMenuItem>Cancel</ContextMenuItem>
+   * // Mobile mode (centered modal)
+   * <ContextMenu :mobile-mode="true">
+   *   <ContextMenuItem icon="share" caption="Share" />
+   *   <ContextMenuItem icon="download" caption="Download" />
    * </ContextMenu>
    *
    * @example
    * // Custom trigger via slot
    * <ContextMenu variant="slot">
    *   <template #trigger="{ toggle, isOpen }">
-   *     <button @click="toggle" :class="{ active: isOpen }">
-   *       Custom Trigger
+   *     <button @click="toggle" :class="{ active: isOpen }" class="custom-btn">
+   *       Actions <Icon name="chevron-down" />
    *     </button>
    *   </template>
-   *   <ContextMenuItem>Option 1</ContextMenuItem>
+   *   <ContextMenuItem icon="settings" caption="Settings" />
+   *   <ContextMenuItem icon="help" caption="Help" />
    * </ContextMenu>
    *
    * @example
-   * // Nested sub-menu
-   * <ContextMenu variant="dots">
-   *   <ContextMenuItem>Edit</ContextMenuItem>
-   *   <ContextMenu variant="custom" text="More Actions" placement="right-start">
-   *     <ContextMenuItem>Advanced Edit</ContextMenuItem>
-   *     <ContextMenuItem>Export</ContextMenuItem>
+   * // Nested sub-menu (automatic context inheritance)
+   * <ContextMenu>
+   *   <ContextMenuItem icon="edit" caption="Edit" />
+   *   <ContextMenu variant="slot" placement="right-start">
+   *     <template #trigger="{ toggle }">
+   *       <button @click="toggle" class="item">
+   *         <Icon name="dots" /> More Actions
+   *       </button>
+   *     </template>
+   *     <ContextMenuItem icon="copy" caption="Duplicate" />
+   *     <ContextMenuItem icon="archive" caption="Archive" />
    *   </ContextMenu>
    * </ContextMenu>
    */
 
-  import { ref, computed, watch, provide, inject, useTemplateRef, useSlots, nextTick } from "vue";
+  import { ref, computed, watch, provide, inject, useTemplateRef } from "vue";
+  import { useFloating, autoUpdate, offset, flip, shift, arrow } from "@floating-ui/vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
-  import { useDesktopMenu } from "@/composables/useDesktopMenu.js";
-  import { useMobileMenu } from "@/composables/useMobileMenu.js";
-  import ContextMenuTrigger from "./ContextMenuTrigger.vue";
+  import ButtonDots from "@/components/base/ButtonDots.vue";
 
   const props = defineProps({
     /**
      * Menu trigger variant type
-     * @values 'dots', 'close', 'custom', 'slot'
+     * @values 'dots', 'slot'
      */
     variant: {
       type: String,
       default: "dots",
-      validator: (value) => ["dots", "close", "custom", "slot"].includes(value),
+      validator: (value) => ["dots", "slot"].includes(value),
     },
 
     /**
@@ -75,98 +89,88 @@
      */
     placement: {
       type: String,
-      default: "left-start",
+      default: "bottom-start",
     },
 
     /**
-     * Additional Floating UI configuration options
-     * @see https://floating-ui.com/docs/tutorial
+     * Use mobile positioning strategy (centers menu)
      */
-    floatingOptions: {
-      type: Object,
-      default: () => ({}),
-    },
-
-    /**
-     * Size of the menu trigger (affects custom and dots variants)
-     * @values 'sm', 'md', 'lg'
-     */
-    size: {
-      type: String,
-      default: "md",
-      validator: (value) => ["sm", "md", "lg"].includes(value),
+    mobileMode: {
+      type: Boolean,
+      default: false,
     },
   });
   defineOptions({ inheritAttrs: false });
-  const mobileMode = inject("mobileMode", false);
-  const currentVariant = computed(() => props.variant);
 
   // Sub-menu setup
-  // This menu provides context for its children:
   provide("isSubMenu", true);
   provide("parentMenu", { placement: props.placement });
-  // This menu receives context from its parent:
   const isSubMenu = inject("isSubMenu", false);
   const parentMenu = inject("parentMenu", null);
 
   // State
   const show = ref(false);
-  const lastFocusedElement = ref(null);
 
-  // Floating styles
+  // Template refs
   const triggerRef = useTemplateRef("trigger-ref");
-  const btnRef = computed(() => {
-    return triggerRef.value?.triggerRef;
-  });
   const menuRef = useTemplateRef("menu-ref");
+  const arrowRef = useTemplateRef("arrow-ref");
 
-  // Initialize positioning systems
-  const positioningOptions = computed(() => ({
-    placement: props.placement,
-    strategy: "fixed",
-    variant: currentVariant.value,
-    offset: currentVariant.value === "dots" ? 4 : 0,
-    isSubMenu,
-    parentPlacement: parentMenu?.placement,
-    ...props.floatingOptions,
-  }));
-
-  const desktopMenu = useDesktopMenu(btnRef, menuRef, positioningOptions.value);
-  const mobileMenu = useMobileMenu(mobileMode, {
-    placement: computed(() => props.placement),
-    isOpen: show,
+  // Floating UI setup
+  const middleware = computed(() => {
+    const mw = [offset(4), flip(), shift({ padding: 8 })];
+    // Only add arrow middleware when menu is shown and arrow ref exists
+    if (show.value && arrowRef.value) {
+      mw.push(arrow({ element: arrowRef.value }));
+    }
+    return mw;
   });
 
-  // Consolidated computed properties
-  const triggerClasses = computed(() => [
-    "context-menu-trigger",
-    `variant-${currentVariant.value}`,
+  const mobileMode = inject("mobileMode");
+  const strategy = computed(() => (mobileMode?.value ? "fixed" : "absolute"));
+  const { floatingStyles, placement: actualPlacement } = useFloating(triggerRef, menuRef, {
+    placement: computed(() => props.placement),
+    strategy,
+    middleware,
+    whileElementsMounted: autoUpdate,
+  });
+
+  // Mobile positioning override
+  const menuStyles = computed(() => {
+    if (mobileMode.value) {
+      return {
+        position: "fixed",
+        top: "50%",
+        left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: "90vw",
+        maxWidth: "320px",
+        maxHeight: "80vh",
+        overflowY: "auto",
+      };
+    }
+    return floatingStyles.value;
+  });
+
+  const menuClasses = computed(() => [
+    "context-menu",
+    { "context-menu--mobile": props.mobileMode },
   ]);
 
-  const menuClasses = computed(() => {
-    return mobileMode.value
-      ? mobileMenu.menuClasses.value
-      : ["context-menu", `placement-${props.placement}`, "desktop-mode", { "is-open": show.value }];
-  });
-
-  // Consolidated positioning interface
-  const menuStyles = computed(() =>
-    mobileMode.value ? mobileMenu.menuStyles.value : desktopMenu.menuStyles.value
-  );
-  const updatePosition = () => !mobileMode.value && desktopMenu.updatePosition();
+  // Toggle function
+  const toggle = () => {
+    show.value = !show.value;
+  };
 
   /**
    * Exposes methods and computed properties for parent components
-   * @expose {Function} toggle - Toggle menu open/closed state
-   * @expose {ComputedRef<string>} effectivePlacement - The actual placement used by Floating UI
    */
   defineExpose({
-    toggle: () => (show.value = !show.value),
-    effectivePlacement: computed(() => desktopMenu.effectivePlacement?.value || props.placement),
+    toggle,
+    actualPlacement,
   });
-  watch(() => props.placement, updatePosition);
 
-  // Keys
+  // Keyboard navigation
   const numItems = computed(() => menuRef.value?.querySelectorAll(".item").length || 0);
   const {
     activeIndex,
@@ -175,16 +179,12 @@
     deactivate: deactivateNav,
   } = useListKeyboardNavigation(numItems, menuRef, false, false);
 
-  // Closable
+  // Closable behavior
   const close = () => {
     show.value = false;
     clearMenuSelection();
-    // Restore focus to trigger
-    if (lastFocusedElement.value && lastFocusedElement.value.focus) {
-      lastFocusedElement.value.focus();
-      lastFocusedElement.value = null;
-    }
   };
+
   const { activate: activateClosable, deactivate: deactivateClosable } = useClosable({
     onClose: close,
     closeOnEsc: true,
@@ -192,59 +192,28 @@
     closeOnCloseButton: false,
     autoActivate: false,
   });
+
   provide("closeMenu", close);
 
-  // Pre-position the menu before showing to prevent fly-in animation
-  const positionBeforeShow = async () => {
-    if (!show.value) return;
-
-    // Activate positioning system immediately after menu appears in DOM
-    const positioningSystem = mobileMode.value ? mobileMenu : desktopMenu;
-    await positioningSystem.activate();
-  };
-
-  // Menu lifecycle management
-  watch(
-    show,
-    async (isShown) => {
-      if (isShown) {
-        // Opening sequence
-        lastFocusedElement.value = document.activeElement;
-        activateClosable();
-        activateNav();
-
-        // Position will be handled by the template's @vue:mounted
-        // This prevents the fly-in effect by positioning before animation starts
-
-        // Focus management - delay to allow positioning to complete
-        await nextTick();
-        const firstItem = menuRef.value?.querySelector('.item[tabindex="0"], .item');
-        firstItem?.focus?.();
-      } else {
-        // Closing sequence
-        deactivateNav();
-        deactivateClosable();
-
-        // Deactivate positioning system
-        const positioningSystem = mobileMode.value ? mobileMenu : desktopMenu;
-        await positioningSystem.deactivate();
-
-        // Restore focus
-        if (lastFocusedElement.value?.focus) {
-          lastFocusedElement.value.focus();
-          lastFocusedElement.value = null;
-        }
-      }
-    },
-    { immediate: true }
-  );
+  // Menu lifecycle
+  watch(show, (isShown) => {
+    if (isShown) {
+      activateClosable();
+      activateNav();
+    } else {
+      deactivateNav();
+      deactivateClosable();
+    }
+  });
 
   // Focus the menu item when navigated via keyboard
   watch(activeIndex, (newIndex) => {
+    // Only focus when menu is shown and index is valid
+    if (!show.value || newIndex === null) return;
     const menuEl = menuRef.value;
     if (!menuEl) return;
     const items = menuEl.querySelectorAll(".item");
-    if (newIndex !== null && newIndex >= 0 && newIndex < items.length) {
+    if (newIndex >= 0 && newIndex < items.length) {
       items[newIndex].focus();
     }
   });
@@ -252,15 +221,19 @@
 
 <template>
   <div class="cm-wrapper" @click.stop @dblclick.stop>
-    <ContextMenuTrigger
+    <!-- Dots variant trigger -->
+    <ButtonDots
+      v-if="variant === 'dots'"
       ref="trigger-ref"
-      :variant="currentVariant"
-      :size="size"
-      :is-open="show"
-      :class="triggerClasses"
+      class="context-menu-trigger"
+      :aria-expanded="show"
+      data-testid="trigger-button"
       v-bind="$attrs"
-      @toggle="show = !show"
-    >
+      @click="toggle"
+    />
+
+    <!-- Slot variant trigger -->
+    <div v-else-if="variant === 'slot'" ref="trigger-ref" class="context-menu-trigger">
       <!--
         @slot trigger - Custom trigger element (only used when variant="slot")
         @binding {Function} toggle - Function to toggle menu open/closed
@@ -272,40 +245,32 @@
           </button>
         </template>
       -->
-      <slot v-if="$slots.trigger && currentVariant === 'slot'" name="trigger" />
-    </ContextMenuTrigger>
+      <slot name="trigger" :toggle="toggle" :is-open="show" />
+    </div>
+
     <Teleport to="body">
-      <Transition
-        name="cm-menu"
-        enter-active-class="cm-menu-enter-active"
-        leave-active-class="cm-menu-leave-active"
-        enter-from-class="cm-menu-enter-from"
-        leave-to-class="cm-menu-leave-to"
-        @before-enter="positionBeforeShow"
+      <div
+        v-if="show"
+        ref="menu-ref"
+        :class="menuClasses"
+        role="menu"
+        aria-orientation="vertical"
+        :style="menuStyles"
+        data-testid="context-menu"
       >
-        <div
-          v-if="show"
-          ref="menu-ref"
-          :class="menuClasses"
-          role="menu"
-          aria-orientation="vertical"
-          :aria-labelledby="triggerRef?.triggerId"
-          :style="menuStyles"
-          data-testid="context-menu"
-        >
-          <!--
-            @slot default - Menu content (typically ContextMenuItem components)
-            @binding {Function} close - Function to close the menu programmatically
-            @example
-            <ContextMenuItem @click="handleEdit">Edit</ContextMenuItem>
-            <ContextMenuItem @click="handleDelete">Delete</ContextMenuItem>
-            <ContextMenu variant="custom" text="More">
-              <ContextMenuItem>Nested Option</ContextMenuItem>
-            </ContextMenu>
-          -->
-          <slot />
-        </div>
-      </Transition>
+        <!--
+          @slot default - Menu content (typically ContextMenuItem components)
+          @binding {Function} close - Function to close the menu programmatically
+          @example
+          <ContextMenuItem @click="handleEdit">Edit</ContextMenuItem>
+          <ContextMenuItem @click="handleDelete">Delete</ContextMenuItem>
+          <ContextMenu variant="dots">
+            <ContextMenuItem>Nested Option</ContextMenuItem>
+          </ContextMenu>
+        -->
+        <slot />
+        <div v-if="!mobileMode" ref="arrow-ref" class="context-menu-arrow" />
+      </div>
     </Teleport>
   </div>
 </template>
@@ -316,9 +281,7 @@
     overflow: visible;
   }
 
-  .cm-menu {
-    position: fixed;
-    overflow: hidden;
+  .context-menu {
     z-index: 999;
     background-color: var(--surface-primary);
     padding-block: 8px;
@@ -331,92 +294,29 @@
     }
   }
 
-  /* Mobile modal positioning */
-  .cm-menu-mobile {
-    position: fixed !important;
-    top: 50% !important;
-    left: 50% !important;
-    transform: translate(-50%, -50%) !important;
+  .context-menu--mobile {
     width: 90vw;
     max-width: 320px;
     max-height: 80vh;
     overflow-y: auto;
   }
 
-  /* CSS Animations */
-  .cm-menu-enter-active {
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  .context-menu-arrow {
+    position: absolute;
+    background: var(--surface-primary);
+    width: 8px;
+    height: 8px;
+    transform: rotate(45deg);
   }
 
-  .cm-menu-leave-active {
-    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .cm-menu-enter-from {
-    opacity: 0;
-    transform: scaleY(0.8) scaleX(0.95);
-    transform-origin: top center;
-  }
-
-  .cm-menu-leave-to {
-    opacity: 0;
-    transform: scaleY(0.8) scaleX(0.95);
-    transform-origin: top center;
-  }
-
-  /* Mobile modal animations */
-  .cm-menu-mobile.cm-menu-enter-from {
-    opacity: 0;
-    transform: translate(-50%, -50%) scaleY(0.8) scaleX(0.95);
-    transform-origin: center center;
-  }
-
-  .cm-menu-mobile.cm-menu-leave-to {
-    opacity: 0;
-    transform: translate(-50%, -50%) scaleY(0.8) scaleX(0.95);
-    transform-origin: center center;
+  .context-menu-trigger {
+    width: fit-content;
   }
 
   /* Touch interactions */
   @media (hover: none) and (pointer: coarse) {
     .cm-wrapper {
       -webkit-tap-highlight-color: transparent;
-    }
-
-    .cm-btn {
-      touch-action: manipulation;
-    }
-  }
-
-  .context-menu-trigger {
-    transition: all 0.3s ease;
-  }
-
-  .context-menu {
-    overflow: hidden;
-    z-index: 999;
-    background-color: var(--surface-primary);
-    padding-block: 8px;
-    border-radius: 16px;
-    min-width: fit-content;
-    box-shadow: var(--shadow-strong), var(--shadow-soft);
-
-    & > *:not(:last-child) {
-      margin-bottom: 8px;
-    }
-
-    &.mobile-mode {
-      position: fixed !important;
-      top: 50% !important;
-      left: 50% !important;
-      transform: translate(-50%, -50%) !important;
-      width: 90vw;
-      max-width: 320px;
-      max-height: 80vh;
-      overflow-y: auto;
-    }
-
-    &.desktop-mode {
     }
   }
 </style>

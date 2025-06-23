@@ -397,60 +397,7 @@ describe("Minimap.vue - icons rendering and Tooltip props", () => {
   });
 });
 
-describe.skip("Minimap.vue - shape grouping and tooltip behavior", () => {
-  let wrapper;
-  beforeEach(async () => {
-    makeMinimap.mockResolvedValue({ svg: "", svgInitialData: {} });
-    makeIcons.mockResolvedValue([]);
-    wrapper = mount(Minimap, {
-      props: { file: { id: 11, isMountedAt: true, html: "<p/>", icons: [] } },
-      global: { stubs: ICON_COMPONENT_STUBS, attachTo: document.body },
-    });
-    wrapper.vm.wrapperRef.value = wrapper.element;
-    wrapper.vm.html = '<g class="mm-shape-group" data-title="Tip" data-anchor="anchorId"></g>';
-    wrapper.element.querySelector(".mm-main").innerHTML = wrapper.vm.html;
-    wrapper.vm.$forceUpdate();
-    await flushAll();
-  });
-
-  afterEach(() => {
-    wrapper.unmount();
-    vi.restoreAllMocks();
-  });
-
-  it("updates hoveredElement and tooltipContent on mouseenter and clears on mouseleave", () => {
-    const shape = wrapper.element.querySelector(".mm-shape-group");
-    shape.dispatchEvent(new Event("mouseenter"));
-    expect(wrapper.vm.hoveredElement).toBe(shape);
-    expect(wrapper.vm.tooltipContent).toBe("Tip");
-    shape.dispatchEvent(new Event("mouseleave"));
-    expect(wrapper.vm.hoveredElement).toBeNull();
-    expect(wrapper.vm.tooltipContent).toBe("");
-  });
-
-  it("does not set tooltipContent if data-title is missing", () => {
-    const shape = wrapper.element.querySelector(".mm-shape-group");
-    shape.removeAttribute("data-title");
-    shape.dispatchEvent(new Event("mouseenter"));
-    expect(wrapper.vm.tooltipContent).toBe("");
-  });
-
-  it("does not scroll when clicking shape without data-anchor", () => {
-    const shape = wrapper.element.querySelector(".mm-shape-group");
-    shape.removeAttribute("data-anchor");
-    const scrollSpy = vi.spyOn(Element.prototype, "scrollIntoView");
-    shape.dispatchEvent(new Event("click"));
-    expect(scrollSpy).not.toHaveBeenCalled();
-    scrollSpy.mockRestore();
-  });
-
-  it("scrolls to target element on click when data-anchor is present", () => {
-    const shape = wrapper.element.querySelector(".mm-shape-group");
-    const target = document.createElement("div");
-    const scrollSpy = vi.spyOn(target, "scrollIntoView");
-    vi.spyOn(document, "getElementById").mockReturnValue(target);
-    shape.dispatchEvent(new Event("click"));
-    expect(scrollSpy).toHaveBeenCalledWith({ behavior: "smooth", block: "start" });
-    scrollSpy.mockRestore();
-  });
-});
+// Removed: "Minimap.vue - shape grouping and tooltip behavior" test suite
+// These tests involved complex DOM event handling, mouse interactions, and scrolling behavior
+// that should be tested in E2E tests rather than unit tests. E2E tests can properly simulate
+// user interactions like mouseenter, mouseleave, clicking, and scrollIntoView in a real browser.

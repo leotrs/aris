@@ -18,6 +18,7 @@
   <div
     ref="self-ref"
     class="sb-item"
+    :data-testid="`sidebar-item-${text.toLowerCase().replace(/\s+/g, '-')}`"
     :class="{ collapsed: collapsed, active: active, 'not-clickable': !clickable }"
   >
     <template v-if="!collapsed">

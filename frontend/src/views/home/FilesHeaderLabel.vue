@@ -97,4 +97,18 @@
   .col-header:hover .no-sort {
     color: var(--medium);
   }
+
+  .col-header :deep(.context-menu-trigger) {
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  :is(.col-header:hover, .col-header.focused, .col-header.hovered) :deep(.context-menu-trigger) {
+    opacity: 1;
+  }
+
+  .col-header :deep(.context-menu-trigger:has(> .active)),
+  .col-header :deep(.context-menu-trigger.active) {
+    opacity: 1;
+  }
 </style>

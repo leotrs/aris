@@ -4,21 +4,25 @@
 export const baseRules = {
   // Prettier integration
   "prettier/prettier": "error",
-  
+
   // Console and debugging
   "no-console": process.env.NODE_ENV === "production" ? "warn" : "off",
   "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
-  
+
   // Code quality
-  "no-unused-vars": ["error", { 
+  "no-unused-vars": ["error", {
     "argsIgnorePattern": "^_",
-    "varsIgnorePattern": "^_" 
+    "varsIgnorePattern": "^_"
   }],
   "no-undef": "error",
   "eqeqeq": ["error", "always"],
   "prefer-const": "warn",
-  
-  // Let prettier handle formatting
+
+  // Whitespace and formatting
+  "no-trailing-spaces": "error",
+  "eol-last": ["error", "always"],
+
+  // Let prettier handle most formatting
   "indent": "off",
   "quotes": "off",
   "semi": "off",

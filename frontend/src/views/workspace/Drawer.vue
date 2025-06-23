@@ -9,6 +9,7 @@
   const active = inject("drawerOpen");
   useClosable({
     onClose: () => (active.value = false),
+    closeOnOutsideClick: false,
   });
   const componentMap = {
     DrawerMargins: DrawerMargins,

@@ -7,9 +7,17 @@ import SelectBox from "@/components/forms/SelectBox.vue";
 describe("SelectBox.vue", () => {
   const TeleportStub = { props: ["to"], template: "<div><slot/></div>" };
   const ContextMenuStub = {
-    props: ["text", "icon"],
-    template:
-      '<div class="cm-wrapper"><button class="cm-btn" :disabled="$attrs.disabled">{{ text }}</button><div class="cm-menu"><slot/></div></div>',
+    props: ["variant", "placement"],
+    template: `
+      <div class="cm-wrapper">
+        <slot name="trigger" :toggle="() => {}"></slot>
+        <div class="cm-menu"><slot/></div>
+      </div>
+    `,
+  };
+  const ButtonToggleStub = {
+    props: ["icon"],
+    template: '<button class="cm-btn" v-bind="$attrs">Toggle</button>',
   };
   const itemStub = {
     props: { caption: { type: String } },
@@ -27,7 +35,12 @@ describe("SelectBox.vue", () => {
       },
       attrs: { disabled: true },
       global: {
-        stubs: { Teleport: TeleportStub, ContextMenu: ContextMenuStub, ContextMenuItem: itemStub },
+        stubs: {
+          Teleport: TeleportStub,
+          ContextMenu: ContextMenuStub,
+          ButtonToggle: ButtonToggleStub,
+          ContextMenuItem: itemStub,
+        },
       },
     });
     const container = wrapper.get(".select-box");
@@ -54,7 +67,12 @@ describe("SelectBox.vue", () => {
         options: [{ value: "x", label: "X" }],
       },
       global: {
-        stubs: { Teleport: TeleportStub, ContextMenu: ContextMenuStub, ContextMenuItem: itemStub },
+        stubs: {
+          Teleport: TeleportStub,
+          ContextMenu: ContextMenuStub,
+          ButtonToggle: ButtonToggleStub,
+          ContextMenuItem: itemStub,
+        },
       },
     });
     const container = wrapper.get(".select-box");
@@ -81,7 +99,12 @@ describe("SelectBox.vue", () => {
         ],
       },
       global: {
-        stubs: { Teleport: TeleportStub, ContextMenu: ContextMenuStub, ContextMenuItem: itemStub },
+        stubs: {
+          Teleport: TeleportStub,
+          ContextMenu: ContextMenuStub,
+          ButtonToggle: ButtonToggleStub,
+          ContextMenuItem: itemStub,
+        },
       },
     });
     const trigger = wrapper.get(".cm-btn");
@@ -97,7 +120,12 @@ describe("SelectBox.vue", () => {
     const wrapper = mount(SelectBox, {
       props: { modelValue: "foo", options: ["foo", "bar"] },
       global: {
-        stubs: { Teleport: TeleportStub, ContextMenu: ContextMenuStub, ContextMenuItem: itemStub },
+        stubs: {
+          Teleport: TeleportStub,
+          ContextMenu: ContextMenuStub,
+          ButtonToggle: ButtonToggleStub,
+          ContextMenuItem: itemStub,
+        },
       },
     });
     await nextTick();
