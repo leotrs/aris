@@ -84,6 +84,18 @@
     ])
   );
 
+  // Event handlers for SidebarMenu
+  const drawerOpen = inject("drawerOpen");
+  const handleItemOn = (index) => {
+    items[index].state = true;
+    drawerOpen.value = true;
+  };
+
+  const handleItemOff = (index) => {
+    drawerOpen.value = false;
+    items[index].state = false;
+  };
+
   // Context
   const layoutOnRef = useTemplateRef("layout-on-ref");
   const focusMode = inject("focusMode");
@@ -94,6 +106,7 @@
 <template>
   <div
     ref="sidebar-ref"
+    data-testid="workspace-sidebar"
     class="sb-wrapper"
     :class="{ focus: focusMode, mobile: mobileMode, xs: xsMode }"
   >
@@ -101,7 +114,7 @@
       <img src="@/assets/logo-32px.svg" />
     </div>
 
-    <SidebarMenu v-model="items" />
+    <SidebarMenu :items="items" @on="handleItemOn" @off="handleItemOff" />
     <Drawer :component="items.find((it) => it.type === 'drawer' && it.state)?.name ?? ''" />
 
     <Button

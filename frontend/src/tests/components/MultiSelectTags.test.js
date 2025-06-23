@@ -20,7 +20,7 @@ describe("MultiSelectTags.vue", () => {
 
   const ContextMenuStub = defineComponent({
     name: "ContextMenu",
-    props: ["icon", "placement", "buttonSize"],
+    props: ["placement", "variant", "menuClass"],
     setup(_, { slots }) {
       return () => h("div", slots.default && slots.default());
     },
@@ -75,7 +75,7 @@ describe("MultiSelectTags.vue", () => {
   it("renders ContextMenu and TagControl items for each store tag", () => {
     const wrapper = mountMulti();
     const cm = wrapper.getComponent(ContextMenuStub);
-    expect(cm.props()).toMatchObject({ icon: "Tag", placement: "bottom-end" });
+    expect(cm.props()).toMatchObject({ placement: "bottom-end" });
     const controls = wrapper.findAllComponents(TagControlStub);
     expect(controls).toHaveLength(tagsList.length);
     controls.forEach((ctrl, i) => {

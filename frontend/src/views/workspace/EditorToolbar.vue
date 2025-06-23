@@ -20,7 +20,10 @@
         <Button kind="tertiary" size="sm" icon="LayoutGrid" />
       </template>
       <HSeparator />
-      <ContextMenu variant="custom" component="ButtonToggle" text="Insert" placement="bottom-start">
+      <ContextMenu variant="slot" placement="bottom-start">
+        <template #trigger="{ toggle }">
+          <ButtonToggle text="Insert" @click="toggle" />
+        </template>
         <template v-if="mini">
           <ContextMenuItem caption="Block Tag" icon="LayoutRows" />
           <ContextMenuItem caption="Inline Tag" icon="LayoutGrid" />
@@ -37,13 +40,10 @@
         <ContextMenuItem caption="Citation" icon="Quote" />
         <ContextMenuItem caption="URL" icon="Link" />
       </ContextMenu>
-      <ContextMenu
-        v-if="!mini"
-        variant="custom"
-        component="ButtonToggle"
-        text="Sections"
-        placement="bottom-start"
-      >
+      <ContextMenu v-if="!mini" variant="slot" placement="bottom-start">
+        <template #trigger="{ toggle }">
+          <ButtonToggle text="Sections" @click="toggle" />
+        </template>
         <ContextMenuItem caption="Author" icon="UserEdit" />
         <ContextMenuItem caption="Abstract" icon="FileDescription" />
         <ContextMenuItem caption="Table of Contents" icon="ListDetails" />
@@ -53,17 +53,17 @@
         <ContextMenuItem caption="Bibliography" icon="Books" />
         <ContextMenuItem caption="Bibliography Item" icon="Book2" />
       </ContextMenu>
-      <ContextMenu variant="custom" component="ButtonToggle" text="Math" placement="bottom-start">
+      <ContextMenu variant="slot" placement="bottom-start">
+        <template #trigger="{ toggle }">
+          <ButtonToggle text="Math" @click="toggle" />
+        </template>
         <ContextMenuItem caption="Math Block" icon="LayoutRows" />
         <ContextMenuItem caption="Math Inline" icon="LayoutGrid" />
         <Separator />
-        <ContextMenu
-          variant="custom"
-          component="ButtonToggle"
-          icon="Therefore"
-          text="Theorems"
-          placement="right-start"
-        >
+        <ContextMenu variant="slot" placement="right-start">
+          <template #trigger="{ toggle }">
+            <ButtonToggle icon="Therefore" text="Theorems" @click="toggle" />
+          </template>
           <ContextMenuItem caption="Proof" icon="" />
           <ContextMenuItem caption="Proof Step" icon="" />
           <ContextMenuItem caption="Subproof" icon="" />
@@ -75,14 +75,10 @@
           <ContextMenuItem caption="Problem" icon="" />
           <ContextMenuItem caption="Exercise" icon="" />
         </ContextMenu>
-        <ContextMenu
-          variant="custom"
-          component="ButtonToggle"
-          icon="Sum"
-          text="Constructs"
-          class="constructs"
-          placement="right-start"
-        >
+        <ContextMenu variant="slot" placement="right-start">
+          <template #trigger="{ toggle }">
+            <ButtonToggle icon="Sum" text="Constructs" class="constructs" @click="toggle" />
+          </template>
           <ContextMenuItem caption="Assumption" icon="" />
           <ContextMenuItem caption="Case" icon="" />
           <ContextMenuItem caption="Claim" icon="" />

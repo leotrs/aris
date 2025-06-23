@@ -17,6 +17,11 @@ MOCK_USERS = [
         email="alice.johnson@example.com",
         password_hash="hashedpassword3",
     ),
+    User(
+        name="Test User",
+        email="testuser@aris.pub",
+        password_hash="$2b$12$TVuqGqn6SWbVFres301hUu6BtCWQHa.xpGPK4EwAKZo8mw50WXKBW",
+    ),
 ]
 
 
@@ -67,6 +72,41 @@ MOCK_FILES = [
         ::
         """,
     ),
+    File(
+        title="Test Visual Regression File",
+        abstract="Stable test file for visual regression testing.",
+        keywords="test, visual, regression",
+        status=FileStatus.DRAFT,
+        owner_id=4,
+        source="""\
+        :rsm:
+        # Test Visual Regression File
+
+        This file is used for visual regression testing.
+        Content should remain stable.
+
+        ## Section 1
+        Lorem ipsum test content.
+
+        ## Section 2
+        More stable test content here.
+
+        ::""",
+    ),
+    File(
+        title="Another Test File",
+        abstract="Second stable test file.",
+        keywords="test, stable, visual",
+        status=FileStatus.DRAFT,
+        owner_id=4,
+        source="""\
+        :rsm:
+        # Another Test File
+
+        This is another stable test file for visual tests.
+
+        ::""",
+    ),
 ]
 
 
@@ -80,4 +120,6 @@ MOCK_TAGS = [
     Tag(name="AI Ethics", user_id=3, color="ORANGE"),
     Tag(name="Databases", user_id=3, color="PURPLE"),
     Tag(name="Chem. Eng.", user_id=3, color="GREEN"),
+    Tag(name="Visual Testing", user_id=4, color="BLUE"),
+    Tag(name="Regression", user_id=4, color="GREEN"),
 ]

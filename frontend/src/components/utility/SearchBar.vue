@@ -41,12 +41,13 @@
 </script>
 
 <template>
-  <div class="s-wrapper text-caption" @click.stop="focusInput">
+  <div class="s-wrapper text-caption" data-testid="search-bar" @click.stop="focusInput">
     <IconSearch v-if="showIcon" />
 
     <input
       ref="inputRef"
       v-model="searchText"
+      data-testid="search-input"
       type="text"
       :placeholder="placeholder"
       @keyup.enter.stop="onEnter"
