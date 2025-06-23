@@ -4,10 +4,11 @@
 
 <template>
   <section class="section-container text-center">
-    <h2 class="section-heading">More than better LaTeX. More than better PDFs.</h2>
+    <h2 class="section-heading">Experience what research should <em>feel</em> like</h2>
     <p class="section-text">
-      Aris is the first platform to bring research fully to the web — connecting authors, reviewers,
-      and readers in one seamless, semantic environment built for discovery and collaboration.
+      Aris is not better LaTeX, and Aris is not better PDF. Aris is something new — the first
+      platform built specifically for web-native research, connecting authors, reviewers, and
+      readers in one seamless environment.
     </p>
     <div class="btn-container">
       <a href="#signup" class="btn btn-primary">{{ betaCopy }}</a>
