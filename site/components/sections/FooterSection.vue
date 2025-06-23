@@ -7,7 +7,11 @@
     <div class="footer-content">
       <div>
         <p><strong>Stay Updated</strong></p>
-        <p>Want updates on Aris development? <a href="#signup" class="footer-signup-link">Sign up for early access</a> and we'll keep you informed on our progress.</p>
+        <p>
+          Want updates on Aris development?
+          <a href="#signup" class="footer-signup-link">Sign up for early access </a>
+          and we'll keep you informed on our progress.
+        </p>
       </div>
       <div>
         <p><strong>Resources</strong></p>
