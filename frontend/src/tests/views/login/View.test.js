@@ -24,7 +24,6 @@ describe("LoginView", () => {
     });
   });
 
-
   it("shows an error message when attempting to login with empty fields", async () => {
     const loginBtn = wrapper.findComponent(Button);
     await loginBtn.trigger("click");
@@ -38,5 +37,4 @@ describe("LoginView", () => {
     await registerBtn.trigger("click");
     expect(pushMock).toHaveBeenCalledWith("/register");
   });
-
 });

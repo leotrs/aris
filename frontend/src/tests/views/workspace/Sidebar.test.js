@@ -91,7 +91,6 @@ describe("Workspace Sidebar", () => {
   });
 
   describe("items configuration", () => {
-
     it("contains all expected toggle items", () => {
       const wrapper = createWrapper();
       const items = wrapper.vm.items;
