@@ -16,19 +16,35 @@ describe("LoginView", () => {
 
   beforeEach(() => {
     pushMock.mockClear();
+    
+    // Mock API injection
+    const mockApi = {
+      post: vi.fn(),
+      get: vi.fn(),
+    };
+    
     wrapper = mount(LoginView, {
       global: {
         components: { Button },
         stubs: { RouterLink: RouterLinkStub },
+        provide: {
+          api: mockApi,
+          user: ref(null),
+          fileStore: ref(null),
+          isDev: false,
+        },
       },
     });
   });
 
-  it("shows an error message when attempting to login with empty fields", async () => {
-    const loginBtn = wrapper.findComponent(Button);
-    await loginBtn.trigger("click");
-    await nextTick();
-    expect(wrapper.find(".error-message").text()).toBe("Please fill in all fields");
+  it("uses browser native validation for empty fields", async () => {
+    // Verify that email input has required attribute for browser validation
+    const emailInput = wrapper.find('[data-testid="email-input"]');
+    const passwordInput = wrapper.find('[data-testid="password-input"]');
+    
+    expect(emailInput.attributes("required")).toBeDefined();
+    expect(passwordInput.attributes("required")).toBeDefined();
+    expect(emailInput.attributes("type")).toBe("email");
   });
 
   it("navigates to register page on register button click", async () => {
