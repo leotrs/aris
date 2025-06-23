@@ -27,13 +27,13 @@ class DuplicateEmailError(SignupError):
 async def create_signup(
     email: str,
     name: str,
+    db: AsyncSession,
     institution: Optional[str] = None,
     research_area: Optional[str] = None,
     interest_level: Optional[InterestLevel] = None,
     ip_address: Optional[str] = None,
     user_agent: Optional[str] = None,
     source: Optional[str] = None,
-    db: AsyncSession
 ) -> Signup:
     """Create a new signup record.
 

@@ -1,7 +1,7 @@
 """Tests for signup route endpoints."""
 
 import pytest
-from fastapi.testclient import TestClient
+from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from aris.crud.signup import create_signup, get_signup_by_email
@@ -11,7 +11,7 @@ from aris.models.models import InterestLevel, SignupStatus
 class TestCreateSignupEndpoint:
     """Test POST /signup/ endpoint."""
 
-    def test_create_signup_success(self, client: TestClient, db: AsyncSession):
+    async def test_create_signup_success(self, client: AsyncClient):
         """Test successful signup creation."""
         signup_data = {
             "email": "newuser@example.com",
@@ -21,7 +21,7 @@ class TestCreateSignupEndpoint:
             "interest_level": "ready"
         }
         
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         
         assert response.status_code == 200
         data = response.json()
@@ -35,14 +35,14 @@ class TestCreateSignupEndpoint:
         assert "id" in data
         assert "created_at" in data
 
-    def test_create_signup_minimal_data(self, client: TestClient):
+    async def test_create_signup_minimal_data(self, client: AsyncClient):
         """Test signup creation with minimal required data."""
         signup_data = {
             "email": "minimal@example.com",
             "name": "Minimal User"
         }
         
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         
         assert response.status_code == 200
         data = response.json()
@@ -54,14 +54,14 @@ class TestCreateSignupEndpoint:
         assert data["interest_level"] is None
         assert data["status"] == "active"
 
-    def test_create_signup_duplicate_email(self, client: TestClient, db: AsyncSession):
+    async def test_create_signup_duplicate_email(self, client: AsyncClient):
         """Test signup creation with duplicate email."""
         # First signup
         signup_data = {
             "email": "duplicate@example.com",
             "name": "First User"
         }
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         assert response.status_code == 200
         
         # Second signup with same email
@@ -69,43 +69,43 @@ class TestCreateSignupEndpoint:
             "email": "duplicate@example.com",
             "name": "Second User"
         }
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         
         assert response.status_code == 409
         data = response.json()
         assert data["detail"]["error"] == "duplicate_email"
         assert "already registered" in data["detail"]["message"]
 
-    def test_create_signup_invalid_email(self, client: TestClient):
+    async def test_create_signup_invalid_email(self, client: AsyncClient):
         """Test signup creation with invalid email format."""
         signup_data = {
             "email": "invalid-email",
             "name": "Test User"
         }
         
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         
         assert response.status_code == 422
         data = response.json()
         assert "validation error" in str(data).lower()
 
-    def test_create_signup_missing_required_fields(self, client: TestClient):
+    async def test_create_signup_missing_required_fields(self, client: AsyncClient):
         """Test signup creation with missing required fields."""
         # Missing name
         signup_data = {
             "email": "test@example.com"
         }
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         assert response.status_code == 422
         
         # Missing email
         signup_data = {
             "name": "Test User"
         }
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         assert response.status_code == 422
 
-    def test_create_signup_invalid_interest_level(self, client: TestClient):
+    async def test_create_signup_invalid_interest_level(self, client: AsyncClient):
         """Test signup creation with invalid interest level."""
         signup_data = {
             "email": "test@example.com",
@@ -113,11 +113,11 @@ class TestCreateSignupEndpoint:
             "interest_level": "invalid_level"
         }
         
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         
         assert response.status_code == 422
 
-    def test_create_signup_xss_protection(self, client: TestClient):
+    async def test_create_signup_xss_protection(self, client: AsyncClient):
         """Test that XSS attempts are sanitized."""
         signup_data = {
             "email": "xss@example.com",
@@ -126,7 +126,7 @@ class TestCreateSignupEndpoint:
             "research_area": "Computer Science<script>evil()</script>"
         }
         
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         
         assert response.status_code == 200
         data = response.json()
@@ -137,7 +137,7 @@ class TestCreateSignupEndpoint:
         assert "<img" not in data["institution"]
         assert "&lt;img" in data["institution"]
 
-    def test_create_signup_empty_strings(self, client: TestClient):
+    async def test_create_signup_empty_strings(self, client: AsyncClient):
         """Test signup creation with empty string values."""
         signup_data = {
             "email": "empty@example.com",
@@ -146,7 +146,7 @@ class TestCreateSignupEndpoint:
             "research_area": ""
         }
         
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         
         # Should fail because name becomes empty after strip
         assert response.status_code == 422
@@ -155,40 +155,40 @@ class TestCreateSignupEndpoint:
 class TestCheckSignupStatusEndpoint:
     """Test GET /signup/status endpoint."""
 
-    def test_check_signup_status_exists(self, client: TestClient, db: AsyncSession):
+    async def test_check_signup_status_exists(self, client: AsyncClient, db: AsyncSession):
         """Test status check for existing email."""
         # Create signup first
         signup_data = {
             "email": "exists@example.com",
             "name": "Exists User"
         }
-        client.post("/signup/", json=signup_data)
+        await client.post("/signup/", json=signup_data)
         
         # Check status
-        response = client.get("/signup/status?email=exists@example.com")
+        response = await client.get("/signup/status?email=exists@example.com")
         
         assert response.status_code == 200
         data = response.json()
         assert data["exists"] is True
 
-    def test_check_signup_status_not_exists(self, client: TestClient):
+    async def test_check_signup_status_not_exists(self, client: AsyncClient):
         """Test status check for non-existent email."""
-        response = client.get("/signup/status?email=notexists@example.com")
+        response = await client.get("/signup/status?email=notexists@example.com")
         
         assert response.status_code == 200
         data = response.json()
         assert data["exists"] is False
 
-    def test_check_signup_status_invalid_email(self, client: TestClient):
+    async def test_check_signup_status_invalid_email(self, client: AsyncClient):
         """Test status check with invalid email format."""
-        response = client.get("/signup/status?email=invalid-email")
+        response = await client.get("/signup/status?email=invalid-email")
         
         # FastAPI query validation should catch this
         assert response.status_code == 422
 
-    def test_check_signup_status_missing_email(self, client: TestClient):
+    async def test_check_signup_status_missing_email(self, client: AsyncClient):
         """Test status check without email parameter."""
-        response = client.get("/signup/status")
+        response = await client.get("/signup/status")
         
         assert response.status_code == 422
 
@@ -196,68 +196,68 @@ class TestCheckSignupStatusEndpoint:
 class TestUnsubscribeEndpoint:
     """Test DELETE /signup/unsubscribe endpoint."""
 
-    def test_unsubscribe_success(self, client: TestClient, db: AsyncSession):
+    async def test_unsubscribe_success(self, client: AsyncClient, db: AsyncSession):
         """Test successful unsubscribe."""
         # Create signup first
         signup_data = {
             "email": "unsubscribe@example.com",
             "name": "Unsubscribe User"
         }
-        client.post("/signup/", json=signup_data)
+        await client.post("/signup/", json=signup_data)
         
         # Unsubscribe
         unsubscribe_data = {
             "email": "unsubscribe@example.com",
             "token": "dummy-token"  # Token validation not implemented yet
         }
-        response = client.delete("/signup/unsubscribe", json=unsubscribe_data)
+        response = await client.delete("/signup/unsubscribe", json=unsubscribe_data)
         
         assert response.status_code == 200
         data = response.json()
         assert "Successfully unsubscribed" in data["message"]
 
-    def test_unsubscribe_email_not_found(self, client: TestClient):
+    async def test_unsubscribe_email_not_found(self, client: AsyncClient):
         """Test unsubscribe for non-existent email."""
         unsubscribe_data = {
             "email": "notfound@example.com",
             "token": "dummy-token"
         }
-        response = client.delete("/signup/unsubscribe", json=unsubscribe_data)
+        response = await client.delete("/signup/unsubscribe", json=unsubscribe_data)
         
         assert response.status_code == 404
         data = response.json()
         assert data["detail"]["error"] == "email_not_found"
 
-    def test_unsubscribe_invalid_email(self, client: TestClient):
+    async def test_unsubscribe_invalid_email(self, client: AsyncClient):
         """Test unsubscribe with invalid email format."""
         unsubscribe_data = {
             "email": "invalid-email",
             "token": "dummy-token"
         }
-        response = client.delete("/signup/unsubscribe", json=unsubscribe_data)
+        response = await client.delete("/signup/unsubscribe", json=unsubscribe_data)
         
         assert response.status_code == 422
 
-    def test_unsubscribe_missing_fields(self, client: TestClient):
+    async def test_unsubscribe_missing_fields(self, client: AsyncClient):
         """Test unsubscribe with missing required fields."""
         # Missing token
-        response = client.delete("/signup/unsubscribe", json={"email": "test@example.com"})
+        response = await client.delete("/signup/unsubscribe", json={"email": "test@example.com"})
         assert response.status_code == 422
         
         # Missing email
-        response = client.delete("/signup/unsubscribe", json={"token": "dummy-token"})
+        response = await client.delete("/signup/unsubscribe", json={"token": "dummy-token"})
         assert response.status_code == 422
 
 
 class TestSignupEndpointIntegration:
     """Integration tests for signup endpoints."""
 
-    def test_complete_signup_flow(self, client: TestClient):
+    async def test_complete_signup_flow(self, client: AsyncClient):
         """Test complete signup and unsubscribe flow."""
         email = "flow@example.com"
         
         # 1. Check email doesn't exist
-        response = client.get(f"/signup/status?email={email}")
+        response = await client.get(f"/signup/status?email={email}")
         assert response.json()["exists"] is False
         
         # 2. Create signup
@@ -266,12 +266,12 @@ class TestSignupEndpointIntegration:
             "name": "Flow User",
             "interest_level": "planning"
         }
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         assert response.status_code == 200
         signup_id = response.json()["id"]
         
         # 3. Check email now exists
-        response = client.get(f"/signup/status?email={email}")
+        response = await client.get(f"/signup/status?email={email}")
         assert response.json()["exists"] is True
         
         # 4. Unsubscribe
@@ -279,14 +279,14 @@ class TestSignupEndpointIntegration:
             "email": email,
             "token": "dummy-token"
         }
-        response = client.delete("/signup/unsubscribe", json=unsubscribe_data)
+        response = await client.delete("/signup/unsubscribe", json=unsubscribe_data)
         assert response.status_code == 200
         
         # 5. Email still exists (soft delete/unsubscribe)
-        response = client.get(f"/signup/status?email={email}")
+        response = await client.get(f"/signup/status?email={email}")
         assert response.json()["exists"] is True
 
-    def test_signup_with_all_fields(self, client: TestClient):
+    async def test_signup_with_all_fields(self, client: AsyncClient):
         """Test signup with all possible fields filled."""
         signup_data = {
             "email": "complete@example.com",
@@ -296,7 +296,7 @@ class TestSignupEndpointIntegration:
             "interest_level": "migrating"
         }
         
-        response = client.post("/signup/", json=signup_data)
+        response = await client.post("/signup/", json=signup_data)
         
         assert response.status_code == 200
         data = response.json()
@@ -310,7 +310,7 @@ class TestSignupEndpointIntegration:
         assert isinstance(data["id"], int)
         assert data["created_at"] is not None
 
-    def test_multiple_signups_different_emails(self, client: TestClient):
+    async def test_multiple_signups_different_emails(self, client: AsyncClient):
         """Test creating multiple signups with different emails."""
         emails = [
             "user1@example.com",
@@ -327,7 +327,7 @@ class TestSignupEndpointIntegration:
                 "interest_level": ["exploring", "planning", "ready"][i]
             }
             
-            response = client.post("/signup/", json=signup_data)
+            response = await client.post("/signup/", json=signup_data)
             assert response.status_code == 200
             
             data = response.json()
@@ -336,13 +336,13 @@ class TestSignupEndpointIntegration:
             # Verify unique IDs
             assert data["id"] not in created_ids[:-1]
 
-    def test_error_response_format(self, client: TestClient):
+    async def test_error_response_format(self, client: AsyncClient):
         """Test that error responses follow the expected format."""
         # Test duplicate email error format
         signup_data = {"email": "error@example.com", "name": "User"}
-        client.post("/signup/", json=signup_data)  # Create first
+        await client.post("/signup/", json=signup_data)  # Create first
         
-        response = client.post("/signup/", json=signup_data)  # Duplicate
+        response = await client.post("/signup/", json=signup_data)  # Duplicate
         assert response.status_code == 409
         
         data = response.json()
