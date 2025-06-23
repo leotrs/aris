@@ -54,19 +54,21 @@
               :disabled="isSubmitting"
               required
               aria-label="Email address for newsletter"
+              class="form-input"
             />
             <button 
               type="submit" 
               :disabled="isSubmitting"
               :aria-label="isSubmitting ? 'Subscribing...' : 'Subscribe to newsletter'"
+              class="btn btn-primary"
             >
               {{ isSubmitting ? 'Subscribing...' : 'Subscribe' }}
             </button>
           </div>
           <div 
             v-if="message" 
-            class="message"
-            :class="{ 'error': message.includes('Please') || message.includes('wrong') }"
+            class="form-message"
+            :class="{ 'form-message--error': message.includes('Please') || message.includes('wrong') }"
           >
             {{ message }}
           </div>
@@ -163,48 +165,19 @@
     gap: 0.5rem;
   }
 
-  .newsletter input {
-    flex: 1;
-    padding: 0.5rem;
-    border-radius: 4px;
+  .newsletter .form-input {
     border: none;
   }
 
-  .newsletter input:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  .newsletter button {
+  .newsletter .btn {
     padding: 0.5rem 1rem;
-    background: var(--primary-500);
-    border: none;
-    color: white;
-    border-radius: 4px;
     font-weight: bold;
-    cursor: pointer;
   }
 
-  .newsletter button:hover:not(:disabled) {
-    background: var(--primary-600);
-  }
-
-  .newsletter button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  .message {
-    margin-top: 0.5rem;
-    padding: 0.5rem;
-    border-radius: 4px;
-    font-size: 0.875rem;
-    background: var(--primary-700);
-    color: white;
-  }
-
-  .message.error {
-    background: #dc2626;
+  .form-message.form-message--error {
+    background: var(--red-50);
+    color: var(--red-700);
+    border-color: var(--red-200);
   }
 
   .footer-bottom {

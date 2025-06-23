@@ -37,7 +37,7 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['./assets/rsm.css', './assets/main.css'],
+  css: ['./assets/rsm.css', './assets/main.css', './assets/components.css'],
 
   // Enable image optimization
   image: {

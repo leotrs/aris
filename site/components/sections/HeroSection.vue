@@ -3,11 +3,11 @@
 </script>
 
 <template>
-  <section class="hero">
-    <div class="hero-content">
+  <section class="section-container">
+    <div class="hero-layout">
       <div class="hero-text">
-        <h1>Scientific publishing, reimagined for the web</h1>
-        <p>
+        <h1 class="section-heading">Scientific publishing, reimagined for the web</h1>
+        <p class="section-text">
           Aris is a new way to author and publish research — clear, interactive, and designed for modern science.
         </p>
       </div>
@@ -27,43 +27,8 @@
 </template>
 
 <style scoped>
-  section {
-    padding: 4rem 1rem;
-    max-width: 1200px;
-    margin: 0 auto;
-  }
-
   h1 {
     font-weight: var(--weight-bold);
-    margin-bottom: 1rem;
     line-height: 2.5rem;
-  }
-
-  p {
-    margin: 0 auto;
-    max-width: 65ch;
-  }
-
-  .hero-content {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 2rem;
-  }
-
-  .hero-image {
-    flex: 1;
-    min-height: 200px;
-    background: var(--extra-light);
-    border-radius: 8px;
-  }
-
-  .hero-img {
-    width: 100%;
-    height: 100%;
-  }
-
-  .hero-text {
-    flex: 1;
   }
 </style>
