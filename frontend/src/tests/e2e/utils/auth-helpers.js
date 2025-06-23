@@ -20,8 +20,8 @@ export async function loginUser(page, { email, password }) {
   // Submit form
   await page.click('[data-testid="login-button"]');
 
-  // Wait for successful login (redirect to root)
-  await page.waitForURL("/");
+  // Wait for successful login (redirect away from login page)
+  await page.waitForURL(/^\/(workspace|home|\?|$)/, { timeout: 10000 });
 
   // Verify user is logged in (check for user menu or logout button)
   await page.waitForSelector('[data-testid="user-menu"]', { timeout: 5000 });

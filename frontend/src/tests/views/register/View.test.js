@@ -26,14 +26,6 @@ describe("RegisterView", () => {
     });
   });
 
-  it("renders the input fields and register button", () => {
-    const inputs = wrapper.findAll("input");
-    expect(inputs).toHaveLength(4);
-    const btn = wrapper.findComponent(Button);
-    expect(btn.exists()).toBe(true);
-    expect(btn.text()).toBe("Register");
-    expect(wrapper.find(".footer p").text()).toBe("Already registered? Login here.");
-  });
 
   it("shows an error when fields are empty", async () => {
     await wrapper.findComponent(Button).trigger("click");

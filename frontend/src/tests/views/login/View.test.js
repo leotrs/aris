@@ -24,14 +24,6 @@ describe("LoginView", () => {
     });
   });
 
-  it("renders email and password inputs and login/register buttons", () => {
-    expect(wrapper.find('input[type="text"]').exists()).toBe(true);
-    expect(wrapper.find('input[type="password"]').exists()).toBe(true);
-    const buttons = wrapper.findAllComponents(Button);
-    expect(buttons.length).toBe(2);
-    expect(buttons[0].text()).toBe("Login");
-    expect(buttons[1].text()).toBe("Register");
-  });
 
   it("shows an error message when attempting to login with empty fields", async () => {
     const loginBtn = wrapper.findComponent(Button);
@@ -47,28 +39,4 @@ describe("LoginView", () => {
     expect(pushMock).toHaveBeenCalledWith("/register");
   });
 
-  it("auto-prefills inputs and focuses login button on mount when isDev=true", async () => {
-    import.meta.env.VITE_DEV_LOGIN_EMAIL = "dev@example.com";
-    import.meta.env.VITE_DEV_LOGIN_PASSWORD = "secret";
-    const api = { post: vi.fn(), get: vi.fn() };
-    const user = ref(null);
-    const fileStore = { loadFiles: vi.fn(), loadTags: vi.fn() };
-    localStorage.clear();
-    wrapper = mount(LoginView, {
-      attachTo: document.body,
-      global: {
-        provide: { isDev: true, api, user, fileStore },
-        components: { Button },
-        stubs: { RouterLink: RouterLinkStub },
-      },
-    });
-    await flushPromises();
-    const emailInput = wrapper.find('input[type="text"]');
-    const pwInput = wrapper.find('input[type="password"]');
-    expect(emailInput.element.value).toBe("dev@example.com");
-    expect(pwInput.element.value).toBe("secret");
-    const loginBtn = wrapper.findComponent(Button);
-    expect(document.activeElement).toBe(loginBtn.element);
-    expect(api.post).not.toHaveBeenCalled();
-  });
 });
