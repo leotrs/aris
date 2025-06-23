@@ -5,6 +5,7 @@
   import FeaturesSection from "@/components/sections/FeaturesSection.vue";
   import ProcessSection from "@/components/sections/ProcessSection.vue";
   import CTASection from "@/components/sections/CTASection.vue";
+  import FAQSection from "@/components/sections/FAQSection.vue";
   import FooterSection from "@/components/sections/FooterSection.vue";
 </script>
 
@@ -15,6 +16,7 @@
     <FeaturesSection />
     <ProcessSection />
     <CTASection />
+    <FAQSection />
     <FooterSection />
   </div>
 </template>
