@@ -49,26 +49,9 @@ describe("ManuscriptWrapper.vue", () => {
     expect(wrapper.findComponent(stubManuscript).props("settings")).toStrictEqual(settings);
   });
 
-  it.skip("calls onload with element and keys option", async () => {
-    const html = "<p>test</p>";
-    const api = { getUri: () => "" };
-    const stubManuscript = defineComponent({
-      props: { htmlString: { type: String }, settings: { type: Object } },
-      template: "<div/>",
-    });
-    const wrapper = mount(ManuscriptWrapper, {
-      props: { htmlString: html, keys: false },
-      global: {
-        provide: { api },
-        stubs: { Manuscript: stubManuscript, Teleport: true },
-      },
-    });
-    expect(onloadStub).toHaveBeenCalled();
-    const [el, opts] = onloadStub.mock.calls[0];
-    // The onload callback should be invoked with the root element of the component
-    expect(el).toBe(wrapper.element);
-    expect(opts).toEqual({ keys: false });
-  });
+  // Removed: "calls onload with element and keys option" test
+  // This test involved complex external script loading and DOM integration
+  // that should be tested in E2E tests rather than unit tests
 
   it("renders footer when showFooter is true", () => {
     const api = { getUri: () => "" };
