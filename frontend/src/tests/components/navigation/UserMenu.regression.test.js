@@ -39,7 +39,7 @@ describe("UserMenu.vue - Regression Tests", () => {
         stubs: {
           ContextMenu: {
             template: `
-              <div v-bind="$attrs" :variant="variant">
+              <div v-bind="$attrs" data-testid="context-menu" :variant="variant">
                 <slot name="trigger" :toggle="toggle" :isOpen="false" />
                 <slot />
               </div>
@@ -50,7 +50,7 @@ describe("UserMenu.vue - Regression Tests", () => {
             },
           },
           Button: {
-            template: '<button data-testid="button" @click="$emit(\'click\')"><slot /></button>',
+            template: '<button v-bind="$attrs" @click="$emit(\'click\')"><slot /></button>',
             props: ["kind"],
           },
           Avatar: {
@@ -68,10 +68,10 @@ describe("UserMenu.vue - Regression Tests", () => {
     });
 
     // Verify the critical elements exist
-    const contextMenu = wrapper.find('[data-testid="user-menu"]');
+    const contextMenu = wrapper.find('[data-testid="context-menu"]');
     expect(contextMenu.exists()).toBe(true);
 
-    const button = wrapper.find('[data-testid="button"]');
+    const button = wrapper.find('[data-testid="user-menu"]');
     expect(button.exists()).toBe(true);
 
     const avatar = wrapper.find('[data-testid="avatar"]');
@@ -96,7 +96,7 @@ describe("UserMenu.vue - Regression Tests", () => {
         stubs: {
           ContextMenu: {
             template:
-              '<div v-bind="$attrs" :data-variant="variant"><slot name="trigger" :toggle="() => {}" /><slot /></div>',
+              '<div v-bind="$attrs" data-testid="context-menu" :data-variant="variant"><slot name="trigger" :toggle="() => {}" /><slot /></div>',
             props: ["variant"],
           },
           Button: {
@@ -118,7 +118,7 @@ describe("UserMenu.vue - Regression Tests", () => {
       },
     });
 
-    const contextMenu = wrapper.find('[data-testid="user-menu"]');
+    const contextMenu = wrapper.find('[data-testid="context-menu"]');
 
     // UserMenu must use slot variant
     expect(contextMenu.attributes("data-variant")).toBe("slot");
