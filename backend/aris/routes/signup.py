@@ -4,7 +4,11 @@ This module provides REST API endpoints for early access signup functionality,
 including creation, status checking, and unsubscription.
 """
 
+import html
+from typing import Optional
+
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from pydantic import BaseModel, EmailStr, Field, field_validator
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..crud.signup import (
@@ -16,14 +20,124 @@ from ..crud.signup import (
     SignupError,
 )
 from ..deps import get_db
-from ..schemas import (
-    SignupCreate,
-    SignupResponse,
-    SignupStatusCheck,
-    SignupUnsubscribe,
-    MessageResponse,
-    ErrorResponse,
-)
+from ..models.models import InterestLevel, SignupStatus
+
+
+class SignupCreate(BaseModel):
+    """Signup creation request schema."""
+    
+    email: EmailStr = Field(..., description="Email address for early access notifications")
+    name: str = Field(..., min_length=1, max_length=100, description="Full name")
+    institution: Optional[str] = Field(None, max_length=200, description="Institution or affiliation")
+    research_area: Optional[str] = Field(None, max_length=200, description="Research area or field of study")
+    interest_level: Optional[InterestLevel] = Field(None, description="Level of interest in the platform")
+    
+    @field_validator('name', 'institution', 'research_area')
+    @classmethod
+    def sanitize_text_fields(cls, v: Optional[str]) -> Optional[str]:
+        """Sanitize text input to prevent XSS."""
+        if v:
+            return html.escape(v.strip())
+        return v
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "email": "researcher@university.edu",
+                "name": "Dr. Jane Smith",
+                "institution": "University of Science",
+                "research_area": "Computational Biology",
+                "interest_level": "ready"
+            }
+        }
+    }
+
+
+class SignupResponse(BaseModel):
+    """Signup creation response schema."""
+    
+    id: int
+    email: str
+    name: str
+    institution: Optional[str]
+    research_area: Optional[str]
+    interest_level: Optional[InterestLevel]
+    status: SignupStatus
+    created_at: str  # ISO format datetime string
+    
+    model_config = {
+        "from_attributes": True,
+        "json_schema_extra": {
+            "example": {
+                "id": 1,
+                "email": "researcher@university.edu",
+                "name": "Dr. Jane Smith",
+                "institution": "University of Science",
+                "research_area": "Computational Biology",
+                "interest_level": "ready",
+                "status": "active",
+                "created_at": "2025-01-15T10:30:00Z"
+            }
+        }
+    }
+
+
+class SignupStatusCheck(BaseModel):
+    """Response for checking if email is already registered."""
+    
+    exists: bool
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {"exists": True}
+        }
+    }
+
+
+class SignupUnsubscribe(BaseModel):
+    """Unsubscribe request schema."""
+    
+    email: EmailStr
+    token: str = Field(..., description="Unsubscribe token for verification")
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "email": "researcher@university.edu",
+                "token": "abc123def456"
+            }
+        }
+    }
+
+
+class ErrorResponse(BaseModel):
+    """Standard error response schema."""
+    
+    error: str = Field(..., description="Error type")
+    message: str = Field(..., description="Human-readable error message")
+    details: Optional[dict] = Field(None, description="Additional error details")
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {
+                "error": "duplicate_email",
+                "message": "This email address is already registered for early access",
+                "details": {"field": "email"}
+            }
+        }
+    }
+
+
+class MessageResponse(BaseModel):
+    """Simple message response schema."""
+    
+    message: str
+    
+    model_config = {
+        "json_schema_extra": {
+            "example": {"message": "Successfully added to waitlist"}
+        }
+    }
 
 router = APIRouter(prefix="/signup", tags=["signup"])
 
@@ -58,13 +172,13 @@ async def create_signup_endpoint(
         signup = await create_signup(
             email=signup_data.email,
             name=signup_data.name,
+            db=db,
             institution=signup_data.institution,
             research_area=signup_data.research_area,
             interest_level=signup_data.interest_level,
             ip_address=ip_address,
             user_agent=user_agent,
             source="website",
-            db=db,
         )
         
         # Convert datetime to ISO format string for response
