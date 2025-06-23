@@ -97,13 +97,10 @@ E2E tests require both backend and frontend servers running with a complete test
 
 #### Prerequisites
 1. **PostgreSQL Database**: Running locally with `aris` database created
-2. **Environment Variables**: Create `.env` file in `/backend/` with:
-   ```bash
-   TEST_USER_EMAIL=testuser@aris.pub
-   TEST_USER_PASSWORD=your_test_password
-   JWT_SECRET_KEY=your_jwt_secret
-   DB_URL_LOCAL=postgresql+asyncpg://username@localhost:5432/aris
-   ```
+2. **Environment Variables**: 
+   - **Local Development**: Both frontend and backend `.env` files should contain test user credentials
+   - **CI Environment**: Requires GitHub repository secret `TEST_USER_PASSWORD`
+   - **Test User**: `testuser@aris.pub` (password stored securely in environment variables)
 
 #### Complete E2E Setup Process
 ```bash
@@ -127,6 +124,8 @@ npm run test:e2e                        # Run Playwright tests
 #### Test Data Management
 - **Test User**: `testuser@aris.pub` with stable test files and tags
 - **Reset Script**: Use `scripts/reset_test_user.py` to reset test environment to known state
+- **Credential Security**: Test user password stored in environment variables (never in version control)
+- **Single Source of Truth**: All E2E tests use centralized credentials from `frontend/src/tests/e2e/setup/test-data.js`
 - **Visual Regression**: Test data designed for consistent visual regression testing
 
 #### E2E Test Environment
@@ -134,6 +133,24 @@ npm run test:e2e                        # Run Playwright tests
 - **Frontend**: Vue.js dev server on `http://localhost:5173`  
 - **Database**: Local PostgreSQL with test user and stable data
 - **Authentication**: JWT-based auth with test user credentials
+- **CI Requirements**: GitHub repository secret `TEST_USER_PASSWORD` must be configured
+
+### CI Configuration
+
+#### Required GitHub Repository Secrets
+For E2E tests to run in CI, the following repository secret must be configured:
+
+- **`TEST_USER_PASSWORD`**: The password for `testuser@aris.pub` (secure test user credentials)
+
+#### Setting Up GitHub Secrets
+1. Go to your repository → Settings → Secrets and variables → Actions
+2. Click "New repository secret"
+3. Add `TEST_USER_PASSWORD` with the test user password value
+
+#### CI Test Coverage
+- **Backend**: Unit tests, linting (ruff), type checking (mypy)
+- **Frontend**: Unit tests, linting (eslint)  
+- **E2E**: Full integration tests with real backend (Playwright on multiple browsers)
 
 ### Running Individual Test Suites
 
