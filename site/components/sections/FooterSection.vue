@@ -1,43 +1,43 @@
 <script setup>
-  import { ref } from 'vue'
+  import { ref } from "vue";
   import logoFull from "@/assets/logo-32px.svg";
 
-  const email = ref('')
-  const isSubmitting = ref(false)
-  const message = ref('')
+  const email = ref("");
+  const isSubmitting = ref(false);
+  const message = ref("");
 
   const validateEmail = (email) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    return re.test(email)
-  }
+    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return re.test(email);
+  };
 
   const handleSubmit = async (event) => {
-    event.preventDefault()
-    
+    event.preventDefault();
+
     if (!email.value) {
-      message.value = 'Please enter your email address'
-      return
+      message.value = "Please enter your email address";
+      return;
     }
-    
+
     if (!validateEmail(email.value)) {
-      message.value = 'Please enter a valid email address'
-      return
+      message.value = "Please enter a valid email address";
+      return;
     }
-    
-    isSubmitting.value = true
-    message.value = ''
-    
+
+    isSubmitting.value = true;
+    message.value = "";
+
     try {
       // TODO: Replace with actual newsletter signup API
-      await new Promise(resolve => setTimeout(resolve, 800))
-      message.value = 'Thank you for subscribing!'
-      email.value = ''
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      message.value = "Thank you for subscribing!";
+      email.value = "";
     } catch (error) {
-      message.value = 'Something went wrong. Please try again.'
+      message.value = "Something went wrong. Please try again.";
     } finally {
-      isSubmitting.value = false
+      isSubmitting.value = false;
     }
-  }
+  };
 </script>
 
 <template>
@@ -47,28 +47,30 @@
         <p>Subscribe to get the latest Aris features and updates.</p>
         <form class="newsletter" @submit="handleSubmit">
           <div class="form-group">
-            <input 
-              type="email" 
+            <input
               v-model="email"
-              placeholder="Your email" 
+              type="email"
+              placeholder="Your email"
               :disabled="isSubmitting"
               required
               aria-label="Email address for newsletter"
               class="form-input"
             />
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               :disabled="isSubmitting"
               :aria-label="isSubmitting ? 'Subscribing...' : 'Subscribe to newsletter'"
               class="btn btn-primary"
             >
-              {{ isSubmitting ? 'Subscribing...' : 'Subscribe' }}
+              {{ isSubmitting ? "Subscribing..." : "Subscribe" }}
             </button>
           </div>
-          <div 
-            v-if="message" 
+          <div
+            v-if="message"
             class="form-message"
-            :class="{ 'form-message--error': message.includes('Please') || message.includes('wrong') }"
+            :class="{
+              'form-message--error': message.includes('Please') || message.includes('wrong'),
+            }"
           >
             {{ message }}
           </div>
@@ -96,14 +98,14 @@
         <p>© 2025 Aris. All rights reserved.</p>
       </div>
       <div>
-        <NuxtImg 
-          id="logo" 
-          :src="logoFull" 
-          alt="Aris logo" 
-          width="30" 
-          height="30" 
-          format="svg" 
-          loading="lazy" 
+        <NuxtImg
+          id="logo"
+          :src="logoFull"
+          alt="Aris logo"
+          width="30"
+          height="30"
+          format="svg"
+          loading="lazy"
         />
       </div>
       <div>
@@ -190,7 +192,7 @@
   }
 
   .footer-bottom > div {
-    flex:1;
+    flex: 1;
     display: flex;
     align-items: center;
   }

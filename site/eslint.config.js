@@ -156,6 +156,8 @@ export default [
       // Frontend-specific ignores
       "dist/**",
       "public/**",
+      ".nuxt/**",
+      ".output/**",
     ],
   },
 ];

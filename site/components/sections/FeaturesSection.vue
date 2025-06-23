@@ -32,14 +32,14 @@
       </div>
       <div class="flex-grid-item">
         <div class="image-placeholder">
-          <NuxtImg 
-            class="feature-img" 
-            :src="feature3" 
-            alt="Scientific document displayed responsively on multiple devices" 
-            width="300" 
-            height="150" 
-            format="webp" 
-            loading="lazy" 
+          <NuxtImg
+            class="feature-img"
+            :src="feature3"
+            alt="Scientific document displayed responsively on multiple devices"
+            width="300"
+            height="150"
+            format="webp"
+            loading="lazy"
           />
         </div>
         <h3 class="feature-title">For Readers</h3>

@@ -3,7 +3,8 @@
     <p class="section-label">Process</p>
     <h2 class="section-heading">From idea to publication — all in one space</h2>
     <p class="section-text">
-      Aris supports your research from first draft to final publication, with built-in tools for writing, reviewing, and sharing.
+      Aris supports your research from first draft to final publication, with built-in tools for
+      writing, reviewing, and sharing.
     </p>
     <div class="flex-grid">
       <div class="flex-grid-item-compact">
@@ -16,7 +17,9 @@
       </div>
       <div class="flex-grid-item-compact">
         <h3 class="step-title">Step 3: Share</h3>
-        <p>Publish a polished document that's accessible and professional — instantly and online.</p>
+        <p>
+          Publish a polished document that's accessible and professional — instantly and online.
+        </p>
       </div>
     </div>
   </section>

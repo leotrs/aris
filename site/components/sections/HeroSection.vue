@@ -8,18 +8,19 @@
       <div class="hero-text">
         <h1 class="section-heading">Scientific publishing, reimagined for the web</h1>
         <p class="section-text">
-          Aris is a new way to author and publish research — clear, interactive, and designed for modern science.
+          Aris is a new way to author and publish research — clear, interactive, and designed for
+          modern science.
         </p>
       </div>
       <div class="hero-image">
-        <NuxtImg 
-          class="hero-img" 
-          :src="screen1" 
-          alt="Aris platform interface showing scientific document" 
-          width="600" 
-          height="400" 
-          format="webp" 
-          loading="eager" 
+        <NuxtImg
+          class="hero-img"
+          :src="screen1"
+          alt="Aris platform interface showing scientific document"
+          width="600"
+          height="400"
+          format="webp"
+          loading="eager"
         />
       </div>
     </div>
