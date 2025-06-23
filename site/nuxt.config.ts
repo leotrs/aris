@@ -38,6 +38,11 @@ export default defineNuxtConfig({
   },
 
   css: ['./assets/rsm.css', './assets/main.css', './assets/components.css'],
+  router: {
+    options: {
+      scrollBehaviorType: 'smooth'
+    }
+  },
 
   // Enable image optimization
   image: {
