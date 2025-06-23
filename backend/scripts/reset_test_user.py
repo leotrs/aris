@@ -6,6 +6,7 @@ with stable test data for visual regression testing.
 
 import asyncio
 import os
+from pathlib import Path
 
 from dotenv import load_dotenv
 from sqlalchemy import text
