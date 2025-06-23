@@ -111,7 +111,7 @@
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
-      
+
       // Only redirect if not on a public page
       const publicPages = ["/login", "/register"];
       if (!publicPages.includes(router.currentRoute.value.path)) {

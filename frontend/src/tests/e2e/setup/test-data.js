@@ -34,7 +34,7 @@ Welcome to *Aris*, the web-native scientific publishing platform.
 
 ::`,
   },
-  
+
   MINIMAL_RSM: {
     title: "Minimal Test File",
     source: `:rsm:
@@ -47,7 +47,7 @@ Simple content for testing.
 };
 
 // Generate unique test data helpers
-export const generateTestFile = (suffix = '') => ({
+export const generateTestFile = (suffix = "") => ({
   title: `Test File ${Date.now()}${suffix}`,
   source: `:rsm:
 # Test File ${Date.now()}${suffix}

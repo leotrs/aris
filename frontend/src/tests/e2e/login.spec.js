@@ -45,17 +45,19 @@ test.describe("Login Flow Tests", () => {
     expect(tokens.accessToken).toBeNull();
   });
 
-  test("empty fields validation - browser native validation prevents submission", async ({ page }) => {
+  test("empty fields validation - browser native validation prevents submission", async ({
+    page,
+  }) => {
     await page.goto("/login");
     await authHelpers.expectToBeOnLoginPage();
 
     // Verify that clicking login with empty fields uses browser validation
     // Browser should prevent form submission and show native validation messages
     await page.click('[data-testid="login-button"]');
-    
+
     // Verify we're still on login page (form submission was prevented)
     await authHelpers.expectToBeOnLoginPage();
-    
+
     // Test that we can't bypass validation by filling only one field
     await page.fill('[data-testid="email-input"]', "test@example.com");
     await page.click('[data-testid="login-button"]');
@@ -150,4 +152,3 @@ test.describe("Login Flow Tests", () => {
     expect(passwordValue).toBeTruthy();
   });
 });
-
