@@ -16,13 +16,13 @@ describe("LoginView", () => {
 
   beforeEach(() => {
     pushMock.mockClear();
-    
+
     // Mock API injection
     const mockApi = {
       post: vi.fn(),
       get: vi.fn(),
     };
-    
+
     wrapper = mount(LoginView, {
       global: {
         components: { Button },
@@ -41,7 +41,7 @@ describe("LoginView", () => {
     // Verify that email input has required attribute for browser validation
     const emailInput = wrapper.find('[data-testid="email-input"]');
     const passwordInput = wrapper.find('[data-testid="password-input"]');
-    
+
     expect(emailInput.attributes("required")).toBeDefined();
     expect(passwordInput.attributes("required")).toBeDefined();
     expect(emailInput.attributes("type")).toBe("email");
