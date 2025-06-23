@@ -26,7 +26,6 @@ describe("RegisterView", () => {
     });
   });
 
-
   it("shows an error when fields are empty", async () => {
     await wrapper.findComponent(Button).trigger("click");
     await nextTick();
