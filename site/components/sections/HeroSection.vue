@@ -6,10 +6,11 @@
   <section class="section-container">
     <div class="hero-layout">
       <div class="hero-text">
-        <h1 class="section-heading">Scientific publishing, reimagined for the web</h1>
+        <h1 class="section-heading">Bring your research fully to the web</h1>
         <p class="section-text">
-          Aris is a new way to author and publish research — clear, interactive, and designed for
-          modern science.
+          From first draft to final publication, Aris connects every step of the research journey.
+          Write with semantic markup, collaborate with threaded comments, publish with one-click
+          sharing — all in one web-native platform.
         </p>
       </div>
       <div class="hero-image">

@@ -5,29 +5,30 @@
 <template>
   <section class="section-container text-center">
     <p class="section-label">Features</p>
-    <h2 class="section-heading">Built for every part of the research journey</h2>
+    <h2 class="section-heading">Every step from idea to impact</h2>
     <p class="section-text">
-      Aris adapts to how you write, review, and read — so science flows better for everyone.
+      Connect the entire research workflow — writing, reviewing, publishing, and reading — in one
+      web-native environment designed for collaboration and discovery.
     </p>
     <div class="flex-grid">
       <div class="flex-grid-item">
         <div class="image-placeholder" />
-        <h3 class="feature-title">For Authors</h3>
-        <p>Write together. Communicate clearly. Publish fast.</p>
+        <h3 class="feature-title">Publish Faster</h3>
+        <p>Semantic markup lets you focus on content, not typesetting.</p>
         <ul class="feature-list">
-          <li>Real-time collaboration</li>
-          <li>Interactive figures</li>
-          <li>Instant reader feedback</li>
+          <li>RSM language separates meaning from presentation</li>
+          <li>Real-time collaborative editing</li>
+          <li>Version tracking through drafts and publications</li>
         </ul>
       </div>
       <div class="flex-grid-item">
         <div class="image-placeholder" />
-        <h3 class="feature-title">For Reviewers</h3>
-        <p>Focus on the science, not the formatting.</p>
+        <h3 class="feature-title">Review Smarter</h3>
+        <p>Threaded discussions tied directly to content sections.</p>
         <ul class="feature-list">
-          <li>Comment threads</li>
-          <li>Change tracking</li>
-          <li>Compare versions with diff views</li>
+          <li>Comments attached to specific passages</li>
+          <li>Visual diff views between versions</li>
+          <li>Track changes from submission to publication</li>
         </ul>
       </div>
       <div class="flex-grid-item">
@@ -42,12 +43,12 @@
             loading="lazy"
           />
         </div>
-        <h3 class="feature-title">For Readers</h3>
-        <p>Research that fits your screen, your pace, your needs.</p>
+        <h3 class="feature-title">Reach More Readers</h3>
+        <p>Web-native documents that adapt to every reader.</p>
         <ul class="feature-list">
-          <li>Responsive on any device</li>
-          <li>Personalize font, layout, colors and more</li>
-          <li>Clean, intuitive navigation</li>
+          <li>Responsive design for any screen size</li>
+          <li>Personal accessibility and reading preferences</li>
+          <li>Semantic search and discovery by tags</li>
         </ul>
       </div>
     </div>

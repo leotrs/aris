@@ -4,10 +4,10 @@
 
 <template>
   <section class="section-container text-center">
-    <h2 class="section-heading">Experience what research should <em>feel</em> like</h2>
+    <h2 class="section-heading">More than better LaTeX. More than better PDFs.</h2>
     <p class="section-text">
-      Every Aris document is an interactive, readable, and beautifully rendered scientific
-      manuscript — a modern interface between researcher and audience.
+      Aris is the first platform to bring research fully to the web — connecting authors, reviewers,
+      and readers in one seamless, semantic environment built for discovery and collaboration.
     </p>
     <div class="btn-container">
       <a href="#signup" class="btn btn-primary">{{ betaCopy }}</a>
