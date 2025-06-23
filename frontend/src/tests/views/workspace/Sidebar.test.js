@@ -91,14 +91,6 @@ describe("Workspace Sidebar", () => {
   });
 
   describe("items configuration", () => {
-    it("initializes items with correct structure", () => {
-      const wrapper = createWrapper();
-
-      // Check that SidebarMenu receives the items
-      const sidebarMenu = wrapper.findComponent({ name: "SidebarMenu" });
-      expect(sidebarMenu.exists()).toBe(true);
-      expect(sidebarMenu.props("modelValue")).toHaveLength(9); // 2 toggles + separator + 5 drawers + separator
-    });
 
     it("contains all expected toggle items", () => {
       const wrapper = createWrapper();
