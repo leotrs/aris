@@ -1,24 +1,20 @@
 <script setup>
-  import NavBar from "@/components/NavBar.vue";
-  import HeroSection from "@/components/sections/HeroSection.vue";
-  import BannerCTA from "@/components/sections/BannerCTA.vue";
-  import FeaturesSection from "@/components/sections/FeaturesSection.vue";
-  import ProcessSection from "@/components/sections/ProcessSection.vue";
-  import CTASection from "@/components/sections/CTASection.vue";
-  import FAQSection from "@/components/sections/FAQSection.vue";
-  import SignupSection from "@/components/sections/SignupSection.vue";
-  import FooterSection from "@/components/sections/FooterSection.vue";
+  import HeroSection from '~/components/sections/HeroSection.vue';
+  import SectionTwo from '~/components/sections/SectionTwo.vue';
+  import SectionThree from '~/components/sections/SectionThree.vue';
+  import SectionFour from '~/components/sections/SectionFour.vue';
+  import SectionCTA from '~/components/sections/SectionCTA.vue';
 </script>
 
 <template>
   <div>
     <HeroSection />
-    <BannerCTA />
-    <FeaturesSection />
-    <ProcessSection />
-    <CTASection />
-    <FAQSection />
-    <SignupSection />
-    <FooterSection />
+    <SectionTwo />
+    <SectionThree />
+    <SectionFour />
+    <SectionCTA />
   </div>
 </template>
+
+<style scoped>
+</style>

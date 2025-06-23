@@ -1,0 +1,191 @@
+<template>
+  <section class="section-two">
+    <div class="content-wrapper">
+      <h2 class="section-heading">The Research Experience, Reimagined by Aris</h2>
+
+      <div class="problem-solution-grid">
+        <div class="problem-solution-card">
+          <div class="card-icon-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M12 18v-11c0 -1.333 .667 -2 2 -2h3" />
+              <path d="M11 18h-4a2 2 0 0 1 -2 -2v-4a2 2 0 0 0 2 -2h3a2 2 0 0 0 2 -2v-7" />
+              <path d="M9 15l-3 3l3 3" />
+              <path d="M15 4l3 -3l3 3" />
+            </svg>
+          </div>
+          <h3 class="card-problem">Fragmented Tools, Disconnected Workflows</h3>
+          <p class="card-problem-description">Switching between word processors, reference managers, and collaboration tools leads to friction and errors.</p>
+          <h3 class="card-solution">→ Unified Platform, Seamless Flow</h3>
+          <p class="card-solution-description">Aris integrates every stage of research, from drafting to peer review, on a single web-native platform.</p>
+        </div>
+
+        <div class="problem-solution-card">
+          <div class="card-icon-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M8.536 4.56a4.01 4.01 0 0 1 3.464 -2.56a4 4 0 0 1 4 4v2" />
+              <path d="M12.782 16.591l-.782 .409l-4 2l-3 -3l2 -4l.409 -.782m2.404 -6.403a4 4 0 0 1 5.115 5.113" />
+              <path d="M3 3l18 18" />
+            </svg>
+          </div>
+          <h3 class="card-problem">Isolated Collaboration, Version Chaos</h3>
+          <p class="card-problem-description">Sharing files back and forth, losing track of changes, and manual merging costs valuable time.</p>
+          <h3 class="card-solution">→ Real-Time Collaboration, Semantic Diffs</h3>
+          <p class="card-solution-description">Work together in real-time with granular change tracking and semantic version control, eliminating chaos.</p>
+        </div>
+
+        <div class="problem-solution-card">
+          <div class="card-icon-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M6.5 17h11a6 6 0 0 0 0 -12h-11a6 6 0 0 0 0 12h.5" />
+              <path d="M6 12v6a3 3 0 0 0 3 3h6a3 3 0 0 0 3 -3v-6" />
+              <path d="M18 12v-6a3 3 0 0 0 -3 -3h-6a3 3 0 0 0 -3 3v6" />
+            </svg>
+          </div>
+          <h3 class="card-problem">Tedious Formatting, Compliance Headaches</h3>
+          <p class="card-problem-description">Manually adjusting citations, references, and manuscript styles for different journal requirements.</p>
+          <h3 class="card-solution">→ Automated Formatting, Instant Compliance</h3>
+          <p class="card-solution-description">Aris automates formatting, citations, and reference management, ensuring instant compliance with publication standards.</p>
+        </div>
+
+        <div class="problem-solution-card">
+          <div class="card-icon-container">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+              <path d="M10 10l-6 6v3a1 1 0 0 0 1 1h7.5" />
+              <path d="M14 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
+              <path d="M17 17l4 4" />
+              <path d="M12 7h.01" />
+              <path d="M10 3h7l3 3v8m-2 2l-4 4h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
+            </svg>
+          </div>
+          <h3 class="card-problem">Limited Discoverability, Static Formats</h3>
+          <p class="card-problem-description">PDFs and static documents restrict engagement, limiting impact and understanding of complex data.</p>
+          <h3 class="card-solution">→ Enhanced Discoverability, Interactive Narratives</h3>
+          <p class="card-solution-description">Publish interactive, web-native manuscripts that allow deep engagement with your research and data.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</template>
+
+<script setup>
+  // No specific script logic needed for this component's structure.
+</script>
+
+<style scoped>
+  /* Section Container */
+  .section-two {
+    background-color: var(--gray-75); /* Background color as per design brief */
+    padding: 80px 0; /* Vertical padding for the section */
+  }
+
+  /* Content Wrapper - Max-width & Centering */
+  .content-wrapper {
+    max-width: 1200px; /* Adjust max-width as needed for content, typically wider for grids */
+    margin: 0 auto; /* Center the content wrapper */
+    padding: 0 var(--side-padding, 24px); /* Side padding */
+  }
+
+  /* Section Heading */
+  .section-heading {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 48px; /* Prominent heading size */
+    font-weight: 700;
+    color: var(--gray-900);
+    text-align: center; /* Center align the section heading */
+    margin-bottom: 60px; /* Space below the heading before the grid */
+    line-height: 1.2;
+  }
+
+  /* Problem-Solution Grid */
+  .problem-solution-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid columns */
+    gap: 32px; /* Space between cards */
+  }
+
+  /* Individual Card Styling */
+  .problem-solution-card {
+    background-color: var(--surface-page); /* White background for cards */
+    border: 1px solid var(--border-primary); /* Thin border */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: var(--shadow-soft); /* Soft shadow */
+    padding: 40px; /* Generous padding inside cards */
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Card Icon Container */
+  .card-icon-container {
+    margin-bottom: 24px; /* Space below the icon */
+    width: 48px; /* Explicit size for the SVG container */
+    height: 48px; /* Explicit size for the SVG container */
+    color: var(--primary-500); /* Color the Tabler.io icon with your primary color */
+  }
+
+  /* Problem & Solution Headings within Card */
+  .card-problem,
+  .card-solution {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 20px;
+    font-weight: 600; /* Semi-bold for these sub-headings */
+    color: var(--gray-800);
+    margin-bottom: 8px; /* Space below heading */
+    line-height: 1.3;
+  }
+
+  /* Problem Description */
+  .card-problem-description {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 16px;
+    line-height: var(--body-line-height);
+    color: var(--gray-600); /* Slightly lighter text for descriptions */
+    margin-bottom: 24px; /* Space below problem description */
+  }
+
+  /* Solution Description */
+  .card-solution-description {
+    font-family: 'Source Sans 3', sans-serif;
+    font-size: 16px;
+    line-height: var(--body-line-height);
+    color: var(--gray-700); /* Standard body text color for solutions */
+  }
+
+  /* --- Responsive Adjustments --- */
+  @media (max-width: 768px) {
+    .section-two {
+      padding: 60px 0; /* Reduce padding on smaller screens */
+    }
+
+    .section-heading {
+      font-size: 38px; /* Smaller heading on mobile */
+      margin-bottom: 40px;
+    }
+
+    .problem-solution-grid {
+      grid-template-columns: 1fr; /* Stack cards in a single column on mobile */
+    }
+
+    .problem-solution-card {
+      padding: 30px; /* Adjust padding for smaller cards */
+    }
+
+    .card-icon-container {
+      width: 40px; /* Slightly smaller icons on mobile */
+      height: 40px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .section-heading {
+      font-size: 32px; /* Even smaller for very small screens */
+    }
+
+    .problem-solution-card {
+      padding: 24px;
+    }
+  }
+</style>
