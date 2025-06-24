@@ -129,6 +129,8 @@ This document outlines the design decisions for the Aris marketing landing page,
 * **Footer:** Comprehensive secondary navigation and legal links.
 * **Consistency:** All links will maintain a consistent visual style using `var(--link-default)` and `var(--link-hover)`.# Aris Landing Page Design Brief
 
+---
+
 Project Goal: To create a compelling, high-converting landing page for Aris that clearly communicates its unique value proposition, appeals to its target audience, and drives sign-ups for the demo or beta waitlist.
 
 ## Core Principles for the Designer:

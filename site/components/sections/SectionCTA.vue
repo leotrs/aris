@@ -17,35 +17,35 @@
 <style scoped>
   /* Section Container */
   .cta-section {
-    background-color: var(--primary-100); /* light blue background as discussed */
-    padding: 100px 0; /* Generous vertical padding for emphasis */
-    text-align: center; /* Center aligns all inline-block/text content */
+    background-color: var(--surface-page);
+    padding: 100px 0;
+    text-align: center;
   }
 
   /* Content Wrapper - Max-width & Centering */
   .cta-content-wrapper {
-    max-width: 800px; /* Max width for the content to keep it focused */
-    margin: 0 auto; /* Centers the content wrapper */
-    padding: 0 var(--side-padding, 24px); /* Side padding */
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 var(--side-padding, 24px);
   }
 
   /* CTA Headline */
   .cta-headline {
     font-family: "Montserrat", sans-serif;
-    font-size: 56px; /* Large, impactful headline */
+    font-size: 56px;
     font-weight: 700;
     color: var(--gray-900);
-    margin-bottom: 40px; /* Space below the headline */
+    margin-bottom: 40px;
     line-height: 1.2;
   }
 
   /* CTA Buttons Container */
   .cta-buttons {
     display: flex;
-    justify-content: center; /* Center the buttons within the flex container */
+    justify-content: center;
     align-items: center;
-    gap: 24px; /* Space between buttons */
-    flex-wrap: wrap; /* Allow buttons to wrap on smaller screens */
+    gap: 24px;
+    flex-wrap: wrap;
   }
 
   /* Reusing Button Styles (from HeroSection or global CSS) */

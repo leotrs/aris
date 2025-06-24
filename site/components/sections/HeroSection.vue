@@ -1,16 +1,17 @@
 <template>
-  <section class="hero-section">
+  <section class="hero-section" aria-labelledby="hero-heading">
     <div class="hero-content-wrapper">
-      <h1 class="hero-headline">Experience what research should feel like.</h1>
+      <h1 id="hero-heading" class="hero-headline">Aris is the Unified Platform for Human-First Scientific Research.</h1>
       <p class="hero-subheadline">
-        Aris is a web-native platform that unifies writing, collaboration, and review, transforming
-        fragmented workflows into a seamless, human-first research journey.
+        Experience an integrated platform for collaborative writing, intelligent peer review, and interactive publishing, making your science more discoverable, understandable, and deeply engaging.
       </p>
-      <div class="hero-ctas">
-        <button class="btn btn-primary">Try the Demo</button>
+      <div class="hero-ctas" role="group" aria-label="Call to action buttons">
+        <button class="btn btn-primary" type="button" aria-describedby="hero-heading">Try the Demo</button>
         <a href="/signup" class="text-link">Or, sign up for the beta waitlist</a>
       </div>
-      <div class="hero-visual-placeholder"></div>
+      <figure class="hero-visual" aria-hidden="true">
+        <img src="@/assets/isometric.png" alt="" />
+      </figure>
     </div>
   </section>
 </template>
@@ -43,7 +44,7 @@
   /* Headline Styling */
   .hero-headline {
     font-family: "Montserrat", sans-serif;
-    font-size: 52px;
+    font-size: clamp(32px, 8vw, 52px);
     font-weight: 700;
     color: var(--gray-900);
     margin-bottom: var(--space-lg);
@@ -54,7 +55,7 @@
   /* Sub-headline Styling */
   .hero-subheadline {
     font-family: "Source Sans 3", sans-serif;
-    font-size: var(--text-lg);
+    font-size: clamp(16px, 4vw, 18px);
     line-height: 1.6;
     color: var(--gray-700);
     max-width: 700px;
@@ -76,7 +77,7 @@
     border-radius: 8px;
     font-family: "Source Sans 3", sans-serif;
     font-weight: 600;
-    font-size: var(--text-lg);
+    font-size: clamp(16px, 3.5vw, 18px);
     cursor: pointer;
     border: none;
     transition: all 0.2s ease-in-out;
@@ -91,8 +92,19 @@
   }
 
   .btn-primary:hover {
-    background-color: var(--primary-600); /* Darker shade on hover */
-    transform: translateY(-2px); /* Subtle upward lift on hover */
+    background-color: var(--primary-600);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(14, 154, 233, 0.25);
+  }
+
+  .btn-primary:focus-visible {
+    outline: 2px solid var(--primary-300);
+    outline-offset: 2px;
+  }
+
+  .btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(14, 154, 233, 0.3);
   }
 
   /* Secondary Text Link Styling */
@@ -101,27 +113,35 @@
     font-size: var(--text-base);
     color: var(--primary-600);
     text-decoration: none;
-    transition: color 0.2s ease-in-out;
+    transition: all 0.2s ease-in-out;
   }
 
   .text-link:hover {
-    color: var(--link-hover); /* Link hover color */
-    text-decoration: underline; /* Underline on hover for clear indication */
+    color: var(--link-hover);
+    text-decoration: underline;
+    transform: translateX(2px);
   }
 
-  /* Placeholder for the Isometric Visual */
-  .hero-visual-placeholder {
+  .text-link:focus-visible {
+    outline: 2px solid var(--primary-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+    background-color: var(--primary-50);
+    padding: 2px 4px;
+  }
+
+  /* Hero Visual */
+  .hero-visual {
     width: 100%;
-    height: 240px;
-    background-color: var(--gray-100);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--gray-500);
-    font-size: var(--text-base);
+    margin: 0;
     text-align: center;
-    border: 2px dashed var(--gray-300);
+  }
+
+  .hero-visual img {
+    width: 100%;
+    height: auto;
+    max-width: 600px;
+    border-radius: 12px;
   }
 
   /* --- Responsive Adjustments --- */

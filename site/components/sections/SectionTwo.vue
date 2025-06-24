@@ -6,23 +6,7 @@
       <div class="problem-solution-grid">
         <div class="problem-solution-card">
           <div class="card-icon-container">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M12 18v-11c0 -1.333 .667 -2 2 -2h3" />
-              <path d="M11 18h-4a2 2 0 0 1 -2 -2v-4a2 2 0 0 0 2 -2h3a2 2 0 0 0 2 -2v-7" />
-              <path d="M9 15l-3 3l3 3" />
-              <path d="M15 4l3 -3l3 3" />
-            </svg>
+            <IconGitFork />
           </div>
           <h3 class="card-problem">Fragmented Tools, Disconnected Workflows</h3>
           <p class="card-problem-description">
@@ -38,24 +22,7 @@
 
         <div class="problem-solution-card">
           <div class="card-icon-container">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M8.536 4.56a4.01 4.01 0 0 1 3.464 -2.56a4 4 0 0 1 4 4v2" />
-              <path
-                d="M12.782 16.591l-.782 .409l-4 2l-3 -3l2 -4l.409 -.782m2.404 -6.403a4 4 0 0 1 5.115 5.113"
-              />
-              <path d="M3 3l18 18" />
-            </svg>
+            <IconMessagesOff />
           </div>
           <h3 class="card-problem">Isolated Collaboration, Version Chaos</h3>
           <p class="card-problem-description">
@@ -71,22 +38,7 @@
 
         <div class="problem-solution-card">
           <div class="card-icon-container">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M6.5 17h11a6 6 0 0 0 0 -12h-11a6 6 0 0 0 0 12h.5" />
-              <path d="M6 12v6a3 3 0 0 0 3 3h6a3 3 0 0 0 3 -3v-6" />
-              <path d="M18 12v-6a3 3 0 0 0 -3 -3h-6a3 3 0 0 0 -3 3v6" />
-            </svg>
+            <IconHourglassHigh />
           </div>
           <h3 class="card-problem">Tedious Formatting, Compliance Headaches</h3>
           <p class="card-problem-description">
@@ -102,24 +54,7 @@
 
         <div class="problem-solution-card">
           <div class="card-icon-container">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M10 10l-6 6v3a1 1 0 0 0 1 1h7.5" />
-              <path d="M14 14m-2 0a2 2 0 1 0 4 0a2 2 0 1 0 -4 0" />
-              <path d="M17 17l4 4" />
-              <path d="M12 7h.01" />
-              <path d="M10 3h7l3 3v8m-2 2l-4 4h-10a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2" />
-            </svg>
+            <IconFileOff />
           </div>
           <h3 class="card-problem">Limited Discoverability, Static Formats</h3>
           <p class="card-problem-description">
@@ -138,7 +73,7 @@
 </template>
 
 <script setup>
-  // No specific script logic needed for this component's structure.
+  import { IconGitFork, IconMessagesOff, IconHourglassHigh, IconFileOff } from "@tabler/icons-vue";
 </script>
 
 <style scoped>
@@ -270,5 +205,11 @@
       width: 40px;
       height: 40px;
     }
+  }
+
+  .tabler-icon {
+    height: 48px;
+    width: 48px;
+    color: var(--extra-dark);
   }
 </style>
