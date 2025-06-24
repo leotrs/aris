@@ -7,7 +7,7 @@
       </p>
       <div class="hero-ctas">
         <button class="btn btn-primary">Try the Demo</button>
-        <a href="#" class="text-link">Or, sign up for the beta waitlist</a>
+        <a href="/signup" class="text-link">Or, sign up for the beta waitlist</a>
       </div>
       <div class="hero-visual-placeholder">
         </div>

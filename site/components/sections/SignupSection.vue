@@ -1,5 +1,12 @@
 <script setup>
   import { ref } from "vue";
+  import axios from "axios";
+
+  // Create API instance with base URL and error handling
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_BASE_URL,
+    timeout: 10000,
+  });
 
   const formData = ref({
     email: "",
@@ -49,8 +56,13 @@
     message.value = "";
 
     try {
-      // TODO: Replace with actual signup API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await api.post('/signup/', {
+        email: formData.value.email,
+        name: formData.value.name,
+        institution: formData.value.institution || null,
+        research_area: formData.value.researchArea || null,
+        interest_level: formData.value.interestLevel || null,
+      });
 
       // Success state
       showMessage(
@@ -67,7 +79,13 @@
         interestLevel: "",
       };
     } catch (error) {
-      showMessage("Something went wrong. Please try again.", "error");
+      if (error.response?.status === 409) {
+        showMessage("This email is already registered for early access.", "error");
+      } else if (error.response?.data?.message) {
+        showMessage(error.response.data.message, "error");
+      } else {
+        showMessage("Something went wrong. Please try again.", "error");
+      }
     } finally {
       isSubmitting.value = false;
     }

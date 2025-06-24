@@ -11,7 +11,7 @@
       readers in one seamless environment.
     </p>
     <div class="btn-container">
-      <a href="#signup" class="btn btn-primary">{{ betaCopy }}</a>
+      <a href="/signup" class="btn btn-primary">{{ betaCopy }}</a>
     </div>
     <a href="/demo" class="btn btn-link">Or explore the demo</a>
   </section>
