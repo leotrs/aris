@@ -16,7 +16,7 @@
   const emit = defineEmits(["on", "off"]);
   const buttonState = defineModel({ type: Boolean, default: false });
   const mobileMode = inject("mobileMode");
-  
+
   // Emit legacy @on/@off events for backward compatibility
   watch(buttonState, (state) => {
     state ? emit("on") : emit("off");

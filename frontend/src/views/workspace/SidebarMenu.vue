@@ -11,22 +11,22 @@
   const items = toRef(() => props.items);
 
   const drawerOpen = inject("drawerOpen");
-  
+
   // Watch for drawer state changes and implement exclusive behavior
   watch(
-    () => items.value.filter(item => item.type === "drawer").map(item => item.state),
+    () => items.value.filter((item) => item.type === "drawer").map((item) => item.state),
     (newStates, oldStates) => {
-      const drawerItems = items.value.filter(item => item.type === "drawer");
-      
+      const drawerItems = items.value.filter((item) => item.type === "drawer");
+
       // First, determine if any drawer should be open
-      const anyDrawerOpen = newStates.some(state => state);
+      const anyDrawerOpen = newStates.some((state) => state);
       drawerOpen.value = anyDrawerOpen;
-      
+
       // Then handle individual drawer state changes
       newStates.forEach((isOpen, drawerIndex) => {
         const wasOpen = oldStates?.[drawerIndex] || false;
         const itemIndex = items.value.indexOf(drawerItems[drawerIndex]);
-        
+
         if (isOpen && !wasOpen) {
           // A drawer was opened - close all other drawers
           drawerItems.forEach((item, otherDrawerIndex) => {

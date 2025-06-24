@@ -102,8 +102,8 @@ describe("Drawer Transition Behavior", () => {
 
     // CRITICAL ASSERTION: drawer should still be open after switching
     expect(drawerOpenRef.value).toBe(true); // This is likely failing
-    expect(marginsItem.state).toBe(false);  // margins should be off
-    expect(activityItem.state).toBe(true);  // activity should be on
+    expect(marginsItem.state).toBe(false); // margins should be off
+    expect(activityItem.state).toBe(true); // activity should be on
   });
 
   it("should close drawer only when all drawer buttons are turned off", async () => {
@@ -134,7 +134,7 @@ describe("Drawer Transition Behavior", () => {
     const marginsItem = wrapper.vm.items.find((item) => item.name === "DrawerMargins");
     const activityItem = wrapper.vm.items.find((item) => item.name === "DrawerActivity");
     const settingsItem = wrapper.vm.items.find((item) => item.name === "DrawerSettings");
-    
+
     const marginsIndex = wrapper.vm.items.indexOf(marginsItem);
     const activityIndex = wrapper.vm.items.indexOf(activityItem);
     const settingsIndex = wrapper.vm.items.indexOf(settingsItem);
