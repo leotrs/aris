@@ -37,10 +37,14 @@ export default function ({
   // Handle clicking the close button
   const getCloseButton = () => {
     if (!closeButtonSelector || !instance || !instance.proxy.$el) return null;
-    const closeButton = instance.proxy.$el.querySelector(closeButtonSelector);
-    if (!closeButton) {
-      return null;
+    const el = instance.proxy.$el;
+    let closeButton;
+    if (el.querySelector) {
+      closeButton = el.querySelector(closeButtonSelector);
+    } else {
+      closeButton = el.parentElement.querySelector(closeButtonSelector);
     }
+    if (!closeButton) return null;
     return closeButton;
   };
   const setupCloseButton = () => getCloseButton()?.addEventListener("click", onClose);
