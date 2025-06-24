@@ -1,5 +1,5 @@
 <script setup>
-  import { toRef, watchEffect, inject, useTemplateRef } from "vue";
+  import { toRef, watch, watchEffect, inject, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
@@ -11,20 +11,37 @@
   const items = toRef(() => props.items);
 
   const drawerOpen = inject("drawerOpen");
-  const handleDrawerClick = (clickedIndex) => {
-    const wasActive = items.value[clickedIndex].state;
-    if (wasActive) {
-      emit("off", clickedIndex);
-      drawerOpen.value = false;
-    } else {
-      // Emit events to close all other drawers first
-      items.value.forEach((item, index) => {
-        if (item.type === "drawer" && item.state) emit("off", index);
+  
+  // Watch for drawer state changes and implement exclusive behavior
+  watch(
+    () => items.value.filter(item => item.type === "drawer").map(item => item.state),
+    (newStates, oldStates) => {
+      const drawerItems = items.value.filter(item => item.type === "drawer");
+      
+      newStates.forEach((isOpen, drawerIndex) => {
+        const wasOpen = oldStates?.[drawerIndex] || false;
+        const itemIndex = items.value.indexOf(drawerItems[drawerIndex]);
+        
+        if (isOpen && !wasOpen) {
+          // A drawer was opened - close all other drawers
+          drawerItems.forEach((item, otherDrawerIndex) => {
+            if (otherDrawerIndex !== drawerIndex && item.state) {
+              item.state = false;
+              const otherItemIndex = items.value.indexOf(item);
+              emit("off", otherItemIndex);
+            }
+          });
+          emit("on", itemIndex);
+          drawerOpen.value = true;
+        } else if (!isOpen && wasOpen) {
+          // A drawer was closed
+          emit("off", itemIndex);
+          drawerOpen.value = false;
+        }
       });
-      emit("on", clickedIndex);
-      drawerOpen.value = true;
-    }
-  };
+    },
+    { deep: true }
+  );
 
   // Keys
   const userMenuRef = useTemplateRef("user-menu");
@@ -39,7 +56,7 @@
           .filter((obj) => obj.key && obj.type === "drawer")
           .map((obj) => {
             const index = items.value.indexOf(obj);
-            return [`p,${obj.key}`, { fn: () => handleDrawerClick(index) }];
+            return [`p,${obj.key}`, { fn: () => (obj.state = !obj.state) }];
           }),
         ["u", { fn: () => toggleUserMenu(), description: "Toggle user menu" }],
       ])
@@ -66,11 +83,10 @@
         />
         <SidebarItem
           v-else-if="it.type === 'drawer'"
+          v-model="it.state"
           :icon="it.icon"
           :label="it.label"
           type="outline"
-          @on="handleDrawerClick(idx)"
-          @off="handleDrawerClick(idx)"
         />
       </template>
       <SidebarItem v-model="focusMode" icon="LayoutOff" label="focus" />
