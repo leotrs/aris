@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar" :class="{ 'navbar-solid': isSolidBackground }">
+  <nav class="navbar">
     <div class="navbar-content-wrapper">
       <div class="navbar-logo">
         <a href="/" aria-label="Home - Aris">
@@ -66,17 +66,10 @@
 <script setup>
   import { ref, onMounted, onUnmounted } from 'vue';
 
-  const isSolidBackground = ref(false);
   const isMobileMenuOpen = ref(false);
   const isResourcesDropdownOpen = ref(false);
   const isMobileResourcesDropdownOpen = ref(false);
 
-  // Handle transparency effect on scroll
-  const handleScroll = () => {
-    const scrollPosition = window.scrollY;
-    // Transition to solid background after scrolling past a certain point (e.g., 50px)
-    isSolidBackground.value = scrollPosition > 50;
-  };
 
   // Toggle desktop dropdowns (on hover)
   const openDropdown = (menuName) => {
@@ -115,14 +108,6 @@
     }
   };
 
-  // Add/remove scroll listener
-  onMounted(() => {
-    window.addEventListener('scroll', handleScroll);
-  });
-
-  onUnmounted(() => {
-    window.removeEventListener('scroll', handleScroll);
-  });
 </script>
 
 <style scoped>
@@ -133,18 +118,12 @@
     top: 0;
     left: 0;
     width: 100%;
-    background-color: transparent; /* Starts transparent */
-    transition: background-color 0.3s ease-in-out, box-shadow 0.3s ease-in-out; /* Smooth transition */
+    background-color: var(--surface-page); /* Solid white background */
+    box-shadow: var(--shadow-soft); /* Subtle shadow */
     z-index: 1000; /* Ensures it stays on top of other content */
     font-family: 'Source Sans 3', sans-serif;
     display: flex; /* Use flex to align content wrapper vertically */
     align-items: center; /* Center content wrapper vertically */
-  }
-
-  /* Solid background when scrolled */
-  .navbar-solid {
-    background-color: var(--surface-page); /* Solid white background */
-    box-shadow: var(--shadow-soft); /* Subtle shadow */
   }
 
   .navbar-content-wrapper {
@@ -481,10 +460,6 @@
       color: var(--primary-600);
     }
 
-    /* When navbar is solid, ensure menu toggle color is good */
-    .navbar-solid .menu-toggle {
-      color: var(--gray-800);
-    }
   }
 
   /* Tablet and smaller desktop adjustments */
