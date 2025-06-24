@@ -18,6 +18,11 @@
     (newStates, oldStates) => {
       const drawerItems = items.value.filter(item => item.type === "drawer");
       
+      // First, determine if any drawer should be open
+      const anyDrawerOpen = newStates.some(state => state);
+      drawerOpen.value = anyDrawerOpen;
+      
+      // Then handle individual drawer state changes
       newStates.forEach((isOpen, drawerIndex) => {
         const wasOpen = oldStates?.[drawerIndex] || false;
         const itemIndex = items.value.indexOf(drawerItems[drawerIndex]);
@@ -32,11 +37,9 @@
             }
           });
           emit("on", itemIndex);
-          drawerOpen.value = true;
         } else if (!isOpen && wasOpen) {
           // A drawer was closed
           emit("off", itemIndex);
-          drawerOpen.value = false;
         }
       });
     },
