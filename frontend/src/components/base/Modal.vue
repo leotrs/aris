@@ -91,22 +91,24 @@
       <p>Your modal content here</p>
     </Modal>
   -->
-  <div
-    class="modal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modal-title"
-    aria-describedby="modal-content"
-  >
-    <div class="content">
-      <Pane>
-        <template #header>
-          <slot name="header" />
-        </template>
-        <slot />
-      </Pane>
+  <Teleport to="body">
+    <div
+      class="modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="modal-title"
+      aria-describedby="modal-content"
+    >
+      <div class="content">
+        <Pane>
+          <template #header>
+            <slot name="header" />
+          </template>
+          <slot />
+        </Pane>
+      </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <style scoped>
@@ -120,12 +122,12 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    z-index: 9999;
     backdrop-filter: blur(4px);
   }
 
   .content {
-    background: var(--surface-primary);
+    background: var(--surface-primary, white);
     border-radius: 12px;
     max-width: 500px;
     max-height: 80vh;
