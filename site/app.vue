@@ -6,7 +6,7 @@
 <template>
   <!-- Skip to main content link for accessibility -->
   <a href="#main-content" class="skip-link">Skip to main content</a>
-  
+
   <NavBar />
   <main id="main-content" role="main">
     <NuxtLayout>
