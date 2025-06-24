@@ -85,16 +85,8 @@
   );
 
   // Event handlers for SidebarMenu
-  const drawerOpen = inject("drawerOpen");
-  const handleItemOn = (index) => {
-    items[index].state = true;
-    drawerOpen.value = true;
-  };
-
-  const handleItemOff = (index) => {
-    drawerOpen.value = false;
-    items[index].state = false;
-  };
+  const handleItemOn = (index) => (items[index].state = true);
+  const handleItemOff = (index) => (items[index].state = false);
 
   // Context
   const layoutOnRef = useTemplateRef("layout-on-ref");
