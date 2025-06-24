@@ -7,10 +7,13 @@
         <div class="feature-card">
           <div class="feature-visual">
             <!-- <img src="/path/to/your/interactive-drafting.gif" alt="Interactive Drafting Demo" class="feature-gif"> -->
-            </div>
+          </div>
           <div class="feature-content">
             <h3 class="card-title">Interactive Drafting</h3>
-            <p class="card-description">Draft your manuscripts with rich media, interactive figures, and live data connections, transcending static documents.</p>
+            <p class="card-description">
+              Draft your manuscripts with rich media, interactive figures, and live data
+              connections, transcending static documents.
+            </p>
           </div>
         </div>
 
@@ -20,7 +23,10 @@
           </div>
           <div class="feature-content">
             <h3 class="card-title">Dynamic Peer Review</h3>
-            <p class="card-description">Streamline the review process with in-context comments, version comparisons, and collaborative editing tools.</p>
+            <p class="card-description">
+              Streamline the review process with in-context comments, version comparisons, and
+              collaborative editing tools.
+            </p>
           </div>
         </div>
 
@@ -30,7 +36,10 @@
           </div>
           <div class="feature-content">
             <h3 class="card-title">Collaborative Data Viz</h3>
-            <p class="card-description">Co-create and embed interactive data visualizations directly within your manuscript, ensuring data integrity and clarity.</p>
+            <p class="card-description">
+              Co-create and embed interactive data visualizations directly within your manuscript,
+              ensuring data integrity and clarity.
+            </p>
           </div>
         </div>
 
@@ -40,7 +49,10 @@
           </div>
           <div class="feature-content">
             <h3 class="card-title">Smart Publishing</h3>
-            <p class="card-description">Seamlessly publish your work to web-native formats, optimizing for discoverability and engagement across platforms.</p>
+            <p class="card-description">
+              Seamlessly publish your work to web-native formats, optimizing for discoverability and
+              engagement across platforms.
+            </p>
           </div>
         </div>
       </div>
@@ -56,33 +68,34 @@
 <style scoped>
   /* Section Container */
   .section-three {
-    background-color: var(--surface-page); /* White background as per design brief */
-    padding: 80px 0; /* Vertical padding for the section */
+    background-color: var(--surface-page);
+    padding: var(--space-4xl) 0;
   }
 
   /* Content Wrapper - Max-width & Centering */
   .content-wrapper {
-    max-width: 1200px; /* Adjust max-width as needed for content, typically wider for grids */
-    margin: 0 auto; /* Center the content wrapper */
-    padding: 0 var(--side-padding, 24px); /* Side padding */
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-lg);
   }
 
   /* Section Heading */
   .section-heading {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 48px; /* Prominent heading size */
+    font-family: "Montserrat", sans-serif;
+    font-size: var(--text-5xl);
     font-weight: 700;
     color: var(--gray-900);
-    text-align: center; /* Center align the section heading */
-    margin-bottom: 60px; /* Space below the heading before the grid */
+    text-align: center;
+    margin-bottom: var(--space-3xl);
     line-height: 1.2;
   }
 
   /* Feature Grid */
   .feature-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Responsive grid columns */
-    gap: 32px; /* Space between cards */
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: var(--space-xl);
+    align-items: stretch;
   }
 
   /* Individual Feature Card Styling */
@@ -94,13 +107,19 @@
     overflow: hidden; /* Ensures GIFs/images don't break border-radius */
     display: flex;
     flex-direction: column;
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transition for hover effects */
+    transition:
+      transform 0.2s ease-in-out,
+      box-shadow 0.2s ease-in-out; /* Smooth transition for hover effects */
   }
 
   /* Hover Effect for Cards */
   .feature-card:hover {
     transform: translateY(-5px); /* Subtle upward lift */
-    box-shadow: var(--shadow-medium, 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)); /* Slightly stronger shadow on hover */
+    box-shadow: var(
+      --shadow-medium,
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05)
+    ); /* Slightly stronger shadow on hover */
   }
 
   /* Feature Visual (GIF/Video) Container */
@@ -135,7 +154,7 @@
 
   /* Card Title */
   .card-title {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-size: 24px;
     font-weight: 700;
     color: var(--gray-900);
@@ -145,7 +164,7 @@
 
   /* Card Description */
   .card-description {
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: "Source Sans 3", sans-serif;
     font-size: 16px;
     line-height: var(--body-line-height);
     color: var(--gray-700);

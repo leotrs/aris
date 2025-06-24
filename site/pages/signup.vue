@@ -2,15 +2,17 @@
   <div class="waitlist-page">
     <div class="waitlist-container">
       <h1 class="waitlist-title">Join the Aris Waitlist</h1>
-      <p class="waitlist-subtitle">Be among the first to experience the future of Research Operations with AI.</p>
+      <p class="waitlist-subtitle">
+        Be among the first to experience the future of Research Operations with AI.
+      </p>
 
-      <form @submit.prevent="handleWaitlistSignup" class="waitlist-form">
+      <form class="waitlist-form" @submit.prevent="handleWaitlistSignup">
         <div class="form-group">
           <label for="email" class="form-label">Email Address</label>
           <input
-            type="email"
             id="email"
             v-model="email"
+            type="email"
             class="form-input"
             placeholder="your.email@example.com"
             required
@@ -21,9 +23,9 @@
         <div class="form-group">
           <label for="name" class="form-label">Your Name (Optional)</label>
           <input
-            type="text"
             id="name"
             v-model="name"
+            type="text"
             class="form-input"
             placeholder="e.g., Jane Doe"
             autocomplete="name"
@@ -48,25 +50,25 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
+  import { ref } from "vue";
 
   // Form fields
-  const email = ref('');
-  const name = ref('');
+  const email = ref("");
+  const name = ref("");
 
   // UI state
   const isLoading = ref(false);
-  const errorMessage = ref('');
-  const successMessage = ref('');
+  const errorMessage = ref("");
+  const successMessage = ref("");
 
   const handleWaitlistSignup = async () => {
     // Reset messages
-    errorMessage.value = '';
-    successMessage.value = '';
+    errorMessage.value = "";
+    successMessage.value = "";
 
     // Basic client-side validation
     if (!email.value) {
-      errorMessage.value = 'Please enter your email address.';
+      errorMessage.value = "Please enter your email address.";
       return;
     }
 
@@ -97,21 +99,21 @@
       // }
 
       // --- Simulation of a successful waitlist signup for demonstration ---
-      await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate API call delay
+      await new Promise((resolve) => setTimeout(resolve, 1500)); // Simulate API call delay
 
       // Simulate different responses based on email
-      if (email.value === 'test@example.com') { // Example for already on waitlist
-        errorMessage.value = 'You are already on the waitlist!';
+      if (email.value === "test@example.com") {
+        // Example for already on waitlist
+        errorMessage.value = "You are already on the waitlist!";
       } else {
-        successMessage.value = 'Thanks for joining! We\'ll notify you when Aris is ready.';
-        console.log('Waitlist signup successful:', { email: email.value, name: name.value });
-        email.value = ''; // Clear form fields on success
-        name.value = '';
+        successMessage.value = "Thanks for joining! We'll notify you when Aris is ready.";
+        console.log("Waitlist signup successful:", { email: email.value, name: name.value });
+        email.value = ""; // Clear form fields on success
+        name.value = "";
       }
-
     } catch (error) {
-      console.error('Waitlist signup error:', error);
-      errorMessage.value = 'An unexpected error occurred. Please try again later.';
+      console.error("Waitlist signup error:", error);
+      errorMessage.value = "An unexpected error occurred. Please try again later.";
     } finally {
       isLoading.value = false;
     }
@@ -127,7 +129,7 @@
     min-height: calc(100vh - 64px - 80px);
     padding: 40px var(--side-padding, 24px);
     background-color: var(--surface-bg); /* Light background for the page */
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: "Source Sans 3", sans-serif;
   }
 
   .waitlist-container {
@@ -141,7 +143,7 @@
   }
 
   .waitlist-title {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-size: 32px;
     font-weight: 700;
     color: var(--gray-900);
@@ -181,7 +183,9 @@
     font-size: 17px;
     color: var(--gray-900);
     background-color: var(--white);
-    transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    transition:
+      border-color 0.2s ease-in-out,
+      box-shadow 0.2s ease-in-out;
   }
 
   .form-input::placeholder {
@@ -226,7 +230,10 @@
   .btn {
     border-radius: 8px;
     text-decoration: none;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out, border-color 0.2s ease-in-out;
+    transition:
+      background-color 0.2s ease-in-out,
+      color 0.2s ease-in-out,
+      border-color 0.2s ease-in-out;
     display: inline-flex;
     align-items: center;
     justify-content: center;

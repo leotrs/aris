@@ -31,7 +31,7 @@
 
   /* CTA Headline */
   .cta-headline {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-size: 56px; /* Large, impactful headline */
     font-weight: 700;
     color: var(--gray-900);
@@ -55,12 +55,14 @@
   .btn {
     padding: 18px 36px; /* Slightly larger padding for a prominent final CTA */
     border-radius: 8px;
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: "Source Sans 3", sans-serif;
     font-weight: 600;
     font-size: 20px; /* Slightly larger text for final CTA */
     cursor: pointer;
     border: none;
-    transition: background-color 0.2s ease-in-out, transform 0.2s ease-in-out;
+    transition:
+      background-color 0.2s ease-in-out,
+      transform 0.2s ease-in-out;
   }
 
   .btn-primary {
@@ -74,7 +76,7 @@
   }
 
   .text-link {
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: "Source Sans 3", sans-serif;
     font-size: 20px; /* Consistent size with primary button */
     color: var(--link-default);
     text-decoration: none;

@@ -1,6 +1,6 @@
 <script setup>
   import NavBar from "@/components/NavBar.vue";
-  import Footer from '@/components/Footer.vue';
+  import Footer from "@/components/Footer.vue";
 </script>
 
 <template>
@@ -15,8 +15,10 @@
 
 <style>
   body {
-    font-family: "Source Sans Pro", sans-serif;
-    background: var(--surface-primary);
+    font-family: "Source Sans 3", sans-serif;
+    background: var(--surface-page);
+    margin: 0;
+    padding: 0;
   }
 
   h1,
@@ -32,7 +34,12 @@
   p {
     font-family: "Source Sans 3", sans-serif;
     font-weight: var(--weight-regular);
-    font-size: 18px;
-    line-height: 1.25;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  /* Ensure main content accounts for fixed navbar */
+  main {
+    padding-top: 64px;
   }
 </style>

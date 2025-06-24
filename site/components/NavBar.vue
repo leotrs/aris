@@ -3,7 +3,7 @@
     <div class="navbar-content-wrapper">
       <div class="navbar-logo">
         <a href="/" aria-label="Home - Aris">
-          <img src="@/assets/logo-32px.svg" alt="Aris Logo">
+          <img src="@/assets/logo-32px.svg" alt="Aris Logo" />
         </a>
       </div>
 
@@ -11,7 +11,11 @@
         <li><a href="/about" class="nav-link">About</a></li>
         <li><a href="/ai-copilot" class="nav-link">AI Copilot</a></li>
         <li><a href="/pricing" class="nav-link">Pricing</a></li>
-        <li class="has-dropdown" @mouseenter="openDropdown('resources')" @mouseleave="closeDropdown('resources')">
+        <li
+          class="has-dropdown"
+          @mouseenter="openDropdown('resources')"
+          @mouseleave="closeDropdown('resources')"
+        >
           <a href="#" class="nav-link dropdown-toggle" @click.prevent>Resources</a>
           <ul v-if="isResourcesDropdownOpen" class="dropdown-menu">
             <li><a href="/documentation" class="dropdown-link">Documentation</a></li>
@@ -26,14 +30,38 @@
         <a href="/demo" class="nav-link nav-link-cta">Try the Demo</a>
       </div>
 
-      <button class="menu-toggle" @click="toggleMobileMenu" aria-label="Toggle navigation menu">
-        <svg v-if="!isMobileMenuOpen" xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-menu-2">
+      <button class="menu-toggle" aria-label="Toggle navigation menu" @click="toggleMobileMenu">
+        <svg
+          v-if="!isMobileMenuOpen"
+          xmlns="http://www.w3.org/2000/svg"
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-menu-2"
+        >
           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
           <path d="M4 6h16"></path>
           <path d="M4 12h16"></path>
           <path d="M4 18h16"></path>
         </svg>
-        <svg v-else xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-x">
+        <svg
+          v-else
+          xmlns="http://www.w3.org/2000/svg"
+          width="28"
+          height="28"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          class="icon icon-tabler icons-tabler-outline icon-tabler-x"
+        >
           <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
           <path d="M18 6l-12 12"></path>
           <path d="M6 6l12 12"></path>
@@ -44,42 +72,58 @@
     <div v-if="isMobileMenuOpen" class="mobile-menu-overlay">
       <ul class="mobile-navbar-links">
         <li><a href="/about" class="mobile-nav-link" @click="closeMobileMenu">About</a></li>
-        <li><a href="/ai-copilot" class="mobile-nav-link" @click="closeMobileMenu">AI Copilot</a></li>
+        <li>
+          <a href="/ai-copilot" class="mobile-nav-link" @click="closeMobileMenu">AI Copilot</a>
+        </li>
         <li><a href="/pricing" class="mobile-nav-link" @click="closeMobileMenu">Pricing</a></li>
         <li class="mobile-has-dropdown">
-          <a href="#" class="mobile-nav-link mobile-dropdown-toggle" @click.prevent="toggleMobileDropdown('resources')">Resources</a>
+          <a
+            href="#"
+            class="mobile-nav-link mobile-dropdown-toggle"
+            @click.prevent="toggleMobileDropdown('resources')"
+            >Resources</a
+          >
           <ul v-if="isMobileResourcesDropdownOpen" class="mobile-dropdown-menu">
-            <li><a href="/documentation" class="mobile-dropdown-link" @click="closeMobileMenu">Documentation</a></li>
+            <li>
+              <a href="/documentation" class="mobile-dropdown-link" @click="closeMobileMenu"
+                >Documentation</a
+              >
+            </li>
             <li><a href="/blog" class="mobile-dropdown-link" @click="closeMobileMenu">Blog</a></li>
           </ul>
         </li>
       </ul>
       <div class="mobile-navbar-utility-links">
-        <a href="/login" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu">Login</a>
-        <a href="/signup" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu">Sign Up</a>
-        <a href="/demo" class="mobile-nav-link mobile-nav-link-cta" @click="closeMobileMenu">Try the Demo</a>
+        <a href="/login" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu"
+          >Login</a
+        >
+        <a href="/signup" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu"
+          >Sign Up</a
+        >
+        <a href="/demo" class="mobile-nav-link mobile-nav-link-cta" @click="closeMobileMenu"
+          >Try the Demo</a
+        >
       </div>
     </div>
   </nav>
 </template>
 
 <script setup>
-  import { ref, onMounted, onUnmounted } from 'vue';
+  import { ref, onMounted, onUnmounted } from "vue";
 
   const isMobileMenuOpen = ref(false);
   const isResourcesDropdownOpen = ref(false);
   const isMobileResourcesDropdownOpen = ref(false);
 
-
   // Toggle desktop dropdowns (on hover)
   const openDropdown = (menuName) => {
-    if (menuName === 'resources') {
+    if (menuName === "resources") {
       isResourcesDropdownOpen.value = true;
     }
   };
 
   const closeDropdown = (menuName) => {
-    if (menuName === 'resources') {
+    if (menuName === "resources") {
       isResourcesDropdownOpen.value = false;
     }
   };
@@ -89,25 +133,24 @@
     isMobileMenuOpen.value = !isMobileMenuOpen.value;
     // Prevent body scrolling when mobile menu is open
     if (isMobileMenuOpen.value) {
-      document.body.style.overflow = 'hidden';
+      document.body.style.overflow = "hidden";
     } else {
-      document.body.style.overflow = '';
+      document.body.style.overflow = "";
     }
   };
 
   const closeMobileMenu = () => {
     isMobileMenuOpen.value = false;
     isMobileResourcesDropdownOpen.value = false; // Close mobile dropdown when menu closes
-    document.body.style.overflow = ''; // Restore body scrolling
+    document.body.style.overflow = ""; // Restore body scrolling
   };
 
   // Toggle mobile dropdowns (on click)
   const toggleMobileDropdown = (menuName) => {
-    if (menuName === 'resources') {
+    if (menuName === "resources") {
       isMobileResourcesDropdownOpen.value = !isMobileResourcesDropdownOpen.value;
     }
   };
-
 </script>
 
 <style scoped>
@@ -121,7 +164,7 @@
     background-color: var(--surface-page); /* Solid white background */
     box-shadow: var(--shadow-soft); /* Subtle shadow */
     z-index: 1000; /* Ensures it stays on top of other content */
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: "Source Sans 3", sans-serif;
     display: flex; /* Use flex to align content wrapper vertically */
     align-items: center; /* Center content wrapper vertically */
   }
@@ -148,7 +191,7 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 30px; /* Space between links */
+    gap: 24px; /* Space between links */
   }
 
   .nav-link {
@@ -197,7 +240,9 @@
     color: var(--gray-800);
     text-decoration: none;
     font-size: 16px;
-    transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+    transition:
+      background-color 0.2s ease-in-out,
+      color 0.2s ease-in-out;
   }
 
   .dropdown-link:hover {
@@ -209,7 +254,7 @@
   .navbar-utility-links {
     display: flex;
     align-items: center;
-    gap: 25px; /* Space between utility links */
+    gap: 16px; /* Space between utility links */
   }
 
   .nav-link-button {
@@ -248,7 +293,6 @@
     color: var(--primary-600);
   }
 
-
   /* Mobile Menu Toggle Button */
   .menu-toggle {
     display: none; /* Hidden on desktop */
@@ -261,10 +305,11 @@
     z-index: 1001; /* Ensure it's above the overlay */
     min-width: 44px;
     min-height: 44px;
-    display: flex;
     align-items: center;
     justify-content: center;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   /* Mobile Menu Overlay */
@@ -308,7 +353,9 @@
     display: flex;
     align-items: center;
     border-radius: 8px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   .mobile-nav-link:hover {
@@ -353,7 +400,9 @@
     align-items: center;
     text-align: left;
     border-radius: 6px;
-    transition: background-color 0.2s ease, color 0.2s ease;
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease;
   }
 
   .mobile-dropdown-link:hover {
@@ -392,7 +441,6 @@
     color: var(--gray-0) !important;
   }
 
-
   .mobile-navbar-utility-links {
     display: flex;
     flex-direction: column;
@@ -405,41 +453,40 @@
 
   /* --- Animations --- */
   @keyframes fadeIn {
-    from { 
-      opacity: 0; 
-      transform: translateY(-8px); 
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
     }
-    to { 
-      opacity: 1; 
-      transform: translateY(0); 
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
   }
 
   @keyframes slideInFromTop {
-    from { 
+    from {
       opacity: 0;
-      transform: translateY(-100%); 
+      transform: translateY(-100%);
     }
-    to { 
+    to {
       opacity: 1;
-      transform: translateY(0); 
+      transform: translateY(0);
     }
   }
 
   @keyframes slideOutToTop {
-    from { 
+    from {
       opacity: 1;
-      transform: translateY(0); 
+      transform: translateY(0);
     }
-    to { 
+    to {
       opacity: 0;
-      transform: translateY(-100%); 
+      transform: translateY(-100%);
     }
   }
 
-
   /* --- Responsive Adjustments --- */
-  @media (max-width: 900px) {
+  @media (max-width: 768px) {
     .navbar-links,
     .navbar-utility-links {
       display: none; /* Hide desktop nav and utility links */
@@ -459,7 +506,6 @@
       background-color: var(--primary-50);
       color: var(--primary-600);
     }
-
   }
 
   /* Tablet and smaller desktop adjustments */
@@ -474,7 +520,7 @@
     .navbar-content-wrapper {
       padding: 0 16px;
     }
-    
+
     .mobile-menu-overlay {
       padding: 20px 16px;
     }
@@ -494,11 +540,11 @@
       font-size: 17px;
       padding: 14px 16px;
     }
-    
+
     .mobile-dropdown-link {
       padding: 12px 20px;
     }
-    
+
     .mobile-navbar-utility-links {
       gap: 10px;
       padding-top: 20px;
