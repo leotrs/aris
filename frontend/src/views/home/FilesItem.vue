@@ -68,6 +68,7 @@
 
   // File menu callbacks
   const open = () => File.openFile(file.value, router);
+  const select = () => fileStore.value.selectFile(file.value);
   const menuRef = useTemplateRef("menu-ref");
   const fileTitleRef = useTemplateRef("file-title-ref");
   const user = inject("user");
@@ -150,7 +151,7 @@
     }"
     @mouseenter="hovered = true"
     @mouseleave="hovered = false"
-    @click="open"
+    @click="select"
     @dblclick="open"
   >
     <template v-if="!!file">

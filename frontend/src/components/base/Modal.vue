@@ -59,6 +59,7 @@
 
   defineOptions({
     name: "Modal",
+    inheritAttrs: false,
   });
 
   /**
@@ -98,6 +99,7 @@
       aria-modal="true"
       aria-labelledby="modal-title"
       aria-describedby="modal-content"
+      v-bind="$attrs"
     >
       <div class="content">
         <Pane>
