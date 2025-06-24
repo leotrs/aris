@@ -8,18 +8,18 @@
         <div class="footer-column">
           <h4 class="column-heading">Resources</h4>
           <ul class="footer-links">
-            <li><a href="#" class="footer-link">Blog</a></li>
-            <li><a href="#" class="footer-link">Documentation</a></li>
-            <li><a href="#" class="footer-link">Contact</a></li>
+            <li><a href="/blog" class="footer-link">Blog</a></li>
+            <li><a href="https://docs.aris.pub/" class="footer-link">Documentation</a></li>
+            <li><a href="/contact" class="footer-link">Contact</a></li>
           </ul>
         </div>
 
         <div class="footer-column">
           <h4 class="column-heading">Product</h4>
           <ul class="footer-links">
-            <li><a href="#" class="footer-link">Pricing</a></li>
-            <li><a href="#" class="footer-link">Demo</a></li>
-            <li><a href="#" class="footer-link">GitHub</a></li>
+            <li><a href="https://app.aris.pub/demo" class="footer-link">Demo</a></li>
+            <li><a href="/pricing" class="footer-link">Pricing</a></li>
+            <li><a href="https://github.com/leotrs/aris" class="footer-link">GitHub</a></li>
           </ul>
         </div>
 
@@ -38,8 +38,8 @@
 
         <p class="footer-bottom-text">© 2025 Aris. All rights reserved.</p>
         <div class="footer-legal-links">
-          <a href="#" class="footer-legal-link">Terms & Conditions</a>
-          <a href="#" class="footer-legal-link">Cookie Policy</a>
+          <a href="/terms" class="footer-legal-link">Terms & Conditions</a>
+          <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
         </div>
       </div>
     </div>
