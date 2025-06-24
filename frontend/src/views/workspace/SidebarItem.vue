@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, inject } from "vue";
+  import { watch, inject } from "vue";
 
   const props = defineProps({
     icon: { type: String, required: true },
@@ -14,9 +14,13 @@
     type: { type: String, default: "filled" },
   });
   const emit = defineEmits(["on", "off"]);
-  const buttonState = ref(false);
+  const buttonState = defineModel({ type: Boolean, default: false });
   const mobileMode = inject("mobileMode");
-  watch(buttonState, (state) => (state ? emit("on") : emit("off")));
+  
+  // Emit legacy @on/@off events for backward compatibility
+  watch(buttonState, (state) => {
+    state ? emit("on") : emit("off");
+  });
 </script>
 
 <template>
