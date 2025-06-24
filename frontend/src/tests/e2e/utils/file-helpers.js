@@ -17,7 +17,7 @@ export class FileHelpers {
       await expect(this.page.locator('[data-testid="files-container"]')).toBeVisible({
         timeout: 5000,
       });
-    } catch (_e) {
+    } catch {
       // If files container doesn't appear, the duplicate might have broken the app state
       // Refresh the page to restore the file list
       await this.page.reload();

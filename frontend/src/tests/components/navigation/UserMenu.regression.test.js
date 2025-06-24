@@ -125,13 +125,6 @@ describe("UserMenu.vue - Regression Tests", () => {
   });
 
   it("REGRESSION: UserMenu trigger template must include scoped slot parameters", () => {
-    // This test verifies the template syntax is correct
-    const UserMenuTemplate = UserMenu.template || UserMenu.__template;
-
-    // Check that the component source uses proper scoped slot syntax
-    // This is a static analysis test that will catch template regressions
-    const componentSource = UserMenu.toString();
-
     // The fix requires: #trigger="{ toggle }" and @click="toggle"
     // We can't easily test the exact template, but we can test the mounted component behavior
     const wrapper = mount(UserMenu, {

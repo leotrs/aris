@@ -1,11 +1,8 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
-import { nextTick, ref } from "vue";
+import { ref } from "vue";
 import { mount, RouterLinkStub } from "@vue/test-utils";
 import LoginView from "@/views/login/View.vue";
 import Button from "@/components/base/Button.vue";
-
-// Utility to wait for pending promises (e.g. auto-focus flow in dev mode)
-const flushPromises = () => new Promise((res) => setTimeout(res, 0));
 
 // Stub useRouter to capture navigation calls
 const pushMock = vi.fn();
