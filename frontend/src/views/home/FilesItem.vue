@@ -88,28 +88,17 @@
 
   // Confirmation modal handlers
   const handleDeleteConfirm = async () => {
-    // Prevent deletion if modal is not shown (race condition protection)
-    if (!showDeleteModal.value) return;
+    if (!showDeleteModal.value) return; // race condition protection
 
     try {
       const success = await fileStore.value.deleteFile(file.value);
-      if (success) {
-        showDeleteModal.value = false;
-      }
-      // If deletion fails, keep modal open so user can try again or cancel
+      if (success) showDeleteModal.value = false;
     } catch (error) {
-      console.error("Failed to delete file:", error);
       // Keep modal open on error
+      console.error("Failed to delete file:", error);
     }
   };
-
-  const handleDeleteCancel = () => {
-    showDeleteModal.value = false;
-  };
-
-  const handleDeleteClose = () => {
-    showDeleteModal.value = false;
-  };
+  const handleDeleteClose = () => (showDeleteModal.value = false);
 
   // Generate confirmation message with file name
   const deleteMessage = computed(() => {
@@ -210,10 +199,9 @@
       :message="deleteMessage"
       confirm-text="Delete"
       cancel-text="Cancel"
-      variant="danger"
       :file-data="file"
       @confirm="handleDeleteConfirm"
-      @cancel="handleDeleteCancel"
+      @cancel="handleDeleteClose"
       @close="handleDeleteClose"
     />
   </div>

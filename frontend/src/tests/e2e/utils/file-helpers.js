@@ -73,8 +73,9 @@ export class FileHelpers {
   async openFileMenu(fileId) {
     const fileItem = await this.getFileItem(fileId);
 
-    // Right-click to open context menu
-    await fileItem.click({ button: "right" });
+    // Find and click the dots button (context menu trigger) within the file item
+    const dotsButton = fileItem.locator('[data-testid="file-menu"] .context-menu-trigger');
+    await dotsButton.click();
 
     // Wait for menu to appear - target the specific file's menu to avoid strict mode violations
     const fileMenu = fileItem.locator('[data-testid="file-menu"]');
@@ -87,17 +88,20 @@ export class FileHelpers {
   async deleteFile(fileId) {
     await this.openFileMenu(fileId);
 
-    // Click delete option
-    await this.page.click('text="Delete"');
+    // Click delete option - look for the danger-styled menu item
+    await this.page.locator('.danger').filter({ hasText: 'Delete' }).click();
 
     // Wait for confirmation modal
     await expect(this.page.locator('text="Delete File?"')).toBeVisible();
 
-    // Confirm deletion
-    await this.page.click('button:has-text("Delete")');
+    // Confirm deletion - use more specific selector
+    await this.page.locator('button').filter({ hasText: 'Delete' }).first().click();
 
     // Wait for modal to disappear
     await expect(this.page.locator('text="Delete File?"')).not.toBeVisible();
+    
+    // Wait for file list to update
+    await this.waitForFilesLoaded();
   }
 
   /**
@@ -107,12 +111,15 @@ export class FileHelpers {
     await this.openFileMenu(fileId);
 
     // Click duplicate option
-    await this.page.click('text="Duplicate"');
+    await this.page.locator('text="Duplicate"').click();
 
     // Wait for operation to complete (menu should close)
     const fileItem = await this.getFileItem(fileId);
     const fileMenu = fileItem.locator('[data-testid="file-menu"]');
     await expect(fileMenu).not.toBeVisible();
+    
+    // Wait for file list to update
+    await this.waitForFilesLoaded();
   }
 
   /**
@@ -163,14 +170,14 @@ export class FileHelpers {
   async cancelFileDeletion(fileId) {
     await this.openFileMenu(fileId);
 
-    // Click delete option
-    await this.page.click('text="Delete"');
+    // Click delete option - look for the danger-styled menu item
+    await this.page.locator('.danger').filter({ hasText: 'Delete' }).click();
 
     // Wait for confirmation modal
     await expect(this.page.locator('text="Delete File?"')).toBeVisible();
 
     // Cancel deletion
-    await this.page.click('button:has-text("Cancel")');
+    await this.page.locator('button').filter({ hasText: 'Cancel' }).click();
 
     // Wait for modal to disappear
     await expect(this.page.locator('text="Delete File?"')).not.toBeVisible();

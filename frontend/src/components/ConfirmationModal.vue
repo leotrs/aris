@@ -1,5 +1,5 @@
 <script setup>
-  import { computed, watch } from "vue";
+  import { toRef, computed, watch } from "vue";
   import Modal from "@/components/base/Modal.vue";
 
   /**
@@ -77,7 +77,7 @@
      * The visual variant for the confirm button
      * @values "primary", "danger", "warning"
      */
-    variant: {
+    confirmBtnClass: {
       type: String,
       default: "danger",
       validator: (value) => ["primary", "danger", "warning"].includes(value),
@@ -98,9 +98,7 @@
   const emit = defineEmits(["confirm", "cancel", "close"]);
 
   // Computed button kind for the confirm button
-  const confirmButtonKind = computed(() => {
-    return props.variant;
-  });
+  const confirmButtonKind = toRef(() => props.variant);
 
   // Handle modal close (ESC, backdrop click, etc.)
   const handleModalClose = () => {
@@ -163,7 +161,7 @@
 </script>
 
 <template>
-  <Modal v-if="show" @close="handleModalClose">
+  <Modal v-if="show" data-testid="confirmation-modal" @close="handleModalClose">
     <template #header>
       <h2 class="modal-title">{{ title }}</h2>
     </template>
@@ -172,11 +170,17 @@
       <p class="confirmation-message">{{ message }}</p>
 
       <div class="confirmation-actions">
-        <Button :kind="confirmButtonKind" class="confirm-button" @click="handleConfirm">
+        <Button
+          kind="primary"
+          class="confirm-button"
+          :class="confirmBtnClass"
+          data-testid="confirm-button"
+          @click="handleConfirm"
+        >
           {{ confirmText }}
         </Button>
 
-        <Button kind="secondary" class="cancel-button" @click="handleCancel">
+        <Button kind="secondary" class="cancel-button" data-testid="cancel-button" @click="handleCancel">
           {{ cancelText }}
         </Button>
       </div>
