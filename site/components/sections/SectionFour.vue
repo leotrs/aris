@@ -6,23 +6,7 @@
       <div class="user-role-grid">
         <div class="user-role-card">
           <div class="card-icon-container">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M12 18l-7 3l7 -15l7 15l-7 -3" />
-              <path d="M12 18v3" />
-              <path d="M17 18l5 -3l-5 -3l-5 3l5 3" />
-              <path d="M7 18l-5 -3l5 -3l5 3l-5 3" />
-            </svg>
+            <IconUserEdit />
           </div>
           <h3 class="card-title">For Authors & Researchers</h3>
           <p class="card-description">
@@ -33,21 +17,7 @@
 
         <div class="user-role-card">
           <div class="card-icon-container">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path d="M19 4v16h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12z" />
-              <path d="M12 4h7v16h-7z" />
-            </svg>
+            <IconBook2 />
           </div>
           <h3 class="card-title">For Readers & Scholars</h3>
           <p class="card-description">
@@ -58,26 +28,7 @@
 
         <div class="user-role-card">
           <div class="card-icon-container">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="48"
-              height="48"
-              viewBox="0 0 24 24"
-              stroke-width="1.5"
-              stroke="currentColor"
-              fill="none"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
-              <path
-                d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"
-              />
-              <path
-                d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z"
-              />
-              <path d="M9 14l2 2l4 -4" />
-            </svg>
+            <IconClipboardCheck />
           </div>
           <h3 class="card-title">For Peer Reviewers & Editors</h3>
           <p class="card-description">
@@ -91,9 +42,7 @@
 </template>
 
 <script setup>
-  // No specific script logic needed for this component.
-  // If you were fetching user roles from an API or defining them in data,
-  // that logic would go here.
+  import { IconUserEdit, IconBook2, IconClipboardCheck } from "@tabler/icons-vue";
 </script>
 
 <style scoped>

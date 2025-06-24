@@ -1,8 +1,9 @@
 /* Component Utilities - Shared styles for marketing site components */
+/* Using variables from rsm.css for consistency */
 
-/* Design System Variables */
+/* Additional spacing and typography variables to extend rsm.css */
 :root {
-  /* Consistent spacing scale */
+  /* Extended spacing scale (building on rsm.css spacing) */
   --space-xs: 4px;
   --space-sm: 8px;
   --space-md: 16px;
@@ -12,18 +13,18 @@
   --space-3xl: 64px;
   --space-4xl: 80px;
   
-  /* Typography scale */
-  --text-xs: 12px;
-  --text-sm: 14px;
-  --text-base: 16px;
-  --text-lg: 18px;
-  --text-xl: 20px;
-  --text-2xl: 24px;
-  --text-3xl: 32px;
-  --text-4xl: 40px;
-  --text-5xl: 48px;
+  /* Fluid typography scale using clamp() for better responsiveness */
+  --text-xs: clamp(11px, 2vw, 12px);
+  --text-sm: clamp(13px, 2.5vw, 14px);
+  --text-base: clamp(15px, 3vw, 16px);
+  --text-lg: clamp(17px, 3.5vw, 18px);
+  --text-xl: clamp(19px, 4vw, 20px);
+  --text-2xl: clamp(22px, 4.5vw, 24px);
+  --text-3xl: clamp(28px, 5vw, 32px);
+  --text-4xl: clamp(36px, 6vw, 40px);
+  --text-5xl: clamp(42px, 7vw, 48px);
   
-  /* Consistent breakpoints */
+  /* Responsive breakpoints */
   --bp-sm: 480px;
   --bp-md: 768px;
   --bp-lg: 1024px;

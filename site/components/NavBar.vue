@@ -7,7 +7,7 @@
         </a>
       </div>
 
-      <ul class="navbar-links">
+      <ul class="navbar-links" role="navigation" aria-label="Main navigation">
         <li><a href="/about" class="nav-link">About</a></li>
         <li><a href="/ai-copilot" class="nav-link">AI Copilot</a></li>
         <li><a href="/pricing" class="nav-link">Pricing</a></li>
@@ -16,10 +16,27 @@
           @mouseenter="openDropdown('resources')"
           @mouseleave="closeDropdown('resources')"
         >
-          <a href="#" class="nav-link dropdown-toggle" @click.prevent>Resources</a>
-          <ul v-if="isResourcesDropdownOpen" class="dropdown-menu">
-            <li><a href="/documentation" class="dropdown-link">Documentation</a></li>
-            <li><a href="/blog" class="dropdown-link">Blog</a></li>
+          <a 
+            href="#" 
+            class="nav-link dropdown-toggle" 
+            @click.prevent="toggleDropdown('resources')"
+            @keydown.enter.prevent="toggleDropdown('resources')"
+            @keydown.space.prevent="toggleDropdown('resources')"
+            @keydown.escape="closeDropdown('resources')"
+            :aria-expanded="isResourcesDropdownOpen"
+            aria-haspopup="true"
+            role="button"
+          >
+            Resources
+          </a>
+          <ul 
+            v-if="isResourcesDropdownOpen" 
+            class="dropdown-menu"
+            role="menu"
+            aria-label="Resources submenu"
+          >
+            <li role="none"><a href="/documentation" class="dropdown-link" role="menuitem">Documentation</a></li>
+            <li role="none"><a href="/blog" class="dropdown-link" role="menuitem">Blog</a></li>
           </ul>
         </li>
       </ul>
@@ -128,6 +145,12 @@
     }
   };
 
+  const toggleDropdown = (menuName) => {
+    if (menuName === "resources") {
+      isResourcesDropdownOpen.value = !isResourcesDropdownOpen.value;
+    }
+  };
+
   // Toggle mobile menu
   const toggleMobileMenu = () => {
     isMobileMenuOpen.value = !isMobileMenuOpen.value;
@@ -209,6 +232,13 @@
     color: var(--primary-500);
   }
 
+  .nav-link:focus-visible {
+    outline: 2px solid var(--primary-500);
+    outline-offset: 2px;
+    border-radius: 4px;
+    background-color: var(--primary-50);
+  }
+
   /* Dropdown Menu Styling */
   .has-dropdown {
     position: relative;
@@ -250,6 +280,13 @@
     color: var(--primary-600);
   }
 
+  .dropdown-link:focus-visible {
+    outline: 2px solid var(--primary-500);
+    outline-offset: -2px;
+    background-color: var(--primary-100);
+    color: var(--primary-700);
+  }
+
   /* Utility Links / CTAs (Right Side) */
   .navbar-utility-links {
     display: flex;
@@ -270,6 +307,13 @@
     background-color: var(--gray-50);
     border-color: var(--gray-400);
     color: var(--gray-800);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .nav-link-button:focus-visible {
+    outline: 2px solid var(--primary-500);
+    outline-offset: 2px;
   }
 
   .nav-link-button-primary {
@@ -282,6 +326,8 @@
     background-color: var(--primary-600);
     border-color: var(--primary-600);
     color: var(--gray-0);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(14, 154, 233, 0.25);
   }
 
   .nav-link-cta {
