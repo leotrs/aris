@@ -21,8 +21,8 @@
       </ul>
 
       <div class="navbar-utility-links">
-        <a href="/login" class="nav-link">Login</a>
-        <a href="/signup" class="nav-link">Sign Up</a>
+        <a href="/login" class="nav-link nav-link-button">Login</a>
+        <a href="/signup" class="nav-link nav-link-button nav-link-button-primary">Sign Up</a>
         <a href="/demo" class="nav-link nav-link-cta">Try the Demo</a>
       </div>
 
@@ -55,8 +55,8 @@
         </li>
       </ul>
       <div class="mobile-navbar-utility-links">
-        <a href="/login" class="mobile-nav-link" @click="closeMobileMenu">Login</a>
-        <a href="/signup" class="mobile-nav-link" @click="closeMobileMenu">Sign Up</a>
+        <a href="/login" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu">Login</a>
+        <a href="/signup" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu">Sign Up</a>
         <a href="/demo" class="mobile-nav-link mobile-nav-link-cta" @click="closeMobileMenu">Try the Demo</a>
       </div>
     </div>
@@ -233,9 +233,36 @@
     gap: 25px; /* Space between utility links */
   }
 
+  .nav-link-button {
+    padding: 8px 16px;
+    border-radius: 6px;
+    border: 1px solid var(--gray-300);
+    background-color: var(--gray-0);
+    color: var(--gray-700);
+    transition: all 0.2s ease-in-out;
+  }
+
+  .nav-link-button:hover {
+    background-color: var(--gray-50);
+    border-color: var(--gray-400);
+    color: var(--gray-800);
+  }
+
+  .nav-link-button-primary {
+    background-color: var(--primary-500);
+    border-color: var(--primary-500);
+    color: var(--gray-0);
+  }
+
+  .nav-link-button-primary:hover {
+    background-color: var(--primary-600);
+    border-color: var(--primary-600);
+    color: var(--gray-0);
+  }
+
   .nav-link-cta {
-    font-weight: 700; /* Slightly bolder for CTA */
-    color: var(--primary-500); /* Primary blue color */
+    font-weight: 700;
+    color: var(--primary-500);
   }
 
   .nav-link-cta:hover {
@@ -249,9 +276,16 @@
     background: none;
     border: none;
     cursor: pointer;
-    padding: 5px;
+    padding: 8px;
+    border-radius: 6px;
     color: var(--gray-800);
     z-index: 1001; /* Ensure it's above the overlay */
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   /* Mobile Menu Overlay */
@@ -262,10 +296,11 @@
     width: 100%;
     height: calc(100vh - 64px); /* Full height minus navbar height */
     background-color: var(--surface-page); /* White background for mobile menu */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    align-items: center;
-    padding: 30px var(--side-padding, 24px); /* Vertical padding for content */
+    align-items: stretch;
+    padding: 24px;
     z-index: 999; /* Below the toggle button, above other content */
     overflow-y: auto; /* Enable scrolling for long menus */
     animation: slideInFromTop 0.3s ease-out forwards; /* Slide in effect */
@@ -275,26 +310,31 @@
     list-style: none;
     padding: 0;
     margin: 0;
-    text-align: center;
     width: 100%;
-    margin-bottom: 30px;
+    margin-bottom: 32px;
   }
 
   .mobile-navbar-links li {
-    margin-bottom: 20px; /* Space between main links */
+    margin-bottom: 8px; /* Consistent spacing between links */
   }
 
   .mobile-nav-link {
-    font-size: 24px; /* Larger links for mobile touch */
-    font-weight: 700;
+    font-size: 18px; /* More reasonable size for mobile */
+    font-weight: 600;
     color: var(--gray-800);
     text-decoration: none;
     display: block; /* Make the whole area clickable */
-    padding: 10px 0;
+    padding: 12px 16px;
+    min-height: 44px; /* Proper touch target */
+    display: flex;
+    align-items: center;
+    border-radius: 8px;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   .mobile-nav-link:hover {
-    color: var(--primary-500);
+    color: var(--primary-600);
+    background-color: var(--primary-50);
   }
 
   /* Mobile Dropdown */
@@ -308,64 +348,137 @@
 
   .mobile-dropdown-menu {
     list-style: none;
-    padding: 0;
-    margin-top: 15px; /* Space above dropdown items */
-    background-color: var(--gray-50); /* Slightly different background for dropdown */
+    padding: 8px;
+    margin-top: 8px;
+    background-color: var(--gray-50);
     border-radius: 8px;
-    padding: 10px 0;
-    animation: fadeIn 0.2s ease-out; /* Simple fade in */
+    animation: fadeIn 0.2s ease-out;
   }
 
   .mobile-dropdown-menu li {
-    margin-bottom: 0; /* Remove extra margin for dropdown items */
+    margin-bottom: 4px;
+  }
+
+  .mobile-dropdown-menu li:last-child {
+    margin-bottom: 0;
   }
 
   .mobile-dropdown-link {
-    font-size: 20px; /* Slightly smaller than main mobile links */
-    font-weight: 600;
+    font-size: 16px; /* Appropriately sized for dropdown */
+    font-weight: 500;
     color: var(--gray-700);
     text-decoration: none;
-    display: block;
-    padding: 10px 30px; /* Padding for mobile dropdown links */
-    text-align: center;
+    display: flex;
+    padding: 12px 24px;
+    min-height: 44px;
+    align-items: center;
+    text-align: left;
+    border-radius: 6px;
+    transition: background-color 0.2s ease, color 0.2s ease;
   }
 
   .mobile-dropdown-link:hover {
+    background-color: var(--primary-50);
+    color: var(--primary-600);
+  }
+
+  /* Mobile utility links styling */
+  .mobile-nav-link-utility {
+    color: var(--gray-600);
+    font-weight: 500;
+    text-align: center;
+    justify-content: center;
+    min-height: 48px; /* Slightly larger for utility buttons */
+  }
+
+  .mobile-nav-link-utility:hover {
+    color: var(--gray-800);
     background-color: var(--gray-100);
-    color: var(--primary-500);
+  }
+
+  /* Mobile CTA button styling */
+  .mobile-nav-link-cta {
+    background: var(--primary-500);
+    color: var(--gray-0) !important;
+    font-weight: 600;
+    text-align: center;
+    justify-content: center;
+    border-radius: 8px;
+    margin-top: 8px;
+    min-height: 48px; /* Larger touch target for CTA */
+  }
+
+  .mobile-nav-link-cta:hover {
+    background: var(--primary-600) !important;
+    color: var(--gray-0) !important;
   }
 
 
   .mobile-navbar-utility-links {
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    width: 80%; /* Adjust button width for mobile */
-    max-width: 300px;
+    gap: 12px;
+    width: 100%;
+    margin-top: auto; /* Push to bottom of menu */
+    padding-top: 24px;
+    border-top: 1px solid var(--gray-200);
   }
 
   /* --- Animations --- */
   @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
+    from { 
+      opacity: 0; 
+      transform: translateY(-8px); 
+    }
+    to { 
+      opacity: 1; 
+      transform: translateY(0); 
+    }
   }
 
   @keyframes slideInFromTop {
-    from { transform: translateY(-100%); }
-    to { transform: translateY(0); }
+    from { 
+      opacity: 0;
+      transform: translateY(-100%); 
+    }
+    to { 
+      opacity: 1;
+      transform: translateY(0); 
+    }
+  }
+
+  @keyframes slideOutToTop {
+    from { 
+      opacity: 1;
+      transform: translateY(0); 
+    }
+    to { 
+      opacity: 0;
+      transform: translateY(-100%); 
+    }
   }
 
 
   /* --- Responsive Adjustments --- */
-  @media (max-width: 768px) {
+  @media (max-width: 900px) {
     .navbar-links,
     .navbar-utility-links {
       display: none; /* Hide desktop nav and utility links */
     }
 
     .menu-toggle {
-      display: block; /* Show hamburger icon */
+      display: flex; /* Show hamburger icon */
       color: var(--gray-800); /* Ensure icon color is visible against transparency */
+    }
+
+    .menu-toggle:hover {
+      background-color: var(--gray-100);
+      color: var(--gray-900);
+    }
+
+    .menu-toggle:active {
+      background-color: var(--primary-50);
+      color: var(--primary-600);
     }
 
     /* When navbar is solid, ensure menu toggle color is good */
@@ -374,24 +487,67 @@
     }
   }
 
-  /* Optional: Adjust for smaller phones if needed */
-  @media (max-width: 480px) {
+  /* Tablet and smaller desktop adjustments */
+  @media (max-width: 1024px) {
+    .navbar-content-wrapper {
+      padding: 0 20px;
+    }
+  }
+
+  /* Small tablet adjustments */
+  @media (max-width: 640px) {
     .navbar-content-wrapper {
       padding: 0 16px;
     }
+    
+    .mobile-menu-overlay {
+      padding: 20px 16px;
+    }
+  }
 
-    .mobile-navbar-links li {
-      margin-bottom: 15px;
+  /* Small mobile adjustments */
+  @media (max-width: 480px) {
+    .navbar-content-wrapper {
+      padding: 0 12px;
     }
+
+    .mobile-menu-overlay {
+      padding: 16px 12px;
+    }
+
     .mobile-nav-link {
-      font-size: 22px;
+      font-size: 17px;
+      padding: 14px 16px;
     }
+    
     .mobile-dropdown-link {
-      font-size: 18px;
-      padding: 8px 20px;
+      padding: 12px 20px;
     }
+    
     .mobile-navbar-utility-links {
-      gap: 15px;
+      gap: 10px;
+      padding-top: 20px;
+    }
+  }
+
+  /* Very small mobile devices */
+  @media (max-width: 360px) {
+    .navbar-content-wrapper {
+      padding: 0 8px;
+    }
+
+    .mobile-menu-overlay {
+      padding: 12px 8px;
+    }
+
+    .mobile-nav-link {
+      font-size: 16px;
+      padding: 12px 14px;
+    }
+
+    .mobile-dropdown-link {
+      font-size: 15px;
+      padding: 10px 16px;
     }
   }
 </style>
