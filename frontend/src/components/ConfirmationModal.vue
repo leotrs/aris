@@ -180,7 +180,12 @@
           {{ confirmText }}
         </Button>
 
-        <Button kind="secondary" class="cancel-button" data-testid="cancel-button" @click="handleCancel">
+        <Button
+          kind="secondary"
+          class="cancel-button"
+          data-testid="cancel-button"
+          @click="handleCancel"
+        >
           {{ cancelText }}
         </Button>
       </div>
