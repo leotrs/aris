@@ -16,26 +16,28 @@
           @mouseenter="openDropdown('resources')"
           @mouseleave="closeDropdown('resources')"
         >
-          <a 
-            href="#" 
-            class="nav-link dropdown-toggle" 
+          <a
+            href="#"
+            class="nav-link dropdown-toggle"
+            :aria-expanded="isResourcesDropdownOpen"
+            aria-haspopup="true"
+            role="button"
             @click.prevent="toggleDropdown('resources')"
             @keydown.enter.prevent="toggleDropdown('resources')"
             @keydown.space.prevent="toggleDropdown('resources')"
             @keydown.escape="closeDropdown('resources')"
-            :aria-expanded="isResourcesDropdownOpen"
-            aria-haspopup="true"
-            role="button"
           >
             Resources
           </a>
-          <ul 
-            v-if="isResourcesDropdownOpen" 
+          <ul
+            v-if="isResourcesDropdownOpen"
             class="dropdown-menu"
             role="menu"
             aria-label="Resources submenu"
           >
-            <li role="none"><a href="/documentation" class="dropdown-link" role="menuitem">Documentation</a></li>
+            <li role="none">
+              <a href="/documentation" class="dropdown-link" role="menuitem">Documentation</a>
+            </li>
             <li role="none"><a href="/blog" class="dropdown-link" role="menuitem">Blog</a></li>
           </ul>
         </li>

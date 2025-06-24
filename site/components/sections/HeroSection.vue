@@ -1,17 +1,23 @@
 <template>
   <section class="hero-section" aria-labelledby="hero-heading">
     <div class="hero-content-wrapper">
-      <h1 id="hero-heading" class="hero-headline">Aris is the Unified Platform for Human-First Scientific Research.</h1>
-      <p class="hero-subheadline">
-        Experience an integrated platform for collaborative writing, intelligent peer review, and interactive publishing, making your science more discoverable, understandable, and deeply engaging.
-      </p>
-      <div class="hero-ctas" role="group" aria-label="Call to action buttons">
-        <button class="btn btn-primary" type="button" aria-describedby="hero-heading">Try the Demo</button>
-        <a href="/signup" class="text-link">Or, sign up for the beta waitlist</a>
+      <div class="hero-content">
+        <h1 id="hero-heading" class="hero-headline">
+          Aris is the Unified Platform for Human-First Scientific Research.
+        </h1>
+        <p class="hero-subheadline">
+          Experience an integrated platform for collaborative writing, intelligent peer review, and
+          interactive publishing, making your science more discoverable, understandable, and deeply
+          engaging.
+        </p>
+        <div class="hero-ctas" role="group" aria-label="Call to action buttons">
+          <button class="btn btn-primary" type="button" aria-describedby="hero-heading">
+            Try the Demo
+          </button>
+          <a href="/signup" class="text-link">Or, sign up for the beta waitlist</a>
+        </div>
       </div>
-      <figure class="hero-visual" aria-hidden="true">
-        <img src="@/assets/isometric.png" alt="" />
-      </figure>
+      <div class="hero-background" aria-hidden="true"></div>
     </div>
   </section>
 </template>
@@ -30,15 +36,41 @@
     min-height: 70vh;
     display: flex;
     align-items: center;
+    position: relative;
+    overflow: hidden;
   }
 
-  /* Content Wrapper - Max-width & Left-alignment */
+  /* Content Wrapper - Full width container */
   .hero-content-wrapper {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 var(--space-lg);
-    text-align: left;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: relative;
+    gap: var(--space-4xl);
+  }
+
+  /* Hero Content - Left Side */
+  .hero-content {
+    flex: 1;
+    max-width: 600px;
+    z-index: 2;
+    position: relative;
+  }
+
+  /* Hero Background - Right Side */
+  .hero-background {
+    flex: 1;
+    min-height: 500px;
+    background-image: url("@/assets/isometric.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    opacity: 1;
+    z-index: 1;
   }
 
   /* Headline Styling */
@@ -49,7 +81,6 @@
     color: var(--gray-900);
     margin-bottom: var(--space-lg);
     line-height: 1.1;
-    max-width: 800px;
   }
 
   /* Sub-headline Styling */
@@ -58,7 +89,6 @@
     font-size: clamp(16px, 4vw, 18px);
     line-height: 1.6;
     color: var(--gray-700);
-    max-width: 700px;
     margin-bottom: var(--space-2xl);
   }
 
@@ -130,20 +160,6 @@
     padding: 2px 4px;
   }
 
-  /* Hero Visual */
-  .hero-visual {
-    width: 100%;
-    margin: 0;
-    text-align: center;
-  }
-
-  .hero-visual img {
-    width: 100%;
-    height: auto;
-    max-width: 600px;
-    border-radius: 12px;
-  }
-
   /* --- Responsive Adjustments --- */
   @media (max-width: 768px) {
     .hero-section {
@@ -151,16 +167,24 @@
       min-height: auto;
     }
 
-    .hero-headline {
-      font-size: 40px;
+    .hero-content-wrapper {
+      flex-direction: column;
+      gap: var(--space-xl);
+      padding: 0 var(--space-md);
       text-align: center;
     }
 
-    .hero-subheadline {
-      font-size: var(--text-base);
-      text-align: center;
-      margin-left: auto;
-      margin-right: auto;
+    .hero-content {
+      max-width: none;
+      order: 1;
+    }
+
+    .hero-background {
+      order: 2;
+      min-height: 300px;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
     }
 
     .hero-ctas {
@@ -175,25 +199,11 @@
       max-width: 280px;
       text-align: center;
     }
-
-    .hero-content-wrapper {
-      padding: 0 var(--space-md);
-      text-align: center;
-    }
-
-    .hero-visual-placeholder {
-      height: 200px;
-      margin-top: var(--space-xl);
-    }
   }
 
   @media (max-width: 480px) {
-    .hero-headline {
-      font-size: 32px;
-    }
-
-    .hero-visual-placeholder {
-      height: 160px;
+    .hero-background {
+      min-height: 250px;
     }
   }
 </style>
