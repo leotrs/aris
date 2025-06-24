@@ -17,6 +17,7 @@
   const newEmptyFile = async () => {
     try {
       const newFile = await fileStore.value.createFile({
+        title: "New File",
         ownerId: user.value.id,
         source: ":rsm:\n# New File\n\nThe possibilities are *endless*!\n\n::\n",
       });

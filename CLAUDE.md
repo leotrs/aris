@@ -41,3 +41,4 @@ npm run test:e2e                      # Run E2E tests
 - **Global Components**: All components in `src/components/` auto-registered via `main.js`
 - **For user interaction bugs: ALWAYS use `debug/debug-bug-template.js` to replicate**
 - **Whenever using puppeteer or playwright, use headless mode**
+- **Always run e2e tests with --reporter=line**

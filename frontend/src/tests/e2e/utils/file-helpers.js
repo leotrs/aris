@@ -136,8 +136,29 @@ export class FileHelpers {
    */
   async getFileTitle(fileId) {
     const fileItem = await this.getFileItem(fileId);
-    const titleElement = fileItem.locator(".file-title .editable, .file-title input");
-    return await titleElement.textContent();
+    
+    // Try to get title from display mode (.editable div)
+    const editableElement = fileItem.locator(".file-title .editable");
+    if (await editableElement.isVisible()) {
+      const title = await editableElement.textContent();
+      return title ? title.trim() : "";
+    }
+    
+    // If editing mode, get from input element
+    const inputElement = fileItem.locator(".file-title input");
+    if (await inputElement.isVisible()) {
+      const title = await inputElement.inputValue();
+      return title ? title.trim() : "";
+    }
+    
+    // Fallback: try any text in the file-title container
+    const titleContainer = fileItem.locator(".file-title");
+    if (await titleContainer.isVisible()) {
+      const title = await titleContainer.textContent();
+      return title ? title.trim() : "";
+    }
+    
+    return "";
   }
 
   /**
