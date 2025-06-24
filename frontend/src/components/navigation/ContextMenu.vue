@@ -66,7 +66,7 @@
    */
 
   import { ref, computed, watch, provide, inject, useTemplateRef } from "vue";
-  import { useFloating, autoUpdate, offset, flip, shift, arrow } from "@floating-ui/vue";
+  import { useFloating, autoUpdate, offset, flip, shift } from "@floating-ui/vue";
   import { useListKeyboardNavigation } from "@/composables/useListKeyboardNavigation.js";
   import useClosable from "@/composables/useClosable.js";
   import ButtonDots from "@/components/base/ButtonDots.vue";
@@ -114,24 +114,14 @@
   // Template refs
   const triggerRef = useTemplateRef("trigger-ref");
   const menuRef = useTemplateRef("menu-ref");
-  const arrowRef = useTemplateRef("arrow-ref");
 
   // Floating UI setup
-  const middleware = computed(() => {
-    const mw = [offset(4), flip(), shift({ padding: 8 })];
-    // Only add arrow middleware when menu is shown and arrow ref exists
-    if (show.value && arrowRef.value) {
-      mw.push(arrow({ element: arrowRef.value }));
-    }
-    return mw;
-  });
-
   const mobileMode = inject("mobileMode");
   const strategy = computed(() => (mobileMode?.value ? "fixed" : "absolute"));
   const { floatingStyles, placement: actualPlacement } = useFloating(triggerRef, menuRef, {
     placement: computed(() => props.placement),
-    strategy,
-    middleware,
+    strategy: strategy,
+    middleware: [offset(4), flip(), shift({ padding: 8 })],
     whileElementsMounted: autoUpdate,
   });
 
@@ -269,7 +259,6 @@
           </ContextMenu>
         -->
         <slot />
-        <div v-if="!mobileMode" ref="arrow-ref" class="context-menu-arrow" />
       </div>
     </Teleport>
   </div>
@@ -299,14 +288,6 @@
     max-width: 320px;
     max-height: 80vh;
     overflow-y: auto;
-  }
-
-  .context-menu-arrow {
-    position: absolute;
-    background: var(--surface-primary);
-    width: 8px;
-    height: 8px;
-    transform: rotate(45deg);
   }
 
   .context-menu-trigger {
