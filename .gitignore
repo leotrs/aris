@@ -36,6 +36,12 @@ coverage.xml
 *.cover
 .hypothesis/
 
+# Frontend testing
+site/coverage/
+site/test-results/
+frontend/coverage/
+frontend/test-results/
+
 # Database
 *.db
 *.sqlite

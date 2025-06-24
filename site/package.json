@@ -8,7 +8,16 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "test": "node --max-old-space-size=4096 ./node_modules/vitest/vitest.mjs",
+    "test:run": "node --max-old-space-size=4096 ./node_modules/vitest/vitest.mjs run",
+    "test:coverage": "vitest run --coverage",
+    "test:coverage:ui": "vitest --coverage --ui",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:all": "npm run test:run && npm run test:e2e",
+    "test:ui": "vitest --ui"
   },
   "dependencies": {
     "@nuxt/eslint": "^1.4.1",
@@ -25,10 +34,21 @@
     "@babel/eslint-parser": "^7.27.5",
     "@babel/plugin-syntax-import-assertions": "^7.27.1",
     "@babel/plugin-syntax-jsx": "^7.27.1",
+    "@playwright/test": "^1.53.1",
+    "@vitejs/plugin-vue": "^6.0.0",
+    "@vitest/coverage-v8": "^3.2.4",
+    "@vitest/ui": "^3.2.4",
+    "@vue/test-utils": "^2.4.6",
+    "axios": "^1.10.0",
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.0",
     "eslint-plugin-vue": "^10.2.0",
-    "globals": "^16.2.0"
+    "globals": "^16.2.0",
+    "happy-dom": "^17.6.3",
+    "jsdom": "^26.1.0",
+    "puppeteer": "^24.10.2",
+    "puppeteer-core": "^24.10.2",
+    "vitest": "^3.2.4"
   }
 }

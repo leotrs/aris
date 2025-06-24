@@ -24,6 +24,7 @@
           <label for="name" class="form-label">Full Name *</label>
           <input
             id="name"
+            name="name"
             v-model="name"
             type="text"
             class="form-input"
@@ -42,6 +43,7 @@
           <label for="institution" class="form-label">Institution or Affiliation</label>
           <input
             id="institution"
+            name="institution"
             v-model="institution"
             type="text"
             class="form-input"
@@ -58,6 +60,7 @@
           <label for="research_area" class="form-label">Research Area</label>
           <input
             id="research_area"
+            name="research_area"
             v-model="researchArea"
             type="text"
             class="form-input"
@@ -73,6 +76,7 @@
           <label for="interest_level" class="form-label">How ready are you to get started?</label>
           <select
             id="interest_level"
+            name="interest_level"
             v-model="interestLevel"
             class="form-select"
           >
@@ -103,6 +107,7 @@
 
 <script setup>
   import { ref } from "vue";
+  import { signupUser } from "../composables/useApi.js";
 
   // Form fields
   const email = ref("");
@@ -155,38 +160,30 @@
         interest_level: interestLevel.value || null,
       };
 
-      // Call backend API
-      const response = await fetch('/api/signup/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(signupData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        successMessage.value = "Successfully signed up for early access! We'll notify you when Aris is ready.";
-        // Clear form fields on success
-        email.value = "";
-        name.value = "";
-        institution.value = "";
-        researchArea.value = "";
-        interestLevel.value = "";
-      } else {
-        // Handle different error types from backend
-        if (data.detail && data.detail.error === 'duplicate_email') {
-          errorMessage.value = "This email address is already registered for early access.";
-        } else if (data.detail && data.detail.message) {
-          errorMessage.value = data.detail.message;
-        } else {
-          errorMessage.value = "Failed to sign up. Please try again.";
-        }
-      }
+      // Call API service
+      await signupUser(signupData);
+      
+      // Success - clear form and show message
+      successMessage.value = "Successfully signed up for early access! We'll notify you when Aris is ready.";
+      email.value = "";
+      name.value = "";
+      institution.value = "";
+      researchArea.value = "";
+      interestLevel.value = "";
+      
     } catch (error) {
       console.error("Signup error:", error);
-      errorMessage.value = "An unexpected error occurred. Please try again later.";
+      
+      // Handle API errors
+      if (error.error === 'duplicate_email') {
+        errorMessage.value = "This email address is already registered for early access.";
+      } else if (error.error === 'network_error') {
+        errorMessage.value = "Unable to connect to server. Please check your internet connection.";
+      } else if (error.message) {
+        errorMessage.value = error.message;
+      } else {
+        errorMessage.value = "An unexpected error occurred. Please try again later.";
+      }
     } finally {
       isLoading.value = false;
     }
