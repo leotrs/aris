@@ -34,17 +34,37 @@
 <template>
   <div class="fm-wrapper" data-testid="file-menu" :class="mode">
     <component :is="menuComponent" ref="menu-ref" variant="dots">
-      <component :is="comp" v-bind="childProps('Share3', 'Share')" data-testid="file-menu-share" />
-      <component :is="comp" v-bind="childProps('Download', 'Download')" data-testid="file-menu-download" />
+      <component
+        :is="comp"
+        v-bind="childProps('Share3', 'Share')"
+        data-testid="file-menu-share"
+        @click.stop
+      />
+      <component
+        :is="comp"
+        v-bind="childProps('Download', 'Download')"
+        data-testid="file-menu-download"
+        @click.stop
+      />
       <Separator />
-      <component :is="comp" v-bind="childProps('Edit', 'Rename')" data-testid="file-menu-rename" @click="emit('rename')" />
-      <component :is="comp" v-bind="childProps('Copy', 'Duplicate')" data-testid="file-menu-duplicate" @click="emit('duplicate')" />
+      <component
+        :is="comp"
+        v-bind="childProps('Edit', 'Rename')"
+        data-testid="file-menu-rename"
+        @click.stop="emit('rename')"
+      />
+      <component
+        :is="comp"
+        v-bind="childProps('Copy', 'Duplicate')"
+        data-testid="file-menu-duplicate"
+        @click.stop="emit('duplicate')"
+      />
       <component
         :is="comp"
         v-bind="childProps('TrashX', 'Delete')"
         class="danger"
         data-testid="file-menu-delete"
-        @click="emit('delete')"
+        @click.stop="emit('delete')"
       />
     </component>
   </div>

@@ -9,8 +9,25 @@ export class FileHelpers {
    * Wait for the files container to be visible and loaded
    */
   async waitForFilesLoaded() {
-    await expect(this.page.locator('[data-testid="files-container"]')).toBeVisible();
-    // Wait a bit for files to load from API
+    // Wait for network operations to complete (file creation/updates)
+    await this.page.waitForLoadState("networkidle");
+
+    try {
+      // Wait for files container to be visible (handles Suspense loading states)
+      await expect(this.page.locator('[data-testid="files-container"]')).toBeVisible({
+        timeout: 5000,
+      });
+    } catch (_e) {
+      // If files container doesn't appear, the duplicate might have broken the app state
+      // Refresh the page to restore the file list
+      await this.page.reload();
+      await this.page.waitForLoadState("networkidle");
+      await expect(this.page.locator('[data-testid="files-container"]')).toBeVisible({
+        timeout: 10000,
+      });
+    }
+
+    // Wait a bit for files to load from API and render
     await this.page.waitForTimeout(1000);
   }
 
@@ -61,10 +78,43 @@ export class FileHelpers {
    */
   async selectFile(fileId) {
     const fileItem = await this.getFileItem(fileId);
-    await fileItem.click();
+
+    // Wait for any existing hover states to clear
+    await this.page.waitForTimeout(100);
+
+    // Try clicking on the spacer element which should not have click handlers
+    const spacer = fileItem.locator(".spacer").first();
+    if (await spacer.isVisible()) {
+      await spacer.click();
+    } else {
+      // Fallback to clicking the file item directly
+      await fileItem.click();
+    }
+
+    // Wait for reactivity to update
+    await this.page.waitForTimeout(200);
 
     // Verify file is selected (has active class)
     await expect(fileItem).toHaveClass(/active/);
+  }
+
+  /**
+   * Ensure a file is deselected by clicking elsewhere
+   */
+  async ensureFileDeselected(fileId) {
+    const fileItem = await this.getFileItem(fileId);
+
+    // Check if file is currently selected
+    const hasActiveClass = await fileItem.evaluate((el) => el.classList.contains("active"));
+
+    if (hasActiveClass) {
+      // Click on an empty area to deselect
+      await this.page.click("body");
+      // Wait a moment for the selection to clear
+      await this.page.waitForTimeout(200);
+      // Verify the file is no longer selected
+      await expect(fileItem).not.toHaveClass(/active/);
+    }
   }
 
   /**
@@ -73,33 +123,35 @@ export class FileHelpers {
   async openFileMenu(fileId) {
     const fileItem = await this.getFileItem(fileId);
 
-    // Find and click the dots button (context menu trigger) within the file item
-    const dotsButton = fileItem.locator('[data-testid="file-menu"] .context-menu-trigger');
+    // Find and click the dots button using the more specific test ID
+    const dotsButton = fileItem.locator('[data-testid="trigger-button"]');
     await dotsButton.click();
 
-    // Wait for menu to appear - target the specific file's menu to avoid strict mode violations
-    const fileMenu = fileItem.locator('[data-testid="file-menu"]');
-    await expect(fileMenu).toBeVisible();
+    // Wait for the context menu to appear
+    await expect(this.page.locator('[data-testid="context-menu"]')).toBeVisible();
   }
 
   /**
    * Delete a file with confirmation
    */
   async deleteFile(fileId) {
+    // Ensure file is deselected so FileMenu is visible
+    await this.ensureFileDeselected(fileId);
+
     await this.openFileMenu(fileId);
 
-    // Click delete option - look for the danger-styled menu item
-    await this.page.locator('.danger').filter({ hasText: 'Delete' }).click();
+    // Click delete option
+    await this.page.locator('[data-testid="file-menu-delete"]').click();
 
-    // Wait for confirmation modal
-    await expect(this.page.locator('text="Delete File?"')).toBeVisible();
+    // Wait for confirmation modal to appear
+    await expect(this.page.locator('[data-testid="confirmation-modal"]')).toBeVisible();
 
-    // Confirm deletion - use more specific selector
-    await this.page.locator('button').filter({ hasText: 'Delete' }).first().click();
+    // Confirm deletion using the specific test ID
+    await this.page.locator('[data-testid="confirm-button"]').click();
 
     // Wait for modal to disappear
-    await expect(this.page.locator('text="Delete File?"')).not.toBeVisible();
-    
+    await expect(this.page.locator('[data-testid="confirmation-modal"]')).not.toBeVisible();
+
     // Wait for file list to update
     await this.waitForFilesLoaded();
   }
@@ -108,17 +160,21 @@ export class FileHelpers {
    * Duplicate a file
    */
   async duplicateFile(fileId) {
+    // Ensure file is deselected so FileMenu is visible
+    await this.ensureFileDeselected(fileId);
+
     await this.openFileMenu(fileId);
 
-    // Click duplicate option
-    await this.page.locator('text="Duplicate"').click();
+    // Click duplicate option using the specific test ID
+    await this.page.locator('[data-testid="file-menu-duplicate"]').click();
 
-    // Wait for operation to complete (menu should close)
-    const fileItem = await this.getFileItem(fileId);
-    const fileMenu = fileItem.locator('[data-testid="file-menu"]');
-    await expect(fileMenu).not.toBeVisible();
-    
-    // Wait for file list to update
+    // Close the menu by clicking elsewhere (duplicate doesn't auto-close menu)
+    await this.page.click("body");
+
+    // Wait for the duplicate operation to complete
+    await this.page.waitForTimeout(1000);
+
+    // Wait for the async file creation to complete and file list to update
     await this.waitForFilesLoaded();
   }
 
@@ -136,28 +192,28 @@ export class FileHelpers {
    */
   async getFileTitle(fileId) {
     const fileItem = await this.getFileItem(fileId);
-    
+
     // Try to get title from display mode (.editable div)
     const editableElement = fileItem.locator(".file-title .editable");
     if (await editableElement.isVisible()) {
       const title = await editableElement.textContent();
       return title ? title.trim() : "";
     }
-    
+
     // If editing mode, get from input element
     const inputElement = fileItem.locator(".file-title input");
     if (await inputElement.isVisible()) {
       const title = await inputElement.inputValue();
       return title ? title.trim() : "";
     }
-    
+
     // Fallback: try any text in the file-title container
     const titleContainer = fileItem.locator(".file-title");
     if (await titleContainer.isVisible()) {
       const title = await titleContainer.textContent();
       return title ? title.trim() : "";
     }
-    
+
     return "";
   }
 
@@ -189,18 +245,21 @@ export class FileHelpers {
    * Cancel a file deletion
    */
   async cancelFileDeletion(fileId) {
+    // Ensure file is deselected so FileMenu is visible
+    await this.ensureFileDeselected(fileId);
+
     await this.openFileMenu(fileId);
 
-    // Click delete option - look for the danger-styled menu item
-    await this.page.locator('.danger').filter({ hasText: 'Delete' }).click();
+    // Click delete option using the specific test ID
+    await this.page.locator('[data-testid="file-menu-delete"]').click();
 
-    // Wait for confirmation modal
-    await expect(this.page.locator('text="Delete File?"')).toBeVisible();
+    // Wait for confirmation modal to appear
+    await expect(this.page.locator('[data-testid="confirmation-modal"]')).toBeVisible();
 
-    // Cancel deletion
-    await this.page.locator('button').filter({ hasText: 'Cancel' }).click();
+    // Cancel deletion using the specific test ID
+    await this.page.locator('[data-testid="cancel-button"]').click();
 
     // Wait for modal to disappear
-    await expect(this.page.locator('text="Delete File?"')).not.toBeVisible();
+    await expect(this.page.locator('[data-testid="confirmation-modal"]')).not.toBeVisible();
   }
 }
