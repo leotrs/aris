@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, watch, inject, onBeforeUnmount } from "vue";
+  import { ref, watch, inject } from "vue";
 
   const props = defineProps({
     icon: { type: String, required: true },
@@ -14,35 +14,9 @@
     type: { type: String, default: "filled" },
   });
   const emit = defineEmits(["on", "off"]);
-  const buttonState = defineModel({ type: Boolean, default: false });
-
-  watch(buttonState, (state) => (state ? emit("on") : emit("off")));
-
-  const isHoveringButton = ref(false);
-  const isHoveringControl = ref(false);
-  const visibilityClass = ref("");
-  const updateVisibility = () => {
-    visibilityClass.value = isHoveringButton.value || isHoveringControl.value ? "show" : "";
-  };
-  let hideTimeout = null;
-  let showTimeout = null;
-  const onMouseEnterButton = () => {
-    isHoveringButton.value = true;
-    clearTimeout(hideTimeout);
-    showTimeout = setTimeout(updateVisibility, 500);
-  };
-  const onMouseLeaveButton = () => {
-    isHoveringButton.value = false;
-    clearTimeout(showTimeout);
-    hideTimeout = setTimeout(updateVisibility, 300);
-  };
-
+  const buttonState = ref(false);
   const mobileMode = inject("mobileMode");
-
-  onBeforeUnmount(() => {
-    if (hideTimeout) clearTimeout(hideTimeout);
-    if (showTimeout) clearTimeout(showTimeout);
-  });
+  watch(buttonState, (state) => (state ? emit("on") : emit("off")));
 </script>
 
 <template>
@@ -55,10 +29,8 @@
         :aria-pressed="buttonState"
         tabindex="0"
         :button-size="mobileMode ? 'sm' : 'md'"
-        :active-color="type === 'outline' ? 'var(--purple-300)' : 'var(--surface-hint)'"
+        active-color="purple"
         :type="type"
-        @mouseenter="onMouseEnterButton"
-        @mouseleave="onMouseLeaveButton"
       />
     </div>
     <div class="sb-item-label text-default">{{ label }}</div>
@@ -71,17 +43,6 @@
     flex-direction: column;
     position: relative;
   }
-
-  /* .sb-item::after {
-     content: "";
-     height: 8px;
-     width: 8px;
-     background: var(--purple-500);
-     position: absolute;
-     right: 12px;
-     border-radius: 50%;
-     bottom: 12px;
-     } */
 
   .sb-item-btn {
     display: flex;

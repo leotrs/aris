@@ -1,5 +1,5 @@
 <script setup>
-  import { watch } from "vue";
+  import { watch, computed } from "vue";
 
   defineOptions({
     name: "ButtonToggle",
@@ -11,13 +11,16 @@
     iconClass: { type: String, default: "" },
     size: { type: String, default: "md" },
     hoverColor: { type: String, default: "var(--gray-50)" },
-    activeColor: { type: String, default: "var(--surface-hint)" },
+    activeColor: { type: String, default: "blue" },
     type: { type: String, default: "filled" },
   });
   const active = defineModel({ type: Boolean });
   const emit = defineEmits(["on", "off"]);
 
   watch(active, (newValue) => (newValue ? emit("on") : emit("off")));
+  const bgColor = computed(() => `var(--${props.activeColor}-300)`);
+  const bdColor = computed(() => `var(--${props.activeColor}-400)`);
+  const pressedColor = computed(() => `var(--${props.activeColor}-500)`);
 </script>
 
 <template>
@@ -61,11 +64,11 @@
     }
 
     &.active:hover {
-      background-color: v-bind("activeColor");
+      background-color: v-bind("bgColor");
     }
 
     &:not(.active):hover {
-      background-color: v-bind("hoverColor");
+      background-color: v-bind("bgColor");
     }
 
     &.active {
@@ -74,11 +77,11 @@
     }
 
     &.active.filled {
-      background-color: v-bind("activeColor");
+      background-color: v-bind("bgColor");
     }
 
     &.active.outline {
-      border: var(--border-width) solid v-bind("activeColor");
+      border: var(--border-width) solid v-bind("bdColor");
     }
   }
 
@@ -123,6 +126,6 @@
   }
 
   button:active {
-    background-color: var(--surface-action) !important;
+    background-color: v-bind("pressedColor") !important;
   }
 </style>

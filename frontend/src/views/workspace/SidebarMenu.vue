@@ -10,19 +10,19 @@
   const emit = defineEmits(["on", "off"]);
   const items = toRef(() => props.items);
 
+  const drawerOpen = inject("drawerOpen");
   const handleDrawerClick = (clickedIndex) => {
     const wasActive = items.value[clickedIndex].state;
     if (wasActive) {
       emit("off", clickedIndex);
+      drawerOpen.value = false;
     } else {
       // Emit events to close all other drawers first
       items.value.forEach((item, index) => {
-        if (item.type === "drawer" && item.state) {
-          emit("off", index);
-        }
+        if (item.type === "drawer" && item.state) emit("off", index);
       });
-      // Then open the clicked drawer
       emit("on", clickedIndex);
+      drawerOpen.value = true;
     }
   };
 
@@ -68,6 +68,7 @@
           v-else-if="it.type === 'drawer'"
           :icon="it.icon"
           :label="it.label"
+          type="outline"
           @on="handleDrawerClick(idx)"
           @off="handleDrawerClick(idx)"
         />
