@@ -6,8 +6,18 @@
       <div class="user-role-grid">
         <div class="user-role-card">
           <div class="card-icon-container">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M12 18l-7 3l7 -15l7 15l-7 -3" />
               <path d="M12 18v3" />
               <path d="M17 18l5 -3l-5 -3l-5 3l5 3" />
@@ -15,32 +25,65 @@
             </svg>
           </div>
           <h3 class="card-title">For Authors & Researchers</h3>
-          <p class="card-description">Craft compelling narratives, manage versions effortlessly, and collaborate in real-time to accelerate your discoveries.</p>
+          <p class="card-description">
+            Craft compelling narratives, manage versions effortlessly, and collaborate in real-time
+            to accelerate your discoveries.
+          </p>
         </div>
 
         <div class="user-role-card">
           <div class="card-icon-container">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
               <path d="M19 4v16h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12z" />
               <path d="M12 4h7v16h-7z" />
             </svg>
           </div>
           <h3 class="card-title">For Readers & Scholars</h3>
-          <p class="card-description">Engage with interactive content, explore rich data, and trace the evolution of ideas with unparalleled clarity.</p>
+          <p class="card-description">
+            Engage with interactive content, explore rich data, and trace the evolution of ideas
+            with unparalleled clarity.
+          </p>
         </div>
 
         <div class="user-role-card">
           <div class="card-icon-container">
-            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-              <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-              <path d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2" />
-              <path d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              fill="none"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+              <path
+                d="M9 5h-2a2 2 0 0 0 -2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-12a2 2 0 0 0 -2 -2h-2"
+              />
+              <path
+                d="M9 3m0 2a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v0a2 2 0 0 1 -2 2h-2a2 2 0 0 1 -2 -2z"
+              />
               <path d="M9 14l2 2l4 -4" />
             </svg>
           </div>
           <h3 class="card-title">For Peer Reviewers & Editors</h3>
-          <p class="card-description">Streamline feedback, track changes semantically, and ensure scientific rigor with intuitive, powerful tools.</p>
+          <p class="card-description">
+            Streamline feedback, track changes semantically, and ensure scientific rigor with
+            intuitive, powerful tools.
+          </p>
         </div>
       </div>
     </div>
@@ -69,7 +112,7 @@
 
   /* Section Heading */
   .section-heading {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-size: 48px; /* Prominent heading size */
     font-weight: 700;
     color: var(--gray-900);
@@ -96,13 +139,19 @@
     flex-direction: column;
     align-items: center; /* Center content horizontally within the card */
     text-align: center; /* Center text within the card */
-    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out; /* Smooth transition for hover effects */
+    transition:
+      transform 0.2s ease-in-out,
+      box-shadow 0.2s ease-in-out; /* Smooth transition for hover effects */
   }
 
   /* Hover Effect for Cards */
   .user-role-card:hover {
     transform: translateY(-5px); /* Subtle upward lift */
-    box-shadow: var(--shadow-medium, 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)); /* Slightly stronger shadow on hover */
+    box-shadow: var(
+      --shadow-medium,
+      0 10px 15px -3px rgba(0, 0, 0, 0.1),
+      0 4px 6px -2px rgba(0, 0, 0, 0.05)
+    ); /* Slightly stronger shadow on hover */
   }
 
   /* Card Icon Container */
@@ -127,7 +176,7 @@
 
   /* Card Title (User Role) */
   .card-title {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-size: 24px;
     font-weight: 700;
     color: var(--gray-900);
@@ -137,7 +186,7 @@
 
   /* Card Description */
   .card-description {
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: "Source Sans 3", sans-serif;
     font-size: 16px;
     line-height: var(--body-line-height);
     color: var(--gray-700);
@@ -146,7 +195,10 @@
   /* --- Responsive Adjustments --- */
   @media (max-width: 992px) {
     .user-role-grid {
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Adjust columns for smaller desktops/tablets */
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(280px, 1fr)
+      ); /* Adjust columns for smaller desktops/tablets */
     }
   }
 

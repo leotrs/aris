@@ -56,7 +56,7 @@
     message.value = "";
 
     try {
-      const response = await api.post('/signup/', {
+      const response = await api.post("/signup/", {
         email: formData.value.email,
         name: formData.value.name,
         institution: formData.value.institution || null,

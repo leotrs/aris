@@ -1,5 +1,4 @@
-<script setup>
-</script>
+<script setup></script>
 
 <template>
   <footer class="main-footer">
@@ -52,7 +51,7 @@
     background-color: var(--blue-900); /* Deep blue background as per design */
     color: var(--gray-200); /* Default text color for the footer */
     padding: 80px 0; /* Generous vertical padding */
-    font-family: 'Source Sans 3', sans-serif;
+    font-family: "Source Sans 3", sans-serif;
   }
 
   /* Content Wrapper - Max-width & Centering */
@@ -75,7 +74,7 @@
   }
 
   .column-heading {
-    font-family: 'Montserrat', sans-serif;
+    font-family: "Montserrat", sans-serif;
     font-size: 20px;
     font-weight: 700;
     color: var(--gray-100); /* Slightly lighter heading color */
