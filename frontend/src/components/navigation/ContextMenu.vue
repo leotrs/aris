@@ -91,14 +91,6 @@
       type: String,
       default: "bottom-start",
     },
-
-    /**
-     * Use mobile positioning strategy (centers menu)
-     */
-    mobileMode: {
-      type: Boolean,
-      default: false,
-    },
   });
   defineOptions({ inheritAttrs: false });
 

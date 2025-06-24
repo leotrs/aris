@@ -80,7 +80,6 @@ describe("ButtonDots.vue - Regression Tests", () => {
       expect(button.exists()).toBe(true);
 
       // These CSS properties are critical for proper button sizing
-      const buttonStyles = button.element.style;
       expect(button.classes()).toContain("btn-toggle");
 
       // Note: The actual CSS values are defined in the scoped style

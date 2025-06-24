@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { nextTick, ref } from "vue";
+import { ref } from "vue";
 import FileMenu from "@/components/navigation/FileMenu.vue";
 
 describe("FileMenu.vue - Isolated Testing", () => {
