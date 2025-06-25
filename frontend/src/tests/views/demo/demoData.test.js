@@ -11,7 +11,7 @@ import {
 const originalFetch = global.fetch;
 const mockFetch = vi.fn().mockImplementation((url, options) => {
   // Allow /render endpoint to hit the real backend
-  if (url.includes('/render')) {
+  if (url.includes("/render")) {
     return originalFetch(url, options);
   }
   // Mock all other requests
@@ -194,7 +194,7 @@ describe("Demo Data Service", () => {
         // Since /render now hits the real backend, we test that the call structure is correct
         // The actual backend call will either succeed or fall back to markdown conversion
         const result = await api.post("/render");
-        
+
         // Verify that the API returns some kind of rendered content
         expect(result).toHaveProperty("data");
         expect(typeof result.data).toBe("string");
@@ -269,7 +269,7 @@ describe("Demo Data Service", () => {
       // Test that the demo file has properly formatted RSM content
       expect(demoFile.source).toMatch(/^:rsm:/);
       expect(demoFile.source).toMatch(/::$/);
-      
+
       // Test that the render call returns valid content
       const result = await api.post("/render");
       expect(result.data).toBeDefined();
@@ -283,7 +283,7 @@ describe("Demo Data Service", () => {
       expect(demoFile.source).toContain(":itemize:");
       expect(demoFile.source).toContain(":enumerate:");
       expect(demoFile.source).toContain(":item:");
-      
+
       // Test that the render API processes the complex content
       const result = await api.post("/render");
       expect(result.data).toBeDefined();
