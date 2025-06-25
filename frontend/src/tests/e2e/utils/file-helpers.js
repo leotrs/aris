@@ -15,7 +15,7 @@ export class FileHelpers {
     try {
       // Wait for files container to be visible (handles Suspense loading states)
       await expect(this.page.locator('[data-testid="files-container"]')).toBeVisible({
-        timeout: 5000,
+        timeout: 3000,
       });
     } catch {
       // If files container doesn't appear, the duplicate might have broken the app state
@@ -23,12 +23,12 @@ export class FileHelpers {
       await this.page.reload();
       await this.page.waitForLoadState("networkidle");
       await expect(this.page.locator('[data-testid="files-container"]')).toBeVisible({
-        timeout: 10000,
+        timeout: 5000,
       });
     }
 
-    // Wait a bit for files to load from API and render
-    await this.page.waitForTimeout(1000);
+    // Reduced timeout for faster test execution
+    await this.page.waitForTimeout(300);
   }
 
   /**
@@ -74,28 +74,25 @@ export class FileHelpers {
   }
 
   /**
-   * Click on a file item to select it
+   * Click on a file item to select it and ensure it has focus for keyboard shortcuts
    */
   async selectFile(fileId) {
     const fileItem = await this.getFileItem(fileId);
 
-    // Wait for any existing hover states to clear
-    await this.page.waitForTimeout(100);
+    // Focus the file item first to ensure it can receive keyboard events
+    await fileItem.focus();
 
-    // Try clicking on the spacer element which should not have click handlers
-    const spacer = fileItem.locator(".spacer").first();
-    if (await spacer.isVisible()) {
-      await spacer.click();
-    } else {
-      // Fallback to clicking the file item directly
-      await fileItem.click();
-    }
+    // Click the file item directly to trigger selection
+    await fileItem.click();
 
-    // Wait for reactivity to update
+    // Wait for Vue reactivity to update the CSS classes
     await this.page.waitForTimeout(200);
 
     // Verify file is selected (has active class)
     await expect(fileItem).toHaveClass(/active/);
+    
+    // Note: focused class may not always be applied depending on the focus management system
+    // The DOM focus should be sufficient for keyboard shortcuts to work
   }
 
   /**
@@ -110,8 +107,8 @@ export class FileHelpers {
     if (hasActiveClass) {
       // Click on an empty area to deselect
       await this.page.click("body");
-      // Wait a moment for the selection to clear
-      await this.page.waitForTimeout(200);
+      // Reduced wait time for faster execution
+      await this.page.waitForTimeout(100);
       // Verify the file is no longer selected
       await expect(fileItem).not.toHaveClass(/active/);
     }
@@ -264,28 +261,6 @@ export class FileHelpers {
   }
 
   /**
-   * Ensure minimum number of test files exist
-   */
-  async ensureTestFiles(minCount = 5, options = {}) {
-    await this.navigateToHome();
-    const currentCount = await this.getFileCount();
-
-    if (currentCount >= minCount) {
-      return; // Already have enough files
-    }
-
-    const filesToCreate = minCount - currentCount;
-    const titles = options.titles || [];
-
-    for (let i = 0; i < filesToCreate; i++) {
-      const title = titles[i] || `Test File ${Date.now()}-${i}`;
-      await this.createFile(title);
-    }
-
-    await this.navigateToHome();
-  }
-
-  /**
    * Create a file with a specific title
    */
   async createFile(_title = "Test File") {
@@ -296,11 +271,28 @@ export class FileHelpers {
   }
 
   /**
-   * Add tags to files for testing filter functionality
+   * Ensure a minimum number of test files exist for navigation testing
    */
-  async addTagsToFiles(_tags = []) {
-    // This would require implementing tag functionality
-    // For now, just return as tags may not be fully implemented
-    return;
+  async ensureTestFiles(minCount) {
+    await this.waitForFilesLoaded();
+    const currentCount = await this.getFileCount();
+    
+    if (currentCount >= minCount) {
+      return; // Already have enough files
+    }
+    
+    const filesToCreate = minCount - currentCount;
+    const createdFiles = [];
+    
+    for (let i = 0; i < filesToCreate; i++) {
+      const fileId = await this.createNewFile();
+      createdFiles.push(fileId);
+      await this.navigateToHome();
+    }
+    
+    // Final wait for all files to be loaded
+    await this.waitForFilesLoaded();
+    
+    return createdFiles;
   }
 }
