@@ -139,8 +139,6 @@ describe("FilesHeader.vue", () => {
     });
 
     it("shows different columns for different modes", () => {
-      const wrapper = createWrapper({ mode: "cards" });
-
       expect(mockShouldShowColumn).toHaveBeenCalledWith("Title", "cards");
       expect(mockShouldShowColumn).toHaveBeenCalledWith("Tags", "cards");
     });
