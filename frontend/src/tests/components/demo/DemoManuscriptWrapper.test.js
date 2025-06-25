@@ -1,7 +1,18 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { nextTick } from "vue";
 import DemoManuscriptWrapper from "@/components/demo/DemoManuscriptWrapper.vue";
+
+// Mock the createDemoApi to avoid dynamic imports
+vi.mock("@/views/demo/demoData.js", () => ({
+  createDemoApi: () => ({
+    getUri: () => "http://localhost:8000",
+    get: () => Promise.resolve({ data: {} }),
+    post: () => Promise.resolve({ data: {} }),
+    put: () => Promise.resolve({ data: {} }),
+    delete: () => Promise.resolve({ data: {} }),
+  }),
+}));
 
 // Mock the Manuscript component
 vi.mock("@/components/manuscript/Manuscript.vue", () => ({
@@ -15,11 +26,34 @@ vi.mock("@/components/manuscript/Manuscript.vue", () => ({
 describe("Demo Manuscript Wrapper", () => {
   let wrapper;
 
+  beforeEach(() => {
+    // Mock global import function to prevent ESM URL errors
+    const originalImport = global.import;
+    global.import = vi.fn().mockImplementation((url) => {
+      // Mock the specific files that the component tries to import
+      if (url.includes('jquery-3.6.0.js') || 
+          url.includes('tooltipster.bundle.js') ||
+          url.includes('onload.js') ||
+          url.includes('http://')) {
+        return Promise.resolve({ 
+          onload: vi.fn().mockResolvedValue(true),
+          default: {},
+        });
+      }
+      // For other imports, use original behavior or return empty module
+      if (originalImport) {
+        return originalImport(url);
+      }
+      return Promise.resolve({});
+    });
+  });
+
   afterEach(() => {
     if (wrapper) {
       wrapper.unmount();
     }
     vi.clearAllMocks();
+    delete global.import;
   });
 
   const createWrapper = (props = {}) => {
