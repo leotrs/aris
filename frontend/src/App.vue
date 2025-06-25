@@ -98,6 +98,8 @@
   const user = ref(null);
   const fileStore = ref(null);
   const router = useRouter();
+
+  // Initialize authentication state on app mount
   onMounted(async () => {
     const token = localStorage.getItem("accessToken");
     const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -111,12 +113,20 @@
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
       localStorage.removeItem("user");
+    }
+  });
 
-      // Only redirect if not on a public page
-      const publicPages = ["/login", "/register"];
-      if (!publicPages.includes(router.currentRoute.value.path)) {
-        router.push("/login");
-      }
+  // Handle authentication redirects after router is ready
+  router.beforeResolve((to, from, next) => {
+    const token = localStorage.getItem("accessToken");
+    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const publicPages = ["/login", "/register", "/demo"];
+
+    // If user is not authenticated and trying to access a protected page
+    if (!token && !storedUser && !publicPages.includes(to.path)) {
+      next("/login");
+    } else {
+      next();
     }
   });
   provide("user", user);

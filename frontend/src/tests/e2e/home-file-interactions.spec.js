@@ -20,8 +20,8 @@ test.describe("Home View File Interactions", () => {
 
   test("file selection state works correctly", async ({ page }) => {
     const fileItems = page.locator('[data-testid^="file-item-"]');
-    
-    if (await fileItems.count() >= 2) {
+
+    if ((await fileItems.count()) >= 2) {
       const firstFile = fileItems.first();
       const secondFile = fileItems.nth(1);
 
@@ -40,13 +40,13 @@ test.describe("Home View File Interactions", () => {
 
   test("file click opens file workspace", async ({ page }) => {
     const fileItems = page.locator('[data-testid^="file-item-"]');
-    
-    if (await fileItems.count() > 0) {
+
+    if ((await fileItems.count()) > 0) {
       const firstFile = fileItems.first();
-      
+
       // Double-click to open file
       await firstFile.dblclick();
-      
+
       // Should navigate to file workspace
       await expect(page).toHaveURL(/\/file\/[a-zA-Z0-9-]+$/);
     }
@@ -62,11 +62,11 @@ test.describe("Home View File Interactions", () => {
     if (fileExists) {
       // Test duplicate operation
       await fileHelpers.duplicateFile(fileId);
-      
+
       // Should have more files now
       const newFileCount = await fileHelpers.getFileCount();
       expect(newFileCount).toBeGreaterThan(1);
-      
+
       // Clean up
       await fileHelpers.deleteFile(fileId);
     }

@@ -17,34 +17,32 @@ describe("FilesPane.vue - Tag Functionality", () => {
   beforeEach(() => {
     mockFileStore = ref({
       files: [
-        { 
-          id: "1", 
-          title: "Research Paper", 
-          filtered: false, 
+        {
+          id: "1",
+          title: "Research Paper",
+          filtered: false,
           focused: false,
           tags: [
             { id: "tag1", name: "research", color: "#blue" },
-            { id: "tag2", name: "biology", color: "#green" }
-          ]
+            { id: "tag2", name: "biology", color: "#green" },
+          ],
         },
-        { 
-          id: "2", 
-          title: "Analysis Document", 
-          filtered: false, 
+        {
+          id: "2",
+          title: "Analysis Document",
+          filtered: false,
           focused: false,
           tags: [
             { id: "tag3", name: "analysis", color: "#red" },
-            { id: "tag1", name: "research", color: "#blue" }
-          ]
+            { id: "tag1", name: "research", color: "#blue" },
+          ],
         },
-        { 
-          id: "3", 
-          title: "Draft Paper", 
-          filtered: true, 
+        {
+          id: "3",
+          title: "Draft Paper",
+          filtered: true,
           focused: false,
-          tags: [
-            { id: "tag4", name: "draft", color: "#yellow" }
-          ]
+          tags: [{ id: "tag4", name: "draft", color: "#yellow" }],
         },
       ],
       filterFiles: vi.fn(),
@@ -111,17 +109,17 @@ describe("FilesPane.vue - Tag Functionality", () => {
 
       // Check first file tags
       const firstFileItem = fileItems[0];
-      const firstFileTags = firstFileItem.findAll('.tag');
+      const firstFileTags = firstFileItem.findAll(".tag");
       expect(firstFileTags).toHaveLength(2);
-      expect(firstFileTags[0].text()).toBe('research');
-      expect(firstFileTags[1].text()).toBe('biology');
+      expect(firstFileTags[0].text()).toBe("research");
+      expect(firstFileTags[1].text()).toBe("biology");
 
       // Check second file tags
       const secondFileItem = fileItems[1];
-      const secondFileTags = secondFileItem.findAll('.tag');
+      const secondFileTags = secondFileItem.findAll(".tag");
       expect(secondFileTags).toHaveLength(2);
-      expect(secondFileTags[0].text()).toBe('analysis');
-      expect(secondFileTags[1].text()).toBe('research');
+      expect(secondFileTags[0].text()).toBe("analysis");
+      expect(secondFileTags[1].text()).toBe("research");
     });
 
     it("handles files with no tags", () => {
@@ -140,11 +138,11 @@ describe("FilesPane.vue - Tag Functionality", () => {
       expect(fileItems).toHaveLength(2);
 
       // First file should have no tags
-      const firstFileTags = fileItems[0].findAll('.tag');
+      const firstFileTags = fileItems[0].findAll(".tag");
       expect(firstFileTags).toHaveLength(0);
 
       // Second file should also have no tags (undefined tags property)
-      const secondFileTags = fileItems[1].findAll('.tag');
+      const secondFileTags = fileItems[1].findAll(".tag");
       expect(secondFileTags).toHaveLength(0);
     });
 
@@ -192,23 +190,23 @@ describe("FilesPane.vue - Tag Functionality", () => {
 
       // Test tag filtering logic (simulating what fileStore.filterFiles would do)
       const files = mockFileStore.value.files;
-      
+
       // Filter for files with "research" tag
-      const researchFiles = files.filter(file => 
-        file.tags && file.tags.some(tag => tag.name === "research")
+      const researchFiles = files.filter(
+        (file) => file.tags && file.tags.some((tag) => tag.name === "research")
       );
       expect(researchFiles).toHaveLength(2);
 
       // Filter for files with "biology" tag
-      const biologyFiles = files.filter(file => 
-        file.tags && file.tags.some(tag => tag.name === "biology")
+      const biologyFiles = files.filter(
+        (file) => file.tags && file.tags.some((tag) => tag.name === "biology")
       );
       expect(biologyFiles).toHaveLength(1);
       expect(biologyFiles[0].title).toBe("Research Paper");
 
       // Filter for files with "draft" tag (this file is already filtered out)
-      const draftFiles = files.filter(file => 
-        file.tags && file.tags.some(tag => tag.name === "draft")
+      const draftFiles = files.filter(
+        (file) => file.tags && file.tags.some((tag) => tag.name === "draft")
       );
       expect(draftFiles).toHaveLength(1);
       expect(draftFiles[0].title).toBe("Draft Paper");
@@ -245,10 +243,10 @@ describe("FilesPane.vue - Tag Functionality", () => {
       expect(fileItems).toHaveLength(1);
 
       // Remaining file should still show its tags
-      const remainingFileTags = fileItems[0].findAll('.tag');
+      const remainingFileTags = fileItems[0].findAll(".tag");
       expect(remainingFileTags).toHaveLength(2);
-      expect(remainingFileTags[0].text()).toBe('analysis');
-      expect(remainingFileTags[1].text()).toBe('research');
+      expect(remainingFileTags[0].text()).toBe("analysis");
+      expect(remainingFileTags[1].text()).toBe("research");
     });
   });
 
@@ -260,7 +258,7 @@ describe("FilesPane.vue - Tag Functionality", () => {
       expect(wrapper.vm.mode).toBe("list");
 
       const fileItems = wrapper.findAll('[data-testid="file-item"]');
-      const firstFileTags = fileItems[0].findAll('.tag');
+      const firstFileTags = fileItems[0].findAll(".tag");
       expect(firstFileTags).toHaveLength(2);
     });
 
@@ -281,7 +279,7 @@ describe("FilesPane.vue - Tag Functionality", () => {
       expect(wrapper.vm.mode).toBe("cards");
 
       const fileItems = wrapper.findAll('[data-testid="file-item"]');
-      const firstFileTags = fileItems[0].findAll('.tag');
+      const firstFileTags = fileItems[0].findAll(".tag");
       expect(firstFileTags).toHaveLength(2);
     });
   });
@@ -304,16 +302,16 @@ describe("FilesPane.vue - Tag Functionality", () => {
         provide: {
           fileStore: ref({
             files: [
-              { 
-                id: "1", 
-                title: "Malformed Tags File", 
-                filtered: false, 
+              {
+                id: "1",
+                title: "Malformed Tags File",
+                filtered: false,
                 focused: false,
                 tags: [
                   { id: "tag1", name: "complete" }, // missing color
                   { name: "incomplete" }, // missing id
                   { id: "tag3" }, // missing name
-                ]
+                ],
               },
             ],
           }),
@@ -324,7 +322,7 @@ describe("FilesPane.vue - Tag Functionality", () => {
       expect(fileItems).toHaveLength(1);
 
       // Should not throw errors with malformed tag data
-      const tags = fileItems[0].findAll('.tag');
+      const tags = fileItems[0].findAll(".tag");
       expect(tags).toHaveLength(3);
     });
 
@@ -378,12 +376,12 @@ describe("FilesPane.vue - Tag Functionality", () => {
         provide: {
           fileStore: ref({
             files: [
-              { 
-                id: "1", 
-                title: "Many Tags File", 
-                filtered: false, 
+              {
+                id: "1",
+                title: "Many Tags File",
+                filtered: false,
                 focused: false,
-                tags: manyTags
+                tags: manyTags,
               },
             ],
           }),
@@ -391,7 +389,7 @@ describe("FilesPane.vue - Tag Functionality", () => {
       });
 
       const fileItems = wrapper.findAll('[data-testid="file-item"]');
-      const tags = fileItems[0].findAll('.tag');
+      const tags = fileItems[0].findAll(".tag");
       expect(tags).toHaveLength(20);
     });
   });

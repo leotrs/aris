@@ -32,18 +32,20 @@ test.describe("Debug File Selection", () => {
     // Listen for console messages and errors
     const consoleMessages = [];
     const jsErrors = [];
-    
-    page.on('console', (msg) => {
+
+    page.on("console", (msg) => {
       consoleMessages.push(`${msg.type()}: ${msg.text()}`);
     });
-    
-    page.on('pageerror', (error) => {
+
+    page.on("pageerror", (error) => {
       jsErrors.push(`JS Error: ${error.message}`);
-      console.log('Page error:', error.message);
+      console.log("Page error:", error.message);
     });
-    
-    page.on('requestfailed', (request) => {
-      jsErrors.push(`Failed request: ${request.method()} ${request.url()} - ${request.failure()?.errorText}`);
+
+    page.on("requestfailed", (request) => {
+      jsErrors.push(
+        `Failed request: ${request.method()} ${request.url()} - ${request.failure()?.errorText}`
+      );
     });
 
     // Create a test file
@@ -59,46 +61,47 @@ test.describe("Debug File Selection", () => {
       const results = {
         filesContainer: null,
         anyVueComponents: [],
-        fileStoreFromRoot: null
+        fileStoreFromRoot: null,
       };
-      
+
       // Check for files-container
       const filesContainer = document.querySelector('[data-testid="files-container"]');
       results.filesContainer = {
         exists: !!filesContainer,
         hasVue: !!(filesContainer && filesContainer.__vue__),
-        childCount: filesContainer ? filesContainer.children.length : 0
+        childCount: filesContainer ? filesContainer.children.length : 0,
       };
-      
+
       // Look for any Vue components
-      const allElements = document.querySelectorAll('*');
+      const allElements = document.querySelectorAll("*");
       let vueComponentCount = 0;
-      allElements.forEach(el => {
+      allElements.forEach((el) => {
         if (el.__vue__) {
           vueComponentCount++;
-          if (vueComponentCount <= 3) { // Only collect first few
+          if (vueComponentCount <= 3) {
+            // Only collect first few
             results.anyVueComponents.push({
               tagName: el.tagName,
-              hasFileStore: !!(el.__vue__.fileStore),
+              hasFileStore: !!el.__vue__.fileStore,
               className: el.className,
-              id: el.id
+              id: el.id,
             });
           }
         }
       });
       results.totalVueComponents = vueComponentCount;
-      
+
       // Try to get fileStore from root app
-      const rootApp = document.querySelector('#app');
+      const rootApp = document.querySelector("#app");
       if (rootApp && rootApp.__vue__) {
         const rootFileStore = rootApp.__vue__.fileStore;
         results.fileStoreFromRoot = {
           exists: !!rootFileStore,
           hasValue: !!(rootFileStore && rootFileStore.value),
-          isNull: rootFileStore ? rootFileStore.value === null : 'no fileStore'
+          isNull: rootFileStore ? rootFileStore.value === null : "no fileStore",
         };
       }
-      
+
       return results;
     });
     console.log("Component check:", JSON.stringify(componentCheck, null, 2));
@@ -131,7 +134,7 @@ test.describe("Debug File Selection", () => {
     // Debug: Focus and click the file item
     console.log("=== Focusing file item ===");
     await fileItem.focus();
-    
+
     const focusedClasses = await fileItem.getAttribute("class");
     console.log("Classes after focus:", focusedClasses);
 
@@ -151,7 +154,7 @@ test.describe("Debug File Selection", () => {
       if (app && app.__vue__) {
         const fileStore = app.__vue__.fileStore;
         if (fileStore && fileStore.value && fileStore.value.files && fileStore.value.files.value) {
-          const file = fileStore.value.files.value.find(f => f.id.toString() === fileId);
+          const file = fileStore.value.files.value.find((f) => f.id.toString() === fileId);
           if (file) {
             console.log("File found in store:", file.id, "selected:", file.selected);
             return file.selected;
@@ -179,10 +182,10 @@ test.describe("Debug File Selection", () => {
       if (fileItem && fileItem.__vue__) {
         const vm = fileItem.__vue__;
         return {
-          hasSelect: typeof vm.select === 'function',
+          hasSelect: typeof vm.select === "function",
           hasFileStore: !!vm.fileStore,
           fileStoreType: typeof vm.fileStore,
-          fileStoreValue: vm.fileStore?.value ? 'has value' : 'no value'
+          fileStoreValue: vm.fileStore?.value ? "has value" : "no value",
         };
       }
       return null;
@@ -195,7 +198,9 @@ test.describe("Debug File Selection", () => {
         vueGlobal: typeof window.Vue,
         createApp: typeof window.createApp,
         hasVueScript: !!document.querySelector('script[src*="vue"]'),
-        scriptTags: Array.from(document.querySelectorAll('script')).map(s => s.src).filter(src => src)
+        scriptTags: Array.from(document.querySelectorAll("script"))
+          .map((s) => s.src)
+          .filter((src) => src),
       };
     });
     console.log("=== Vue Loading Check ===");
@@ -203,10 +208,10 @@ test.describe("Debug File Selection", () => {
 
     // Print console messages and errors from the browser
     console.log("=== Console Messages ===");
-    consoleMessages.forEach(msg => console.log(msg));
-    
+    consoleMessages.forEach((msg) => console.log(msg));
+
     console.log("=== JavaScript Errors ===");
-    jsErrors.forEach(error => console.log(error));
+    jsErrors.forEach((error) => console.log(error));
 
     // Clean up - don't clean up for now to avoid the context menu error
     // await fileHelpers.deleteFile(fileId);
