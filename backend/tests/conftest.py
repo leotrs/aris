@@ -53,7 +53,8 @@ async def test_engine(request):
     database_url = settings.get_test_database_url()
     
     # If we're using PostgreSQL and pytest-postgresql is available
-    if database_url.startswith("postgresql") and POSTGRESQL_AVAILABLE:
+    # Skip pytest-postgresql in CI environment since we use the service
+    if database_url.startswith("postgresql") and POSTGRESQL_AVAILABLE and not os.environ.get("CI"):
         try:
             # Try to get the postgresql fixture if it exists
             postgresql = request.getfixturevalue('postgresql')
