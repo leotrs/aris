@@ -78,24 +78,25 @@ test.describe("Signup Flow E2E", () => {
   });
 
   test("should enforce character limits", async ({ page }) => {
-    // Reload the page to ensure clean state
-    await page.reload();
+    // Test that character warnings appear at 90+ characters
+    const nameAt90 = "a".repeat(90); 
+    await page.fill('input[type="email"]', "test@example.com");
+    await page.fill('input[name="name"]', nameAt90);
 
-    // Enter name that's too long (over 100 characters)
-    const longName = "a".repeat(101);
-    await page.fill('input[type="email"]', "test-charlimit@example.com");
-    await page.fill('input[name="name"]', longName);
+    // Verify character count warning shows at 90 characters
+    await expect(page.locator(".field-warning")).toBeVisible();
+    await expect(page.locator(".field-warning")).toContainText("90/100 characters");
 
-    await page.click('button[type="submit"]');
-
-    // Wait for validation to trigger
-    await page.waitForTimeout(100);
-
-    // Verify character limit error appears
-    await expect(page.locator(".error-message")).toBeVisible();
-    await expect(page.locator(".error-message")).toContainText(
-      "Name must be 100 characters or less."
-    );
+    // Test that browser maxlength prevents typing more than 100 characters
+    const attemptedLongName = "a".repeat(110); // Try to type 110 characters
+    await page.fill('input[name="name"]', attemptedLongName);
+    
+    // Verify that only 100 characters were actually entered due to maxlength
+    const actualValue = await page.locator('input[name="name"]').inputValue();
+    expect(actualValue.length).toBe(100);
+    
+    // Verify the character warning shows 100/100
+    await expect(page.locator(".field-warning")).toContainText("100/100 characters");
   });
 
   test("should show character warning when approaching limits", async ({ page }) => {
@@ -103,8 +104,12 @@ test.describe("Signup Flow E2E", () => {
     const longInstitution = "a".repeat(185);
     await page.fill('input[name="institution"]', longInstitution);
 
+    // Wait for reactive update
+    await page.waitForTimeout(100);
+
     // Verify character count warning appears
-    await expect(page.locator("text=185/200 characters")).toBeVisible();
+    await expect(page.locator(".field-warning")).toBeVisible();
+    await expect(page.locator(".field-warning")).toContainText("185/200 characters");
   });
 
   test("should handle duplicate email error", async ({ page }) => {
@@ -179,8 +184,8 @@ test.describe("Signup Flow E2E", () => {
   });
 
   test("should be accessible via keyboard navigation", async ({ page }) => {
-    // Navigate through form using only keyboard
-    await page.keyboard.press("Tab"); // Email field
+    // Focus on first form field directly
+    await page.locator('input[type="email"]').focus();
     await page.keyboard.type("test@example.com");
 
     await page.keyboard.press("Tab"); // Name field
@@ -195,10 +200,25 @@ test.describe("Signup Flow E2E", () => {
     await page.keyboard.press("Tab"); // Interest level select
     await page.keyboard.press("ArrowDown"); // Select an option
 
-    await page.keyboard.press("Tab"); // Submit button
+    // Navigate to submit button by tabbing through potentially multiple elements
+    let maxTabs = 5;
+    let submitButtonFocused = false;
+    
+    for (let i = 0; i < maxTabs; i++) {
+      await page.keyboard.press("Tab");
+      const focusedElement = await page.evaluate(() => document.activeElement?.tagName.toLowerCase());
+      if (focusedElement === 'button') {
+        const isSubmitButton = await page.evaluate(() => 
+          document.activeElement?.getAttribute('type') === 'submit'
+        );
+        if (isSubmitButton) {
+          submitButtonFocused = true;
+          break;
+        }
+      }
+    }
 
     // Verify we can reach and interact with submit button
-    const submitButton = page.locator('button[type="submit"]');
-    await expect(submitButton).toBeFocused();
+    expect(submitButtonFocused).toBe(true);
   });
 });

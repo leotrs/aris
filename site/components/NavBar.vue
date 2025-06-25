@@ -21,6 +21,7 @@
             class="nav-link dropdown-toggle"
             :aria-expanded="isResourcesDropdownOpen"
             aria-haspopup="true"
+            aria-label="Resources menu"
             role="button"
             @click.prevent="toggleDropdown('resources')"
             @keydown.enter.prevent="toggleDropdown('resources')"
@@ -100,6 +101,7 @@
             <a
               href="#"
               class="mobile-nav-link mobile-dropdown-toggle"
+              aria-label="Resources menu"
               @click.prevent="toggleMobileDropdown('resources')"
               >Resources</a
             >

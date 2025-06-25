@@ -25,6 +25,8 @@ export default defineConfig({
     screenshot: "only-on-failure",
     /* Record video on failure */
     video: "retain-on-failure",
+    /* Enable touch support for mobile tests */
+    hasTouch: true,
   },
 
   /* Configure projects for major browsers */

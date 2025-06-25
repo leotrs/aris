@@ -12,7 +12,7 @@
 </script>
 
 <template>
-  <footer class="main-footer">
+  <footer class="main-footer" role="contentinfo">
     <div class="footer-content-wrapper">
       <div class="footer-columns">
         <div class="footer-column">
