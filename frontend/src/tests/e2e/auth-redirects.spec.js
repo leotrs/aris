@@ -101,4 +101,24 @@ test.describe("Authentication Redirect Tests", () => {
     await page.goto("/login");
     await expect(page).toHaveURL("/login");
   });
+
+  test("unauthenticated user can access /demo route directly", async ({ page }) => {
+    // Test demo route specifically since it's a public page
+    
+    // Add logging to see what happens
+    page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+    
+    // Navigate directly to demo page
+    await page.goto("/demo");
+    
+    // Check current URL before assertions
+    const currentUrl = page.url();
+    console.log('Current URL after navigation:', currentUrl);
+    
+    // Should stay on demo page
+    await expect(page).toHaveURL("/demo");
+    
+    // Should see demo elements
+    await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
+  });
 });
