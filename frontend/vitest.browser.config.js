@@ -21,11 +21,7 @@ export default defineConfig({
     globals: true,
     setupFiles: "src/tests/setup.ts",
     include: ["src/tests/**/*.browser.test.js"],
-    exclude: [
-      "**/node_modules/**",
-      "**/dist/**",
-      "**/.{idea,git,cache,output,temp}/**",
-    ],
+    exclude: ["**/node_modules/**", "**/dist/**", "**/.{idea,git,cache,output,temp}/**"],
   },
   server: {
     proxy: {
