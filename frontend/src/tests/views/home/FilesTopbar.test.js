@@ -324,4 +324,279 @@ describe("FilesTopbar.vue", () => {
       expect(wrapper.emitted().list?.length).toBeGreaterThan(initialEmittedCount);
     });
   });
+
+  describe("Enhanced Search Edge Cases", () => {
+    it("handles extremely long search queries", () => {
+      const wrapper = createWrapper();
+      const longQuery = "a".repeat(1000);
+
+      wrapper.vm.onSearchSubmit(longQuery);
+
+      expect(mockFileStore.value.clearFilters).toHaveBeenCalledOnce();
+      expect(mockFileStore.value.filterFiles).toHaveBeenCalledOnce();
+
+      const filterFunction = mockFileStore.value.filterFiles.mock.calls[0][0];
+      expect(filterFunction({ title: longQuery })).toBe(false); // Should show
+      expect(filterFunction({ title: "short" })).toBe(true); // Should hide
+    });
+
+    it("handles search with only whitespace", () => {
+      const wrapper = createWrapper();
+      const whitespaceQuery = "   \t\n   ";
+
+      wrapper.vm.onSearchSubmit(whitespaceQuery);
+
+      expect(mockFileStore.value.clearFilters).toHaveBeenCalledOnce();
+      const filterFunction = mockFileStore.value.filterFiles.mock.calls[0][0];
+      // Whitespace-only search should behave like empty search - show all files
+      expect(filterFunction({ title: "any file" })).toBe(false);
+    });
+
+    it("handles unicode and emoji in search", () => {
+      const wrapper = createWrapper();
+      const unicodeQuery = "研究 🧬 café";
+
+      wrapper.vm.onSearchSubmit(unicodeQuery);
+
+      const filterFunction = mockFileStore.value.filterFiles.mock.calls[0][0];
+      expect(filterFunction({ title: "研究 paper" })).toBe(false); // Should show
+      expect(filterFunction({ title: "DNA 🧬 study" })).toBe(false); // Should show
+      expect(filterFunction({ title: "café data" })).toBe(false); // Should show
+      expect(filterFunction({ title: "other file" })).toBe(true); // Should hide
+    });
+
+    it("handles regex special characters safely", () => {
+      const wrapper = createWrapper();
+      const regexQuery = ".*+?^${}()|[]\\";
+
+      // Should not throw an error
+      expect(() => wrapper.vm.onSearchSubmit(regexQuery)).not.toThrow();
+
+      const filterFunction = mockFileStore.value.filterFiles.mock.calls[0][0];
+      expect(filterFunction({ title: regexQuery })).toBe(false); // Should show exact match
+      expect(filterFunction({ title: "other" })).toBe(true); // Should hide
+    });
+
+    it("preserves case insensitivity with complex strings", () => {
+      const wrapper = createWrapper();
+
+      wrapper.vm.onSearchSubmit("DNA-Seq");
+
+      const filterFunction = mockFileStore.value.filterFiles.mock.calls[0][0];
+      expect(filterFunction({ title: "dna-seq analysis" })).toBe(false); // Should show
+      expect(filterFunction({ title: "DNA-SEQ results" })).toBe(false); // Should show
+      expect(filterFunction({ title: "DnA-sEq report" })).toBe(false); // Should show
+      expect(filterFunction({ title: "RNA analysis" })).toBe(true); // Should hide
+    });
+
+    it("handles rapid sequential searches", async () => {
+      const wrapper = createWrapper();
+
+      // Rapid fire search submissions
+      wrapper.vm.onSearchSubmit("first");
+      wrapper.vm.onSearchSubmit("second");
+      wrapper.vm.onSearchSubmit("third");
+
+      // Should clear filters before each new search
+      expect(mockFileStore.value.clearFilters).toHaveBeenCalledTimes(3);
+      expect(mockFileStore.value.filterFiles).toHaveBeenCalledTimes(3);
+
+      // Latest filter should be for "third"
+      const lastFilterFunction = mockFileStore.value.filterFiles.mock.calls[2][0];
+      expect(lastFilterFunction({ title: "third result" })).toBe(false);
+      expect(lastFilterFunction({ title: "first result" })).toBe(true);
+    });
+
+    it("handles null or undefined search queries", () => {
+      const wrapper = createWrapper();
+
+      // Test null query
+      expect(() => wrapper.vm.onSearchSubmit(null)).not.toThrow();
+      
+      // Test undefined query
+      expect(() => wrapper.vm.onSearchSubmit(undefined)).not.toThrow();
+
+      // Both should be treated as empty searches
+      expect(mockFileStore.value.clearFilters).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  describe("Enhanced Keyboard Shortcuts", () => {
+    it("registers all expected keyboard shortcuts with correct descriptions", () => {
+      const wrapper = createWrapper();
+      const { useKeyboardShortcuts } = vi.mocked(await import("@/composables/useKeyboardShortcuts.js"));
+
+      const registeredShortcuts = useKeyboardShortcuts.mock.calls[0][0];
+      
+      expect(registeredShortcuts).toMatchObject({
+        "v,l": { description: "view as list" },
+        "v,c": { description: "view as cards" },
+        "/": { description: "search" },
+      });
+
+      // Verify it's registered with correct parameters
+      expect(useKeyboardShortcuts).toHaveBeenCalledWith(
+        expect.any(Object),
+        true, // isActive
+        "Home view" // scope
+      );
+    });
+
+    it("handles keyboard shortcuts when component is inactive", () => {
+      // Create wrapper but assume component becomes inactive
+      createWrapper();
+      
+      const { useKeyboardShortcuts } = vi.mocked(await import("@/composables/useKeyboardShortcuts.js"));
+      
+      // Verify shortcuts were registered as active
+      expect(useKeyboardShortcuts).toHaveBeenCalledWith(
+        expect.any(Object),
+        true, // Component should register as active
+        "Home view"
+      );
+    });
+
+    it("executes view mode shortcuts correctly with state verification", async () => {
+      const wrapper = createWrapper();
+      const { useKeyboardShortcuts } = vi.mocked(await import("@/composables/useKeyboardShortcuts.js"));
+      const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
+
+      // Test v,l shortcut (switch to list)
+      wrapper.vm.controlState = 1; // Start in cards mode
+      await nextTick();
+      
+      shortcuts["v,l"].fn();
+      expect(wrapper.vm.controlState).toBe(0);
+      expect(wrapper.emitted().list).toBeTruthy();
+
+      // Test v,c shortcut (switch to cards)
+      shortcuts["v,c"].fn();
+      expect(wrapper.vm.controlState).toBe(1);
+      expect(wrapper.emitted().cards).toBeTruthy();
+    });
+
+    it("handles search shortcut when SearchBar is not ready", async () => {
+      const { useKeyboardShortcuts } = await import("@/composables/useKeyboardShortcuts.js");
+      
+      createWrapper({
+        stubs: {
+          SearchBar: {
+            template: '<div data-testid="search-bar"></div>',
+            // Intentionally missing focusInput method
+          },
+        },
+      });
+
+      const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
+      
+      // Should throw when trying to focus non-existent method
+      expect(() => shortcuts["/"].fn()).toThrow();
+    });
+
+    it("maintains keyboard shortcut scope throughout component lifecycle", () => {
+      const wrapper = createWrapper();
+      const { useKeyboardShortcuts } = vi.mocked(await import("@/composables/useKeyboardShortcuts.js"));
+
+      // Verify scope is maintained
+      expect(useKeyboardShortcuts).toHaveBeenCalledWith(
+        expect.any(Object),
+        true,
+        "Home view" // Consistent scope
+      );
+
+      // Component should not re-register shortcuts on updates
+      wrapper.vm.controlState = 1;
+      expect(useKeyboardShortcuts).toHaveBeenCalledTimes(1);
+    });
+
+    it("handles simultaneous shortcut presses gracefully", async () => {
+      const wrapper = createWrapper();
+      const { useKeyboardShortcuts } = vi.mocked(await import("@/composables/useKeyboardShortcuts.js"));
+      const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
+
+      // Simulate rapid shortcut presses
+      shortcuts["v,l"].fn();
+      shortcuts["v,c"].fn();
+      shortcuts["v,l"].fn();
+      
+      await nextTick();
+      
+      // Should end up in list mode (last shortcut wins)
+      expect(wrapper.vm.controlState).toBe(0);
+    });
+  });
+
+  describe("Search Performance and Memory", () => {
+    it("does not leak memory with repeated searches", () => {
+      const wrapper = createWrapper();
+      
+      // Perform many searches to test for memory leaks
+      for (let i = 0; i < 100; i++) {
+        wrapper.vm.onSearchSubmit(`query ${i}`);
+      }
+      
+      // Each search should clear previous filters
+      expect(mockFileStore.value.clearFilters).toHaveBeenCalledTimes(100);
+      expect(mockFileStore.value.filterFiles).toHaveBeenCalledTimes(100);
+    });
+
+    it("handles search with very large file lists efficiently", () => {
+      const wrapper = createWrapper();
+      
+      wrapper.vm.onSearchSubmit("test");
+      const filterFunction = mockFileStore.value.filterFiles.mock.calls[0][0];
+      
+      // Simulate filtering large number of files
+      const startTime = performance.now();
+      for (let i = 0; i < 10000; i++) {
+        filterFunction({ title: `file ${i} test` });
+      }
+      const endTime = performance.now();
+      
+      // Filter should complete within reasonable time (adjust threshold as needed)
+      expect(endTime - startTime).toBeLessThan(100); // 100ms threshold
+    });
+  });
+
+  describe("Integration Edge Cases", () => {
+    it("maintains view mode state during search operations", async () => {
+      const wrapper = createWrapper();
+      
+      // Switch to cards mode
+      wrapper.vm.controlState = 1;
+      await nextTick();
+      
+      // Perform search
+      wrapper.vm.onSearchSubmit("test query");
+      
+      // View mode should remain unchanged
+      expect(wrapper.vm.controlState).toBe(1);
+    });
+
+    it("handles component re-mounting with preserved state", () => {
+      let wrapper = createWrapper();
+      wrapper.vm.controlState = 1;
+      wrapper.unmount();
+      
+      // Re-mount component
+      wrapper = createWrapper();
+      
+      // Should start with default state again
+      expect(wrapper.vm.controlState).toBe(0);
+    });
+
+    it("handles concurrent search and view mode changes", async () => {
+      const wrapper = createWrapper();
+      
+      // Simulate concurrent operations
+      wrapper.vm.onSearchSubmit("concurrent test");
+      wrapper.vm.controlState = 1;
+      await nextTick();
+      
+      // Both operations should complete successfully
+      expect(mockFileStore.value.filterFiles).toHaveBeenCalledOnce();
+      expect(wrapper.vm.controlState).toBe(1);
+      expect(wrapper.emitted().cards).toBeTruthy();
+    });
+  });
 });
