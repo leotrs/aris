@@ -124,7 +124,6 @@ async def test_user(db_session):
     through the API and includes auth tokens.
     """
     user = User(
-        id="10",
         name="foo bar",
         email="test@example.com",
         password_hash="example_hash_pwd_for_testing",
@@ -140,7 +139,6 @@ async def test_file(db_session, test_user):
     """Create a test file directly in the database."""
     file = File(
         owner_id=test_user.id,
-        id="1234",
         source=":rsm: Test file. ::",
     )
     db_session.add(file)
