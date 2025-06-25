@@ -94,7 +94,7 @@ async def test_engine(request):
 async def db_session(test_engine):
     """Create a fresh database for each test."""
     async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
     async with TestingSessionLocal() as session:
