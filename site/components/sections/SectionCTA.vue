@@ -17,7 +17,7 @@
 <style scoped>
   /* Section Container */
   .cta-section {
-    background-color: var(--primary-100);
+    background-color: var(--surface-page);
     padding: 100px 0;
     text-align: center;
   }
