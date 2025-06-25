@@ -11,6 +11,8 @@ def test_settings_defaults_and_env_override(monkeypatch):
         "ALEMBIC_DB_URL_LOCAL": "sqlite:///:memory:",
         "ALEMBIC_DB_URL_PROD": "postgresql://user:pass@host/db",
         "JWT_SECRET_KEY": "secret",
+        "TEST_USER_EMAIL": "test@example.com",
+        "TEST_USER_PASSWORD": "testpassword123",
     }
     for key, val in env.items():
         monkeypatch.setenv(key, val)
@@ -18,7 +20,7 @@ def test_settings_defaults_and_env_override(monkeypatch):
     monkeypatch.delenv("JWT_ALGORITHM", raising=False)
     monkeypatch.delenv("JWT_ACCESS_TOKEN_EXPIRE_MINUTES", raising=False)
 
-    s = Settings()
+    s = Settings(_env_file=None)
     assert s.DB_URL_LOCAL == env["DB_URL_LOCAL"]
     assert s.DB_URL_PROD == env["DB_URL_PROD"]
     assert s.ALEMBIC_DB_URL_LOCAL == env["ALEMBIC_DB_URL_LOCAL"]
@@ -37,7 +39,9 @@ def test_missing_required_env_vars(monkeypatch):
         "ALEMBIC_DB_URL_LOCAL",
         "ALEMBIC_DB_URL_PROD",
         "JWT_SECRET_KEY",
+        "TEST_USER_EMAIL",
+        "TEST_USER_PASSWORD",
     ):
         monkeypatch.delenv(key, raising=False)
     with pytest.raises(ValidationError):
-        Settings()
+        Settings(_env_file=None)
