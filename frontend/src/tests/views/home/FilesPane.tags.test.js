@@ -186,8 +186,6 @@ describe("FilesPane.vue - Tag Functionality", () => {
     });
 
     it("handles tag-based filter functions correctly", () => {
-      const wrapper = createWrapper();
-
       // Test tag filtering logic (simulating what fileStore.filterFiles would do)
       const files = mockFileStore.value.files;
 

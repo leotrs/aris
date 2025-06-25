@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { mount, shallowMount } from "@vue/test-utils";
+import { mount } from "@vue/test-utils";
 import { nextTick, ref } from "vue";
 import FilesItem from "@/views/home/FilesItem.vue";
 
@@ -217,7 +217,6 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
   describe("Context Menu Navigation and Keyboard Interaction", () => {
     it("opens context menu with keyboard shortcut", async () => {
       const { useKeyboardShortcuts } = await import("@/composables/useKeyboardShortcuts.js");
-      const wrapper = createWrapper();
 
       // Get registered shortcuts
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
@@ -227,7 +226,6 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
     it("opens file with Enter key", async () => {
       const { useKeyboardShortcuts } = await import("@/composables/useKeyboardShortcuts.js");
-      const wrapper = createWrapper();
 
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
       expect(shortcuts).toHaveProperty("enter");
@@ -239,7 +237,6 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
     it("opens file with Space key", async () => {
       const { useKeyboardShortcuts } = await import("@/composables/useKeyboardShortcuts.js");
-      const wrapper = createWrapper();
 
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
       expect(shortcuts).toHaveProperty(" ");

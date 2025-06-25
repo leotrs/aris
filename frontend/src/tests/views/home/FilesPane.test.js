@@ -281,7 +281,6 @@ describe("FilesPane.vue", () => {
       mockFileStore.value.files[0].focused = true;
       mockFileStore.value.files[1].focused = true;
 
-      const wrapper = createWrapper();
       await nextTick(); // Let the component mount and watchers set up
 
       // Simulate activeIndex changing to null
@@ -301,8 +300,6 @@ describe("FilesPane.vue", () => {
       mockUseListKeyboardNavigation.useListKeyboardNavigation.mockReturnValue({
         activeIndex: activeIndexRef,
       });
-
-      const wrapper = createWrapper();
 
       // Simulate activeIndex changing to 1 (second visible file)
       activeIndexRef.value = 1;
@@ -324,8 +321,6 @@ describe("FilesPane.vue", () => {
       mockUseListKeyboardNavigation.useListKeyboardNavigation.mockReturnValue({
         activeIndex: activeIndexRef,
       });
-
-      const wrapper = createWrapper();
 
       // Should not throw an error
       expect(() => {
@@ -377,8 +372,6 @@ describe("FilesPane.vue", () => {
       const mockUseListKeyboardNavigation = await import(
         "@/composables/useListKeyboardNavigation.js"
       );
-
-      const wrapper = createWrapper();
 
       expect(mockUseListKeyboardNavigation.useListKeyboardNavigation).toHaveBeenCalledWith(
         expect.objectContaining({ value: 2 }), // numFiles
