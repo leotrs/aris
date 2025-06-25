@@ -94,22 +94,6 @@ async def test_engine(request):
 @pytest_asyncio.fixture
 async def db_session(test_engine):
     """Create a fresh database for each test."""
-    # Generate unique schema name for this worker
-    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
-    unique_id = str(os.getpid())  # Use process ID for uniqueness
-    schema_name = f"test_{worker_id}_{unique_id}"
-    
-    # Create schema for PostgreSQL
-    if str(test_engine.url).startswith("postgresql"):
-        async with test_engine.begin() as conn:
-            await conn.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{schema_name}"'))
-        
-        # Temporarily set schema on all tables
-        original_schemas = {}
-        for table in Base.metadata.tables.values():
-            original_schemas[table.name] = table.schema
-            table.schema = schema_name
-    
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
@@ -119,15 +103,6 @@ async def db_session(test_engine):
 
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
-    
-    # Restore original schemas and clean up
-    if str(test_engine.url).startswith("postgresql"):
-        for table in Base.metadata.tables.values():
-            table.schema = original_schemas[table.name]
-        
-        # Drop the schema
-        async with test_engine.begin() as conn:
-            await conn.execute(text(f'DROP SCHEMA IF EXISTS "{schema_name}" CASCADE'))
 
 
 @pytest_asyncio.fixture
