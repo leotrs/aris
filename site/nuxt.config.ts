@@ -63,4 +63,7 @@ export default defineNuxtConfig({
   },
 
   modules: ['@nuxt/image'],
+
+  // Disable DevTools in test environment
+  devtools: { enabled: process.env.NODE_ENV !== 'test' },
 })

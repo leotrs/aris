@@ -115,11 +115,13 @@ test.describe("Mobile Responsiveness E2E", () => {
       expect(emailBox?.height).toBeGreaterThanOrEqual(40);
       expect(nameBox?.height).toBeGreaterThanOrEqual(40);
 
-      // Test form interaction
+      // Test form interaction with proper waits
       await emailInput.tap();
+      await page.waitForTimeout(100);
       await emailInput.fill("test@example.com");
 
       await nameInput.tap();
+      await page.waitForTimeout(100);
       await nameInput.fill("Dr. Jane Doe");
 
       // Submit button should be easily tappable
@@ -151,8 +153,9 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto("/");
 
-      // Test touch on mobile menu
+      // Test touch on mobile menu with wait
       await page.tap(".menu-toggle");
+      await page.waitForTimeout(300); // Wait for animation
       await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
       // Test touch on mobile links
