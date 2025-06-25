@@ -5,7 +5,7 @@ const LoginView = isTest ? {} : () => import("@/views/login/View.vue");
 const RegisterView = isTest ? {} : () => import("@/views/register/View.vue");
 const HomeView = isTest ? {} : () => import("@/views/home/View.vue");
 const WorkspaceView = isTest ? {} : () => import("@/views/workspace/View.vue");
-const DemoView = isTest ? {} : () => import("@/views/demo/View.vue");
+const DemoView = () => import("@/views/demo/View.vue");
 const AccountView = isTest ? {} : () => import("@/views/account/View.vue");
 const SettingsView = isTest ? {} : () => import("@/views/settings/View.vue");
 const NotFoundView = isTest ? {} : () => import("@/views/notfound/View.vue");
@@ -32,8 +32,9 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const publicPages = ["/login", "/register", "/demo"];
   const authRequired = !publicPages.includes(to.path);
+  if (!authRequired) return next();
   const token = localStorage.getItem("accessToken")?.trim();
-  return authRequired && !token ? next("/login") : next();
+  return !token ? next("/login") : next();
 });
 
 export default router;
