@@ -49,7 +49,11 @@
 <style scoped>
   /* Section Container */
   .section-four {
-    background: linear-gradient(-45deg, var(--gray-75) 0%, var(--gray-100) 100%); /* Opposite direction from Section 2 */
+    background: linear-gradient(
+      -45deg,
+      var(--gray-75) 0%,
+      var(--gray-100) 100%
+    ); /* Opposite direction from Section 2 */
     padding: 80px 0; /* Vertical padding for the section */
   }
 
