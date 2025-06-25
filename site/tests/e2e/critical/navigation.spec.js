@@ -9,21 +9,25 @@ test.describe("Navigation Flow E2E", () => {
 
     // Navigate to signup page via hero CTA link
     await page.click('a[href="/signup"]');
+    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL("/signup");
     await expect(page.locator("h1")).toContainText("Sign Up");
 
     // Navigate to terms page
     await page.click('a[href="/terms"]');
+    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL("/terms");
     await expect(page.locator("h1")).toContainText("Terms");
 
     // Navigate to cookies page
     await page.click('a[href="/cookies"]');
+    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL("/cookies");
     await expect(page.locator("h1")).toContainText("Cookie");
 
     // Navigate back to home via logo
     await page.click('a[href="/"]');
+    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL("/");
     await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
   });
@@ -45,6 +49,7 @@ test.describe("Navigation Flow E2E", () => {
     const viewport = page.viewportSize();
     if (viewport && viewport.width >= 768) {
       await page.hover(".has-dropdown");
+      await page.waitForTimeout(300); // Wait for hover animation
       await expect(page.locator(".dropdown-menu")).toBeVisible();
     }
 
@@ -67,12 +72,14 @@ test.describe("Navigation Flow E2E", () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto("/");
+    await page.waitForLoadState("networkidle");
 
     // Mobile menu should be hidden initially
     await expect(page.locator(".mobile-menu-overlay")).not.toBeVisible();
 
     // Click hamburger menu
     await page.click(".menu-toggle");
+    await page.waitForTimeout(300); // Wait for mobile menu animation
     await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
     // Verify mobile navigation links
@@ -82,10 +89,12 @@ test.describe("Navigation Flow E2E", () => {
 
     // Test mobile resources dropdown
     await page.click(".mobile-dropdown-toggle");
+    await page.waitForTimeout(300); // Wait for dropdown animation
     await expect(page.locator(".mobile-dropdown-menu")).toBeVisible();
 
     // Test navigation to signup from mobile menu
     await page.click('.mobile-nav-link[href="/signup"]');
+    await page.waitForLoadState("networkidle");
     await expect(page).toHaveURL("/signup");
 
     // Mobile menu should close after navigation

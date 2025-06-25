@@ -267,11 +267,11 @@ test.describe("Accessibility E2E", () => {
       await page.setViewportSize({ width: 1024, height: 768 });
 
       // Wait for page to be fully loaded
-      await page.waitForLoadState('networkidle');
+      await page.waitForLoadState("networkidle");
 
       // Directly focus the resources dropdown toggle
       const resourcesDropdown = page.locator(".has-dropdown .dropdown-toggle");
-      await resourcesDropdown.waitFor({ state: 'visible' });
+      await resourcesDropdown.waitFor({ state: "visible" });
       await resourcesDropdown.focus();
 
       // Verify it's focused

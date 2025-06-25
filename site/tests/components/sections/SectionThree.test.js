@@ -130,7 +130,7 @@ describe("SectionThree Component", () => {
 
       const cards = wrapper.findAll(".feature-card");
 
-      cards.forEach((card, index) => {
+      cards.forEach((card, _index) => {
         const featureVisual = card.find(".feature-visual");
         expect(featureVisual.exists()).toBe(true);
 
