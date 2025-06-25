@@ -14,6 +14,7 @@ Usage:
     for standardized test data.
 """
 
+import asyncio
 import os
 import sys
 
@@ -27,12 +28,11 @@ from sqlalchemy.pool import StaticPool
 # Import pytest-postgresql for PostgreSQL testing
 try:
     from pytest_postgresql import factories
+
     postgresql_proc = factories.postgresql_proc(
-        port=None,
-        unixsocketdir='/tmp',
-        postgres_options='-F'
+        port=None, unixsocketdir="/tmp", postgres_options="-F"
     )
-    postgresql = factories.postgresql('postgresql_proc')
+    postgresql = factories.postgresql("postgresql_proc")
     POSTGRESQL_AVAILABLE = True
 except ImportError:
     POSTGRESQL_AVAILABLE = False
@@ -51,20 +51,19 @@ from main import app
 async def test_engine(request):
     """Create test engine for each test."""
     database_url = settings.get_test_database_url()
-    
+
     # If we're using PostgreSQL and pytest-postgresql is available
     # Skip pytest-postgresql in CI environment since we use the service
     if database_url.startswith("postgresql") and POSTGRESQL_AVAILABLE and not os.environ.get("CI"):
         try:
             # Try to get the postgresql fixture if it exists
-            postgresql = request.getfixturevalue('postgresql')
+            postgresql = request.getfixturevalue("postgresql")
             conn_info = postgresql.info
             database_url = f"postgresql+asyncpg://{conn_info.user}:@{conn_info.host}:{conn_info.port}/{conn_info.dbname}"
         except Exception:
             # Fall back to the configured URL if pytest-postgresql isn't being used
             pass
-    
-    
+
     # Configure engine based on database type
     if database_url.startswith("sqlite"):
         engine = create_async_engine(
@@ -79,10 +78,10 @@ async def test_engine(request):
             database_url,
             future=True,
         )
-    
+
     yield engine
     await engine.dispose()
-    
+
     # Clean up SQLite database files
     if database_url.startswith("sqlite"):
         db_file = database_url.split("///")[1]
@@ -93,30 +92,42 @@ async def test_engine(request):
 @pytest_asyncio.fixture
 async def db_session(test_engine):
     """Create a fresh database for each test."""
-    # For PostgreSQL, handle enum creation race conditions
-    if str(test_engine.url).startswith("postgresql"):
+    # Create tables with proper error handling
+    created_successfully = False
+    retries = 3
+
+    for attempt in range(retries):
         try:
             async with test_engine.begin() as conn:
                 await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+            created_successfully = True
+            break
         except Exception as e:
-            # If enum already exists, that's fine - another worker created it
-            if "already exists" in str(e):
-                # Try again, this time the enum should exist
-                async with test_engine.begin() as conn:
-                    await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+            if "already exists" in str(e) and attempt < retries - 1:
+                # Enum collision - wait briefly and retry
+                await asyncio.sleep(0.1)
+                continue
+            elif attempt == retries - 1:
+                # Last attempt failed
+                raise
             else:
                 raise
-    else:
-        # SQLite doesn't have this issue
-        async with test_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+
+    if not created_successfully:
+        raise RuntimeError("Failed to create database tables after retries")
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
     async with TestingSessionLocal() as session:
         yield session
 
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+    # Clean up with error handling
+    try:
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+    except Exception as e:
+        # Ignore errors when dropping tables that don't exist
+        if "does not exist" not in str(e):
+            raise
 
 
 @pytest_asyncio.fixture
