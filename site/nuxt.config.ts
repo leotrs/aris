@@ -28,8 +28,11 @@ export default defineNuxtConfig({
         // Preconnect to Google Fonts for performance
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
+        { rel: 'preconnect', href: '[https://fonts.googleapis.com](https://fonts.googleapis.com)' },
+        { rel: 'preconnect', href: '[https://fonts.gstatic.com](https://fonts.gstatic.com)', crossorigin: '' },
+        { href: '[https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap)', rel: 'stylesheet' },
         // Canonical URL
-        { rel: 'canonical', href: 'https://aris.dev' },
+        { rel: 'canonical', href: 'https://aris.pub' },
         // Favicon
         { rel: 'icon', type: 'image/svg+xml', href: '/favicon.svg' },
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
