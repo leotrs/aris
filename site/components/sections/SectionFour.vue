@@ -8,7 +8,7 @@
           <div class="card-icon-container">
             <IconUserEdit />
           </div>
-          <h3 class="card-title">For Authors & Researchers</h3>
+          <h3 class="card-title">Authors & Researchers</h3>
           <p class="card-description">
             Integrated platform to craft, collaborate on, and publish research with control and
             clarity. Focus on ideas, streamline workflow, reach an engaged audience.
@@ -19,7 +19,7 @@
           <div class="card-icon-container">
             <IconBook2 />
           </div>
-          <h3 class="card-title">For Readers & Learners</h3>
+          <h3 class="card-title">Readers & Learners</h3>
           <p class="card-description">
             Transforms engagement with scientific knowledge, making it personal and interactive.
             Dive into dynamic manuscripts, add private notes, connect with authors for richer
@@ -31,7 +31,7 @@
           <div class="card-icon-container">
             <IconClipboardCheck />
           </div>
-          <h3 class="card-title">For Reviewers & Editors</h3>
+          <h3 class="card-title">Reviewers & Editors</h3>
           <p class="card-description">
             Streamlines peer review for efficiency and quality. Leverage intelligent reviewer
             recommendations, manage submissions, facilitate structured, empathetic feedback.

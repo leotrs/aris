@@ -12,8 +12,7 @@
             <h3 class="card-problem">Fragmented Tools</h3>
           </div>
           <p class="card-problem-description">
-            Researchers struggle with disconnected tools, battling software, and lost time that
-            fragments their workflow and wastes valuable research time.
+            Disconnected tools fragment workflows and waste valuable research time.
           </p>
           <h3 class="card-solution">Aris provides an integrated platform</h3>
           <p class="card-solution-description">
@@ -30,8 +29,7 @@
             <h3 class="card-problem">Clunky Collaboration</h3>
           </div>
           <p class="card-problem-description">
-            Traditional collaboration tools obscure context, hinder feedback, and lack precision,
-            making it difficult to provide meaningful input.
+            Traditional tools obscure context and hinder precise, meaningful feedback.
           </p>
           <h3 class="card-solution">Aris elevates collaboration with intelligent assistance</h3>
           <p class="card-solution-description">
@@ -48,8 +46,7 @@
             <h3 class="card-problem">Peer Review Bottleneck</h3>
           </div>
           <p class="card-problem-description">
-            Current peer review systems are opaque, inefficient, and sometimes lacking depth or
-            empathy - often slow, unclear, and failing to provide meaningful feedback.
+            Current systems are opaque, slow, and often lack depth or meaningful feedback.
           </p>
           <h3 class="card-solution">Aris redefines peer review with built-in efficiency</h3>
           <p class="card-solution-description">
@@ -66,8 +63,7 @@
             <h3 class="card-problem">Impersonal Digital Engagement</h3>
           </div>
           <p class="card-problem-description">
-            Static articles limit engagement and make complex concepts hard to grasp, creating
-            barriers to understanding and losing personal connection with readers.
+            Static formats limit engagement and create barriers to understanding complex concepts.
           </p>
           <h3 class="card-solution">Aris transforms research into dynamic experiences</h3>
           <p class="card-solution-description">

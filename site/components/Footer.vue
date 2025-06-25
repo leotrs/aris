@@ -102,7 +102,7 @@
   .footer-content-wrapper {
     max-width: 1200px; /* Standard content width */
     margin: 0 auto; /* Center the wrapper */
-    padding: 0 16px; /* Reduced side padding */
+    padding: 0 32px; /* Better side padding for desktop */
   }
 
   /* Footer Columns Layout */
@@ -275,6 +275,10 @@
   @media (max-width: 768px) {
     .main-footer {
       padding: 60px 0 30px 0;
+    }
+
+    .footer-content-wrapper {
+      padding: 0 16px; /* Tighter padding on mobile */
     }
 
     .footer-columns {
