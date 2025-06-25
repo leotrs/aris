@@ -1,35 +1,84 @@
 /* Component Utilities - Shared styles for marketing site components */
+/* Using variables from rsm.css for consistency */
+
+/* Additional spacing and typography variables to extend rsm.css */
+:root {
+  /* Extended spacing scale (building on rsm.css spacing) */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+  --space-4xl: 80px;
+  
+  /* Fluid typography scale using clamp() for better responsiveness */
+  --text-xs: clamp(11px, 2vw, 12px);
+  --text-sm: clamp(13px, 2.5vw, 14px);
+  --text-base: clamp(15px, 3vw, 16px);
+  --text-lg: clamp(17px, 3.5vw, 18px);
+  --text-xl: clamp(19px, 4vw, 20px);
+  --text-2xl: clamp(22px, 4.5vw, 24px);
+  --text-3xl: clamp(28px, 5vw, 32px);
+  --text-4xl: clamp(36px, 6vw, 40px);
+  --text-5xl: clamp(42px, 7vw, 48px);
+  
+  /* Responsive breakpoints */
+  --bp-sm: 480px;
+  --bp-md: 768px;
+  --bp-lg: 1024px;
+  --bp-xl: 1200px;
+}
 
 /* Section Container - Replaces repeated section styles */
 .section-container {
-  padding: 4rem 1rem;
+  padding: var(--space-4xl) var(--space-lg);
   max-width: 1200px;
   margin: 0 auto;
 }
 
+.section-container-wide {
+  padding: var(--space-4xl) var(--space-lg);
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.section-container-narrow {
+  padding: var(--space-4xl) var(--space-lg);
+  max-width: 960px;
+  margin: 0 auto;
+}
+
 @media (max-width: 768px) {
-  .section-container {
-    padding: 2rem 1rem;
+  .section-container,
+  .section-container-wide,
+  .section-container-narrow {
+    padding: var(--space-3xl) var(--space-md);
   }
 }
 
 @media (max-width: 480px) {
-  .section-container {
-    padding: 1.5rem 0.75rem;
+  .section-container,
+  .section-container-wide,
+  .section-container-narrow {
+    padding: var(--space-2xl) var(--space-md);
   }
 }
 
 /* Button Components - Shared button styles */
 .btn {
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
+  padding: var(--space-md) var(--space-xl);
+  border-radius: 8px;
   font-weight: 600;
   text-decoration: none;
   display: inline-block;
-  transition: background-color 0.2s ease;
+  transition: all 0.2s ease;
   cursor: pointer;
   border: none;
-  font-family: inherit;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: var(--text-lg);
+  line-height: 1;
 }
 
 .btn-primary {
@@ -39,6 +88,8 @@
 
 .btn-primary:hover {
   background: var(--primary-600);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(14, 154, 233, 0.25);
 }
 
 .btn-primary:focus-visible {
@@ -47,13 +98,17 @@
 }
 
 .btn-secondary {
-  background: var(--gray-50);
-  color: var(--primary-800);
+  background: var(--gray-100);
+  color: var(--gray-800);
+  border: 1px solid var(--gray-300);
 }
 
 .btn-secondary:hover {
   background: var(--gray-200);
+  border-color: var(--gray-400);
+  transform: translateY(-1px);
 }
+
 
 .btn-link {
   background: transparent;
@@ -68,8 +123,10 @@
 
 @media (max-width: 480px) {
   .btn {
-    padding: 0.625rem 1.25rem;
-    font-size: 0.9rem;
+    padding: var(--space-sm) var(--space-lg);
+    font-size: var(--text-base);
+    width: 100%;
+    max-width: 280px;
   }
 }
 
@@ -91,8 +148,30 @@
 
 /* Typography Utilities */
 .section-heading {
+  font-family: "Montserrat", sans-serif;
   font-weight: var(--weight-semi);
-  margin-bottom: 1rem;
+  font-size: var(--text-5xl);
+  line-height: 1.2;
+  margin-bottom: var(--space-2xl);
+  color: var(--gray-900);
+}
+
+.section-heading-lg {
+  font-family: "Montserrat", sans-serif;
+  font-weight: var(--weight-bold);
+  font-size: 56px;
+  line-height: 1.1;
+  margin-bottom: var(--space-2xl);
+  color: var(--gray-900);
+}
+
+.card-heading {
+  font-family: "Montserrat", sans-serif;
+  font-weight: var(--weight-semi);
+  font-size: var(--text-xl);
+  line-height: 1.3;
+  margin-bottom: var(--space-sm);
+  color: var(--gray-800);
 }
 
 .section-text {
@@ -115,67 +194,116 @@
 
 @media (max-width: 768px) {
   .section-heading {
-    font-size: 1.5rem;
-    line-height: 1.3;
+    font-size: 40px;
+    line-height: 1.2;
+    margin-bottom: var(--space-xl);
+  }
+  
+  .section-heading-lg {
+    font-size: 44px;
   }
 }
 
 @media (max-width: 480px) {
   .section-heading {
-    font-size: 1.25rem;
-    margin-bottom: 0.75rem;
+    font-size: 32px;
+    margin-bottom: var(--space-lg);
+  }
+  
+  .section-heading-lg {
+    font-size: 36px;
+  }
+  
+  .card-heading {
+    font-size: var(--text-lg);
   }
   
   .section-text {
-    font-size: 0.9rem;
+    font-size: var(--text-sm);
     max-width: none;
   }
+}
+
+/* Card Components - Shared card styles */
+.card {
+  background: var(--surface-page);
+  border: 1px solid var(--gray-200);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  padding: var(--space-2xl);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
+}
+
+.card-compact {
+  padding: var(--space-xl);
 }
 
 /* Flexbox Grid Utilities */
 .flex-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
-  margin-top: 2rem;
+  gap: var(--space-xl);
+  margin-top: var(--space-xl);
   justify-content: center;
 }
 
 .flex-grid-item {
-  flex: 1 1 250px;
+  flex: 1 1 280px;
   background: var(--gray-75);
-  padding: 2rem;
-  border-radius: 8px;
+  padding: var(--space-xl);
+  border-radius: 12px;
 }
 
 .flex-grid-item-compact {
-  flex: 1 1 250px;
+  flex: 1 1 280px;
   background: var(--gray-75);
-  padding: 1.5rem;
-  border-radius: 8px;
+  padding: var(--space-lg);
+  border-radius: 12px;
 }
 
+/* Responsive Design */
 @media (max-width: 768px) {
   .flex-grid {
-    gap: 1.5rem;
-    margin-top: 1.5rem;
+    gap: var(--space-lg);
+    margin-top: var(--space-lg);
   }
   
   .flex-grid-item,
   .flex-grid-item-compact {
     flex: 1 1 100%;
-    padding: 1.5rem;
+    padding: var(--space-lg);
+  }
+  
+  .card {
+    padding: var(--space-xl);
+  }
+  
+  .card-compact {
+    padding: var(--space-lg);
   }
 }
 
 @media (max-width: 480px) {
   .flex-grid {
-    gap: 1rem;
+    gap: var(--space-md);
   }
   
   .flex-grid-item,
   .flex-grid-item-compact {
-    padding: 1rem;
+    padding: var(--space-md);
+  }
+  
+  .card {
+    padding: var(--space-lg);
+  }
+  
+  .card-compact {
+    padding: var(--space-md);
   }
 }
 
