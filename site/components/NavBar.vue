@@ -50,7 +50,13 @@
         <a href="/demo" class="nav-link nav-link-cta">Try the Demo</a>
       </div>
 
-      <button class="menu-toggle" aria-label="Toggle navigation menu" @click="toggleMobileMenu">
+      <button 
+        class="menu-toggle" 
+        aria-label="Toggle navigation menu" 
+        @click="toggleMobileMenu"
+        @keydown.enter.prevent="toggleMobileMenu"
+        @keydown.space.prevent="toggleMobileMenu"
+      >
         <svg
           v-if="!isMobileMenuOpen"
           xmlns="http://www.w3.org/2000/svg"
