@@ -31,11 +31,13 @@ describe("Demo Manuscript Wrapper", () => {
     const originalImport = global.import;
     global.import = vi.fn().mockImplementation((url) => {
       // Mock the specific files that the component tries to import
-      if (url.includes('jquery-3.6.0.js') || 
-          url.includes('tooltipster.bundle.js') ||
-          url.includes('onload.js') ||
-          url.includes('http://')) {
-        return Promise.resolve({ 
+      if (
+        url.includes("jquery-3.6.0.js") ||
+        url.includes("tooltipster.bundle.js") ||
+        url.includes("onload.js") ||
+        url.includes("http://")
+      ) {
+        return Promise.resolve({
           onload: vi.fn().mockResolvedValue(true),
           default: {},
         });
