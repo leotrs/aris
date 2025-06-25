@@ -96,8 +96,8 @@ async def create_database_if_not_exists(database_url: str):
     
     # Extract database name from URL
     db_name = database_url.split("/")[-1]
-    # Create connection to postgres database to create our test database
-    admin_url = database_url.rsplit("/", 1)[0] + "/postgres"
+    # Create admin connection URL with password preserved
+    admin_url = database_url.replace(f"/{db_name}", "/postgres")
     
     admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
     try:
@@ -117,7 +117,7 @@ async def create_database_if_not_exists(database_url: str):
 @pytest_asyncio.fixture
 async def db_session(test_engine):
     """Create a fresh database for each test."""
-    # Create database if needed (for PostgreSQL worker-specific databases)
+    # Create worker-specific database if needed
     database_url = str(test_engine.url)
     await create_database_if_not_exists(database_url)
     
