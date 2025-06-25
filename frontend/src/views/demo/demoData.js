@@ -194,7 +194,7 @@ export const createDemoApi = () => ({
             source: demoFile.source,
           }),
         });
-        const html = await response.text();
+        const html = await response.json();
         return { data: html };
       } catch (error) {
         console.error("Failed to render RSM content:", error);
@@ -210,8 +210,8 @@ export const createDemoApi = () => ({
   },
   put: () => Promise.resolve({ data: {} }),
   delete: () => Promise.resolve({ data: {} }),
-  // Return a fake URI that won't cause 404s for static assets
-  getUri: () => "",
+  // Return the backend URI for static assets
+  getUri: () => "http://localhost:8000",
 });
 
 // Simple markdown to HTML converter for demo purposes
