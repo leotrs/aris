@@ -16,6 +16,7 @@
   const numFiles = computed(() => visibleFiles.value.length);
   const { activeIndex } = useListKeyboardNavigation(numFiles, filesRef, true);
   watch(activeIndex, (newVal) => {
+    if (!fileStore?.value?.files) return;
     const currentFocused = fileStore.value.files.filter((d) => d.focused);
     currentFocused.forEach((d) => (d.focused = false));
     if (newVal === null) return;

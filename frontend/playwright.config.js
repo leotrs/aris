@@ -16,21 +16,26 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? 2 : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 2, // Limit workers for faster startup
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  reporter: process.env.CI ? "html" : "line", // Use line reporter for faster local feedback
+  /* Global timeout for each test */
+  timeout: 30000, // 30 seconds instead of default 60
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: "http://localhost:5173",
     /* Always run in headless mode */
     headless: true,
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-    trace: "on-first-retry",
+    /* Collect trace only on failure, not retry */
+    trace: "retain-on-failure",
     /* Take screenshot on failure */
     screenshot: "only-on-failure",
-    /* Record video on failure */
-    video: "retain-on-failure",
+    /* Disable video recording for faster execution */
+    video: "off",
+    /* Faster action timeouts */
+    actionTimeout: 10000, // 10 seconds instead of default 30
+    navigationTimeout: 15000, // 15 seconds instead of default 30
   },
 
   /* Configure projects for major browsers */
