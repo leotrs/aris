@@ -1,12 +1,12 @@
-import { vi } from 'vitest'
+import { vi } from "vitest";
 
 // Mock Nuxt composables
-global.defineNuxtConfig = vi.fn()
+global.defineNuxtConfig = vi.fn();
 global.useRuntimeConfig = vi.fn(() => ({
   public: {
-    apiBase: 'http://localhost:8000'
-  }
-}))
+    apiBase: "http://localhost:8000",
+  },
+}));
 
 // Mock console methods to reduce noise in tests
 global.console = {
@@ -14,4 +14,4 @@ global.console = {
   log: vi.fn(),
   warn: vi.fn(),
   error: vi.fn(),
-}
+};

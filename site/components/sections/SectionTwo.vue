@@ -8,15 +8,15 @@
           <div class="card-icon-container">
             <IconGitFork />
           </div>
-          <h3 class="card-problem">Fragmented Tools, Disconnected Workflows</h3>
+          <h3 class="card-problem">Fragmented tools, lost time, battling software</h3>
           <p class="card-problem-description">
-            Switching between word processors, reference managers, and collaboration tools leads to
-            friction and errors.
+            Researchers struggle with disconnected tools that fragment their workflow and waste
+            valuable time.
           </p>
-          <h3 class="card-solution">→ Unified Platform, Seamless Flow</h3>
+          <h3 class="card-solution">Aris provides an integrated platform</h3>
           <p class="card-solution-description">
-            Aris integrates every stage of research, from drafting to peer review, on a single
-            web-native platform.
+            Eliminates friction, regains version control, and lets you focus on discoveries rather
+            than tool management.
           </p>
         </div>
 
@@ -24,15 +24,15 @@
           <div class="card-icon-container">
             <IconMessagesOff />
           </div>
-          <h3 class="card-problem">Isolated Collaboration, Version Chaos</h3>
+          <h3 class="card-problem">Obscured context, hindered feedback, lack of precision</h3>
           <p class="card-problem-description">
-            Sharing files back and forth, losing track of changes, and manual merging costs valuable
-            time.
+            Traditional collaboration tools make it difficult to provide precise, contextual
+            feedback.
           </p>
-          <h3 class="card-solution">→ Real-Time Collaboration, Semantic Diffs</h3>
+          <h3 class="card-solution">Aris elevates collaboration with intelligent assistance</h3>
           <p class="card-solution-description">
-            Work together in real-time with granular change tracking and semantic version control,
-            eliminating chaos.
+            Semantic diffs and AI Copilot invite human interaction, empowering human agency in the
+            research process.
           </p>
         </div>
 
@@ -40,15 +40,15 @@
           <div class="card-icon-container">
             <IconHourglassHigh />
           </div>
-          <h3 class="card-problem">Tedious Formatting, Compliance Headaches</h3>
+          <h3 class="card-problem">Opaque, inefficient, sometimes lacking depth or empathy</h3>
           <p class="card-problem-description">
-            Manually adjusting citations, references, and manuscript styles for different journal
-            requirements.
+            Current peer review systems are often slow, unclear, and fail to provide meaningful
+            feedback.
           </p>
-          <h3 class="card-solution">→ Automated Formatting, Instant Compliance</h3>
+          <h3 class="card-solution">Aris redefines peer review with built-in efficiency</h3>
           <p class="card-solution-description">
-            Aris automates formatting, citations, and reference management, ensuring instant
-            compliance with publication standards.
+            AI-powered reviewer recommendations ensure quality and integrity while maintaining human
+            oversight and empathy.
           </p>
         </div>
 
@@ -56,15 +56,17 @@
           <div class="card-icon-container">
             <IconFileOff />
           </div>
-          <h3 class="card-problem">Limited Discoverability, Static Formats</h3>
+          <h3 class="card-problem">
+            Static articles, limiting engagement, hard to grasp complex concepts
+          </h3>
           <p class="card-problem-description">
-            PDFs and static documents restrict engagement, limiting impact and understanding of
-            complex data.
+            Traditional publishing formats create barriers to understanding and lose personal
+            connection with readers.
           </p>
-          <h3 class="card-solution">→ Enhanced Discoverability, Interactive Narratives</h3>
+          <h3 class="card-solution">Aris transforms research into dynamic experiences</h3>
           <p class="card-solution-description">
-            Publish interactive, web-native manuscripts that allow deep engagement with your
-            research and data.
+            Web-native publishing makes research more discoverable, understandable, and deeply
+            engaging for all audiences.
           </p>
         </div>
       </div>
