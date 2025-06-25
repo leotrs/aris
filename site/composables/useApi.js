@@ -1,35 +1,35 @@
-import axios from 'axios'
+import axios from "axios";
 
 // Configure axios instance
 const api = axios.create({
-  baseURL: process.env.NODE_ENV === 'production' ? 'https://api.aris.pub' : 'http://localhost:8000',
+  baseURL: process.env.NODE_ENV === "production" ? "https://api.aris.pub" : "http://localhost:8000",
   timeout: 10000,
   headers: {
-    'Content-Type': 'application/json',
-  }
-})
+    "Content-Type": "application/json",
+  },
+});
 
 // Request interceptor to log requests in development
 api.interceptors.request.use(
   (config) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`, config.data)
+    if (process.env.NODE_ENV === "development") {
+      console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`, config.data);
     }
-    return config
+    return config;
   },
   (error) => Promise.reject(error)
-)
+);
 
 // Response interceptor to handle common error cases
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (process.env.NODE_ENV === 'development') {
-      console.error('API Error:', error.response?.status, error.response?.data)
+    if (process.env.NODE_ENV === "development") {
+      console.error("API Error:", error.response?.status, error.response?.data);
     }
-    return Promise.reject(error)
+    return Promise.reject(error);
   }
-)
+);
 
 // Data structures matching backend API (JSDoc comments for documentation)
 /**
@@ -70,7 +70,7 @@ function sanitizeSignupData(data) {
     institution: data.institution?.trim() || null,
     research_area: data.research_area?.trim() || null,
     interest_level: data.interest_level || null,
-  }
+  };
 }
 
 // Utility function to normalize API errors
@@ -79,29 +79,29 @@ function normalizeApiError(error) {
   if (!error.response) {
     return {
       status: 0,
-      error: 'network_error',
-      message: 'Unable to connect to server. Please check your internet connection.'
-    }
+      error: "network_error",
+      message: "Unable to connect to server. Please check your internet connection.",
+    };
   }
 
-  const { status, data } = error.response
+  const { status, data } = error.response;
 
   // Backend error with structured response
   if (data?.detail) {
     return {
       status,
-      error: data.detail.error || 'api_error',
-      message: data.detail.message || 'An error occurred',
-      details: data.detail.details
-    }
+      error: data.detail.error || "api_error",
+      message: data.detail.message || "An error occurred",
+      details: data.detail.details,
+    };
   }
 
   // Fallback for unexpected error formats
   return {
     status,
-    error: 'unknown_error',
-    message: data?.message || 'An unexpected error occurred'
-  }
+    error: "unknown_error",
+    message: data?.message || "An unexpected error occurred",
+  };
 }
 
 /**
@@ -111,11 +111,11 @@ function normalizeApiError(error) {
  */
 export async function signupUser(data) {
   try {
-    const sanitizedData = sanitizeSignupData(data)
-    const response = await api.post('/signup/', sanitizedData)
-    return response.data
+    const sanitizedData = sanitizeSignupData(data);
+    const response = await api.post("/signup/", sanitizedData);
+    return response.data;
   } catch (error) {
-    throw normalizeApiError(error)
+    throw normalizeApiError(error);
   }
 }
 
@@ -126,11 +126,11 @@ export async function signupUser(data) {
  */
 export async function checkEmailExists(email) {
   try {
-    const response = await api.get(`/signup/status?email=${encodeURIComponent(email)}`)
-    return response.data.exists
+    const response = await api.get(`/signup/status?email=${encodeURIComponent(email)}`);
+    return response.data.exists;
   } catch (error) {
-    throw normalizeApiError(error)
+    throw normalizeApiError(error);
   }
 }
 
-export default api
+export default api;

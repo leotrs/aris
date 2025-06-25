@@ -6,52 +6,80 @@
       <div class="feature-grid">
         <div class="feature-card">
           <div class="feature-visual">
-            <!-- <img src="/path/to/your/interactive-drafting.gif" alt="Interactive Drafting Demo" class="feature-gif"> -->
+            <img
+              src="@/assets/screen1.png"
+              alt="Unified Research Environment Demo"
+              class="feature-gif"
+            />
+            <div class="video-placeholder">
+              <p>Demo Video: Unified Environment</p>
+            </div>
           </div>
           <div class="feature-content">
-            <h3 class="card-title">Interactive Drafting</h3>
+            <h3 class="card-title">The Unified Research Environment</h3>
             <p class="card-description">
-              Draft your manuscripts with rich media, interactive figures, and live data
-              connections, transcending static documents.
+              Aris integrates writing, collaboration, review, and publishing into a single, cohesive
+              environment, solving fragmentation and reclaiming time lost to tool-juggling and email
+              exchanges.
             </p>
           </div>
         </div>
 
         <div class="feature-card">
           <div class="feature-visual">
-            <!-- <img src="/path/to/your/dynamic-peer-review.gif" alt="Dynamic Peer Review Demo" class="feature-gif"> -->
+            <img
+              src="@/assets/feature3.png"
+              alt="Intelligent Human-First Collaboration Demo"
+              class="feature-gif"
+            />
+            <div class="video-placeholder">
+              <p>Demo Video: AI Collaboration</p>
+            </div>
           </div>
           <div class="feature-content">
-            <h3 class="card-title">Dynamic Peer Review</h3>
+            <h3 class="card-title">Intelligent, Human-First Collaboration</h3>
             <p class="card-description">
-              Streamline the review process with in-context comments, version comparisons, and
-              collaborative editing tools.
+              Focuses on semantic diffs for meaningful change tracking, and the AI Copilot's role in
+              facilitating human interaction by suggesting feedback requests and proposing
+              collaborators (not generating content).
             </p>
           </div>
         </div>
 
         <div class="feature-card">
           <div class="feature-visual">
-            <!-- <img src="/path/to/your/collaborative-data-viz.gif" alt="Collaborative Data Visualization Demo" class="feature-gif"> -->
+            <img
+              src="@/assets/screen1.png"
+              alt="Streamlined Peer Review Demo"
+              class="feature-gif"
+            />
+            <div class="video-placeholder">
+              <p>Demo Video: Peer Review</p>
+            </div>
           </div>
           <div class="feature-content">
-            <h3 class="card-title">Collaborative Data Viz</h3>
+            <h3 class="card-title">Streamlined Peer Review, Focused on Quality</h3>
             <p class="card-description">
-              Co-create and embed interactive data visualizations directly within your manuscript,
-              ensuring data integrity and clarity.
+              Explains the built-in system for peer review, highlighting how AI recommendations for
+              reviewers lead to more relevant, insightful, and robust evaluations, emphasizing
+              quality and integrity.
             </p>
           </div>
         </div>
 
         <div class="feature-card">
           <div class="feature-visual">
-            <!-- <img src="/path/to/your/smart-publishing.gif" alt="Smart Publishing Demo" class="feature-gif"> -->
+            <img src="@/assets/feature3.png" alt="Interactive Science Demo" class="feature-gif" />
+            <div class="video-placeholder">
+              <p>Demo Video: Interactive Publishing</p>
+            </div>
           </div>
           <div class="feature-content">
-            <h3 class="card-title">Smart Publishing</h3>
+            <h3 class="card-title">Interactive Science for Deeper Engagement</h3>
             <p class="card-description">
-              Seamlessly publish your work to web-native formats, optimizing for discoverability and
-              engagement across platforms.
+              Describes the power of web-native content (embedding data/multimedia), how it boosts
+              discoverability (intelligent tagging/search), understandability (tooltips/smart
+              navigation), and engagement (layered reading, annotations, direct feedback).
             </p>
           </div>
         </div>
@@ -134,6 +162,7 @@
     align-items: center;
     justify-content: center;
     overflow: hidden; /* Ensure content inside doesn't spill */
+    position: relative; /* For video placeholder positioning */
   }
 
   .feature-gif,
@@ -142,6 +171,25 @@
     height: 100%;
     object-fit: cover; /* Ensures the visual covers the container, cropping if necessary */
     display: block; /* Removes extra space below images */
+  }
+
+  .video-placeholder {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.7);
+    color: var(--white);
+    padding: 8px 16px;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+  }
+
+  .feature-visual:hover .video-placeholder {
+    opacity: 1;
   }
 
   /* Feature Content (Text) */

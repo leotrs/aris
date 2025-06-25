@@ -25,8 +25,8 @@
           <label for="name" class="form-label">Full Name *</label>
           <input
             id="name"
-            name="name"
             v-model="name"
+            name="name"
             type="text"
             class="form-input"
             placeholder="e.g., Dr. Jane Doe"
@@ -36,17 +36,15 @@
             autocomplete="name"
             :disabled="isLoading"
           />
-          <div v-if="name.length >= 90" class="field-warning">
-            {{ name.length }}/100 characters
-          </div>
+          <div v-if="name.length >= 90" class="field-warning">{{ name.length }}/100 characters</div>
         </div>
 
         <div class="form-group">
           <label for="institution" class="form-label">Institution or Affiliation</label>
           <input
             id="institution"
-            name="institution"
             v-model="institution"
+            name="institution"
             type="text"
             class="form-input"
             placeholder="e.g., University of Science"
@@ -63,8 +61,8 @@
           <label for="research_area" class="form-label">Research Area</label>
           <input
             id="research_area"
-            name="research_area"
             v-model="researchArea"
+            name="research_area"
             type="text"
             class="form-input"
             placeholder="e.g., Computational Biology, Materials Science"
@@ -80,8 +78,8 @@
           <label for="interest_level" class="form-label">How ready are you to get started?</label>
           <select
             id="interest_level"
-            name="interest_level"
             v-model="interestLevel"
+            name="interest_level"
             class="form-select"
             :disabled="isLoading"
           >
@@ -96,7 +94,12 @@
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
 
-        <button type="submit" class="btn btn-primary signup-button" :disabled="isLoading" :aria-busy="isLoading">
+        <button
+          type="submit"
+          class="btn btn-primary signup-button"
+          :disabled="isLoading"
+          :aria-busy="isLoading"
+        >
           <span v-if="isLoading">Signing Up...</span>
           <span v-else>Sign Up for Early Access</span>
         </button>
@@ -167,23 +170,24 @@
 
       // Call API service
       await signupUser(signupData);
-      
+
       // Success - clear form and show message
-      successMessage.value = "Successfully signed up for early access! We'll notify you when Aris is ready.";
+      successMessage.value =
+        "Successfully signed up for early access! We'll notify you when Aris is ready.";
       email.value = "";
       name.value = "";
       institution.value = "";
       researchArea.value = "";
       interestLevel.value = "";
-      
     } catch (error) {
       console.error("Signup error:", error);
-      
+
       // Handle API errors with more specific messaging
-      if (error.error === 'duplicate_email') {
+      if (error.error === "duplicate_email") {
         errorMessage.value = "This email address is already registered for early access.";
-      } else if (error.error === 'network_error') {
-        errorMessage.value = "Unable to connect to server. Please check your internet connection and try again.";
+      } else if (error.error === "network_error") {
+        errorMessage.value =
+          "Unable to connect to server. Please check your internet connection and try again.";
       } else if (error.status === 422) {
         errorMessage.value = "Please check your input and try again.";
       } else if (error.status === 500) {

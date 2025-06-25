@@ -33,7 +33,7 @@
       </div>
 
       <div class="footer-bottom">
-        <!-- <img src="/path/to/your/aris-logo-monochromatic.svg" alt="Aris Logo" class="footer-logo"> -->
+        <img src="@/assets/logo-32px-gray.svg" alt="Aris Logo" class="footer-logo" />
 
         <p class="footer-bottom-text">© 2025 Aris. All rights reserved.</p>
         <div class="footer-legal-links">
@@ -48,7 +48,7 @@
 <style scoped>
   /* Main Footer Container */
   .main-footer {
-    background-color: var(--blue-900); /* Deep blue background as per design */
+    background-color: var(--primary-900); /* Deep blue background as per design */
     color: var(--gray-200); /* Default text color for the footer */
     padding: 80px 0; /* Generous vertical padding */
     font-family: "Source Sans 3", sans-serif;

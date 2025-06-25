@@ -3,7 +3,7 @@
     <div class="hero-content-wrapper">
       <div class="hero-content">
         <h1 id="hero-heading" class="hero-headline">
-          Aris is the Unified Platform for Human-First Scientific Research.
+          Aris: The Unified Platform for Human-First Scientific Research.
         </h1>
         <p class="hero-subheadline">
           Experience an integrated platform for collaborative writing, intelligent peer review, and

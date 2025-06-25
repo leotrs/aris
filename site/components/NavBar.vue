@@ -1,5 +1,5 @@
 <template>
-  <nav class="navbar">
+  <nav class="navbar" :class="{ 'navbar-scrolled': isScrolled }">
     <div class="navbar-content-wrapper">
       <div class="navbar-logo">
         <a href="/" aria-label="Home - Aris">
@@ -133,6 +133,21 @@
   const isMobileMenuOpen = ref(false);
   const isResourcesDropdownOpen = ref(false);
   const isMobileResourcesDropdownOpen = ref(false);
+  const isScrolled = ref(false);
+
+  // Handle scroll events for navbar transparency
+  const handleScroll = () => {
+    // Consider scrolled if we've scrolled past the hero section (roughly 70vh)
+    isScrolled.value = window.scrollY > window.innerHeight * 0.7;
+  };
+
+  onMounted(() => {
+    window.addEventListener("scroll", handleScroll);
+  });
+
+  onUnmounted(() => {
+    window.removeEventListener("scroll", handleScroll);
+  });
 
   // Toggle desktop dropdowns (on hover)
   const openDropdown = (menuName) => {
@@ -186,12 +201,21 @@
     top: 0;
     left: 0;
     width: 100%;
-    background-color: var(--surface-page); /* Solid white background */
-    box-shadow: var(--shadow-soft); /* Subtle shadow */
+    background-color: transparent; /* Start transparent */
+    box-shadow: none; /* No shadow when transparent */
     z-index: 1000; /* Ensures it stays on top of other content */
     font-family: "Source Sans 3", sans-serif;
     display: flex; /* Use flex to align content wrapper vertically */
     align-items: center; /* Center content wrapper vertically */
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease; /* Smooth transition */
+  }
+
+  /* Navbar when scrolled */
+  .navbar.navbar-scrolled {
+    background-color: var(--surface-page); /* Solid white background */
+    box-shadow: var(--shadow-soft); /* Subtle shadow */
   }
 
   .navbar-content-wrapper {
