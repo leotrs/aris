@@ -74,9 +74,7 @@ class Settings(BaseSettings):
             
         # Use PostgreSQL in CI environment
         if self.ENV == "CI" or os.environ.get("CI"):
-            worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
-            unique_id = str(uuid.uuid4())[:8]
-            return f"postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris_{worker_id}_{unique_id}"
+            return "postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris"
             
         # Use SQLite for local development
         worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")

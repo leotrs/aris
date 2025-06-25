@@ -16,6 +16,7 @@ Usage:
 
 import os
 import sys
+import uuid
 
 import httpx
 import pytest_asyncio
@@ -48,31 +49,6 @@ from aris.models import Base, File, User
 from main import app
 
 
-async def create_database_if_not_exists(database_url: str):
-    """Create database if it doesn't exist (PostgreSQL only)."""
-    if not database_url.startswith("postgresql"):
-        return
-    
-    # Extract database name from URL
-    db_name = database_url.split("/")[-1]
-    # Create connection to postgres database to create our test database
-    admin_url = database_url.rsplit("/", 1)[0] + "/postgres"
-    
-    admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
-    try:
-        async with admin_engine.connect() as conn:
-            # Check if database exists
-            result = await conn.execute(
-                text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
-                {"db_name": db_name}
-            )
-            if not result.fetchone():
-                # Create database
-                await conn.execute(text(f'CREATE DATABASE "{db_name}"'))
-    finally:
-        await admin_engine.dispose()
-
-
 @pytest_asyncio.fixture(scope="session")
 async def test_engine(request):
     """Create test engine once per session."""
@@ -90,8 +66,6 @@ async def test_engine(request):
             # Fall back to the configured URL if pytest-postgresql isn't being used
             pass
     
-    # Create database if it doesn't exist (for PostgreSQL in CI)
-    await create_database_if_not_exists(database_url)
     
     # Configure engine based on database type
     if database_url.startswith("sqlite"):
@@ -111,29 +85,32 @@ async def test_engine(request):
     yield engine
     await engine.dispose()
     
-    # Clean up test databases
+    # Clean up SQLite database files
     if database_url.startswith("sqlite"):
         db_file = database_url.split("///")[1]
         if os.path.exists(db_file):
             os.remove(db_file)
-    elif database_url.startswith("postgresql") and os.environ.get("CI"):
-        # Clean up test database in CI
-        db_name = database_url.split("/")[-1]
-        admin_url = database_url.rsplit("/", 1)[0] + "/postgres"
-        admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
-        try:
-            async with admin_engine.connect() as conn:
-                await conn.execute(text(f'DROP DATABASE IF EXISTS "{db_name}"'))
-        except Exception:
-            # Ignore cleanup errors
-            pass
-        finally:
-            await admin_engine.dispose()
 
 
 @pytest_asyncio.fixture
 async def db_session(test_engine):
     """Create a fresh database for each test."""
+    # Generate unique schema name for this worker
+    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
+    unique_id = str(os.getpid())  # Use process ID for uniqueness
+    schema_name = f"test_{worker_id}_{unique_id}"
+    
+    # Create schema for PostgreSQL
+    if str(test_engine.url).startswith("postgresql"):
+        async with test_engine.begin() as conn:
+            await conn.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{schema_name}"'))
+        
+        # Temporarily set schema on all tables
+        original_schemas = {}
+        for table in Base.metadata.tables.values():
+            original_schemas[table.name] = table.schema
+            table.schema = schema_name
+    
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
@@ -143,6 +120,15 @@ async def db_session(test_engine):
 
     async with test_engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
+    
+    # Restore original schemas and clean up
+    if str(test_engine.url).startswith("postgresql"):
+        for table in Base.metadata.tables.values():
+            table.schema = original_schemas[table.name]
+        
+        # Drop the schema
+        async with test_engine.begin() as conn:
+            await conn.execute(text(f'DROP SCHEMA IF EXISTS "{schema_name}" CASCADE'))
 
 
 @pytest_asyncio.fixture
