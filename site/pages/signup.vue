@@ -17,6 +17,7 @@
             placeholder="your.email@example.com"
             required
             autocomplete="email"
+            :disabled="isLoading"
           />
         </div>
 
@@ -33,6 +34,7 @@
             minlength="1"
             maxlength="100"
             autocomplete="name"
+            :disabled="isLoading"
           />
           <div v-if="name.length >= 90" class="field-warning">
             {{ name.length }}/100 characters
@@ -50,6 +52,7 @@
             placeholder="e.g., University of Science"
             maxlength="200"
             autocomplete="organization"
+            :disabled="isLoading"
           />
           <div v-if="institution.length >= 180" class="field-warning">
             {{ institution.length }}/200 characters
@@ -66,6 +69,7 @@
             class="form-input"
             placeholder="e.g., Computational Biology, Materials Science"
             maxlength="200"
+            :disabled="isLoading"
           />
           <div v-if="researchArea.length >= 180" class="field-warning">
             {{ researchArea.length }}/200 characters
@@ -79,6 +83,7 @@
             name="interest_level"
             v-model="interestLevel"
             class="form-select"
+            :disabled="isLoading"
           >
             <option value="">Please select</option>
             <option value="exploring">Exploring - Just looking around</option>
@@ -91,7 +96,7 @@
         <p v-if="errorMessage" class="error-message">{{ errorMessage }}</p>
         <p v-if="successMessage" class="success-message">{{ successMessage }}</p>
 
-        <button type="submit" class="btn btn-primary signup-button" :disabled="isLoading">
+        <button type="submit" class="btn btn-primary signup-button" :disabled="isLoading" :aria-busy="isLoading">
           <span v-if="isLoading">Signing Up...</span>
           <span v-else>Sign Up for Early Access</span>
         </button>
@@ -174,11 +179,15 @@
     } catch (error) {
       console.error("Signup error:", error);
       
-      // Handle API errors
+      // Handle API errors with more specific messaging
       if (error.error === 'duplicate_email') {
         errorMessage.value = "This email address is already registered for early access.";
       } else if (error.error === 'network_error') {
-        errorMessage.value = "Unable to connect to server. Please check your internet connection.";
+        errorMessage.value = "Unable to connect to server. Please check your internet connection and try again.";
+      } else if (error.status === 422) {
+        errorMessage.value = "Please check your input and try again.";
+      } else if (error.status === 500) {
+        errorMessage.value = "Server error. Please try again in a few moments.";
       } else if (error.message) {
         errorMessage.value = error.message;
       } else {

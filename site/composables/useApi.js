@@ -112,7 +112,7 @@ function normalizeApiError(error) {
 export async function signupUser(data) {
   try {
     const sanitizedData = sanitizeSignupData(data)
-    const response = await api.post('/api/signup/', sanitizedData)
+    const response = await api.post('/signup/', sanitizedData)
     return response.data
   } catch (error) {
     throw normalizeApiError(error)
@@ -126,7 +126,7 @@ export async function signupUser(data) {
  */
 export async function checkEmailExists(email) {
   try {
-    const response = await api.get(`/api/signup/status?email=${encodeURIComponent(email)}`)
+    const response = await api.get(`/signup/status?email=${encodeURIComponent(email)}`)
     return response.data.exists
   } catch (error) {
     throw normalizeApiError(error)
