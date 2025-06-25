@@ -45,7 +45,7 @@ describe("FileMenu - Delete Confirmation Integration", () => {
               <div 
                 class="context-menu-item-stub" 
                 :class="{ danger: kind === 'danger' }"
-                @click="$emit('click')"
+                @click="$emit('click', $event)"
               >
                 {{ caption }}
               </div>
