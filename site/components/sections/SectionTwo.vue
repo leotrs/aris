@@ -5,13 +5,15 @@
 
       <div class="problem-solution-grid">
         <div class="problem-solution-card">
-          <div class="card-icon-container">
-            <IconGitFork />
+          <div class="card-header">
+            <div class="card-icon-container">
+              <IconGitFork />
+            </div>
+            <h3 class="card-problem">Fragmented Tools</h3>
           </div>
-          <h3 class="card-problem">Fragmented tools, lost time, battling software</h3>
           <p class="card-problem-description">
-            Researchers struggle with disconnected tools that fragment their workflow and waste
-            valuable time.
+            Researchers struggle with disconnected tools, battling software, and lost time that
+            fragments their workflow and wastes valuable research time.
           </p>
           <h3 class="card-solution">Aris provides an integrated platform</h3>
           <p class="card-solution-description">
@@ -21,13 +23,15 @@
         </div>
 
         <div class="problem-solution-card">
-          <div class="card-icon-container">
-            <IconMessagesOff />
+          <div class="card-header">
+            <div class="card-icon-container">
+              <IconMessagesOff />
+            </div>
+            <h3 class="card-problem">Clunky Collaboration</h3>
           </div>
-          <h3 class="card-problem">Obscured context, hindered feedback, lack of precision</h3>
           <p class="card-problem-description">
-            Traditional collaboration tools make it difficult to provide precise, contextual
-            feedback.
+            Traditional collaboration tools obscure context, hinder feedback, and lack precision,
+            making it difficult to provide meaningful input.
           </p>
           <h3 class="card-solution">Aris elevates collaboration with intelligent assistance</h3>
           <p class="card-solution-description">
@@ -37,13 +41,15 @@
         </div>
 
         <div class="problem-solution-card">
-          <div class="card-icon-container">
-            <IconHourglassHigh />
+          <div class="card-header">
+            <div class="card-icon-container">
+              <IconHourglassHigh />
+            </div>
+            <h3 class="card-problem">Peer Review Bottleneck</h3>
           </div>
-          <h3 class="card-problem">Opaque, inefficient, sometimes lacking depth or empathy</h3>
           <p class="card-problem-description">
-            Current peer review systems are often slow, unclear, and fail to provide meaningful
-            feedback.
+            Current peer review systems are opaque, inefficient, and sometimes lacking depth or
+            empathy - often slow, unclear, and failing to provide meaningful feedback.
           </p>
           <h3 class="card-solution">Aris redefines peer review with built-in efficiency</h3>
           <p class="card-solution-description">
@@ -53,15 +59,15 @@
         </div>
 
         <div class="problem-solution-card">
-          <div class="card-icon-container">
-            <IconFileOff />
+          <div class="card-header">
+            <div class="card-icon-container">
+              <IconFileOff />
+            </div>
+            <h3 class="card-problem">Impersonal Digital Engagement</h3>
           </div>
-          <h3 class="card-problem">
-            Static articles, limiting engagement, hard to grasp complex concepts
-          </h3>
           <p class="card-problem-description">
-            Traditional publishing formats create barriers to understanding and lose personal
-            connection with readers.
+            Static articles limit engagement and make complex concepts hard to grasp, creating
+            barriers to understanding and losing personal connection with readers.
           </p>
           <h3 class="card-solution">Aris transforms research into dynamic experiences</h3>
           <p class="card-solution-description">
@@ -132,13 +138,23 @@
     background: linear-gradient(135deg, var(--surface-page) 0%, var(--gray-50) 100%);
   }
 
+  /* Card Header - Icon + Problem Heading Row */
+  .card-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: var(--space-md);
+    gap: var(--space-md);
+  }
+
   /* Card Icon Container */
   .card-icon-container {
-    margin-bottom: var(--space-lg);
-    width: 48px;
-    height: 48px;
+    width: 40px;
+    height: 40px;
     color: var(--primary-500);
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* Problem & Solution Headings within Card */
@@ -148,8 +164,18 @@
     font-size: var(--text-xl);
     font-weight: 600;
     color: var(--gray-800);
-    margin-bottom: var(--space-sm);
     line-height: 1.3;
+  }
+
+  /* Problem heading when in header */
+  .card-header .card-problem {
+    margin: 0;
+  }
+
+  /* Solution heading standalone */
+  .card-solution {
+    margin-bottom: var(--space-sm);
+    margin-top: var(--space-lg);
   }
 
   /* Problem Description */
@@ -158,7 +184,7 @@
     font-size: var(--text-base);
     line-height: 1.5;
     color: var(--gray-600);
-    margin-bottom: var(--space-lg);
+    margin-bottom: var(--space-xl);
   }
 
   /* Solution Description */

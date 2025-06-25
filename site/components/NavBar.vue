@@ -88,42 +88,46 @@
       </button>
     </div>
 
-    <div v-if="isMobileMenuOpen" class="mobile-menu-overlay">
-      <ul class="mobile-navbar-links">
-        <li><a href="/about" class="mobile-nav-link" @click="closeMobileMenu">About</a></li>
-        <li>
-          <a href="/ai-copilot" class="mobile-nav-link" @click="closeMobileMenu">AI Copilot</a>
-        </li>
-        <li><a href="/pricing" class="mobile-nav-link" @click="closeMobileMenu">Pricing</a></li>
-        <li class="mobile-has-dropdown">
-          <a
-            href="#"
-            class="mobile-nav-link mobile-dropdown-toggle"
-            @click.prevent="toggleMobileDropdown('resources')"
-            >Resources</a
+    <Transition name="mobile-menu">
+      <div v-if="isMobileMenuOpen" class="mobile-menu-overlay">
+        <ul class="mobile-navbar-links">
+          <li><a href="/about" class="mobile-nav-link" @click="closeMobileMenu">About</a></li>
+          <li>
+            <a href="/ai-copilot" class="mobile-nav-link" @click="closeMobileMenu">AI Copilot</a>
+          </li>
+          <li><a href="/pricing" class="mobile-nav-link" @click="closeMobileMenu">Pricing</a></li>
+          <li class="mobile-has-dropdown">
+            <a
+              href="#"
+              class="mobile-nav-link mobile-dropdown-toggle"
+              @click.prevent="toggleMobileDropdown('resources')"
+              >Resources</a
+            >
+            <ul v-if="isMobileResourcesDropdownOpen" class="mobile-dropdown-menu">
+              <li>
+                <a href="/documentation" class="mobile-dropdown-link" @click="closeMobileMenu"
+                  >Documentation</a
+                >
+              </li>
+              <li>
+                <a href="/blog" class="mobile-dropdown-link" @click="closeMobileMenu">Blog</a>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <div class="mobile-navbar-utility-links">
+          <a href="/login" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu"
+            >Login</a
           >
-          <ul v-if="isMobileResourcesDropdownOpen" class="mobile-dropdown-menu">
-            <li>
-              <a href="/documentation" class="mobile-dropdown-link" @click="closeMobileMenu"
-                >Documentation</a
-              >
-            </li>
-            <li><a href="/blog" class="mobile-dropdown-link" @click="closeMobileMenu">Blog</a></li>
-          </ul>
-        </li>
-      </ul>
-      <div class="mobile-navbar-utility-links">
-        <a href="/login" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu"
-          >Login</a
-        >
-        <a href="/signup" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu"
-          >Sign Up</a
-        >
-        <a href="/demo" class="mobile-nav-link mobile-nav-link-cta" @click="closeMobileMenu"
-          >Try the Demo</a
-        >
+          <a href="/signup" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu"
+            >Sign Up</a
+          >
+          <a href="/demo" class="mobile-nav-link mobile-nav-link-cta" @click="closeMobileMenu"
+            >Try the Demo</a
+          >
+        </div>
       </div>
-    </div>
+    </Transition>
   </nav>
 </template>
 
@@ -214,7 +218,11 @@
 
   /* Navbar when scrolled */
   .navbar.navbar-scrolled {
-    background: linear-gradient(180deg, var(--surface-page) 0%, var(--gray-50) 100%); /* Subtle gradient */
+    background: linear-gradient(
+      180deg,
+      var(--surface-page) 0%,
+      var(--gray-50) 100%
+    ); /* Subtle gradient */
     box-shadow: var(--shadow-soft); /* Subtle shadow */
   }
 
@@ -233,7 +241,7 @@
     display: flex;
     align-items: center; /* Ensure logo is vertically centered */
   }
-  
+
   .navbar-logo img {
     height: 32px; /* Slightly smaller for better proportions */
     width: auto;
@@ -405,7 +413,25 @@
     padding: 24px;
     z-index: 999; /* Below the toggle button, above other content */
     overflow-y: auto; /* Enable scrolling for long menus */
-    animation: slideInFromTop 0.3s ease-out forwards; /* Slide in effect */
+  }
+
+  /* Vue Transition Classes for Mobile Menu */
+  .mobile-menu-enter-active {
+    transition: all 0.3s ease-out;
+  }
+
+  .mobile-menu-leave-active {
+    transition: all 0.3s ease-in;
+  }
+
+  .mobile-menu-enter-from {
+    opacity: 0;
+    transform: translateY(-100%);
+  }
+
+  .mobile-menu-leave-to {
+    opacity: 0;
+    transform: translateY(-100%);
   }
 
   .mobile-navbar-links {
@@ -538,28 +564,6 @@
     to {
       opacity: 1;
       transform: translateY(0);
-    }
-  }
-
-  @keyframes slideInFromTop {
-    from {
-      opacity: 0;
-      transform: translateY(-100%);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-  @keyframes slideOutToTop {
-    from {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    to {
-      opacity: 0;
-      transform: translateY(-100%);
     }
   }
 
