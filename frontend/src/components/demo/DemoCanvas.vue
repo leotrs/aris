@@ -150,7 +150,7 @@
                 ref="manuscript-ref"
                 data-testid="manuscript-viewer"
                 :class="{ 'title-visible': isMainTitleVisible }"
-                :html-string="file.html || ''"
+                :html-string="file.html"
                 :keys="true"
                 :settings="fileSettings"
                 :show-footer="true"

@@ -73,8 +73,9 @@
 
   // Initialize demo content
   onMounted(async () => {
-    // Convert markdown to HTML for demo
-    demoFileReactive.html = await api.get("/content").then((res) => res.data);
+    demoFileReactive.html = await api
+      .post("/render", { source: file.value.source })
+      .then((res) => res.data);
   });
 
   // Keyboard shortcuts
