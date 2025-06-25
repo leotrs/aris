@@ -153,7 +153,7 @@ test.describe("Home View Navigation & Keyboard", () => {
 
     // Dot should open context menu
     await page.keyboard.press(".");
-    await expect(page.locator(".context-menu")).toBeVisible();
+    await expect(page.locator('[data-testid="context-menu"]')).toBeVisible();
   });
 
   test("view mode shortcut v,l switches to list view", async ({ page }) => {

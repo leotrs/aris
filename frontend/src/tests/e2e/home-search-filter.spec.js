@@ -60,6 +60,7 @@ test.describe("Home View Search & Filter", () => {
       
       // Should be able to interact with files
       await firstFile.click();
+      await page.waitForTimeout(200); // Wait for reactivity
       await expect(firstFile).toHaveClass(/active/);
     }
   });

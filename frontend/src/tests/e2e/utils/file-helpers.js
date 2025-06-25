@@ -82,17 +82,11 @@ export class FileHelpers {
     // Focus the file item first to ensure it can receive keyboard events
     await fileItem.focus();
 
-    // Try clicking on the spacer element which should not have click handlers
-    const spacer = fileItem.locator(".spacer").first();
-    if (await spacer.isVisible()) {
-      await spacer.click();
-    } else {
-      // Fallback to clicking the file item directly
-      await fileItem.click();
-    }
+    // Click the file item directly to trigger selection
+    await fileItem.click();
 
-    // Reduced wait time for faster execution
-    await this.page.waitForTimeout(100);
+    // Wait for Vue reactivity to update the CSS classes
+    await this.page.waitForTimeout(200);
 
     // Verify file is selected (has active class)
     await expect(fileItem).toHaveClass(/active/);
@@ -274,5 +268,31 @@ export class FileHelpers {
     // Navigate back to home to see the new file
     await this.navigateToHome();
     return fileId;
+  }
+
+  /**
+   * Ensure a minimum number of test files exist for navigation testing
+   */
+  async ensureTestFiles(minCount) {
+    await this.waitForFilesLoaded();
+    const currentCount = await this.getFileCount();
+    
+    if (currentCount >= minCount) {
+      return; // Already have enough files
+    }
+    
+    const filesToCreate = minCount - currentCount;
+    const createdFiles = [];
+    
+    for (let i = 0; i < filesToCreate; i++) {
+      const fileId = await this.createNewFile();
+      createdFiles.push(fileId);
+      await this.navigateToHome();
+    }
+    
+    // Final wait for all files to be loaded
+    await this.waitForFilesLoaded();
+    
+    return createdFiles;
   }
 }
