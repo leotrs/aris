@@ -5,6 +5,7 @@ Implemented as a Pydantic model that is then read by FastAPI.
 """
 
 import os
+import uuid
 from pathlib import Path
 
 from pydantic import ConfigDict, Field
@@ -55,7 +56,30 @@ class Settings(BaseSettings):
     TEST_USER_PASSWORD: str = Field(..., json_schema_extra={"env": "TEST_USER_PASSWORD"})
     """Password for test user."""
 
+    TEST_DB_URL: str = Field("", json_schema_extra={"env": "TEST_DB_URL"})
+    """Test database URL override. If empty, will auto-detect based on environment."""
+
     model_config = ConfigDict(extra="forbid")
+
+    def get_test_database_url(self) -> str:
+        """Get test database URL based on environment and configuration.
+        
+        Returns:
+            - TEST_DB_URL if explicitly set
+            - PostgreSQL URL if in CI environment  
+            - SQLite URL for local development
+        """
+        if self.TEST_DB_URL:
+            return self.TEST_DB_URL
+            
+        # Use PostgreSQL in CI environment
+        if self.ENV == "CI" or os.environ.get("CI"):
+            return "postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris"
+            
+        # Use SQLite for local development
+        worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
+        unique_id = str(uuid.uuid4())[:8]
+        return f"sqlite+aiosqlite:///./test_{worker_id}_{unique_id}.db"
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
