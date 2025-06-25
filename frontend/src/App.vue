@@ -113,7 +113,7 @@
       localStorage.removeItem("user");
 
       // Only redirect if not on a public page
-      const publicPages = ["/login", "/register"];
+      const publicPages = ["/login", "/register", "/demo"];
       if (!publicPages.includes(router.currentRoute.value.path)) {
         router.push("/login");
       }
