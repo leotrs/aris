@@ -89,45 +89,47 @@ async def test_engine(request):
             os.remove(db_file)
 
 
+async def create_database_if_not_exists(database_url: str):
+    """Create database if it doesn't exist (PostgreSQL only)."""
+    if not database_url.startswith("postgresql"):
+        return
+    
+    # Extract database name from URL
+    db_name = database_url.split("/")[-1]
+    # Create connection to postgres database to create our test database
+    admin_url = database_url.rsplit("/", 1)[0] + "/postgres"
+    
+    admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
+    try:
+        async with admin_engine.connect() as conn:
+            # Check if database exists
+            result = await conn.execute(
+                text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
+                {"db_name": db_name}
+            )
+            if not result.fetchone():
+                # Create database
+                await conn.execute(text(f'CREATE DATABASE "{db_name}"'))
+    finally:
+        await admin_engine.dispose()
+
+
 @pytest_asyncio.fixture
 async def db_session(test_engine):
     """Create a fresh database for each test."""
-    # Create tables with proper error handling
-    created_successfully = False
-    retries = 3
-
-    for attempt in range(retries):
-        try:
-            async with test_engine.begin() as conn:
-                await conn.run_sync(Base.metadata.create_all, checkfirst=True)
-            created_successfully = True
-            break
-        except Exception as e:
-            if "already exists" in str(e) and attempt < retries - 1:
-                # Enum collision - wait briefly and retry
-                await asyncio.sleep(0.1)
-                continue
-            elif attempt == retries - 1:
-                # Last attempt failed
-                raise
-            else:
-                raise
-
-    if not created_successfully:
-        raise RuntimeError("Failed to create database tables after retries")
+    # Create database if needed (for PostgreSQL worker-specific databases)
+    database_url = str(test_engine.url)
+    await create_database_if_not_exists(database_url)
+    
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
     async with TestingSessionLocal() as session:
         yield session
 
-    # Clean up with error handling
-    try:
-        async with test_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.drop_all)
-    except Exception as e:
-        # Ignore errors when dropping tables that don't exist
-        if "does not exist" not in str(e):
-            raise
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.drop_all)
 
 
 @pytest_asyncio.fixture
