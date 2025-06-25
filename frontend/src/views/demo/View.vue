@@ -73,9 +73,17 @@
 
   // Initialize demo content
   onMounted(async () => {
-    demoFileReactive.html = await api
-      .post("/render", { source: file.value.source })
-      .then((res) => res.data);
+    try {
+      console.log(
+        "Initializing demo content with source:",
+        file.value.source.substring(0, 100) + "..."
+      );
+      const response = await api.post("/render", { source: file.value.source });
+      demoFileReactive.html = response.data;
+      console.log("Demo content initialized, HTML length:", demoFileReactive.html.length);
+    } catch (error) {
+      console.error("Failed to initialize demo content:", error);
+    }
   });
 
   // Keyboard shortcuts

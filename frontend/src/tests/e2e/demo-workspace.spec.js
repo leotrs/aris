@@ -78,6 +78,7 @@ test.describe("Demo Workspace Functionality", () => {
       // Wait for manuscript to be visible
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Look for margins/settings panel
       const marginsButton = page
@@ -95,6 +96,7 @@ test.describe("Demo Workspace Functionality", () => {
         // Look for margin controls
         const marginControls = page.locator(
           '[data-testid*="margin-control"], .margin-control, input[type="range"]'
+        );
 
         if ((await marginControls.count()) > 0) {
           const marginControl = marginControls.first();
@@ -229,6 +231,7 @@ test.describe("Demo Workspace Functionality", () => {
       // Ensure demo content is loaded and focused
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Get initial state (banner should be visible)
       const banner = page.locator(".demo-banner");
@@ -258,6 +261,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("focus mode hides sidebar and banner", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
+      });
 
       const banner = page.locator(".demo-banner");
       const sidebar = page.locator('[data-testid="sidebar"]');
@@ -285,6 +289,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("can exit focus mode", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Enter focus mode
       await page.keyboard.press("c");
@@ -306,6 +311,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("responsive layout in focus mode", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Enter focus mode
       await page.keyboard.press("c");
@@ -325,6 +331,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("keyboard focus management works correctly", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Tab through interactive elements
       await page.keyboard.press("Tab");
@@ -338,6 +345,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("keyboard shortcuts work throughout demo", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Test focus mode shortcut
       await page.keyboard.press("c");
@@ -353,6 +361,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("can navigate with arrow keys", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
+      });
 
       const manuscriptContainer = page.locator('[data-testid="manuscript-container"]');
 
@@ -402,6 +411,7 @@ test.describe("Demo Workspace Functionality", () => {
       // Content should still be accessible
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Reset viewport
       await page.setViewportSize({ width: 1280, height: 720 });
@@ -433,6 +443,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("can interact with RSM handrails", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Look for interactive handrails
       const handrails = page.locator(".hr-menu-zone");
@@ -456,6 +467,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("scrolling through content works smoothly", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
+      });
 
       const container = page.locator('[data-testid="manuscript-container"]');
 

@@ -1,6 +1,7 @@
 <script setup>
-  import { ref, computed, useTemplateRef, nextTick } from "vue";
+  import { ref, computed, useTemplateRef, nextTick, onBeforeMount } from "vue";
   import Manuscript from "@/components/manuscript/Manuscript.vue";
+  import { createDemoApi } from "@/views/demo/demoData.js";
 
   const props = defineProps({
     htmlString: { type: String, required: true },
@@ -12,9 +13,35 @@
   const emit = defineEmits(["mounted-at"]);
 
   const selfRef = useTemplateRef("self-ref");
+  const onload = ref(null);
+  const api = createDemoApi();
 
-  // For demo mode, we'll use a simple version without external dependencies
+  // Load RSM dependencies to enable handrails functionality
+  onBeforeMount(async () => {
+    const base = api.getUri();
+    try {
+      await import(/* @vite-ignore */ `${base}/static/jquery-3.6.0.js`);
+      await import(/* @vite-ignore */ `${base}/static/tooltipster.bundle.js`);
+      const module = await import(/* @vite-ignore */ `${base}/static/onload.js`);
+      onload.value = module.onload;
+    } catch (error) {
+      console.error(error);
+    }
+  });
+
   const mountPoint = computed(() => selfRef.value);
+
+  // Execute RSM onload functionality and emit mounted event
+  const tryExecuteOnload = async () => {
+    if (!onload.value || !selfRef.value || !props.htmlString) return;
+    await nextTick();
+    try {
+      await onload.value(selfRef.value);
+    } catch (error) {
+      console.error(error);
+    }
+    emit("mounted-at", selfRef.value);
+  };
 
   // Emit mounted event after next tick
   const tryEmitMounted = async () => {
@@ -23,10 +50,24 @@
     emit("mounted-at", selfRef.value);
   };
 
-  // Watch for changes and emit mounted event
-  nextTick(() => {
-    tryEmitMounted();
-  });
+  // Watch for changes and execute onload or emit mounted event
+  const handleMount = async () => {
+    await nextTick();
+    if (onload.value) {
+      await tryExecuteOnload();
+    } else {
+      // If onload hasn't loaded yet, wait a bit and try again
+      setTimeout(async () => {
+        if (onload.value) {
+          await tryExecuteOnload();
+        } else {
+          await tryEmitMounted();
+        }
+      }, 100);
+    }
+  };
+
+  nextTick(handleMount);
 </script>
 
 <template>
