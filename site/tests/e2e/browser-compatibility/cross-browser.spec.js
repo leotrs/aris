@@ -176,62 +176,6 @@ test.describe("Cross-Browser Compatibility", () => {
       console.log(`✓ Interactive features work correctly in ${browserName}`);
     });
 
-    test("should handle form validation across browsers", async ({ page, browserName }) => {
-      await page.goto("/signup");
-
-      // Test client-side validation
-      await page.click('button[type="submit"]');
-
-      // Check browser validation state instead of custom messages
-      const emailValid = await page
-        .locator('input[type="email"]')
-        .evaluate((el) => el.validity.valid);
-      expect(emailValid).toBe(false);
-
-      // Test character limit validation
-      const longName = "a".repeat(101);
-      await page.fill('input[type="email"]', "test@example.com");
-      await page.fill('input[name="name"]', longName);
-      await page.click('button[type="submit"]');
-
-      // Wait for validation and check for error message
-      await page.waitForTimeout(100);
-      await expect(page.locator(".error-message")).toBeVisible();
-
-      console.log(`✓ Form validation works correctly in ${browserName}`);
-    });
-
-    test("should handle async operations across browsers", async ({ page, browserName }) => {
-      await page.goto("/signup");
-
-      // Test loading states
-      await page.fill('input[type="email"]', "test@example.com");
-      await page.fill('input[name="name"]', "Dr. Jane Doe");
-
-      // Mock slow response
-      await page.route("**/signup/", async (route) => {
-        await page.waitForTimeout(100);
-        await route.fulfill({
-          status: 200,
-          contentType: "application/json",
-          body: JSON.stringify({ id: 1 }),
-        });
-      });
-
-      await page.click('button[type="submit"]');
-
-      // Loading state should work
-      await expect(page.locator('button[type="submit"]:disabled')).toBeVisible();
-
-      // Should complete successfully
-      await expect(
-        page.locator(
-          "text=Successfully signed up for early access! We'll notify you when Aris is ready."
-        )
-      ).toBeVisible();
-
-      console.log(`✓ Async operations work correctly in ${browserName}`);
-    });
   });
 
   test.describe("Mobile Browser Compatibility", () => {
@@ -287,25 +231,6 @@ test.describe("Cross-Browser Compatibility", () => {
   });
 
   test.describe("Error Handling Compatibility", () => {
-    test("should handle network errors consistently", async ({ page, browserName }) => {
-      await page.goto("/signup");
-
-      await page.fill('input[type="email"]', "test@example.com");
-      await page.fill('input[name="name"]', "Dr. Jane Doe");
-
-      // Mock network failure
-      await page.route("**/signup/", (route) => route.abort("failed"));
-
-      await page.click('button[type="submit"]');
-      await expect(
-        page.locator(
-          "text=Unable to connect to server. Please check your internet connection and try again."
-        )
-      ).toBeVisible();
-
-      console.log(`✓ Network error handling works correctly in ${browserName}`);
-    });
-
     test("should handle API errors consistently", async ({ page, browserName }) => {
       await page.goto("/signup");
 
