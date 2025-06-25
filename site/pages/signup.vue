@@ -13,6 +13,7 @@
             id="email"
             v-model="email"
             type="email"
+            name="email"
             class="form-input"
             placeholder="your.email@example.com"
             required
