@@ -59,7 +59,14 @@ jobs:
         cat .env.ci
 
     - name: Run tests
-      run: uv run pytest -n8 --cov=aris --cov-report=xml
+      run: |
+        if [ "$CI" = "true" ]; then
+          # Run tests sequentially in CI to avoid PostgreSQL conflicts
+          uv run pytest --cov=aris --cov-report=xml
+        else
+          # Run tests in parallel locally (uses SQLite)
+          uv run pytest -n8 --cov=aris --cov-report=xml
+        fi
 
 
     - name: Upload coverage to Codecov
