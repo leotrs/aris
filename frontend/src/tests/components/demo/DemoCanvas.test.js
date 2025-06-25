@@ -363,9 +363,6 @@ describe("Demo Canvas", () => {
       wrapper = createWrapper({}, { fileSettings: ref(mockSettings) });
       await nextTick();
 
-      const outer = wrapper.find(".outer");
-      const style = outer.element.style;
-
       // Note: CSS variable binding verification might need to be adjusted based on actual implementation
       expect(wrapper.vm.fileSettings.background).toBe("#f5f5f5");
       expect(wrapper.vm.fileSettings.fontSize).toBe("18px");

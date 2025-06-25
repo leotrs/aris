@@ -17,26 +17,26 @@ describe("FilesPane.vue - Accessibility Features", () => {
   beforeEach(() => {
     mockFileStore = ref({
       files: [
-        { 
-          id: "1", 
-          title: "Accessible Research Paper", 
-          filtered: false, 
+        {
+          id: "1",
+          title: "Accessible Research Paper",
+          filtered: false,
           focused: false,
-          tags: [{ id: "tag1", name: "research" }]
+          tags: [{ id: "tag1", name: "research" }],
         },
-        { 
-          id: "2", 
-          title: "Biology Study Document", 
-          filtered: false, 
+        {
+          id: "2",
+          title: "Biology Study Document",
+          filtered: false,
           focused: false,
-          tags: [{ id: "tag2", name: "biology" }]
+          tags: [{ id: "tag2", name: "biology" }],
         },
-        { 
-          id: "3", 
-          title: "Hidden Document", 
-          filtered: true, 
+        {
+          id: "3",
+          title: "Hidden Document",
+          filtered: true,
           focused: false,
-          tags: []
+          tags: [],
         },
       ],
     });
@@ -60,7 +60,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
         },
         stubs: {
           Pane: {
-            template: '<div class="pane" role="main"><slot name="header"></slot><slot></slot></div>',
+            template:
+              '<div class="pane" role="main"><slot name="header"></slot><slot></slot></div>',
           },
           Topbar: {
             template: '<div data-testid="topbar" role="toolbar"></div>',
@@ -78,8 +79,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
           },
           FilesItem: {
             template: `
-              <div 
-                class="file-item" 
+              <div
+                class="file-item"
                 data-testid="file-item"
                 role="button"
                 tabindex="0"
@@ -98,7 +99,7 @@ describe("FilesPane.vue - Accessibility Features", () => {
             emits: ["open"],
             computed: {
               tagsList() {
-                return this.modelValue.tags?.map(t => t.name).join(", ") || "No tags";
+                return this.modelValue.tags?.map((t) => t.name).join(", ") || "No tags";
               },
             },
           },
@@ -129,7 +130,7 @@ describe("FilesPane.vue - Accessibility Features", () => {
       expect(fileItems).toHaveLength(2); // Only visible files
 
       // Each file item should have proper ARIA attributes
-      fileItems.forEach((item, index) => {
+      fileItems.forEach((item) => {
         expect(item.attributes("role")).toBe("button");
         expect(item.attributes("tabindex")).toBe("0");
         expect(item.attributes("aria-label")).toContain("File:");
@@ -141,10 +142,10 @@ describe("FilesPane.vue - Accessibility Features", () => {
       const wrapper = createWrapper();
 
       const fileItems = wrapper.findAll('[data-testid="file-item"]');
-      
+
       // First file
       expect(fileItems[0].attributes("aria-label")).toBe("File: Accessible Research Paper");
-      
+
       // Second file
       expect(fileItems[1].attributes("aria-label")).toBe("File: Biology Study Document");
     });
@@ -153,8 +154,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
       const wrapper = createWrapper();
 
       const fileItems = wrapper.findAll('[data-testid="file-item"]');
-      const firstFileTagsLabel = fileItems[0].find('.file-tags').attributes("aria-label");
-      
+      const firstFileTagsLabel = fileItems[0].find(".file-tags").attributes("aria-label");
+
       expect(firstFileTagsLabel).toBe("Tags: research");
     });
 
@@ -163,12 +164,12 @@ describe("FilesPane.vue - Accessibility Features", () => {
         provide: {
           fileStore: ref({
             files: [
-              { 
-                id: "1", 
-                title: "No Tags File", 
-                filtered: false, 
+              {
+                id: "1",
+                title: "No Tags File",
+                filtered: false,
                 focused: false,
-                tags: []
+                tags: [],
               },
             ],
           }),
@@ -176,8 +177,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
       });
 
       const fileItem = wrapper.find('[data-testid="file-item"]');
-      const tagsLabel = fileItem.find('.file-tags').attributes("aria-label");
-      
+      const tagsLabel = fileItem.find(".file-tags").attributes("aria-label");
+
       expect(tagsLabel).toBe("Tags: No tags");
     });
 
@@ -198,13 +199,14 @@ describe("FilesPane.vue - Accessibility Features", () => {
 
   describe("Focus Management and Navigation", () => {
     it("manages focus correctly with keyboard navigation", async () => {
-      const mockUseListKeyboardNavigation = await import("@/composables/useListKeyboardNavigation.js");
+      const mockUseListKeyboardNavigation = await import(
+        "@/composables/useListKeyboardNavigation.js"
+      );
       const activeIndexRef = ref(null);
       mockUseListKeyboardNavigation.useListKeyboardNavigation.mockReturnValue({
         activeIndex: activeIndexRef,
       });
 
-      const wrapper = createWrapper();
       await nextTick();
 
       // Simulate focusing first file
@@ -223,7 +225,9 @@ describe("FilesPane.vue - Accessibility Features", () => {
     });
 
     it("clears focus when activeIndex is null", async () => {
-      const mockUseListKeyboardNavigation = await import("@/composables/useListKeyboardNavigation.js");
+      const mockUseListKeyboardNavigation = await import(
+        "@/composables/useListKeyboardNavigation.js"
+      );
       const activeIndexRef = ref(0);
       mockUseListKeyboardNavigation.useListKeyboardNavigation.mockReturnValue({
         activeIndex: activeIndexRef,
@@ -231,8 +235,7 @@ describe("FilesPane.vue - Accessibility Features", () => {
 
       // Set initial focus
       mockFileStore.value.files[0].focused = true;
-      
-      const wrapper = createWrapper();
+
       await nextTick();
 
       // Clear focus
@@ -244,13 +247,14 @@ describe("FilesPane.vue - Accessibility Features", () => {
     });
 
     it("handles focus restoration after list changes", async () => {
-      const mockUseListKeyboardNavigation = await import("@/composables/useListKeyboardNavigation.js");
+      const mockUseListKeyboardNavigation = await import(
+        "@/composables/useListKeyboardNavigation.js"
+      );
       const activeIndexRef = ref(1);
       mockUseListKeyboardNavigation.useListKeyboardNavigation.mockReturnValue({
         activeIndex: activeIndexRef,
       });
 
-      const wrapper = createWrapper();
       await nextTick();
 
       // Initially focus second file
@@ -271,13 +275,15 @@ describe("FilesPane.vue - Accessibility Features", () => {
       const wrapper = createWrapper();
 
       const fileItem = wrapper.find('[data-testid="file-item"]');
-      
+
       // Should have keyboard event listeners
       expect(fileItem.element.getAttribute("tabindex")).toBe("0");
     });
 
     it("handles focus during filtering operations", async () => {
-      const mockUseListKeyboardNavigation = await import("@/composables/useListKeyboardNavigation.js");
+      const mockUseListKeyboardNavigation = await import(
+        "@/composables/useListKeyboardNavigation.js"
+      );
       const activeIndexRef = ref(0);
       mockUseListKeyboardNavigation.useListKeyboardNavigation.mockReturnValue({
         activeIndex: activeIndexRef,
@@ -342,9 +348,9 @@ describe("FilesPane.vue - Accessibility Features", () => {
 
   describe("Keyboard Navigation Integration", () => {
     it("integrates with keyboard navigation composable correctly", async () => {
-      const mockUseListKeyboardNavigation = await import("@/composables/useListKeyboardNavigation.js");
-      
-      const wrapper = createWrapper();
+      const mockUseListKeyboardNavigation = await import(
+        "@/composables/useListKeyboardNavigation.js"
+      );
 
       expect(mockUseListKeyboardNavigation.useListKeyboardNavigation).toHaveBeenCalledWith(
         expect.objectContaining({ value: 2 }), // numFiles
@@ -377,7 +383,7 @@ describe("FilesPane.vue - Accessibility Features", () => {
       const wrapper = createWrapper({
         stubs: {
           Topbar: {
-            template: '<div data-testid="topbar" @click="$emit(\\'cards\\')"></div>',
+            template: '<div data-testid="topbar" @click="$emit(\'cards\')"></div>',
             emits: ["list", "cards"],
           },
         },
@@ -402,7 +408,7 @@ describe("FilesPane.vue - Accessibility Features", () => {
 
       // Should still have accessible file items
       const fileItems = wrapper.findAll('[data-testid="file-item"]');
-      fileItems.forEach(item => {
+      fileItems.forEach((item) => {
         expect(item.attributes("role")).toBe("button");
         expect(item.attributes("aria-label")).toContain("File:");
       });
@@ -436,9 +442,7 @@ describe("FilesPane.vue - Accessibility Features", () => {
         },
       });
 
-      expect(xsWrapper.vm.gridTemplateColumns).toBe(
-        "minmax(144px, 2fr) 104px 16px 8px"
-      );
+      expect(xsWrapper.vm.gridTemplateColumns).toBe("minmax(144px, 2fr) 104px 16px 8px");
     });
 
     it("adjusts padding for touch accessibility", () => {
@@ -475,13 +479,13 @@ describe("FilesPane.vue - Accessibility Features", () => {
     });
 
     it("handles keyboard navigation with invalid indices", async () => {
-      const mockUseListKeyboardNavigation = await import("@/composables/useListKeyboardNavigation.js");
+      const mockUseListKeyboardNavigation = await import(
+        "@/composables/useListKeyboardNavigation.js"
+      );
       const activeIndexRef = ref(999); // Out of bounds
       mockUseListKeyboardNavigation.useListKeyboardNavigation.mockReturnValue({
         activeIndex: activeIndexRef,
       });
-
-      const wrapper = createWrapper();
 
       // Should not throw
       expect(() => {
@@ -498,12 +502,12 @@ describe("FilesPane.vue - Accessibility Features", () => {
         provide: {
           fileStore: ref({
             files: [
-              { 
-                id: null, 
-                title: undefined, 
-                filtered: false, 
+              {
+                id: null,
+                title: undefined,
+                filtered: false,
                 focused: false,
-                tags: null
+                tags: null,
               },
             ],
           }),
@@ -516,17 +520,19 @@ describe("FilesPane.vue - Accessibility Features", () => {
     });
 
     it("handles focus management during component destruction", async () => {
-      const mockUseListKeyboardNavigation = await import("@/composables/useListKeyboardNavigation.js");
+      const mockUseListKeyboardNavigation = await import(
+        "@/composables/useListKeyboardNavigation.js"
+      );
       const activeIndexRef = ref(0);
       mockUseListKeyboardNavigation.useListKeyboardNavigation.mockReturnValue({
         activeIndex: activeIndexRef,
       });
 
       const wrapper = createWrapper();
-      
+
       // Set focus
       mockFileStore.value.files[0].focused = true;
-      
+
       // Unmount component
       wrapper.unmount();
 
@@ -548,9 +554,9 @@ describe("FilesPane.vue - Accessibility Features", () => {
       const wrapper = createWrapper();
 
       const fileItems = wrapper.findAll('[data-testid="file-item"]');
-      
+
       // All interactive elements should be keyboard accessible
-      fileItems.forEach(item => {
+      fileItems.forEach((item) => {
         expect(item.attributes("tabindex")).toBe("0");
       });
     });
@@ -568,7 +574,7 @@ describe("FilesPane.vue - Accessibility Features", () => {
 
       // Files should have recognizable labels for voice commands
       const fileItems = wrapper.findAll('[data-testid="file-item"]');
-      fileItems.forEach(item => {
+      fileItems.forEach((item) => {
         const ariaLabel = item.attributes("aria-label");
         expect(ariaLabel).toMatch(/^File: /);
       });

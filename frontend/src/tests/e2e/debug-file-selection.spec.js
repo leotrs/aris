@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 import { TEST_CREDENTIALS } from "./setup/test-data.js";

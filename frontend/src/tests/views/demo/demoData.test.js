@@ -193,7 +193,7 @@ describe("Demo Data Service", () => {
       it("calls backend render endpoint with correct parameters", async () => {
         // Since /render now hits the real backend, we test that the call structure is correct
         // The actual backend call will either succeed or fall back to markdown conversion
-        const result = await api.post("/render");
+        const result = await api.post("/render", { source: demoFile.source });
 
         // Verify that the API returns some kind of rendered content
         expect(result).toHaveProperty("data");
@@ -203,7 +203,7 @@ describe("Demo Data Service", () => {
 
       it("returns rendered HTML from backend", async () => {
         // Test that the API returns valid HTML content (either from backend or fallback)
-        const result = await api.post("/render");
+        const result = await api.post("/render", { source: demoFile.source });
 
         expect(result).toHaveProperty("data");
         expect(typeof result.data).toBe("string");
@@ -212,7 +212,7 @@ describe("Demo Data Service", () => {
 
       it("handles backend render success", async () => {
         // Test that the API handles both success and fallback cases
-        const result = await api.post("/render");
+        const result = await api.post("/render", { source: demoFile.source });
 
         expect(result).toHaveProperty("data");
         expect(typeof result.data).toBe("string");
@@ -221,7 +221,7 @@ describe("Demo Data Service", () => {
 
       it("handles error scenarios gracefully", async () => {
         // Test that the API always returns valid data, either from backend or fallback
-        const result = await api.post("/render");
+        const result = await api.post("/render", { source: demoFile.source });
 
         expect(result.data).toBeDefined();
         expect(typeof result.data).toBe("string");
@@ -230,7 +230,7 @@ describe("Demo Data Service", () => {
 
       it("processes RSM content correctly", async () => {
         // Test that the render endpoint processes the demo RSM content
-        const result = await api.post("/render");
+        const result = await api.post("/render", { source: demoFile.source });
 
         expect(result.data).toBeDefined();
         expect(typeof result.data).toBe("string");
