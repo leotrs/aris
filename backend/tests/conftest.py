@@ -16,7 +16,6 @@ Usage:
 
 import os
 import sys
-import uuid
 
 import httpx
 import pytest_asyncio
@@ -25,35 +24,68 @@ from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
 
+# Import pytest-postgresql for PostgreSQL testing
+try:
+    from pytest_postgresql import factories
+    postgresql_proc = factories.postgresql_proc(
+        port=None,
+        unixsocketdir='/tmp',
+        postgres_options='-F'
+    )
+    postgresql = factories.postgresql('postgresql_proc')
+    POSTGRESQL_AVAILABLE = True
+except ImportError:
+    POSTGRESQL_AVAILABLE = False
+    postgresql_proc = None
+    postgresql = None
+
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from aris.config import settings
 from aris.deps import get_db
 from aris.models import Base, File, User
 from main import app
 
 
-def get_test_database_url():
-    """Generate unique database URL for each worker process."""
-    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
-    unique_id = str(uuid.uuid4())[:8]
-    return f"sqlite+aiosqlite:///./test_{worker_id}_{unique_id}.db"
-
-
 @pytest_asyncio.fixture(scope="session")
-async def test_engine():
+async def test_engine(request):
     """Create test engine once per session."""
-    database_url = get_test_database_url()
-    engine = create_async_engine(
-        database_url,
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
-        future=True,
-    )
+    database_url = settings.get_test_database_url()
+    
+    # If we're using PostgreSQL and pytest-postgresql is available
+    if database_url.startswith("postgresql") and POSTGRESQL_AVAILABLE:
+        try:
+            # Try to get the postgresql fixture if it exists
+            postgresql = request.getfixturevalue('postgresql')
+            conn_info = postgresql.info
+            database_url = f"postgresql+asyncpg://{conn_info.user}:@{conn_info.host}:{conn_info.port}/{conn_info.dbname}"
+        except Exception:
+            # Fall back to the configured URL if pytest-postgresql isn't being used
+            pass
+    
+    # Configure engine based on database type
+    if database_url.startswith("sqlite"):
+        engine = create_async_engine(
+            database_url,
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+            future=True,
+        )
+    else:
+        # PostgreSQL configuration
+        engine = create_async_engine(
+            database_url,
+            future=True,
+        )
+    
     yield engine
     await engine.dispose()
-    # Clean up the database file
-    db_file = database_url.split("///")[1]
-    if os.path.exists(db_file):
-        os.remove(db_file)
+    
+    # Clean up SQLite database files
+    if database_url.startswith("sqlite"):
+        db_file = database_url.split("///")[1]
+        if os.path.exists(db_file):
+            os.remove(db_file)
 
 
 @pytest_asyncio.fixture
@@ -174,6 +206,12 @@ async def authenticated_user(client: AsyncClient):
         "email": TestConstants.DEFAULT_USER_EMAIL,
         "password": TestConstants.DEFAULT_PASSWORD,
     }
+
+
+@pytest_asyncio.fixture
+def is_postgresql():
+    """Check if we're testing against PostgreSQL."""
+    return settings.get_test_database_url().startswith("postgresql")
 
 
 @pytest_asyncio.fixture
