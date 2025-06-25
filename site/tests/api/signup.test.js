@@ -203,7 +203,9 @@ describe("Signup API Service", () => {
 
       await checkEmailExists("user+test@example.com");
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith("/signup/status?email=user%2Btest%40example.com");
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+        "/signup/status?email=user%2Btest%40example.com"
+      );
     });
 
     it("should handle special characters in email", async () => {
@@ -215,7 +217,9 @@ describe("Signup API Service", () => {
 
       await checkEmailExists("user.test+123@sub.example.com");
 
-      expect(mockAxiosInstance.get).toHaveBeenCalledWith("/signup/status?email=user.test%2B123%40sub.example.com");
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith(
+        "/signup/status?email=user.test%2B123%40sub.example.com"
+      );
     });
 
     it("should handle network errors", async () => {

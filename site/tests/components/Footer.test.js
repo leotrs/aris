@@ -4,8 +4,14 @@ import Footer from "../../components/Footer.vue";
 
 // Mock Tabler icons
 vi.mock("@tabler/icons-vue", () => ({
-  IconBrandBluesky: { name: "IconBrandBluesky", template: "<svg data-testid='bluesky-icon'></svg>" },
-  IconBrandLinkedin: { name: "IconBrandLinkedin", template: "<svg data-testid='linkedin-icon'></svg>" },
+  IconBrandBluesky: {
+    name: "IconBrandBluesky",
+    template: "<svg data-testid='bluesky-icon'></svg>",
+  },
+  IconBrandLinkedin: {
+    name: "IconBrandLinkedin",
+    template: "<svg data-testid='linkedin-icon'></svg>",
+  },
   IconBrandX: { name: "IconBrandX", template: "<svg data-testid='x-icon'></svg>" },
   IconChevronUp: { name: "IconChevronUp", template: "<svg data-testid='chevron-up-icon'></svg>" },
 }));
@@ -51,7 +57,9 @@ describe("Footer Component", () => {
 
       const tagline = wrapper.find(".footer-tagline");
       expect(tagline.exists()).toBe(true);
-      expect(tagline.text()).toBe("Transforming scientific research through human-first technology");
+      expect(tagline.text()).toBe(
+        "Transforming scientific research through human-first technology"
+      );
     });
 
     it("should render copyright information", () => {
@@ -87,7 +95,7 @@ describe("Footer Component", () => {
       wrapper = mount(Footer);
 
       const columnHeadings = wrapper.findAll(".column-heading");
-      const productHeading = columnHeadings.find(heading => heading.text() === "Product");
+      const productHeading = columnHeadings.find((heading) => heading.text() === "Product");
       expect(productHeading.exists()).toBe(true);
 
       // Check specific product links
@@ -107,7 +115,7 @@ describe("Footer Component", () => {
       wrapper = mount(Footer);
 
       const columnHeadings = wrapper.findAll(".column-heading");
-      const connectHeading = columnHeadings.find(heading => heading.text() === "Connect");
+      const connectHeading = columnHeadings.find((heading) => heading.text() === "Connect");
       expect(connectHeading.exists()).toBe(true);
     });
   });
@@ -120,14 +128,14 @@ describe("Footer Component", () => {
       expect(socialLinks.length).toBe(3);
 
       // Check ARIA labels
-      const blueSkyLink = socialLinks.find(link => 
-        link.attributes("aria-label") === "Follow us on BlueSky"
+      const blueSkyLink = socialLinks.find(
+        (link) => link.attributes("aria-label") === "Follow us on BlueSky"
       );
-      const linkedInLink = socialLinks.find(link => 
-        link.attributes("aria-label") === "Follow us on LinkedIn"
+      const linkedInLink = socialLinks.find(
+        (link) => link.attributes("aria-label") === "Follow us on LinkedIn"
       );
-      const xLink = socialLinks.find(link => 
-        link.attributes("aria-label") === "Follow us on X (Twitter)"
+      const xLink = socialLinks.find(
+        (link) => link.attributes("aria-label") === "Follow us on X (Twitter)"
       );
 
       expect(blueSkyLink.exists()).toBe(true);
@@ -183,7 +191,7 @@ describe("Footer Component", () => {
 
       expect(window.scrollTo).toHaveBeenCalledWith({
         top: 0,
-        behavior: "smooth"
+        behavior: "smooth",
       });
     });
   });
@@ -225,7 +233,7 @@ describe("Footer Component", () => {
       wrapper = mount(Footer);
 
       const footerLinks = wrapper.findAll(".footer-link");
-      footerLinks.forEach(link => {
+      footerLinks.forEach((link) => {
         expect(link.text().trim()).not.toBe("");
       });
     });
@@ -252,10 +260,10 @@ describe("Footer Component", () => {
       wrapper = mount(Footer);
 
       const headings = wrapper.findAll(".column-heading");
-      const headingTexts = headings.map(h => h.text());
+      const headingTexts = headings.map((h) => h.text());
 
       expect(headingTexts).toContain("Resources");
-      expect(headingTexts).toContain("Product");  
+      expect(headingTexts).toContain("Product");
       expect(headingTexts).toContain("Connect");
     });
 

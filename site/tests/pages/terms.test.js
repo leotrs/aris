@@ -76,10 +76,8 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const sections = wrapper.findAll(".section-title");
-      const introSection = sections.find(section => 
-        section.text().includes("1. Introduction")
-      );
-      
+      const introSection = sections.find((section) => section.text().includes("1. Introduction"));
+
       expect(introSection.exists()).toBe(true);
       expect(introSection.element.tagName.toLowerCase()).toBe("h2");
     });
@@ -88,10 +86,10 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const sections = wrapper.findAll(".section-title");
-      const userObligationsSection = sections.find(section => 
+      const userObligationsSection = sections.find((section) =>
         section.text().includes("2. User Obligations")
       );
-      
+
       expect(userObligationsSection.exists()).toBe(true);
     });
 
@@ -99,10 +97,10 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const sections = wrapper.findAll(".section-title");
-      const ipSection = sections.find(section => 
+      const ipSection = sections.find((section) =>
         section.text().includes("3. Intellectual Property Rights")
       );
-      
+
       expect(ipSection.exists()).toBe(true);
     });
 
@@ -119,7 +117,7 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const pageText = wrapper.text();
-      
+
       // Should contain key legal terms
       expect(pageText).toContain("Terms and Conditions");
       expect(pageText).toContain("Service");
@@ -132,7 +130,7 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const pageText = wrapper.text();
-      
+
       expect(pageText).toContain("Welcome to Aris");
       expect(pageText).toContain("website, products, and services");
       expect(pageText).toContain("accessing or using the Service");
@@ -142,7 +140,7 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const pageText = wrapper.text();
-      
+
       expect(pageText).toContain("accurate and complete information");
       expect(pageText).toContain("confidentiality of your account password");
       expect(pageText).toContain("lawful purposes");
@@ -153,7 +151,7 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const pageText = wrapper.text();
-      
+
       expect(pageText).toContain("original content, features, and functionality");
       expect(pageText).toContain("exclusive property of Aris");
       expect(pageText).toContain("protected by copyright");
@@ -172,7 +170,7 @@ describe("Terms Page", () => {
       // Section titles should be h2
       const sectionTitles = wrapper.findAll("h2");
       expect(sectionTitles.length).toBeGreaterThan(0);
-      sectionTitles.forEach(title => {
+      sectionTitles.forEach((title) => {
         expect(title.classes()).toContain("section-title");
       });
     });
@@ -203,10 +201,8 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const sectionTitles = wrapper.findAll(".section-title");
-      const numberedSections = sectionTitles.filter(title => 
-        /^\d+\./.test(title.text())
-      );
-      
+      const numberedSections = sectionTitles.filter((title) => /^\d+\./.test(title.text()));
+
       expect(numberedSections.length).toBeGreaterThan(2);
     });
 
@@ -216,8 +212,8 @@ describe("Terms Page", () => {
       // Should have unordered lists for obligations
       const lists = wrapper.findAll("ul");
       expect(lists.length).toBeGreaterThan(0);
-      
-      lists.forEach(list => {
+
+      lists.forEach((list) => {
         const listItems = list.findAll("li");
         expect(listItems.length).toBeGreaterThan(0);
       });
@@ -228,9 +224,9 @@ describe("Terms Page", () => {
 
       const listItems = wrapper.findAll("li");
       expect(listItems.length).toBeGreaterThan(0);
-      
+
       // Each list item should have substantial content
-      listItems.forEach(item => {
+      listItems.forEach((item) => {
         expect(item.text().trim().length).toBeGreaterThan(10);
       });
     });
@@ -282,7 +278,7 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const pageText = wrapper.text();
-      
+
       expect(pageText).toContain("Aris");
       expect(pageText).toContain("Service");
       expect(pageText).toContain("website, products, and services");
@@ -292,7 +288,7 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const pageText = wrapper.text();
-      
+
       expect(pageText).toContain("Privacy Policy");
     });
   });
@@ -302,7 +298,7 @@ describe("Terms Page", () => {
       wrapper = mount(TermsPage);
 
       const pageText = wrapper.text();
-      
+
       // Should contain standard legal terms
       expect(pageText).toContain("agree to be bound");
       expect(pageText).toContain("exclusive property");

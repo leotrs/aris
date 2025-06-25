@@ -76,10 +76,10 @@ describe("Cookies Page", () => {
       wrapper = mount(CookiesPage);
 
       const sections = wrapper.findAll(".section-title");
-      const whatAreCookiesSection = sections.find(section => 
+      const whatAreCookiesSection = sections.find((section) =>
         section.text().includes("1. What are Cookies?")
       );
-      
+
       expect(whatAreCookiesSection.exists()).toBe(true);
       expect(whatAreCookiesSection.element.tagName.toLowerCase()).toBe("h2");
     });
@@ -88,10 +88,10 @@ describe("Cookies Page", () => {
       wrapper = mount(CookiesPage);
 
       const sections = wrapper.findAll(".section-title");
-      const howArisUsesSection = sections.find(section => 
+      const howArisUsesSection = sections.find((section) =>
         section.text().includes("2. How Aris Uses Cookies")
       );
-      
+
       expect(howArisUsesSection.exists()).toBe(true);
     });
 
@@ -99,10 +99,10 @@ describe("Cookies Page", () => {
       wrapper = mount(CookiesPage);
 
       const sections = wrapper.findAll(".section-title");
-      const typesOfCookiesSection = sections.find(section => 
+      const typesOfCookiesSection = sections.find((section) =>
         section.text().includes("3. Types of Cookies We Use")
       );
-      
+
       expect(typesOfCookiesSection.exists()).toBe(true);
     });
 
@@ -119,7 +119,7 @@ describe("Cookies Page", () => {
       wrapper = mount(CookiesPage);
 
       const pageText = wrapper.text();
-      
+
       // Should contain key cookie policy terms
       expect(pageText).toContain("cookies");
       expect(pageText).toContain("first-party cookies");
@@ -132,7 +132,7 @@ describe("Cookies Page", () => {
       wrapper = mount(CookiesPage);
 
       const pageText = wrapper.text();
-      
+
       expect(pageText).toContain("small text files");
       expect(pageText).toContain("placed on your computer or mobile device");
       expect(pageText).toContain("make websites work");
@@ -142,7 +142,7 @@ describe("Cookies Page", () => {
       wrapper = mount(CookiesPage);
 
       const pageText = wrapper.text();
-      
+
       expect(pageText).toContain("technical reasons");
       expect(pageText).toContain("strictly necessary");
       expect(pageText).toContain("track and target the interests");
@@ -162,7 +162,7 @@ describe("Cookies Page", () => {
       // Section titles should be h2
       const sectionTitles = wrapper.findAll("h2");
       expect(sectionTitles.length).toBeGreaterThan(0);
-      sectionTitles.forEach(title => {
+      sectionTitles.forEach((title) => {
         expect(title.classes()).toContain("section-title");
       });
     });
@@ -193,10 +193,8 @@ describe("Cookies Page", () => {
       wrapper = mount(CookiesPage);
 
       const sectionTitles = wrapper.findAll(".section-title");
-      const numberedSections = sectionTitles.filter(title => 
-        /^\d+\./.test(title.text())
-      );
-      
+      const numberedSections = sectionTitles.filter((title) => /^\d+\./.test(title.text()));
+
       expect(numberedSections.length).toBeGreaterThan(2);
     });
 
@@ -206,7 +204,7 @@ describe("Cookies Page", () => {
       // Should have h3 headings for subsections
       const subsectionHeadings = wrapper.findAll("h3");
       if (subsectionHeadings.length > 0) {
-        subsectionHeadings.forEach(heading => {
+        subsectionHeadings.forEach((heading) => {
           expect(heading.text().trim()).not.toBe("");
         });
       }
@@ -218,7 +216,7 @@ describe("Cookies Page", () => {
       // Should have unordered lists
       const lists = wrapper.findAll("ul");
       if (lists.length > 0) {
-        lists.forEach(list => {
+        lists.forEach((list) => {
           const listItems = list.findAll("li");
           expect(listItems.length).toBeGreaterThan(0);
         });

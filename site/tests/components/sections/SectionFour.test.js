@@ -6,7 +6,10 @@ import SectionFour from "../../../components/sections/SectionFour.vue";
 vi.mock("@tabler/icons-vue", () => ({
   IconUserEdit: { name: "IconUserEdit", template: "<svg data-testid='user-edit-icon'></svg>" },
   IconBook2: { name: "IconBook2", template: "<svg data-testid='book-icon'></svg>" },
-  IconClipboardCheck: { name: "IconClipboardCheck", template: "<svg data-testid='clipboard-check-icon'></svg>" },
+  IconClipboardCheck: {
+    name: "IconClipboardCheck",
+    template: "<svg data-testid='clipboard-check-icon'></svg>",
+  },
 }));
 
 describe("SectionFour Component", () => {
@@ -78,7 +81,9 @@ describe("SectionFour Component", () => {
 
       const description = firstCard.find(".card-description");
       expect(description.exists()).toBe(true);
-      expect(description.text()).toContain("Integrated platform to craft, collaborate on, and publish research");
+      expect(description.text()).toContain(
+        "Integrated platform to craft, collaborate on, and publish research"
+      );
       expect(description.text()).toContain("Focus on ideas, streamline workflow");
 
       const icon = firstCard.find('[data-testid="user-edit-icon"]');
@@ -127,8 +132,8 @@ describe("SectionFour Component", () => {
       wrapper = mount(SectionFour);
 
       const cards = wrapper.findAll(".user-role-card");
-      
-      cards.forEach(card => {
+
+      cards.forEach((card) => {
         const iconContainer = card.find(".card-icon-container");
         expect(iconContainer.exists()).toBe(true);
 
@@ -148,7 +153,7 @@ describe("SectionFour Component", () => {
       const iconContainers = wrapper.findAll(".card-icon-container");
       expect(iconContainers.length).toBe(3);
 
-      iconContainers.forEach(container => {
+      iconContainers.forEach((container) => {
         // Each container should have an icon
         const icon = container.find("svg");
         expect(icon.exists()).toBe(true);
@@ -161,8 +166,8 @@ describe("SectionFour Component", () => {
       wrapper = mount(SectionFour);
 
       const cards = wrapper.findAll(".user-role-card");
-      
-      cards.forEach(card => {
+
+      cards.forEach((card) => {
         const title = card.find(".card-title");
         const description = card.find(".card-description");
 
@@ -176,7 +181,7 @@ describe("SectionFour Component", () => {
       wrapper = mount(SectionFour);
 
       const allText = wrapper.text();
-      
+
       // Should mention key benefits for different user types
       expect(allText).toContain("craft, collaborate on, and publish");
       expect(allText).toContain("dynamic manuscripts");
@@ -189,8 +194,8 @@ describe("SectionFour Component", () => {
     it("should address different user personas", () => {
       wrapper = mount(SectionFour);
 
-      const titles = wrapper.findAll(".card-title").map(title => title.text());
-      
+      const titles = wrapper.findAll(".card-title").map((title) => title.text());
+
       expect(titles).toContain("Authors & Researchers");
       expect(titles).toContain("Readers & Learners");
       expect(titles).toContain("Reviewers & Editors");
@@ -207,7 +212,7 @@ describe("SectionFour Component", () => {
 
       // Card headings should be h3
       const cardTitles = wrapper.findAll(".card-title");
-      cardTitles.forEach(title => {
+      cardTitles.forEach((title) => {
         expect(title.element.tagName.toLowerCase()).toBe("h3");
       });
     });
@@ -242,15 +247,15 @@ describe("SectionFour Component", () => {
       wrapper = mount(SectionFour);
 
       const cards = wrapper.findAll(".user-role-card");
-      
+
       // Authors & Researchers - UserEdit icon
       const firstCardIcon = cards[0].find('[data-testid="user-edit-icon"]');
       expect(firstCardIcon.exists()).toBe(true);
-      
+
       // Readers & Learners - Book icon
       const secondCardIcon = cards[1].find('[data-testid="book-icon"]');
       expect(secondCardIcon.exists()).toBe(true);
-      
+
       // Reviewers & Editors - ClipboardCheck icon
       const thirdCardIcon = cards[2].find('[data-testid="clipboard-check-icon"]');
       expect(thirdCardIcon.exists()).toBe(true);
