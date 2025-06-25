@@ -11,6 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       ENV: CI
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     services:
       postgres:
@@ -53,6 +54,7 @@ jobs:
     - name: Debug env & .env.ci file
       run: |
         echo "ENV=$ENV"
+        echo "TEST_USER_PASSWORD is set: $([ -n "$TEST_USER_PASSWORD" ] && echo "yes" || echo "no")"
         ls -l .env.ci
         cat .env.ci
 
