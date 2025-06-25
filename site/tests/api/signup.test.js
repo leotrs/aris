@@ -54,7 +54,7 @@ describe('Signup API Service', () => {
 
       const result = await signupUser(validSignupData)
 
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/api/signup/', validSignupData)
+      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/signup/', validSignupData)
       expect(result).toEqual(mockResponse.data)
     })
 
@@ -159,7 +159,7 @@ describe('Signup API Service', () => {
 
       await signupUser(dataWithNulls)
 
-      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/api/signup/', expectedSanitizedData)
+      expect(mockAxiosInstance.post).toHaveBeenCalledWith('/signup/', expectedSanitizedData)
     })
   })
 })
