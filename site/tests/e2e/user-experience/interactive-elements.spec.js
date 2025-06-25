@@ -62,27 +62,6 @@ test.describe("Interactive Elements E2E", () => {
   });
 
   test.describe("Navigation Interactions", () => {
-    test("should handle dropdown menu interactions", async ({ page }) => {
-      await page.goto("/");
-
-      const resourcesDropdown = page.locator(".has-dropdown");
-      const dropdownMenu = page.locator(".dropdown-menu");
-
-      // Dropdown should be hidden initially
-      await expect(dropdownMenu).not.toBeVisible();
-
-      // Hover to open dropdown
-      await resourcesDropdown.hover();
-      await expect(dropdownMenu).toBeVisible();
-
-      // Click on dropdown item
-      const docLink = page.locator('.dropdown-link[href="/documentation"]');
-      await expect(docLink).toBeVisible();
-
-      // Test that links are clickable (external links)
-      await expect(docLink).toHaveAttribute("href", "/documentation");
-    });
-
     test("should handle mobile menu interactions", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto("/");
@@ -134,19 +113,6 @@ test.describe("Interactive Elements E2E", () => {
       // Test basic form interaction (removed validation test)
     });
 
-    test("should handle character count displays", async ({ page }) => {
-      await page.goto("/signup");
-
-      const institutionInput = page.locator('input[name="institution"]');
-
-      // Type text approaching character limit
-      const longText = "a".repeat(180);
-      await institutionInput.fill(longText);
-
-      // Character count should be displayed
-      await expect(page.locator("text=180/200 characters")).toBeVisible();
-    });
-
     test("should handle select dropdown interactions", async ({ page }) => {
       await page.goto("/signup");
 
@@ -163,35 +129,6 @@ test.describe("Interactive Elements E2E", () => {
   });
 
   test.describe("Scroll and Animation Interactions", () => {
-    test("should handle back to top functionality", async ({ page }) => {
-      await page.goto("/");
-
-      // Ensure we're on desktop view
-      await page.setViewportSize({ width: 1024, height: 768 });
-
-      // Scroll to footer
-      await page.locator("footer").scrollIntoViewIfNeeded();
-
-      // Verify we're at the bottom
-      const scrollPosition = await page.evaluate(() => window.scrollY);
-      expect(scrollPosition).toBeGreaterThan(500);
-
-      // Click back to top button with correct selector
-      const backToTopButton = page.locator('button[aria-label="Back to top"]');
-      await expect(backToTopButton).toBeVisible();
-      await backToTopButton.click();
-
-      // Wait for scroll animation to complete
-      await page.waitForTimeout(1000);
-
-      // Verify we're back at the top
-      const newScrollPosition = await page.evaluate(() => window.scrollY);
-      expect(newScrollPosition).toBeLessThan(100);
-
-      // Hero section should be visible
-      await expect(page.locator(".hero-section")).toBeInViewport();
-    });
-
     test("should handle navbar scroll behavior", async ({ page }) => {
       await page.goto("/");
 

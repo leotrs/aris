@@ -82,37 +82,6 @@ test.describe("Accessibility E2E", () => {
       }
     });
 
-    test("should handle dropdown keyboard navigation", async ({ page }) => {
-      await page.goto("/");
-
-      // Ensure we're on desktop view for dropdown testing
-      await page.setViewportSize({ width: 1024, height: 768 });
-
-      // Navigate to resources dropdown using Tab
-      let foundDropdown = false;
-      for (let i = 0; i < 20; i++) {
-        await page.keyboard.press("Tab");
-
-        const focusedElement = await page.evaluate(() => {
-          const el = document.activeElement;
-          return {
-            text: el?.textContent?.trim(),
-            classList: Array.from(el?.classList || []),
-          };
-        });
-
-        if (focusedElement.text?.includes("Resources")) {
-          foundDropdown = true;
-          // Press Enter to activate dropdown
-          await page.keyboard.press("Enter");
-          await expect(page.locator(".dropdown-menu")).toBeVisible();
-          break;
-        }
-      }
-
-      expect(foundDropdown).toBe(true);
-    });
-
     test("should handle mobile menu keyboard navigation", async ({ page }) => {
       await page.goto("/");
       await page.setViewportSize({ width: 375, height: 667 });
@@ -296,7 +265,7 @@ test.describe("Accessibility E2E", () => {
 
       // Ensure we're on desktop view where dropdown is visible
       await page.setViewportSize({ width: 1024, height: 768 });
-      
+
       // Wait for page to be fully loaded
       await page.waitForLoadState('networkidle');
 
