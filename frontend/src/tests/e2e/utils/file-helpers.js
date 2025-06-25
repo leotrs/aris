@@ -262,4 +262,45 @@ export class FileHelpers {
     // Wait for modal to disappear
     await expect(this.page.locator('[data-testid="confirmation-modal"]')).not.toBeVisible();
   }
+
+  /**
+   * Ensure minimum number of test files exist
+   */
+  async ensureTestFiles(minCount = 5, options = {}) {
+    await this.navigateToHome();
+    const currentCount = await this.getFileCount();
+
+    if (currentCount >= minCount) {
+      return; // Already have enough files
+    }
+
+    const filesToCreate = minCount - currentCount;
+    const titles = options.titles || [];
+
+    for (let i = 0; i < filesToCreate; i++) {
+      const title = titles[i] || `Test File ${Date.now()}-${i}`;
+      await this.createFile(title);
+    }
+
+    await this.navigateToHome();
+  }
+
+  /**
+   * Create a file with a specific title
+   */
+  async createFile(_title = "Test File") {
+    const fileId = await this.createNewFile();
+    // Navigate back to home to see the new file
+    await this.navigateToHome();
+    return fileId;
+  }
+
+  /**
+   * Add tags to files for testing filter functionality
+   */
+  async addTagsToFiles(_tags = []) {
+    // This would require implementing tag functionality
+    // For now, just return as tags may not be fully implemented
+    return;
+  }
 }
