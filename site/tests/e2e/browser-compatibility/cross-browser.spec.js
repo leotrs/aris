@@ -159,11 +159,14 @@ test.describe("Cross-Browser Compatibility", () => {
 
       // Test dropdown interaction
       await page.hover(".has-dropdown");
+      await page.waitForTimeout(300); // Wait for hover animation
       await expect(page.locator(".dropdown-menu")).toBeVisible();
 
       // Test mobile menu
       await page.setViewportSize({ width: 375, height: 667 });
+      await page.waitForTimeout(300); // Wait for viewport change
       await page.click(".menu-toggle");
+      await page.waitForTimeout(300); // Wait for mobile menu animation
       await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
       // Test back to top
@@ -175,7 +178,6 @@ test.describe("Cross-Browser Compatibility", () => {
 
       console.log(`✓ Interactive features work correctly in ${browserName}`);
     });
-
   });
 
   test.describe("Mobile Browser Compatibility", () => {
@@ -252,6 +254,7 @@ test.describe("Cross-Browser Compatibility", () => {
       });
 
       await page.click('button[type="submit"]');
+      await page.waitForTimeout(2000); // Wait for API call to complete
       await expect(
         page.locator("text=This email address is already registered for early access.")
       ).toBeVisible();

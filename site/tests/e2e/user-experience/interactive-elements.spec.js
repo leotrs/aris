@@ -17,6 +17,7 @@ test.describe("Interactive Elements E2E", () => {
 
       // Test navigation to signup page
       await secondaryCTA.click();
+      await page.waitForLoadState("networkidle");
       await expect(page).toHaveURL("/signup");
     });
 
@@ -35,6 +36,7 @@ test.describe("Interactive Elements E2E", () => {
 
       // Test final signup link
       await finalSignupLink.click();
+      await page.waitForLoadState("networkidle");
       await expect(page).toHaveURL("/signup");
     });
 
@@ -44,7 +46,7 @@ test.describe("Interactive Elements E2E", () => {
       const primaryButton = page.locator(".btn-primary").first();
 
       // Get initial styles
-      const initialBackground = await primaryButton.evaluate(
+      const _initialBackground = await primaryButton.evaluate(
         (el) => window.getComputedStyle(el).backgroundColor
       );
 
@@ -52,12 +54,13 @@ test.describe("Interactive Elements E2E", () => {
       await primaryButton.hover();
 
       // Styles should change on hover (testing CSS :hover state)
-      const hoveredBackground = await primaryButton.evaluate(
+      const _hoveredBackground = await primaryButton.evaluate(
         (el) => window.getComputedStyle(el).backgroundColor
       );
 
       // Background should be different when hovered (due to CSS hover state)
       // Note: This test might be flaky depending on CSS timing
+      // TODO: Add assertion when CSS hover behavior is stable
     });
   });
 
@@ -65,17 +68,20 @@ test.describe("Interactive Elements E2E", () => {
     test("should handle mobile menu interactions", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto("/");
+      await page.waitForLoadState("networkidle");
 
       const menuToggle = page.locator(".menu-toggle");
       const mobileMenu = page.locator(".mobile-menu-overlay");
 
       // Open mobile menu
       await menuToggle.click();
+      await page.waitForTimeout(300); // Wait for mobile menu animation
       await expect(mobileMenu).toBeVisible();
 
       // Test mobile dropdown
       const mobileResourcesToggle = page.locator(".mobile-dropdown-toggle");
       await mobileResourcesToggle.click();
+      await page.waitForTimeout(300); // Wait for dropdown animation
 
       const mobileDropdownMenu = page.locator(".mobile-dropdown-menu");
       await expect(mobileDropdownMenu).toBeVisible();
@@ -83,6 +89,7 @@ test.describe("Interactive Elements E2E", () => {
       // Close menu by clicking a link
       const mobileSignupLink = page.locator('.mobile-nav-link[href="/signup"]');
       await mobileSignupLink.click();
+      await page.waitForLoadState("networkidle");
 
       // Menu should close and navigate
       await expect(page).toHaveURL("/signup");
@@ -96,7 +103,7 @@ test.describe("Interactive Elements E2E", () => {
 
       const emailInput = page.locator('input[type="email"]');
       const nameInput = page.locator('input[name="name"]');
-      const submitButton = page.locator('button[type="submit"]');
+      const _submitButton = page.locator('button[type="submit"]');
 
       // Test input focus states
       await emailInput.click();
@@ -139,12 +146,14 @@ test.describe("Interactive Elements E2E", () => {
 
       // Scroll down
       await page.locator(".section-two").scrollIntoViewIfNeeded();
+      await page.waitForTimeout(300); // Wait for scroll event processing
 
       // Navbar should have scrolled class
       await expect(navbar).toHaveClass(/navbar-scrolled/);
 
       // Scroll back to top
       await page.locator(".hero-section").scrollIntoViewIfNeeded();
+      await page.waitForTimeout(300); // Wait for scroll event processing
 
       // Navbar should lose scrolled class
       await expect(navbar).not.toHaveClass(/navbar-scrolled/);
@@ -161,7 +170,7 @@ test.describe("Interactive Elements E2E", () => {
 
       // Mock slow API response
       await page.route("**/signup/", async (route) => {
-        await page.waitForTimeout(100);
+        await new Promise((resolve) => setTimeout(resolve, 1000)); // Longer delay to capture loading state
         await route.fulfill({
           status: 200,
           contentType: "application/json",
@@ -207,7 +216,8 @@ test.describe("Interactive Elements E2E", () => {
       // Submit form
       await page.click('button[type="submit"]');
 
-      // Error message should appear (check for the actual message from signup form)
+      // Wait for error processing and error message should appear
+      await page.waitForTimeout(1000);
       await expect(
         page.locator("text=Server error. Please try again in a few moments.")
       ).toBeVisible();
@@ -255,6 +265,7 @@ test.describe("Interactive Elements E2E", () => {
         // If we reach a signup link, activate it with Enter
         if (focusedElement.text?.includes("sign up") || focusedElement.text?.includes("Sign Up")) {
           await page.keyboard.press("Enter");
+          await page.waitForLoadState("networkidle");
           await expect(page).toHaveURL("/signup");
           break;
         }
