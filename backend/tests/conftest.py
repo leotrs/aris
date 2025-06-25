@@ -93,8 +93,23 @@ async def test_engine(request):
 @pytest_asyncio.fixture
 async def db_session(test_engine):
     """Create a fresh database for each test."""
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+    # For PostgreSQL, handle enum creation race conditions
+    if str(test_engine.url).startswith("postgresql"):
+        try:
+            async with test_engine.begin() as conn:
+                await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+        except Exception as e:
+            # If enum already exists, that's fine - another worker created it
+            if "already exists" in str(e):
+                # Try again, this time the enum should exist
+                async with test_engine.begin() as conn:
+                    await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+            else:
+                raise
+    else:
+        # SQLite doesn't have this issue
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
     async with TestingSessionLocal() as session:
