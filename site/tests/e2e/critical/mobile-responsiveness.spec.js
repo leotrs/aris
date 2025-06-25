@@ -116,11 +116,11 @@ test.describe("Mobile Responsiveness E2E", () => {
       expect(nameBox?.height).toBeGreaterThanOrEqual(40);
 
       // Test form interaction with proper waits
-      await emailInput.tap();
+      await emailInput.click();
       await page.waitForTimeout(100);
       await emailInput.fill("test@example.com");
 
-      await nameInput.tap();
+      await nameInput.click();
       await page.waitForTimeout(100);
       await nameInput.fill("Dr. Jane Doe");
 
@@ -154,12 +154,12 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.goto("/");
 
       // Test touch on mobile menu with wait
-      await page.tap(".menu-toggle");
+      await page.click(".menu-toggle");
       await page.waitForTimeout(300); // Wait for animation
       await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
       // Test touch on mobile links
-      await page.tap('.mobile-nav-link[href="/signup"]');
+      await page.click('.mobile-nav-link[href="/signup"]');
       await expect(page).toHaveURL("/signup");
     });
 
@@ -174,11 +174,11 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.locator("section").nth(2).scrollIntoViewIfNeeded();
       await expect(page.locator("section").nth(2)).toBeInViewport();
 
-      await page.locator("contentinfo").scrollIntoViewIfNeeded();
-      await expect(page.locator("contentinfo")).toBeInViewport();
+      await page.locator("footer").scrollIntoViewIfNeeded();
+      await expect(page.locator("footer")).toBeInViewport();
 
       // Test back to top functionality
-      await page.tap('button:has-text("Back to top")');
+      await page.click('button[aria-label="Back to top"]');
       await expect(page.locator(".hero-section")).toBeInViewport();
     });
   });

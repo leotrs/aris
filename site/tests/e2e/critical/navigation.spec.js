@@ -32,9 +32,9 @@ test.describe("Navigation Flow E2E", () => {
     await page.goto("/");
 
     // Test navbar links (these may be external or placeholder) - only check they exist
-    const aboutLink = page.locator('a[href="/about"]');
-    const aiCopilotLink = page.locator('a[href="/ai-copilot"]');
-    const pricingLink = page.locator('a[href="/pricing"]');
+    const aboutLink = page.locator('nav a[href="/about"]').first();
+    const aiCopilotLink = page.locator('nav a[href="/ai-copilot"]').first();
+    const pricingLink = page.locator('nav a[href="/pricing"]').first();
 
     // Verify links exist in DOM
     await expect(aboutLink).toBeVisible();
@@ -48,15 +48,15 @@ test.describe("Navigation Flow E2E", () => {
       await expect(page.locator(".dropdown-menu")).toBeVisible();
     }
 
-    const docLink = page.locator('a[href="/documentation"]');
-    const blogLink = page.locator('a[href="/blog"]');
+    const docLink = page.locator('nav a[href="/documentation"]').first();
+    const blogLink = page.locator('nav a[href="/blog"]').first();
     await expect(docLink).toBeVisible();
     await expect(blogLink).toBeVisible();
 
     // Test utility links that should work
-    const loginLink = page.locator('a[href="/login"]');
-    const signupLink = page.locator('a[href="/signup"]');
-    const demoLink = page.locator('a[href="/demo"]');
+    const loginLink = page.locator('nav a[href="/login"]').first();
+    const signupLink = page.locator('nav a[href="/signup"]').first();
+    const demoLink = page.locator('nav a[href="/demo"]').first();
 
     await expect(loginLink).toBeVisible();
     await expect(signupLink).toBeVisible();
@@ -95,12 +95,12 @@ test.describe("Navigation Flow E2E", () => {
   test("should handle footer navigation", async ({ page }) => {
     await page.goto("/");
 
-    // Scroll to footer (use contentinfo instead of footer)
-    await page.locator("contentinfo").scrollIntoViewIfNeeded();
+    // Scroll to footer
+    await page.locator("footer").scrollIntoViewIfNeeded();
 
     // Test footer links
-    const footerTermsLink = page.locator('a[href="/terms"]');
-    const footerCookiesLink = page.locator('a[href="/cookies"]');
+    const footerTermsLink = page.locator('footer a[href="/terms"]');
+    const footerCookiesLink = page.locator('footer a[href="/cookies"]');
 
     await expect(footerTermsLink).toBeVisible();
     await expect(footerCookiesLink).toBeVisible();
@@ -111,10 +111,10 @@ test.describe("Navigation Flow E2E", () => {
 
     // Test back to top functionality
     await page.goto("/");
-    await page.locator("contentinfo").scrollIntoViewIfNeeded();
+    await page.locator("footer").scrollIntoViewIfNeeded();
 
-    // Look for back to top button with different selector
-    const backToTopButton = page.locator('button:has-text("Back to top")');
+    // Look for back to top button using aria-label
+    const backToTopButton = page.locator('button[aria-label="Back to top"]');
     await expect(backToTopButton).toBeVisible();
     await backToTopButton.click();
 

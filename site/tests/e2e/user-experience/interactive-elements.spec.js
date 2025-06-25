@@ -131,9 +131,11 @@ test.describe("Interactive Elements E2E", () => {
       await page.keyboard.press("Tab");
       await expect(nameInput).toBeFocused();
 
-      // Test form submission without full data
+      // Test form submission without name (should trigger client-side validation)
+      // Clear email to test the first validation message
+      await emailInput.fill("");
       await submitButton.click();
-      await expect(page.locator("text=Please enter your name")).toBeVisible();
+      await expect(page.locator("text=Please enter your email address.")).toBeVisible();
     });
 
     test("should handle character count displays", async ({ page }) => {
@@ -172,14 +174,14 @@ test.describe("Interactive Elements E2E", () => {
       await page.setViewportSize({ width: 1024, height: 768 });
 
       // Scroll to footer
-      await page.locator("contentinfo").scrollIntoViewIfNeeded();
+      await page.locator("footer").scrollIntoViewIfNeeded();
 
       // Verify we're at the bottom
       const scrollPosition = await page.evaluate(() => window.scrollY);
       expect(scrollPosition).toBeGreaterThan(500);
 
       // Click back to top button with correct selector
-      const backToTopButton = page.locator('button:has-text("Back to top")');
+      const backToTopButton = page.locator('button[aria-label="Back to top"]');
       await expect(backToTopButton).toBeVisible();
       await backToTopButton.click();
 
@@ -273,7 +275,7 @@ test.describe("Interactive Elements E2E", () => {
       await page.click('button[type="submit"]');
 
       // Error message should appear
-      await expect(page.locator("text=An unexpected error occurred")).toBeVisible();
+      await expect(page.locator("text=An unexpected error occurred. Please try again later.")).toBeVisible();
 
       // Form should be usable again
       await expect(page.locator('button[type="submit"]:not(:disabled)')).toBeVisible();

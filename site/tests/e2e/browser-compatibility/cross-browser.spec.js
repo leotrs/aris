@@ -9,7 +9,7 @@ test.describe("Cross-Browser Compatibility", () => {
       await expect(page.locator("h1")).toBeVisible();
       await expect(page.locator(".hero-section")).toBeVisible();
       await expect(page.locator(".section-two")).toBeVisible();
-      await expect(page.locator("contentinfo")).toBeVisible();
+      await expect(page.locator("footer")).toBeVisible();
 
       // Navigation should be functional
       await expect(page.locator(".navbar")).toBeVisible();
