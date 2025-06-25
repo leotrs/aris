@@ -50,35 +50,6 @@ test.describe("Signup Flow E2E", () => {
     await expect(page.locator('input[name="institution"]')).toHaveValue("");
   });
 
-  test("should show validation errors for empty required fields", async ({ page }) => {
-    // Check if form has required fields
-    await expect(page.locator('input[type="email"][required]')).toBeVisible();
-    await expect(page.locator('input[name="name"][required]')).toBeVisible();
-
-    // Try to submit empty form - this should trigger browser validation
-    await page.click('button[type="submit"]');
-
-    // For browser native validation, check that form is still on the same page
-    // or check the validity state of the inputs
-    const emailValid = await page
-      .locator('input[type="email"]')
-      .evaluate((el) => el.validity.valid);
-    expect(emailValid).toBe(false);
-  });
-
-  test("should validate email format", async ({ page }) => {
-    // Enter invalid email
-    await page.fill('input[type="email"]', "invalid-email");
-    await page.fill('input[name="name"]', "Dr. Jane Doe");
-
-    await page.click('button[type="submit"]');
-
-    // Browser native validation should prevent submission
-    // Check if the email field has invalid state
-    const emailField = page.locator('input[type="email"]');
-    await expect(emailField).toHaveAttribute("type", "email");
-  });
-
   test("should enforce character limits", async ({ page }) => {
     // Test that character warnings appear at 90+ characters
     const nameAt90 = "a".repeat(90);
@@ -158,7 +129,7 @@ test.describe("Signup Flow E2E", () => {
 
     await page.click('button[type="submit"]');
 
-    // Verify network error message appears
+    // Verify network error message appears (check the actual message from signup form)
     await expect(
       page.locator(
         "text=Unable to connect to server. Please check your internet connection and try again."

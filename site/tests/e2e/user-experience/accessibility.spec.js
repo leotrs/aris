@@ -280,8 +280,6 @@ test.describe("Accessibility E2E", () => {
       await page.goto("/");
 
       // Tab through many elements to ensure we don't get stuck
-      const initialFocus = await page.evaluate(() => document.activeElement?.tagName);
-
       for (let i = 0; i < 30; i++) {
         await page.keyboard.press("Tab");
       }
@@ -296,33 +294,30 @@ test.describe("Accessibility E2E", () => {
     test("should handle modal/dropdown focus properly", async ({ page }) => {
       await page.goto("/");
 
-      // Open resources dropdown with keyboard
-      let foundDropdown = false;
-      for (let i = 0; i < 20; i++) {
-        await page.keyboard.press("Tab");
+      // Ensure we're on desktop view where dropdown is visible
+      await page.setViewportSize({ width: 1024, height: 768 });
+      
+      // Wait for page to be fully loaded
+      await page.waitForLoadState('networkidle');
 
-        const focusedElement = await page.evaluate(() => {
-          return document.activeElement?.textContent?.trim();
-        });
+      // Directly focus the resources dropdown toggle
+      const resourcesDropdown = page.locator(".has-dropdown .dropdown-toggle");
+      await resourcesDropdown.waitFor({ state: 'visible' });
+      await resourcesDropdown.focus();
 
-        if (focusedElement?.includes("Resources")) {
-          await page.keyboard.press("Enter");
-          await expect(page.locator(".dropdown-menu")).toBeVisible();
-          foundDropdown = true;
-          break;
-        }
-      }
+      // Verify it's focused
+      await expect(resourcesDropdown).toBeFocused();
 
-      if (foundDropdown) {
-        // Focus should move into dropdown
-        await page.keyboard.press("Tab");
-        const dropdownFocused = await page.evaluate(() => {
-          const focused = document.activeElement;
-          return focused?.closest(".dropdown-menu") !== null;
-        });
+      // Press Enter to open dropdown
+      await page.keyboard.press("Enter");
+      await page.waitForTimeout(300); // Wait for Vue reactivity and focus movement
 
-        expect(dropdownFocused).toBe(true);
-      }
+      // Dropdown should be visible
+      await expect(page.locator(".dropdown-menu")).toBeVisible({ timeout: 2000 });
+
+      // Focus should move to first dropdown item
+      const firstDropdownItem = page.locator(".dropdown-link").first();
+      await expect(firstDropdownItem).toBeFocused({ timeout: 2000 });
     });
   });
 

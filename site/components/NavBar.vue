@@ -17,6 +17,7 @@
           @mouseleave="closeDropdown('resources')"
         >
           <a
+            ref="resourcesToggle"
             href="#"
             class="nav-link dropdown-toggle"
             :aria-expanded="isResourcesDropdownOpen"
@@ -27,19 +28,39 @@
             @keydown.enter.prevent="toggleDropdown('resources')"
             @keydown.space.prevent="toggleDropdown('resources')"
             @keydown.escape="closeDropdown('resources')"
+            @keydown.arrow-down.prevent="openDropdownAndFocus('resources')"
           >
             Resources
           </a>
           <ul
             v-if="isResourcesDropdownOpen"
+            ref="resourcesDropdownMenu"
             class="dropdown-menu"
             role="menu"
             aria-label="Resources submenu"
+            @keydown.escape="closeDropdownAndFocus('resources')"
+            @keydown.arrow-up.prevent="focusPreviousMenuItem"
+            @keydown.arrow-down.prevent="focusNextMenuItem"
           >
             <li role="none">
-              <a href="/documentation" class="dropdown-link" role="menuitem">Documentation</a>
+              <a
+                ref="firstDropdownItem"
+                href="/documentation"
+                class="dropdown-link"
+                role="menuitem"
+                @keydown.tab.shift.prevent="closeDropdownAndFocus('resources')"
+                >Documentation</a
+              >
             </li>
-            <li role="none"><a href="/blog" class="dropdown-link" role="menuitem">Blog</a></li>
+            <li role="none">
+              <a
+                href="/blog"
+                class="dropdown-link"
+                role="menuitem"
+                @keydown.tab.prevent="closeDropdown('resources')"
+                >Blog</a
+              >
+            </li>
           </ul>
         </li>
       </ul>
@@ -140,12 +161,17 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, onUnmounted } from "vue";
+  import { ref, onMounted, onUnmounted, nextTick } from "vue";
 
   const isMobileMenuOpen = ref(false);
   const isResourcesDropdownOpen = ref(false);
   const isMobileResourcesDropdownOpen = ref(false);
   const isScrolled = ref(false);
+
+  // Template refs for focus management
+  const resourcesToggle = ref(null);
+  const resourcesDropdownMenu = ref(null);
+  const firstDropdownItem = ref(null);
 
   // Handle scroll events for navbar transparency
   const handleScroll = () => {
@@ -177,7 +203,62 @@
   const toggleDropdown = (menuName) => {
     if (menuName === "resources") {
       isResourcesDropdownOpen.value = !isResourcesDropdownOpen.value;
+      if (isResourcesDropdownOpen.value) {
+        // Focus first dropdown item when opened via keyboard
+        nextTick(() => {
+          if (firstDropdownItem.value) {
+            firstDropdownItem.value.focus();
+          }
+        });
+      }
     }
+  };
+
+  // Open dropdown and focus first item (for arrow down key)
+  const openDropdownAndFocus = (menuName) => {
+    if (menuName === "resources") {
+      isResourcesDropdownOpen.value = true;
+      nextTick(() => {
+        if (firstDropdownItem.value) {
+          firstDropdownItem.value.focus();
+        }
+      });
+    }
+  };
+
+  // Close dropdown and return focus to toggle
+  const closeDropdownAndFocus = (menuName) => {
+    if (menuName === "resources") {
+      isResourcesDropdownOpen.value = false;
+      nextTick(() => {
+        if (resourcesToggle.value) {
+          resourcesToggle.value.focus();
+        }
+      });
+    }
+  };
+
+  // Arrow key navigation within dropdown
+  const focusNextMenuItem = () => {
+    const dropdownLinks = resourcesDropdownMenu.value?.querySelectorAll(".dropdown-link");
+    if (!dropdownLinks) return;
+
+    const currentIndex = Array.from(dropdownLinks).findIndex(
+      (link) => link === document.activeElement
+    );
+    const nextIndex = (currentIndex + 1) % dropdownLinks.length;
+    dropdownLinks[nextIndex].focus();
+  };
+
+  const focusPreviousMenuItem = () => {
+    const dropdownLinks = resourcesDropdownMenu.value?.querySelectorAll(".dropdown-link");
+    if (!dropdownLinks) return;
+
+    const currentIndex = Array.from(dropdownLinks).findIndex(
+      (link) => link === document.activeElement
+    );
+    const previousIndex = currentIndex <= 0 ? dropdownLinks.length - 1 : currentIndex - 1;
+    dropdownLinks[previousIndex].focus();
   };
 
   // Toggle mobile menu
