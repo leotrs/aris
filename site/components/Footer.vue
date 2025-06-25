@@ -55,19 +55,19 @@
           <p class="footer-tagline">
             Transforming scientific research through human-first technology
           </p>
-
-          <div class="footer-legal">
-            <p class="footer-bottom-text">© 2025 Aris. All rights reserved.</p>
-            <div class="footer-legal-links">
-              <a href="/terms" class="footer-legal-link">Terms & Conditions</a>
-              <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
-            </div>
-          </div>
-
-          <button class="back-to-top" aria-label="Back to top" @click="scrollToTop">
-            <IconChevronUp />
-          </button>
         </div>
+
+        <div class="footer-legal">
+          <p class="footer-bottom-text">© 2025 Aris. All rights reserved.</p>
+          <div class="footer-legal-links">
+            <a href="/terms" class="footer-legal-link">Terms & Conditions</a>
+            <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
+          </div>
+        </div>
+
+        <button class="back-to-top" aria-label="Back to top" @click="scrollToTop">
+          <IconChevronUp />
+        </button>
       </div>
     </div>
   </footer>
@@ -218,6 +218,7 @@
     flex-direction: column;
     align-items: center;
     gap: 8px;
+    text-align: center;
   }
 
   .footer-bottom-text {
