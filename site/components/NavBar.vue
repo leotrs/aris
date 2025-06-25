@@ -221,7 +221,7 @@
   .navbar-content-wrapper {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 var(--side-padding, 24px);
+    padding: 0 16px; /* Reduced side padding */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -229,9 +229,15 @@
   }
 
   /* Logo */
+  .navbar-logo {
+    display: flex;
+    align-items: center; /* Ensure logo is vertically centered */
+  }
+  
   .navbar-logo img {
-    height: 40px; /* Adjust logo size as needed */
+    height: 32px; /* Slightly smaller for better proportions */
     width: auto;
+    display: block; /* Remove any baseline spacing */
   }
 
   /* Primary Navigation Links (Left Side) */
