@@ -1,4 +1,10 @@
-<script setup></script>
+<script setup>
+  import { IconBrandBluesky, IconBrandLinkedin, IconBrandX, IconChevronUp } from "@tabler/icons-vue";
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+</script>
 
 <template>
   <footer class="main-footer">
@@ -24,22 +30,37 @@
 
         <div class="footer-column">
           <h4 class="column-heading">Connect</h4>
-          <ul class="footer-links">
-            <li><a href="#" class="footer-link">BlueSky</a></li>
-            <li><a href="#" class="footer-link">LinkedIn</a></li>
-            <li><a href="#" class="footer-link">Twitter</a></li>
-          </ul>
+          <div class="social-icons">
+            <a href="#" class="social-icon-link" aria-label="Follow us on BlueSky">
+              <IconBrandBluesky />
+            </a>
+            <a href="#" class="social-icon-link" aria-label="Follow us on LinkedIn">
+              <IconBrandLinkedin />
+            </a>
+            <a href="#" class="social-icon-link" aria-label="Follow us on X (Twitter)">
+              <IconBrandX />
+            </a>
+          </div>
         </div>
       </div>
 
       <div class="footer-bottom">
-        <img src="@/assets/logo-32px-gray.svg" alt="Aris Logo" class="footer-logo" />
-
-        <p class="footer-bottom-text">© 2025 Aris. All rights reserved.</p>
-        <div class="footer-legal-links">
-          <a href="/terms" class="footer-legal-link">Terms & Conditions</a>
-          <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
+        <div class="footer-branding">
+          <img src="@/assets/logo-32px-gray.svg" alt="Aris Logo" class="footer-logo" />
+          <p class="footer-tagline">Transforming scientific research through human-first technology</p>
         </div>
+        
+        <div class="footer-legal">
+          <p class="footer-bottom-text">© 2025 Aris. All rights reserved.</p>
+          <div class="footer-legal-links">
+            <a href="/terms" class="footer-legal-link">Terms & Conditions</a>
+            <a href="/cookies" class="footer-legal-link">Cookie Policy</a>
+          </div>
+        </div>
+        
+        <button class="back-to-top" @click="scrollToTop" aria-label="Back to top">
+          <IconChevronUp />
+        </button>
       </div>
     </div>
   </footer>
@@ -48,10 +69,25 @@
 <style scoped>
   /* Main Footer Container */
   .main-footer {
-    background-color: var(--primary-900); /* Deep blue background as per design */
-    color: var(--gray-200); /* Default text color for the footer */
-    padding: 80px 0; /* Generous vertical padding */
+    background: linear-gradient(135deg, var(--primary-900) 0%, var(--primary-800) 100%);
+    color: var(--gray-200);
+    padding: 80px 0 40px 0;
     font-family: "Source Sans 3", sans-serif;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  /* Decorative background pattern */
+  .main-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-image: radial-gradient(circle at 20% 80%, rgba(255,255,255,0.03) 0%, transparent 50%),
+                      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.03) 0%, transparent 50%);
+    pointer-events: none;
   }
 
   /* Content Wrapper - Max-width & Centering */
@@ -92,90 +128,155 @@
   }
 
   .footer-link {
-    color: var(--gray-200); /* Link color */
+    color: var(--gray-200);
     text-decoration: none;
     font-size: 18px;
-    transition: color 0.2s ease-in-out;
+    transition: all 0.3s ease;
+    display: inline-block;
   }
 
   .footer-link:hover {
-    color: var(--primary-500); /* Primary blue on hover */
+    color: var(--primary-300);
+    transform: translateX(4px);
   }
 
   /* Social Icons */
   .social-icons {
     display: flex;
-    gap: 20px; /* Space between social icons */
+    gap: 16px;
+    margin-top: 8px;
   }
 
   .social-icon-link {
-    color: var(--gray-200); /* Icon color */
-    transition: color 0.2s ease-in-out;
-    display: inline-flex; /* Ensures proper alignment if there's padding/margin */
+    color: var(--gray-300);
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
   }
 
   .social-icon-link:hover {
-    color: var(--primary-500); /* Primary blue on hover */
+    color: var(--primary-200);
+    background: rgba(255, 255, 255, 0.1);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   }
 
   .social-icon-link svg {
-    width: 28px; /* Size of social icons */
-    height: 28px;
+    width: 22px;
+    height: 22px;
   }
 
   /* Footer Bottom Section */
   .footer-bottom {
-    border-top: 1px solid var(--gray-700); /* Thin line separates main footer from bottom */
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
     padding-top: 40px;
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 24px;
+    position: relative;
+  }
+  
+  .footer-branding {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
   }
 
   .footer-logo {
-    max-width: 100px; /* Smaller logo for the footer */
-    height: auto;
-    margin: 0 auto 20px auto; /* Center logo with space below */
-    filter: grayscale(100%) brightness(200%); /* Example for monochromatic/light logo */
-    opacity: 0.8; /* Slightly less prominent */
+    height: 32px;
+    width: auto;
+    filter: grayscale(100%) brightness(200%);
+    opacity: 0.8;
+  }
+  
+  .footer-tagline {
+    font-size: 14px;
+    color: var(--gray-400);
+    font-style: italic;
+    max-width: 300px;
+  }
+  
+  .footer-legal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
   }
 
   .footer-bottom-text {
-    font-size: 16px;
-    color: var(--gray-400); /* Slightly muted color for copyright text */
-    margin-bottom: 10px;
+    font-size: 14px;
+    color: var(--gray-400);
+    margin: 0;
   }
 
   .footer-legal-links {
     display: flex;
-    justify-content: center;
-    gap: 20px; /* Space between legal links */
-    flex-wrap: wrap; /* Allow wrapping on small screens */
+    gap: 16px;
+    flex-wrap: wrap;
   }
 
   .footer-legal-link {
-    font-size: 16px;
-    color: var(--gray-400); /* Muted color for legal links */
+    font-size: 14px;
+    color: var(--gray-400);
     text-decoration: none;
-    transition: color 0.2s ease-in-out;
+    transition: color 0.3s ease;
   }
 
   .footer-legal-link:hover {
-    color: var(--primary-500); /* Primary blue on hover */
+    color: var(--primary-300);
+  }
+  
+  /* Back to Top Button */
+  .back-to-top {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray-300);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+  }
+  
+  .back-to-top:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--primary-200);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+  
+  .back-to-top svg {
+    width: 20px;
+    height: 20px;
   }
 
   /* --- Responsive Adjustments --- */
   @media (max-width: 768px) {
     .main-footer {
-      padding: 60px 0;
+      padding: 60px 0 30px 0;
     }
 
     .footer-columns {
-      grid-template-columns: 1fr; /* Stack columns vertically on smaller screens */
-      gap: 40px; /* Adjust gap for stacked layout */
-      text-align: center; /* Center align content in columns */
+      grid-template-columns: 1fr;
+      gap: 40px;
+      text-align: center;
     }
 
     .column-heading {
-      margin-bottom: 15px; /* Adjust spacing */
+      margin-bottom: 15px;
     }
 
     .footer-links li {
@@ -183,28 +284,43 @@
     }
 
     .social-icons {
-      justify-content: center; /* Center social icons when stacked */
+      justify-content: center;
     }
 
     .footer-bottom {
       padding-top: 30px;
+      flex-direction: column;
+      text-align: center;
+      gap: 20px;
     }
-
-    .footer-logo {
-      max-width: 80px;
+    
+    .footer-branding {
+      align-items: center;
+      text-align: center;
+    }
+    
+    .footer-tagline {
+      text-align: center;
     }
   }
 
   @media (max-width: 480px) {
     .main-footer {
-      padding: 40px 0;
+      padding: 40px 0 20px 0;
     }
+    
     .footer-bottom {
       padding-top: 20px;
     }
+    
     .footer-legal-links {
-      flex-direction: column; /* Stack legal links too */
-      gap: 5px; /* Smaller gap when stacked */
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .back-to-top {
+      width: 44px;
+      height: 44px;
     }
   }
 </style>
