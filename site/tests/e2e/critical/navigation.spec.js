@@ -41,9 +41,12 @@ test.describe("Navigation Flow E2E", () => {
     await expect(aiCopilotLink).toBeVisible();
     await expect(pricingLink).toBeVisible();
 
-    // Test Resources dropdown
-    await page.hover(".has-dropdown");
-    await expect(page.locator(".dropdown-menu")).toBeVisible();
+    // Test Resources dropdown (only on desktop)
+    const viewport = page.viewportSize();
+    if (viewport && viewport.width >= 768) {
+      await page.hover(".has-dropdown");
+      await expect(page.locator(".dropdown-menu")).toBeVisible();
+    }
 
     const docLink = page.locator('a[href="/documentation"]');
     const blogLink = page.locator('a[href="/blog"]');

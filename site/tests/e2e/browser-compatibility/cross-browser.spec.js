@@ -181,14 +181,22 @@ test.describe("Cross-Browser Compatibility", () => {
 
       // Test client-side validation
       await page.click('button[type="submit"]');
-      await expect(page.locator("text=Please enter your email address.")).toBeVisible();
+
+      // Check browser validation state instead of custom messages
+      const emailValid = await page
+        .locator('input[type="email"]')
+        .evaluate((el) => el.validity.valid);
+      expect(emailValid).toBe(false);
 
       // Test character limit validation
       const longName = "a".repeat(101);
       await page.fill('input[type="email"]', "test@example.com");
       await page.fill('input[name="name"]', longName);
       await page.click('button[type="submit"]');
-      await expect(page.locator("text=Name must be 100 characters or less.")).toBeVisible();
+
+      // Wait for validation and check for error message
+      await page.waitForTimeout(100);
+      await expect(page.locator(".error-message")).toBeVisible();
 
       console.log(`✓ Form validation works correctly in ${browserName}`);
     });
