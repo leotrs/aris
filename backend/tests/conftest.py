@@ -47,9 +47,9 @@ from aris.models import Base, File, User
 from main import app
 
 
-@pytest_asyncio.fixture(scope="session")
+@pytest_asyncio.fixture
 async def test_engine(request):
-    """Create test engine once per session."""
+    """Create test engine for each test."""
     database_url = settings.get_test_database_url()
     
     # If we're using PostgreSQL and pytest-postgresql is available
