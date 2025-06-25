@@ -195,8 +195,9 @@ describe("HomeSidebar.vue", () => {
       expect(collapsed.value).toBe(false);
 
       // Find and click the collapse button
-      const collapseButton = wrapper.findAll('[data-testid="sidebar-item"]')
-        .find(item => item.text().includes("Collapse"));
+      const collapseButton = wrapper
+        .findAll('[data-testid="sidebar-item"]')
+        .find((item) => item.text().includes("Collapse"));
       await collapseButton.trigger("click");
 
       expect(collapsed.value).toBe(true);
@@ -256,7 +257,8 @@ describe("HomeSidebar.vue", () => {
             ContextMenu: { template: "<div><slot /></div>" },
             ContextMenuItem: { template: "<div><slot /></div>" },
             SidebarItem: {
-              template: '<div data-testid="sidebar-item" :class="{recent: text && text.includes(\'Research\')}">{{ text }}</div>',
+              template:
+                '<div data-testid="sidebar-item" :class="{recent: text && text.includes(\'Research\')}">{{ text }}</div>',
               props: ["icon", "text", "active", "clickable", "tooltip", "tooltipAlways"],
               emits: ["click"],
             },
@@ -266,13 +268,20 @@ describe("HomeSidebar.vue", () => {
       });
 
       // Should render Recent Files header
-      const recentFilesLabel = wrapper.findAll('[data-testid="sidebar-item"]')
-        .find(item => item.text().includes("Recent Files"));
+      const recentFilesLabel = wrapper
+        .findAll('[data-testid="sidebar-item"]')
+        .find((item) => item.text().includes("Recent Files"));
       expect(recentFilesLabel.exists()).toBe(true);
 
       // Should render the actual recent files
-      const recentFileItems = wrapper.findAll('[data-testid="sidebar-item"]')
-        .filter(item => item.text().includes("Research") || item.text().includes("Analysis") || item.text().includes("Draft"));
+      const recentFileItems = wrapper
+        .findAll('[data-testid="sidebar-item"]')
+        .filter(
+          (item) =>
+            item.text().includes("Research") ||
+            item.text().includes("Analysis") ||
+            item.text().includes("Draft")
+        );
       expect(recentFileItems.length).toBe(3);
     });
 
@@ -297,22 +306,27 @@ describe("HomeSidebar.vue", () => {
       });
 
       // Should still render Recent Files header
-      const recentFilesLabel = wrapper.findAll('[data-testid="sidebar-item"]')
-        .find(item => item.text().includes("Recent Files"));
+      const recentFilesLabel = wrapper
+        .findAll('[data-testid="sidebar-item"]')
+        .find((item) => item.text().includes("Recent Files"));
       expect(recentFilesLabel.exists()).toBe(true);
 
       // Should not render any recent file items
-      const recentFileItems = wrapper.findAll('[data-testid="sidebar-item"]')
-        .filter(item => !item.text().includes("Home") && !item.text().includes("Recent Files") && 
-                       !item.text().includes("Account") && !item.text().includes("Settings") && 
-                       !item.text().includes("Collapse"));
+      const recentFileItems = wrapper
+        .findAll('[data-testid="sidebar-item"]')
+        .filter(
+          (item) =>
+            !item.text().includes("Home") &&
+            !item.text().includes("Recent Files") &&
+            !item.text().includes("Account") &&
+            !item.text().includes("Settings") &&
+            !item.text().includes("Collapse")
+        );
       expect(recentFileItems.length).toBe(0);
     });
 
     it("calls File.openFile when recent file is clicked", async () => {
-      const mockRecentFiles = [
-        { id: "file1", title: "Test File" },
-      ];
+      const mockRecentFiles = [{ id: "file1", title: "Test File" }];
       const collapsed = ref(false);
       const fileStore = ref({ getRecentFiles: () => mockRecentFiles });
       const wrapper = shallowMount(HomeSidebar, {
@@ -323,7 +337,8 @@ describe("HomeSidebar.vue", () => {
             ContextMenu: { template: "<div><slot /></div>" },
             ContextMenuItem: { template: "<div><slot /></div>" },
             SidebarItem: {
-              template: '<div @click="$emit(\'click\')" data-testid="sidebar-item">{{ text }}</div>',
+              template:
+                '<div @click="$emit(\'click\')" data-testid="sidebar-item">{{ text }}</div>',
               props: ["icon", "text", "active", "clickable", "tooltip", "tooltipAlways"],
               emits: ["click"],
             },
@@ -332,8 +347,9 @@ describe("HomeSidebar.vue", () => {
         },
       });
 
-      const testFileItem = wrapper.findAll('[data-testid="sidebar-item"]')
-        .find(item => item.text().includes("Test File"));
+      const testFileItem = wrapper
+        .findAll('[data-testid="sidebar-item"]')
+        .find((item) => item.text().includes("Test File"));
       expect(testFileItem.exists()).toBe(true);
 
       await testFileItem.trigger("click");
@@ -350,7 +366,7 @@ describe("HomeSidebar.vue", () => {
       ];
       const collapsed = ref(false);
       const fileStore = ref({ getRecentFiles: () => mockRecentFiles });
-      
+
       shallowMount(HomeSidebar, {
         props: { active: "Home", fab: false },
         global: {
@@ -368,7 +384,7 @@ describe("HomeSidebar.vue", () => {
     it("registers navigation keyboard shortcuts", () => {
       const collapsed = ref(false);
       const fileStore = ref({ getRecentFiles: () => [] });
-      
+
       // Mock the useKeyboardShortcuts composable
       const mockUseKeyboardShortcuts = vi.fn();
       vi.doMock("@/composables/useKeyboardShortcuts.js", () => ({
@@ -392,8 +408,8 @@ describe("HomeSidebar.vue", () => {
           "g,1": expect.objectContaining({ description: "open most recent file" }),
           "g,2": expect.objectContaining({ description: "open second most recent file" }),
           "g,3": expect.objectContaining({ description: "open third most recent file" }),
-          "n": expect.objectContaining({ description: "open new file menu" }),
-          "c": expect.objectContaining({ description: "collapse sidebar" }),
+          n: expect.objectContaining({ description: "open new file menu" }),
+          c: expect.objectContaining({ description: "collapse sidebar" }),
         }),
         true,
         "Main"
@@ -463,10 +479,10 @@ describe("HomeSidebar.vue", () => {
       });
 
       const initialCallCount = push.mock.calls.length;
-      
+
       // Try to open non-existent recent file
       wrapper.vm.openRecentFile(0);
-      
+
       // Should not call router.push
       expect(push.mock.calls.length).toBe(initialCallCount);
     });

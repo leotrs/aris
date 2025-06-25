@@ -17,7 +17,7 @@ vi.mock("@/composables/useKeyboardShortcuts.js", () => ({
   })),
 }));
 
-// Mock File model  
+// Mock File model
 vi.mock("@/models/File.js", () => ({
   File: {
     openFile: vi.fn(),
@@ -43,7 +43,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       lastModified: new Date().toISOString(),
       tags: [
         { id: "tag1", name: "research", color: "#blue" },
-        { id: "tag2", name: "biology", color: "#green" }
+        { id: "tag2", name: "biology", color: "#green" },
       ],
     });
 
@@ -94,11 +94,14 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
               return { menuOpen: false };
             },
             methods: {
-              openMenu() { this.menuOpen = !this.menuOpen; },
+              openMenu() {
+                this.menuOpen = !this.menuOpen;
+              },
             },
           },
           FileTitle: {
-            template: '<div data-testid="file-title" @click="$emit(\'click\')">{{ file.title }}</div>',
+            template:
+              '<div data-testid="file-title" @click="$emit(\'click\')">{{ file.title }}</div>',
             props: ["file"],
             emits: ["click"],
             methods: {
@@ -117,7 +120,9 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
             template: '<div data-testid="file-date">{{ formattedDate }}</div>',
             props: ["file"],
             computed: {
-              formattedDate() { return "2 days ago"; },
+              formattedDate() {
+                return "2 days ago";
+              },
             },
           },
           ConfirmationModal: {
@@ -226,7 +231,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
       expect(shortcuts).toHaveProperty("enter");
-      
+
       // Execute Enter shortcut
       shortcuts["enter"]();
       expect(mockOpenFile).toHaveBeenCalledWith(mockFile.value, expect.any(Object));
@@ -238,7 +243,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
       expect(shortcuts).toHaveProperty(" ");
-      
+
       // Execute Space shortcut
       shortcuts[" "].fn();
       expect(mockOpenFile).toHaveBeenCalledWith(mockFile.value, expect.any(Object));
@@ -246,12 +251,12 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
     it("navigates context menu with arrow keys", async () => {
       const wrapper = createWrapper();
-      
+
       // Open context menu
       const menuTrigger = wrapper.find('[data-testid="file-menu"] .context-menu-trigger');
       await menuTrigger.trigger("click");
 
-      const contextMenu = wrapper.find('.context-menu');
+      const contextMenu = wrapper.find(".context-menu");
       expect(contextMenu.exists()).toBe(true);
 
       // Verify menu items are accessible
@@ -553,7 +558,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
       // Start delete operation
       await wrapper.vm.onDelete();
-      
+
       // Unmount component
       wrapper.unmount();
 

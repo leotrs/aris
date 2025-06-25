@@ -22,7 +22,7 @@ test.describe("Home View Accessibility", () => {
     const fileItems = page.locator('[data-testid^="file-item-"]');
     const firstFile = fileItems.first();
 
-    if (await firstFile.count() > 0) {
+    if ((await firstFile.count()) > 0) {
       // File items should have button role
       await expect(firstFile).toHaveAttribute("role", "button");
       await expect(firstFile).toHaveAttribute("tabindex", "0");
@@ -32,7 +32,7 @@ test.describe("Home View Accessibility", () => {
   test("file list container has proper accessibility attributes", async ({ page }) => {
     const filesContainer = page.locator('[data-testid="files-container"]');
     await expect(filesContainer).toBeVisible();
-    
+
     // Should be keyboard accessible
     const focusableElements = page.locator('[tabindex="0"], button, input, a');
     expect(await focusableElements.count()).toBeGreaterThan(0);
@@ -40,20 +40,20 @@ test.describe("Home View Accessibility", () => {
 
   test("keyboard navigation works for basic file interaction", async ({ page }) => {
     const fileItems = page.locator('[data-testid^="file-item-"]');
-    
-    if (await fileItems.count() > 0) {
+
+    if ((await fileItems.count()) > 0) {
       const firstFile = fileItems.first();
-      
+
       // Should be able to focus file items
       await firstFile.focus();
       await expect(firstFile).toBeFocused();
-      
+
       // Should be able to activate with Enter
       await page.keyboard.press("Enter");
-      
+
       // Should either open file or show menu (depending on implementation)
       // Just verify no errors occurred and page remains functional
-      await expect(page.locator('body')).toBeVisible();
+      await expect(page.locator("body")).toBeVisible();
     }
   });
 });
