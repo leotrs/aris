@@ -1,10 +1,10 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { 
-  demoFile, 
-  demoUser, 
-  demoFileStore, 
-  demoAnnotations, 
-  createDemoApi 
+import {
+  demoFile,
+  demoUser,
+  demoFileStore,
+  demoAnnotations,
+  createDemoApi,
 } from "@/views/demo/demoData.js";
 
 // Mock fetch globally
@@ -55,8 +55,8 @@ describe("Demo Data Service", () => {
       it("has valid tags array", () => {
         expect(Array.isArray(demoFile.tags)).toBe(true);
         expect(demoFile.tags.length).toBeGreaterThan(0);
-        
-        demoFile.tags.forEach(tag => {
+
+        demoFile.tags.forEach((tag) => {
           expect(tag).toHaveProperty("id");
           expect(tag).toHaveProperty("name");
           expect(tag).toHaveProperty("color");
@@ -100,15 +100,15 @@ describe("Demo Data Service", () => {
       });
 
       it("contains the demo file in the store", () => {
-        const demoFileInStore = demoFileStore.files.find(f => f.id === demoFile.id);
+        const demoFileInStore = demoFileStore.files.find((f) => f.id === demoFile.id);
         expect(demoFileInStore).toBeDefined();
         expect(demoFileInStore.title).toBe(demoFile.title);
       });
 
       it("has demo files for demonstration", () => {
         expect(demoFileStore.files.length).toBeGreaterThanOrEqual(1);
-        
-        demoFileStore.files.forEach(file => {
+
+        demoFileStore.files.forEach((file) => {
           expect(file).toHaveProperty("id");
           expect(file).toHaveProperty("title");
           expect(file).toHaveProperty("last_edited_at");
@@ -124,12 +124,12 @@ describe("Demo Data Service", () => {
       });
 
       it("has properly structured annotations", () => {
-        demoAnnotations.forEach(annotation => {
+        demoAnnotations.forEach((annotation) => {
           expect(annotation).toHaveProperty("id");
           expect(annotation).toHaveProperty("content");
           expect(annotation).toHaveProperty("user");
           expect(annotation).toHaveProperty("created_at");
-          
+
           expect(typeof annotation.content).toBe("string");
           expect(annotation.user).toHaveProperty("username");
           expect(typeof annotation.created_at).toBe("string");
@@ -153,7 +153,7 @@ describe("Demo Data Service", () => {
         expect(api).toHaveProperty("put");
         expect(api).toHaveProperty("delete");
         expect(api).toHaveProperty("getUri");
-        
+
         expect(typeof api.get).toBe("function");
         expect(typeof api.post).toBe("function");
         expect(typeof api.put).toBe("function");
@@ -188,18 +188,15 @@ describe("Demo Data Service", () => {
 
         await api.post("/render");
 
-        expect(mockFetch).toHaveBeenCalledWith(
-          "http://localhost:8000/render",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              source: demoFile.source,
-            }),
-          }
-        );
+        expect(mockFetch).toHaveBeenCalledWith("http://localhost:8000/render", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            source: demoFile.source,
+          }),
+        });
       });
 
       it("returns rendered HTML from backend", async () => {
@@ -234,10 +231,7 @@ describe("Demo Data Service", () => {
 
         const result = await api.post("/render");
 
-        expect(consoleSpy).toHaveBeenCalledWith(
-          "Failed to render RSM content:",
-          expect.any(Error)
-        );
+        expect(consoleSpy).toHaveBeenCalledWith("Failed to render RSM content:", expect.any(Error));
         expect(result.data).toBeDefined();
         expect(typeof result.data).toBe("string");
         expect(result.data.length).toBeGreaterThan(0);
@@ -297,7 +291,7 @@ describe("Demo Data Service", () => {
 
       const fetchCall = mockFetch.mock.calls[0];
       const requestBody = JSON.parse(fetchCall[1].body);
-      
+
       expect(requestBody.source).toBe(demoFile.source);
       expect(requestBody.source).toMatch(/^:rsm:/);
       expect(requestBody.source).toMatch(/::$/);
@@ -314,7 +308,7 @@ describe("Demo Data Service", () => {
       const fetchCall = mockFetch.mock.calls[0];
       const requestBody = JSON.parse(fetchCall[1].body);
       const rsmContent = requestBody.source;
-      
+
       // Verify RSM contains expected elements
       expect(rsmContent).toContain(":abstract:");
       expect(rsmContent).toContain(":itemize:");
@@ -331,10 +325,8 @@ describe("Demo Data Service", () => {
     });
 
     it("handles network timeout gracefully", async () => {
-      mockFetch.mockImplementation(() => 
-        new Promise((_, reject) => 
-          setTimeout(() => reject(new Error("Timeout")), 100)
-        )
+      mockFetch.mockImplementation(
+        () => new Promise((_, reject) => setTimeout(() => reject(new Error("Timeout")), 100))
       );
 
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -373,10 +365,7 @@ describe("Demo Data Service", () => {
       const result = await api.post("/render");
 
       expect(result.data).toBeDefined();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        "Failed to render RSM content:",
-        expect.any(Error)
-      );
+      expect(consoleSpy).toHaveBeenCalledWith("Failed to render RSM content:", expect.any(Error));
 
       consoleSpy.mockRestore();
     });

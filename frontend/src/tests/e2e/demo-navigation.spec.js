@@ -15,15 +15,15 @@ test.describe("Demo Navigation & Access", () => {
       // Verify tokens are cleared
       const tokens = await authHelpers.getStoredTokens();
       expect(tokens.accessToken).toBeNull();
-      
+
       await page.goto("/demo");
-      
+
       // Wait for the page to load
       await page.waitForLoadState("networkidle");
-      
+
       // Verify we're on the demo page (not redirected to login)
       expect(page.url()).toContain("/demo");
-      
+
       // Check for demo-specific elements
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
     });
@@ -31,7 +31,7 @@ test.describe("Demo Navigation & Access", () => {
     test("demo route loads without authentication", async ({ page }) => {
       // Double-check that auth state is truly cleared
       await authHelpers.clearAuthState();
-      
+
       // Verify no tokens exist
       const tokens = await authHelpers.getStoredTokens();
       expect(tokens.accessToken).toBeNull();
@@ -51,11 +51,11 @@ test.describe("Demo Navigation & Access", () => {
 
       const banner = page.locator(".demo-banner");
       await expect(banner).toBeVisible();
-      
+
       // Check banner content
       await expect(banner).toContainText("Demo Mode");
       await expect(banner).toContainText("Experience Aris workspace with sample content");
-      
+
       // Check for demo icon
       await expect(banner.locator(".demo-icon")).toBeVisible();
       await expect(banner.locator(".demo-icon")).toContainText("ℹ️");
@@ -65,13 +65,13 @@ test.describe("Demo Navigation & Access", () => {
       await page.goto("/demo");
       await page.waitForLoadState("networkidle");
 
-      const backLink = page.locator('.demo-link');
+      const backLink = page.locator(".demo-link");
       await expect(backLink).toBeVisible();
       await expect(backLink).toContainText("← Back to homepage");
-      
+
       // Click the back link
       await backLink.click();
-      
+
       // Should navigate to homepage
       await page.waitForLoadState("networkidle");
       expect(page.url()).not.toContain("/demo");
@@ -81,7 +81,7 @@ test.describe("Demo Navigation & Access", () => {
     test("demo page loads with correct title", async ({ page }) => {
       await page.goto("/demo");
       await page.waitForLoadState("networkidle");
-      
+
       // Check page title
       const title = await page.title();
       expect(title).toContain("Aris");
@@ -92,7 +92,7 @@ test.describe("Demo Navigation & Access", () => {
     test("demo accessible without login", async ({ page }) => {
       // Use comprehensive auth clearing
       await authHelpers.clearAuthState();
-      
+
       // Verify clean state
       const tokens = await authHelpers.getStoredTokens();
       expect(tokens.accessToken).toBeNull();
@@ -102,7 +102,7 @@ test.describe("Demo Navigation & Access", () => {
 
       // Verify demo loads successfully
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
-      
+
       // Verify we're not redirected to login
       expect(page.url()).toContain("/demo");
       expect(page.url()).not.toContain("/login");
@@ -131,11 +131,11 @@ test.describe("Demo Navigation & Access", () => {
       await page.evaluate(() => {
         localStorage.clear();
         sessionStorage.clear();
-        
+
         // Clear IndexedDB if available
         if (window.indexedDB) {
-          indexedDB.databases?.().then(databases => {
-            databases.forEach(db => {
+          indexedDB.databases?.().then((databases) => {
+            databases.forEach((db) => {
               indexedDB.deleteDatabase(db.name);
             });
           });
@@ -201,11 +201,11 @@ test.describe("Demo Navigation & Access", () => {
     test("direct URL sharing works", async ({ page, browser }) => {
       // Simulate sharing a direct demo URL
       const demoUrl = page.url().replace(/\/.*$/, "/demo");
-      
+
       // Open in new tab/context to simulate sharing
       const newContext = await browser.newContext();
       const newPage = await newContext.newPage();
-      
+
       await newPage.goto(demoUrl);
       await newPage.waitForLoadState("networkidle");
 
@@ -224,8 +224,8 @@ test.describe("Demo Navigation & Access", () => {
 
       // Check main containers exist
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
-      await expect(page.locator('.demo-banner')).toBeVisible();
-      await expect(page.locator('.workspace-container')).toBeVisible();
+      await expect(page.locator(".demo-banner")).toBeVisible();
+      await expect(page.locator(".workspace-container")).toBeVisible();
     });
 
     test("demo page has correct viewport meta tag", async ({ page }) => {
@@ -233,8 +233,8 @@ test.describe("Demo Navigation & Access", () => {
       await page.waitForLoadState("networkidle");
 
       // Check viewport meta tag for mobile support
-      const viewport = await page.locator('meta[name="viewport"]').getAttribute('content');
-      expect(viewport).toContain('width=device-width');
+      const viewport = await page.locator('meta[name="viewport"]').getAttribute("content");
+      expect(viewport).toContain("width=device-width");
     });
 
     test("demo page loads required CSS and JS", async ({ page }) => {

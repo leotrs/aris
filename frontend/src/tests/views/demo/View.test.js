@@ -86,7 +86,7 @@ describe("Demo View", () => {
       const banner = wrapper.find(".demo-banner");
       expect(banner.exists()).toBe(true);
       expect(banner.text()).toContain("Demo Mode - Experience Aris workspace with sample content");
-      
+
       const backLink = wrapper.find(".demo-link");
       expect(backLink.exists()).toBe(true);
       expect(backLink.attributes("href")).toBe("/");
@@ -233,27 +233,27 @@ describe("Demo View", () => {
   describe("Async Content Loading", () => {
     it("calls demo API to render RSM content on mount", async () => {
       mockPost.mockClear();
-      
+
       wrapper = mount(DemoView);
       await nextTick();
-      
-      // Wait for the onMounted hook to execute
-      await new Promise(resolve => setTimeout(resolve, 0));
 
-      expect(mockPost).toHaveBeenCalledWith("/render", { 
-        source: ":rsm:# Test Content::" 
+      // Wait for the onMounted hook to execute
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(mockPost).toHaveBeenCalledWith("/render", {
+        source: ":rsm:# Test Content::",
       });
     });
 
     it("sets file.html property after successful API call", async () => {
       mockPost.mockResolvedValue({ data: "<html>Rendered HTML</html>" });
       mockPost.mockClear();
-      
+
       wrapper = mount(DemoView);
       await nextTick();
-      
+
       // Wait for async API call
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
       await nextTick();
 
       const vm = wrapper.vm;
@@ -264,7 +264,7 @@ describe("Demo View", () => {
   describe("Keyboard Shortcuts", () => {
     it("registers keyboard shortcuts for focus mode", async () => {
       mockUseKeyboardShortcuts.mockClear();
-      
+
       wrapper = mount(DemoView);
       await nextTick();
 
@@ -275,7 +275,7 @@ describe("Demo View", () => {
 
     it("toggles focus mode when shortcut function is called", async () => {
       let shortcutCallback;
-      
+
       mockUseKeyboardShortcuts.mockImplementation((shortcuts) => {
         shortcutCallback = shortcuts.c;
       });
