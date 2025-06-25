@@ -49,7 +49,7 @@
 <style scoped>
   /* Section Container */
   .section-four {
-    background-color: var(--gray-75); /* Background color as per design brief */
+    background: linear-gradient(-45deg, var(--gray-75) 0%, var(--gray-100) 100%); /* Opposite direction from Section 2 */
     padding: 80px 0; /* Vertical padding for the section */
   }
 
@@ -57,7 +57,7 @@
   .content-wrapper {
     max-width: 1200px; /* Adjust max-width as needed for content, typically wider for grids */
     margin: 0 auto; /* Center the content wrapper */
-    padding: 0 var(--side-padding, 24px); /* Side padding */
+    padding: 0 16px; /* Reduced side padding */
   }
 
   /* Section Heading */
@@ -102,6 +102,7 @@
       0 10px 15px -3px rgba(0, 0, 0, 0.1),
       0 4px 6px -2px rgba(0, 0, 0, 0.05)
     ); /* Slightly stronger shadow on hover */
+    background: linear-gradient(135deg, var(--surface-page) 0%, var(--gray-50) 100%);
   }
 
   /* Card Icon Container */

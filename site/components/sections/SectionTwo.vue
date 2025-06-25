@@ -81,7 +81,7 @@
 <style scoped>
   /* Section Container */
   .section-two {
-    background-color: var(--gray-75);
+    background: linear-gradient(45deg, var(--gray-75) 0%, var(--gray-100) 100%);
     padding: var(--space-4xl) 0;
   }
 
@@ -89,7 +89,7 @@
   .content-wrapper {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 var(--space-lg);
+    padding: 0 16px;
   }
 
   /* Section Heading */
@@ -129,6 +129,7 @@
   .problem-solution-card:hover {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
     transform: translateY(-2px);
+    background: linear-gradient(135deg, var(--surface-page) 0%, var(--gray-50) 100%);
   }
 
   /* Card Icon Container */

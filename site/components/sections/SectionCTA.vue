@@ -26,7 +26,7 @@
   .cta-content-wrapper {
     max-width: 800px;
     margin: 0 auto;
-    padding: 0 var(--side-padding, 24px);
+    padding: 0 16px;
   }
 
   /* CTA Headline */
@@ -66,13 +66,14 @@
   }
 
   .btn-primary {
-    background-color: var(--primary-500);
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
     color: var(--white);
   }
 
   .btn-primary:hover {
-    background-color: var(--primary-600);
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
     transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(14, 154, 233, 0.35);
   }
 
   .text-link {

@@ -94,7 +94,7 @@
   .footer-content-wrapper {
     max-width: 1200px; /* Standard content width */
     margin: 0 auto; /* Center the wrapper */
-    padding: 0 var(--side-padding, 24px); /* Side padding */
+    padding: 0 16px; /* Reduced side padding */
   }
 
   /* Footer Columns Layout */

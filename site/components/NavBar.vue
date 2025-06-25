@@ -214,7 +214,7 @@
 
   /* Navbar when scrolled */
   .navbar.navbar-scrolled {
-    background-color: var(--surface-page); /* Solid white background */
+    background: linear-gradient(180deg, var(--surface-page) 0%, var(--gray-50) 100%); /* Subtle gradient */
     box-shadow: var(--shadow-soft); /* Subtle shadow */
   }
 

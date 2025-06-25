@@ -31,7 +31,7 @@
 <style scoped>
   /* Hero Section - Overall Container */
   .hero-section {
-    background-color: var(--gray-0);
+    background: linear-gradient(135deg, var(--gray-0) 0%, var(--gray-50) 100%);
     padding: var(--space-4xl) 0;
     min-height: 70vh;
     display: flex;
@@ -44,7 +44,7 @@
   .hero-content-wrapper {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 var(--space-lg);
+    padding: 0 16px;
     width: 100%;
     display: flex;
     align-items: center;
@@ -117,14 +117,14 @@
 
   /* Primary Button Specifics */
   .btn-primary {
-    background-color: var(--primary-500); /* Your brand's primary action color */
-    color: var(--white); /* White text for contrast on primary color */
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    color: var(--white);
   }
 
   .btn-primary:hover {
-    background-color: var(--primary-600);
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(14, 154, 233, 0.25);
+    box-shadow: 0 4px 12px rgba(14, 154, 233, 0.35);
   }
 
   .btn-primary:focus-visible {
