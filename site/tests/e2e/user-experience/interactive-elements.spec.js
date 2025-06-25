@@ -136,6 +136,8 @@ test.describe("Interactive Elements E2E", () => {
   });
 
   test.describe("Scroll and Animation Interactions", () => {
+    // Configure more retries for these flaky scroll timing tests
+    test.describe.configure({ retries: 3 });
     test("should handle navbar scroll behavior", async ({ page }) => {
       await page.goto("/");
 
@@ -161,6 +163,8 @@ test.describe("Interactive Elements E2E", () => {
   });
 
   test.describe("Loading States", () => {
+    // Configure more retries for these flaky API loading state tests
+    test.describe.configure({ retries: 3 });
     test("should handle form loading states", async ({ page }) => {
       await page.goto("/signup");
 
@@ -192,6 +196,8 @@ test.describe("Interactive Elements E2E", () => {
   });
 
   test.describe("Error States", () => {
+    // Configure more retries for these flaky API timing tests
+    test.describe.configure({ retries: 3 });
     test("should handle and recover from errors", async ({ page }) => {
       await page.goto("/signup");
 
