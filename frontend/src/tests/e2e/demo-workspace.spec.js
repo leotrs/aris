@@ -88,7 +88,6 @@ test.describe("Demo Workspace Functionality", () => {
       if ((await marginsButton.count()) > 0) {
         // Get initial manuscript width
         const manuscript = page.locator('.manuscript, [data-testid="manuscript-viewer"]').first();
-        const initialWidth = await manuscript.evaluate((el) => el.offsetWidth);
 
         await marginsButton.click();
         await page.waitForTimeout(500);
@@ -364,9 +363,6 @@ test.describe("Demo Workspace Functionality", () => {
       });
 
       const manuscriptContainer = page.locator('[data-testid="manuscript-container"]');
-
-      // Get initial scroll position
-      const initialScroll = await manuscriptContainer.evaluate((el) => el.scrollTop);
 
       // Try page down
       await page.keyboard.press("PageDown");

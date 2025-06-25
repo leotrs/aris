@@ -191,7 +191,7 @@ export const createDemoApi = () => ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            source: payload.source || demoFile.source,
+            source: payload?.source || demoFile.source,
           }),
         });
 
@@ -203,7 +203,7 @@ export const createDemoApi = () => ({
         return { data: html };
       } catch (error) {
         console.error("Failed to render RSM content:", error);
-        return { data: convertMarkdownToHtml(payload.source || demoFile.source) };
+        return { data: convertMarkdownToHtml(payload?.source || demoFile.source) };
       }
     }
     if (url.includes("/settings")) {

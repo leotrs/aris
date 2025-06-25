@@ -52,7 +52,7 @@ test.describe("Home View File Interactions", () => {
     }
   });
 
-  test("file menu operations work correctly", async ({ page }) => {
+  test("file menu operations work correctly", async () => {
     // Create a test file for menu operations
     const fileId = await fileHelpers.createNewFile();
     await fileHelpers.navigateToHome();

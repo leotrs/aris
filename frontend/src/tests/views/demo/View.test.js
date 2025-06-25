@@ -62,10 +62,10 @@ vi.mock("@/composables/useKeyboardShortcuts.js", () => ({
 
 describe("Demo View", () => {
   let wrapper;
-  let mockApi;
+  let _mockApi;
 
   beforeEach(() => {
-    mockApi = {
+    _mockApi = {
       post: vi.fn().mockResolvedValue({ data: "<html>Test HTML</html>" }),
       getUri: () => "http://localhost:8000",
     };

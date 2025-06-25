@@ -384,7 +384,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       wrapper.vm.showDeleteModal = false;
 
       // Should return early and not call deleteFile
-      const result = await wrapper.vm.handleDeleteConfirm();
+      await wrapper.vm.handleDeleteConfirm();
       expect(mockFileStore.value.deleteFile).not.toHaveBeenCalled();
     });
   });
@@ -491,18 +491,6 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       });
 
       expect(wrapper.find('[data-testid="tag-row"]').exists()).toBe(true);
-    });
-
-    it("adapts layout based on shouldShowColumn function", () => {
-      const mockShouldShowColumn = vi.fn((column) => column !== "Tags");
-      const wrapper = createWrapper({
-        provide: {
-          shouldShowColumn: mockShouldShowColumn,
-        },
-      });
-
-      // shouldShowColumn should be available to child components
-      expect(mockShouldShowColumn).toBeDefined();
     });
   });
 
