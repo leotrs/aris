@@ -19,7 +19,7 @@ vi.mock("axios", () => ({
 }));
 
 // Import after mocking
-const { signupUser } = await import("../../composables/useApi.js");
+const { signupUser, checkEmailExists } = await import("../../composables/useApi.js");
 
 describe("Signup API Service", () => {
   beforeEach(() => {
@@ -160,6 +160,133 @@ describe("Signup API Service", () => {
       await signupUser(dataWithNulls);
 
       expect(mockAxiosInstance.post).toHaveBeenCalledWith("/signup/", expectedSanitizedData);
+    });
+  });
+
+  describe("checkEmailExists", () => {
+    it("should make GET request to check email status", async () => {
+      const mockResponse = {
+        data: {
+          exists: true,
+        },
+      };
+
+      mockAxiosInstance.get.mockResolvedValueOnce(mockResponse);
+
+      const result = await checkEmailExists("test@example.com");
+
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith("/signup/status?email=test%40example.com");
+      expect(result).toBe(true);
+    });
+
+    it("should return false when email does not exist", async () => {
+      const mockResponse = {
+        data: {
+          exists: false,
+        },
+      };
+
+      mockAxiosInstance.get.mockResolvedValueOnce(mockResponse);
+
+      const result = await checkEmailExists("new@example.com");
+
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith("/signup/status?email=new%40example.com");
+      expect(result).toBe(false);
+    });
+
+    it("should properly encode email address in URL", async () => {
+      const mockResponse = {
+        data: { exists: false },
+      };
+
+      mockAxiosInstance.get.mockResolvedValueOnce(mockResponse);
+
+      await checkEmailExists("user+test@example.com");
+
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith("/signup/status?email=user%2Btest%40example.com");
+    });
+
+    it("should handle special characters in email", async () => {
+      const mockResponse = {
+        data: { exists: false },
+      };
+
+      mockAxiosInstance.get.mockResolvedValueOnce(mockResponse);
+
+      await checkEmailExists("user.test+123@sub.example.com");
+
+      expect(mockAxiosInstance.get).toHaveBeenCalledWith("/signup/status?email=user.test%2B123%40sub.example.com");
+    });
+
+    it("should handle network errors", async () => {
+      const networkError = new Error("Network Error");
+      mockAxiosInstance.get.mockRejectedValueOnce(networkError);
+
+      await expect(checkEmailExists("test@example.com")).rejects.toMatchObject({
+        status: 0,
+        error: "network_error",
+        message: "Unable to connect to server. Please check your internet connection.",
+      });
+    });
+
+    it("should handle server errors (500)", async () => {
+      const errorResponse = {
+        response: {
+          status: 500,
+          data: {
+            detail: {
+              error: "internal_error",
+              message: "An unexpected error occurred. Please try again later.",
+            },
+          },
+        },
+      };
+
+      mockAxiosInstance.get.mockRejectedValueOnce(errorResponse);
+
+      await expect(checkEmailExists("test@example.com")).rejects.toMatchObject({
+        status: 500,
+        error: "internal_error",
+        message: "An unexpected error occurred. Please try again later.",
+      });
+    });
+
+    it("should handle 404 errors gracefully", async () => {
+      const errorResponse = {
+        response: {
+          status: 404,
+          data: {
+            detail: {
+              error: "endpoint_not_found",
+              message: "The requested endpoint was not found.",
+            },
+          },
+        },
+      };
+
+      mockAxiosInstance.get.mockRejectedValueOnce(errorResponse);
+
+      await expect(checkEmailExists("test@example.com")).rejects.toMatchObject({
+        status: 404,
+        error: "endpoint_not_found",
+        message: "The requested endpoint was not found.",
+      });
+    });
+
+    it("should handle malformed response gracefully", async () => {
+      const mockResponse = {
+        data: {
+          // Missing 'exists' field
+          status: "ok",
+        },
+      };
+
+      mockAxiosInstance.get.mockResolvedValueOnce(mockResponse);
+
+      const result = await checkEmailExists("test@example.com");
+
+      // Should handle undefined exists field gracefully
+      expect(result).toBeUndefined();
     });
   });
 });
