@@ -343,7 +343,7 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    gap: 24px; /* Space between links */
+    gap: 32px; /* Increased space between links */
   }
 
   .nav-link {
@@ -380,6 +380,7 @@
     left: 0;
     background-color: var(--surface-page);
     box-shadow: var(--shadow-medium);
+    border: 1px solid var(--gray-200);
     border-radius: 8px;
     min-width: 180px;
     padding: 10px 0;
