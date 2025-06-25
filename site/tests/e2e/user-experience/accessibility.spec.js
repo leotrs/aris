@@ -60,8 +60,8 @@ test.describe("Accessibility E2E", () => {
       await page.goto("/signup");
 
       // Focus on the page first by clicking on the form
-      await page.click('form');
-      
+      await page.click("form");
+
       const formElements = [
         'input[type="email"]',
         'input[name="name"]',
@@ -116,10 +116,10 @@ test.describe("Accessibility E2E", () => {
     test("should handle mobile menu keyboard navigation", async ({ page }) => {
       await page.goto("/");
       await page.setViewportSize({ width: 375, height: 667 });
-      
+
       // Wait for responsive layout to apply
       await page.waitForTimeout(100);
-      
+
       // Ensure mobile menu toggle is visible
       await expect(page.locator(".menu-toggle")).toBeVisible();
 

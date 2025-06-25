@@ -275,7 +275,9 @@ test.describe("Interactive Elements E2E", () => {
       await page.click('button[type="submit"]');
 
       // Error message should appear
-      await expect(page.locator("text=An unexpected error occurred. Please try again later.")).toBeVisible();
+      await expect(
+        page.locator("text=An unexpected error occurred. Please try again later.")
+      ).toBeVisible();
 
       // Form should be usable again
       await expect(page.locator('button[type="submit"]:not(:disabled)')).toBeVisible();
