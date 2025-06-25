@@ -31,7 +31,12 @@
 
 <template>
   <div ref="self-ref" class="manuscript-wrapper demo-mode">
-    <Manuscript :html="htmlString" :show-footer="showFooter" :settings="settings" />
+    <Manuscript
+      v-if="htmlString"
+      :html-string="htmlString"
+      :show-footer="showFooter"
+      :settings="settings"
+    />
   </div>
 </template>
 

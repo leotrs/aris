@@ -3,66 +3,80 @@
 export const demoFile = {
   id: 999,
   title: "Sample Research Paper: The Future of Web-Native Publishing",
-  source: `# The Future of Web-Native Publishing
-  
-## Abstract
+  source: `:rsm:
+# The Future of Web-Native Publishing
 
-This paper explores the revolutionary potential of web-native scientific publishing platforms in transforming how research is disseminated, consumed, and validated. We examine the limitations of traditional PDF-based publishing and propose a new paradigm that leverages modern web technologies to create interactive, accessible, and dynamic research documents.
+:abstract:
+
+  This paper explores the revolutionary potential of web-native scientific publishing platforms in transforming how research is disseminated, consumed, and validated. We examine the limitations of traditional PDF-based publishing and propose a new paradigm that leverages modern web technologies to create interactive, accessible, and dynamic research documents.
+
+::
 
 ## Introduction
 
 The current landscape of scientific publishing relies heavily on static document formats that were designed for print media. While PDFs have served the academic community for decades, they present significant limitations in our increasingly digital world:
 
-- **Limited interactivity**: Static content cannot adapt to user preferences or provide dynamic visualizations
-- **Accessibility barriers**: Poor screen reader support and fixed layouts
-- **Version control issues**: Difficulty tracking changes and updates
-- **Discovery challenges**: Content locked in non-searchable formats
+:itemize:
+
+  :item: *Limited interactivity*: Static content cannot adapt to user preferences or provide dynamic visualizations
+
+  :item: *Accessibility barriers*: Poor screen reader support and fixed layouts
+
+  :item: *Version control issues*: Difficulty tracking changes and updates
+
+  :item: *Discovery challenges*: Content locked in non-searchable formats
+
+::
 
 ### Research Questions
 
 This study addresses three primary research questions:
 
-1. How can web-native technologies improve research accessibility and engagement?
-2. What are the key technical requirements for a modern publishing platform?
-3. How might interactive documents change the peer review process?
+:enumerate:
+
+  :item: How can web-native technologies improve research accessibility and engagement?
+
+  :item: What are the key technical requirements for a modern publishing platform?
+
+  :item: How might interactive documents change the peer review process?
+
+::
 
 ## Methodology
 
 Our research employed a mixed-methods approach combining:
 
-- Literature review of existing publishing platforms
-- Technical analysis of web standards and capabilities  
-- User interviews with researchers and publishers
-- Prototype development and testing
+:itemize:
+
+  :item: Literature review of existing publishing platforms
+
+  :item: Technical analysis of web standards and capabilities
+
+  :item: User interviews with researchers and publishers
+
+  :item: Prototype development and testing
+
+::
 
 ### Technical Implementation
 
 We developed a proof-of-concept platform using:
 
-- **Frontend**: Vue.js with reactive state management
-- **Backend**: FastAPI with PostgreSQL database
-- **Document Format**: RSM (Readable Research Markup)
-- **Deployment**: Docker containers on cloud infrastructure
+:itemize:
+
+  :item: **Frontend**: Vue.js with reactive state management
+
+  :item: **Backend**: FastAPI with PostgreSQL database
+
+  :item: **Document Format**: RSM (Readable Research Markup)
+
+  :item: **Deployment**: Docker containers on cloud infrastructure
+
+::
 
 ## Results
 
 Our findings demonstrate significant advantages of web-native publishing:
-
-### Performance Metrics
-
-| Metric | PDF | Web-Native | Improvement |
-|--------|-----|------------|-------------|
-| Load Time | 3.2s | 1.1s | 66% faster |
-| Accessibility Score | 45/100 | 94/100 | 109% better |
-| Mobile Usability | Poor | Excellent | Qualitative |
-
-### User Feedback
-
-Participants reported improved reading experiences:
-
-> "The ability to adjust font size and margins made reading much more comfortable. I could finally read research papers on my phone during commutes." - Researcher A
-
-> "Interactive figures and embedded data visualizations helped me understand complex concepts much faster than static images." - Graduate Student B
 
 ## Discussion
 
@@ -70,28 +84,26 @@ The transition to web-native publishing represents more than a technological upg
 
 ### Key Benefits
 
-1. **Enhanced Accessibility**: Screen readers, keyboard navigation, and customizable display options
-2. **Dynamic Content**: Interactive figures, embedded data, and real-time updates
-3. **Better Discovery**: Full-text search, semantic markup, and linked data
-4. **Collaborative Features**: Inline comments, annotations, and version tracking
+:enumerate:
 
-### Implementation Challenges
+  :item: *Enhanced Accessibility*: Screen readers, keyboard navigation, and customizable display options
 
-Despite the benefits, several challenges must be addressed:
+  :item: *Dynamic Content*: Interactive figures, embedded data, and real-time updates
 
-- **Author Training**: Researchers need support transitioning from Word/LaTeX workflows
-- **Publisher Adoption**: Business model changes and technical infrastructure requirements
-- **Standardization**: Need for common markup standards and interoperability
-- **Long-term Preservation**: Ensuring digital documents remain accessible over time
+  :item: *Better Discovery*: Full-text search, semantic markup, and linked data
+
+  :item: *Collaborative Features*: Inline comments, annotations, and version tracking
+
+::
 
 ## Future Work
 
 This research opens several avenues for future investigation:
 
-- Development of authoring tools for non-technical researchers
-- Integration with existing manuscript submission systems
-- Analysis of impact on citation patterns and research discovery
-- Exploration of multimedia content integration (videos, interactive simulations)
+Development of authoring tools for non-technical researchers. Integration with existing
+manuscript submission systems. Analysis of impact on citation patterns and research
+discovery. Exploration of multimedia content integration (videos, interactive
+simulations).
 
 ## Conclusion
 
@@ -103,16 +115,9 @@ The future of research dissemination lies not in replicating print formats digit
 
 We thank the research participants who provided valuable feedback and the open-source community whose tools made this work possible.
 
-## References
+*This is a demonstration document showcasing the capabilities of web-native research publishing. The content is fictional but representative of actual research papers.*
 
-1. Smith, J. et al. (2023). "Digital Transformation in Academic Publishing." *Journal of Scholarly Communication*, 15(3), 45-62.
-2. Johnson, M. (2022). "Accessibility in Scientific Literature: Current State and Future Directions." *Universal Design Quarterly*, 8(2), 12-28.
-3. Lee, K. & Brown, S. (2024). "Interactive Research Documents: A User Experience Study." *CHI Conference Proceedings*, 1234-1245.
-4. Wilson, A. (2023). "Web Technologies for Academic Publishing: A Technical Review." *Digital Humanities Review*, 7(4), 89-105.
-
----
-
-*This is a demonstration document showcasing the capabilities of web-native research publishing. The content is fictional but representative of actual research papers.*`,
+::`,
   last_edited_at: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000).toISOString(), // 2 days ago
   tags: [
     { id: 1, name: "publishing", color: "#3b82f6" },
@@ -175,11 +180,26 @@ export const demoAnnotations = [
 
 // Mock API that returns demo data
 export const createDemoApi = () => ({
-  get: (url) => {
-    if (url.includes("/content")) {
-      return Promise.resolve({
-        data: convertMarkdownToHtml(demoFile.source),
-      });
+  get: async () => Promise.resolve({ data: {} }),
+  post: async (url) => {
+    if (url.includes("/render")) {
+      // Use the actual backend /render endpoint for RSM content
+      try {
+        const response = await fetch("http://localhost:8000/render", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            source: demoFile.source,
+          }),
+        });
+        const html = await response.text();
+        return { data: html };
+      } catch (error) {
+        console.error("Failed to render RSM content:", error);
+        return { data: convertMarkdownToHtml(demoFile.source) };
+      }
     }
     if (url.includes("/settings")) {
       return Promise.resolve({
@@ -188,7 +208,6 @@ export const createDemoApi = () => ({
     }
     return Promise.resolve({ data: {} });
   },
-  post: () => Promise.resolve({ data: {} }),
   put: () => Promise.resolve({ data: {} }),
   delete: () => Promise.resolve({ data: {} }),
   // Return a fake URI that won't cause 404s for static assets
