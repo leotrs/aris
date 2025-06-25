@@ -1,15 +1,15 @@
 <script setup>
   import {} from "vue";
-  
+
   defineProps({
     annotation: {
       type: Object,
-      required: true
+      required: true,
     },
     collapsed: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
   });
 </script>
 

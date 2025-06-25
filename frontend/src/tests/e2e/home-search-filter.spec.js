@@ -21,14 +21,14 @@ test.describe("Home View Search & Filter", () => {
   test("search input is accessible and functional", async ({ page }) => {
     // Check if search input exists
     const searchInput = page.locator('input[type="search"], input[placeholder*="earch"]').first();
-    
-    if (await searchInput.count() > 0) {
+
+    if ((await searchInput.count()) > 0) {
       await expect(searchInput).toBeVisible();
-      
+
       // Should be able to type in search
       await searchInput.fill("test");
       expect(await searchInput.inputValue()).toBe("test");
-      
+
       // Clear search
       await searchInput.clear();
       expect(await searchInput.inputValue()).toBe("");
@@ -38,11 +38,11 @@ test.describe("Home View Search & Filter", () => {
   test("search keyboard shortcut opens search", async ({ page }) => {
     // Test search shortcut
     await page.keyboard.press("/");
-    
+
     const searchInput = page.locator('input[type="search"], input[placeholder*="earch"]').first();
-    if (await searchInput.count() > 0) {
+    if ((await searchInput.count()) > 0) {
       await expect(searchInput).toBeFocused();
-      
+
       // Escape should exit search
       await page.keyboard.press("Escape");
     }
@@ -51,13 +51,13 @@ test.describe("Home View Search & Filter", () => {
   test("file list remains functional with search functionality", async ({ page }) => {
     const filesContainer = page.locator('[data-testid="files-container"]');
     await expect(filesContainer).toBeVisible();
-    
+
     // Files should be visible
     const fileItems = page.locator('[data-testid^="file-item-"]');
-    if (await fileItems.count() > 0) {
+    if ((await fileItems.count()) > 0) {
       const firstFile = fileItems.first();
       await expect(firstFile).toBeVisible();
-      
+
       // Should be able to interact with files
       await firstFile.click();
       await page.waitForTimeout(200); // Wait for reactivity

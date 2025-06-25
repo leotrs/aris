@@ -90,7 +90,7 @@ export class FileHelpers {
 
     // Verify file is selected (has active class)
     await expect(fileItem).toHaveClass(/active/);
-    
+
     // Note: focused class may not always be applied depending on the focus management system
     // The DOM focus should be sufficient for keyboard shortcuts to work
   }
@@ -276,23 +276,23 @@ export class FileHelpers {
   async ensureTestFiles(minCount) {
     await this.waitForFilesLoaded();
     const currentCount = await this.getFileCount();
-    
+
     if (currentCount >= minCount) {
       return; // Already have enough files
     }
-    
+
     const filesToCreate = minCount - currentCount;
     const createdFiles = [];
-    
+
     for (let i = 0; i < filesToCreate; i++) {
       const fileId = await this.createNewFile();
       createdFiles.push(fileId);
       await this.navigateToHome();
     }
-    
+
     // Final wait for all files to be loaded
     await this.waitForFilesLoaded();
-    
+
     return createdFiles;
   }
 }

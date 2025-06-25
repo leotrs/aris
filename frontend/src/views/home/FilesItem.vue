@@ -74,10 +74,10 @@
       console.log("Calling fileStore.selectFile");
       fileStore.value.selectFile(file.value);
     } else {
-      console.warn("FileStore not available for file selection", { 
-        hasFileStore: !!fileStore, 
-        hasValue: !!(fileStore?.value),
-        hasSelectFile: !!(fileStore?.value?.selectFile)
+      console.warn("FileStore not available for file selection", {
+        hasFileStore: !!fileStore,
+        hasValue: !!fileStore?.value,
+        hasSelectFile: !!fileStore?.value?.selectFile,
       });
     }
   };

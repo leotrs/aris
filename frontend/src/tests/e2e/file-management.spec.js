@@ -208,11 +208,11 @@ test.describe("File Management Tests", () => {
     // Test keyboard shortcut to open file menu (.) - if implemented
     await page.keyboard.press(".");
     const contextMenu = page.locator('[data-testid="context-menu"]');
-    
+
     // Context menu may or may not appear depending on keyboard shortcut implementation
-    if (await contextMenu.count() > 0) {
+    if ((await contextMenu.count()) > 0) {
       await expect(contextMenu).toBeVisible();
-      
+
       // Close menu with Escape
       await page.keyboard.press("Escape");
       await expect(contextMenu).not.toBeVisible();
@@ -225,7 +225,7 @@ test.describe("File Management Tests", () => {
     // Check if navigation happened (keyboard shortcut may not be implemented)
     await page.waitForTimeout(1000);
     const currentUrl = page.url();
-    
+
     if (currentUrl.includes(`/file/${fileId}`)) {
       // File opened successfully via keyboard
       await fileHelpers.navigateToHome();
