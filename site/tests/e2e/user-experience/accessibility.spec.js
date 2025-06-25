@@ -1,6 +1,14 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Accessibility E2E", () => {
+  test.beforeEach(async ({ page }) => {
+    // Ensure clean state for each test
+    await page.evaluate(() => {
+      // Close any open dropdowns or menus
+      document.body.style.overflow = "";
+    });
+  });
+
   test.describe("Keyboard Navigation", () => {
     test("should allow complete keyboard navigation of homepage", async ({ page }) => {
       await page.goto("/");
@@ -106,8 +114,14 @@ test.describe("Accessibility E2E", () => {
     });
 
     test("should handle mobile menu keyboard navigation", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
       await page.goto("/");
+      await page.setViewportSize({ width: 375, height: 667 });
+      
+      // Wait for responsive layout to apply
+      await page.waitForTimeout(100);
+      
+      // Ensure mobile menu toggle is visible
+      await expect(page.locator(".menu-toggle")).toBeVisible();
 
       // Find and activate mobile menu toggle
       let foundMenuToggle = false;

@@ -15,8 +15,8 @@ test.describe("Cross-Browser Compatibility", () => {
       await expect(page.locator(".navbar")).toBeVisible();
       await expect(page.locator(".navbar-logo")).toBeVisible();
 
-      // CTA buttons should be present
-      await expect(page.locator(".btn-primary")).toBeVisible();
+      // CTA buttons should be present (use first one to avoid strict mode violation)
+      await expect(page.locator(".btn-primary").first()).toBeVisible();
 
       console.log(`✓ Homepage renders correctly in ${browserName}`);
     });
@@ -169,8 +169,8 @@ test.describe("Cross-Browser Compatibility", () => {
       // Test back to top
       await page.setViewportSize({ width: 1024, height: 768 });
       await page.goto("/");
-      await page.locator("contentinfo").scrollIntoViewIfNeeded();
-      await page.click('button:has-text("Back to top")');
+      await page.locator("footer").scrollIntoViewIfNeeded();
+      await page.click('button[aria-label="Back to top"]');
       await expect(page.locator(".hero-section")).toBeInViewport();
 
       console.log(`✓ Interactive features work correctly in ${browserName}`);

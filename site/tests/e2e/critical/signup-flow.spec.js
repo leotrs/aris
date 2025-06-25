@@ -3,6 +3,8 @@ import { test, expect } from "@playwright/test";
 test.describe("Signup Flow E2E", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/signup");
+    // Clear any existing route handlers to prevent interference
+    await page.unrouteAll();
   });
 
   test("should complete successful signup flow", async ({ page }) => {
@@ -14,7 +16,7 @@ test.describe("Signup Flow E2E", () => {
     await page.selectOption('select[name="interest_level"]', "ready");
 
     // Mock the API response for successful signup
-    await page.route("**/signup/", async (route) => {
+    await page.route(/.*\/signup\/?$/, async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -100,16 +102,20 @@ test.describe("Signup Flow E2E", () => {
   });
 
   test("should show character warning when approaching limits", async ({ page }) => {
-    // Enter institution text approaching limit
-    const longInstitution = "a".repeat(185);
+    // Enter institution text approaching limit (>=180 characters triggers warning)
+    const longInstitution = "a".repeat(180);
+    
+    // Focus on the field and fill it character by character to trigger Vue reactivity
+    await page.click('input[name="institution"]');
     await page.fill('input[name="institution"]', longInstitution);
-
-    // Wait for reactive update
-    await page.waitForTimeout(100);
+    
+    // Trigger blur to ensure reactive update
+    await page.click('input[name="name"]');
+    await page.waitForTimeout(200);
 
     // Verify character count warning appears
     await expect(page.locator(".field-warning")).toBeVisible();
-    await expect(page.locator(".field-warning")).toContainText("185/200 characters");
+    await expect(page.locator(".field-warning")).toContainText("180/200 characters");
   });
 
   test("should handle duplicate email error", async ({ page }) => {
@@ -118,14 +124,14 @@ test.describe("Signup Flow E2E", () => {
     await page.fill('input[name="name"]', "Dr. Jane Doe");
 
     // Mock API response for duplicate email
-    await page.route("**/signup/", async (route) => {
+    await page.route(/.*\/signup\/?$/, async (route) => {
       await route.fulfill({
         status: 409,
         contentType: "application/json",
         body: JSON.stringify({
           detail: {
             error: "duplicate_email",
-            message: "This email address is already registered for early access",
+            message: "This email address is already registered for early access.",
             details: { field: "email" },
           },
         }),
@@ -146,7 +152,7 @@ test.describe("Signup Flow E2E", () => {
     await page.fill('input[name="name"]', "Dr. Jane Doe");
 
     // Mock network error
-    await page.route("**/signup/", async (route) => {
+    await page.route(/.*\/signup\/?$/, async (route) => {
       await route.abort("failed");
     });
 
@@ -165,9 +171,13 @@ test.describe("Signup Flow E2E", () => {
     await page.fill('input[type="email"]', "test@example.com");
     await page.fill('input[name="name"]', "Dr. Jane Doe");
 
-    // Mock slow API response
-    await page.route("**/signup/", async (route) => {
-      await page.waitForTimeout(100); // Small delay to see loading state
+    // Mock slow API response with longer delay
+    let routeResolve;
+    const routePromise = new Promise((resolve) => { routeResolve = resolve; });
+    
+    await page.route(/.*\/signup\/?$/, async (route) => {
+      // Wait for test to check loading state before resolving
+      await routePromise;
       await route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -175,12 +185,18 @@ test.describe("Signup Flow E2E", () => {
       });
     });
 
-    // Submit form and immediately check button state
+    // Submit form (this will trigger the route handler)
     await page.click('button[type="submit"]');
 
     // Verify button shows loading state
-    await expect(page.locator('button[type="submit"]:disabled')).toBeVisible();
-    await expect(page.locator("text=Signing Up...")).toBeVisible();
+    await expect(page.locator('button[type="submit"]:disabled')).toBeVisible({ timeout: 1000 });
+    await expect(page.locator("text=Signing Up...")).toBeVisible({ timeout: 1000 });
+    
+    // Now allow the route to complete
+    routeResolve();
+    
+    // Wait for success message
+    await expect(page.locator("text=Successfully signed up for early access! We'll notify you when Aris is ready.")).toBeVisible();
   });
 
   test("should be accessible via keyboard navigation", async ({ page }) => {
