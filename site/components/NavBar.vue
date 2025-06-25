@@ -137,8 +137,8 @@
 
   // Handle scroll events for navbar transparency
   const handleScroll = () => {
-    // Consider scrolled if we've scrolled past the hero section (roughly 70vh)
-    isScrolled.value = window.scrollY > window.innerHeight * 0.7;
+    // Consider scrolled if we've scrolled just a little bit (50px)
+    isScrolled.value = window.scrollY > 50;
   };
 
   onMounted(() => {
