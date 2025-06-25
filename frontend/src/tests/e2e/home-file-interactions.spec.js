@@ -27,10 +27,12 @@ test.describe("Home View File Interactions", () => {
 
       // Click to select first file
       await firstFile.click();
+      await page.waitForTimeout(200); // Wait for reactivity
       await expect(firstFile).toHaveClass(/active/);
 
       // Select different file
       await secondFile.click();
+      await page.waitForTimeout(200); // Wait for reactivity
       await expect(secondFile).toHaveClass(/active/);
       await expect(firstFile).not.toHaveClass(/active/);
     }
