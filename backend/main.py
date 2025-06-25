@@ -98,7 +98,8 @@ async def health_check():
 
 
 origins = [
-    "http://localhost:5173",  # local Vue app
+    "http://localhost:5173",  # local Vue app (Vite dev server)
+    "http://localhost:3000",  # local Nuxt app
     "https://aris-frontend.netlify.app",  # Netlify frontend
 ]
 
