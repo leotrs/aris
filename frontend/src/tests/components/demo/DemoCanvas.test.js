@@ -283,7 +283,7 @@ describe("Demo Canvas", () => {
 
       const manuscriptWrapper = wrapper.findComponent({ name: "DemoManuscriptWrapper" });
       const mockElement = document.createElement("div");
-      
+
       await manuscriptWrapper.vm.$emit("mounted-at", mockElement);
       await nextTick();
 
@@ -293,10 +293,7 @@ describe("Demo Canvas", () => {
 
   describe("Component Visibility Logic", () => {
     it("hides manuscript container in mobile mode when editor is shown", async () => {
-      wrapper = createWrapper(
-        { showEditor: true },
-        { mobileMode: ref(true) }
-      );
+      wrapper = createWrapper({ showEditor: true }, { mobileMode: ref(true) });
       await nextTick();
 
       const manuscriptContainer = wrapper.find('[data-testid="manuscript-container"]');
@@ -304,10 +301,7 @@ describe("Demo Canvas", () => {
     });
 
     it("shows manuscript container in mobile mode when editor is not shown", async () => {
-      wrapper = createWrapper(
-        { showEditor: false },
-        { mobileMode: ref(true) }
-      );
+      wrapper = createWrapper({ showEditor: false }, { mobileMode: ref(true) });
       await nextTick();
 
       const manuscriptContainer = wrapper.find('[data-testid="manuscript-container"]');
@@ -315,10 +309,7 @@ describe("Demo Canvas", () => {
     });
 
     it("shows manuscript container in desktop mode regardless of editor state", async () => {
-      wrapper = createWrapper(
-        { showEditor: true },
-        { mobileMode: ref(false) }
-      );
+      wrapper = createWrapper({ showEditor: true }, { mobileMode: ref(false) });
       await nextTick();
 
       const manuscriptContainer = wrapper.find('[data-testid="manuscript-container"]');
@@ -326,15 +317,12 @@ describe("Demo Canvas", () => {
     });
 
     it("shows both editor and manuscript in desktop mode", async () => {
-      wrapper = createWrapper(
-        { showEditor: true },
-        { mobileMode: ref(false) }
-      );
+      wrapper = createWrapper({ showEditor: true }, { mobileMode: ref(false) });
       await nextTick();
 
       const editor = wrapper.find('[data-testid="editor-mock"]');
       const manuscriptContainer = wrapper.find('[data-testid="manuscript-container"]');
-      
+
       expect(editor.exists()).toBe(true);
       expect(manuscriptContainer.exists()).toBe(true);
     });
@@ -377,7 +365,7 @@ describe("Demo Canvas", () => {
 
       const outer = wrapper.find(".outer");
       const style = outer.element.style;
-      
+
       // Note: CSS variable binding verification might need to be adjusted based on actual implementation
       expect(wrapper.vm.fileSettings.background).toBe("#f5f5f5");
       expect(wrapper.vm.fileSettings.fontSize).toBe("18px");

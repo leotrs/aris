@@ -88,7 +88,7 @@ describe("Demo Manuscript Wrapper", () => {
   describe("Props Handling", () => {
     it("passes htmlString prop correctly to Manuscript component", async () => {
       const testHtml = "<html><body><h1>Test Title</h1><p>Test content</p></body></html>";
-      
+
       wrapper = createWrapper({
         htmlString: testHtml,
       });
@@ -151,7 +151,7 @@ describe("Demo Manuscript Wrapper", () => {
       await nextTick();
 
       // Wait for nextTick to ensure the mounted-at event is emitted
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       const emitted = wrapper.emitted("mounted-at");
       expect(emitted).toBeTruthy();
@@ -166,7 +166,7 @@ describe("Demo Manuscript Wrapper", () => {
       await nextTick();
 
       // Wait a bit to ensure no event is emitted
-      await new Promise(resolve => setTimeout(resolve, 10));
+      await new Promise((resolve) => setTimeout(resolve, 10));
 
       const emitted = wrapper.emitted("mounted-at");
       expect(emitted).toBeFalsy();
@@ -177,12 +177,12 @@ describe("Demo Manuscript Wrapper", () => {
       await nextTick();
 
       // Wait for the emission
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       const emitted = wrapper.emitted("mounted-at");
       const emittedElement = emitted[0][0];
       const wrapperElement = wrapper.find(".manuscript-wrapper").element;
-      
+
       expect(emittedElement).toBe(wrapperElement);
     });
   });
@@ -190,7 +190,7 @@ describe("Demo Manuscript Wrapper", () => {
   describe("Required Props", () => {
     it("requires htmlString prop", () => {
       const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-      
+
       // Mount without required htmlString prop
       wrapper = mount(DemoManuscriptWrapper, {
         props: {
@@ -200,13 +200,13 @@ describe("Demo Manuscript Wrapper", () => {
 
       // Vue should warn about missing required prop
       expect(consoleSpy).toHaveBeenCalled();
-      
+
       consoleSpy.mockRestore();
     });
 
     it("requires keys prop", () => {
       const consoleSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
-      
+
       // Mount without required keys prop
       wrapper = mount(DemoManuscriptWrapper, {
         props: {
@@ -216,7 +216,7 @@ describe("Demo Manuscript Wrapper", () => {
 
       // Vue should warn about missing required prop
       expect(consoleSpy).toHaveBeenCalled();
-      
+
       consoleSpy.mockRestore();
     });
   });
