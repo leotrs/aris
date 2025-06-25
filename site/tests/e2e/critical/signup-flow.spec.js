@@ -81,7 +81,7 @@ test.describe("Signup Flow E2E", () => {
 
   test("should enforce character limits", async ({ page }) => {
     // Test that character warnings appear at 90+ characters
-    const nameAt90 = "a".repeat(90); 
+    const nameAt90 = "a".repeat(90);
     await page.fill('input[type="email"]', "test@example.com");
     await page.fill('input[name="name"]', nameAt90);
 
@@ -92,11 +92,11 @@ test.describe("Signup Flow E2E", () => {
     // Test that browser maxlength prevents typing more than 100 characters
     const attemptedLongName = "a".repeat(110); // Try to type 110 characters
     await page.fill('input[name="name"]', attemptedLongName);
-    
+
     // Verify that only 100 characters were actually entered due to maxlength
     const actualValue = await page.locator('input[name="name"]').inputValue();
     expect(actualValue.length).toBe(100);
-    
+
     // Verify the character warning shows 100/100
     await expect(page.locator(".field-warning")).toContainText("100/100 characters");
   });
@@ -104,11 +104,11 @@ test.describe("Signup Flow E2E", () => {
   test("should show character warning when approaching limits", async ({ page }) => {
     // Enter institution text approaching limit (>=180 characters triggers warning)
     const longInstitution = "a".repeat(180);
-    
+
     // Focus on the field and fill it character by character to trigger Vue reactivity
     await page.click('input[name="institution"]');
     await page.fill('input[name="institution"]', longInstitution);
-    
+
     // Trigger blur to ensure reactive update
     await page.click('input[name="name"]');
     await page.waitForTimeout(200);
@@ -173,8 +173,10 @@ test.describe("Signup Flow E2E", () => {
 
     // Mock slow API response with longer delay
     let routeResolve;
-    const routePromise = new Promise((resolve) => { routeResolve = resolve; });
-    
+    const routePromise = new Promise((resolve) => {
+      routeResolve = resolve;
+    });
+
     await page.route(/.*\/signup\/?$/, async (route) => {
       // Wait for test to check loading state before resolving
       await routePromise;
@@ -191,12 +193,16 @@ test.describe("Signup Flow E2E", () => {
     // Verify button shows loading state
     await expect(page.locator('button[type="submit"]:disabled')).toBeVisible({ timeout: 1000 });
     await expect(page.locator("text=Signing Up...")).toBeVisible({ timeout: 1000 });
-    
+
     // Now allow the route to complete
     routeResolve();
-    
+
     // Wait for success message
-    await expect(page.locator("text=Successfully signed up for early access! We'll notify you when Aris is ready.")).toBeVisible();
+    await expect(
+      page.locator(
+        "text=Successfully signed up for early access! We'll notify you when Aris is ready."
+      )
+    ).toBeVisible();
   });
 
   test("should be accessible via keyboard navigation", async ({ page }) => {
@@ -217,15 +223,17 @@ test.describe("Signup Flow E2E", () => {
     await page.keyboard.press("ArrowDown"); // Select an option
 
     // Navigate to submit button by tabbing through potentially multiple elements
-    let maxTabs = 5;
+    const maxTabs = 5;
     let submitButtonFocused = false;
-    
+
     for (let i = 0; i < maxTabs; i++) {
       await page.keyboard.press("Tab");
-      const focusedElement = await page.evaluate(() => document.activeElement?.tagName.toLowerCase());
-      if (focusedElement === 'button') {
-        const isSubmitButton = await page.evaluate(() => 
-          document.activeElement?.getAttribute('type') === 'submit'
+      const focusedElement = await page.evaluate(() =>
+        document.activeElement?.tagName.toLowerCase()
+      );
+      if (focusedElement === "button") {
+        const isSubmitButton = await page.evaluate(
+          () => document.activeElement?.getAttribute("type") === "submit"
         );
         if (isSubmitButton) {
           submitButtonFocused = true;

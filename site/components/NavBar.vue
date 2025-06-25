@@ -50,9 +50,9 @@
         <a href="/demo" class="nav-link nav-link-cta">Try the Demo</a>
       </div>
 
-      <button 
-        class="menu-toggle" 
-        aria-label="Toggle navigation menu" 
+      <button
+        class="menu-toggle"
+        aria-label="Toggle navigation menu"
         @click="toggleMobileMenu"
         @keydown.enter.prevent="toggleMobileMenu"
         @keydown.space.prevent="toggleMobileMenu"
