@@ -4,38 +4,38 @@ import IndexPage from "../../pages/index.vue";
 
 // Mock the section components
 vi.mock("~/components/sections/HeroSection.vue", () => ({
-  default: { 
-    name: "HeroSection", 
-    template: "<div data-testid='hero-section'>HeroSection</div>" 
-  }
+  default: {
+    name: "HeroSection",
+    template: "<div data-testid='hero-section'>HeroSection</div>",
+  },
 }));
 
 vi.mock("~/components/sections/SectionTwo.vue", () => ({
-  default: { 
-    name: "SectionTwo", 
-    template: "<div data-testid='section-two'>SectionTwo</div>" 
-  }
+  default: {
+    name: "SectionTwo",
+    template: "<div data-testid='section-two'>SectionTwo</div>",
+  },
 }));
 
 vi.mock("~/components/sections/SectionThree.vue", () => ({
-  default: { 
-    name: "SectionThree", 
-    template: "<div data-testid='section-three'>SectionThree</div>" 
-  }
+  default: {
+    name: "SectionThree",
+    template: "<div data-testid='section-three'>SectionThree</div>",
+  },
 }));
 
 vi.mock("~/components/sections/SectionFour.vue", () => ({
-  default: { 
-    name: "SectionFour", 
-    template: "<div data-testid='section-four'>SectionFour</div>" 
-  }
+  default: {
+    name: "SectionFour",
+    template: "<div data-testid='section-four'>SectionFour</div>",
+  },
 }));
 
 vi.mock("~/components/sections/SectionCTA.vue", () => ({
-  default: { 
-    name: "SectionCTA", 
-    template: "<div data-testid='section-cta'>SectionCTA</div>" 
-  }
+  default: {
+    name: "SectionCTA",
+    template: "<div data-testid='section-cta'>SectionCTA</div>",
+  },
 }));
 
 describe("Index Page", () => {
@@ -81,18 +81,20 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       const sections = wrapper.findAll('[data-testid^="hero-section"], [data-testid^="section-"]');
-      
-      expect(sections[0].attributes('data-testid')).toBe('hero-section');
-      expect(sections[1].attributes('data-testid')).toBe('section-two');
-      expect(sections[2].attributes('data-testid')).toBe('section-three');
-      expect(sections[3].attributes('data-testid')).toBe('section-four');
-      expect(sections[4].attributes('data-testid')).toBe('section-cta');
+
+      expect(sections[0].attributes("data-testid")).toBe("hero-section");
+      expect(sections[1].attributes("data-testid")).toBe("section-two");
+      expect(sections[2].attributes("data-testid")).toBe("section-three");
+      expect(sections[3].attributes("data-testid")).toBe("section-four");
+      expect(sections[4].attributes("data-testid")).toBe("section-cta");
     });
 
     it("should have proper section count", () => {
       wrapper = mount(IndexPage);
 
-      const allSections = wrapper.findAll('[data-testid^="hero-section"], [data-testid^="section-"]');
+      const allSections = wrapper.findAll(
+        '[data-testid^="hero-section"], [data-testid^="section-"]'
+      );
       expect(allSections.length).toBe(5);
     });
   });
@@ -144,7 +146,7 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       const rootDivs = wrapper.vm.$el;
-      expect(rootDivs.tagName.toLowerCase()).toBe('div');
+      expect(rootDivs.tagName.toLowerCase()).toBe("div");
     });
 
     it("should contain all sections within the root container", () => {
@@ -152,8 +154,8 @@ describe("Index Page", () => {
 
       const rootElement = wrapper.element;
       const sections = wrapper.findAll('[data-testid^="hero-section"], [data-testid^="section-"]');
-      
-      sections.forEach(section => {
+
+      sections.forEach((section) => {
         expect(rootElement.contains(section.element)).toBe(true);
       });
     });
@@ -165,7 +167,7 @@ describe("Index Page", () => {
 
       // Should have a template wrapper
       expect(wrapper.exists()).toBe(true);
-      
+
       // Should render without errors
       expect(wrapper.vm).toBeDefined();
     });
@@ -205,10 +207,10 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       const sections = wrapper.findAll('[data-testid^="hero-section"], [data-testid^="section-"]');
-      
+
       // Sections should flow from hero -> content sections -> CTA
-      expect(sections[0].attributes('data-testid')).toBe('hero-section');
-      expect(sections[sections.length - 1].attributes('data-testid')).toBe('section-cta');
+      expect(sections[0].attributes("data-testid")).toBe("hero-section");
+      expect(sections[sections.length - 1].attributes("data-testid")).toBe("section-cta");
     });
   });
 
@@ -225,7 +227,7 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       // Should not contain any loading indicators
-      const loadingElements = wrapper.findAll('[data-loading], .loading, .spinner');
+      const loadingElements = wrapper.findAll("[data-loading], .loading, .spinner");
       expect(loadingElements.length).toBe(0);
     });
   });

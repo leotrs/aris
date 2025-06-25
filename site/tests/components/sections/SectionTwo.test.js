@@ -5,8 +5,14 @@ import SectionTwo from "../../../components/sections/SectionTwo.vue";
 // Mock Tabler icons
 vi.mock("@tabler/icons-vue", () => ({
   IconGitFork: { name: "IconGitFork", template: "<svg data-testid='git-fork-icon'></svg>" },
-  IconMessagesOff: { name: "IconMessagesOff", template: "<svg data-testid='messages-off-icon'></svg>" },
-  IconHourglassHigh: { name: "IconHourglassHigh", template: "<svg data-testid='hourglass-icon'></svg>" },
+  IconMessagesOff: {
+    name: "IconMessagesOff",
+    template: "<svg data-testid='messages-off-icon'></svg>",
+  },
+  IconHourglassHigh: {
+    name: "IconHourglassHigh",
+    template: "<svg data-testid='hourglass-icon'></svg>",
+  },
   IconFileOff: { name: "IconFileOff", template: "<svg data-testid='file-off-icon'></svg>" },
 }));
 
@@ -111,7 +117,9 @@ describe("SectionTwo Component", () => {
 
       // Check solution
       const solutionHeading = secondCard.find(".card-solution");
-      expect(solutionHeading.text()).toBe("Aris elevates collaboration with intelligent assistance");
+      expect(solutionHeading.text()).toBe(
+        "Aris elevates collaboration with intelligent assistance"
+      );
 
       const solutionDescription = secondCard.find(".card-solution-description");
       expect(solutionDescription.text()).toContain("Semantic diffs and AI Copilot");
@@ -177,8 +185,8 @@ describe("SectionTwo Component", () => {
       wrapper = mount(SectionTwo);
 
       const cards = wrapper.findAll(".problem-solution-card");
-      
-      cards.forEach(card => {
+
+      cards.forEach((card) => {
         const header = card.find(".card-header");
         expect(header.exists()).toBe(true);
 
@@ -195,8 +203,8 @@ describe("SectionTwo Component", () => {
       wrapper = mount(SectionTwo);
 
       const cards = wrapper.findAll(".problem-solution-card");
-      
-      cards.forEach(card => {
+
+      cards.forEach((card) => {
         // Problem elements
         const problemDescription = card.find(".card-problem-description");
         expect(problemDescription.exists()).toBe(true);
@@ -219,8 +227,8 @@ describe("SectionTwo Component", () => {
       wrapper = mount(SectionTwo);
 
       const cards = wrapper.findAll(".problem-solution-card");
-      
-      cards.forEach(card => {
+
+      cards.forEach((card) => {
         const problemHeading = card.find(".card-problem");
         const problemDescription = card.find(".card-problem-description");
         const solutionHeading = card.find(".card-solution");
@@ -238,7 +246,7 @@ describe("SectionTwo Component", () => {
       wrapper = mount(SectionTwo);
 
       const allText = wrapper.text();
-      
+
       // Should mention key features
       expect(allText).toContain("integrated platform");
       expect(allText).toContain("AI Copilot");
@@ -258,12 +266,12 @@ describe("SectionTwo Component", () => {
 
       // Card headings should be h3
       const cardHeadings = wrapper.findAll(".card-problem");
-      cardHeadings.forEach(heading => {
+      cardHeadings.forEach((heading) => {
         expect(heading.element.tagName.toLowerCase()).toBe("h3");
       });
 
       const solutionHeadings = wrapper.findAll(".card-solution");
-      solutionHeadings.forEach(heading => {
+      solutionHeadings.forEach((heading) => {
         expect(heading.element.tagName.toLowerCase()).toBe("h3");
       });
     });
@@ -302,7 +310,7 @@ describe("SectionTwo Component", () => {
       const iconContainers = wrapper.findAll(".card-icon-container");
       expect(iconContainers.length).toBe(4);
 
-      iconContainers.forEach(container => {
+      iconContainers.forEach((container) => {
         // Each container should have an icon
         const icon = container.find("svg");
         expect(icon.exists()).toBe(true);

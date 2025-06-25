@@ -34,7 +34,7 @@ global.NuxtImg = {
   props: ["src", "alt", "width", "height"],
 };
 
-// Mock Nuxt Link component  
+// Mock Nuxt Link component
 global.NuxtLink = {
   name: "NuxtLink",
   template: "<a><slot /></a>",
@@ -47,6 +47,20 @@ global.process = {
     NODE_ENV: "test",
   },
 };
+
+// Mock window.location and navigation to prevent JSDOM warnings
+Object.defineProperty(window, "location", {
+  writable: true,
+  value: {
+    href: "http://localhost:3000",
+    assign: vi.fn(),
+    replace: vi.fn(),
+    reload: vi.fn(),
+  },
+});
+
+// Mock navigation API that JSDOM doesn't implement
+global.HTMLAnchorElement.prototype.click = vi.fn();
 
 // Mock console methods to reduce noise in tests
 global.console = {

@@ -28,7 +28,9 @@ describe("HeroSection Component", () => {
 
       const headline = wrapper.find("#hero-heading");
       expect(headline.exists()).toBe(true);
-      expect(headline.text()).toBe("Aris: The Unified Platform for Human-First Scientific Research.");
+      expect(headline.text()).toBe(
+        "Aris: The Unified Platform for Human-First Scientific Research."
+      );
       expect(headline.classes()).toContain("hero-headline");
     });
 
@@ -37,7 +39,9 @@ describe("HeroSection Component", () => {
 
       const subheadline = wrapper.find(".hero-subheadline");
       expect(subheadline.exists()).toBe(true);
-      expect(subheadline.text()).toContain("Experience an integrated platform for collaborative writing");
+      expect(subheadline.text()).toContain(
+        "Experience an integrated platform for collaborative writing"
+      );
       expect(subheadline.text()).toContain("intelligent peer review");
       expect(subheadline.text()).toContain("interactive publishing");
     });
@@ -57,7 +61,7 @@ describe("HeroSection Component", () => {
 
       const primaryButton = wrapper.find(".btn.btn-primary");
       expect(primaryButton.exists()).toBe(true);
-      expect(primaryButton.text()).toBe("Try the Demo"); 
+      expect(primaryButton.text()).toBe("Try the Demo");
       expect(primaryButton.attributes("type")).toBe("button");
     });
 
@@ -195,7 +199,7 @@ describe("HeroSection Component", () => {
       wrapper = mount(HeroSection);
 
       const links = wrapper.findAll("a");
-      links.forEach(link => {
+      links.forEach((link) => {
         const href = link.attributes("href");
         expect(href).toBeDefined();
         expect(href.trim()).not.toBe("");

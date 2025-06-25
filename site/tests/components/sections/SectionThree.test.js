@@ -71,7 +71,9 @@ describe("SectionThree Component", () => {
 
       const description = firstCard.find(".card-description");
       expect(description.exists()).toBe(true);
-      expect(description.text()).toContain("integrates writing, collaboration, review, and publishing");
+      expect(description.text()).toContain(
+        "integrates writing, collaboration, review, and publishing"
+      );
       expect(description.text()).toContain("solving fragmentation");
     });
 
@@ -127,7 +129,7 @@ describe("SectionThree Component", () => {
       wrapper = mount(SectionThree);
 
       const cards = wrapper.findAll(".feature-card");
-      
+
       cards.forEach((card, index) => {
         const featureVisual = card.find(".feature-visual");
         expect(featureVisual.exists()).toBe(true);
@@ -143,12 +145,12 @@ describe("SectionThree Component", () => {
       wrapper = mount(SectionThree);
 
       const images = wrapper.findAll(".feature-gif");
-      
+
       const expectedAlts = [
         "Unified Research Environment Demo",
-        "Intelligent Human-First Collaboration Demo", 
+        "Intelligent Human-First Collaboration Demo",
         "Streamlined Peer Review Demo",
-        "Interactive Science Demo"
+        "Interactive Science Demo",
       ];
 
       images.forEach((image, index) => {
@@ -165,8 +167,8 @@ describe("SectionThree Component", () => {
       const expectedTexts = [
         "Demo Video: Unified Environment",
         "Demo Video: AI Collaboration",
-        "Demo Video: Peer Review", 
-        "Demo Video: Interactive Publishing"
+        "Demo Video: Peer Review",
+        "Demo Video: Interactive Publishing",
       ];
 
       placeholders.forEach((placeholder, index) => {
@@ -178,9 +180,9 @@ describe("SectionThree Component", () => {
       wrapper = mount(SectionThree);
 
       const images = wrapper.findAll(".feature-gif");
-      
+
       // All images should have proper src attributes
-      images.forEach(image => {
+      images.forEach((image) => {
         expect(image.attributes("src")).toBeDefined();
         expect(image.attributes("src").length).toBeGreaterThan(0);
       });
@@ -192,8 +194,8 @@ describe("SectionThree Component", () => {
       wrapper = mount(SectionThree);
 
       const cards = wrapper.findAll(".feature-card");
-      
-      cards.forEach(card => {
+
+      cards.forEach((card) => {
         const featureVisual = card.find(".feature-visual");
         expect(featureVisual.exists()).toBe(true);
 
@@ -216,8 +218,8 @@ describe("SectionThree Component", () => {
       wrapper = mount(SectionThree);
 
       const cards = wrapper.findAll(".feature-card");
-      
-      cards.forEach(card => {
+
+      cards.forEach((card) => {
         const title = card.find(".card-title");
         const description = card.find(".card-description");
 
@@ -231,7 +233,7 @@ describe("SectionThree Component", () => {
       wrapper = mount(SectionThree);
 
       const allText = wrapper.text();
-      
+
       // Should mention key features
       expect(allText).toContain("writing, collaboration, review, and publishing");
       expect(allText).toContain("semantic diffs");
@@ -252,7 +254,7 @@ describe("SectionThree Component", () => {
 
       // Card headings should be h3
       const cardTitles = wrapper.findAll(".card-title");
-      cardTitles.forEach(title => {
+      cardTitles.forEach((title) => {
         expect(title.element.tagName.toLowerCase()).toBe("h3");
       });
     });
@@ -273,7 +275,7 @@ describe("SectionThree Component", () => {
       wrapper = mount(SectionThree);
 
       const images = wrapper.findAll("img");
-      images.forEach(image => {
+      images.forEach((image) => {
         const alt = image.attributes("alt");
         expect(alt).toBeDefined();
         expect(alt.trim()).not.toBe("");

@@ -79,7 +79,7 @@ describe("SectionCTA Component", () => {
       wrapper = mount(SectionCTA);
 
       const headline = wrapper.find(".cta-headline").text();
-      
+
       expect(headline.length).toBeGreaterThan(20);
       expect(headline).toContain("research");
       expect(headline).toContain("feel like");
@@ -130,7 +130,7 @@ describe("SectionCTA Component", () => {
       wrapper = mount(SectionCTA);
 
       const links = wrapper.findAll("a");
-      links.forEach(link => {
+      links.forEach((link) => {
         const href = link.attributes("href");
         expect(href).toBeDefined();
         expect(href.trim()).not.toBe("");
@@ -172,7 +172,7 @@ describe("SectionCTA Component", () => {
 
       const ctaButtons = wrapper.find(".cta-buttons");
       expect(ctaButtons.exists()).toBe(true);
-      
+
       // Should contain both CTA elements
       const buttons = ctaButtons.findAll("button, a");
       expect(buttons.length).toBe(2);
