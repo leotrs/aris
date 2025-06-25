@@ -104,7 +104,7 @@
   .content-wrapper {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 var(--space-lg);
+    padding: 0 16px;
   }
 
   /* Section Heading */
@@ -148,6 +148,7 @@
       0 10px 15px -3px rgba(0, 0, 0, 0.1),
       0 4px 6px -2px rgba(0, 0, 0, 0.05)
     ); /* Slightly stronger shadow on hover */
+    background: linear-gradient(135deg, var(--surface-page) 0%, var(--gray-50) 100%);
   }
 
   /* Feature Visual (GIF/Video) Container */
