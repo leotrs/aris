@@ -1,8 +1,8 @@
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event)
   
-  // Only handle /demo requests
-  if (url.pathname === '/demo') {
+  // Only handle /demo requests (with or without trailing slash)
+  if (url.pathname === '/demo' || url.pathname === '/demo/') {
     const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173'
     const targetUrl = `${frontendUrl}/demo`
     
