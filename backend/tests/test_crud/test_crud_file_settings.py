@@ -275,7 +275,7 @@ async def test_default_settings_user_isolation(db_session, test_user):
     """Test that default settings are isolated per user"""
     # Create another user
     user2 = User(
-        id="20",
+        id=20,
         name="user two",
         email="user2@example.com",
         password_hash="hash2",
