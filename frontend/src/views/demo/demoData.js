@@ -180,7 +180,13 @@ export const demoAnnotations = [
 
 // Mock API that returns demo data
 export const createDemoApi = () => ({
-  get: async () => Promise.resolve({ data: {} }),
+  get: async (url) => {
+    // Add support for file content endpoint
+    if (url && url.includes("/files/") && url.includes("/content")) {
+      return Promise.resolve({ data: demoFile.html || "" });
+    }
+    return Promise.resolve({ data: {} });
+  },
   post: async (url, payload) => {
     if (url.includes("/render")) {
       // Use the actual backend /render endpoint for RSM content

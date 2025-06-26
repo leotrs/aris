@@ -1,5 +1,7 @@
 <script setup>
   import { inject } from "vue";
+  import Note from "@/components/annotations/Note.vue";
+  import Comment from "@/components/annotations/Comment.vue";
 
   const annotations = inject("annotations");
 </script>
@@ -15,5 +17,9 @@
 
 <style scoped>
   .annotations {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
   }
 </style>

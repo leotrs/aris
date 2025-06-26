@@ -6,7 +6,8 @@
   import { demoFile, demoUser, demoFileStore, demoAnnotations, createDemoApi } from "./demoData.js";
   import { File } from "@/models/File.js";
   import Sidebar from "@/views/workspace/Sidebar.vue";
-  import DemoCanvas from "@/components/demo/DemoCanvas.vue";
+  import Canvas from "@/views/workspace/Canvas.vue";
+  import Icon from "@/components/base/Icon.vue";
 
   // Create demo API instance
   const api = createDemoApi();
@@ -101,44 +102,64 @@
 </script>
 
 <template>
-  <div
-    class="demo-view"
-    data-testid="demo-container"
-    :class="{ focus: focusMode, mobile: mobileMode }"
-  >
+  <div class="demo-root">
     <!-- Demo banner -->
-    <div class="demo-banner">
+    <div v-if="!focusMode" class="demo-banner">
       <div class="demo-banner-content">
-        <span class="demo-icon">ℹ️</span>
+        <Icon name="InfoCircle" icon-class="demo-icon" />
         <span>Demo Mode - Experience Aris workspace with sample content</span>
         <a href="/" class="demo-link">← Back to homepage</a>
       </div>
     </div>
 
-    <div class="workspace-container">
+    <div
+      class="view demo-view"
+      data-testid="demo-container"
+      :class="{ focus: focusMode, mobile: mobileMode }"
+    >
       <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
 
-      <DemoCanvas
-        v-if="file"
-        v-model="demoFileReactive"
-        data-testid="demo-canvas"
-        :show-editor="showEditor"
-        :show-search="showSearch"
-      />
+      <!-- Demo state -->
+      <div class="outer" :class="{ focus: focusMode, mobile: mobileMode }">
+        <Canvas
+          v-if="file && file.id"
+          v-model="demoFileReactive"
+          data-testid="workspace-canvas"
+          :show-editor="showEditor"
+          :show-search="showSearch"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <style scoped>
-  .demo-view {
+  .demo-root {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .view {
     --transition-duration: 0.3s;
     --sidebar-width: v-bind(sidebarWidth);
 
     display: flex;
-    flex-direction: column;
     width: 100%;
-    height: 100vh;
-    background-color: var(--gray-75);
+    flex: 1;
+    padding: 8px 8px 8px 0;
+    will-change: padding;
+    transition: padding var(--transition-duration) ease;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .view.mobile {
+    padding: 0;
+  }
+
+  .view.focus {
+    padding: 0;
   }
 
   .demo-banner {
@@ -168,25 +189,14 @@
     text-decoration: underline;
   }
 
-  .workspace-container {
-    display: flex;
-    flex: 1;
-    padding: 8px 8px 8px 0;
-    will-change: padding;
-    transition: padding var(--transition-duration) ease;
+  .outer {
+    width: calc(100% - 64px);
     position: relative;
-    overflow-x: hidden;
+    left: var(--sidebar-width);
   }
 
-  .demo-view.mobile .workspace-container {
-    padding: 0;
-  }
-
-  .demo-view.focus .workspace-container {
-    padding: 0;
-  }
-
-  .demo-view.focus .demo-banner {
-    display: none;
+  .view.mobile > .outer {
+    width: 100%;
+    left: 0;
   }
 </style>
