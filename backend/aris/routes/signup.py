@@ -20,8 +20,12 @@ from ..crud.signup import (
     unsubscribe_by_token,
 )
 from ..deps import get_db
+from ..logging_config import get_logger
 from ..models.models import InterestLevel, SignupStatus
 from ..services.email import get_email_service
+
+
+logger = get_logger(__name__)
 
 
 class SignupCreate(BaseModel):
@@ -154,6 +158,7 @@ async def create_signup_endpoint(
     Validates input data and creates a new signup record. Returns the created
     signup information with sanitized data.
     """
+    logger.info(f"Creating signup for email: {signup_data.email}")
     try:
         # Extract client information for compliance
         ip_address = request.client.host if request.client else None
@@ -182,7 +187,7 @@ async def create_signup_endpoint(
                 )
             except Exception as e:
                 # Log email failure but don't fail the signup
-                print(f"Failed to send confirmation email to {signup.email}: {str(e)}")
+                logger.error(f"Failed to send confirmation email to {signup.email}: {str(e)}")
 
         # Convert datetime to ISO format string for response
         response_data = SignupResponse(
@@ -197,9 +202,11 @@ async def create_signup_endpoint(
             created_at=signup.created_at.isoformat(),
         )
 
+        logger.info(f"Successfully created signup for {signup.email}")
         return response_data
 
     except DuplicateEmailError:
+        logger.warning(f"Duplicate email signup attempt: {signup_data.email}")
         raise HTTPException(
             status_code=409,
             detail={
@@ -209,12 +216,13 @@ async def create_signup_endpoint(
             },
         )
     except SignupError as e:
+        logger.error(f"Signup error for {signup_data.email}: {str(e)}")
         raise HTTPException(
             status_code=400,
             detail={"error": "signup_error", "message": str(e), "details": None},
         )
-    except Exception:
-        # Log the error in production
+    except Exception as e:
+        logger.error(f"Unexpected error during signup for {signup_data.email}: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail={
@@ -244,11 +252,13 @@ async def check_signup_status(
     Returns whether the email exists in the signup database without
     exposing any other user information.
     """
+    logger.debug(f"Checking signup status for email: {email}")
     try:
         exists = await email_exists(email, db)
         return SignupStatusCheck(exists=exists)
 
-    except Exception:
+    except Exception as e:
+        logger.error(f"Error checking signup status for {email}: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail={
@@ -279,6 +289,7 @@ async def unsubscribe_endpoint(
     Marks the signup as unsubscribed rather than deleting it completely
     for compliance and analytics purposes.
     """
+    logger.info(f"Processing unsubscribe request for token: {token[:8]}...")
     try:
         signup = await get_signup_by_token(token, db)
         if not signup:
@@ -303,6 +314,7 @@ async def unsubscribe_endpoint(
             )
 
         await unsubscribe_by_token(token, db)
+        logger.info(f"Successfully unsubscribed user with token: {token[:8]}...")
 
         return MessageResponse(
             message="Successfully unsubscribed from early access notifications"
@@ -311,7 +323,8 @@ async def unsubscribe_endpoint(
     except HTTPException:
         # Re-raise HTTP exceptions
         raise
-    except Exception:
+    except Exception as e:
+        logger.error(f"Error processing unsubscribe for token {token[:8]}...: {str(e)}")
         raise HTTPException(
             status_code=500,
             detail={

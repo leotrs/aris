@@ -20,4 +20,4 @@ def test_render_error(monkeypatch, caplog):
     caplog.set_level(logging.ERROR)
     result = asyncio.run(render("src", None))
     assert result == ""
-    assert "There was an error rendering the code" in caplog.text
+    assert "RSM render failed after" in caplog.text and "fail" in caplog.text

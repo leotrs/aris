@@ -8,7 +8,11 @@ from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..logging_config import get_logger
 from ..models import FileAsset
+
+
+logger = get_logger(__name__)
 
 
 class FileAssetCreate(BaseModel):
@@ -41,7 +45,7 @@ class FileAssetUpdate(BaseModel):
         try:
             base64.b64decode(v)
         except (TypeError, binascii.Error):
-            print("Content is not base64 decodable")
+            logger.warning("Content is not base64 decodable")
         return v
 
     @field_validator("content")

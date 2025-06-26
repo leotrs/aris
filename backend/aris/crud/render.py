@@ -1,16 +1,24 @@
-import logging
+import time
 
 import rsm
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..logging_config import get_logger
 
-logger = logging.getLogger("RSM")
+
+logger = get_logger(__name__)
 
 
 async def render(src: str, db: AsyncSession):
+    logger.debug(f"Starting RSM render for {len(src)} characters")
+    start_time = time.time()
+    
     try:
         result = rsm.render(src, handrails=True)
+        render_time = time.time() - start_time
+        logger.info(f"RSM render completed successfully in {render_time:.3f}s")
     except rsm.RSMApplicationError as e:
-        logger.error(f"There was an error rendering the code: {e}")
+        render_time = time.time() - start_time
+        logger.error(f"RSM render failed after {render_time:.3f}s: {e}")
         result = ""
     return result

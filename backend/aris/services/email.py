@@ -1,13 +1,13 @@
-import logging
 from typing import Optional
 
 import resend
 from pydantic import BaseModel
 
 from ..config import settings
+from ..logging_config import get_logger
 
 
-logger = logging.getLogger(__name__)
+logger = get_logger(__name__)
 
 
 class EmailConfig(BaseModel):
