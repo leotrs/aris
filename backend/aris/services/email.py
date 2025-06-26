@@ -1,9 +1,13 @@
+import logging
 from typing import Optional
 
 import resend
 from pydantic import BaseModel
 
 from ..config import settings
+
+
+logger = logging.getLogger(__name__)
 
 
 class EmailConfig(BaseModel):
@@ -23,6 +27,7 @@ class EmailService:
         unsubscribe_token: str
     ) -> bool:
         """Send waitlist confirmation email."""
+        logger.info(f"Attempting to send confirmation email to {to_email}")
         try:
             unsubscribe_url = f"https://aris.pub/unsubscribe/{unsubscribe_token}"
             
@@ -47,7 +52,7 @@ class EmailService:
                     <p>Aris is revolutionizing scientific publishing with:</p>
                     <ul style="margin: 20px 0;">
                         <li><strong>Web-native publishing</strong> - Interactive, multimedia-rich manuscripts</li>
-                        <li><strong>Readable Research Markup (RSM)</strong> - A modern format for scientific content</li>
+                        <li><strong>Readable Science Markup (RSM)</strong> - A modern format for scientific content</li>
                         <li><strong>Seamless collaboration</strong> - Built for modern research workflows</li>
                     </ul>
                     
@@ -78,7 +83,7 @@ class EmailService:
             
             Aris is revolutionizing scientific publishing with:
             • Web-native publishing - Interactive, multimedia-rich manuscripts
-            • Readable Research Markup (RSM) - A modern format for scientific content  
+            • Readable Science Markup (RSM) - A modern format for scientific content  
             • Seamless collaboration - Built for modern research workflows
             
             We'll keep you updated on our progress and let you know as soon as we're ready for early access.
@@ -98,18 +103,21 @@ class EmailService:
             }
             
             resend.Emails.send(params)
+            logger.info(f"Successfully sent confirmation email to {to_email}")
             return True
             
         except Exception as e:
-            print(f"Failed to send email to {to_email}: {str(e)}")
+            logger.error(f"Failed to send email to {to_email}: {str(e)}")
             return False
 
 
 def get_email_service() -> Optional[EmailService]:
     """Get configured email service instance."""
     if not settings.RESEND_API_KEY or settings.RESEND_API_KEY == "your_resend_api_key_here":
+        logger.warning("Email service disabled: RESEND_API_KEY not configured")
         return None
         
+    logger.info("Initializing email service with Resend")
     config = EmailConfig(
         resend_api_key=settings.RESEND_API_KEY,
         from_email=settings.FROM_EMAIL
