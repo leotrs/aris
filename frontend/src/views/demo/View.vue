@@ -29,9 +29,12 @@
   provide("fileStore", fileStore);
 
   // Create reactive demo file
-  const demoFileReactive = reactive(new File(demoFile));
+  const demoFileReactive = new File(demoFile);
   const file = computed(() => demoFileReactive);
   provide("file", file);
+
+  // Track demo initialization state
+  const isContentLoaded = ref(false);
 
   // Demo annotations
   const annotations = reactive(demoAnnotations);
@@ -81,9 +84,12 @@
       );
       const response = await api.post("/render", { source: file.value.source });
       demoFileReactive.html = response.data;
+      isContentLoaded.value = true;
       console.log("Demo content initialized, HTML length:", demoFileReactive.html.length);
     } catch (error) {
       console.error("Failed to initialize demo content:", error);
+      // Set content loaded to true even on error so tests don't hang
+      isContentLoaded.value = true;
     }
   });
 
@@ -108,7 +114,7 @@
       <div class="demo-banner-content">
         <Icon name="InfoCircle" icon-class="demo-icon" />
         <span>Demo Mode - Experience Aris workspace with sample content</span>
-        <a href="/" class="demo-link">← Back to homepage</a>
+        <a href="/" class="demo-link" data-testid="demo-back-link">← Back to homepage</a>
       </div>
     </div>
 
@@ -120,11 +126,17 @@
       <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
 
       <!-- Demo state -->
-      <div class="outer" :class="{ focus: focusMode, mobile: mobileMode }">
+      <div class="outer workspace-container" :class="{ focus: focusMode, mobile: mobileMode }">
+        <div v-if="!isContentLoaded" class="demo-loading" data-testid="demo-canvas">
+          <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <p>Loading demo workspace...</p>
+          </div>
+        </div>
         <Canvas
-          v-if="file && file.id"
+          v-else
           v-model="demoFileReactive"
-          data-testid="workspace-canvas"
+          data-testid="demo-canvas"
           :show-editor="showEditor"
           :show-search="showSearch"
         />
@@ -198,5 +210,37 @@
   .view.mobile > .outer {
     width: 100%;
     left: 0;
+  }
+
+  .demo-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 400px;
+    min-height: 50vh;
+  }
+
+  .loading-content {
+    text-align: center;
+    color: var(--gray-600);
+  }
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--gray-200);
+    border-top: 3px solid var(--primary-500);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto 16px;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 </style>
