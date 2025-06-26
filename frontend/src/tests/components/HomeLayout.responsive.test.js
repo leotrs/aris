@@ -68,9 +68,13 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
             methods: {
               toggle: vi.fn(),
             },
+            created() {
+              // Make toggle method a proper spy
+              this.toggle = vi.fn();
+            },
           },
           Button: {
-            template: '<button data-testid="button" :class="kind"><slot />{{ icon }}</button>',
+            template: '<button data-testid="button" :class="kind" @click="$emit(\'click\')"><slot />{{ icon }}</button>',
             props: ["kind", "icon"],
             emits: ["click"],
           },
@@ -272,10 +276,11 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
         },
       });
 
-      const homeButton = wrapper
-        .findAll('[data-testid="button"]')
-        .find((btn) => btn.text().includes("Home"));
-      expect(homeButton.exists()).toBe(true);
+      const buttons = wrapper.findAll('[data-testid="button"]');
+      const homeButton = buttons.find((btn) => btn.text().includes("Home"));
+      
+      expect(buttons.length).toBeGreaterThan(0);
+      expect(homeButton).toBeTruthy();
       expect(homeButton.props("kind")).toBe("tertiary");
       expect(homeButton.props("icon")).toBe("Home");
     });
@@ -299,10 +304,11 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
     it("shows notification and user menu buttons", () => {
       const wrapper = createWrapper();
 
-      const bellButton = wrapper
-        .findAll('[data-testid="button"]')
-        .find((btn) => btn.text().includes("Bell"));
-      expect(bellButton.exists()).toBe(true);
+      const buttons = wrapper.findAll('[data-testid="button"]');
+      const bellButton = buttons.find((btn) => btn.text().includes("Bell"));
+      
+      expect(buttons.length).toBeGreaterThan(0);
+      expect(bellButton).toBeTruthy();
       expect(bellButton.props("kind")).toBe("tertiary");
       expect(bellButton.props("icon")).toBe("Bell");
 
@@ -323,6 +329,7 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
         .findAll('[data-testid="button"]')
         .find((btn) => btn.text().includes("Home"));
 
+      expect(homeButton).toBeTruthy();
       await homeButton.trigger("click");
       expect(mockPush).toHaveBeenCalledWith("/");
     });
@@ -411,21 +418,34 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
     });
 
     it("toggles user menu via keyboard shortcut", async () => {
-      const wrapper = createWrapper();
+      const mockToggle = vi.fn();
+      const wrapper = createWrapper({
+        stubs: {
+          UserMenu: {
+            template: '<div data-testid="user-menu" ref="user-menu">User Menu</div>',
+            methods: {
+              toggle: mockToggle,
+            },
+          },
+        },
+      });
+
       const { useKeyboardShortcuts } = vi.mocked(
         await import("@/composables/useKeyboardShortcuts.js")
       );
 
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
-      const userMenu = wrapper.findComponent('[data-testid="user-menu"]');
 
       // Execute 'u' shortcut
       shortcuts.u.fn();
 
-      expect(userMenu.vm.toggle).toHaveBeenCalled();
+      expect(mockToggle).toHaveBeenCalled();
     });
 
     it("handles missing user menu reference gracefully", async () => {
+      // Spy on console.error to suppress expected error output
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      
       const wrapper = createWrapper({
         stubs: {
           UserMenu: {
@@ -435,8 +455,11 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
         },
       });
 
-      // Should not throw when trying to toggle
+      // The component's toggleUserMenu method checks if ref exists before calling toggle
+      // So it should not throw, but may log an error internally
       expect(() => wrapper.vm.toggleUserMenu()).not.toThrow();
+      
+      consoleSpy.mockRestore();
     });
   });
 
@@ -457,14 +480,15 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
       expect(wrapper.find(".view").exists()).toBe(true);
     });
 
-    it("maintains z-index layering", () => {
+    it("maintains z-index layering", async () => {
       const wrapper = createWrapper();
 
       const menus = wrapper.find(".menus");
       expect(menus.exists()).toBe(true);
 
       // Open modal to test z-index
-      wrapper.vm.showModal = true;
+      await wrapper.setData({ showModal: true });
+      await nextTick();
 
       const modal = wrapper.find(".modal");
       expect(modal.exists()).toBe(true);

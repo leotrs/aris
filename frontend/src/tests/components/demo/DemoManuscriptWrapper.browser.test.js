@@ -12,6 +12,27 @@ import { nextTick } from "vue";
 // Mock the modules before importing the component
 vi.mock("@/views/demo/demoData.js", { spy: true });
 
+// Mock dynamic imports that would load external JS files
+const mockOnload = vi.fn().mockResolvedValue(undefined);
+const mockJquery = { default: {} };
+const mockTooltipster = { default: {} };
+
+// Override global import to mock the dynamic imports
+const originalImport = globalThis.import;
+globalThis.import = vi.fn().mockImplementation((url) => {
+  if (url.includes('jquery')) {
+    return Promise.resolve(mockJquery);
+  }
+  if (url.includes('tooltipster')) {
+    return Promise.resolve(mockTooltipster);
+  }
+  if (url.includes('onload.js')) {
+    return Promise.resolve({ onload: mockOnload });
+  }
+  // Fall back to original import for other modules
+  return originalImport(url);
+});
+
 import DemoManuscriptWrapper from "@/components/demo/DemoManuscriptWrapper.vue";
 import { createDemoApi } from "@/views/demo/demoData.js";
 
@@ -24,9 +45,13 @@ const ManuscriptMock = {
 
 // Setup mocks
 beforeEach(() => {
+  // Reset the mock onload function
+  mockOnload.mockClear();
+  mockOnload.mockResolvedValue(undefined);
+  
   // Mock the createDemoApi return value
   vi.mocked(createDemoApi).mockReturnValue({
-    getUri: () => "", // Empty string so imports become /static/... instead of http://localhost:8000/static/...
+    getUri: () => "http://localhost:8000", // Keep the proper URI for backend requests
     get: () => Promise.resolve({ data: {} }),
     post: () => Promise.resolve({ data: {} }),
     put: () => Promise.resolve({ data: {} }),
@@ -43,6 +68,10 @@ describe("Demo Manuscript Wrapper", () => {
       wrapper = null;
     }
     vi.clearAllMocks();
+    // Restore original import if needed
+    if (originalImport) {
+      globalThis.import = originalImport;
+    }
   });
 
   const createWrapper = (props = {}) => {

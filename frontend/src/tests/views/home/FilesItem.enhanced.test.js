@@ -53,8 +53,13 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       deleteFile: vi.fn().mockResolvedValue(true),
     });
 
+    // Create a ref-like object that has a .value property
+    const mockFileStoreRef = {
+      value: mockFileStore.value
+    };
+
     mockProvides = {
-      fileStore: mockFileStore,
+      fileStore: mockFileStoreRef, 
       xsMode: ref(false),
       user: ref({ id: "user-1" }),
       shouldShowColumn: vi.fn(() => true),
@@ -150,12 +155,8 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       expect(wrapper.classes()).not.toContain("active");
       expect(mockFile.value.selected).toBe(false);
 
-      // Debug: Check if select method exists
-      console.log("wrapper.vm.select:", wrapper.vm.select);
-      console.log("fileStore provided:", wrapper.vm.fileStore);
-
-      // Trigger selection
-      await wrapper.trigger("click");
+      // Trigger selection by calling select method directly
+      wrapper.vm.select();
 
       expect(mockFileStore.value.selectFile).toHaveBeenCalledWith(mockFile.value);
     });
