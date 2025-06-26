@@ -1,5 +1,8 @@
 """Tests for signup route endpoints."""
 
+import logging
+from unittest.mock import AsyncMock, patch
+
 from httpx import AsyncClient
 
 from aris.crud.signup import get_signup_by_email
@@ -353,3 +356,108 @@ class TestSignupEndpointIntegration:
         assert "error" in data["detail"]
         assert "message" in data["detail"]
         assert "details" in data["detail"]
+
+
+class TestSignupEndpointEmailIntegration:
+    """Test signup endpoint email integration."""
+
+    @patch('aris.routes.signup.get_email_service')
+    async def test_signup_sends_confirmation_email(self, mock_get_email_service, client: AsyncClient):
+        """Test that successful signup sends confirmation email."""
+        # Mock email service
+        mock_email_service = AsyncMock()
+        mock_email_service.send_waitlist_confirmation.return_value = True
+        mock_get_email_service.return_value = mock_email_service
+
+        signup_data = {
+            "email": "emailtest@example.com",
+            "name": "Email Test User",
+            "institution": "Test University"
+        }
+
+        response = await client.post("/signup/", json=signup_data)
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify email service was called
+        mock_get_email_service.assert_called_once()
+        mock_email_service.send_waitlist_confirmation.assert_called_once_with(
+            to_email="emailtest@example.com",
+            name="Email Test User",
+            unsubscribe_token=data["unsubscribe_token"]
+        )
+
+    @patch('aris.routes.signup.get_email_service')
+    async def test_signup_continues_when_email_fails(self, mock_get_email_service, client: AsyncClient, caplog):
+        """Test that signup succeeds even when email sending fails."""
+        # Mock email service that fails
+        mock_email_service = AsyncMock()
+        mock_email_service.send_waitlist_confirmation.side_effect = Exception("Email API error")
+        mock_get_email_service.return_value = mock_email_service
+
+        signup_data = {
+            "email": "emailfail@example.com",
+            "name": "Email Fail User"
+        }
+
+        with caplog.at_level(logging.ERROR):
+            response = await client.post("/signup/", json=signup_data)
+        
+        # Signup should still succeed
+        assert response.status_code == 200
+        data = response.json()
+        assert data["email"] == "emailfail@example.com"
+        
+        # But email error should be logged (though we can't easily test this with our current setup)
+        mock_email_service.send_waitlist_confirmation.assert_called_once()
+
+    @patch('aris.routes.signup.get_email_service')
+    async def test_signup_when_email_service_disabled(self, mock_get_email_service, client: AsyncClient):
+        """Test that signup works when email service is disabled."""
+        # Mock disabled email service
+        mock_get_email_service.return_value = None
+
+        signup_data = {
+            "email": "noemail@example.com",
+            "name": "No Email User"
+        }
+
+        response = await client.post("/signup/", json=signup_data)
+        
+        # Signup should succeed without email
+        assert response.status_code == 200
+        data = response.json()
+        assert data["email"] == "noemail@example.com"
+        
+        mock_get_email_service.assert_called_once()
+
+    @patch('aris.routes.signup.get_email_service')
+    async def test_email_called_with_correct_parameters(self, mock_get_email_service, client: AsyncClient):
+        """Test that email service is called with sanitized and correct data."""
+        mock_email_service = AsyncMock()
+        mock_email_service.send_waitlist_confirmation.return_value = True
+        mock_get_email_service.return_value = mock_email_service
+
+        signup_data = {
+            "email": "parameterstest@example.com",
+            "name": "Dr. Jane <script>alert('xss')</script> Smith",  # Test XSS sanitization
+            "institution": "University & College"
+        }
+
+        response = await client.post("/signup/", json=signup_data)
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify email called with sanitized name
+        mock_email_service.send_waitlist_confirmation.assert_called_once()
+        call_args = mock_email_service.send_waitlist_confirmation.call_args
+        
+        assert call_args.kwargs["to_email"] == "parameterstest@example.com"
+        assert call_args.kwargs["name"] == data["name"]  # Should be sanitized
+        assert call_args.kwargs["unsubscribe_token"] == data["unsubscribe_token"]
+        
+        # Verify XSS was sanitized
+        assert "<script>" not in data["name"]
+        assert "Dr. Jane" in data["name"]
