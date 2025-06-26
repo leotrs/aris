@@ -15,14 +15,11 @@ test.describe("Demo Integration E2E", () => {
       await expect(heroButton).toContainText("Try the Demo");
 
       // Click the button and wait for navigation
-      const [response] = await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle" }),
-        heroButton.click()
-      ]);
+      await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), heroButton.click()]);
 
       // Verify redirect happened
       expect(page.url()).toContain("localhost:5173/demo");
-      
+
       // Verify demo page loads with content
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
       await expect(page.locator(".demo-banner")).toBeVisible();
@@ -32,7 +29,7 @@ test.describe("Demo Integration E2E", () => {
     test("Section CTA button redirects to frontend demo", async ({ page }) => {
       // Scroll to find the section CTA
       await page.locator(".cta-section").scrollIntoViewIfNeeded();
-      
+
       const sectionButton = page.locator(".cta-section .btn-primary").first();
       await expect(sectionButton).toBeVisible();
       await expect(sectionButton).toContainText("Try the Demo");
@@ -40,7 +37,7 @@ test.describe("Demo Integration E2E", () => {
       // Click and verify redirect
       await Promise.all([
         page.waitForNavigation({ waitUntil: "networkidle" }),
-        sectionButton.click()
+        sectionButton.click(),
       ]);
 
       expect(page.url()).toContain("localhost:5173/demo");
@@ -49,37 +46,44 @@ test.describe("Demo Integration E2E", () => {
 
     test("CTASection explore demo link redirects correctly", async ({ page }) => {
       // Find the "explore the demo" link
-      const exploreLink = page.locator('a[href="/demo"]').filter({ hasText: /explore.*demo/i }).first();
-      
-      if (await exploreLink.count() > 0) {
+      const exploreLink = page
+        .locator('a[href="/demo"]')
+        .filter({ hasText: /explore.*demo/i })
+        .first();
+
+      if ((await exploreLink.count()) > 0) {
         await exploreLink.scrollIntoViewIfNeeded();
         await expect(exploreLink).toBeVisible();
 
         await Promise.all([
           page.waitForNavigation({ waitUntil: "networkidle" }),
-          exploreLink.click()
+          exploreLink.click(),
         ]);
 
         expect(page.url()).toContain("localhost:5173/demo");
-        await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({
+          timeout: 10000,
+        });
       }
     });
 
     test("BannerCTA demo button redirects correctly", async ({ page }) => {
       // Look for banner CTA with demo text
-      const bannerButton = page.locator('.btn-primary').filter({ hasText: /demo/i }).first();
-      
-      if (await bannerButton.count() > 0) {
+      const bannerButton = page.locator(".btn-primary").filter({ hasText: /demo/i }).first();
+
+      if ((await bannerButton.count()) > 0) {
         await bannerButton.scrollIntoViewIfNeeded();
         await expect(bannerButton).toBeVisible();
 
         await Promise.all([
           page.waitForNavigation({ waitUntil: "networkidle" }),
-          bannerButton.click()
+          bannerButton.click(),
         ]);
 
         expect(page.url()).toContain("localhost:5173/demo");
-        await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({
+          timeout: 10000,
+        });
       }
     });
   });
@@ -87,10 +91,7 @@ test.describe("Demo Integration E2E", () => {
   test.describe("Direct Demo Route Access", () => {
     test("navigating to /demo redirects to frontend", async ({ page }) => {
       // Navigate directly to /demo on marketing site
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle" }),
-        page.goto("/demo")
-      ]);
+      await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       // Should redirect to frontend demo
       expect(page.url()).toContain("localhost:5173/demo");
@@ -100,7 +101,7 @@ test.describe("Demo Integration E2E", () => {
     test("demo route with trailing slash works", async ({ page }) => {
       await Promise.all([
         page.waitForNavigation({ waitUntil: "networkidle" }),
-        page.goto("/demo/")
+        page.goto("/demo/"),
       ]);
 
       expect(page.url()).toContain("localhost:5173/demo");
@@ -110,7 +111,7 @@ test.describe("Demo Integration E2E", () => {
     test("demo route with query parameters works", async ({ page }) => {
       await Promise.all([
         page.waitForNavigation({ waitUntil: "networkidle" }),
-        page.goto("/demo?test=1")
+        page.goto("/demo?test=1"),
       ]);
 
       expect(page.url()).toContain("localhost:5173/demo");
@@ -122,11 +123,11 @@ test.describe("Demo Integration E2E", () => {
     test("redirect returns 302 status", async ({ page }) => {
       // Monitor network requests
       const responses = [];
-      page.on('response', response => {
-        if (response.url().includes('/demo')) {
+      page.on("response", (response) => {
+        if (response.url().includes("/demo")) {
           responses.push({
             url: response.url(),
-            status: response.status()
+            status: response.status(),
           });
         }
       });
@@ -134,14 +135,14 @@ test.describe("Demo Integration E2E", () => {
       await page.goto("/demo", { waitUntil: "networkidle" });
 
       // Find the 302 redirect response
-      const redirectResponse = responses.find(r => r.status === 302);
+      const redirectResponse = responses.find((r) => r.status === 302);
       expect(redirectResponse).toBeDefined();
       expect(redirectResponse.url).toContain("localhost:3000/demo");
     });
 
     test("handles frontend unavailable gracefully", async ({ page }) => {
       // Block requests to frontend to simulate downtime
-      await page.route("**localhost:5173/**", route => {
+      await page.route("**localhost:5173/**", (route) => {
         route.abort("failed");
       });
 
@@ -155,10 +156,7 @@ test.describe("Demo Integration E2E", () => {
     });
 
     test("preserves URL structure in redirect", async ({ page }) => {
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle" }),
-        page.goto("/demo")
-      ]);
+      await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       // URL should be the frontend demo URL
       expect(page.url()).toMatch(/localhost:5173\/demo$/);
@@ -178,7 +176,7 @@ test.describe("Demo Integration E2E", () => {
 
       await Promise.all([
         page.waitForNavigation({ waitUntil: "networkidle" }),
-        mobileButton.click()
+        mobileButton.click(),
       ]);
 
       expect(page.url()).toContain("localhost:5173/demo");
@@ -187,35 +185,30 @@ test.describe("Demo Integration E2E", () => {
 
     test("mobile demo loads with proper viewport", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle" }),
-        page.goto("/demo")
-      ]);
+
+      await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       expect(page.url()).toContain("localhost:5173/demo");
-      
+
       // Demo should be mobile responsive
       const demoContainer = page.locator('[data-testid="demo-container"]');
       await expect(demoContainer).toBeVisible({ timeout: 10000 });
-      
+
       // Check if mobile class is applied
-      const hasMobileClass = await demoContainer.evaluate(el => 
-        el.classList.contains('mobile') || 
-        getComputedStyle(el).getPropertyValue('--mobile-mode') !== ''
+      const hasMobileClass = await demoContainer.evaluate(
+        (el) =>
+          el.classList.contains("mobile") ||
+          getComputedStyle(el).getPropertyValue("--mobile-mode") !== ""
       );
-      
+
       // Mobile behavior should be applied
-      expect(typeof hasMobileClass).toBe('boolean');
+      expect(typeof hasMobileClass).toBe("boolean");
     });
   });
 
   test.describe("Demo Content Validation", () => {
     test("demo loads with expected content after redirect", async ({ page }) => {
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle" }),
-        page.goto("/demo")
-      ]);
+      await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       // Verify demo banner
       await expect(page.locator(".demo-banner")).toBeVisible({ timeout: 10000 });
@@ -224,17 +217,14 @@ test.describe("Demo Integration E2E", () => {
 
       // Verify demo workspace
       await expect(page.locator(".workspace-container")).toBeVisible();
-      
+
       // Verify manuscript content loads
       await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible({ timeout: 15000 });
     });
 
     test("demo back to homepage link works", async ({ page }) => {
       // Go to demo first
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle" }),
-        page.goto("/demo")
-      ]);
+      await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       expect(page.url()).toContain("localhost:5173/demo");
 
@@ -243,15 +233,12 @@ test.describe("Demo Integration E2E", () => {
       await expect(backLink).toBeVisible();
 
       // Check where the link points
-      const href = await backLink.getAttribute('href');
-      
+      const href = await backLink.getAttribute("href");
+
       // The demo back link might point to frontend root, which is expected
-      if (href === '/' || href?.includes('localhost:3000')) {
-        await Promise.all([
-          page.waitForNavigation({ waitUntil: "networkidle" }),
-          backLink.click()
-        ]);
-        
+      if (href === "/" || href?.includes("localhost:3000")) {
+        await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), backLink.click()]);
+
         // Could go to either marketing site or frontend home
         const finalUrl = page.url();
         expect(finalUrl).toMatch(/localhost:(3000|5173)/);
@@ -262,13 +249,12 @@ test.describe("Demo Integration E2E", () => {
     });
 
     test("demo manuscript content renders correctly", async ({ page }) => {
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle" }),
-        page.goto("/demo")
-      ]);
+      await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       // Wait for manuscript to load
-      await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({ timeout: 15000 });
+      await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
+        timeout: 15000,
+      });
 
       // Verify content is present
       const manuscriptText = await page.locator('[data-testid="manuscript-viewer"]').textContent();
@@ -289,10 +275,7 @@ test.describe("Demo Integration E2E", () => {
       const heroButton = page.locator(".hero-section .btn-primary").first();
       await expect(heroButton).toBeVisible();
 
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle" }),
-        heroButton.click()
-      ]);
+      await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), heroButton.click()]);
 
       expect(page.url()).toContain("localhost:5173/demo");
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
