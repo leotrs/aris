@@ -68,15 +68,12 @@ test.describe("Navigation Flow E2E", () => {
     await expect(demoLink).toBeVisible();
 
     // Test demo link redirects to frontend
-    if (await demoLink.count() > 0) {
-      await Promise.all([
-        page.waitForNavigation({ waitUntil: "networkidle" }),
-        demoLink.click()
-      ]);
-      
+    if ((await demoLink.count()) > 0) {
+      await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), demoLink.click()]);
+
       // Should redirect to frontend demo
       expect(page.url()).toContain("localhost:5173/demo");
-      
+
       // Navigate back for other tests
       await page.goBack();
       await page.waitForLoadState("networkidle");
@@ -195,17 +192,14 @@ test.describe("Navigation Flow E2E", () => {
 
   test("should handle demo route redirect correctly", async ({ page }) => {
     // Test direct navigation to /demo
-    await Promise.all([
-      page.waitForNavigation({ waitUntil: "networkidle" }),
-      page.goto("/demo")
-    ]);
+    await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
     // Should redirect to frontend demo
     expect(page.url()).toContain("localhost:5173/demo");
-    
+
     // Verify demo loads
     await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator('.demo-banner')).toBeVisible();
+    await expect(page.locator(".demo-banner")).toBeVisible();
   });
 
   test("should handle invalid routes gracefully", async ({ page }) => {
