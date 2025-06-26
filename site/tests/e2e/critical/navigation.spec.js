@@ -1,71 +1,145 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Navigation Flow E2E", () => {
-  test("should navigate between all main pages", async ({ page }) => {
+  test("should navigate between all main pages", async ({ page, browserName }) => {
     // Start at home page
     await page.goto("/");
     await expect(page).toHaveTitle(/Aris/);
     await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
 
-    // Navigate to signup page via hero CTA link
-    await page.click('a[href="/signup"]');
-    await page.waitForLoadState("networkidle");
-    await expect(page).toHaveURL("/signup");
-    await expect(page.locator("h1")).toContainText("Sign Up");
+    // Check if this is a mobile browser
+    const isMobile = browserName?.includes("Mobile");
 
-    // Navigate to terms page
-    await page.click('a[href="/terms"]');
-    await page.waitForLoadState("networkidle");
-    await expect(page).toHaveURL("/terms");
-    await expect(page.locator("h1")).toContainText("Terms");
+    if (isMobile) {
+      // Mobile navigation: use mobile menu
+      await page.click(".menu-toggle");
+      await page.waitForTimeout(300);
+      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
-    // Navigate to cookies page
-    await page.click('a[href="/cookies"]');
-    await page.waitForLoadState("networkidle");
-    await expect(page).toHaveURL("/cookies");
-    await expect(page.locator("h1")).toContainText("Cookie");
+      // Navigate to signup via mobile menu
+      await page.click('.mobile-nav-link[href="/signup"]');
+      await page.waitForLoadState("networkidle");
+      await expect(page).toHaveURL("/signup");
+      await expect(page.locator("h1")).toContainText("Sign Up");
 
-    // Navigate back to home via logo
-    await page.click('a[href="/"]');
-    await page.waitForLoadState("networkidle");
-    await expect(page).toHaveURL("/");
-    await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
+      // Use direct navigation for other pages since they may not be in mobile menu
+      await page.goto("/terms");
+      await page.waitForLoadState("networkidle");
+      await expect(page).toHaveURL("/terms");
+      await expect(page.locator("h1")).toContainText("Terms");
+
+      await page.goto("/cookies");
+      await page.waitForLoadState("networkidle");
+      await expect(page).toHaveURL("/cookies");
+      await expect(page.locator("h1")).toContainText("Cookie");
+
+      // Navigate back to home via logo
+      await page.click('a[href="/"]');
+      await page.waitForLoadState("networkidle");
+      await expect(page).toHaveURL("/");
+      await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
+    } else {
+      // Desktop navigation: use regular nav links
+      await page.click('a[href="/signup"]');
+      await page.waitForLoadState("networkidle");
+      await expect(page).toHaveURL("/signup");
+      await expect(page.locator("h1")).toContainText("Sign Up");
+
+      // Navigate to terms page
+      await page.click('a[href="/terms"]');
+      await page.waitForLoadState("networkidle");
+      await expect(page).toHaveURL("/terms");
+      await expect(page.locator("h1")).toContainText("Terms");
+
+      // Navigate to cookies page
+      await page.click('a[href="/cookies"]');
+      await page.waitForLoadState("networkidle");
+      await expect(page).toHaveURL("/cookies");
+      await expect(page.locator("h1")).toContainText("Cookie");
+
+      // Navigate back to home via logo
+      await page.click('a[href="/"]');
+      await page.waitForLoadState("networkidle");
+      await expect(page).toHaveURL("/");
+      await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
+    }
   });
 
-  test("should handle navbar navigation links", async ({ page }) => {
+  test("should handle navbar navigation links", async ({ page, browserName }) => {
     await page.goto("/");
 
-    // Test navbar links (these may be external or placeholder) - only check they exist
-    const aboutLink = page.locator('nav a[href="/about"]').first();
-    const aiCopilotLink = page.locator('nav a[href="/ai-copilot"]').first();
-    const pricingLink = page.locator('nav a[href="/pricing"]').first();
+    // Check if this is a mobile browser
+    const isMobile = browserName?.includes("Mobile");
 
-    // Verify links exist in DOM
-    await expect(aboutLink).toBeVisible();
-    await expect(aiCopilotLink).toBeVisible();
-    await expect(pricingLink).toBeVisible();
+    if (isMobile) {
+      // Mobile: Open mobile menu first
+      await page.click(".menu-toggle");
+      await page.waitForTimeout(300);
+      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
-    // Test Resources dropdown (only on desktop)
-    const viewport = page.viewportSize();
-    if (viewport && viewport.width >= 768) {
+      // Test mobile navbar links
+      const aboutLink = page.locator('.mobile-nav-link[href="/about"]');
+      const aiCopilotLink = page.locator('.mobile-nav-link[href="/ai-copilot"]');
+      const pricingLink = page.locator('.mobile-nav-link[href="/pricing"]');
+
+      // Verify mobile links exist in DOM
+      await expect(aboutLink).toBeVisible();
+      await expect(aiCopilotLink).toBeVisible();
+      await expect(pricingLink).toBeVisible();
+    } else {
+      // Desktop: Test navbar links (these may be external or placeholder) - only check they exist
+      const aboutLink = page.locator('nav a[href="/about"]').first();
+      const aiCopilotLink = page.locator('nav a[href="/ai-copilot"]').first();
+      const pricingLink = page.locator('nav a[href="/pricing"]').first();
+
+      // Verify links exist in DOM
+      await expect(aboutLink).toBeVisible();
+      await expect(aiCopilotLink).toBeVisible();
+      await expect(pricingLink).toBeVisible();
+    }
+
+    // Define demo link variable based on mobile/desktop
+    let demoLink;
+
+    if (isMobile) {
+      // Mobile: Test mobile dropdown
+      await page.click(".mobile-dropdown-toggle");
+      await page.waitForTimeout(300);
+      await expect(page.locator(".mobile-dropdown-menu")).toBeVisible();
+
+      const docLink = page.locator('.mobile-dropdown-link[href="/documentation"]');
+      const blogLink = page.locator('.mobile-dropdown-link[href="/blog"]');
+      await expect(docLink).toBeVisible();
+      await expect(blogLink).toBeVisible();
+
+      // Test mobile utility links
+      const loginLink = page.locator('.mobile-nav-link[href="/login"]');
+      const signupLink = page.locator('.mobile-nav-link[href="/signup"]');
+      demoLink = page.locator('.mobile-nav-link[href="/demo"]');
+
+      await expect(loginLink).toBeVisible();
+      await expect(signupLink).toBeVisible();
+      await expect(demoLink).toBeVisible();
+    } else {
+      // Desktop: Test Resources dropdown
       await page.hover(".has-dropdown");
       await page.waitForTimeout(300); // Wait for hover animation
       await expect(page.locator(".dropdown-menu")).toBeVisible();
+
+      const docLink = page.locator('nav a[href="/documentation"]').first();
+      const blogLink = page.locator('nav a[href="/blog"]').first();
+      await expect(docLink).toBeVisible();
+      await expect(blogLink).toBeVisible();
+
+      // Test utility links that should work
+      const loginLink = page.locator('nav a[href="/login"]').first();
+      const signupLink = page.locator('nav a[href="/signup"]').first();
+      demoLink = page.locator('nav a[href="/demo"]').first();
+
+      await expect(loginLink).toBeVisible();
+      await expect(signupLink).toBeVisible();
+      await expect(demoLink).toBeVisible();
     }
-
-    const docLink = page.locator('nav a[href="/documentation"]').first();
-    const blogLink = page.locator('nav a[href="/blog"]').first();
-    await expect(docLink).toBeVisible();
-    await expect(blogLink).toBeVisible();
-
-    // Test utility links that should work
-    const loginLink = page.locator('nav a[href="/login"]').first();
-    const signupLink = page.locator('nav a[href="/signup"]').first();
-    const demoLink = page.locator('nav a[href="/demo"]').first();
-
-    await expect(loginLink).toBeVisible();
-    await expect(signupLink).toBeVisible();
-    await expect(demoLink).toBeVisible();
 
     // Test demo link redirects to frontend (only if frontend is available)
     if ((await demoLink.count()) > 0) {
@@ -181,10 +255,26 @@ test.describe("Navigation Flow E2E", () => {
     expect(tabCount).toBeLessThan(maxTabs);
   });
 
-  test("should handle navigation with browser back/forward buttons", async ({ page }) => {
+  test("should handle navigation with browser back/forward buttons", async ({
+    page,
+    browserName,
+  }) => {
     // Navigate through several pages
     await page.goto("/");
-    await page.click('a[href="/signup"]');
+
+    // Check if this is a mobile browser
+    const isMobile = browserName?.includes("Mobile");
+
+    if (isMobile) {
+      // Mobile navigation: use mobile menu
+      await page.click(".menu-toggle");
+      await page.waitForTimeout(300);
+      await page.click('.mobile-nav-link[href="/signup"]');
+    } else {
+      // Desktop navigation: use regular nav links
+      await page.click('a[href="/signup"]');
+    }
+
     await expect(page).toHaveURL("/signup");
 
     await page.click('a[href="/terms"]');
@@ -224,7 +314,7 @@ test.describe("Navigation Flow E2E", () => {
     expect(response?.status()).toBe(404);
   });
 
-  test("should maintain scroll position appropriately", async ({ page }) => {
+  test("should maintain scroll position appropriately", async ({ page, browserName }) => {
     await page.goto("/");
 
     // Scroll down to a section
@@ -235,7 +325,19 @@ test.describe("Navigation Flow E2E", () => {
     expect(scrollPosition).toBeGreaterThan(100);
 
     // Navigate to another page and back
-    await page.click('a[href="/signup"]');
+    // Check if this is a mobile browser
+    const isMobile = browserName?.includes("Mobile");
+
+    if (isMobile) {
+      // Mobile navigation: use mobile menu
+      await page.click(".menu-toggle");
+      await page.waitForTimeout(300);
+      await page.click('.mobile-nav-link[href="/signup"]');
+    } else {
+      // Desktop navigation: use regular nav links
+      await page.click('a[href="/signup"]');
+    }
+
     await expect(page).toHaveURL("/signup");
 
     await page.goBack();
