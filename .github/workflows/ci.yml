@@ -7,8 +7,29 @@ on:
     branches: [ main ]
 
 jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.changes.outputs.backend }}
+      frontend: ${{ steps.changes.outputs.frontend }}
+      site: ${{ steps.changes.outputs.site }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          filters: |
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'frontend/**'
+            site:
+              - 'site/**'
+
   backend-test:
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
     env:
       ENV: CI
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
@@ -89,6 +110,8 @@ jobs:
 
   frontend-test:
     runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
 
     defaults:
       run:
@@ -123,12 +146,54 @@ jobs:
         flags: frontend
         token: ${{ secrets.CODECOV_TOKEN }}
 
+  site-test:
+    runs-on: ubuntu-latest
+    needs: changes
+    if: ${{ needs.changes.outputs.site == 'true' }}
+
+    defaults:
+      run:
+        working-directory: site
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: site/package-lock.json
+
+    - name: Install dependencies
+      run: npm ci
+
+    - name: Check for missing packages
+      run: npm ls --depth=0
+
+    - name: Run linting
+      run: npm run lint
+
+    - name: Run unit tests
+      run: npm run test:run
+
+    - name: Install Playwright browsers
+      run: npx playwright install --with-deps
+
+    - name: Run E2E tests (all browsers, excluding demo integration)
+      run: npm run test:e2e:all -- --grep-invert "demo"
+
   e2e-test:
     runs-on: ubuntu-latest
+<<<<<<< test/postgresql-tests-in-ci
     needs: [backend-test, frontend-test]
     env:
       ENV: CI
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+=======
+    needs: [changes, backend-test, frontend-test, site-test]
+    if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true' || needs.changes.outputs.site == 'true') }}
+>>>>>>> main
 
     services:
       postgres:
@@ -186,6 +251,11 @@ jobs:
       working-directory: frontend
       run: npx playwright install --with-deps
 
+    # Site setup for demo integration tests
+    - name: Install site dependencies
+      working-directory: site
+      run: npm ci
+
     # Start servers and run E2E tests
     - name: Start backend server
       working-directory: backend
@@ -197,13 +267,24 @@ jobs:
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
+    - name: Start marketing site server
+      working-directory: site
+      run: npm run dev -- --host 0.0.0.0 --port 3000 &
+
     - name: Wait for servers to be ready
       run: |
         timeout 60 bash -c 'until curl -f http://localhost:8000/health; do sleep 2; done'
         timeout 60 bash -c 'until curl -f http://localhost:5173; do sleep 2; done'
+        timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
 
-    - name: Run E2E tests
+    - name: Run Frontend E2E tests
       working-directory: frontend
       run: npm run test:e2e
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+    - name: Run Site Demo Integration tests
+      working-directory: site
+      run: npm run test:e2e -- --grep "demo"
+      env:
+        FRONTEND_URL: http://localhost:5173
