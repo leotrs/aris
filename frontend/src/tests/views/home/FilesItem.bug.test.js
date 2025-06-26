@@ -32,14 +32,18 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
     vi.restoreAllMocks();
   });
 
-  it("should hide FileMenu by default (not selected, not hovered)", () => {
+  const createAsyncWrapper = async (overrides = {}) => {
     const wrapper = mount(FilesItem, {
       props: {
         modelValue: mockFile.value,
         mode: "list",
+        ...overrides.props,
       },
       global: {
-        provide: mockProvides,
+        provide: {
+          ...mockProvides,
+          ...overrides.provide,
+        },
         stubs: {
           FileMenu: {
             template:
@@ -55,9 +59,20 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
           Date: {
             template: '<div data-testid="files-item-date"></div>',
           },
+          ...overrides.stubs,
         },
       },
     });
+
+    // Wait for async component to mount
+    await nextTick();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    return wrapper;
+  };
+
+  it("should hide FileMenu by default (not selected, not hovered)", async () => {
+    const wrapper = await createAsyncWrapper();
 
     const fileMenu = wrapper.find('[data-testid="file-menu"]');
     expect(fileMenu.exists()).toBe(true);
@@ -72,31 +87,7 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
   });
 
   it("should show FileMenu on hover", async () => {
-    const wrapper = mount(FilesItem, {
-      props: {
-        modelValue: mockFile.value,
-        mode: "list",
-      },
-      global: {
-        provide: mockProvides,
-        stubs: {
-          FileMenu: {
-            template:
-              '<div data-testid="file-menu" class="fm-wrapper"><div class="context-menu-trigger">⋮</div></div>',
-          },
-          FileTitle: {
-            template: '<div data-testid="file-title">{{ file.title }}</div>',
-            props: ["file"],
-          },
-          TagRow: {
-            template: '<div data-testid="tag-row"></div>',
-          },
-          Date: {
-            template: '<div data-testid="files-item-date"></div>',
-          },
-        },
-      },
-    });
+    const wrapper = await createAsyncWrapper();
 
     const itemRow = wrapper.find(".item");
     expect(itemRow.exists()).toBe(true);
@@ -110,31 +101,7 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
   });
 
   it("should show FileMenu when file is focused", async () => {
-    const wrapper = mount(FilesItem, {
-      props: {
-        modelValue: mockFile.value,
-        mode: "list",
-      },
-      global: {
-        provide: mockProvides,
-        stubs: {
-          FileMenu: {
-            template:
-              '<div data-testid="file-menu" class="fm-wrapper"><div class="context-menu-trigger">⋮</div></div>',
-          },
-          FileTitle: {
-            template: '<div data-testid="file-title">{{ file.title }}</div>',
-            props: ["file"],
-          },
-          TagRow: {
-            template: '<div data-testid="tag-row"></div>',
-          },
-          Date: {
-            template: '<div data-testid="files-item-date"></div>',
-          },
-        },
-      },
-    });
+    const wrapper = await createAsyncWrapper();
 
     const itemRow = wrapper.find(".item");
     expect(itemRow.exists()).toBe(true);
@@ -147,32 +114,12 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
     expect(itemRow.classes()).toContain("focused");
   });
 
-  it("should not render FileMenu when file is selected", () => {
+  it("should not render FileMenu when file is selected", async () => {
     const selectedFile = ref({ ...mockFile.value, selected: true });
 
-    const wrapper = mount(FilesItem, {
+    const wrapper = await createAsyncWrapper({
       props: {
         modelValue: selectedFile.value,
-        mode: "list",
-      },
-      global: {
-        provide: mockProvides,
-        stubs: {
-          FileMenu: {
-            template:
-              '<div data-testid="file-menu" class="fm-wrapper"><div class="context-menu-trigger">⋮</div></div>',
-          },
-          FileTitle: {
-            template: '<div data-testid="file-title">{{ file.title }}</div>',
-            props: ["file"],
-          },
-          TagRow: {
-            template: '<div data-testid="tag-row"></div>',
-          },
-          Date: {
-            template: '<div data-testid="files-item-date"></div>',
-          },
-        },
       },
     });
 
@@ -181,32 +128,8 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
     expect(fileMenu.exists()).toBe(false);
   });
 
-  it("should have correct CSS classes for hover states", () => {
-    const wrapper = mount(FilesItem, {
-      props: {
-        modelValue: mockFile.value,
-        mode: "list",
-      },
-      global: {
-        provide: mockProvides,
-        stubs: {
-          FileMenu: {
-            template:
-              '<div data-testid="file-menu" class="fm-wrapper"><div class="context-menu-trigger">⋮</div></div>',
-          },
-          FileTitle: {
-            template: '<div data-testid="file-title">{{ file.title }}</div>',
-            props: ["file"],
-          },
-          TagRow: {
-            template: '<div data-testid="tag-row"></div>',
-          },
-          Date: {
-            template: '<div data-testid="files-item-date"></div>',
-          },
-        },
-      },
-    });
+  it("should have correct CSS classes for hover states", async () => {
+    const wrapper = await createAsyncWrapper();
 
     const itemRow = wrapper.find(".item");
     expect(itemRow.exists()).toBe(true);

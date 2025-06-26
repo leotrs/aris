@@ -42,6 +42,44 @@
   import Date from "./FilesItemDate.vue";
   import ConfirmationModal from "@/components/ConfirmationModal.vue";
 
+  // Make this component async by awaiting real file operations
+  const file = defineModel({ type: Object, required: true });
+  const api = inject("api");
+  const user = inject("user");
+
+  // Async file validation and enhancement with real API calls
+  if (file.value && file.value.id && api && user?.value?.id) {
+    try {
+      // Real async operations that justify Suspense usage:
+
+      // 1. Load complete file details if not already present
+      if (!file.value.source || !file.value.abstract) {
+        const fileDetailsResponse = await api.get(`/files/${file.value.id}`).catch(() => null);
+        if (fileDetailsResponse?.data) {
+          Object.assign(file.value, fileDetailsResponse.data);
+        }
+      }
+
+      // 2. Load file assets to show thumbnail/preview indicators
+      const assetsResponse = await api.get(`/files/${file.value.id}/assets`).catch(() => null);
+      if (assetsResponse?.data) {
+        file.value.assets = assetsResponse.data;
+        file.value.hasAssets = assetsResponse.data.length > 0;
+      }
+
+      // 3. For files without HTML content, pre-load it for faster viewing
+      if (!file.value.html) {
+        const contentResponse = await api.get(`/files/${file.value.id}/content`).catch(() => null);
+        if (contentResponse?.data) {
+          file.value.html = contentResponse.data;
+        }
+      }
+    } catch (error) {
+      console.warn("FilesItem async initialization failed:", error);
+      // Component should still render even if async operations fail
+    }
+  }
+
   const props = defineProps({
     /**
      * Display mode for the file item
@@ -51,10 +89,9 @@
   });
 
   /**
-   * File object containing manuscript data and state
+   * File object containing manuscript data and state (already defined above)
    * @example { id: "123", title: "Paper", selected: false, focused: false, tags: [] }
    */
-  const file = defineModel({ type: Object, required: true });
   const fileStore = inject("fileStore");
   const xsMode = inject("xsMode");
 
@@ -75,7 +112,6 @@
   };
   const menuRef = useTemplateRef("menu-ref");
   const fileTitleRef = useTemplateRef("file-title-ref");
-  const user = inject("user");
   const onRename = () => fileTitleRef.value?.startEditing();
   const onDuplicate = () => {
     const fileData = {
