@@ -66,19 +66,19 @@ class Settings(BaseSettings):
         
         Returns:
             - TEST_DB_URL if explicitly set
-            - PostgreSQL URL if in CI environment  
-            - SQLite URL for local development
+            - PostgreSQL URL if in actual CI environment (GitHub Actions)
+            - SQLite URL for local development (including CI simulation)
         """
         if self.TEST_DB_URL:
             return self.TEST_DB_URL
             
-        # Use PostgreSQL in CI environment
-        if self.ENV == "CI" or os.environ.get("CI"):
+        # Use PostgreSQL only in actual CI environment (GitHub Actions)
+        if (self.ENV == "CI" or os.environ.get("CI")) and os.environ.get("GITHUB_ACTIONS"):
             worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
             unique_id = str(uuid.uuid4())[:8]
             return f"postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris_{worker_id}_{unique_id}"
             
-        # Use SQLite for local development
+        # Use SQLite for local development (including CI simulation)
         worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
         unique_id = str(uuid.uuid4())[:8]
         return f"sqlite+aiosqlite:///./test_{worker_id}_{unique_id}.db"

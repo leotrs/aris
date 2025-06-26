@@ -94,6 +94,11 @@ async def create_database_if_not_exists(database_url: str):
     if not database_url.startswith("postgresql"):
         return
     
+    # Only attempt database creation in actual CI environment
+    # Skip if we're just simulating CI locally
+    if not (os.environ.get("CI") and os.environ.get("GITHUB_ACTIONS")):
+        return
+    
     # Extract database name from URL
     db_name = database_url.split("/")[-1]
     # Create admin connection URL with password preserved
