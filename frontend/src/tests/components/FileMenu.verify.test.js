@@ -66,7 +66,7 @@ describe("FileMenu.vue - Component Fix Verification", () => {
           },
           ContextMenuItem: {
             template:
-              '<div class="context-menu-item-mock" @click="$emit(\'click\')"><slot /></div>',
+              '<div class="context-menu-item-mock" @click="$emit(\'click\', $event)"><slot /></div>',
           },
           Separator: {
             template: '<div class="separator-mock"></div>',

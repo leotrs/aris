@@ -5,6 +5,7 @@ Implemented as a Pydantic model that is then read by FastAPI.
 """
 
 import os
+import uuid
 from pathlib import Path
 
 from pydantic import ConfigDict, Field
@@ -55,7 +56,39 @@ class Settings(BaseSettings):
     TEST_USER_PASSWORD: str = Field(..., json_schema_extra={"env": "TEST_USER_PASSWORD"})
     """Password for test user."""
 
+    TEST_DB_URL: str = Field("", json_schema_extra={"env": "TEST_DB_URL"})
+    """Test database URL override. If empty, will auto-detect based on environment."""
+
     model_config = ConfigDict(extra="forbid")
+
+    def get_test_database_url(self) -> str:
+        """Get test database URL based on environment and configuration.
+        
+        Returns:
+            - TEST_DB_URL if explicitly set
+            - PostgreSQL URL if in CI environment (ENV=CI or CI=true)
+            - SQLite URL for local development
+        """
+        if self.TEST_DB_URL:
+            return self.TEST_DB_URL
+            
+        # Use PostgreSQL in CI environment (includes both real CI and local simulation)
+        if self.ENV == "CI" or os.environ.get("CI"):
+            worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
+            unique_id = str(uuid.uuid4())[:8]
+            
+            # Use different credentials for GitHub Actions vs local CI simulation
+            if os.environ.get("GITHUB_ACTIONS"):
+                # Real GitHub Actions CI environment - use per-worker databases for parallel test isolation
+                return f"postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris_{worker_id}_{unique_id}"
+            else:
+                # Local CI simulation (using local PostgreSQL user with worker isolation)
+                return f"postgresql+asyncpg://leo.torres@localhost:5432/test_aris_{worker_id}_{unique_id}"
+            
+        # Use SQLite for local development
+        worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
+        unique_id = str(uuid.uuid4())[:8]
+        return f"sqlite+aiosqlite:///./test_{worker_id}_{unique_id}.db"
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent

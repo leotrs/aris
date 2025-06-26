@@ -17,7 +17,7 @@ describe("FileMenu.vue", () => {
     name: "ContextMenuItem",
     props: { icon: { type: String }, caption: { type: String } },
     emits: ["click"],
-    template: '<button @click="$emit(\'click\')" class="item">{{ caption }}</button>',
+    template: '<button @click="$emit(\'click\', $event)" class="item">{{ caption }}</button>',
   });
   const SeparatorStub = defineComponent({ name: "Separator", template: "<hr />" });
 

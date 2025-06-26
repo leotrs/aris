@@ -32,13 +32,16 @@ jobs:
     if: ${{ needs.changes.outputs.backend == 'true' }}
     env:
       ENV: CI
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     services:
       postgres:
         image: postgres:15
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -71,9 +74,26 @@ jobs:
     - name: Run linting (ruff)
       run: uv run ruff check
 
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U postgres; do
+          echo "Waiting for PostgreSQL..."
+          sleep 2
+        done
+        echo "PostgreSQL is ready!"
+
+    - name: Test PostgreSQL connection
+      run: |
+        echo "Testing PostgreSQL connection..."
+        psql -h localhost -p 5432 -U postgres -d test_aris -c "SELECT version();"
+      env:
+        PGPASSWORD: postgres
+
     - name: Debug env & .env.ci file
       run: |
         echo "ENV=$ENV"
+        echo "TEST_USER_PASSWORD is set: $([ -n "$TEST_USER_PASSWORD" ] && echo "yes" || echo "no")"
+        echo "GITHUB_ACTIONS=$GITHUB_ACTIONS"
         ls -l .env.ci
         cat .env.ci
 
@@ -84,7 +104,7 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
-        file: ./backend/coverage.xml
+        files: ./backend/coverage.xml
         flags: backend
         token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -122,7 +142,7 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
-        file: ./frontend/coverage/lcov.info
+        files: ./frontend/coverage/lcov.info
         flags: frontend
         token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -165,13 +185,21 @@ jobs:
 
   e2e-test:
     runs-on: ubuntu-latest
+<<<<<<< test/postgresql-tests-in-ci
+    needs: [backend-test, frontend-test]
+    env:
+      ENV: CI
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+=======
     needs: [changes, backend-test, frontend-test, site-test]
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true' || needs.changes.outputs.site == 'true') }}
+>>>>>>> main
 
     services:
       postgres:
         image: postgres:15
         env:
+          POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_aris
         options: >-
@@ -206,8 +234,6 @@ jobs:
       run: |
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
-      env:
-        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     # Frontend setup
     - name: Setup Node.js
@@ -234,8 +260,6 @@ jobs:
     - name: Start backend server
       working-directory: backend
       run: uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
-      env:
-        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     - name: Start frontend server
       working-directory: frontend

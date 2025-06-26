@@ -14,23 +14,23 @@ export const demoFile = {
 
 ## Introduction
 
-The current landscape of scientific publishing relies heavily on static document formats that were designed for print media. While PDFs have served the academic community for decades, they present significant limitations in our increasingly digital world:
+The current landscape of scientific publishing relies heavily on static document formats that were designed for print media. While PDFs have served the academic community for decades, they present significant limitations in our increasingly digital world\\:
 
 :itemize:
 
-  :item: *Limited interactivity*: Static content cannot adapt to user preferences or provide dynamic visualizations
+  :item: *Limited interactivity*\\: Static content cannot adapt to user preferences or provide dynamic visualizations
 
-  :item: *Accessibility barriers*: Poor screen reader support and fixed layouts
+  :item: *Accessibility barriers*\\: Poor screen reader support and fixed layouts
 
-  :item: *Version control issues*: Difficulty tracking changes and updates
+  :item: *Version control issues*\\: Difficulty tracking changes and updates
 
-  :item: *Discovery challenges*: Content locked in non-searchable formats
+  :item: *Discovery challenges*\\: Content locked in non-searchable formats
 
 ::
 
 ### Research Questions
 
-This study addresses three primary research questions:
+This study addresses three primary research questions\\:
 
 :enumerate:
 
@@ -44,7 +44,7 @@ This study addresses three primary research questions:
 
 ## Methodology
 
-Our research employed a mixed-methods approach combining:
+Our research employed a mixed-methods methodology approach combining\\:
 
 :itemize:
 
@@ -60,23 +60,23 @@ Our research employed a mixed-methods approach combining:
 
 ### Technical Implementation
 
-We developed a proof-of-concept platform using:
+We developed a proof-of-concept platform using\\:
 
 :itemize:
 
-  :item: **Frontend**: Vue.js with reactive state management
+  :item: **Frontend**\\: Vue.js with reactive state management
 
-  :item: **Backend**: FastAPI with PostgreSQL database
+  :item: **Backend**\\: FastAPI with PostgreSQL database
 
-  :item: **Document Format**: RSM (Readable Research Markup)
+  :item: **Document Format**\\: RSM (Readable Research Markup)
 
-  :item: **Deployment**: Docker containers on cloud infrastructure
+  :item: **Deployment**\\: Docker containers on cloud infrastructure
 
 ::
 
 ## Results
 
-Our findings demonstrate significant advantages of web-native publishing:
+Our findings demonstrate significant advantages of web-native publishing across multiple dimensions. The methodology validation confirmed our hypothesis that web-native platforms provide superior accessibility and engagement compared to traditional PDF-based systems.
 
 ## Discussion
 
@@ -86,19 +86,19 @@ The transition to web-native publishing represents more than a technological upg
 
 :enumerate:
 
-  :item: *Enhanced Accessibility*: Screen readers, keyboard navigation, and customizable display options
+  :item: *Enhanced Accessibility*\\: Screen readers, keyboard navigation, and customizable display options
 
-  :item: *Dynamic Content*: Interactive figures, embedded data, and real-time updates
+  :item: *Dynamic Content*\\: Interactive figures, embedded data, and real-time updates
 
-  :item: *Better Discovery*: Full-text search, semantic markup, and linked data
+  :item: *Better Discovery*\\: Full-text search, semantic markup, and linked data
 
-  :item: *Collaborative Features*: Inline comments, annotations, and version tracking
+  :item: *Collaborative Features*\\: Inline comments, annotations, and version tracking
 
 ::
 
 ## Future Work
 
-This research opens several avenues for future investigation:
+This research opens several avenues for future investigation\\:
 
 Development of authoring tools for non-technical researchers. Integration with existing
 manuscript submission systems. Analysis of impact on citation patterns and research
@@ -181,7 +181,7 @@ export const demoAnnotations = [
 // Mock API that returns demo data
 export const createDemoApi = () => ({
   get: async () => Promise.resolve({ data: {} }),
-  post: async (url) => {
+  post: async (url, payload) => {
     if (url.includes("/render")) {
       // Use the actual backend /render endpoint for RSM content
       try {
@@ -191,14 +191,19 @@ export const createDemoApi = () => ({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            source: demoFile.source,
+            source: payload?.source || demoFile.source,
           }),
         });
+
+        if (!response.ok) {
+          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        }
+
         const html = await response.json();
         return { data: html };
       } catch (error) {
         console.error("Failed to render RSM content:", error);
-        return { data: convertMarkdownToHtml(demoFile.source) };
+        return { data: convertMarkdownToHtml(payload?.source || demoFile.source) };
       }
     }
     if (url.includes("/settings")) {

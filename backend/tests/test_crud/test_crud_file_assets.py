@@ -10,13 +10,13 @@ from aris.crud.file_assets import (
 )
 
 
-async def test_create_asset(db_session, test_user):
+async def test_create_asset(db_session, test_user, test_file):
     """Test creating a new file asset"""
     payload = FileAssetCreate(
         filename="test.txt",
         mime_type="text/plain",
         content="dGVzdCBjb250ZW50",  # base64 encoded "test content"
-        file_id=1,
+        file_id=test_file.id,
     )
 
     asset = await FileAssetDB.create_asset(payload, test_user.id, db_session)
@@ -25,20 +25,20 @@ async def test_create_asset(db_session, test_user):
     assert asset.filename == "test.txt"
     assert asset.mime_type == "text/plain"
     assert asset.content == "dGVzdCBjb250ZW50"
-    assert asset.file_id == 1
+    assert asset.file_id == test_file.id
     assert asset.owner_id == test_user.id
     assert asset.uploaded_at
     assert asset.deleted_at is None
 
 
-async def test_get_user_asset(db_session, test_user):
+async def test_get_user_asset(db_session, test_user, test_file):
     """Test getting a user's asset"""
     # Create an asset first
     payload = FileAssetCreate(
         filename="test.jpg",
         mime_type="image/jpeg",
         content="dGVzdCBpbWFnZQ==",  # base64 encoded "test image"
-        file_id=1,
+        file_id=test_file.id,
     )
     created_asset = await FileAssetDB.create_asset(payload, test_user.id, db_session)
 
@@ -57,11 +57,11 @@ async def test_get_user_asset_not_found(db_session, test_user):
     assert asset is None
 
 
-async def test_get_user_asset_wrong_owner(db_session, test_user):
+async def test_get_user_asset_wrong_owner(db_session, test_user, test_file):
     """Test getting an asset owned by another user returns None"""
     # Create an asset
     payload = FileAssetCreate(
-        filename="test.txt", mime_type="text/plain", content="dGVzdA==", file_id=1
+        filename="test.txt", mime_type="text/plain", content="dGVzdA==", file_id=test_file.id
     )
     created_asset = await FileAssetDB.create_asset(payload, test_user.id, db_session)
 
@@ -70,11 +70,11 @@ async def test_get_user_asset_wrong_owner(db_session, test_user):
     assert asset is None
 
 
-async def test_get_user_asset_soft_deleted(db_session, test_user):
+async def test_get_user_asset_soft_deleted(db_session, test_user, test_file):
     """Test getting a soft-deleted asset returns None"""
     # Create and soft delete an asset
     payload = FileAssetCreate(
-        filename="test.txt", mime_type="text/plain", content="dGVzdA==", file_id=1
+        filename="test.txt", mime_type="text/plain", content="dGVzdA==", file_id=test_file.id
     )
     created_asset = await FileAssetDB.create_asset(payload, test_user.id, db_session)
     await FileAssetDB.soft_delete_asset(created_asset, db_session)
@@ -84,20 +84,27 @@ async def test_get_user_asset_soft_deleted(db_session, test_user):
     assert asset is None
 
 
-async def test_list_user_assets(db_session, test_user):
+async def test_list_user_assets(db_session, test_user, test_file):
     """Test listing all user assets"""
+    # Create a second file for the second asset
+    from aris.models import File
+    file2 = File(owner_id=test_user.id, source=":rsm: Another test file. ::")
+    db_session.add(file2)
+    await db_session.commit()
+    await db_session.refresh(file2)
+    
     # Create multiple assets
     payload1 = FileAssetCreate(
         filename="file1.txt",
         mime_type="text/plain",
         content="ZmlsZTE=",  # base64 "file1"
-        file_id=1,
+        file_id=test_file.id,
     )
     payload2 = FileAssetCreate(
         filename="file2.jpg",
         mime_type="image/jpeg",
         content="ZmlsZTI=",  # base64 "file2"
-        file_id=2,
+        file_id=file2.id,
     )
 
     await FileAssetDB.create_asset(payload1, test_user.id, db_session)
@@ -111,14 +118,21 @@ async def test_list_user_assets(db_session, test_user):
     assert "file2.jpg" in filenames
 
 
-async def test_list_user_assets_excludes_soft_deleted(db_session, test_user):
+async def test_list_user_assets_excludes_soft_deleted(db_session, test_user, test_file):
     """Test that listing assets excludes soft-deleted ones"""
+    # Create a second file for the second asset
+    from aris.models import File
+    file2 = File(owner_id=test_user.id, source=":rsm: Another test file. ::")
+    db_session.add(file2)
+    await db_session.commit()
+    await db_session.refresh(file2)
+    
     # Create two assets
     payload1 = FileAssetCreate(
-        filename="keep.txt", mime_type="text/plain", content="a2VlcA==", file_id=1
+        filename="keep.txt", mime_type="text/plain", content="a2VlcA==", file_id=test_file.id
     )
     payload2 = FileAssetCreate(
-        filename="delete.txt", mime_type="text/plain", content="ZGVsZXRl", file_id=2
+        filename="delete.txt", mime_type="text/plain", content="ZGVsZXRl", file_id=file2.id
     )
 
     _asset1 = await FileAssetDB.create_asset(payload1, test_user.id, db_session)
@@ -133,11 +147,11 @@ async def test_list_user_assets_excludes_soft_deleted(db_session, test_user):
     assert assets[0].filename == "keep.txt"
 
 
-async def test_update_asset(db_session, test_user):
+async def test_update_asset(db_session, test_user, test_file):
     """Test updating an asset"""
     # Create an asset
     payload = FileAssetCreate(
-        filename="original.txt", mime_type="text/plain", content="b3JpZ2luYWw=", file_id=1
+        filename="original.txt", mime_type="text/plain", content="b3JpZ2luYWw=", file_id=test_file.id
     )
     asset = await FileAssetDB.create_asset(payload, test_user.id, db_session)
 
@@ -155,11 +169,11 @@ async def test_update_asset(db_session, test_user):
     assert updated_asset.id == asset.id
 
 
-async def test_update_asset_partial(db_session, test_user):
+async def test_update_asset_partial(db_session, test_user, test_file):
     """Test partially updating an asset"""
     # Create an asset
     payload = FileAssetCreate(
-        filename="original.txt", mime_type="text/plain", content="b3JpZ2luYWw=", file_id=1
+        filename="original.txt", mime_type="text/plain", content="b3JpZ2luYWw=", file_id=test_file.id
     )
     asset = await FileAssetDB.create_asset(payload, test_user.id, db_session)
 
@@ -172,11 +186,11 @@ async def test_update_asset_partial(db_session, test_user):
     assert updated_asset.content == "b3JpZ2luYWw="  # unchanged
 
 
-async def test_soft_delete_asset(db_session, test_user):
+async def test_soft_delete_asset(db_session, test_user, test_file):
     """Test soft deleting an asset"""
     # Create an asset
     payload = FileAssetCreate(
-        filename="to_delete.txt", mime_type="text/plain", content="ZGVsZXRl", file_id=1
+        filename="to_delete.txt", mime_type="text/plain", content="ZGVsZXRl", file_id=test_file.id
     )
     asset = await FileAssetDB.create_asset(payload, test_user.id, db_session)
 
@@ -191,14 +205,14 @@ async def test_soft_delete_asset(db_session, test_user):
     assert isinstance(asset.deleted_at, datetime)
 
 
-async def test_file_asset_create_validation_image(db_session, test_user):
+async def test_file_asset_create_validation_image(db_session, test_user, test_file):
     """Test FileAssetCreate validation for image content"""
     # Valid base64 image content
     valid_payload = FileAssetCreate(
         filename="test.jpg",
         mime_type="image/jpeg",
         content=base64.b64encode(b"fake image data").decode(),
-        file_id=1,
+        file_id=test_file.id,
     )
 
     asset = await FileAssetDB.create_asset(valid_payload, test_user.id, db_session)
@@ -209,7 +223,7 @@ async def test_file_asset_create_validation_invalid_base64():
     """Test FileAssetCreate validation fails for invalid base64 image content"""
     with pytest.raises(ValueError, match="Invalid base64-encoded string"):
         FileAssetCreate(
-            filename="test.jpg", mime_type="image/jpeg", content="invalid_base64!@#", file_id=1
+            filename="test.jpg", mime_type="image/jpeg", content="invalid_base64!@#", file_id=999
         )
 
 

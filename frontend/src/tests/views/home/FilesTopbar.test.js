@@ -18,8 +18,13 @@ describe("FilesTopbar.vue", () => {
       filterFiles: vi.fn(),
     });
 
+    // Create a ref-like object that has a .value property for Vue test utils
+    const mockFileStoreRef = {
+      value: mockFileStore.value,
+    };
+
     mockProvides = {
-      fileStore: mockFileStore,
+      fileStore: mockFileStoreRef,
     };
   });
 
@@ -412,7 +417,7 @@ describe("FilesTopbar.vue", () => {
 
       // Test null query
       expect(() => wrapper.vm.onSearchSubmit(null)).not.toThrow();
-      
+
       // Test undefined query
       expect(() => wrapper.vm.onSearchSubmit(undefined)).not.toThrow();
 
@@ -422,12 +427,16 @@ describe("FilesTopbar.vue", () => {
   });
 
   describe("Enhanced Keyboard Shortcuts", () => {
-    it("registers all expected keyboard shortcuts with correct descriptions", () => {
-      const wrapper = createWrapper();
-      const { useKeyboardShortcuts } = vi.mocked(await import("@/composables/useKeyboardShortcuts.js"));
+    it("registers all expected keyboard shortcuts with correct descriptions", async () => {
+      const { useKeyboardShortcuts } = vi.mocked(
+        await import("@/composables/useKeyboardShortcuts.js")
+      );
+
+      // Create wrapper first to trigger useKeyboardShortcuts call
+      createWrapper();
 
       const registeredShortcuts = useKeyboardShortcuts.mock.calls[0][0];
-      
+
       expect(registeredShortcuts).toMatchObject({
         "v,l": { description: "view as list" },
         "v,c": { description: "view as cards" },
@@ -442,12 +451,14 @@ describe("FilesTopbar.vue", () => {
       );
     });
 
-    it("handles keyboard shortcuts when component is inactive", () => {
+    it("handles keyboard shortcuts when component is inactive", async () => {
       // Create wrapper but assume component becomes inactive
       createWrapper();
-      
-      const { useKeyboardShortcuts } = vi.mocked(await import("@/composables/useKeyboardShortcuts.js"));
-      
+
+      const { useKeyboardShortcuts } = vi.mocked(
+        await import("@/composables/useKeyboardShortcuts.js")
+      );
+
       // Verify shortcuts were registered as active
       expect(useKeyboardShortcuts).toHaveBeenCalledWith(
         expect.any(Object),
@@ -457,27 +468,32 @@ describe("FilesTopbar.vue", () => {
     });
 
     it("executes view mode shortcuts correctly with state verification", async () => {
+      const { useKeyboardShortcuts } = vi.mocked(
+        await import("@/composables/useKeyboardShortcuts.js")
+      );
+
       const wrapper = createWrapper();
-      const { useKeyboardShortcuts } = vi.mocked(await import("@/composables/useKeyboardShortcuts.js"));
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
 
       // Test v,l shortcut (switch to list)
       wrapper.vm.controlState = 1; // Start in cards mode
       await nextTick();
-      
+
       shortcuts["v,l"].fn();
+      await nextTick(); // Wait for watcher to emit event
       expect(wrapper.vm.controlState).toBe(0);
       expect(wrapper.emitted().list).toBeTruthy();
 
       // Test v,c shortcut (switch to cards)
       shortcuts["v,c"].fn();
+      await nextTick(); // Wait for watcher to emit event
       expect(wrapper.vm.controlState).toBe(1);
       expect(wrapper.emitted().cards).toBeTruthy();
     });
 
     it("handles search shortcut when SearchBar is not ready", async () => {
       const { useKeyboardShortcuts } = await import("@/composables/useKeyboardShortcuts.js");
-      
+
       createWrapper({
         stubs: {
           SearchBar: {
@@ -488,14 +504,16 @@ describe("FilesTopbar.vue", () => {
       });
 
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
-      
+
       // Should throw when trying to focus non-existent method
       expect(() => shortcuts["/"].fn()).toThrow();
     });
 
-    it("maintains keyboard shortcut scope throughout component lifecycle", () => {
+    it("maintains keyboard shortcut scope throughout component lifecycle", async () => {
       const wrapper = createWrapper();
-      const { useKeyboardShortcuts } = vi.mocked(await import("@/composables/useKeyboardShortcuts.js"));
+      const { useKeyboardShortcuts } = vi.mocked(
+        await import("@/composables/useKeyboardShortcuts.js")
+      );
 
       // Verify scope is maintained
       expect(useKeyboardShortcuts).toHaveBeenCalledWith(
@@ -511,16 +529,18 @@ describe("FilesTopbar.vue", () => {
 
     it("handles simultaneous shortcut presses gracefully", async () => {
       const wrapper = createWrapper();
-      const { useKeyboardShortcuts } = vi.mocked(await import("@/composables/useKeyboardShortcuts.js"));
+      const { useKeyboardShortcuts } = vi.mocked(
+        await import("@/composables/useKeyboardShortcuts.js")
+      );
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
 
       // Simulate rapid shortcut presses
       shortcuts["v,l"].fn();
       shortcuts["v,c"].fn();
       shortcuts["v,l"].fn();
-      
+
       await nextTick();
-      
+
       // Should end up in list mode (last shortcut wins)
       expect(wrapper.vm.controlState).toBe(0);
     });
@@ -529,12 +549,12 @@ describe("FilesTopbar.vue", () => {
   describe("Search Performance and Memory", () => {
     it("does not leak memory with repeated searches", () => {
       const wrapper = createWrapper();
-      
+
       // Perform many searches to test for memory leaks
       for (let i = 0; i < 100; i++) {
         wrapper.vm.onSearchSubmit(`query ${i}`);
       }
-      
+
       // Each search should clear previous filters
       expect(mockFileStore.value.clearFilters).toHaveBeenCalledTimes(100);
       expect(mockFileStore.value.filterFiles).toHaveBeenCalledTimes(100);
@@ -542,17 +562,17 @@ describe("FilesTopbar.vue", () => {
 
     it("handles search with very large file lists efficiently", () => {
       const wrapper = createWrapper();
-      
+
       wrapper.vm.onSearchSubmit("test");
       const filterFunction = mockFileStore.value.filterFiles.mock.calls[0][0];
-      
+
       // Simulate filtering large number of files
       const startTime = performance.now();
       for (let i = 0; i < 10000; i++) {
         filterFunction({ title: `file ${i} test` });
       }
       const endTime = performance.now();
-      
+
       // Filter should complete within reasonable time (adjust threshold as needed)
       expect(endTime - startTime).toBeLessThan(100); // 100ms threshold
     });
@@ -561,14 +581,14 @@ describe("FilesTopbar.vue", () => {
   describe("Integration Edge Cases", () => {
     it("maintains view mode state during search operations", async () => {
       const wrapper = createWrapper();
-      
+
       // Switch to cards mode
       wrapper.vm.controlState = 1;
       await nextTick();
-      
+
       // Perform search
       wrapper.vm.onSearchSubmit("test query");
-      
+
       // View mode should remain unchanged
       expect(wrapper.vm.controlState).toBe(1);
     });
@@ -577,22 +597,22 @@ describe("FilesTopbar.vue", () => {
       let wrapper = createWrapper();
       wrapper.vm.controlState = 1;
       wrapper.unmount();
-      
+
       // Re-mount component
       wrapper = createWrapper();
-      
+
       // Should start with default state again
       expect(wrapper.vm.controlState).toBe(0);
     });
 
     it("handles concurrent search and view mode changes", async () => {
       const wrapper = createWrapper();
-      
+
       // Simulate concurrent operations
       wrapper.vm.onSearchSubmit("concurrent test");
       wrapper.vm.controlState = 1;
       await nextTick();
-      
+
       // Both operations should complete successfully
       expect(mockFileStore.value.filterFiles).toHaveBeenCalledOnce();
       expect(wrapper.vm.controlState).toBe(1);

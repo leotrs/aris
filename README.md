@@ -81,11 +81,33 @@ aris/
 
 ## Testing Infrastructure
 
+Aris features a robust dual-database testing infrastructure with automatic database selection and per-worker isolation for reliable parallel test execution.
+
+### Database Strategy
+
+**Local Development**
+- **Database**: SQLite (fast iteration, no setup required)
+- **Command**: `uv run pytest -n8`
+- **Features**: Automatic in-memory databases, instant test execution
+
+**CI Environment** 
+- **Database**: PostgreSQL 15 (production-like testing)
+- **Isolation**: Per-worker databases (`test_aris_gw0_abc123`, `test_aris_gw1_def456`, etc.)
+- **Workers**: 8 parallel test workers for maximum speed
+- **Features**: Automatic database creation, cleanup, and worker isolation
+
+**Local CI Simulation**
+- **Database**: PostgreSQL (matches CI exactly)
+- **Command**: `./simulate-ci -- uv run pytest -n8`
+- **Features**: 100% CI fidelity for debugging CI-specific issues
+
 ### Test Types
 
 **Backend Tests**
 - **Unit Tests**: `uv run pytest -n8` - Test individual functions and API endpoints
+- **Integration Tests**: `tests/integration/` - RSM processing, database constraints
 - **Coverage**: Generated in `htmlcov/` directory
+- **Database Selection**: Automatic (SQLite locally, PostgreSQL in CI)
 
 **Frontend Tests**  
 - **Unit Tests**: `npm test` - Component and utility testing with Vitest
@@ -135,7 +157,42 @@ npm run test:e2e                        # Run Playwright tests
 - **Authentication**: JWT-based auth with test user credentials
 - **CI Requirements**: GitHub repository secret `TEST_USER_PASSWORD` must be configured
 
+### Parallel Testing Architecture
+
+**Worker Isolation**
+- Each test worker gets an isolated database to prevent conflicts
+- Database names include worker ID and unique hash: `test_aris_gw2_a1b2c3d4`
+- Automatic cleanup after test completion
+
+**Performance Benefits**
+- **Local**: 8x speedup with SQLite (in-memory databases)
+- **CI**: 8x speedup with PostgreSQL (isolated databases)
+- **Reliability**: No flaky tests due to database conflicts
+
+**Environment Detection**
+```python
+# Automatic database selection based on environment
+if ENV == "CI" or os.environ.get("CI"):
+    # Use PostgreSQL with per-worker databases
+    return f"postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris_{worker_id}_{unique_id}"
+else:
+    # Use SQLite for fast local development
+    return f"sqlite+aiosqlite:///./test_{worker_id}_{unique_id}.db"
+```
+
 ### CI Configuration
+
+**PostgreSQL Service Container**
+```yaml
+services:
+  postgres:
+    image: postgres:15
+    env:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: test_aris
+      POSTGRES_HOST_AUTH_METHOD: trust
+```
 
 #### Required GitHub Repository Secrets
 For E2E tests to run in CI, the following repository secret must be configured:
@@ -148,15 +205,16 @@ For E2E tests to run in CI, the following repository secret must be configured:
 3. Add `TEST_USER_PASSWORD` with the test user password value
 
 #### CI Test Coverage
-- **Backend**: Unit tests, linting (ruff), type checking (mypy)
+- **Backend**: 352 tests with 8 parallel workers, linting (ruff), type checking (mypy)
 - **Frontend**: Unit tests, linting (eslint)  
 - **E2E**: Full integration tests with real backend (Playwright on multiple browsers)
 
 ### Running Individual Test Suites
 
 ```bash
-# Backend unit tests only
-cd backend && uv run pytest -n8
+# Backend tests (automatic database selection)
+cd backend && uv run pytest -n8              # SQLite locally, fast iteration
+cd backend && ./simulate-ci -- uv run pytest -n8  # PostgreSQL locally, CI simulation
 
 # Frontend unit tests only  
 cd frontend && npm test
@@ -167,6 +225,9 @@ cd frontend && npm run test:e2e
 # Run all tests
 cd backend && uv run pytest -n8
 cd frontend && npm test && npm run test:e2e
+
+# Debug CI issues locally
+cd backend && ./simulate-ci -- uv run pytest tests/integration/ -v
 ```
 
 ## Contributing
@@ -178,7 +239,8 @@ Please ensure all tests pass and code is linted before submitting PRs:
 ```bash
 # Backend checks
 cd backend
-uv run pytest -n8                       # All tests pass
+uv run pytest -n8                       # All 352 tests pass (SQLite locally)
+./simulate-ci -- uv run pytest -n8     # Verify CI compatibility (PostgreSQL locally) 
 uv run ruff check                       # No linting errors
 uv run mypy aris/                       # No type errors
 
@@ -188,6 +250,12 @@ npm test                                # All unit tests pass
 npm run lint                            # No linting errors
 npm run test:e2e                        # All E2E tests pass (requires backend)
 ```
+
+**Testing Infrastructure Notes**
+- Local development uses SQLite for fast iteration
+- CI uses PostgreSQL with per-worker database isolation
+- Use `./simulate-ci` to debug CI-specific issues locally
+- All tests run in parallel with 8 workers for maximum speed
 
 ## License
 

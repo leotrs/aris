@@ -9,7 +9,7 @@ test.describe("Demo Content Rendering", () => {
     // Ensure clean auth state for demo access
     await authHelpers.clearAuthState();
 
-    await page.goto("/demo");
+    await page.goto("/demo", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
   });
 
@@ -21,6 +21,7 @@ test.describe("Demo Content Rendering", () => {
       // Wait for manuscript content to load
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Check that manuscript content is rendered
       const manuscript = page.locator('[data-testid="manuscript-viewer"]');
@@ -35,6 +36,7 @@ test.describe("Demo Content Rendering", () => {
       // Wait for manuscript to be visible
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Check for RSM-specific classes and structure
       const manuscriptWrapper = page.locator(".manuscriptwrapper");
@@ -52,6 +54,7 @@ test.describe("Demo Content Rendering", () => {
       // Wait for manuscript content
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Look for RSM handrails (interactive UI elements)
       const handrails = page.locator(".hr");
@@ -71,6 +74,7 @@ test.describe("Demo Content Rendering", () => {
       // Wait for manuscript content
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       const manuscriptContainer = page.locator('[data-testid="manuscript-container"]');
       await expect(manuscriptContainer).toBeVisible();
@@ -93,6 +97,7 @@ test.describe("Demo Content Rendering", () => {
       // Wait for content to load
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       const loadTime = Date.now() - startTime;
 
@@ -105,6 +110,7 @@ test.describe("Demo Content Rendering", () => {
     test("research paper title is visible", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Look for the main title
       const title = page.locator("h1").first();
@@ -117,6 +123,7 @@ test.describe("Demo Content Rendering", () => {
     test("section headings render correctly", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Check for various heading levels
       const h1Elements = page.locator("h1");
@@ -127,7 +134,7 @@ test.describe("Demo Content Rendering", () => {
 
       // Verify some expected section headings
       await expect(page.locator("text=Introduction")).toBeVisible();
-      await expect(page.locator("text=Methodology")).toBeVisible();
+      await expect(page.getByRole("heading", { name: "2. Methodology" })).toBeVisible();
       await expect(page.locator("text=Results")).toBeVisible();
       await expect(page.locator("text=Conclusion")).toBeVisible();
     });
@@ -135,9 +142,27 @@ test.describe("Demo Content Rendering", () => {
     test("interactive handrails (RSM UI elements) are present", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
-      // Wait for handrails to render
-      await expect(page.locator(".hr-menu-zone")).toBeVisible({ timeout: 5000 });
+      // Wait for RSM JavaScript to fully load
+      await page.waitForFunction(
+        () => {
+          return window.jQuery && document.querySelectorAll(".hr-border-zone").length > 0;
+        },
+        { timeout: 15000 }
+      );
+
+      // Hover over content to reveal border dots
+      await page.hover("h1"); // Hover over main heading
+
+      // Wait for border dots to become visible on hover
+      await expect(page.locator(".hr-border-dots").first()).toBeVisible({ timeout: 5000 });
+
+      // Click the border dots to reveal the menu
+      await page.locator(".hr-border-dots").first().click();
+
+      // Now verify the menu zone becomes visible
+      await expect(page.locator(".hr-menu-zone").first()).toBeVisible({ timeout: 3000 });
 
       // Check for various handrail components
       const menuZones = page.locator(".hr-menu-zone");
@@ -152,6 +177,7 @@ test.describe("Demo Content Rendering", () => {
     test("proper typography and spacing applied", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Check that content has proper styling
       const manuscript = page.locator(".manuscript");
@@ -175,6 +201,7 @@ test.describe("Demo Content Rendering", () => {
     test("lists and itemization render correctly", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Look for itemized lists (from RSM :itemize: markup)
       const listItems = page.locator("li, .list-item");
@@ -192,6 +219,7 @@ test.describe("Demo Content Rendering", () => {
     test("abstract section renders correctly", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Look for abstract content (from RSM :abstract: markup)
       const abstractSection = page.locator("text=This paper explores").first();
@@ -220,6 +248,7 @@ test.describe("Demo Content Rendering", () => {
       // Wait for content to load
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Verify the render request was made
       expect(renderRequestMade).toBe(true);
@@ -241,6 +270,7 @@ test.describe("Demo Content Rendering", () => {
       // Wait for styles to apply
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Verify RSM CSS was loaded
       expect(rsmCssLoaded).toBe(true);
@@ -259,6 +289,7 @@ test.describe("Demo Content Rendering", () => {
       // Wait for content to load completely
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Check for any failed requests related to demo content
       const demoRelatedFailures = failedRequests.filter(
@@ -290,20 +321,22 @@ test.describe("Demo Content Rendering", () => {
     test("content contains expected research sections", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
-      // Check for standard academic paper sections
-      await expect(page.locator("text=Abstract")).toBeVisible();
-      await expect(page.locator("text=Introduction")).toBeVisible();
-      await expect(page.locator("text=Methodology")).toBeVisible();
-      await expect(page.locator("text=Results")).toBeVisible();
-      await expect(page.locator("text=Discussion")).toBeVisible();
-      await expect(page.locator("text=Conclusion")).toBeVisible();
-      await expect(page.locator("text=Acknowledgments")).toBeVisible();
+      // Check for standard academic paper sections using headings
+      await expect(page.getByRole("heading", { name: "Abstract" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Introduction" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Methodology" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Results" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Discussion" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Conclusion" })).toBeVisible();
+      await expect(page.getByRole("heading", { name: "Acknowledgments" })).toBeVisible();
     });
 
     test("content is substantive and realistic", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       // Check that content has meaningful length
       const manuscriptText = await page.locator('[data-testid="manuscript-viewer"]').textContent();
@@ -321,6 +354,7 @@ test.describe("Demo Content Rendering", () => {
     test("RSM markup renders correctly without raw syntax", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
 
       const manuscriptText = await page.locator('[data-testid="manuscript-viewer"]').textContent();
 

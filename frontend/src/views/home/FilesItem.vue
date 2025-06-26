@@ -69,16 +69,8 @@
   // File menu callbacks
   const open = () => File.openFile(file.value, router);
   const select = () => {
-    console.log("FilesItem select() called with file:", file.value?.id);
     if (fileStore?.value && fileStore.value.selectFile) {
-      console.log("Calling fileStore.selectFile");
       fileStore.value.selectFile(file.value);
-    } else {
-      console.warn("FileStore not available for file selection", {
-        hasFileStore: !!fileStore,
-        hasValue: !!fileStore?.value,
-        hasSelectFile: !!fileStore?.value?.selectFile,
-      });
     }
   };
   const menuRef = useTemplateRef("menu-ref");

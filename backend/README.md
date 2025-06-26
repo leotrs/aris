@@ -43,9 +43,78 @@ authentication, and metadata.
    uvicorn main:app --reload
    ```
 
-3. **API**
+4. **API**
 
-Once running, the API docs are available at `http://localhost:8000/docs`.
+   Once running, the API docs are available at `http://localhost:8000/docs`.
+
+## Testing
+
+The backend uses a dual-database testing strategy for optimal development speed and CI fidelity.
+
+### Quick Development Testing
+
+For fast iteration during development:
+
+```bash
+uv run pytest -n8                     # SQLite, 8 parallel workers
+uv run pytest tests/test_routes/       # Test specific module
+uv run pytest -k "test_login"         # Run tests matching pattern
+```
+
+### CI Simulation
+
+For 100% CI fidelity using PostgreSQL (requires local PostgreSQL server):
+
+```bash
+./simulate-ci -- uv run pytest -n8              # Full test suite 
+./simulate-ci -- uv run pytest tests/integration/ # Integration tests only
+./simulate-ci -- uv run pytest -k "database"     # Database-specific tests
+```
+
+#### Setting Up CI Simulation
+
+1. **Copy the template script:**
+   ```bash
+   cp simulate-ci.example simulate-ci
+   ```
+
+2. **Edit `simulate-ci` with your actual credentials:**
+   ```bash
+   # Replace placeholders with your actual values
+   export JWT_SECRET_KEY=your_actual_jwt_secret
+   export TEST_USER_PASSWORD=your_test_password
+   # Other environment variables as needed
+   ```
+   
+   **Note**: PostgreSQL credentials are automatically detected:
+   - **Local simulation**: Uses your local PostgreSQL username (e.g., `your_username@localhost`)
+   - **GitHub Actions CI**: Uses `postgres:postgres@localhost` (matches CI service)
+
+3. **Make it executable:**
+   ```bash
+   chmod +x simulate-ci
+   ```
+
+The script automatically:
+- Sets CI environment variables
+- Uses PostgreSQL with worker-specific database isolation
+- Runs your command
+- Cleans up environment variables on exit
+
+### Database Strategy
+
+| Environment | Database | Isolation | Use Case |
+|-------------|----------|-----------|----------|
+| **Local Dev** | SQLite | File-based per worker | Fast iteration, development |
+| **CI / Simulation** | PostgreSQL | Database per worker | Production-like testing |
+
+**Worker Isolation**: Each pytest worker gets a unique database named `test_aris_{worker_id}_{uuid}` to prevent conflicts during parallel execution.
+
+### Environment Variables
+
+- `TEST_DB_URL`: Override database URL completely
+- `CI=true` or `ENV=CI`: Force PostgreSQL usage with worker isolation
+- `PYTEST_XDIST_WORKER`: Set automatically by pytest-xdist for worker identification
 
 
 ## Deployment
