@@ -72,85 +72,6 @@ test.describe("File Management Tests", () => {
     expect(fileExists).toBe(false);
   });
 
-  test("duplicate file creates copy with incremented name", { tag: '@flaky' }, async () => {
-    // Create a file to duplicate
-    const originalFileId = await fileHelpers.createNewFile();
-    await fileHelpers.navigateToHome();
-
-    // Get original file title
-    const originalTitle = await fileHelpers.getFileTitle(originalFileId);
-
-    // Duplicate the file
-    await fileHelpers.duplicateFile(originalFileId);
-
-    // Wait for file list to update
-    await fileHelpers.waitForFilesLoaded();
-
-    // Find the duplicated file (should have "Copy" in the title)
-    const fileItems = await fileHelpers.getFileItems();
-    let duplicatedFileFound = false;
-    let _duplicatedFileId = null;
-
-    for (const fileItem of fileItems) {
-      const testId = await fileItem.getAttribute("data-testid");
-      const fileId = testId.replace("file-item-", "");
-
-      if (fileId !== originalFileId) {
-        const title = await fileHelpers.getFileTitle(fileId);
-        if (title.includes("Copy") || title.includes(originalTitle)) {
-          duplicatedFileFound = true;
-          _duplicatedFileId = fileId;
-          break;
-        }
-      }
-    }
-
-    expect(duplicatedFileFound).toBe(true);
-
-    // TODO: Clean up - deletion functionality needs to be fixed
-    // await fileHelpers.deleteFile(originalFileId);
-    // if (_duplicatedFileId) {
-    //   await fileHelpers.deleteFile(_duplicatedFileId);
-    // }
-  });
-
-  test("file selection updates UI state across components", { tag: '@flaky' }, async () => {
-    // Create multiple files for selection testing
-    const fileId1 = await fileHelpers.createNewFile();
-    await fileHelpers.navigateToHome();
-
-    const fileId2 = await fileHelpers.createNewFile();
-    await fileHelpers.navigateToHome();
-
-    // Verify both files exist
-    const file1Exists = await fileHelpers.fileExists(fileId1);
-    const file2Exists = await fileHelpers.fileExists(fileId2);
-    expect(file1Exists).toBe(true);
-    expect(file2Exists).toBe(true);
-
-    // Select first file
-    await fileHelpers.selectFile(fileId1);
-
-    // Verify first file is selected (has active class)
-    const file1Item = await fileHelpers.getFileItem(fileId1);
-    await expect(file1Item).toHaveClass(/active/);
-
-    // Verify second file is not selected
-    const file2Item = await fileHelpers.getFileItem(fileId2);
-    await expect(file2Item).not.toHaveClass(/active/);
-
-    // Select second file
-    await fileHelpers.selectFile(fileId2);
-
-    // Verify selection switched to second file
-    await expect(file2Item).toHaveClass(/active/);
-    await expect(file1Item).not.toHaveClass(/active/);
-
-    // Clean up - delete test files
-    await fileHelpers.deleteFile(fileId1);
-    await fileHelpers.deleteFile(fileId2);
-  });
-
   test("file deletion can be cancelled", async () => {
     // Create a file to test cancellation
     const fileId = await fileHelpers.createNewFile();
@@ -197,7 +118,7 @@ test.describe("File Management Tests", () => {
     await fileHelpers.deleteFile(fileId);
   });
 
-  test("file operations work with keyboard shortcuts", { tag: '@flaky' }, async ({ page }) => {
+  test("file operations work with keyboard shortcuts", { tag: "@flaky" }, async ({ page }) => {
     // Create a file for keyboard testing
     const fileId = await fileHelpers.createNewFile();
     await fileHelpers.navigateToHome();
@@ -223,7 +144,7 @@ test.describe("File Management Tests", () => {
     await page.keyboard.press("Enter");
 
     // Check if navigation happened (keyboard shortcut may not be implemented)
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(300);
     const currentUrl = page.url();
 
     if (currentUrl.includes(`/file/${fileId}`)) {

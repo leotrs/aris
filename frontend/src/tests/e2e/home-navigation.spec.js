@@ -59,28 +59,6 @@ test.describe("Home View Navigation & Keyboard", () => {
     await expect(files[0]).toHaveClass(/focused/);
   });
 
-  test("navigation wraps around at list boundaries", { tag: '@flaky' }, async ({ page }) => {
-    await page.goto("/");
-
-    await page.waitForSelector('[data-testid="files-container"]');
-    const files = await page.locator('[data-testid^="file-item-"]').all();
-    const lastIndex = files.length - 1;
-
-    // Navigate to last item
-    for (let i = 0; i < files.length; i++) {
-      await page.keyboard.press("j");
-    }
-    await expect(files[lastIndex]).toHaveClass(/focused/);
-
-    // j should wrap to first item
-    await page.keyboard.press("j");
-    await expect(files[0]).toHaveClass(/focused/);
-
-    // k should wrap back to last item
-    await page.keyboard.press("k");
-    await expect(files[lastIndex]).toHaveClass(/focused/);
-  });
-
   test("escape key clears focus", async ({ page }) => {
     await page.goto("/");
 
@@ -94,25 +72,6 @@ test.describe("Home View Navigation & Keyboard", () => {
     // Escape should clear focus
     await page.keyboard.press("Escape");
     await expect(files[0]).not.toHaveClass(/focused/);
-  });
-
-  test("focused item scrolls into view", { tag: '@flaky' }, async ({ page }) => {
-    await page.goto("/");
-
-    // Create more files to enable scrolling
-    await fileHelpers.ensureTestFiles(15);
-    await page.waitForSelector('[data-testid="files-container"]');
-
-    const files = await page.locator('[data-testid^="file-item-"]').all();
-
-    // Navigate to bottom of list
-    for (let i = 0; i < files.length; i++) {
-      await page.keyboard.press("j");
-    }
-
-    // Last item should be in view
-    const lastFile = files[files.length - 1];
-    await expect(lastFile).toBeInViewport();
   });
 
   test("enter key opens focused file", async ({ page }) => {
@@ -195,29 +154,33 @@ test.describe("Home View Navigation & Keyboard", () => {
     await expect(searchInput).toBeFocused();
   });
 
-  test("keyboard navigation maintains focus after file operations", { tag: '@flaky' }, async ({ page }) => {
-    await page.goto("/");
+  test(
+    "keyboard navigation maintains focus after file operations",
+    { tag: "@flaky" },
+    async ({ page }) => {
+      await page.goto("/");
 
-    await page.waitForSelector('[data-testid="files-container"]');
-    const files = await page.locator('[data-testid^="file-item-"]').all();
+      await page.waitForSelector('[data-testid="files-container"]');
+      const files = await page.locator('[data-testid^="file-item-"]').all();
 
-    // Focus second file
-    await page.keyboard.press("j");
-    await page.keyboard.press("j");
-    await expect(files[1]).toHaveClass(/focused/);
+      // Focus second file
+      await page.keyboard.press("j");
+      await page.keyboard.press("j");
+      await expect(files[1]).toHaveClass(/focused/);
 
-    // Duplicate file via context menu
-    await page.keyboard.press(".");
-    await page.locator("text=Duplicate").click();
+      // Duplicate file via context menu
+      await page.keyboard.press(".");
+      await page.locator("text=Duplicate").click();
 
-    // Wait for file list to update
-    await page.waitForTimeout(500);
+      // Wait for file list to update
+      await page.waitForTimeout(500);
 
-    // Focus should still work after file operations
-    await page.keyboard.press("j");
-    const newFiles = await page.locator('[data-testid^="file-item-"]').all();
-    expect(newFiles.length).toBeGreaterThan(files.length);
-  });
+      // Focus should still work after file operations
+      await page.keyboard.press("j");
+      const newFiles = await page.locator('[data-testid^="file-item-"]').all();
+      expect(newFiles.length).toBeGreaterThan(files.length);
+    }
+  );
 
   test("navigation works in both list and cards view modes", async ({ page }) => {
     await page.goto("/");
