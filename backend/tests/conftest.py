@@ -96,22 +96,32 @@ async def create_database_if_not_exists(database_url: str):
     
     # Extract database name from URL
     db_name = database_url.split("/")[-1]
-    # Create admin connection URL with password preserved
-    admin_url = database_url.replace(f"/{db_name}", "/postgres")
     
-    admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
-    try:
-        async with admin_engine.connect() as conn:
-            # Check if database exists
-            result = await conn.execute(
-                text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
-                {"db_name": db_name}
-            )
-            if not result.fetchone():
-                # Create database
-                await conn.execute(text(f'CREATE DATABASE "{db_name}"'))
-    finally:
-        await admin_engine.dispose()
+    # Try different admin databases in order of preference
+    admin_dbs = ["postgres", "test_aris"]
+    
+    for admin_db in admin_dbs:
+        admin_url = database_url.replace(f"/{db_name}", f"/{admin_db}")
+        admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
+        
+        try:
+            async with admin_engine.connect() as conn:
+                # Check if database exists
+                result = await conn.execute(
+                    text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
+                    {"db_name": db_name}
+                )
+                if not result.fetchone():
+                    # Create database
+                    await conn.execute(text(f'CREATE DATABASE "{db_name}"'))
+                break  # Success, exit the loop
+        except Exception as e:
+            # If this admin database fails, try the next one
+            if admin_db == admin_dbs[-1]:  # Last attempt
+                raise e  # Re-raise the last exception
+            continue
+        finally:
+            await admin_engine.dispose()
 
 
 @pytest_asyncio.fixture
