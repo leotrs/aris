@@ -73,8 +73,8 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     vi.clearAllMocks();
   });
 
-  const createWrapper = (overrides = {}) => {
-    return mount(FilesItem, {
+  const createWrapper = async (overrides = {}) => {
+    const wrapper = mount(FilesItem, {
       props: {
         modelValue: mockFile.value,
         mode: "list",
@@ -151,11 +151,17 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
         },
       },
     });
+
+    // Wait for async component to mount
+    await nextTick();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    return wrapper;
   };
 
   describe("File Selection State Synchronization", () => {
     it("syncs selection state correctly when file is selected", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       expect(wrapper.classes()).not.toContain("active");
       expect(mockFile.value.selected).toBe(false);
@@ -169,7 +175,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     it("applies active class when file is selected", async () => {
       // Set selected first, then create wrapper
       mockFile.value.selected = true;
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       await nextTick();
 
@@ -181,7 +187,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
     it("removes active class when file is deselected", async () => {
       mockFile.value.selected = true;
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       expect(wrapper.vm.file.selected).toBe(true);
       expect(wrapper.html()).toContain("active");
@@ -196,7 +202,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
     it("maintains selection state across component updates", async () => {
       mockFile.value.selected = true;
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       expect(wrapper.vm.file.selected).toBe(true);
       expect(wrapper.html()).toContain("active");
@@ -209,7 +215,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     });
 
     it("handles rapid selection changes", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Call select method directly since click events need proper setup
       wrapper.vm.select();
@@ -220,7 +226,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     });
 
     it("prevents selection when file store is unavailable", async () => {
-      const wrapper = createWrapper({
+      const wrapper = await createWrapper({
         provide: {
           fileStore: ref(null),
         },
@@ -236,7 +242,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       const { useKeyboardShortcuts } = await import("@/composables/useKeyboardShortcuts.js");
 
       // Create wrapper to trigger useKeyboardShortcuts call
-      createWrapper();
+      await createWrapper();
 
       // Get registered shortcuts
       expect(useKeyboardShortcuts).toHaveBeenCalled();
@@ -249,7 +255,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       const { useKeyboardShortcuts } = await import("@/composables/useKeyboardShortcuts.js");
 
       // Create wrapper to trigger useKeyboardShortcuts call
-      createWrapper();
+      await createWrapper();
 
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
       expect(shortcuts).toHaveProperty("enter");
@@ -263,7 +269,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       const { useKeyboardShortcuts } = await import("@/composables/useKeyboardShortcuts.js");
 
       // Create wrapper to trigger useKeyboardShortcuts call
-      createWrapper();
+      await createWrapper();
 
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
       expect(shortcuts).toHaveProperty(" ");
@@ -274,7 +280,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     });
 
     it("navigates context menu with arrow keys", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Open context menu
       const menuTrigger = wrapper.find('[data-testid="file-menu"] .context-menu-trigger');
@@ -290,7 +296,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     });
 
     it("executes context menu actions correctly", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Open context menu
       const menuTrigger = wrapper.find('[data-testid="file-menu"] .context-menu-trigger');
@@ -307,7 +313,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     });
 
     it("handles duplicate action correctly", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Open context menu and trigger duplicate
       const menuTrigger = wrapper.find('[data-testid="file-menu"] .context-menu-trigger');
@@ -326,7 +332,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     });
 
     it("shows delete confirmation modal", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Open context menu and trigger delete
       const menuTrigger = wrapper.find('[data-testid="file-menu"] .context-menu-trigger');
@@ -345,7 +351,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
   describe("File Operations and State Management", () => {
     it("handles successful file deletion", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Trigger delete action
       await wrapper.vm.onDelete();
@@ -360,7 +366,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
     it("handles failed file deletion gracefully", async () => {
       mockFileStore.value.deleteFile.mockRejectedValue(new Error("Delete failed"));
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Spy on console.error
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
@@ -380,7 +386,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     });
 
     it("cancels file deletion", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       await wrapper.vm.onDelete();
       await nextTick();
@@ -393,8 +399,8 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       expect(wrapper.vm.showDeleteModal).toBe(false);
     });
 
-    it("prevents delete when file is null", () => {
-      const wrapper = createWrapper({
+    it("prevents delete when file is null", async () => {
+      const wrapper = await createWrapper({
         props: {
           modelValue: null,
         },
@@ -406,7 +412,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     });
 
     it("handles race condition in delete confirmation", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Close modal before handling confirm
       wrapper.vm.showDeleteModal = false;
@@ -419,7 +425,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
   describe("Hover and Focus State Management", () => {
     it("applies hover state correctly", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       expect(wrapper.vm.hovered).toBe(false);
 
@@ -435,7 +441,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
     it("applies focused state correctly", async () => {
       mockFile.value.focused = true;
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
       await nextTick();
 
       expect(wrapper.vm.file.focused).toBe(true);
@@ -452,7 +458,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     it("combines multiple states correctly", async () => {
       mockFile.value.selected = true;
       mockFile.value.focused = true;
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       await wrapper.trigger("mouseenter");
       await nextTick();
@@ -473,7 +479,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     });
 
     it("maintains hover state during focus changes", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Set hovered state directly since DOM events may not trigger reactive updates in tests
       wrapper.vm.hovered = true;
@@ -489,8 +495,8 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
   });
 
   describe("View Mode Compatibility", () => {
-    it("renders correctly in list mode", () => {
-      const wrapper = createWrapper({ props: { mode: "list" } });
+    it("renders correctly in list mode", async () => {
+      const wrapper = await createWrapper({ props: { mode: "list" } });
 
       expect(wrapper.props("mode")).toBe("list");
       expect(wrapper.html()).toContain("list");
@@ -498,8 +504,8 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       expect(wrapper.find('[data-testid="file-date"]').exists()).toBe(true);
     });
 
-    it("renders correctly in cards mode", () => {
-      const wrapper = createWrapper({ props: { mode: "cards" } });
+    it("renders correctly in cards mode", async () => {
+      const wrapper = await createWrapper({ props: { mode: "cards" } });
 
       expect(wrapper.props("mode")).toBe("cards");
       expect(wrapper.html()).toContain("cards");
@@ -507,23 +513,23 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
     it("hides file menu when file is selected", async () => {
       mockFile.value.selected = true;
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // FileMenu should not be rendered when file is selected
       expect(wrapper.find('[data-testid="file-menu"]').exists()).toBe(false);
     });
 
-    it("shows file menu when file is not selected", () => {
+    it("shows file menu when file is not selected", async () => {
       mockFile.value.selected = false;
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       expect(wrapper.find('[data-testid="file-menu"]').exists()).toBe(true);
     });
   });
 
   describe("Responsive Behavior", () => {
-    it("hides tags in extra small mode", () => {
-      const wrapper = createWrapper({
+    it("hides tags in extra small mode", async () => {
+      const wrapper = await createWrapper({
         provide: {
           xsMode: ref(true),
         },
@@ -533,8 +539,8 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       expect(wrapper.find('[data-testid="tag-row"]').exists()).toBe(false);
     });
 
-    it("shows tags in normal mode", () => {
-      const wrapper = createWrapper({
+    it("shows tags in normal mode", async () => {
+      const wrapper = await createWrapper({
         provide: {
           xsMode: ref(false),
         },
@@ -546,7 +552,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
   describe("Error Handling and Edge Cases", () => {
     it("handles missing file store methods gracefully", async () => {
-      const wrapper = createWrapper({
+      const wrapper = await createWrapper({
         provide: {
           fileStore: ref({}), // Empty store
         },
@@ -556,15 +562,15 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       await wrapper.trigger("click");
     });
 
-    it("handles malformed file data", () => {
+    it("handles malformed file data", async () => {
       const malformedFile = {
         id: null,
         title: undefined,
         // missing other properties
       };
 
-      expect(() => {
-        createWrapper({
+      expect(async () => {
+        await createWrapper({
           props: {
             modelValue: malformedFile,
           },
@@ -573,7 +579,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     });
 
     it("handles double-click correctly", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Call open method directly since dblclick event needs proper setup
       wrapper.vm.open();
@@ -581,16 +587,16 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       expect(mockOpenFile).toHaveBeenCalledWith(mockFile.value, expect.any(Object));
     });
 
-    it("prevents context menu when file is selected", () => {
+    it("prevents context menu when file is selected", async () => {
       mockFile.value.selected = true;
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // FileMenu component should not exist
       expect(wrapper.findComponent('[data-testid="file-menu"]').exists()).toBe(false);
     });
 
     it("handles component unmounting during operations", async () => {
-      const wrapper = createWrapper();
+      const wrapper = await createWrapper();
 
       // Start delete operation
       await wrapper.vm.onDelete();
