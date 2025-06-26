@@ -12,7 +12,7 @@ export default defineConfig({
   /* Retry failed tests - more retries on CI, fewer locally */
   retries: process.env.CI ? 2 : 1,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : undefined,
+  workers: process.env.CI ? 1 : 2,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
   /* Global test timeout - max time for individual test */
@@ -29,8 +29,8 @@ export default defineConfig({
     trace: "on-first-retry",
     /* Take screenshot on failure */
     screenshot: "only-on-failure",
-    /* Record video on failure */
-    video: "retain-on-failure",
+    /* Disable video recording for performance */
+    video: "off",
     /* Enable touch support for mobile tests */
     hasTouch: true,
   },

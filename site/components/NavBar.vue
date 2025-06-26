@@ -33,11 +33,12 @@
             Resources
           </a>
           <ul
-            v-if="isResourcesDropdownOpen"
+            v-show="isResourcesDropdownOpen"
             ref="resourcesDropdownMenu"
             class="dropdown-menu"
             role="menu"
             aria-label="Resources submenu"
+            data-testid="dropdown-menu"
             @keydown.escape="closeDropdownAndFocus('resources')"
             @keydown.arrow-up.prevent="focusPreviousMenuItem"
             @keydown.arrow-down.prevent="focusNextMenuItem"
@@ -387,7 +388,20 @@
     list-style: none;
     margin: 0;
     z-index: 1010; /* Above navbar and other content */
-    animation: fadeIn 0.2s ease-out; /* Simple fade in */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 0.2s ease-out, visibility 0.2s ease-out, transform 0.2s ease-out;
+  }
+
+  /* Show dropdown when Vue reactive state is true OR on CSS hover as fallback */
+  .dropdown-menu[style*="display: block"],
+  .dropdown-menu[style*="display: list-item"],
+  .dropdown-menu:not([style*="display: none"]),
+  .has-dropdown:hover .dropdown-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
   }
 
   .dropdown-menu li {
