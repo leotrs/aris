@@ -101,15 +101,12 @@ async def create_database_if_not_exists(database_url: str):
     db_name = database_url.split("/")[-1]
     print(f"DEBUG: Creating database {db_name} from URL {database_url}")
     
-    # In GitHub Actions, we need to create per-worker databases for parallel test isolation
-    # Only skip if using the original shared database (for backwards compatibility)
-    if os.environ.get("GITHUB_ACTIONS") and db_name == "test_aris":
-        print(f"DEBUG: Skipping creation of {db_name} in GitHub Actions")
-        return
-    
-    # Try different admin databases in order of preference
-    # In GitHub Actions, we use test_aris as the admin database
-    admin_dbs = ["test_aris", "postgres"] if os.environ.get("GITHUB_ACTIONS") else ["postgres", "test_aris"]
+    # In GitHub Actions, we can create databases by connecting to the default 'postgres' database
+    # which always exists in the PostgreSQL service container
+    if os.environ.get("GITHUB_ACTIONS"):
+        admin_dbs = ["postgres"]  # Use the default postgres database as admin
+    else:
+        admin_dbs = ["postgres", "test_aris"]  # Try both for local development
     
     for admin_db in admin_dbs:
         admin_url = database_url.replace(f"/{db_name}", f"/{admin_db}")
