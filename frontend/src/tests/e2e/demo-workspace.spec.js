@@ -9,7 +9,7 @@ test.describe("Demo Workspace Functionality", () => {
     // Ensure clean auth state for demo access
     await authHelpers.clearAuthState();
 
-    await page.goto("/demo");
+    await page.goto("/demo", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
 
     // Wait for demo content to load
@@ -172,7 +172,7 @@ test.describe("Demo Workspace Functionality", () => {
       }
     });
 
-    test("editor and manuscript view work together in split mode", async ({ page }) => {
+    test("editor and manuscript view work together in split mode", { tag: '@flaky' }, async ({ page }) => {
       // Open editor
       const editorButton = page
         .locator('button:has-text("editor"), [data-testid*="editor"]')

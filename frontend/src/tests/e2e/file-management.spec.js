@@ -72,7 +72,7 @@ test.describe("File Management Tests", () => {
     expect(fileExists).toBe(false);
   });
 
-  test("duplicate file creates copy with incremented name", async () => {
+  test("duplicate file creates copy with incremented name", { tag: '@flaky' }, async () => {
     // Create a file to duplicate
     const originalFileId = await fileHelpers.createNewFile();
     await fileHelpers.navigateToHome();
@@ -114,7 +114,7 @@ test.describe("File Management Tests", () => {
     // }
   });
 
-  test("file selection updates UI state across components", async () => {
+  test("file selection updates UI state across components", { tag: '@flaky' }, async () => {
     // Create multiple files for selection testing
     const fileId1 = await fileHelpers.createNewFile();
     await fileHelpers.navigateToHome();
@@ -197,7 +197,7 @@ test.describe("File Management Tests", () => {
     await fileHelpers.deleteFile(fileId);
   });
 
-  test("file operations work with keyboard shortcuts", async ({ page }) => {
+  test("file operations work with keyboard shortcuts", { tag: '@flaky' }, async ({ page }) => {
     // Create a file for keyboard testing
     const fileId = await fileHelpers.createNewFile();
     await fileHelpers.navigateToHome();

@@ -48,7 +48,7 @@ test.describe("Home View Search & Filter", () => {
     }
   });
 
-  test("file list remains functional with search functionality", async ({ page }) => {
+  test("file list remains functional with search functionality", { tag: '@flaky' }, async ({ page }) => {
     const filesContainer = page.locator('[data-testid="files-container"]');
     await expect(filesContainer).toBeVisible();
 

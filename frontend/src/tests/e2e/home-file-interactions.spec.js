@@ -18,7 +18,7 @@ test.describe("Home View File Interactions", () => {
     await fileHelpers.waitForFilesLoaded();
   });
 
-  test("file selection state works correctly", async ({ page }) => {
+  test("file selection state works correctly", { tag: '@flaky' }, async ({ page }) => {
     const fileItems = page.locator('[data-testid^="file-item-"]');
 
     if ((await fileItems.count()) >= 2) {
@@ -52,7 +52,7 @@ test.describe("Home View File Interactions", () => {
     }
   });
 
-  test("file menu operations work correctly", async () => {
+  test("file menu operations work correctly", { tag: '@flaky' }, async () => {
     // Create a test file for menu operations
     const fileId = await fileHelpers.createNewFile();
     await fileHelpers.navigateToHome();
