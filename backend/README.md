@@ -78,14 +78,17 @@ For 100% CI fidelity using PostgreSQL (requires local PostgreSQL server):
    cp simulate-ci.example simulate-ci
    ```
 
-2. **Edit `simulate-ci` with your PostgreSQL credentials:**
+2. **Edit `simulate-ci` with your actual credentials:**
    ```bash
    # Replace placeholders with your actual values
    export JWT_SECRET_KEY=your_actual_jwt_secret
    export TEST_USER_PASSWORD=your_test_password
-   # Use your PostgreSQL username (no password needed for local superuser)
-   export DB_URL_PROD=postgresql+asyncpg://your_username@localhost:5432/test_aris
+   # Other environment variables as needed
    ```
+   
+   **Note**: PostgreSQL credentials are automatically detected:
+   - **Local simulation**: Uses your local PostgreSQL username (e.g., `your_username@localhost`)
+   - **GitHub Actions CI**: Uses `postgres:postgres@localhost` (matches CI service)
 
 3. **Make it executable:**
    ```bash
