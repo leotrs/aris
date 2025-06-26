@@ -53,3 +53,4 @@ npm run test:e2e                      # Run E2E tests
 - **Whenever using puppeteer or playwright, use headless mode**
 - **Always run e2e tests with --reporter=line**
 - **When using playwright or puppeteer, always run in headless mode**
+- Before starting any service, check if it is already running
