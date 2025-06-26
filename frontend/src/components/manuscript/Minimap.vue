@@ -80,10 +80,10 @@
               html: props.file.html,
             }
           );
-          
+
           // Handle case where makeMinimap returns undefined (e.g., in tests)
           const { svg: newSvg = "", svgInitialData: newData = {} } = result || {};
-          
+
           if (!canceled) {
             html.value = newSvg;
             svgInitialData.value = newData;

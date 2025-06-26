@@ -126,6 +126,9 @@ jobs:
   e2e-test:
     runs-on: ubuntu-latest
     needs: [backend-test, frontend-test]
+    env:
+      ENV: CI
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     services:
       postgres:
@@ -166,8 +169,6 @@ jobs:
       run: |
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
-      env:
-        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     # Frontend setup
     - name: Setup Node.js
@@ -189,8 +190,6 @@ jobs:
     - name: Start backend server
       working-directory: backend
       run: uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
-      env:
-        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     - name: Start frontend server
       working-directory: frontend
