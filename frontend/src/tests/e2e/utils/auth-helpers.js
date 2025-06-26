@@ -9,12 +9,40 @@ export class AuthHelpers {
     await this.page.goto("/login");
     await this.page.fill('[data-testid="email-input"]', email);
     await this.page.fill('[data-testid="password-input"]', password);
+
+    // Click login button and wait for either navigation or error message
     await this.page.click('[data-testid="login-button"]');
+
+    try {
+      // Try to wait for navigation (successful login)
+      await this.page.waitForNavigation({ timeout: 10000 });
+      await this.page.waitForLoadState("networkidle");
+    } catch (error) {
+      // If no navigation, check if we're still on login page (failed login)
+      const currentUrl = this.page.url();
+      if (currentUrl.includes("/login")) {
+        // Failed login - wait for any error messages to appear
+        await this.page.waitForLoadState("networkidle");
+        // Don't throw error here, let the test handle the failed login scenario
+      } else {
+        // Some other navigation issue, re-throw the error
+        throw error;
+      }
+    }
   }
 
   async expectToBeLoggedIn() {
-    await expect(this.page).toHaveURL("/");
-    await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible();
+    // Wait for redirect to home page with increased timeout
+    await expect(this.page).toHaveURL("/", { timeout: 10000 });
+
+    // Wait for user menu to be visible, indicating successful authentication
+    await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible({ timeout: 10000 });
+
+    // Verify authentication tokens exist
+    const tokens = await this.getStoredTokens();
+    if (!tokens.accessToken) {
+      throw new Error("Authentication tokens not found after login");
+    }
   }
 
   async expectToBeOnLoginPage() {
