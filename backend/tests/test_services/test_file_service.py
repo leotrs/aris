@@ -387,6 +387,164 @@ class TestInMemoryFileService:
         
         duplicated_file = await file_service.duplicate_file(999)
         assert duplicated_file is None
+    
+    @pytest.mark.asyncio
+    async def test_get_file_html_renders_actual_rsm(self, file_service):
+        """Test that get_file_html returns properly rendered RSM content, not placeholder."""
+        await file_service.initialize()
+        
+        # Create a file with RSM content
+        rsm_content = ":rsm:\n# Test Title\nThis is test content.\n::"
+        create_data = FileCreateData(
+            title="RSM Test File",
+            abstract="Test abstract",
+            source=rsm_content,
+            owner_id=123,
+            status=FileStatus.DRAFT
+        )
+        
+        created_file = await file_service.create_file(create_data)
+        
+        # Get HTML rendering
+        html = await file_service.get_file_html(created_file.id)
+        
+        # Should NOT contain placeholder text
+        assert html is not None
+        assert "Rendered:" not in html  # Should not contain placeholder prefix
+        assert rsm_content not in html  # Should not contain raw RSM source
+        
+        # Should contain actual HTML elements from RSM rendering
+        assert "<" in html and ">" in html  # Should contain HTML tags
+        assert "Test Title" in html  # Should contain the rendered title
+        assert "This is test content" in html  # Should contain the rendered content
+    
+    @pytest.mark.asyncio
+    async def test_get_file_section_renders_actual_rsm(self, file_service):
+        """Test that get_file_section returns properly extracted and rendered RSM sections."""
+        await file_service.initialize()
+        
+        # Create a file with RSM content that has markdown-style sections
+        rsm_content = ":rsm:\n# Main Title\n\n## minimap\nMinimap content here\n\n## abstract\nAbstract content here\n::"
+        create_data = FileCreateData(
+            title="Section Test File",
+            abstract="Test abstract",
+            source=rsm_content,
+            owner_id=123,
+            status=FileStatus.DRAFT
+        )
+        
+        created_file = await file_service.create_file(create_data)
+        
+        # Get section rendering - test for level-2 section extraction
+        section_html = await file_service.get_file_section(created_file.id, "level-2", handrails=True)
+        
+        # Should NOT contain placeholder text
+        assert section_html is not None
+        assert f"level-2: {rsm_content}" not in section_html  # Should not contain placeholder
+        
+        # Should contain actual section content (should get first level-2 section)
+        assert "<" in section_html and ">" in section_html  # Should contain HTML tags
+        assert "minimap" in section_html.lower()  # Should contain the first level-2 section content
+    
+    @pytest.mark.asyncio 
+    async def test_html_caching_with_real_rsm(self, file_service):
+        """Test that HTML caching works correctly with real RSM rendering."""
+        await file_service.initialize()
+        
+        # Create a file with RSM content
+        rsm_content = ":rsm:\n# Cached Title\nCached content.\n::"
+        create_data = FileCreateData(
+            title="Cache Test File",
+            abstract="Test abstract", 
+            source=rsm_content,
+            owner_id=123,
+            status=FileStatus.DRAFT
+        )
+        
+        created_file = await file_service.create_file(create_data)
+        
+        # Get HTML twice - should be cached after first call
+        html1 = await file_service.get_file_html(created_file.id)
+        html2 = await file_service.get_file_html(created_file.id)
+        
+        # Both should be identical (cached)
+        assert html1 == html2
+        
+        # Should contain real rendered content, not placeholder
+        assert "Rendered:" not in html1
+        assert "Cached Title" in html1
+        assert "Cached content" in html1
+    
+    @pytest.mark.asyncio
+    async def test_get_file_title_extracts_from_rsm(self, file_service):
+        """Test that get_file_title extracts title from RSM when file title is empty."""
+        await file_service.initialize()
+        
+        # Create a file with empty title but RSM content with title
+        rsm_content = ":rsm:\n# Extracted Title from RSM\nSome content here\n::"
+        create_data = FileCreateData(
+            title="",  # Empty title to force extraction
+            abstract="Test abstract",
+            source=rsm_content,
+            owner_id=123,
+            status=FileStatus.DRAFT
+        )
+        
+        created_file = await file_service.create_file(create_data)
+        
+        # Get title - should extract from RSM
+        title = await file_service.get_file_title(created_file.id)
+        
+        # Should extract the title from RSM content
+        assert title is not None
+        assert title == "Extracted Title from RSM"
+    
+    @pytest.mark.asyncio
+    async def test_get_file_title_uses_explicit_title(self, file_service):
+        """Test that get_file_title uses explicit title when available."""
+        await file_service.initialize()
+        
+        # Create a file with explicit title and different RSM title
+        rsm_content = ":rsm:\n# RSM Title\nSome content here\n::"
+        create_data = FileCreateData(
+            title="Explicit Title",  # Explicit title should take precedence
+            abstract="Test abstract",
+            source=rsm_content,
+            owner_id=123,
+            status=FileStatus.DRAFT
+        )
+        
+        created_file = await file_service.create_file(create_data)
+        
+        # Get title - should use explicit title
+        title = await file_service.get_file_title(created_file.id)
+        
+        # Should use explicit title, not extracted
+        assert title == "Explicit Title"
+    
+    @pytest.mark.asyncio
+    async def test_get_file_title_caching(self, file_service):
+        """Test that extracted titles are properly cached."""
+        await file_service.initialize()
+        
+        # Create a file with empty title
+        rsm_content = ":rsm:\n# Cached Title\nSome content here\n::"
+        create_data = FileCreateData(
+            title="",
+            abstract="Test abstract",
+            source=rsm_content,
+            owner_id=123,
+            status=FileStatus.DRAFT
+        )
+        
+        created_file = await file_service.create_file(create_data)
+        
+        # Get title twice - should be cached after first call
+        title1 = await file_service.get_file_title(created_file.id)
+        title2 = await file_service.get_file_title(created_file.id)
+        
+        # Both should be identical (cached)
+        assert title1 == title2 == "Cached Title"
 
 
 class TestInMemoryFileServiceDatabaseSync:

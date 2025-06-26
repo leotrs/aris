@@ -4,6 +4,8 @@ import asyncio
 from datetime import UTC, datetime
 from typing import Any, Dict, List, Optional, Set
 
+import rsm
+from bs4 import BeautifulSoup
 from sqlalchemy import select
 from sqlalchemy.engine import Result
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -166,12 +168,17 @@ class InMemoryFileService(FileServiceInterface):
             if file_data._rendered_html is not None:
                 return file_data._rendered_html
             
-            # Render RSM content (will be implemented later with actual RSM rendering)
-            # For now, return placeholder
-            rendered_html = f"<p>Rendered: {file_data.source}</p>"
-            file_data._rendered_html = rendered_html
-            
-            return rendered_html
+            # Render RSM content using actual RSM rendering
+            try:
+                rendered_html: str = await asyncio.to_thread(rsm.render, file_data.source, handrails=True)
+                file_data._rendered_html = rendered_html
+                return rendered_html
+            except Exception as e:
+                logger.error(f"Failed to render RSM content for file {file_id}: {e}")
+                # Fallback to placeholder if rendering fails
+                fallback_html: str = f"<p>Rendered: {file_data.source}</p>"
+                file_data._rendered_html = fallback_html
+                return fallback_html
     
     async def get_file_section(self, file_id: int, section_name: str, handrails: bool = True) -> Optional[str]:
         """Get rendered HTML for a specific section of a file."""
@@ -185,12 +192,63 @@ class InMemoryFileService(FileServiceInterface):
             if cache_key in file_data._sections:
                 return file_data._sections[cache_key]
             
-            # Extract and render section (will be implemented later with actual RSM processing)
-            # For now, return placeholder
-            section_html = f"<section>{section_name}: {file_data.source}</section>"
-            file_data._sections[cache_key] = section_html
+            # Extract and render section using actual RSM processing
+            try:
+                # Use RSM ProcessorApp to render the content with sections
+                app = rsm.app.ProcessorApp(plain=file_data.source, handrails=handrails)
+                await asyncio.to_thread(app.run)
+                html = app.translator.body
+                
+                # Use BeautifulSoup to extract the specific section
+                soup = BeautifulSoup(html, "lxml")
+                
+                # Try to find element by exact class match first
+                element = soup.find(attrs={"class": section_name})
+                if not element:
+                    # Try to find element that contains the section_name in its class list
+                    for elem in soup.find_all():
+                        if elem.get('class') and section_name in elem.get('class'):
+                            element = elem
+                            break
+                
+                section_html = str(element) if element else ""
+                
+                file_data._sections[cache_key] = section_html
+                return section_html
+            except Exception as e:
+                logger.error(f"Failed to extract section '{section_name}' for file {file_id}: {e}")
+                # Fallback to placeholder if extraction fails
+                section_html = f"<section>{section_name}: {file_data.source}</section>"
+                file_data._sections[cache_key] = section_html
+                return section_html
+    
+    async def get_file_title(self, file_id: int) -> Optional[str]:
+        """Get the title for a file, extracted from RSM if needed."""
+        async with self._lock:
+            file_data = self._files.get(file_id)
+            if not file_data or file_data.is_deleted():
+                return None
             
-            return section_html
+            # If file has an explicit title, use it
+            if file_data.title:
+                return file_data.title
+            
+            # Check cache first
+            if file_data._extracted_title is not None:
+                return file_data._extracted_title
+            
+            # Extract title from RSM content
+            try:
+                app = rsm.app.ParserApp(plain=file_data.source)
+                await asyncio.to_thread(app.run)
+                extracted_title = str(app.transformer.tree.title) if app.transformer.tree.title else ""
+                file_data._extracted_title = extracted_title
+                return extracted_title
+            except Exception as e:
+                logger.error(f"Failed to extract title for file {file_id}: {e}")
+                # Fallback to empty string
+                file_data._extracted_title = ""
+                return ""
     
     async def sync_from_database(self, db: AsyncSession) -> None:
         """Load all files from database into memory."""
