@@ -99,7 +99,6 @@ async def create_database_if_not_exists(database_url: str):
     
     # Extract database name from URL
     db_name = database_url.split("/")[-1]
-    print(f"DEBUG: Creating database {db_name} from URL {database_url}")
     
     # In GitHub Actions, we can create databases by connecting to the default 'postgres' database
     # which always exists in the PostgreSQL service container
