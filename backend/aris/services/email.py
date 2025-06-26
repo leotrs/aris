@@ -41,6 +41,7 @@ class EmailService:
             </head>
             <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
                 <div style="text-align: center; margin-bottom: 30px;">
+                    <img src="https://aris.pub/logo.png" alt="Aris" style="height: 48px; margin-bottom: 16px;" />
                     <h1 style="color: #2563eb; margin: 0;">Welcome to Aris</h1>
                     <p style="color: #6b7280; margin: 5px 0 0 0;">The future of scientific publishing</p>
                 </div>
