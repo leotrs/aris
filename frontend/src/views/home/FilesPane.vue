@@ -4,6 +4,7 @@
   import Topbar from "./FilesTopbar.vue";
   import FilesHeader from "./FilesHeader.vue";
   import FilesItem from "./FilesItem.vue";
+  import LoadingSpinner from "@/components/base/LoadingSpinner.vue";
 
   const props = defineProps({});
   const fileStore = inject("fileStore");
@@ -63,7 +64,9 @@
           </template>
         </div>
 
-        <template #fallback><div class="loading">loading files...</div></template>
+        <template #fallback>
+          <LoadingSpinner message="Loading files..." />
+        </template>
       </Suspense>
     </div>
   </Pane>
