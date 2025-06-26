@@ -187,7 +187,8 @@ describe("HomeSidebar.vue", () => {
             ContextMenu: { template: "<div><slot /></div>" },
             ContextMenuItem: { template: "<div><slot /></div>" },
             SidebarItem: {
-              template: '<div @click="$emit(\'click\')" data-testid="sidebar-item">{{ text }}<slot /></div>',
+              template:
+                '<div @click="$emit(\'click\')" data-testid="sidebar-item">{{ text }}<slot /></div>',
               emits: ["click"],
               props: ["icon", "text", "active", "clickable", "tooltip", "tooltipAlways"],
             },
@@ -203,7 +204,7 @@ describe("HomeSidebar.vue", () => {
       const collapseButton = wrapper
         .findAll('[data-testid="sidebar-item"]')
         .find((item) => item.text().includes("Collapse"));
-      
+
       expect(collapseButton).toBeTruthy();
       await collapseButton.trigger("click");
 
@@ -229,7 +230,7 @@ describe("HomeSidebar.vue", () => {
       collapsed.value = true;
       await wrapper.vm.$nextTick();
       const collapsedLogoSrc = wrapper.get("#logo img").attributes("src");
-      
+
       // The logos should be different
       expect(expandedLogoSrc).not.toBe(collapsedLogoSrc);
     });

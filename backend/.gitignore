@@ -1,0 +1,27 @@
+# Environment files with secrets
+simulate-ci.sh
+
+# Test databases
+test_*.db
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Coverage reports
+htmlcov/
+.coverage
+coverage.xml
+*.cover
+
+# Pytest cache
+.pytest_cache/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

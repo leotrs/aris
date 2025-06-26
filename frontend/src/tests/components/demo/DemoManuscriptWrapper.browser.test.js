@@ -20,13 +20,13 @@ const mockTooltipster = { default: {} };
 // Override global import to mock the dynamic imports
 const originalImport = globalThis.import;
 globalThis.import = vi.fn().mockImplementation((url) => {
-  if (url.includes('jquery')) {
+  if (url.includes("jquery")) {
     return Promise.resolve(mockJquery);
   }
-  if (url.includes('tooltipster')) {
+  if (url.includes("tooltipster")) {
     return Promise.resolve(mockTooltipster);
   }
-  if (url.includes('onload.js')) {
+  if (url.includes("onload.js")) {
     return Promise.resolve({ onload: mockOnload });
   }
   // Fall back to original import for other modules
@@ -48,7 +48,7 @@ beforeEach(() => {
   // Reset the mock onload function
   mockOnload.mockClear();
   mockOnload.mockResolvedValue(undefined);
-  
+
   // Mock the createDemoApi return value
   vi.mocked(createDemoApi).mockReturnValue({
     getUri: () => "http://localhost:8000", // Keep the proper URI for backend requests
