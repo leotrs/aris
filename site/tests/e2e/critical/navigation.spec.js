@@ -72,20 +72,23 @@ test.describe("Navigation Flow E2E", () => {
       try {
         // Check if frontend is available before testing demo
         const frontendCheck = await page.request.get("http://localhost:5173").catch(() => null);
-        
+
         if (frontendCheck && frontendCheck.ok()) {
-          await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), demoLink.click()]);
-          
+          await Promise.all([
+            page.waitForNavigation({ waitUntil: "networkidle" }),
+            demoLink.click(),
+          ]);
+
           // Should redirect to frontend demo
           expect(page.url()).toContain("localhost:5173/demo");
-          
+
           // Navigate back for other tests
           await page.goBack();
           await page.waitForLoadState("networkidle");
         } else {
           console.log("Frontend not available, skipping demo redirect test");
         }
-      } catch (error) {
+      } catch {
         console.log("Demo redirect test skipped due to frontend unavailability");
       }
     }
