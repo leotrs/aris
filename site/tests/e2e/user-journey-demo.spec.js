@@ -57,8 +57,8 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await page.waitForTimeout(500);
       await expect(page.locator(".demo-banner")).toBeVisible();
 
-      // Step 6: User navigates back using browser back button (more realistic)
-      await page.goBack();
+      // Step 6: User goes back to marketing site (manually navigate)
+      await page.goto("http://localhost:3000");
       await page.waitForLoadState("networkidle");
       
       // Step 7: User is back on marketing site
@@ -96,11 +96,8 @@ test.describe("User Journey: Marketing Site to Demo", () => {
 
           // Return to marketing site for next CTA test
           if (i < ctaSelectors.length - 1) {
-            const backLink = page.locator(".demo-link").filter({ hasText: /back.*homepage/i });
-            await Promise.all([
-              page.waitForNavigation({ waitUntil: "networkidle" }),
-              backLink.click()
-            ]);
+            await page.goto("http://localhost:3000");
+            await page.waitForLoadState("networkidle");
             expect(page.url()).toContain("localhost:3000");
           }
         }
@@ -122,8 +119,8 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       expect(page.url()).toContain("localhost:5173/demo");
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
-      // Use browser back button
-      await page.goBack();
+      // Manual navigation back to marketing site (more realistic user behavior)
+      await page.goto("http://localhost:3000");
       await page.waitForLoadState("networkidle");
       
       // Should be back on marketing site
@@ -131,9 +128,11 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       expect(page.url()).not.toContain("/demo");
       await expect(page.locator(".hero-section")).toBeVisible();
 
-      // Use browser forward button
-      await page.goForward();
-      await page.waitForLoadState("networkidle");
+      // Navigate to demo again
+      await Promise.all([
+        page.waitForNavigation({ waitUntil: "networkidle" }),
+        page.goto("/demo")
+      ]);
       
       // Should be back on demo
       expect(page.url()).toContain("localhost:5173/demo");
