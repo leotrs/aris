@@ -127,6 +127,18 @@ class FileServiceInterface(ABC):
         pass
     
     @abstractmethod
+    async def get_file_title(self, file_id: int) -> Optional[str]:
+        """Get the title for a file, extracted from RSM if needed.
+        
+        Args:
+            file_id: Unique identifier of the file
+            
+        Returns:
+            File title (from title field or extracted from RSM), None if file not found
+        """
+        pass
+    
+    @abstractmethod
     async def sync_from_database(self, db) -> None:
         """Load all files from database into memory.
         

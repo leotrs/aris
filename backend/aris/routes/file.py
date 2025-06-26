@@ -96,20 +96,21 @@ async def get_files(
     # Get files from memory
     files = await file_service.get_all_files()
     
-    # Convert to response format
-    return [
-        {
+    # Convert to response format with extracted titles
+    result = []
+    for f in files:
+        title = await file_service.get_file_title(f.id)
+        result.append({
             "id": f.id,
-            "title": f.title,
+            "title": title or f.title,  # Use extracted title or fallback to original
             "abstract": f.abstract,
             "last_edited_at": f.last_edited_at,
             "source": f.source,
             "owner_id": f.owner_id,
             "status": f.status.value,
             "created_at": f.created_at,
-        }
-        for f in files
-    ]
+        })
+    return result
 
 
 @router.post("")
@@ -205,9 +206,12 @@ async def get_file(
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
     
+    # Get extracted title
+    title = await file_service.get_file_title(file_id)
+    
     return {
         "id": file_id,
-        "title": doc.title,
+        "title": title or doc.title,  # Use extracted title or fallback to original
         "abstract": doc.abstract,
         "last_edited_at": doc.last_edited_at,
         "source": doc.source,
@@ -276,9 +280,12 @@ async def update_file(
     # Save to database
     await file_service.update_file_in_database(file_id, db)
     
+    # Get extracted title
+    title = await file_service.get_file_title(file_id)
+    
     return {
         "id": doc.id,
-        "title": doc.title,
+        "title": title or doc.title,  # Use extracted title or fallback to original
         "abstract": doc.abstract,
         "last_edited_at": doc.last_edited_at,
         "source": doc.source,

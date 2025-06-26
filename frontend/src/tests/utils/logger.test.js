@@ -3,7 +3,7 @@ import { getLogger } from "@/utils/logger.js";
 
 describe("Logger", () => {
   let consoleSpy;
-  
+
   beforeEach(() => {
     consoleSpy = {
       debug: vi.spyOn(console, "debug").mockImplementation(() => {}),
@@ -26,7 +26,7 @@ describe("Logger", () => {
   it("logs info messages with structured format", () => {
     const logger = getLogger("TestModule");
     logger.info("Test message", { key: "value" });
-    
+
     expect(consoleSpy.info).toHaveBeenCalledOnce();
     const logCall = consoleSpy.info.mock.calls[0][0];
     expect(logCall).toContain("INFO");
@@ -38,7 +38,7 @@ describe("Logger", () => {
   it("logs errors with structured format", () => {
     const logger = getLogger("TestModule");
     logger.error("Error occurred", { error: "test error" });
-    
+
     expect(consoleSpy.error).toHaveBeenCalledOnce();
     const logCall = consoleSpy.error.mock.calls[0][0];
     expect(logCall).toContain("ERROR");
@@ -55,9 +55,9 @@ describe("Logger", () => {
         statusText: "Internal Server Error",
       },
     };
-    
+
     logger.apiError("/api/test", mockError);
-    
+
     expect(consoleSpy.error).toHaveBeenCalledOnce();
     const logCall = consoleSpy.error.mock.calls[0][0];
     expect(logCall).toContain("API request failed");
@@ -68,7 +68,7 @@ describe("Logger", () => {
   it("logs performance metrics", () => {
     const logger = getLogger("TestModule");
     logger.performance("test operation", 123.45, { detail: "info" });
-    
+
     expect(consoleSpy.debug).toHaveBeenCalledOnce();
     const logCall = consoleSpy.debug.mock.calls[0][0];
     expect(logCall).toContain("Performance: test operation took 123.45ms");
@@ -78,7 +78,7 @@ describe("Logger", () => {
   it("logs user actions", () => {
     const logger = getLogger("TestModule");
     logger.userAction("button click", { buttonId: "save" });
-    
+
     expect(consoleSpy.info).toHaveBeenCalledOnce();
     const logCall = consoleSpy.info.mock.calls[0][0];
     expect(logCall).toContain("User action: button click");
@@ -88,7 +88,7 @@ describe("Logger", () => {
   it("formats timestamp correctly", () => {
     const logger = getLogger("TestModule");
     logger.info("Test message");
-    
+
     const logCall = consoleSpy.info.mock.calls[0][0];
     // Should contain ISO timestamp format (YYYY-MM-DD HH:mm:ss)
     expect(logCall).toMatch(/\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}/);
