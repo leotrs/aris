@@ -74,7 +74,8 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
             },
           },
           Button: {
-            template: '<button data-testid="button" :class="kind" @click="$emit(\'click\')"><slot />{{ icon }}</button>',
+            template:
+              '<button data-testid="button" :class="kind" @click="$emit(\'click\')"><slot />{{ icon }}</button>',
             props: ["kind", "icon"],
             emits: ["click"],
           },
@@ -278,7 +279,7 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
 
       const buttons = wrapper.findAll('[data-testid="button"]');
       const homeButton = buttons.find((btn) => btn.text().includes("Home"));
-      
+
       expect(buttons.length).toBeGreaterThan(0);
       expect(homeButton).toBeTruthy();
       expect(homeButton.props("kind")).toBe("tertiary");
@@ -306,7 +307,7 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
 
       const buttons = wrapper.findAll('[data-testid="button"]');
       const bellButton = buttons.find((btn) => btn.text().includes("Bell"));
-      
+
       expect(buttons.length).toBeGreaterThan(0);
       expect(bellButton).toBeTruthy();
       expect(bellButton.props("kind")).toBe("tertiary");
@@ -419,7 +420,7 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
 
     it("toggles user menu via keyboard shortcut", async () => {
       const mockToggle = vi.fn();
-      const wrapper = createWrapper({
+      createWrapper({
         stubs: {
           UserMenu: {
             template: '<div data-testid="user-menu" ref="user-menu">User Menu</div>',
@@ -444,8 +445,8 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
 
     it("handles missing user menu reference gracefully", async () => {
       // Spy on console.error to suppress expected error output
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
       const wrapper = createWrapper({
         stubs: {
           UserMenu: {
@@ -458,7 +459,7 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
       // The component's toggleUserMenu method checks if ref exists before calling toggle
       // So it should not throw, but may log an error internally
       expect(() => wrapper.vm.toggleUserMenu()).not.toThrow();
-      
+
       consoleSpy.mockRestore();
     });
   });

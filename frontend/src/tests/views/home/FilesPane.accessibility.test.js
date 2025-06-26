@@ -22,6 +22,7 @@ describe("FilesPane.vue - Accessibility Features", () => {
           title: "Accessible Research Paper",
           filtered: false,
           focused: false,
+          selected: false,
           tags: [{ id: "tag1", name: "research" }],
         },
         {
@@ -29,6 +30,7 @@ describe("FilesPane.vue - Accessibility Features", () => {
           title: "Biology Study Document",
           filtered: false,
           focused: false,
+          selected: false,
           tags: [{ id: "tag2", name: "biology" }],
         },
         {
@@ -36,6 +38,7 @@ describe("FilesPane.vue - Accessibility Features", () => {
           title: "Hidden Document",
           filtered: true,
           focused: false,
+          selected: false,
           tags: [],
         },
       ],
@@ -207,6 +210,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
         activeIndex: activeIndexRef,
       });
 
+      // Create wrapper to setup component and watcher
+      createWrapper();
       await nextTick();
 
       // Simulate focusing first file
@@ -233,9 +238,11 @@ describe("FilesPane.vue - Accessibility Features", () => {
         activeIndex: activeIndexRef,
       });
 
+      // Create wrapper to setup component and watcher
+      createWrapper();
+
       // Set initial focus
       mockFileStore.value.files[0].focused = true;
-
       await nextTick();
 
       // Clear focus
@@ -250,24 +257,31 @@ describe("FilesPane.vue - Accessibility Features", () => {
       const mockUseListKeyboardNavigation = await import(
         "@/composables/useListKeyboardNavigation.js"
       );
-      const activeIndexRef = ref(1);
+      const activeIndexRef = ref(null);
       mockUseListKeyboardNavigation.useListKeyboardNavigation.mockReturnValue({
         activeIndex: activeIndexRef,
       });
 
+      // Create wrapper to setup component and watcher
+      createWrapper();
       await nextTick();
 
       // Initially focus second file
+      activeIndexRef.value = 1;
+      await nextTick();
       expect(mockFileStore.value.files[1].focused).toBe(true);
 
       // Simulate file list change (filter out first file)
       mockFileStore.value.files[0].filtered = true;
       await nextTick();
 
-      // Focus should now be on what is now the first visible file (was second)
+      // When activeIndex changes to 0, it should focus the first visible file
+      // (which is now the file that was at index 1)
       activeIndexRef.value = 0;
       await nextTick();
 
+      // After filtering, the first visible file (visibleFiles[0]) should be focused
+      // This corresponds to the file that was originally at index 1
       expect(mockFileStore.value.files[1].focused).toBe(true);
     });
 
@@ -351,6 +365,9 @@ describe("FilesPane.vue - Accessibility Features", () => {
       const mockUseListKeyboardNavigation = await import(
         "@/composables/useListKeyboardNavigation.js"
       );
+
+      // Create wrapper to trigger the useListKeyboardNavigation call
+      createWrapper();
 
       expect(mockUseListKeyboardNavigation.useListKeyboardNavigation).toHaveBeenCalledWith(
         expect.objectContaining({ value: 2 }), // numFiles

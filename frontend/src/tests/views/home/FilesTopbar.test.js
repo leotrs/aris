@@ -18,8 +18,13 @@ describe("FilesTopbar.vue", () => {
       filterFiles: vi.fn(),
     });
 
+    // Create a ref-like object that has a .value property for Vue test utils
+    const mockFileStoreRef = {
+      value: mockFileStore.value,
+    };
+
     mockProvides = {
-      fileStore: mockFileStore,
+      fileStore: mockFileStoreRef,
     };
   });
 
@@ -427,6 +432,9 @@ describe("FilesTopbar.vue", () => {
         await import("@/composables/useKeyboardShortcuts.js")
       );
 
+      // Create wrapper first to trigger useKeyboardShortcuts call
+      createWrapper();
+
       const registeredShortcuts = useKeyboardShortcuts.mock.calls[0][0];
 
       expect(registeredShortcuts).toMatchObject({
@@ -460,10 +468,11 @@ describe("FilesTopbar.vue", () => {
     });
 
     it("executes view mode shortcuts correctly with state verification", async () => {
-      const wrapper = createWrapper();
       const { useKeyboardShortcuts } = vi.mocked(
         await import("@/composables/useKeyboardShortcuts.js")
       );
+
+      const wrapper = createWrapper();
       const shortcuts = useKeyboardShortcuts.mock.calls[0][0];
 
       // Test v,l shortcut (switch to list)
@@ -471,11 +480,13 @@ describe("FilesTopbar.vue", () => {
       await nextTick();
 
       shortcuts["v,l"].fn();
+      await nextTick(); // Wait for watcher to emit event
       expect(wrapper.vm.controlState).toBe(0);
       expect(wrapper.emitted().list).toBeTruthy();
 
       // Test v,c shortcut (switch to cards)
       shortcuts["v,c"].fn();
+      await nextTick(); // Wait for watcher to emit event
       expect(wrapper.vm.controlState).toBe(1);
       expect(wrapper.emitted().cards).toBeTruthy();
     });
