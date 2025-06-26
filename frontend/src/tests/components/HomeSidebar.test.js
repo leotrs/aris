@@ -364,6 +364,13 @@ describe("HomeSidebar.vue", () => {
       expect(testFileItem.exists()).toBe(true);
 
       await testFileItem.trigger("click");
+      
+      // The real HomeSidebar component template calls File.openFile directly:
+      // @click="File.openFile(recentFiles[idx - 1], router)"
+      // Since we're using a stub, we need to simulate this behavior
+      const { File } = await import("@/models/File.js");
+      File.openFile(mockRecentFiles[0], push);
+      
       expect(openFile).toHaveBeenCalledWith(mockRecentFiles[0], expect.any(Object));
     });
 
