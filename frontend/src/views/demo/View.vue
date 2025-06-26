@@ -6,7 +6,8 @@
   import { demoFile, demoUser, demoFileStore, demoAnnotations, createDemoApi } from "./demoData.js";
   import { File } from "@/models/File.js";
   import Sidebar from "@/views/workspace/Sidebar.vue";
-  import DemoCanvas from "@/components/demo/DemoCanvas.vue";
+  import Canvas from "@/views/workspace/Canvas.vue";
+  import Icon from "@/components/base/Icon.vue";
 
   // Create demo API instance
   const api = createDemoApi();
@@ -109,7 +110,7 @@
     <!-- Demo banner -->
     <div class="demo-banner">
       <div class="demo-banner-content">
-        <span class="demo-icon">ℹ️</span>
+        <Icon name="InfoCircle" icon-class="demo-icon" />
         <span>Demo Mode - Experience Aris workspace with sample content</span>
         <a href="/" class="demo-link">← Back to homepage</a>
       </div>
@@ -118,10 +119,10 @@
     <div class="workspace-container">
       <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
 
-      <DemoCanvas
+      <Canvas
         v-if="file"
         v-model="demoFileReactive"
-        data-testid="demo-canvas"
+        data-testid="workspace-canvas"
         :show-editor="showEditor"
         :show-search="showSearch"
       />
