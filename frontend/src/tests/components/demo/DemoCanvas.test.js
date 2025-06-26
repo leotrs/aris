@@ -100,7 +100,10 @@ describe("Demo Canvas", () => {
         showEditor: false,
         showSearch: false,
         ...props,
+      },
+      attrs: {
         modelValue: mockFile,
+        "onUpdate:modelValue": vi.fn(),
       },
       global: {
         provide: {
@@ -142,7 +145,7 @@ describe("Demo Canvas", () => {
       wrapper = createWrapper();
       await nextTick();
 
-      const manuscriptWrapper = wrapper.find('[data-testid="manuscript-wrapper-mock"]');
+      const manuscriptWrapper = wrapper.find('[data-testid="manuscript-viewer"]');
       expect(manuscriptWrapper.exists()).toBe(true);
     });
 

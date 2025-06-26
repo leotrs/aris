@@ -108,13 +108,22 @@ describe("FileMenu.vue - TDD ContextMenu Dots Variant", () => {
       },
     });
 
-    const contextMenu = wrapper.find('[data-testid="context-menu"]');
-    const menuItems = contextMenu.findAll('[data-testid="context-menu-item"]');
+    // Look for the specific menu item testids from the component
+    const shareItem = wrapper.find('[data-testid="file-menu-share"]');
+    const downloadItem = wrapper.find('[data-testid="file-menu-download"]');
+    const renameItem = wrapper.find('[data-testid="file-menu-rename"]');
+    const duplicateItem = wrapper.find('[data-testid="file-menu-duplicate"]');
+    const deleteItem = wrapper.find('[data-testid="file-menu-delete"]');
 
     // Should have Share, Download, Rename, Duplicate, Delete items
-    expect(menuItems.length).toBe(5);
+    expect(shareItem.exists()).toBe(true);
+    expect(downloadItem.exists()).toBe(true);
+    expect(renameItem.exists()).toBe(true);
+    expect(duplicateItem.exists()).toBe(true);
+    expect(deleteItem.exists()).toBe(true);
 
     // Should have separators
+    const contextMenu = wrapper.find('[data-testid="context-menu"]');
     const separators = contextMenu.findAll('[data-testid="separator"]');
     expect(separators.length).toBeGreaterThan(0);
   });
@@ -175,18 +184,21 @@ describe("FileMenu.vue - TDD ContextMenu Dots Variant", () => {
       },
     });
 
-    const menuItems = wrapper.findAll('[data-testid="context-menu-item"]');
+    // Test using the specific menu item testids
+    const renameItem = wrapper.find('[data-testid="file-menu-rename"]');
+    const duplicateItem = wrapper.find('[data-testid="file-menu-duplicate"]');
+    const deleteItem = wrapper.find('[data-testid="file-menu-delete"]');
 
-    // Test rename button (3rd item - Share, Download, Rename)
-    await menuItems[2].trigger("click");
+    // Test rename button
+    await renameItem.trigger("click");
     expect(wrapper.emitted("rename")).toBeTruthy();
 
-    // Test duplicate button (4th item)
-    await menuItems[3].trigger("click");
+    // Test duplicate button
+    await duplicateItem.trigger("click");
     expect(wrapper.emitted("duplicate")).toBeTruthy();
 
-    // Test delete button (5th item)
-    await menuItems[4].trigger("click");
+    // Test delete button
+    await deleteItem.trigger("click");
     expect(wrapper.emitted("delete")).toBeTruthy();
   });
 });

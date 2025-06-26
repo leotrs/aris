@@ -11,7 +11,9 @@ vi.mock("vue-router", () => ({
   useRoute: () => route,
 }));
 vi.mock("@/models/File.js", () => ({
-  File: { openFile },
+  File: {
+    openFile: vi.fn(),
+  },
 }));
 
 // Mock the keyboard shortcuts composable
@@ -23,7 +25,9 @@ describe("HomeSidebar.vue", () => {
   beforeEach(async () => {
     push = vi.fn();
     route = { fullPath: "/" };
-    openFile = vi.fn();
+    const { File } = await import("@/models/File.js");
+    openFile = File.openFile;
+    openFile.mockClear();
     const mod = await import("@/components/layout/HomeSidebar.vue");
     HomeSidebar = mod.default;
   });
@@ -364,13 +368,13 @@ describe("HomeSidebar.vue", () => {
       expect(testFileItem.exists()).toBe(true);
 
       await testFileItem.trigger("click");
-      
+
       // The real HomeSidebar component template calls File.openFile directly:
       // @click="File.openFile(recentFiles[idx - 1], router)"
       // Since we're using a stub, we need to simulate this behavior
       const { File } = await import("@/models/File.js");
       File.openFile(mockRecentFiles[0], push);
-      
+
       expect(openFile).toHaveBeenCalledWith(mockRecentFiles[0], expect.any(Object));
     });
 
