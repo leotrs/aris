@@ -1,0 +1,20 @@
+export default defineEventHandler(async (event) => {
+  const url = getRequestURL(event)
+  
+  // Only handle /demo requests
+  if (url.pathname === '/demo') {
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173'
+    const targetUrl = `${frontendUrl}/demo`
+    
+    try {
+      // Redirect to the frontend demo
+      return sendRedirect(event, targetUrl, 302)
+    } catch (error) {
+      console.error('Demo proxy error:', error)
+      throw createError({
+        statusCode: 502,
+        statusMessage: 'Demo service unavailable'
+      })
+    }
+  }
+})

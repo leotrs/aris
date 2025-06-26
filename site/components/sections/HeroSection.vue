@@ -11,9 +11,9 @@
           engaging.
         </p>
         <div class="hero-ctas" role="group" aria-label="Call to action buttons">
-          <button class="btn btn-primary" type="button" aria-describedby="hero-heading">
+          <a href="/demo" class="btn btn-primary" aria-describedby="hero-heading">
             Try the Demo
-          </button>
+          </a>
           <a href="/signup" class="text-link">Or, sign up for the beta waitlist</a>
         </div>
       </div>

@@ -28,9 +28,7 @@ export default defineNuxtConfig({
         // Preconnect to Google Fonts for performance
         { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
-        { rel: 'preconnect', href: '[https://fonts.googleapis.com](https://fonts.googleapis.com)' },
-        { rel: 'preconnect', href: '[https://fonts.gstatic.com](https://fonts.gstatic.com)', crossorigin: '' },
-        { href: '[https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap](https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap)', rel: 'stylesheet' },
+        { href: 'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&display=swap', rel: 'stylesheet' },
         // Canonical URL
         { rel: 'canonical', href: 'https://aris.pub' },
         // Favicon
@@ -58,11 +56,19 @@ export default defineNuxtConfig({
     payloadExtraction: false, // Improve initial load time
   },
 
+  modules: ['@nuxt/image'],
+
+  // Compression configuration
   nitro: {
     compressPublicAssets: true, // Enable compression
   },
 
-  modules: ['@nuxt/image'],
+  // Runtime config for frontend URL
+  runtimeConfig: {
+    public: {
+      frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173'
+    }
+  },
 
   // Disable DevTools in test environment
   devtools: { enabled: process.env.NODE_ENV !== 'test' },
