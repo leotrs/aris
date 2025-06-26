@@ -67,7 +67,7 @@
 
         const run = async () => {
           if (canceled) return;
-          const { svg: newSvg, svgInitialData: newData } = await makeMinimap(
+          const result = await makeMinimap(
             props.file,
             isHorizontal.value,
             wrapperWidth.value,
@@ -80,6 +80,10 @@
               html: props.file.html,
             }
           );
+          
+          // Handle case where makeMinimap returns undefined (e.g., in tests)
+          const { svg: newSvg = "", svgInitialData: newData = {} } = result || {};
+          
           if (!canceled) {
             html.value = newSvg;
             svgInitialData.value = newData;
