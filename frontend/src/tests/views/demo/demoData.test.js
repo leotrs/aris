@@ -8,7 +8,7 @@ import {
 } from "@/views/demo/demoData.js";
 
 // Mock fetch globally with proper Response objects
-const mockFetch = vi.fn().mockImplementation((url, options) => {
+const mockFetch = vi.fn().mockImplementation((url, _options) => {
   // Mock /render endpoint to return valid HTML
   if (url.includes("/render")) {
     return Promise.resolve({
