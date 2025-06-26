@@ -1,5 +1,5 @@
 # Environment files with secrets
-simulate-ci.sh
+simulate-ci
 
 # Test databases
 test_*.db
