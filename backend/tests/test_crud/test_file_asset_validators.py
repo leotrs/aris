@@ -34,7 +34,8 @@ def test_fileassetupdate_optional_content_valid():
     assert payload.content == content
 
 
-def test_fileassetupdate_optional_content_invalid_prints(capsys):
+def test_fileassetupdate_optional_content_invalid_prints(caplog):
+    import logging
+    caplog.set_level(logging.WARNING)
     FileAssetUpdate.validate_optional_content("bad!!!")
-    captured = capsys.readouterr()
-    assert "Content is not base64 decodable" in captured.out
+    assert "Content is not base64 decodable" in caplog.text

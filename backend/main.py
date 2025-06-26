@@ -4,6 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
+from aris.logging_config import get_logger, setup_logging
 from aris.routes import (
     auth_router,
     file_assets_router,
@@ -16,11 +17,17 @@ from aris.routes import (
 )
 
 
+# Initialize logging before anything else
+setup_logging()
+logger = get_logger(__name__)
+
+
 # API metadata for documentation
+logger.info("Starting Aris backend application")
 app = FastAPI(
     title="Aris API",
     description="""
-    **Aris** is a web-native scientific publishing platform that manages research manuscripts 
+    **Aris** is a web-native scientific publishing platform that manages research manuscripts
     written in RSM (Research Source Markup) format.
 
     ## Features
@@ -94,11 +101,13 @@ async def health_check():
     Returns a simple status message to verify the API is running correctly.
     This endpoint does not require authentication.
     """
+    logger.debug("Health check requested")
     return {"status": "ok", "message": "Aris API is running"}
 
 
 origins = [
     "http://localhost:5173",  # local Vue app (Vite dev server)
+    "http://localhost:5174",  # local Vue app (Vite dev server - alternate port)
     "http://localhost:3000",  # local Nuxt app
     "https://aris-frontend.netlify.app",  # Netlify frontend
 ]
@@ -113,6 +122,7 @@ app.add_middleware(
 )
 
 # Include routers with proper tags
+logger.info("Registering API routers")
 app.include_router(auth_router, tags=["authentication"])
 app.include_router(user_router, tags=["users"])
 app.include_router(file_router, tags=["files"])
@@ -121,6 +131,7 @@ app.include_router(file_assets_router, tags=["file-assets"])
 app.include_router(file_settings_router, tags=["file-settings"])
 app.include_router(render_router, tags=["render"])
 app.include_router(signup_router, tags=["signup"])
+logger.info("All routers registered successfully")
 
 
 @app.middleware("http")

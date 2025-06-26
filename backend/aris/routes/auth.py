@@ -4,8 +4,12 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import crud, current_user, get_db, jwt
+from ..logging_config import get_logger
 from ..models import User
 from ..security import hash_password, verify_password
+
+
+logger = get_logger(__name__)
 
 
 class UserLogin(BaseModel):
@@ -86,6 +90,7 @@ async def me(user: User = Depends(current_user)):
     Requires valid JWT token in Authorization header.
     Returns a subset of user fields suitable for client display.
     """
+    logger.debug(f"User profile requested for user_id: {user.id}")
     return {
         "email": user.email,
         "id": user.id,
@@ -128,13 +133,16 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
     Verifies password using bcrypt and creates both access and refresh tokens.
     Only allows login for non-deleted users.
     """
+    logger.info(f"Login attempt for email: {user_data.email}")
     result = await db.execute(
         select(User).where(User.email == user_data.email, User.deleted_at.is_(None))
     )
     user = result.scalars().first()
     if not user or not verify_password(user_data.password, user.password_hash):
+        logger.warning(f"Failed login attempt for email: {user_data.email}")
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
+    logger.info(f"Successful login for user_id: {user.id}")
     access = jwt.create_access_token(data={"sub": str(user.id)})
     refresh = jwt.create_refresh_token(data={"sub": str(user.id)})
     return {"token_type": "bearer", "access_token": access, "refresh_token": refresh}
@@ -172,9 +180,11 @@ async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
     Returns both access and refresh tokens for immediate authentication.
     Includes user profile data in response for client initialization.
     """
+    logger.info(f"Registration attempt for email: {user_data.email}")
     result = await db.execute(select(User).where(User.email == user_data.email))
     existing_user = result.scalars().first()
     if existing_user:
+        logger.warning(f"Registration failed - email already exists: {user_data.email}")
         raise HTTPException(status_code=409, detail="Email already registered.")
 
     password_hash = hash_password(user_data.password)
@@ -182,6 +192,7 @@ async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
         user_data.name, user_data.initials, user_data.email, password_hash, db
     )
 
+    logger.info(f"Successfully registered new user with id: {new_user.id}")
     access_token = jwt.create_access_token(data={"sub": str(new_user.id)})
     refresh_token = jwt.create_refresh_token(data={"sub": str(new_user.id)})
 
