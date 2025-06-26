@@ -1,6 +1,8 @@
 <script setup>
-  import { ref, computed, inject, onMounted, onUnmounted } from "vue";
+  import { ref, computed, inject, onMounted, onUnmounted, watch } from "vue";
   import { IconUserCircle } from "@tabler/icons-vue";
+  import { toast } from "@/utils/toast.js";
+  import PasswordStrength from "@/components/ui/PasswordStrength.vue";
 
   const xsMode = inject("xsMode");
   const mobileMode = inject("mobileMode");
@@ -11,7 +13,34 @@
   const newName = ref(null);
   const newInitials = ref(null);
   const newEmail = ref(null);
+  const isSaving = ref(false);
+
+  // Password change functionality
+  const currentPassword = ref("");
+  const newPassword = ref("");
+  const confirmPassword = ref("");
+  const isChangingPassword = ref(false);
+
+  // Dirty state tracking
+  const hasUnsavedProfileChanges = computed(() => {
+    return !!(
+      (newName.value && newName.value !== user.value?.name) ||
+      (newInitials.value && newInitials.value !== user.value?.initials) ||
+      (newEmail.value && newEmail.value !== user.value?.email)
+    );
+  });
+
+  const hasUnsavedPasswordChanges = computed(() => {
+    return !!(currentPassword.value || newPassword.value || confirmPassword.value);
+  });
+
+  const hasUnsavedChanges = computed(() => {
+    return hasUnsavedProfileChanges.value || hasUnsavedPasswordChanges.value;
+  });
+
   const onSave = async () => {
+    if (isSaving.value) return;
+    isSaving.value = true;
     try {
       const payload = {
         name: newName.value || user.value.name,
@@ -21,10 +50,79 @@
 
       const res = await api.put(`/users/${user.value.id}`, payload);
       Object.assign(user.value, res.data);
-      // toast.success("Profile updated")
+      toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Failed to update user", error);
-      // toast.error("Failed to update profile")
+      toast.error("Failed to update profile", {
+        description: "Please check your connection and try again.",
+      });
+    } finally {
+      isSaving.value = false;
+    }
+  };
+
+  const onDiscard = () => {
+    if (!hasUnsavedChanges.value) return;
+
+    if (confirm("Are you sure you want to discard your unsaved changes?")) {
+      // Reset profile fields
+      newName.value = null;
+      newInitials.value = null;
+      newEmail.value = null;
+
+      // Reset password fields
+      currentPassword.value = "";
+      newPassword.value = "";
+      confirmPassword.value = "";
+
+      toast.info("Changes discarded");
+    }
+  };
+
+  const onChangePassword = async () => {
+    if (isChangingPassword.value) return;
+
+    // Basic validation
+    if (!currentPassword.value || !newPassword.value || !confirmPassword.value) {
+      toast.error("Please fill in all password fields");
+      return;
+    }
+
+    if (newPassword.value !== confirmPassword.value) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    if (newPassword.value.length < 8) {
+      toast.error("New password must be at least 8 characters long");
+      return;
+    }
+
+    isChangingPassword.value = true;
+
+    try {
+      await api.post(`/users/${user.value.id}/change-password`, {
+        current_password: currentPassword.value,
+        new_password: newPassword.value,
+      });
+
+      // Clear password fields
+      currentPassword.value = "";
+      newPassword.value = "";
+      confirmPassword.value = "";
+
+      toast.success("Password changed successfully");
+    } catch (error) {
+      console.error("Failed to change password", error);
+      if (error.response?.status === 401) {
+        toast.error("Current password is incorrect");
+      } else {
+        toast.error("Failed to change password", {
+          description: "Please check your connection and try again.",
+        });
+      }
+    } finally {
+      isChangingPassword.value = false;
     }
   };
 
@@ -33,6 +131,7 @@
   const selectedFile = ref(null);
   const localPreviewUrl = ref(null);
   const serverAvatarUrl = ref(null);
+  const isUploadingAvatar = ref(false);
 
   const fetchAvatar = async () => {
     if (!user.value) return;
@@ -45,6 +144,7 @@
       }
       serverAvatarUrl.value = URL.createObjectURL(response.data);
     } catch (error) {
+      // Silent failure for avatar fetch - this is expected when user has no avatar
       console.log("No avatar found or error fetching avatar:", error);
       serverAvatarUrl.value = null;
     }
@@ -59,18 +159,21 @@
   const onFileSelected = async (event) => {
     const file = event.target.files[0];
     if (!file) return;
+
+    if (isUploadingAvatar.value) return;
+
     if (!file.type.startsWith("image/")) {
-      console.error("Please select an image file");
-      // toast.error('Please select an image file');
+      toast.error("Please select an image file");
       return;
     }
     const maxSize = 5 * 1024 * 1024; // 5MB
     if (file.size > maxSize) {
-      console.error("File size must be less than 5MB");
-      // toast.error('File size must be less than 5MB');
+      toast.error("File size must be less than 5MB");
       return;
     }
+
     selectedFile.value = file;
+    isUploadingAvatar.value = true;
 
     // Create new preview URL
     if (localPreviewUrl.value) URL.revokeObjectURL(localPreviewUrl.value);
@@ -84,8 +187,7 @@
       await api.post(`/users/${user.value.id}/avatar`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log("Avatar uploaded successfully");
-      // toast.success('Avatar updated successfully');
+      toast.success("Avatar updated successfully");
 
       // Clear local preview and refetch from server
       setTimeout(async () => {
@@ -98,15 +200,38 @@
       }, 500);
     } catch (error) {
       console.error("Failed to upload avatar", error);
-      // toast.error('Failed to upload avatar');
+      toast.error("Failed to upload avatar", {
+        description: "Please check your connection and try again.",
+      });
+    } finally {
+      isUploadingAvatar.value = false;
     }
   };
+
+  // Warn before leaving with unsaved changes
+  const handleBeforeUnload = (e) => {
+    if (hasUnsavedChanges.value) {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    }
+  };
+
+  // Watch for unsaved changes and add/remove beforeunload listener
+  watch(hasUnsavedChanges, (hasChanges) => {
+    if (hasChanges) {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    } else {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    }
+  });
 
   // Lifecycle
   onMounted(() => fetchAvatar());
   onUnmounted(() => {
     if (localPreviewUrl.value) URL.revokeObjectURL(localPreviewUrl.value);
     if (serverAvatarUrl.value) URL.revokeObjectURL(serverAvatarUrl.value);
+    window.removeEventListener("beforeunload", handleBeforeUnload);
   });
 </script>
 
@@ -114,28 +239,32 @@
   <HomeLayout :fab="false" active="Account">
     <Pane>
       <template #header>
-        <IconUserCircle />
+        <Icon name="User" />
         <span class="title">Account</span>
       </template>
 
-      <div class="main" :class="{ mobile: mobileMode, xs: xsMode }">
-        <div class="left">
-          <Section class="profile-card">
-            <template #content>
+      <div class="account-layout">
+        <!-- Hero Section: Profile Overview -->
+        <div class="hero-section">
+          <div class="profile-hero">
+            <div class="avatar-container">
               <div
-                id="pic"
+                class="avatar"
                 :style="{
                   backgroundImage: previewUrl ? `url(${previewUrl})` : 'none',
                 }"
               >
+                <div v-if="!previewUrl" class="avatar-placeholder">
+                  <Icon name="User" size="32" />
+                </div>
                 <Button
                   kind="tertiary"
-                  icon="Upload"
-                  class="pic-upload"
+                  :icon="isUploadingAvatar ? 'Loader2' : 'Camera'"
+                  class="avatar-upload"
                   size="sm"
+                  :disabled="isUploadingAvatar"
                   @click="onUpload"
                 />
-                <!-- Hidden file input -->
                 <input
                   ref="fileInputRef"
                   type="file"
@@ -144,70 +273,145 @@
                   @change="onFileSelected"
                 />
               </div>
-              <div class="info">
-                <div id="username" class="text-h6">{{ user.name }}</div>
-                <div>{{ user.email }}</div>
-                <div>Prestigious University or Institute</div>
-                <div id="since" class="text-caption">
-                  <span id="Aris">Aris</span>
-                  <em> user since {{ new Date(user.created_at).toLocaleDateString() }} </em>
-                </div>
+            </div>
+            <div class="profile-info">
+              <h1 class="user-name">{{ user.name }}</h1>
+              <p class="user-email">{{ user.email }}</p>
+              <div class="user-meta">
+                <span class="affiliation">Prestigious University or Institute</span>
+                <span class="member-since">
+                  <Icon name="Calendar" size="14" />
+                  Member since {{ new Date(user.created_at).toLocaleDateString() }}
+                </span>
               </div>
-            </template>
-          </Section>
+            </div>
+          </div>
+        </div>
 
-          <Section>
-            <template #title>Profile</template>
-            <template #content>
-              <InputText v-model="newName" label="Name" :placeholder="user.name" />
-              <InputText v-model="newInitials" label="Initials" :placeholder="user.initials" />
-              <InputText v-model="newEmail" label="Email" :placeholder="user.email" />
-            </template>
-          </Section>
+        <!-- Main Content -->
+        <div class="content-sections">
+          <!-- Profile Settings -->
+          <div class="content-section">
+            <div class="section-header">
+              <h2>Profile Information</h2>
+              <p>Update your personal information and preferences</p>
+            </div>
 
-          <Section>
-            <template #title>Password</template>
-            <template #content>
-              <InputText label="Current password" type="password" />
-              <InputText label="New password" type="password" />
-              <InputText label="Confirm new password" type="password" />
-            </template>
-          </Section>
+            <div class="form-group">
+              <InputText
+                v-model="newName"
+                label="Full Name"
+                :placeholder="user.name"
+                direction="column"
+              />
+              <InputText
+                v-model="newInitials"
+                label="Initials"
+                :placeholder="user.initials"
+                direction="column"
+              />
+              <InputText
+                v-model="newEmail"
+                label="Email Address"
+                :placeholder="user.email"
+                type="email"
+                direction="column"
+              />
+            </div>
 
-          <div class="buttons">
-            <Button kind="tertiary">Discard</Button>
-            <Button id="cta" kind="primary" @click="onSave">Save</Button>
+            <div class="form-actions">
+              <Button
+                kind="tertiary"
+                :disabled="isSaving || !hasUnsavedProfileChanges"
+                @click="onDiscard"
+              >
+                Reset
+              </Button>
+              <Button
+                kind="primary"
+                :disabled="isSaving || !hasUnsavedProfileChanges"
+                :icon="isSaving ? 'Loader2' : undefined"
+                @click="onSave"
+              >
+                {{ isSaving ? "Saving..." : "Save Changes" }}
+              </Button>
+            </div>
+
+            <div v-if="hasUnsavedProfileChanges" class="status-message warning">
+              <Icon name="AlertCircle" size="16" />
+              <span>You have unsaved changes</span>
+            </div>
           </div>
 
-          <Section v-if="mobileMode">
-            <template #title>Useful Links</template>
-            <template #content>
-              <Button kind="tertiary" size="sm" icon="Lifebuoy" text="Help" />
-              <Button kind="tertiary" size="sm" icon="BrandGit" text="Contribute" />
-              <Button kind="tertiary" size="sm" icon="Heart" text="Donate" />
-            </template>
-          </Section>
+          <!-- Security Settings -->
+          <div class="content-section">
+            <div class="section-header">
+              <h2>Security</h2>
+              <p>Manage your password and account security</p>
+            </div>
 
-          <Section class="danger">
-            <template #title>Danger Zone</template>
-            <template #content>
-              <div>
-                <p>
-                  If you wish to delete your account, make sure you back up your files and data
-                  first.
-                </p>
-                <p>This is an irreversible action.</p>
+            <div class="form-group">
+              <InputText
+                v-model="currentPassword"
+                label="Current Password"
+                type="password"
+                :disabled="isChangingPassword"
+                direction="column"
+              />
+              <div class="password-field">
+                <InputText
+                  v-model="newPassword"
+                  label="New Password"
+                  type="password"
+                  :disabled="isChangingPassword"
+                  direction="column"
+                />
+                <PasswordStrength :password="newPassword" />
               </div>
-            </template>
-            <template #footer>
-              <Button id="danger" kind="primary" class="danger">Delete account</Button>
-            </template>
-          </Section>
-        </div>
-        <div v-if="!mobileMode" class="right">
-          <Button kind="tertiary" size="sm" icon="Lifebuoy" text="Help" />
-          <Button kind="tertiary" size="sm" icon="BrandGit" text="Contribute" />
-          <Button kind="tertiary" size="sm" icon="Heart" text="Donate" />
+              <InputText
+                v-model="confirmPassword"
+                label="Confirm New Password"
+                type="password"
+                :disabled="isChangingPassword"
+                direction="column"
+              />
+            </div>
+
+            <div class="form-actions">
+              <Button
+                kind="secondary"
+                :disabled="isChangingPassword"
+                :icon="isChangingPassword ? 'Loader2' : undefined"
+                @click="onChangePassword"
+              >
+                {{ isChangingPassword ? "Updating..." : "Update Password" }}
+              </Button>
+            </div>
+          </div>
+
+          <!-- Support & Resources -->
+          <div class="content-section">
+            <div class="section-header">
+              <h3>Support & Resources</h3>
+            </div>
+            <div class="action-links">
+              <Button kind="tertiary" size="sm" icon="Lifebuoy" text="Get Help" />
+              <Button kind="tertiary" size="sm" icon="BrandGit" text="Contribute" />
+              <Button kind="tertiary" size="sm" icon="Heart" text="Support Us" />
+            </div>
+          </div>
+
+          <!-- Danger Zone -->
+          <div class="content-section danger-zone">
+            <div class="section-header">
+              <h3>Danger Zone</h3>
+              <p>Irreversible and destructive actions</p>
+            </div>
+            <div class="danger-content">
+              <p>Once you delete your account, there is no going back. Please be certain.</p>
+              <Button kind="secondary" size="sm" icon="Trash" text="Delete Account" />
+            </div>
+          </div>
         </div>
       </div>
     </Pane>
@@ -215,166 +419,346 @@
 </template>
 
 <style scoped>
-  .view {
-    --right-width: 168px;
-    --transition-duration: 0.3s;
-    display: flex;
-    width: 100%;
-    height: 100%;
-    will-change: padding;
-    transition: padding var(--transition-duration) ease;
+  /* Header Title */
+  .title {
+    margin-left: 8px;
+    font-weight: var(--weight-medium);
   }
 
-  .section {
+  /* Account Layout Container */
+  .account-layout {
     width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
   }
 
-  .profile-card {
-    display: flex;
-    justify-content: flex-start;
-    border: var(--border-thin) solid v-bind(user.color);
+  /* Hero Section */
+  .hero-section {
+    background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+    margin: 0 0 24px 0;
     border-radius: 16px;
+    padding: 32px;
+    border: var(--border-thin) solid var(--primary-200);
   }
 
-  .profile-card > :deep(.content) {
-    width: 100%;
-    padding: 0px;
+  .profile-hero {
     display: flex;
-    flex-direction: row;
-    border-radius: 16px;
-    box-shadow: var(--shadow-soft);
+    align-items: center;
+    gap: 24px;
+    max-width: 100%;
   }
 
-  #username {
-    font-weight: var(--weight-semi);
-    padding-bottom: 4px;
-  }
-
-  #pic {
-    min-height: 150px;
-    height: 100%;
-    width: 150px;
+  /* Avatar Container */
+  .avatar-container {
+    position: relative;
     flex-shrink: 0;
-    border-radius: calc(16px - var(--border-thin));
+  }
+
+  .avatar {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
     background-color: var(--gray-100);
     background-size: cover;
     background-position: center;
+    border: 4px solid var(--surface-primary);
+    box-shadow: var(--shadow-soft);
     position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  #pic::before {
-    content: "";
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 35%;
-    background: linear-gradient(
-      to top,
-      color-mix(in srgb, v-bind(user.color) 60%, transparent) 0%,
-      color-mix(in srgb, v-bind(user.color) 30%, transparent) 70%,
-      transparent 100%
-    );
-    border-radius: 0 0 calc(16px - var(--border-thin)) calc(16px - var(--border-thin));
-    pointer-events: none;
+  .avatar-placeholder {
+    color: var(--gray-400);
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .pic-upload {
+  .avatar-upload {
     position: absolute;
     bottom: 8px;
     right: 8px;
-    & :deep(.tabler-icon) {
-      color: var(--almost-white);
-    }
+    border-radius: 50% !important;
+    box-shadow: var(--shadow-soft);
+    background: var(--surface-primary) !important;
+    border: 2px solid var(--surface-primary) !important;
   }
 
-  #since {
-    font-size: 12px;
-    margin-top: 8px;
+  .avatar-upload :deep(.tabler-icon) {
+    color: var(--gray-600);
   }
 
-  #Aris {
+  /* Profile Info */
+  .profile-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .user-name {
+    font-size: 32px;
     font-weight: var(--weight-semi);
-    color: var(--primary-700);
+    color: var(--gray-900);
+    margin: 0 0 4px 0;
+    line-height: 1.2;
   }
 
-  .main.mobile #pic {
-    min-height: 100px;
-    height: 100%;
-    aspect-ratio: 1/1;
+  .user-email {
+    font-size: 16px;
+    color: var(--gray-600);
+    margin: 0 0 12px 0;
   }
 
-  .profile-card > .content > .info {
-    magin: 0 auto;
+  .user-meta {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-
-    & > * {
-      margin-bottom: 4px;
-    }
+    gap: 6px;
   }
 
-  .main.xs .profile-card > :deep(.content) {
-    flex-direction: column;
+  .affiliation {
+    font-size: 14px;
+    color: var(--gray-700);
+    font-weight: var(--weight-medium);
+  }
+
+  .member-since {
+    display: flex;
     align-items: center;
-    padding-block: 8px;
-    text-align: center;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--gray-500);
   }
 
-  .main.xs #pic {
-    margin-inline: 32px;
-    height: 100px;
-    width: 100px;
-  }
-
-  .main.xs .profile-card > .content > .info > * {
-    white-space: wrap;
-  }
-
-  .main {
+  /* Content Sections */
+  .content-sections {
     display: flex;
+    flex-direction: column;
+    gap: 24px;
   }
 
-  .main > .left {
-    width: calc(100% - var(--right-width));
+  .content-section {
+    background: var(--surface-primary);
+    border-radius: 16px;
+    border: var(--border-thin) solid var(--gray-200);
+    box-shadow: none;
+    padding: 24px;
+    transition: box-shadow 0.2s ease;
   }
 
-  .main.mobile > .left {
-    width: 100%;
+  .content-section:hover {
+    box-shadow: var(--shadow-soft);
   }
 
-  .buttons {
+  .section-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: var(--border-thin) solid var(--gray-200);
+  }
+
+  .section-header h2 {
+    font-size: 20px;
+    font-weight: var(--weight-semi);
+    color: var(--gray-900);
+    margin: 0 0 4px 0;
+  }
+
+  .section-header h3 {
+    font-size: 18px;
+    font-weight: var(--weight-semi);
+    color: var(--gray-900);
+    margin: 0 0 4px 0;
+  }
+
+  .section-header p {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin: 0;
+  }
+
+  /* Form Styling */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .password-field {
+    position: relative;
+  }
+
+  .form-actions {
     display: flex;
     justify-content: flex-end;
-    margin-bottom: 16px;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: var(--border-thin) solid var(--gray-200);
+  }
+
+  /* Status Messages */
+  .status-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 16px;
+  }
+
+  .status-message.warning {
+    background-color: var(--surface-warning);
+    border: var(--border-thin) solid var(--border-warning);
+    color: var(--warning-700);
+  }
+
+  .status-message :deep(.tabler-icon) {
+    flex-shrink: 0;
+  }
+
+  .status-message.warning :deep(.tabler-icon) {
+    color: var(--warning-600);
+  }
+
+  /* Secondary Content */
+  .secondary-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Support & Resources */
+  .action-links {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .action-links :deep(.btn) {
+    justify-content: flex-start;
+    padding: 12px 16px;
+    font-weight: var(--weight-medium);
+    width: fit-content !important;
+    align-self: flex-start;
+    flex: none;
+    max-width: none;
+  }
+
+  .action-links :deep(button) {
+    width: fit-content !important;
+    flex: none;
+  }
+
+  /* Danger Zone */
+  .danger-zone {
+    border-color: var(--red-200) !important;
+  }
+
+  .danger-zone .section-header {
+    border-bottom-color: var(--red-100);
+  }
+
+  .danger-zone .section-header h3 {
+    color: var(--red-700);
+  }
+
+  .danger-zone .section-header p {
+    color: var(--red-600);
+  }
+
+  .danger-content {
+    display: flex;
+    flex-direction: column;
     gap: 16px;
   }
 
-  #cta {
-    padding-inline: 48px;
+  .danger-content p {
+    font-size: 14px;
+    color: var(--red-600);
+    margin: 0;
+    line-height: 1.5;
   }
 
-  .section.danger :deep(.footer) {
-    display: flex;
-    justify-content: flex-end;
+  .danger-content :deep(button.secondary) {
+    align-self: flex-start;
+    width: auto;
+    background-color: var(--red-500) !important;
+    border-color: var(--red-500) !important;
+    color: white !important;
   }
 
-  .main > .right {
-    width: var(--right-width);
-    position: absolute;
-    right: calc(32px);
-    padding-inline: 16px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    height: calc(100% - 48px - 16px - 16px - 16px - 16px);
-    gap: 8px;
-    padding: 16px;
-    padding-bottom: 16px;
+  .danger-content :deep(button.secondary:hover) {
+    background-color: var(--red-600) !important;
+    border-color: var(--red-600) !important;
+    color: white !important;
+    box-shadow: none !important;
   }
 
-  #danger {
-    width: fit-content;
+  .danger-content :deep(button.secondary .btn-icon) {
+    color: white !important;
+  }
+
+  /* Loading states */
+  :deep(.tabler-icon-loader-2) {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .hero-section {
+      padding: 24px;
+    }
+
+    .profile-hero {
+      flex-direction: column;
+      text-align: center;
+      gap: 16px;
+    }
+
+    .avatar {
+      width: 100px;
+      height: 100px;
+    }
+
+    .user-name {
+      font-size: 28px;
+    }
+
+    .content-section {
+      padding: 20px;
+    }
+
+    .form-actions {
+      flex-direction: column-reverse;
+      gap: 12px;
+    }
+
+    .action-links {
+      gap: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .hero-section {
+      padding: 20px;
+    }
+
+    .user-name {
+      font-size: 24px;
+    }
+
+    .content-section {
+      padding: 16px;
+    }
   }
 </style>
