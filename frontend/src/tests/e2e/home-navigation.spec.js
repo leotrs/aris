@@ -59,7 +59,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     await expect(files[0]).toHaveClass(/focused/);
   });
 
-  test("navigation wraps around at list boundaries", async ({ page }) => {
+  test("navigation wraps around at list boundaries", { tag: '@flaky' }, async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
@@ -96,7 +96,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     await expect(files[0]).not.toHaveClass(/focused/);
   });
 
-  test("focused item scrolls into view", async ({ page }) => {
+  test("focused item scrolls into view", { tag: '@flaky' }, async ({ page }) => {
     await page.goto("/");
 
     // Create more files to enable scrolling
@@ -195,7 +195,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     await expect(searchInput).toBeFocused();
   });
 
-  test("keyboard navigation maintains focus after file operations", async ({ page }) => {
+  test("keyboard navigation maintains focus after file operations", { tag: '@flaky' }, async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');

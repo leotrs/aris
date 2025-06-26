@@ -9,7 +9,7 @@ test.describe("Demo Content Rendering", () => {
     // Ensure clean auth state for demo access
     await authHelpers.clearAuthState();
 
-    await page.goto("/demo");
+    await page.goto("/demo", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
   });
 
