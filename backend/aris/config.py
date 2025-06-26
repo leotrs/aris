@@ -79,10 +79,10 @@ class Settings(BaseSettings):
             
             # Use different credentials for GitHub Actions vs local CI simulation
             if os.environ.get("GITHUB_ACTIONS"):
-                # Real GitHub Actions CI environment
+                # Real GitHub Actions CI environment - use per-worker databases for parallel test isolation
                 return f"postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris_{worker_id}_{unique_id}"
             else:
-                # Local CI simulation (using local PostgreSQL user)
+                # Local CI simulation (using local PostgreSQL user with worker isolation)
                 return f"postgresql+asyncpg://leo.torres@localhost:5432/test_aris_{worker_id}_{unique_id}"
             
         # Use SQLite for local development
