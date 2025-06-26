@@ -1,11 +1,12 @@
 """Tests for file service models and functionality."""
 
-import pytest
-from datetime import datetime, UTC
+from datetime import UTC, datetime
 
-from aris.services.file_service.models import FileData, FileCreateData, FileUpdateData
-from aris.services.file_service.memory_service import InMemoryFileService
+import pytest
+
 from aris.models.models import FileStatus
+from aris.services.file_service.memory_service import InMemoryFileService
+from aris.services.file_service.models import FileCreateData, FileData, FileUpdateData
 
 
 class TestFileData:
