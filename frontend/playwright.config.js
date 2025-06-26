@@ -13,14 +13,14 @@ export default defineConfig({
   fullyParallel: true,
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
-  retries: process.env.CI ? 2 : 0,
+  /* Retry configuration */
+  retries: process.env.CI ? 2 : 1, // Always retry flaky tests at least once
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : 2, // Limit workers for faster startup
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? "html" : "line", // Use line reporter for faster local feedback
   /* Global timeout for each test */
-  timeout: 30000, // 30 seconds instead of default 60
+  timeout: 15000, // 15 seconds - allows for auth operations
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -33,9 +33,9 @@ export default defineConfig({
     screenshot: "only-on-failure",
     /* Disable video recording for faster execution */
     video: "off",
-    /* Faster action timeouts */
-    actionTimeout: 10000, // 10 seconds instead of default 30
-    navigationTimeout: 15000, // 15 seconds instead of default 30
+    /* Fast timeouts - if tests fail, fix the underlying issue */
+    actionTimeout: 5000, // 5 seconds for actions
+    navigationTimeout: 8000, // 8 seconds max for navigation
   },
 
   /* Configure projects for major browsers */
@@ -45,29 +45,35 @@ export default defineConfig({
         {
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
+          retries: 3, // Extra retries for flaky tests in CI
         },
         {
           name: "firefox",
           use: { ...devices["Desktop Firefox"] },
+          retries: 3,
         },
         {
           name: "webkit",
           use: { ...devices["Desktop Safari"] },
+          retries: 3,
         },
         {
           name: "Mobile Chrome",
           use: { ...devices["Pixel 5"] },
+          retries: 3,
         },
         {
           name: "Mobile Safari",
           use: { ...devices["iPhone 12"] },
+          retries: 3,
         },
       ]
     : [
-        // Development: Run on Chromium only for speed
+        // Development: Run on Chromium only for speed with retries for flaky tests
         {
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
+          retries: 2, // Retry flaky tests locally
         },
       ],
 

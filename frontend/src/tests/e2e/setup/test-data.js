@@ -59,5 +59,8 @@ This is a test file created at ${new Date().toISOString()}.
 
 // Validate that required credentials are available
 if (!TEST_USERS.VALID_USER.password) {
-  throw new Error("TEST_USER_PASSWORD not configured - check environment variables");
+  console.warn(
+    "VITE_DEV_LOGIN_PASSWORD not configured - using default test password for local development"
+  );
+  TEST_USERS.VALID_USER.password = "defaulttestpassword";
 }

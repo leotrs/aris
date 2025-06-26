@@ -12,9 +12,26 @@
   const fileStore = inject("fileStore");
   const onSearchSubmit = (searchString) => {
     fileStore.value.clearFilters();
-    fileStore.value.filterFiles(
-      (file) => !file.title.toLowerCase().includes(searchString.toLowerCase())
-    );
+
+    // Handle null/undefined and trim whitespace
+    const trimmedSearch = (searchString || "").trim();
+
+    fileStore.value.filterFiles((file) => {
+      // If search is empty/whitespace, don't filter anything (show all files)
+      if (!trimmedSearch) {
+        return false;
+      }
+
+      // Split search into terms and match any term
+      const searchTerms = trimmedSearch.toLowerCase().split(/\s+/);
+      const fileTitle = file.title.toLowerCase();
+
+      // Show file if it contains any search term
+      const hasMatch = searchTerms.some((term) => fileTitle.includes(term));
+
+      // Return true to hide, false to show
+      return !hasMatch;
+    });
   };
   const searchBar = useTemplateRef("search-bar-ref");
 

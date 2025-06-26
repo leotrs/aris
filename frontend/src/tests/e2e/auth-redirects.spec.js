@@ -109,7 +109,7 @@ test.describe("Authentication Redirect Tests", () => {
     page.on("console", (msg) => console.log("PAGE LOG:", msg.text()));
 
     // Navigate directly to demo page
-    await page.goto("/demo");
+    await page.goto("/demo", { waitUntil: "domcontentloaded" });
 
     // Check current URL before assertions
     const currentUrl = page.url();

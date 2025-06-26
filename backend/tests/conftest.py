@@ -16,51 +16,138 @@ Usage:
 
 import os
 import sys
-import uuid
 
 import httpx
 import pytest_asyncio
 from httpx import AsyncClient
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlalchemy.pool import StaticPool
 
 
+# Import pytest-postgresql for PostgreSQL testing
+try:
+    from pytest_postgresql import factories
+
+    postgresql_proc = factories.postgresql_proc(
+        port=None, unixsocketdir="/tmp", postgres_options="-F"
+    )
+    postgresql = factories.postgresql("postgresql_proc")
+    POSTGRESQL_AVAILABLE = True
+except ImportError:
+    POSTGRESQL_AVAILABLE = False
+    postgresql_proc = None
+    postgresql = None
+
+
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from aris.config import settings
 from aris.deps import get_db
 from aris.models import Base, File, User
 from main import app
 
 
-def get_test_database_url():
-    """Generate unique database URL for each worker process."""
-    worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
-    unique_id = str(uuid.uuid4())[:8]
-    return f"sqlite+aiosqlite:///./test_{worker_id}_{unique_id}.db"
+@pytest_asyncio.fixture
+async def test_engine(request):
+    """Create test engine for each test."""
+    database_url = settings.get_test_database_url()
 
+    # If we're using PostgreSQL and pytest-postgresql is available
+    # Skip pytest-postgresql in CI environment since we use the service
+    if database_url.startswith("postgresql") and POSTGRESQL_AVAILABLE and not os.environ.get("CI"):
+        try:
+            # Try to get the postgresql fixture if it exists
+            postgresql = request.getfixturevalue("postgresql")
+            conn_info = postgresql.info
+            database_url = f"postgresql+asyncpg://{conn_info.user}:@{conn_info.host}:{conn_info.port}/{conn_info.dbname}"
+        except Exception:
+            # Fall back to the configured URL if pytest-postgresql isn't being used
+            pass
 
-@pytest_asyncio.fixture(scope="session")
-async def test_engine():
-    """Create test engine once per session."""
-    database_url = get_test_database_url()
-    engine = create_async_engine(
-        database_url,
-        connect_args={"check_same_thread": False},
-        poolclass=StaticPool,
-        future=True,
-    )
+    # Configure engine based on database type
+    if database_url.startswith("sqlite"):
+        engine = create_async_engine(
+            database_url,
+            connect_args={"check_same_thread": False},
+            poolclass=StaticPool,
+            future=True,
+        )
+    else:
+        # PostgreSQL configuration
+        engine = create_async_engine(
+            database_url,
+            future=True,
+        )
+
     yield engine
     await engine.dispose()
-    # Clean up the database file
-    db_file = database_url.split("///")[1]
-    if os.path.exists(db_file):
-        os.remove(db_file)
+
+    # Clean up SQLite database files
+    if database_url.startswith("sqlite"):
+        db_file = database_url.split("///")[1]
+        if os.path.exists(db_file):
+            os.remove(db_file)
+
+
+async def create_database_if_not_exists(database_url: str):
+    """Create database if it doesn't exist (PostgreSQL only)."""
+    if not database_url.startswith("postgresql"):
+        return
+    
+    import asyncio
+    import os
+    
+    # Extract database name from URL
+    db_name = database_url.split("/")[-1]
+    
+    # In GitHub Actions, we can create databases by connecting to the default 'postgres' database
+    # which always exists in the PostgreSQL service container
+    if os.environ.get("GITHUB_ACTIONS"):
+        admin_dbs = ["postgres"]  # Use the default postgres database as admin
+    else:
+        admin_dbs = ["postgres", "test_aris"]  # Try both for local development
+    
+    for admin_db in admin_dbs:
+        admin_url = database_url.replace(f"/{db_name}", f"/{admin_db}")
+        
+        # Retry logic with exponential backoff
+        max_retries = 3
+        for attempt in range(max_retries):
+            admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
+            
+            try:
+                async with admin_engine.connect() as conn:
+                    # Check if database exists
+                    result = await conn.execute(
+                        text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
+                        {"db_name": db_name}
+                    )
+                    if not result.fetchone():
+                        # Create database
+                        await conn.execute(text(f'CREATE DATABASE "{db_name}"'))
+                    
+                    # Success! Exit both retry and admin_db loops
+                    return
+            except Exception as e:
+                if attempt == max_retries - 1:  # Last retry
+                    if admin_db == admin_dbs[-1]:  # Last admin database
+                        raise e
+                    break  # Try next admin database
+                # Wait before retry with exponential backoff
+                await asyncio.sleep(2 ** attempt)
+            finally:
+                await admin_engine.dispose()
 
 
 @pytest_asyncio.fixture
 async def db_session(test_engine):
     """Create a fresh database for each test."""
+    # Create worker-specific database if needed
+    database_url = str(test_engine.url)
+    await create_database_if_not_exists(database_url)
+    
     async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all)
+        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
     async with TestingSessionLocal() as session:
@@ -92,7 +179,6 @@ async def test_user(db_session):
     through the API and includes auth tokens.
     """
     user = User(
-        id="10",
         name="foo bar",
         email="test@example.com",
         password_hash="example_hash_pwd_for_testing",
@@ -108,7 +194,6 @@ async def test_file(db_session, test_user):
     """Create a test file directly in the database."""
     file = File(
         owner_id=test_user.id,
-        id="1234",
         source=":rsm: Test file. ::",
     )
     db_session.add(file)
@@ -174,6 +259,12 @@ async def authenticated_user(client: AsyncClient):
         "email": TestConstants.DEFAULT_USER_EMAIL,
         "password": TestConstants.DEFAULT_PASSWORD,
     }
+
+
+@pytest_asyncio.fixture
+def is_postgresql():
+    """Check if we're testing against PostgreSQL."""
+    return settings.get_test_database_url().startswith("postgresql")
 
 
 @pytest_asyncio.fixture

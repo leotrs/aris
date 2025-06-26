@@ -1,6 +1,6 @@
 """Routes to manage annotations (notes and comments)."""
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
@@ -132,7 +132,7 @@ def delete_annotation(annotation_id: int, db: AsyncSession = Depends(get_db)):
     if not annotation:
         raise HTTPException(status_code=404, detail="Annotation not found")
 
-    annotation.deleted_at = datetime.utcnow()
+    annotation.deleted_at = datetime.now(timezone.utc)
     db.commit()
 
 
@@ -238,5 +238,5 @@ def delete_annotation_message(message_id: int, db: AsyncSession = Depends(get_db
     if not message:
         raise HTTPException(status_code=404, detail="Message not found")
 
-    message.deleted_at = datetime.utcnow()
+    message.deleted_at = datetime.now(timezone.utc)
     db.commit()

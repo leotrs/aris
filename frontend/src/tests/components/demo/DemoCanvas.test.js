@@ -100,7 +100,10 @@ describe("Demo Canvas", () => {
         showEditor: false,
         showSearch: false,
         ...props,
+      },
+      attrs: {
         modelValue: mockFile,
+        "onUpdate:modelValue": vi.fn(),
       },
       global: {
         provide: {
@@ -142,7 +145,7 @@ describe("Demo Canvas", () => {
       wrapper = createWrapper();
       await nextTick();
 
-      const manuscriptWrapper = wrapper.find('[data-testid="manuscript-wrapper-mock"]');
+      const manuscriptWrapper = wrapper.find('[data-testid="manuscript-viewer"]');
       expect(manuscriptWrapper.exists()).toBe(true);
     });
 
@@ -362,9 +365,6 @@ describe("Demo Canvas", () => {
 
       wrapper = createWrapper({}, { fileSettings: ref(mockSettings) });
       await nextTick();
-
-      const outer = wrapper.find(".outer");
-      const style = outer.element.style;
 
       // Note: CSS variable binding verification might need to be adjusted based on actual implementation
       expect(wrapper.vm.fileSettings.background).toBe("#f5f5f5");

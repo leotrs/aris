@@ -62,7 +62,13 @@ def test_file_settings_column_defaults():
 
 async def test_annotation_creation(db_session):
     """Test basic creation of an Annotation."""
-    file = File(owner_id=1, source=":rsm: Test content ::")
+    # Create a user first
+    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    
+    file = File(owner_id=user.id, source=":rsm: Test content ::")
     db_session.add(file)
     await db_session.commit()
     await db_session.refresh(file)
