@@ -76,7 +76,14 @@ class Settings(BaseSettings):
         if self.ENV == "CI" or os.environ.get("CI"):
             worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
             unique_id = str(uuid.uuid4())[:8]
-            return f"postgresql+asyncpg://leo.torres@localhost:5432/test_aris_{worker_id}_{unique_id}"
+            
+            # Use different credentials for GitHub Actions vs local CI simulation
+            if os.environ.get("GITHUB_ACTIONS"):
+                # Real GitHub Actions CI environment
+                return f"postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris_{worker_id}_{unique_id}"
+            else:
+                # Local CI simulation (using local PostgreSQL user)
+                return f"postgresql+asyncpg://leo.torres@localhost:5432/test_aris_{worker_id}_{unique_id}"
             
         # Use SQLite for local development
         worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
