@@ -26,6 +26,7 @@ dependencies = [
     "httpx>=0.28.1",
     "aiosqlite>=0.21.0",
     "pytest-xdist>=3.7.0",
+    "resend>=2.10.0",
 ]
 
 [dependency-groups]
