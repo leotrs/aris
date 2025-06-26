@@ -124,6 +124,7 @@ describe("HomeLayout.vue", () => {
     await flushPromises();
     expect(createFile).toHaveBeenCalledWith({
       ownerId: "owner1",
+      title: "New File",
       source: expect.stringContaining("# New File"),
     });
     expect(push).toHaveBeenCalledWith("/file/123");

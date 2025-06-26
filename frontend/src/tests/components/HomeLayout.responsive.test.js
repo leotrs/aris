@@ -282,9 +282,9 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
 
       expect(buttons.length).toBeGreaterThan(0);
       expect(homeButton).toBeTruthy();
-      
+
       // Check if homeButton has props method before calling it
-      if (homeButton && typeof homeButton.props === 'function') {
+      if (homeButton && typeof homeButton.props === "function") {
         expect(homeButton.props("kind")).toBe("tertiary");
         expect(homeButton.props("icon")).toBe("Home");
       }
@@ -314,9 +314,9 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
 
       expect(buttons.length).toBeGreaterThan(0);
       expect(bellButton).toBeTruthy();
-      
+
       // Check if bellButton has props method before calling it
-      if (bellButton && typeof bellButton.props === 'function') {
+      if (bellButton && typeof bellButton.props === "function") {
         expect(bellButton.props("kind")).toBe("tertiary");
         expect(bellButton.props("icon")).toBe("Bell");
       }
@@ -500,8 +500,8 @@ describe("HomeLayout.vue - Responsive Behavior", () => {
       // Test z-index layering by checking that menus container exists
       // and has proper structure for layering (this is a structural test)
       expect(menus.exists()).toBe(true);
-      expect(menus.classes()).toContain('menus');
-      
+      expect(menus.classes()).toContain("menus");
+
       // The z-index layering is primarily handled by CSS,
       // so we just verify the DOM structure is correct
     });

@@ -48,27 +48,30 @@ vi.mock("@/models/File.js", () => ({
 }));
 
 // Mock composables
-const mockUseKeyboardShortcuts = vi.fn();
 vi.mock("@vueuse/core", () => ({
   breakpointsTailwind: {},
-  useBreakpoints: () => ({
-    smallerOrEqual: (size) => ref(size === "xs" ? false : false),
-  }),
+  useBreakpoints: vi.fn(),
 }));
 
 vi.mock("@/composables/useKeyboardShortcuts.js", () => ({
-  useKeyboardShortcuts: mockUseKeyboardShortcuts,
+  useKeyboardShortcuts: vi.fn(),
 }));
 
 describe("Demo View", () => {
   let wrapper;
   let _mockApi;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     _mockApi = {
       post: vi.fn().mockResolvedValue({ data: "<html>Test HTML</html>" }),
       getUri: () => "http://localhost:8000",
     };
+
+    // Default breakpoints mock
+    const { useBreakpoints } = await import("@vueuse/core");
+    useBreakpoints.mockReturnValue({
+      smallerOrEqual: (size) => ref(size === "xs" ? false : false),
+    });
   });
 
   afterEach(() => {
@@ -114,7 +117,8 @@ describe("Demo View", () => {
       wrapper = mount(DemoView);
       await nextTick();
 
-      const demoCanvas = wrapper.find('[data-testid="demo-canvas-mock"]');
+      // DemoCanvas is rendered with data-testid="demo-canvas" (not demo-canvas-mock)
+      const demoCanvas = wrapper.find('[data-testid="demo-canvas"]');
       expect(demoCanvas.exists()).toBe(true);
     });
 
@@ -130,13 +134,11 @@ describe("Demo View", () => {
 
   describe("Responsive Behavior", () => {
     it("applies mobile class when mobileMode is true", async () => {
-      // Mock breakpoints to return mobile true
-      vi.doMock("@vueuse/core", () => ({
-        breakpointsTailwind: {},
-        useBreakpoints: () => ({
-          smallerOrEqual: (size) => ref(size === "sm"),
-        }),
-      }));
+      // Mock breakpoints to return mobile true for sm and below
+      const { useBreakpoints } = await import("@vueuse/core");
+      useBreakpoints.mockReturnValue({
+        smallerOrEqual: (size) => ref(size === "sm" ? true : false),
+      });
 
       wrapper = mount(DemoView);
       await nextTick();
@@ -167,8 +169,9 @@ describe("Demo View", () => {
       vm.focusMode = true;
       await nextTick();
 
-      const banner = wrapper.find(".demo-banner");
-      expect(banner.element.style.display).toBe("none");
+      // Check that focus class is applied to container (CSS handles hiding banner)
+      const container = wrapper.find('[data-testid="demo-container"]');
+      expect(container.classes()).toContain("focus");
     });
   });
 
@@ -263,20 +266,22 @@ describe("Demo View", () => {
 
   describe("Keyboard Shortcuts", () => {
     it("registers keyboard shortcuts for focus mode", async () => {
-      mockUseKeyboardShortcuts.mockClear();
+      const { useKeyboardShortcuts } = await import("@/composables/useKeyboardShortcuts.js");
+      useKeyboardShortcuts.mockClear();
 
       wrapper = mount(DemoView);
       await nextTick();
 
-      expect(mockUseKeyboardShortcuts).toHaveBeenCalledWith({
+      expect(useKeyboardShortcuts).toHaveBeenCalledWith({
         c: expect.any(Function),
       });
     });
 
     it("toggles focus mode when shortcut function is called", async () => {
+      const { useKeyboardShortcuts } = await import("@/composables/useKeyboardShortcuts.js");
       let shortcutCallback;
 
-      mockUseKeyboardShortcuts.mockImplementation((shortcuts) => {
+      useKeyboardShortcuts.mockImplementation((shortcuts) => {
         shortcutCallback = shortcuts.c;
       });
 
