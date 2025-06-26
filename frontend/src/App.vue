@@ -4,7 +4,10 @@
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { createFileStore } from "@/store/FileStore.js";
+  import { getLogger } from "@/utils/logger.js";
   import axios from "axios";
+
+  const logger = getLogger("App");
 
   // Create API instance with base URL and error handling
   const api = axios.create({
@@ -12,10 +15,15 @@
     timeout: 10000,
   });
 
+  logger.info("API instance created", { baseURL: import.meta.env.VITE_API_BASE_URL });
+
   // Add access token to every request
   api.interceptors.request.use((config) => {
     const token = localStorage.getItem("accessToken");
-    if (token) config.headers.Authorization = `Bearer ${token}`;
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+      logger.debug("Added auth token to request", { url: config.url });
+    }
     return config;
   });
 
@@ -73,7 +81,7 @@
         }
       }
 
-      console.error(`API Error: ${error.message}`, error);
+      logger.apiError(error.config?.url || "unknown", error);
       return Promise.reject(error);
     }
   );
@@ -104,23 +112,33 @@
 
   // Initialize authentication state on app mount
   onMounted(async () => {
+    logger.info("Starting app initialization");
+    const startTime = performance.now();
+
     try {
       const token = localStorage.getItem("accessToken");
       const storedUser = JSON.parse(localStorage.getItem("user"));
 
       if (token && storedUser) {
+        logger.info("Found existing auth credentials", { userId: storedUser.id });
         user.value = storedUser;
         fileStore.value = createFileStore(api, user.value);
+
+        logger.debug("Loading user files and tags");
         await fileStore.value.loadFiles();
         await fileStore.value.loadTags();
+        logger.info("App initialization completed successfully");
       } else {
+        logger.info("No auth credentials found, cleaning storage");
         localStorage.removeItem("accessToken");
         localStorage.removeItem("refreshToken");
         localStorage.removeItem("user");
       }
     } catch (error) {
-      console.error("App initialization error:", error);
+      logger.error("App initialization failed", error);
     } finally {
+      const duration = performance.now() - startTime;
+      logger.performance("App initialization", duration);
       isAppLoading.value = false;
     }
   });
