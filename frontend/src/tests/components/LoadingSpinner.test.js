@@ -5,7 +5,7 @@ import LoadingSpinner from "@/components/base/LoadingSpinner.vue";
 describe("LoadingSpinner.vue", () => {
   it("renders with default props", () => {
     const wrapper = mount(LoadingSpinner);
-    
+
     expect(wrapper.find(".loading-container").exists()).toBe(true);
     expect(wrapper.find(".spinner").exists()).toBe(true);
     expect(wrapper.find(".loading-message").text()).toBe("Loading...");
@@ -16,7 +16,7 @@ describe("LoadingSpinner.vue", () => {
     const wrapper = mount(LoadingSpinner, {
       props: { message: "Loading files..." },
     });
-    
+
     expect(wrapper.find(".loading-message").text()).toBe("Loading files...");
   });
 
@@ -24,7 +24,7 @@ describe("LoadingSpinner.vue", () => {
     const wrapper = mount(LoadingSpinner, {
       props: { size: "large" },
     });
-    
+
     expect(wrapper.find(".spinner").classes()).toContain("large");
   });
 
@@ -32,7 +32,7 @@ describe("LoadingSpinner.vue", () => {
     const wrapper = mount(LoadingSpinner, {
       props: { compact: true },
     });
-    
+
     expect(wrapper.find(".loading-container").classes()).toContain("compact");
     expect(wrapper.find(".loading-message").exists()).toBe(false);
   });
@@ -41,7 +41,7 @@ describe("LoadingSpinner.vue", () => {
     const wrapper = mount(LoadingSpinner, {
       props: { compact: true, message: "Loading..." },
     });
-    
+
     // In compact mode, message should not be shown
     expect(wrapper.find(".loading-message").exists()).toBe(false);
   });

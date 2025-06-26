@@ -99,20 +99,29 @@
   const fileStore = ref(null);
   const router = useRouter();
 
+  // App-wide loading state
+  const isAppLoading = ref(true);
+
   // Initialize authentication state on app mount
   onMounted(async () => {
-    const token = localStorage.getItem("accessToken");
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    try {
+      const token = localStorage.getItem("accessToken");
+      const storedUser = JSON.parse(localStorage.getItem("user"));
 
-    if (token && storedUser) {
-      user.value = storedUser;
-      fileStore.value = createFileStore(api, user.value);
-      await fileStore.value.loadFiles();
-      await fileStore.value.loadTags();
-    } else {
-      localStorage.removeItem("accessToken");
-      localStorage.removeItem("refreshToken");
-      localStorage.removeItem("user");
+      if (token && storedUser) {
+        user.value = storedUser;
+        fileStore.value = createFileStore(api, user.value);
+        await fileStore.value.loadFiles();
+        await fileStore.value.loadTags();
+      } else {
+        localStorage.removeItem("accessToken");
+        localStorage.removeItem("refreshToken");
+        localStorage.removeItem("user");
+      }
+    } catch (error) {
+      console.error("App initialization error:", error);
+    } finally {
+      isAppLoading.value = false;
     }
   });
 
@@ -154,10 +163,15 @@
 </script>
 
 <template>
-  <RouterView :class="`bp-${breakpoints.active().value}`" />
-  <div v-if="isDev" id="env">LOCAL</div>
+  <div v-if="isAppLoading" class="app-loading">
+    <LoadingSpinner size="large" message="Loading Aris..." />
+  </div>
+  <template v-else>
+    <RouterView :class="`bp-${breakpoints.active().value}`" />
+    <div v-if="isDev" id="env">LOCAL</div>
 
-  <ModalShortcuts v-if="showShortcutsModal" @close="showShortcutsModal = false" />
+    <ModalShortcuts v-if="showShortcutsModal" @close="showShortcutsModal = false" />
+  </template>
 </template>
 
 <style>
@@ -189,5 +203,14 @@
     border-radius: 16px;
     z-index: 999;
     pointer-events: none;
+  }
+
+  .app-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--extra-light);
   }
 </style>
