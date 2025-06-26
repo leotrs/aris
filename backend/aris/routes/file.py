@@ -4,8 +4,9 @@ from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from .. import crud, current_user, get_db
+from .. import current_user, get_db, get_file_service
 from ..models import FileAsset
+from ..services.file_service import FileCreateData, FileUpdateData, InMemoryFileService
 from .file_assets import FileAssetOut
 
 
@@ -67,29 +68,54 @@ class FileUpdate(BaseModel):
 
 
 @router.get("")
-async def get_files(db: AsyncSession = Depends(get_db)):
+async def get_files(
+    file_service: InMemoryFileService = Depends(get_file_service),
+    db: AsyncSession = Depends(get_db)
+):
     """Retrieve all files with extracted titles.
 
     Parameters
     ----------
+    file_service : InMemoryFileService
+        File service dependency.
     db : AsyncSession
         SQLAlchemy async database session dependency.
 
     Returns
     -------
-    list of File
+    list of FileData
         List of all non-deleted files with title attributes populated.
 
     Notes
     -----
-    Requires authentication. Titles are extracted from RSM content.
+    Requires authentication. Uses file service for in-memory access.
     """
-    return await crud.get_files(db)
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Get files from memory
+    files = await file_service.get_all_files()
+    
+    # Convert to response format
+    return [
+        {
+            "id": f.id,
+            "title": f.title,
+            "abstract": f.abstract,
+            "last_edited_at": f.last_edited_at,
+            "source": f.source,
+            "owner_id": f.owner_id,
+            "status": f.status.value,
+            "created_at": f.created_at,
+        }
+        for f in files
+    ]
 
 
 @router.post("")
 async def create_file(
     doc: FileCreate,
+    file_service: InMemoryFileService = Depends(get_file_service),
     db: AsyncSession = Depends(get_db),
 ):
     """Create a new file with RSM source content.
@@ -98,6 +124,8 @@ async def create_file(
     ----------
     doc : FileCreate
         File creation data including source, owner_id, title, and abstract.
+    file_service : InMemoryFileService
+        File service dependency.
     db : AsyncSession
         SQLAlchemy async database session dependency.
 
@@ -121,18 +149,37 @@ async def create_file(
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-    result = await crud.create_file(doc.source, doc.owner_id, doc.title, doc.abstract, db)
+    # Create file data
+    create_data = FileCreateData(
+        title=doc.title,
+        abstract=doc.abstract,
+        source=doc.source,
+        owner_id=doc.owner_id
+    )
+    
+    # Create in memory
+    result = await file_service.create_file(create_data)
+    
+    # Save to database
+    await file_service.save_file_to_database(result.id, db)
+    
     return {"id": result.id}
 
 
 @router.get("/{file_id}")
-async def get_file(file_id: int, db: AsyncSession = Depends(get_db)):
+async def get_file(
+    file_id: int, 
+    file_service: InMemoryFileService = Depends(get_file_service),
+    db: AsyncSession = Depends(get_db)
+):
     """Retrieve a specific file by ID.
 
     Parameters
     ----------
     file_id : int
         The unique identifier of the file to retrieve.
+    file_service : InMemoryFileService
+        File service dependency.
     db : AsyncSession
         SQLAlchemy async database session dependency.
 
@@ -148,11 +195,16 @@ async def get_file(file_id: int, db: AsyncSession = Depends(get_db)):
 
     Notes
     -----
-    Requires authentication. Returns file with extracted title.
+    Requires authentication. Uses file service for in-memory access.
     """
-    doc = await crud.get_file(file_id, db)
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Get file from memory
+    doc = await file_service.get_file(file_id)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
+    
     return {
         "id": file_id,
         "title": doc.title,
@@ -160,6 +212,8 @@ async def get_file(file_id: int, db: AsyncSession = Depends(get_db)):
         "last_edited_at": doc.last_edited_at,
         "source": doc.source,
         "owner_id": doc.owner_id,
+        "status": doc.status.value,
+        "created_at": doc.created_at,
     }
 
 
@@ -167,6 +221,7 @@ async def get_file(file_id: int, db: AsyncSession = Depends(get_db)):
 async def update_file(
     file_id: int,
     file_data: FileUpdate,
+    file_service: InMemoryFileService = Depends(get_file_service),
     db: AsyncSession = Depends(get_db),
 ):
     """Update an existing file's content and metadata.
@@ -177,12 +232,14 @@ async def update_file(
         The unique identifier of the file to update.
     file_data : FileUpdate
         Updated file data including title, abstract, and source.
+    file_service : InMemoryFileService
+        File service dependency.
     db : AsyncSession
         SQLAlchemy async database session dependency.
 
     Returns
     -------
-    File
+    FileData
         The updated file object.
 
     Raises
@@ -192,22 +249,59 @@ async def update_file(
 
     Notes
     -----
-    Requires authentication. Updates last_edited_at timestamp.
+    Requires authentication. Uses file service for in-memory updates.
     """
-    doc = await crud.update_file(file_id, file_data.title, file_data.source, db)
+    # Validate source if provided
+    if file_data.source:
+        try:
+            file_data.validate_source()
+        except ValueError as e:
+            raise HTTPException(status_code=400, detail=str(e))
+    
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Create update data
+    update_data = FileUpdateData(
+        title=file_data.title if file_data.title else None,
+        abstract=file_data.abstract if file_data.abstract else None,
+        source=file_data.source if file_data.source else None
+    )
+    
+    # Update in memory
+    doc = await file_service.update_file(file_id, update_data)
     if not doc:
         raise HTTPException(status_code=404, detail="File not found")
-    return doc
+    
+    # Save to database
+    await file_service.update_file_in_database(file_id, db)
+    
+    return {
+        "id": doc.id,
+        "title": doc.title,
+        "abstract": doc.abstract,
+        "last_edited_at": doc.last_edited_at,
+        "source": doc.source,
+        "owner_id": doc.owner_id,
+        "status": doc.status.value,
+        "created_at": doc.created_at,
+    }
 
 
 @router.delete("/{file_id}")
-async def soft_delete_file(file_id: int, db: AsyncSession = Depends(get_db)):
+async def soft_delete_file(
+    file_id: int, 
+    file_service: InMemoryFileService = Depends(get_file_service),
+    db: AsyncSession = Depends(get_db)
+):
     """Soft delete a file by setting deleted_at timestamp.
 
     Parameters
     ----------
     file_id : int
         The unique identifier of the file to delete.
+    file_service : InMemoryFileService
+        File service dependency.
     db : AsyncSession
         SQLAlchemy async database session dependency.
 
@@ -223,22 +317,36 @@ async def soft_delete_file(file_id: int, db: AsyncSession = Depends(get_db)):
 
     Notes
     -----
-    Requires authentication. Preserves data integrity by using soft delete.
+    Requires authentication. Uses file service for in-memory soft delete.
     """
-    doc = await crud.soft_delete_file(file_id, db)
-    if not doc:
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Delete in memory
+    deleted = await file_service.delete_file(file_id)
+    if not deleted:
         raise HTTPException(status_code=404, detail="File not found")
+    
+    # Save to database
+    await file_service.delete_file_in_database(file_id, db)
+    
     return {"message": f"File {file_id} soft deleted"}
 
 
 @router.post("/{file_id}/duplicate")
-async def duplicate_file(file_id: int, db: AsyncSession = Depends(get_db)):
+async def duplicate_file(
+    file_id: int, 
+    file_service: InMemoryFileService = Depends(get_file_service),
+    db: AsyncSession = Depends(get_db)
+):
     """Create a duplicate copy of an existing file.
 
     Parameters
     ----------
     file_id : int
         The unique identifier of the file to duplicate.
+    file_service : InMemoryFileService
+        File service dependency.
     db : AsyncSession
         SQLAlchemy async database session dependency.
 
@@ -254,21 +362,49 @@ async def duplicate_file(file_id: int, db: AsyncSession = Depends(get_db)):
 
     Notes
     -----
-    Requires authentication. Copies all content and associated tags.
-    New file title includes '(copy)' suffix.
+    Requires authentication. Uses file service for in-memory duplication
+    and copies tags from the original file.
     """
-    new_doc = await crud.duplicate_file(file_id, db)
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Duplicate in memory
+    new_doc = await file_service.duplicate_file(file_id)
+    if not new_doc:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    # Save to database
+    await file_service.save_file_to_database(new_doc.id, db)
+    
+    # Copy tags from original file (using original logic)
+    from ..models.models import file_tags
+    tag_ids = (
+        await db.execute(file_tags.select().where(file_tags.c.file_id == file_id))
+    ).fetchall()
+    if tag_ids:
+        await db.execute(
+            file_tags.insert(),
+            [{"file_id": new_doc.id, "tag_id": tag.tag_id} for tag in tag_ids],
+        )
+        await db.commit()
+    
     return {"id": new_doc.id, "message": "File duplicated successfully"}
 
 
 @router.get("/{file_id}/content", response_class=HTMLResponse)
-async def get_file_html(file_id: int, db: AsyncSession = Depends(get_db)):
+async def get_file_html(
+    file_id: int, 
+    file_service: InMemoryFileService = Depends(get_file_service),
+    db: AsyncSession = Depends(get_db)
+):
     """Retrieve rendered HTML content for a file.
 
     Parameters
     ----------
     file_id : int
         The unique identifier of the file to render.
+    file_service : InMemoryFileService
+        File service dependency.
     db : AsyncSession
         SQLAlchemy async database session dependency.
 
@@ -284,12 +420,17 @@ async def get_file_html(file_id: int, db: AsyncSession = Depends(get_db)):
 
     Notes
     -----
-    Requires authentication. Converts RSM source to HTML using rsm.render().
+    Requires authentication. Uses file service for cached HTML rendering.
     """
-    doc = await crud.get_file_html(file_id, db)
-    if not doc:
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Get HTML from file service (with caching)
+    html = await file_service.get_file_html(file_id)
+    if not html:
         raise HTTPException(status_code=404, detail="File not found")
-    return doc
+    
+    return HTMLResponse(content=html)
 
 
 @router.get("/{file_id}/content/{section_name}", response_class=HTMLResponse)
@@ -297,6 +438,7 @@ async def get_file_section(
     file_id: int,
     section_name: str,
     handrails: bool = True,
+    file_service: InMemoryFileService = Depends(get_file_service),
     db: AsyncSession = Depends(get_db),
 ):
     """Retrieve rendered HTML for a specific section of a file.
@@ -309,6 +451,8 @@ async def get_file_section(
         Name of the section to extract (e.g., 'minimap', 'abstract').
     handrails : bool, optional
         Whether to enable handrails in the rendered output (default: True).
+    file_service : InMemoryFileService
+        File service dependency.
     db : AsyncSession
         SQLAlchemy async database session dependency.
 
@@ -324,12 +468,16 @@ async def get_file_section(
 
     Notes
     -----
-    Requires authentication. Extracts specific sections from RSM content.
+    Requires authentication. Uses file service for cached section rendering.
     """
-    try:
-        html = await crud.get_file_section(file_id, section_name, db, handrails)
-    except ValueError:
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Get section HTML from file service (with caching)
+    html = await file_service.get_file_section(file_id, section_name, handrails)
+    if not html:
         raise HTTPException(status_code=404, detail=f"Section {section_name} not found")
+    
     return HTMLResponse(content=html)
 
 
