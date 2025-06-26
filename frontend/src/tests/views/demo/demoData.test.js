@@ -7,15 +7,22 @@ import {
   createDemoApi,
 } from "@/views/demo/demoData.js";
 
-// Mock fetch globally, but allow /render endpoint to pass through
-const originalFetch = global.fetch;
+// Mock fetch globally with proper Response objects
 const mockFetch = vi.fn().mockImplementation((url, options) => {
-  // Allow /render endpoint to hit the real backend
+  // Mock /render endpoint to return valid HTML
   if (url.includes("/render")) {
-    return originalFetch(url, options);
+    return Promise.resolve({
+      ok: true,
+      status: 200,
+      statusText: "OK",
+      json: vi.fn().mockResolvedValue("<div>Rendered HTML content</div>"),
+    });
   }
   // Mock all other requests
   return Promise.resolve({
+    ok: true,
+    status: 200,
+    statusText: "OK",
     json: vi.fn().mockResolvedValue({}),
   });
 });
@@ -24,10 +31,13 @@ global.fetch = mockFetch;
 describe("Demo Data Service", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Ensure fetch mock is properly set up for each test
+    global.fetch = mockFetch;
   });
 
   afterEach(() => {
-    vi.restoreAllMocks();
+    // Don't restore mocks that would break the global fetch setup
+    // vi.restoreAllMocks();
   });
 
   describe("Demo Data Structure", () => {

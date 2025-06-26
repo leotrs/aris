@@ -22,7 +22,7 @@ const ICON_COMPONENT_STUBS = [
 
 // Stub MinimapUtils functions
 vi.mock("@/utils/MinimapUtils.js", () => ({
-  makeMinimap: vi.fn(),
+  makeMinimap: vi.fn().mockResolvedValue({ svg: "<svg></svg>", svgInitialData: {} }),
   resizeMinimap: vi.fn(),
   highlightScrollPos: vi.fn(),
   makeIcons: vi.fn().mockResolvedValue([]),
