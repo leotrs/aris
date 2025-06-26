@@ -59,6 +59,12 @@ class Settings(BaseSettings):
     TEST_DB_URL: str = Field("", json_schema_extra={"env": "TEST_DB_URL"})
     """Test database URL override. If empty, will auto-detect based on environment."""
 
+    RESEND_API_KEY: str = Field("", json_schema_extra={"env": "RESEND_API_KEY"})
+    """Resend API key for sending emails."""
+
+    FROM_EMAIL: str = Field("noreply@aris.pub", json_schema_extra={"env": "FROM_EMAIL"})
+    """Default from email address."""
+
     model_config = ConfigDict(extra="forbid")
 
     def get_test_database_url(self) -> str:
