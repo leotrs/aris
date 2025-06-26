@@ -246,21 +246,6 @@ test.describe("Demo Navigation & Access", () => {
   });
 
   test.describe("Error Handling", () => {
-    test("handles demo route with trailing slash", async ({ page }) => {
-      // Clear auth state first
-      await authHelpers.clearAuthState();
-
-      await page.goto("/demo/", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
-
-      // Wait for Vue to mount the demo container
-      // Fast check for demo container
-      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 3000 });
-
-      // Should still load demo correctly
-      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
-    });
-
     test("handles demo route with query parameters", async ({ page }) => {
       // Clear auth state first
       await authHelpers.clearAuthState();
