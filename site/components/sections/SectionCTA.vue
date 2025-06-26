@@ -3,7 +3,7 @@
     <div class="cta-content-wrapper">
       <h2 class="cta-headline">Experience what research should feel like.</h2>
       <div class="cta-buttons">
-        <button class="btn btn-primary">Try the Demo</button>
+        <a href="/demo" class="btn btn-primary">Try the Demo</a>
         <a href="/signup" class="text-link">Or, sign up for the beta waitlist</a>
       </div>
     </div>

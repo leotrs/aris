@@ -62,7 +62,7 @@ describe("HeroSection Component", () => {
       const primaryButton = wrapper.find(".btn.btn-primary");
       expect(primaryButton.exists()).toBe(true);
       expect(primaryButton.text()).toBe("Try the Demo");
-      expect(primaryButton.attributes("type")).toBe("button");
+      expect(primaryButton.attributes("href")).toBe("/demo");
     });
 
     it("should render secondary CTA link", () => {

@@ -48,7 +48,7 @@ describe("SectionCTA Component", () => {
       const primaryButton = wrapper.find(".btn.btn-primary");
       expect(primaryButton.exists()).toBe(true);
       expect(primaryButton.text()).toBe("Try the Demo");
-      expect(primaryButton.element.tagName.toLowerCase()).toBe("button");
+      expect(primaryButton.element.tagName.toLowerCase()).toBe("a");
     });
 
     it("should render secondary CTA link", () => {
@@ -180,12 +180,13 @@ describe("SectionCTA Component", () => {
   });
 
   describe("Button Functionality", () => {
-    it("should render button with proper type", () => {
+    it("should render link with proper href", () => {
       wrapper = mount(SectionCTA);
 
       const button = wrapper.find(".btn.btn-primary");
       expect(button.exists()).toBe(true);
-      expect(button.element.tagName.toLowerCase()).toBe("button");
+      expect(button.element.tagName.toLowerCase()).toBe("a");
+      expect(button.attributes("href")).toBe("/demo");
     });
 
     it("should have link element for secondary action", () => {
