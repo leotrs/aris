@@ -1,9 +1,12 @@
 """Aris backend: FastApi app."""
 
-from fastapi import FastAPI
+from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy.ext.asyncio import AsyncSession
 
+from aris.deps import get_db
+from aris.health import HealthResponse, perform_health_check
 from aris.logging_config import get_logger, setup_logging
 from aris.routes import (
     auth_router,
@@ -94,15 +97,27 @@ app = FastAPI(
 )
 
 
-@app.get("/health", tags=["health"], summary="Health Check")
-async def health_check():
-    """Check the health status of the API.
+@app.get("/health", tags=["health"], summary="Health Check", response_model=HealthResponse)
+async def health_check(db: AsyncSession = Depends(get_db)):
+    """Check the health status of the API and its dependencies.
 
-    Returns a simple status message to verify the API is running correctly.
+    Performs comprehensive health checks including:
+    - API service availability
+    - Database connectivity and responsiveness  
+    - Email service configuration
+    - RSM rendering engine functionality
+    - Environment configuration validation
+
+    Returns detailed status information for monitoring and debugging.
     This endpoint does not require authentication.
     """
-    logger.debug("Health check requested")
-    return {"status": "ok", "message": "Aris API is running"}
+    health_result = await perform_health_check(db)
+    
+    # Return appropriate HTTP status based on health
+    if health_result.status == "unhealthy":
+        raise HTTPException(status_code=503, detail=health_result.model_dump())
+    
+    return health_result
 
 
 origins = [
