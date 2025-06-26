@@ -76,8 +76,8 @@ jobs:
         ls -l .env.ci
         cat .env.ci
 
-    - name: Run tests (subset for testing)
-      run: uv run pytest tests/test_config.py tests/test_crud/test_crud_user.py tests/integration/test_database_constraints.py -n4 --cov=aris --cov-report=xml
+    - name: Run tests
+      run: uv run pytest -n8 --cov=aris --cov-report=xml
 
 
     - name: Upload coverage to Codecov
