@@ -103,7 +103,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
 
     Performs comprehensive health checks including:
     - API service availability
-    - Database connectivity and responsiveness  
+    - Database connectivity and responsiveness
     - Email service configuration
     - RSM rendering engine functionality
     - Environment configuration validation
@@ -112,11 +112,11 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     This endpoint does not require authentication.
     """
     health_result = await perform_health_check(db)
-    
+
     # Return appropriate HTTP status based on health
     if health_result.status == "unhealthy":
         raise HTTPException(status_code=503, detail=health_result.model_dump())
-    
+
     return health_result
 
 

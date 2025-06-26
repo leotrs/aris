@@ -4,14 +4,11 @@ These tests verify that the file routes properly integrate with the
 InMemoryFileService instead of making direct database calls.
 """
 
-import pytest
-from unittest.mock import Mock, AsyncMock, patch
-from fastapi.testclient import TestClient
-from fastapi import HTTPException
+from unittest.mock import AsyncMock, Mock
 
-from aris.services.file_service import InMemoryFileService, FileCreateData, FileUpdateData
-from aris.models.models import FileStatus
-from aris.routes.file import router
+import pytest
+
+from aris.services.file_service import InMemoryFileService
 
 
 class TestFileServiceRouteIntegration:
@@ -38,8 +35,9 @@ class TestFileServiceRouteIntegration:
         # Now that we've integrated the file service, let's test that it's being used
         
         # Check that the route function has file_service parameter
-        from aris.routes.file import get_files
         import inspect
+
+        from aris.routes.file import get_files
         
         sig = inspect.signature(get_files)
         params = list(sig.parameters.keys())
@@ -51,8 +49,9 @@ class TestFileServiceRouteIntegration:
     @pytest.mark.asyncio
     async def test_create_file_route_should_use_file_service(self, mock_file_service):
         """Test that POST /files should use file service instead of crud."""
-        from aris.routes.file import create_file
         import inspect
+
+        from aris.routes.file import create_file
         
         sig = inspect.signature(create_file)
         params = list(sig.parameters.keys())
@@ -64,8 +63,9 @@ class TestFileServiceRouteIntegration:
     @pytest.mark.asyncio
     async def test_get_file_route_should_use_file_service(self, mock_file_service):
         """Test that GET /files/{file_id} should use file service instead of crud."""
-        from aris.routes.file import get_file
         import inspect
+
+        from aris.routes.file import get_file
         
         sig = inspect.signature(get_file)
         params = list(sig.parameters.keys())
@@ -77,8 +77,9 @@ class TestFileServiceRouteIntegration:
     @pytest.mark.asyncio
     async def test_update_file_route_should_use_file_service(self, mock_file_service):
         """Test that PUT /files/{file_id} should use file service instead of crud."""
-        from aris.routes.file import update_file
         import inspect
+
+        from aris.routes.file import update_file
         
         sig = inspect.signature(update_file)
         params = list(sig.parameters.keys())
@@ -90,8 +91,9 @@ class TestFileServiceRouteIntegration:
     @pytest.mark.asyncio
     async def test_delete_file_route_should_use_file_service(self, mock_file_service):
         """Test that DELETE /files/{file_id} should use file service instead of crud."""
-        from aris.routes.file import soft_delete_file
         import inspect
+
+        from aris.routes.file import soft_delete_file
         
         sig = inspect.signature(soft_delete_file)
         params = list(sig.parameters.keys())
@@ -103,8 +105,9 @@ class TestFileServiceRouteIntegration:
     @pytest.mark.asyncio
     async def test_duplicate_file_route_should_use_file_service(self, mock_file_service):
         """Test that POST /files/{file_id}/duplicate should use file service instead of crud."""
-        from aris.routes.file import duplicate_file
         import inspect
+
+        from aris.routes.file import duplicate_file
         
         sig = inspect.signature(duplicate_file)
         params = list(sig.parameters.keys())
@@ -116,8 +119,9 @@ class TestFileServiceRouteIntegration:
     @pytest.mark.asyncio
     async def test_get_file_html_route_should_use_file_service(self, mock_file_service):
         """Test that GET /files/{file_id}/content should use file service instead of crud."""
-        from aris.routes.file import get_file_html
         import inspect
+
+        from aris.routes.file import get_file_html
         
         sig = inspect.signature(get_file_html)
         params = list(sig.parameters.keys())
@@ -129,8 +133,9 @@ class TestFileServiceRouteIntegration:
     @pytest.mark.asyncio
     async def test_get_file_section_route_should_use_file_service(self, mock_file_service):
         """Test that GET /files/{file_id}/content/{section_name} should use file service instead of crud."""
-        from aris.routes.file import get_file_section
         import inspect
+
+        from aris.routes.file import get_file_section
         
         sig = inspect.signature(get_file_section)
         params = list(sig.parameters.keys())
