@@ -39,8 +39,11 @@
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { File } from "@/models/File.js";
+  import { getLogger } from "@/utils/logger.js";
   import Date from "./FilesItemDate.vue";
   import ConfirmationModal from "@/components/ConfirmationModal.vue";
+
+  const logger = getLogger("FilesItem");
 
   // Make this component async by awaiting real file operations
   const file = defineModel({ type: Object, required: true });
@@ -49,33 +52,49 @@
 
   // Async file validation and enhancement with real API calls
   if (file.value && file.value.id && api && user?.value?.id) {
+    const fileId = file.value.id;
+    logger.debug("Starting async file enhancement", { fileId, title: file.value.title });
+    const startTime = performance.now();
+
     try {
       // Real async operations that justify Suspense usage:
 
       // 1. Load complete file details if not already present
       if (!file.value.source || !file.value.abstract) {
-        const fileDetailsResponse = await api.get(`/files/${file.value.id}`).catch(() => null);
+        logger.debug("Loading file details", { fileId });
+        const fileDetailsResponse = await api.get(`/files/${fileId}`).catch(() => null);
         if (fileDetailsResponse?.data) {
           Object.assign(file.value, fileDetailsResponse.data);
+          logger.debug("File details loaded successfully", { fileId });
         }
       }
 
       // 2. Load file assets to show thumbnail/preview indicators
-      const assetsResponse = await api.get(`/files/${file.value.id}/assets`).catch(() => null);
+      logger.debug("Loading file assets", { fileId });
+      const assetsResponse = await api.get(`/files/${fileId}/assets`).catch(() => null);
       if (assetsResponse?.data) {
         file.value.assets = assetsResponse.data;
         file.value.hasAssets = assetsResponse.data.length > 0;
+        logger.debug("File assets loaded", { fileId, assetCount: assetsResponse.data.length });
       }
 
       // 3. For files without HTML content, pre-load it for faster viewing
       if (!file.value.html) {
-        const contentResponse = await api.get(`/files/${file.value.id}/content`).catch(() => null);
+        logger.debug("Loading file content", { fileId });
+        const contentResponse = await api.get(`/files/${fileId}/content`).catch(() => null);
         if (contentResponse?.data) {
           file.value.html = contentResponse.data;
+          logger.debug("File content loaded successfully", { fileId });
         }
       }
+
+      const duration = performance.now() - startTime;
+      logger.performance("File async enhancement", duration, { fileId });
     } catch (error) {
-      console.warn("FilesItem async initialization failed:", error);
+      logger.error("FilesItem async initialization failed", {
+        fileId: file.value.id,
+        error: error.message,
+      });
       // Component should still render even if async operations fail
     }
   }
