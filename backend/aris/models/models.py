@@ -540,6 +540,10 @@ class Signup(Base):
     unsubscribe_token = Column(String, unique=True, nullable=False, index=True)
     unsubscribed_at = Column(DateTime(timezone=True), nullable=True)
 
+    # Email tracking
+    email_sent = Column(Boolean, nullable=False, default=False)
+    email_sent_at = Column(DateTime(timezone=True), nullable=True)
+
     # Timestamps
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(
