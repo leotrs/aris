@@ -5,7 +5,7 @@ including creation, retrieval, updates, and soft deletes.
 """
 
 import secrets
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import select
@@ -176,8 +176,8 @@ async def update_signup_status(
 
     signup.status = status
     if status == SignupStatus.UNSUBSCRIBED:
-        signup.unsubscribed_at = datetime.utcnow()
-    signup.updated_at = datetime.utcnow()
+        signup.unsubscribed_at = datetime.now(timezone.utc)
+    signup.updated_at = datetime.now(timezone.utc)
 
     await db.commit()
     await db.refresh(signup)
@@ -283,8 +283,8 @@ async def unsubscribe_by_token(token: str, db: AsyncSession) -> Optional[Signup]
         return None
     
     signup.status = SignupStatus.UNSUBSCRIBED
-    signup.unsubscribed_at = datetime.utcnow()
-    signup.updated_at = datetime.utcnow()
+    signup.unsubscribed_at = datetime.now(timezone.utc)
+    signup.updated_at = datetime.now(timezone.utc)
     
     await db.commit()
     await db.refresh(signup)
