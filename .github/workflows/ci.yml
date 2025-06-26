@@ -83,7 +83,7 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
-        file: ./backend/coverage.xml
+        files: ./backend/coverage.xml
         flags: backend
         token: ${{ secrets.CODECOV_TOKEN }}
 
@@ -119,7 +119,7 @@ jobs:
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
       with:
-        file: ./frontend/coverage/lcov.info
+        files: ./frontend/coverage/lcov.info
         flags: frontend
         token: ${{ secrets.CODECOV_TOKEN }}
 
