@@ -21,6 +21,7 @@ from ..crud.signup import (
 )
 from ..deps import get_db
 from ..models.models import InterestLevel, SignupStatus
+from ..services.email import get_email_service
 
 
 class SignupCreate(BaseModel):
@@ -169,6 +170,19 @@ async def create_signup_endpoint(
             user_agent=user_agent,
             source="website",
         )
+
+        # Send confirmation email
+        email_service = get_email_service()
+        if email_service:
+            try:
+                await email_service.send_waitlist_confirmation(
+                    to_email=signup.email,
+                    name=signup.name,
+                    unsubscribe_token=signup.unsubscribe_token
+                )
+            except Exception as e:
+                # Log email failure but don't fail the signup
+                print(f"Failed to send confirmation email to {signup.email}: {str(e)}")
 
         # Convert datetime to ISO format string for response
         response_data = SignupResponse(
