@@ -51,10 +51,19 @@ jobs:
     - name: Run linting (ruff)
       run: uv run ruff check
 
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        until pg_isready -h localhost -p 5432 -U postgres; do
+          echo "Waiting for PostgreSQL..."
+          sleep 2
+        done
+        echo "PostgreSQL is ready!"
+
     - name: Debug env & .env.ci file
       run: |
         echo "ENV=$ENV"
         echo "TEST_USER_PASSWORD is set: $([ -n "$TEST_USER_PASSWORD" ] && echo "yes" || echo "no")"
+        echo "GITHUB_ACTIONS=$GITHUB_ACTIONS"
         ls -l .env.ci
         cat .env.ci
 

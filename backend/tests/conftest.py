@@ -94,6 +94,8 @@ async def create_database_if_not_exists(database_url: str):
     if not database_url.startswith("postgresql"):
         return
     
+    import asyncio
+    
     # Extract database name from URL
     db_name = database_url.split("/")[-1]
     
@@ -102,26 +104,34 @@ async def create_database_if_not_exists(database_url: str):
     
     for admin_db in admin_dbs:
         admin_url = database_url.replace(f"/{db_name}", f"/{admin_db}")
-        admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
         
-        try:
-            async with admin_engine.connect() as conn:
-                # Check if database exists
-                result = await conn.execute(
-                    text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
-                    {"db_name": db_name}
-                )
-                if not result.fetchone():
-                    # Create database
-                    await conn.execute(text(f'CREATE DATABASE "{db_name}"'))
-                break  # Success, exit the loop
-        except Exception as e:
-            # If this admin database fails, try the next one
-            if admin_db == admin_dbs[-1]:  # Last attempt
-                raise e  # Re-raise the last exception
-            continue
-        finally:
-            await admin_engine.dispose()
+        # Retry logic with exponential backoff
+        max_retries = 3
+        for attempt in range(max_retries):
+            admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
+            
+            try:
+                async with admin_engine.connect() as conn:
+                    # Check if database exists
+                    result = await conn.execute(
+                        text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
+                        {"db_name": db_name}
+                    )
+                    if not result.fetchone():
+                        # Create database
+                        await conn.execute(text(f'CREATE DATABASE "{db_name}"'))
+                    
+                    # Success! Exit both retry and admin_db loops
+                    return
+            except Exception as e:
+                if attempt == max_retries - 1:  # Last retry
+                    if admin_db == admin_dbs[-1]:  # Last admin database
+                        raise e
+                    break  # Try next admin database
+                # Wait before retry with exponential backoff
+                await asyncio.sleep(2 ** attempt)
+            finally:
+                await admin_engine.dispose()
 
 
 @pytest_asyncio.fixture
