@@ -12,10 +12,10 @@ vi.mock("@/views/workspace/Sidebar.vue", () => ({
   },
 }));
 
-vi.mock("@/components/demo/DemoCanvas.vue", () => ({
+vi.mock("@/views/workspace/Canvas.vue", () => ({
   default: {
-    name: "DemoCanvas",
-    template: '<div data-testid="demo-canvas-mock">DemoCanvas</div>',
+    name: "Canvas",
+    template: '<div data-testid="canvas-mock">Canvas</div>',
     props: ["showEditor", "showSearch"],
     emits: ["update:modelValue"],
   },
@@ -113,13 +113,13 @@ describe("Demo View", () => {
       expect(sidebar.exists()).toBe(true);
     });
 
-    it("renders DemoCanvas when file is available", async () => {
+    it("renders Canvas when file is available", async () => {
       wrapper = mount(DemoView);
       await nextTick();
 
-      // DemoCanvas is rendered with data-testid="demo-canvas" (not demo-canvas-mock)
-      const demoCanvas = wrapper.find('[data-testid="demo-canvas"]');
-      expect(demoCanvas.exists()).toBe(true);
+      // Canvas is rendered with data-testid="workspace-canvas"
+      const canvas = wrapper.find('[data-testid="workspace-canvas"]');
+      expect(canvas.exists()).toBe(true);
     });
 
     it("has correct demo banner icon", async () => {
@@ -128,7 +128,8 @@ describe("Demo View", () => {
 
       const icon = wrapper.find(".demo-icon");
       expect(icon.exists()).toBe(true);
-      expect(icon.text()).toBe("ℹ️");
+      // Now using Tabler icon instead of emoji
+      expect(icon.classes()).toContain("tabler-icon");
     });
   });
 
@@ -183,8 +184,8 @@ describe("Demo View", () => {
       const sidebar = wrapper.findComponent({ name: "Sidebar" });
       await sidebar.vm.$emit("show-component", "DockableEditor");
 
-      const demoCanvas = wrapper.findComponent({ name: "DemoCanvas" });
-      expect(demoCanvas.props("showEditor")).toBe(true);
+      const canvas = wrapper.findComponent({ name: "Canvas" });
+      expect(canvas.props("showEditor")).toBe(true);
     });
 
     it("handles hideComponent event from Sidebar for editor", async () => {
@@ -200,8 +201,8 @@ describe("Demo View", () => {
       await sidebar.vm.$emit("hide-component", "DockableEditor");
       await nextTick();
 
-      const demoCanvas = wrapper.findComponent({ name: "DemoCanvas" });
-      expect(demoCanvas.props("showEditor")).toBe(false);
+      const canvas = wrapper.findComponent({ name: "Canvas" });
+      expect(canvas.props("showEditor")).toBe(false);
     });
 
     it("handles showComponent event from Sidebar for search", async () => {
@@ -211,8 +212,8 @@ describe("Demo View", () => {
       const sidebar = wrapper.findComponent({ name: "Sidebar" });
       await sidebar.vm.$emit("show-component", "DockableSearch");
 
-      const demoCanvas = wrapper.findComponent({ name: "DemoCanvas" });
-      expect(demoCanvas.props("showSearch")).toBe(true);
+      const canvas = wrapper.findComponent({ name: "Canvas" });
+      expect(canvas.props("showSearch")).toBe(true);
     });
 
     it("handles hideComponent event from Sidebar for search", async () => {
@@ -228,8 +229,8 @@ describe("Demo View", () => {
       await sidebar.vm.$emit("hide-component", "DockableSearch");
       await nextTick();
 
-      const demoCanvas = wrapper.findComponent({ name: "DemoCanvas" });
-      expect(demoCanvas.props("showSearch")).toBe(false);
+      const canvas = wrapper.findComponent({ name: "Canvas" });
+      expect(canvas.props("showSearch")).toBe(false);
     });
   });
 

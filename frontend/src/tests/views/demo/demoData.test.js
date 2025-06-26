@@ -199,6 +199,28 @@ describe("Demo Data Service", () => {
       });
     });
 
+    describe("GET method - file content endpoint", () => {
+      it("returns file HTML for /files/{id}/content", async () => {
+        const api = createDemoApi();
+        demoFile.html = "<div>Test HTML Content</div>";
+        const result = await api.get(`/files/${demoFile.id}/content`);
+        expect(result).toEqual({ data: "<div>Test HTML Content</div>" });
+      });
+
+      it("returns empty string when file has no HTML", async () => {
+        const api = createDemoApi();
+        demoFile.html = null;
+        const result = await api.get(`/files/999/content`);
+        expect(result).toEqual({ data: "" });
+      });
+
+      it("still returns empty object for other GET endpoints after adding file content support", async () => {
+        const api = createDemoApi();
+        const result = await api.get("/some/other/endpoint");
+        expect(result).toEqual({ data: {} });
+      });
+    });
+
     describe("POST method - /render endpoint", () => {
       it("calls backend render endpoint with correct parameters", async () => {
         // Since /render now hits the real backend, we test that the call structure is correct
