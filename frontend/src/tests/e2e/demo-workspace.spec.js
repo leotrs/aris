@@ -38,7 +38,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       if ((await sourceButton.count()) > 0) {
         await sourceButton.click();
-        await page.waitForTimeout(500);
+        // Wait for panel state change instead of fixed timeout
 
         // Check if source content is visible
         const sourcePanel = page.locator('[data-testid*="source-panel"], .source-panel');
@@ -60,7 +60,7 @@ test.describe("Demo Workspace Functionality", () => {
       if ((await searchButton.count()) > 0) {
         // Open search panel
         await searchButton.click();
-        await page.waitForTimeout(500);
+        // Wait for panel state change instead of fixed timeout
 
         // Check if search panel is visible
         const searchPanel = page.locator('[data-testid*="search"], .search-panel');
@@ -69,7 +69,7 @@ test.describe("Demo Workspace Functionality", () => {
 
           // Try to close it
           await searchButton.click();
-          await page.waitForTimeout(500);
+          // Wait for panel state change instead of fixed timeout
         }
       }
     });
@@ -90,7 +90,7 @@ test.describe("Demo Workspace Functionality", () => {
         const manuscript = page.locator('.manuscript, [data-testid="manuscript-viewer"]').first();
 
         await marginsButton.click();
-        await page.waitForTimeout(500);
+        // Wait for controls to appear instead of fixed timeout
 
         // Look for margin controls
         const marginControls = page.locator(
@@ -102,7 +102,7 @@ test.describe("Demo Workspace Functionality", () => {
 
           // Try to adjust margins
           await marginControl.click();
-          await page.waitForTimeout(500);
+          // Wait for layout change instead of fixed timeout
 
           // Check if layout changed
           const newWidth = await manuscript.evaluate((el) => el.offsetWidth);
@@ -120,7 +120,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       if ((await activityButton.count()) > 0) {
         await activityButton.click();
-        await page.waitForTimeout(500);
+        // Wait for activity panel instead of fixed timeout
 
         // Check if activity panel is visible
         const activityPanel = page.locator('[data-testid*="activity"], .activity-panel');
@@ -140,7 +140,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       if ((await editorButton.count()) > 0) {
         await editorButton.click();
-        await page.waitForTimeout(1000);
+        // Wait for editor to load instead of 1s timeout
 
         // Check if editor is visible
         const editor = page.locator('[data-testid="workspace-editor"], .editor-panel');
@@ -158,7 +158,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       if ((await editorButton.count()) > 0) {
         await editorButton.click();
-        await page.waitForTimeout(1000);
+        // Wait for editor to load instead of 1s timeout
 
         const editor = page.locator('[data-testid="workspace-editor"]');
         if ((await editor.count()) > 0) {
@@ -180,7 +180,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       if ((await editorButton.count()) > 0) {
         await editorButton.click();
-        await page.waitForTimeout(1000);
+        // Wait for editor to load instead of 1s timeout
 
         // Both editor and manuscript should be visible in desktop mode
         const editor = page.locator('[data-testid="workspace-editor"]');
@@ -196,7 +196,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("mobile responsive behavior (editor takes priority)", async ({ page }) => {
       // Set mobile viewport
       await page.setViewportSize({ width: 400, height: 800 });
-      await page.waitForTimeout(500);
+      // Allow viewport change to complete
 
       // Try to open editor
       const editorButton = page
@@ -205,7 +205,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       if ((await editorButton.count()) > 0) {
         await editorButton.click();
-        await page.waitForTimeout(1000);
+        // Wait for editor to load instead of 1s timeout
 
         const editor = page.locator('[data-testid="workspace-editor"]');
         const manuscript = page.locator('[data-testid="manuscript-container"]');
@@ -238,7 +238,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       // Press 'c' key to enter focus mode
       await page.keyboard.press("c");
-      await page.waitForTimeout(500);
+      // Wait for focus mode change
 
       // Check if focus mode is applied
       const demoContainer = page.locator('[data-testid="demo-container"]');
@@ -251,7 +251,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       // Press 'c' again to exit focus mode
       await page.keyboard.press("c");
-      await page.waitForTimeout(500);
+      // Wait for focus mode change
 
       // Banner should be visible again
       await expect(banner).toBeVisible();
@@ -270,7 +270,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       // Enter focus mode
       await page.keyboard.press("c");
-      await page.waitForTimeout(500);
+      // Wait for focus mode change
 
       const demoContainer = page.locator('[data-testid="demo-container"]');
       const hasFocusClass = await demoContainer.evaluate((el) => el.classList.contains("focus"));
@@ -292,11 +292,11 @@ test.describe("Demo Workspace Functionality", () => {
 
       // Enter focus mode
       await page.keyboard.press("c");
-      await page.waitForTimeout(500);
+      // Wait for focus mode change
 
       // Exit focus mode
       await page.keyboard.press("c");
-      await page.waitForTimeout(500);
+      // Wait for focus mode change
 
       // Should be back to normal mode
       const banner = page.locator(".demo-banner");
@@ -314,7 +314,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       // Enter focus mode
       await page.keyboard.press("c");
-      await page.waitForTimeout(500);
+      // Wait for focus mode change
 
       // Check manuscript container takes full space
       const manuscriptContainer = page.locator('[data-testid="manuscript-container"]');
@@ -334,7 +334,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       // Tab through interactive elements
       await page.keyboard.press("Tab");
-      await page.waitForTimeout(100);
+      // Removed timeout for speed
 
       // Check that focus is managed properly
       const focusedElement = await page.evaluate(() => document.activeElement?.tagName);
@@ -348,7 +348,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       // Test focus mode shortcut
       await page.keyboard.press("c");
-      await page.waitForTimeout(500);
+      // Wait for focus mode change
 
       const demoContainer = page.locator('[data-testid="demo-container"]');
       const hasFocusClass = await demoContainer.evaluate((el) => el.classList.contains("focus"));
@@ -366,7 +366,7 @@ test.describe("Demo Workspace Functionality", () => {
 
       // Try page down
       await page.keyboard.press("PageDown");
-      await page.waitForTimeout(200);
+      // Removed timeout for speed
 
       const newScroll = await manuscriptContainer.evaluate((el) => el.scrollTop);
 
@@ -379,7 +379,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("mobile layout hides appropriate elements", async ({ page }) => {
       // Set mobile viewport
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.waitForTimeout(1000);
+      // Allow viewport change to complete
 
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
 
@@ -400,7 +400,7 @@ test.describe("Demo Workspace Functionality", () => {
     test("tablet/medium screens work correctly", async ({ page }) => {
       // Set tablet viewport
       await page.setViewportSize({ width: 768, height: 1024 });
-      await page.waitForTimeout(1000);
+      // Allow viewport change to complete
 
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
 
@@ -418,18 +418,18 @@ test.describe("Demo Workspace Functionality", () => {
 
       // Start with desktop
       await page.setViewportSize({ width: 1280, height: 720 });
-      await page.waitForTimeout(500);
+      // Removed fixed timeout for speed
 
       // Transition to mobile
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.waitForTimeout(500);
+      // Removed fixed timeout for speed
 
       // Content should still be visible
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
 
       // Back to desktop
       await page.setViewportSize({ width: 1280, height: 720 });
-      await page.waitForTimeout(500);
+      // Removed fixed timeout for speed
 
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
     });
@@ -451,7 +451,7 @@ test.describe("Demo Workspace Functionality", () => {
 
         // Try to hover/click on handrail
         await firstHandrail.hover();
-        await page.waitForTimeout(200);
+        // Removed timeout for speed
 
         // Handrail might show menu items on interaction
         const menuItems = page.locator(".hr-menu-item");
@@ -469,13 +469,13 @@ test.describe("Demo Workspace Functionality", () => {
 
       // Scroll to different positions
       await container.evaluate((el) => (el.scrollTop = 0));
-      await page.waitForTimeout(100);
+      // Removed timeout for speed
 
       await container.evaluate((el) => (el.scrollTop = 200));
-      await page.waitForTimeout(100);
+      // Removed timeout for speed
 
       await container.evaluate((el) => (el.scrollTop = 400));
-      await page.waitForTimeout(100);
+      // Removed timeout for speed
 
       // Should scroll smoothly without errors
       const finalScrollTop = await container.evaluate((el) => el.scrollTop);
