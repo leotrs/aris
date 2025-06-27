@@ -1,18 +1,33 @@
 import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
+import { NoAuthHelpers } from "./utils/no-auth-helpers.js";
 
 test.describe("Account View E2E Tests @standard", () => {
   let authHelpers;
+  let noAuthHelpers;
 
   test.beforeEach(async ({ page }) => {
     authHelpers = new AuthHelpers(page);
-    // Ensure authenticated state for account tests
-    await authHelpers.loginWithTestUser();
+    noAuthHelpers = new NoAuthHelpers(page);
+
+    // Check if we're in no-auth mode (SKIP_AUTH_FOR_TESTS)
+    const skipAuth = process.env.SKIP_AUTH_FOR_TESTS === "true";
+
+    if (skipAuth) {
+      // Skip authentication and navigate directly
+      await noAuthHelpers.verifyNoAuthRequired();
+    } else {
+      // Ensure authenticated state for account tests
+      await authHelpers.loginWithTestUser();
+    }
   });
 
   test.afterEach(async () => {
-    // Clean up auth state after each test
-    await authHelpers.clearAuthState();
+    // Clean up auth state only if not in no-auth mode
+    const skipAuth = process.env.SKIP_AUTH_FOR_TESTS === "true";
+    if (!skipAuth) {
+      await authHelpers.clearAuthState();
+    }
   });
 
   test("complete account profile update workflow", async ({ page }) => {
