@@ -189,6 +189,8 @@
     flex-shrink: 0;
     height: 40px;
     box-sizing: border-box;
+    display: flex;
+    align-items: center;
   }
 
   /* Push sidebar down to account for demo banner */
@@ -204,6 +206,11 @@
     font-size: 14px;
     font-weight: 500;
     color: var(--dark);
+    width: 100%;
+  }
+
+  .demo-icon {
+    color: var(--blue-600);
   }
 
   .demo-link {
