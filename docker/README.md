@@ -53,7 +53,6 @@ docker compose -f docker-compose.dev.yml up --build
 **Login credentials (auto-seeded):**
 - 📧 **Email**: `foo@bar.com`
 - 🔑 **Password**: `admin`
-
 ### 2. Set Up Additional Clones
 
 For each additional repository clone:
