@@ -13,22 +13,35 @@ export class AuthHelpers {
     // Click login button and wait for either navigation or error message
     await this.page.click('[data-testid="login-button"]');
 
+    // Wait for either successful navigation away from login or error state
     try {
-      // Try to wait for navigation (successful login)
-      await this.page.waitForNavigation({ timeout: 10000 });
+      await this.page.waitForURL(url => !url.includes('/login'), { timeout: 10000 });
       await this.page.waitForLoadState("networkidle");
     } catch (error) {
-      // If no navigation, check if we're still on login page (failed login)
+      // If still on login page, check for error messages or other issues
+      await this.page.waitForLoadState("networkidle");
       const currentUrl = this.page.url();
       if (currentUrl.includes("/login")) {
-        // Failed login - wait for any error messages to appear
-        await this.page.waitForLoadState("networkidle");
-        // Don't throw error here, let the test handle the failed login scenario
+        // Still on login page - login likely failed
+        console.log("Login attempt did not navigate away from login page");
       } else {
         // Some other navigation issue, re-throw the error
         throw error;
       }
     }
+  }
+
+  async loginWithTestUser() {
+    // Use test credentials from environment variables
+    const testEmail = process.env.TEST_USER_EMAIL || "testuser@aris.pub";
+    const testPassword = process.env.VITE_DEV_LOGIN_PASSWORD || process.env.TEST_USER_PASSWORD;
+    
+    if (!testPassword) {
+      throw new Error("Test user password not configured. Set VITE_DEV_LOGIN_PASSWORD or TEST_USER_PASSWORD environment variable.");
+    }
+    
+    await this.login(testEmail, testPassword);
+    await this.expectToBeLoggedIn();
   }
 
   async expectToBeLoggedIn() {
