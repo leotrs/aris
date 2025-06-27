@@ -18,12 +18,13 @@ test.describe("File Management Tests @standard", () => {
     const hasValidCredentials = TEST_CREDENTIALS.valid.password;
     test.skip(!hasValidCredentials, "Requires valid test credentials for file operations");
 
-    // Use authentication bypass for @flaky tests, regular login for others
+    // Use authentication bypass for @flaky and @desktop-only tests, regular login for others
     const testInfo = test.info();
     const isFlaky = testInfo.tags.includes("@flaky");
+    const isDesktopOnly = testInfo.tags.includes("@desktop-only");
 
-    if (isFlaky) {
-      console.log("Using authentication bypass for @flaky test");
+    if (isFlaky || isDesktopOnly) {
+      console.log(`Using authentication bypass for ${isDesktopOnly ? '@desktop-only' : '@flaky'} test`);
       try {
         await authHelpers.authenticateWithBypass();
       } catch (error) {
@@ -131,7 +132,7 @@ test.describe("File Management Tests @standard", () => {
     await fileHelpers.deleteFile(fileId);
   });
 
-  test("file operations work with keyboard shortcuts", { tag: "@flaky" }, async ({ page }) => {
+  test("file operations work with keyboard shortcuts", { tag: "@desktop-only" }, async ({ page }) => {
     // Create a file for keyboard testing
     const fileId = await fileHelpers.createNewFile();
     await fileHelpers.navigateToHome();

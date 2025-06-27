@@ -13,12 +13,13 @@ test.describe("Home View Search & Filter", () => {
     await page.goto("/");
     await authHelpers.clearAuthState();
 
-    // Use authentication bypass for @flaky tests, regular login for others
+    // Use authentication bypass for @flaky and @desktop-only tests, regular login for others
     const testInfo = test.info();
     const isFlaky = testInfo.tags.includes("@flaky");
+    const isDesktopOnly = testInfo.tags.includes("@desktop-only");
 
-    if (isFlaky) {
-      console.log("Using authentication bypass for @flaky test");
+    if (isFlaky || isDesktopOnly) {
+      console.log(`Using authentication bypass for ${isDesktopOnly ? '@desktop-only' : '@flaky'} test`);
       try {
         await authHelpers.authenticateWithBypass();
         await fileHelpers.waitForFilesLoaded();
@@ -49,7 +50,7 @@ test.describe("Home View Search & Filter", () => {
     }
   });
 
-  test("search keyboard shortcut opens search", async ({ page }) => {
+  test("search keyboard shortcut opens search", { tag: "@desktop-only" }, async ({ page }) => {
     // Test search shortcut
     await page.keyboard.press("/");
 
@@ -64,7 +65,7 @@ test.describe("Home View Search & Filter", () => {
 
   test(
     "file list remains functional with search functionality",
-    { tag: "@flaky" },
+    { tag: "@desktop-only" },
     async ({ page }) => {
       const filesContainer = page.locator('[data-testid="files-container"]');
       await expect(filesContainer).toBeVisible();

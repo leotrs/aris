@@ -13,12 +13,13 @@ test.describe("Home View Navigation & Keyboard", () => {
     await page.goto("/");
     await authHelpers.clearAuthState();
 
-    // Use authentication bypass for @flaky tests, regular login for others
+    // Use authentication bypass for @flaky and @desktop-only tests, regular login for others
     const testInfo = test.info();
     const isFlaky = testInfo.tags.includes("@flaky");
+    const isDesktopOnly = testInfo.tags.includes("@desktop-only");
 
-    if (isFlaky) {
-      console.log("Using authentication bypass for @flaky test");
+    if (isFlaky || isDesktopOnly) {
+      console.log(`Using authentication bypass for ${isDesktopOnly ? '@desktop-only' : '@flaky'} test`);
       try {
         await authHelpers.authenticateWithBypass();
         // Ensure we have test files for navigation
@@ -34,7 +35,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     }
   });
 
-  test("keyboard navigation with j/k updates focus correctly", async ({ page }) => {
+  test("keyboard navigation with j/k updates focus correctly", { tag: "@desktop-only" }, async ({ page }) => {
     // Wait for files to load
     await page.waitForSelector('[data-testid="files-container"]');
     const files = await page.locator('[data-testid^="file-item-"]').all();
@@ -89,7 +90,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     await expect(files[0]).not.toHaveClass(/focused/);
   });
 
-  test("enter key opens focused file", async ({ page }) => {
+  test("enter key opens focused file", { tag: "@desktop-only" }, async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
@@ -103,7 +104,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     expect(page.url()).toContain("/file/");
   });
 
-  test("space key opens focused file", async ({ page }) => {
+  test("space key opens focused file", { tag: "@desktop-only" }, async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
@@ -117,7 +118,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     expect(page.url()).toContain("/file/");
   });
 
-  test("dot key opens context menu for focused file", async ({ page }) => {
+  test("dot key opens context menu for focused file", { tag: "@desktop-only" }, async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
@@ -130,7 +131,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     await expect(page.locator('[data-testid="context-menu"]')).toBeVisible();
   });
 
-  test("view mode shortcut v,l switches to list view", async ({ page }) => {
+  test("view mode shortcut v,l switches to list view", { tag: "@desktop-only" }, async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
@@ -143,7 +144,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     await expect(filesContainer).toHaveClass(/list/);
   });
 
-  test("view mode shortcut v,c switches to cards view", async ({ page }) => {
+  test("view mode shortcut v,c switches to cards view", { tag: "@desktop-only" }, async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
@@ -156,7 +157,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     await expect(filesContainer).toHaveClass(/cards/);
   });
 
-  test("search shortcut / focuses search input", async ({ page }) => {
+  test("search shortcut / focuses search input", { tag: "@desktop-only" }, async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
@@ -171,7 +172,7 @@ test.describe("Home View Navigation & Keyboard", () => {
 
   test(
     "keyboard navigation maintains focus after file operations",
-    { tag: "@flaky" },
+    { tag: "@desktop-only" },
     async ({ page }) => {
       await page.goto("/");
 
