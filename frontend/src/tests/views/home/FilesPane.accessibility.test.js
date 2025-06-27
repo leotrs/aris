@@ -340,6 +340,11 @@ describe("FilesPane.vue - Accessibility Features", () => {
           Suspense: {
             template: '<div><slot name="fallback"></slot></div>',
           },
+          LoadingSpinner: {
+            template:
+              '<div class="loading-container"><div class="loading-message">{{ message }}</div></div>',
+            props: ["message"],
+          },
         },
       });
 

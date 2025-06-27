@@ -162,6 +162,16 @@
   const isDev = import.meta.env.VITE_ENV === "DEV";
   provide("isDev", isDev);
 
+  // Determine which clone this is based on backend port
+  const getCloneInfo = () => {
+    const apiUrl = import.meta.env.VITE_API_BASE_URL || "";
+    const portMatch = apiUrl.match(/:(\d+)/);
+    const port = portMatch ? parseInt(portMatch[1]) : 8000;
+    return `LOCAL:${port}`;
+  };
+
+  const cloneInfo = getCloneInfo();
+
   // Shortcuts modal
   const showShortcutsModal = ref(false);
   useKeyboardShortcuts(
@@ -186,7 +196,7 @@
   </div>
   <template v-else>
     <RouterView :class="`bp-${breakpoints.active().value}`" />
-    <div v-if="isDev" id="env">LOCAL</div>
+    <div v-if="isDev" id="env">{{ cloneInfo }}</div>
 
     <ModalShortcuts v-if="showShortcutsModal" @close="showShortcutsModal = false" />
   </template>

@@ -28,6 +28,7 @@ describe("Logger", () => {
 
   it("logs info messages with structured format", () => {
     const logger = getLogger("TestModule");
+    logger.setLogLevel(0); // DEBUG level to ensure all logs are output
     logger.info("Test message", { key: "value" });
 
     expect(consoleSpy.info).toHaveBeenCalledOnce();
@@ -70,6 +71,7 @@ describe("Logger", () => {
 
   it("logs performance metrics", () => {
     const logger = getLogger("TestModule");
+    logger.setLogLevel(0); // DEBUG level to ensure all logs are output
     logger.performance("test operation", 123.45, { detail: "info" });
 
     expect(consoleSpy.debug).toHaveBeenCalledOnce();
@@ -80,6 +82,7 @@ describe("Logger", () => {
 
   it("logs user actions", () => {
     const logger = getLogger("TestModule");
+    logger.setLogLevel(0); // DEBUG level to ensure all logs are output
     logger.userAction("button click", { buttonId: "save" });
 
     expect(consoleSpy.info).toHaveBeenCalledOnce();
@@ -90,6 +93,7 @@ describe("Logger", () => {
 
   it("formats timestamp correctly", () => {
     const logger = getLogger("TestModule");
+    logger.setLogLevel(0); // DEBUG level to ensure all logs are output
     logger.info("Test message");
 
     const logCall = consoleSpy.info.mock.calls[0][0];

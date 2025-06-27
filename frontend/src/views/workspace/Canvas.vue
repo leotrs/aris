@@ -140,6 +140,8 @@
   const mobileMode = inject("mobileMode");
   const focusMode = inject("focusMode");
   const drawerOpen = inject("drawerOpen");
+  const annotations = inject("annotations", []);
+  const hasAnnotations = computed(() => annotations && annotations.length > 0);
   const middleTopWidth = computed(() => `${columnSizes.middle.width + 8}px`);
 </script>
 
@@ -164,6 +166,7 @@
           ref="inner-right-ref"
           data-testid="manuscript-container"
           class="inner right"
+          :class="{ 'no-annotations': !hasAnnotations }"
         >
           <div ref="left-column-ref" class="left-column">
             <Dock class="dock left top"> </Dock>
@@ -186,7 +189,7 @@
               />
             </Dock>
           </div>
-          <div ref="right-column-ref" class="right-column">
+          <div v-if="hasAnnotations" ref="right-column-ref" class="right-column">
             <Dock class="dock right top"> </Dock>
             <Dock class="dock right main">
               <DockableAnnotations />
@@ -292,9 +295,27 @@
   }
 
   .inner.right .middle-column {
-    width: calc(100% - 8px);
+    /* Use flex instead of fixed width to allow proper space distribution */
+    /* between left, middle, and right columns in three-column layout */
+    /* Give middle column (manuscript) the majority of space */
+    flex: 4; /* Increase flex ratio to give middle column even more space */
+    min-width: 0; /* Allow flex shrinking when needed */
     height: fit-content;
     scrollbar-gutter: stable;
+  }
+
+  /* When no annotations are present, middle column should expand to full width */
+  .inner.right.no-annotations .middle-column {
+    flex: 1; /* Take all available space when no right column */
+    max-width: none; /* Remove any width constraints */
+  }
+
+  .inner.right .right-column {
+    /* Make annotations panel much narrower */
+    /* Annotations should be compact to keep focus on main content */
+    flex: 0 0 280px; /* Fixed width for annotations panel - even narrower */
+    min-width: 250px; /* Minimum width to prevent collapse */
+    max-width: 300px; /* Maximum width to keep it compact */
   }
 
   .outer.mobile .inner.right .middle-column {
