@@ -7,6 +7,7 @@ describe("Logger", () => {
   beforeEach(() => {
     // Set environment to development to ensure DEBUG level logging
     vi.stubEnv("MODE", "development");
+
     consoleSpy = {
       debug: vi.spyOn(console, "debug").mockImplementation(() => {}),
       info: vi.spyOn(console, "info").mockImplementation(() => {}),
