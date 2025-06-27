@@ -139,7 +139,7 @@ This is another stable test file for visual tests.
             password_valid = verify_password(TEST_USER_PASSWORD, verify_row.password_hash)
             print(f"   - Password verification test: {'✅ PASS' if password_valid else '❌ FAIL'}")
         else:
-            print(f"   - ❌ Could not verify user in database")
+            print("   - ❌ Could not verify user in database")
 
     except Exception as e:
         await session.rollback()
