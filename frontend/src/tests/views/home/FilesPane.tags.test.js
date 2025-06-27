@@ -22,6 +22,8 @@ describe("FilesPane.vue - Tag Functionality", () => {
           title: "Research Paper",
           filtered: false,
           focused: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
           tags: [
             { id: "tag1", name: "research", color: "#blue" },
             { id: "tag2", name: "biology", color: "#green" },
@@ -32,6 +34,8 @@ describe("FilesPane.vue - Tag Functionality", () => {
           title: "Analysis Document",
           filtered: false,
           focused: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
           tags: [
             { id: "tag3", name: "analysis", color: "#red" },
             { id: "tag1", name: "research", color: "#blue" },
@@ -42,6 +46,8 @@ describe("FilesPane.vue - Tag Functionality", () => {
           title: "Draft Paper",
           filtered: true,
           focused: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
           tags: [{ id: "tag4", name: "draft", color: "#yellow" }],
         },
       ],
@@ -127,8 +133,8 @@ describe("FilesPane.vue - Tag Functionality", () => {
         provide: {
           fileStore: ref({
             files: [
-              { id: "1", title: "No Tags File", filtered: false, focused: false, tags: [] },
-              { id: "2", title: "Undefined Tags File", filtered: false, focused: false },
+              { id: "1", title: "No Tags File", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
+              { id: "2", title: "Undefined Tags File", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
             ],
           }),
         },
@@ -305,6 +311,8 @@ describe("FilesPane.vue - Tag Functionality", () => {
                 title: "Malformed Tags File",
                 filtered: false,
                 focused: false,
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
                 tags: [
                   { id: "tag1", name: "complete" }, // missing color
                   { name: "incomplete" }, // missing id
@@ -379,6 +387,8 @@ describe("FilesPane.vue - Tag Functionality", () => {
                 title: "Many Tags File",
                 filtered: false,
                 focused: false,
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
                 tags: manyTags,
               },
             ],

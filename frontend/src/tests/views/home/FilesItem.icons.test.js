@@ -14,6 +14,8 @@ describe("FilesItem.vue - Icon Visibility and Colors", () => {
       selected: false,
       focused: false,
       lastModified: new Date().toISOString(),
+      getFormattedDate: () => "2 hours ago",
+      getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
       tags: [{ id: "tag1", name: "math" }],
     });
 

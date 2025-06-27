@@ -167,6 +167,9 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
         title: `File ${i}`,
         filtered: false,
         focused: false,
+        getFormattedDate: () => "2 hours ago",
+        getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+        tags: [],
       }));
 
       const wrapper = createWrapper({
@@ -191,7 +194,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       // Rapid updates to test Suspense stability
       for (let i = 0; i < 5; i++) {
         mockFileStore.value.files = [
-          { id: `rapid-${i}`, title: `Rapid File ${i}`, filtered: false, focused: false },
+          { id: `rapid-${i}`, title: `Rapid File ${i}`, filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
         ];
         await nextTick();
       }
@@ -213,7 +216,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
           fileStore: ref({
             files: [
               // Missing required properties to potentially trigger errors
-              { id: "error-file" },
+              { id: "error-file", getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
             ],
           }),
         },
@@ -236,7 +239,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       await nextTick();
 
       mockFileStore.value.files = [
-        { id: "recovery", title: "Recovery File", filtered: false, focused: false },
+        { id: "recovery", title: "Recovery File", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
       ];
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -342,8 +345,8 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       // Replace files completely
       mockFileStore.value.files = [
-        { id: "new-1", title: "New File 1", filtered: false, focused: false },
-        { id: "new-2", title: "New File 2", filtered: false, focused: false },
+        { id: "new-1", title: "New File 1", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
+        { id: "new-2", title: "New File 2", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
       ];
 
       await nextTick();
