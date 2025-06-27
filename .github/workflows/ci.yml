@@ -288,6 +288,7 @@ jobs:
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
   e2e-standard:
     runs-on: ubuntu-latest
@@ -419,6 +420,7 @@ jobs:
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     - name: Run Site E2E tests (excluding demo integration)
       working-directory: site
@@ -539,6 +541,7 @@ jobs:
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     - name: Run remaining uncategorized tests
       working-directory: frontend
@@ -546,3 +549,4 @@ jobs:
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
