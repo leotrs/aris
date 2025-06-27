@@ -294,12 +294,6 @@
     border-bottom-right-radius: 0;
   }
 
-  .inner.right .left-column {
-    /* Left column should be compact for sidebar tools */
-    flex: 0 0 auto; /* Don't grow, don't shrink, use natural width */
-    min-width: 64px; /* Minimum width for sidebar tools */
-  }
-
   .inner.right .middle-column {
     /* Use flex instead of fixed width to allow proper space distribution */
     /* between left, middle, and right columns in three-column layout */
