@@ -107,15 +107,15 @@ export class AuthHelpers {
       console.log("Performing one-time authentication to get tokens...");
       await this.login(testEmail, testPassword);
       await this.expectToBeLoggedIn();
-      
+
       // Cache the authentication tokens
       const tokens = await this.getStoredTokens();
       this._cachedAuth = {
         accessToken: tokens.accessToken,
         refreshToken: tokens.refreshToken,
-        user: tokens.user
+        user: tokens.user,
       };
-      
+
       console.log("Authentication tokens cached successfully");
     } catch (error) {
       console.error("Failed to get authentication tokens:", error);

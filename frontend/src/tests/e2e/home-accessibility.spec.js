@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
-import { TEST_CREDENTIALS } from "./setup/test-data.js";
 
 test.describe("Home View Accessibility @flaky", () => {
   let authHelpers, fileHelpers;
@@ -12,7 +11,7 @@ test.describe("Home View Accessibility @flaky", () => {
 
     await page.goto("/");
     await authHelpers.clearAuthState();
-    
+
     // This entire test suite is @flaky, use authentication bypass
     console.log("Using authentication bypass for @flaky accessibility tests");
     try {
