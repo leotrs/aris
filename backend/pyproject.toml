@@ -117,6 +117,9 @@ line-length = 100
 [tool.ruff.lint]
 extend-select = ["I"]    # Enable import sorting
 
+[tool.ruff.lint.per-file-ignores]
+"main.py" = ["E402", "I001"]  # Allow imports not at top of file for conditional imports
+
 [tool.ruff.lint.isort]
 known-first-party = ["aris"]
 force-single-line = false
