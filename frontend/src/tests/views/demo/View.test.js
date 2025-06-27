@@ -31,7 +31,22 @@ vi.mock("@/views/demo/demoData.js", () => ({
   },
   demoUser: { id: 1, name: "Demo User" },
   demoFileStore: { files: [] },
-  demoAnnotations: [],
+  demoAnnotations: [
+    {
+      id: 1,
+      type: "comment",
+      content: "This is an excellent point about accessibility barriers in traditional publishing.",
+      user: { id: 1, name: "Demo User" },
+      created_at: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000).toISOString(),
+    },
+    {
+      id: 2,
+      type: "note",
+      content: "Consider adding more details about the technical implementation here.",
+      user: { id: 1, name: "Demo User" },
+      created_at: new Date(Date.now() - 12 * 60 * 60 * 1000).toISOString(),
+    },
+  ],
   createDemoApi: () => ({
     post: mockPost,
     getUri: () => "http://localhost:8000",
@@ -136,6 +151,55 @@ describe("Demo View", () => {
       expect(icon.exists()).toBe(true);
       // Now using Tabler icon instead of emoji
       expect(icon.classes()).toContain("tabler-icon");
+    });
+
+    it("provides demo annotations to Canvas component", async () => {
+      wrapper = mount(DemoView);
+      await nextTick();
+
+      // Wait for content to load
+      await vi.waitFor(() => {
+        return wrapper.vm.isContentLoaded;
+      });
+      await nextTick();
+
+      // Check that annotations are provided
+      const canvas = wrapper.find('[data-testid="demo-canvas"]');
+      expect(canvas.exists()).toBe(true);
+
+      // Verify annotations are passed through provide/inject
+      // The demo should have 2 sample annotations
+      const annotations = wrapper.vm.annotations;
+      expect(annotations).toBeDefined();
+      expect(annotations.length).toBe(2);
+      expect(annotations[0].type).toBe("comment");
+      expect(annotations[1].type).toBe("note");
+    });
+
+    it("should not have wrapper container around Canvas", async () => {
+      wrapper = mount(DemoView);
+      await nextTick();
+
+      // Wait for content to load
+      await vi.waitFor(() => {
+        return wrapper.vm.isContentLoaded;
+      });
+      await nextTick();
+
+      // Canvas should be direct child of demo-view, not wrapped in .outer
+      const demoView = wrapper.find(".demo-view");
+      const canvas = wrapper.find('[data-testid="demo-canvas"]');
+
+      expect(demoView.exists()).toBe(true);
+      expect(canvas.exists()).toBe(true);
+
+      // There should be no .outer wrapper between demo-view and Canvas
+      const outerWrapper = demoView.find(".outer");
+      if (outerWrapper.exists()) {
+        // If .outer exists, Canvas should NOT be inside it
+        const canvasInOuter = outerWrapper.find('[data-testid="demo-canvas"]');
+        expect(canvasInOuter.exists()).toBe(false);
+      }
     });
   });
 
