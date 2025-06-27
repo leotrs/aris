@@ -5,10 +5,13 @@ export const TEST_USERS = {
   VALID_USER: {
     email: "testuser@aris.pub",
     // In CI environment, use TEST_USER_PASSWORD, otherwise use VITE_DEV_LOGIN_PASSWORD
+    // When SKIP_AUTH_FOR_TESTS=true, password is not needed
     password:
-      process.env.CI || process.env.ENV === "CI"
-        ? process.env.TEST_USER_PASSWORD
-        : process.env.VITE_DEV_LOGIN_PASSWORD,
+      process.env.SKIP_AUTH_FOR_TESTS === "true"
+        ? "not-needed"
+        : process.env.CI || process.env.ENV === "CI"
+          ? process.env.TEST_USER_PASSWORD
+          : process.env.VITE_DEV_LOGIN_PASSWORD,
     name: "Test User",
   },
 
@@ -61,8 +64,8 @@ This is a test file created at ${new Date().toISOString()}.
 ::`,
 });
 
-// Validate that required credentials are available - fail if missing
-if (!TEST_USERS.VALID_USER.password) {
+// Validate that required credentials are available - fail if missing (unless auth is disabled)
+if (!TEST_USERS.VALID_USER.password && process.env.SKIP_AUTH_FOR_TESTS !== "true") {
   const envVar =
     process.env.CI || process.env.ENV === "CI" ? "TEST_USER_PASSWORD" : "VITE_DEV_LOGIN_PASSWORD";
   throw new Error(
