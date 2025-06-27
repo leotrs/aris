@@ -27,7 +27,7 @@
   const logoUrl = computed(() => {
     // Use the configured backend URL from the api instance
     const baseUrl = api.defaults.baseURL;
-    
+
     switch (props.type) {
       case "full":
         return `${baseUrl}/design-assets/logos/logotype.svg`;

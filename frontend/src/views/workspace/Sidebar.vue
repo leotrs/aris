@@ -6,6 +6,7 @@
   import SidebarMenu from "./SidebarMenu.vue";
   import Drawer from "./Drawer.vue";
   import Icon from "@/components/base/Icon.vue";
+  import Button from "@/components/base/Button.vue";
 
   const router = useRouter();
   const emit = defineEmits(["showComponent", "hideComponent"]);
@@ -105,6 +106,11 @@
     // Normal mode: avoid drawer overlap if drawer is open
     return drawerOpen.value ? "calc(64px + var(--sidebar-width))" : "64px";
   });
+
+  // Focus mode toggle function
+  const toggleFocusMode = () => {
+    focusMode.value = !focusMode.value;
+  };
 </script>
 
 <template>
@@ -120,6 +126,21 @@
 
     <SidebarMenu :items="items" @on="handleItemOn" @off="handleItemOff" />
     <Drawer :component="items.find((it) => it.type === 'drawer' && it.state)?.name ?? ''" />
+
+    <!-- Focus mode toggle button -->
+    <Button
+      icon="Layout"
+      kind="tertiary"
+      :style="{ 
+        position: 'fixed', 
+        left: focusButtonLeft, 
+        top: '16px', 
+        zIndex: 10,
+        display: focusMode ? 'block' : 'none'
+      }"
+      @click="toggleFocusMode"
+      aria-label="Exit focus mode"
+    />
 
     <Tooltip :anchor="layoutOnRef?.btn ?? null" content="Focus mode off" placement="top" />
   </div>

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Navigation Flow E2E", () => {
-  test("should navigate between all main pages", async ({ page, browserName }) => {
+  test("should navigate between all main pages", async ({ page, browserName: _browserName }) => {
     // Start at home page
     await page.goto("/");
     await expect(page).toHaveTitle(/Aris/);
@@ -66,7 +66,7 @@ test.describe("Navigation Flow E2E", () => {
     }
   });
 
-  test("should handle navbar navigation links", async ({ page, browserName }) => {
+  test("should handle navbar navigation links", async ({ page, browserName: _browserName }) => {
     await page.goto("/");
 
     // Check if this is a mobile viewport (based on responsive breakpoint - sm: 640px)
@@ -259,7 +259,7 @@ test.describe("Navigation Flow E2E", () => {
 
   test("should handle navigation with browser back/forward buttons", async ({
     page,
-    browserName,
+    browserName: _browserName,
   }) => {
     // Navigate through several pages
     await page.goto("/");
@@ -317,7 +317,10 @@ test.describe("Navigation Flow E2E", () => {
     expect(response?.status()).toBe(404);
   });
 
-  test("should maintain scroll position appropriately", async ({ page, browserName }) => {
+  test("should maintain scroll position appropriately", async ({
+    page,
+    browserName: _browserName,
+  }) => {
     await page.goto("/");
 
     // Scroll down to a section
