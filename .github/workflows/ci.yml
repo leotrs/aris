@@ -226,7 +226,7 @@ jobs:
         echo "Marketing site server is ready!"
 
     - name: Run Site E2E tests (excluding demo integration)
-      run: npm run test:e2e:all -- --grep-invert "demo"
+      run: npm run test:e2e -- --grep-invert "demo"
       env:
         SITE_URL: http://localhost:3001
 

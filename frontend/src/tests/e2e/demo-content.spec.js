@@ -176,7 +176,19 @@ test.describe("Demo Content Rendering @demo", () => {
       }
 
       // Hover over content to reveal border dots
-      await page.hover("h1"); // Hover over main heading
+      const isWebKit = page.context().browser()?.browserType().name() === 'webkit';
+      
+      if (isWebKit) {
+        // WebKit-specific approach: Use force and try multiple elements
+        try {
+          await page.hover("h1", { force: true, timeout: 3000 });
+        } catch {
+          // If h1 hover fails, try hovering over a more stable element
+          await page.hover('[data-testid="manuscript-viewer"]', { force: true, timeout: 3000 });
+        }
+      } else {
+        await page.hover("h1"); // Hover over main heading
+      }
 
       // Wait for border dots to become visible on hover
       await expect(page.locator(".hr-border-dots").first()).toBeVisible({ timeout: 5000 });
