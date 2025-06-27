@@ -168,16 +168,13 @@ test.describe("Demo Content Rendering @demo", () => {
       );
 
       // Extra wait for WebKit stability
-      const isWebKit = page.context().browser()?.browserType().name() === 'webkit';
+      const isWebKit = page.context().browser()?.browserType().name() === "webkit";
       if (isWebKit) {
         await page.waitForTimeout(2000);
       } else {
         await page.waitForTimeout(500);
       }
 
-      // Hover over content to reveal border dots
-      const isWebKit = page.context().browser()?.browserType().name() === 'webkit';
-      
       if (isWebKit) {
         // WebKit-specific approach: Use force and try multiple elements
         try {

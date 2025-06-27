@@ -450,7 +450,7 @@ test.describe("Demo Workspace Functionality", () => {
       );
 
       // Extra wait for WebKit stability
-      const isWebKit = page.context().browser()?.browserType().name() === 'webkit';
+      const isWebKit = page.context().browser()?.browserType().name() === "webkit";
       if (isWebKit) {
         await page.waitForTimeout(2000);
       } else {

@@ -13,7 +13,7 @@
   const api = inject("api");
   const onload = ref(null);
   const isLoaded = ref(false);
-  
+
   onBeforeMount(async () => {
     const base = api.getUri();
     try {
@@ -31,13 +31,13 @@
     if (!onload.value || !selfRef.value || !props.htmlString || isLoaded.value) return;
     await nextTick();
     onload.value(selfRef.value, { keys: props.keys });
-    
+
     // Mark as loaded after RSM scripts complete to prevent re-execution
     setTimeout(() => {
       isLoaded.value = true;
       // Add CSS class to indicate loading is complete for testing
       if (selfRef.value) {
-        selfRef.value.classList.add('rsm-loaded');
+        selfRef.value.classList.add("rsm-loaded");
       }
     }, 1000);
   };
