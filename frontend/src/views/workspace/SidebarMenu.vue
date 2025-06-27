@@ -92,7 +92,6 @@
           type="outline"
         />
       </template>
-      <SidebarItem v-model="focusMode" icon="LayoutOff" label="focus" />
       <UserMenu ref="user-menu" />
     </template>
 

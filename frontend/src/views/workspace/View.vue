@@ -5,6 +5,7 @@
   import { File } from "@/models/File.js";
   import Sidebar from "./Sidebar.vue";
   import Canvas from "./Canvas.vue";
+  import Icon from "@/components/base/Icon.vue";
 
   // Load and provide file
   const fileStore = inject("fileStore");
@@ -152,6 +153,11 @@
       <Button kind="secondary" @click="$router.push('/')">Go back home</Button>
     </div>
 
+    <!-- Focus mode exit button - positioned outside sidebar to avoid transform issues -->
+    <div v-show="focusMode" class="focus-mode-exit-button" @click="focusMode = false">
+      <Icon name="Layout" />
+    </div>
+
     <!-- <div class="menus" :class="{ focus: focusMode, mobile: mobileMode }">
          <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
          <UserMenu />
@@ -239,5 +245,34 @@
 
   .state-message.error {
     color: var(--error);
+  }
+
+  .focus-mode-exit-button {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    width: 48px;
+    height: 48px;
+    background: var(--surface-primary);
+    border: var(--border-thin) solid var(--border-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: var(--shadow-soft);
+    z-index: 9999;
+    transition: all 0.2s ease;
+  }
+
+  .focus-mode-exit-button:hover {
+    background: var(--surface-hover);
+    transform: scale(1.05);
+  }
+
+  .focus-mode-exit-button :deep(svg) {
+    width: 24px;
+    height: 24px;
+    color: var(--text-primary);
   }
 </style>
