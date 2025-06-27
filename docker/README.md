@@ -50,6 +50,10 @@ docker compose -f docker-compose.dev.yml up --build
 - 📊 **Health Check**: http://localhost:8000/health
 - 🗄️ **Database**: localhost:5432
 
+**Login credentials (auto-seeded):**
+- 📧 **Email**: `foo@bar.com`
+- 🔑 **Password**: `admin`
+
 ### 2. Set Up Additional Clones
 
 For each additional repository clone:
@@ -93,8 +97,38 @@ TEST_DB_NAME=aris_clone3_test
 
 - **Volume Mounts**: Source code changes sync instantly
 - **Database Migrations**: Run automatically on container startup
+- **Auto-Seeding**: Pre-populated with user and sample data
 - **Environment Isolation**: Separate databases and ports per clone
 - **Development Tools**: Built-in debuggers, dev servers, and monitoring
+
+## 🎲 Auto-Seeding
+
+Every fresh container automatically includes a complete development dataset:
+
+### Pre-loaded User Account
+- **Email**: `foo@bar.com`
+- **Password**: `admin`
+- **Name**: Leo Torres
+- **Initials**: LT
+- **Avatar Color**: Blue
+
+### Sample Content
+- **18 Files**: Realistic documents with actual RSM content, including mathematical notation and formatted text
+- **18 Tags**: Various categories like 'math2', 'rsm', 'nb', 'journal', 'research', etc.
+- **26 File-Tag Relationships**: Files properly categorized with multiple tags
+
+### Data Isolation
+- **Per-Clone Independence**: Each clone has its own complete dataset
+- **No Cross-Clone Syncing**: Data changes in one clone don't affect others
+- **Persistent Storage**: Data survives container restarts within each clone
+- **Fresh Start Option**: Use `docker compose down -v` to reset to clean state
+
+### Seeding Process
+The auto-seeding happens automatically during container startup:
+1. Database migrations run first
+2. User and sample data inserted with conflict handling
+3. Sequences updated to prevent ID conflicts
+4. Application starts with ready-to-use data
 
 ## 🔧 Configuration
 
