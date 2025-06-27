@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 
-test.describe("Home View Accessibility @flaky", () => {
+test.describe("Home View Accessibility @desktop-only", () => {
   let authHelpers, fileHelpers;
 
   test.beforeEach(async ({ page }) => {
@@ -12,8 +12,8 @@ test.describe("Home View Accessibility @flaky", () => {
     await page.goto("/");
     await authHelpers.clearAuthState();
 
-    // This entire test suite is @flaky, use authentication bypass
-    console.log("Using authentication bypass for @flaky accessibility tests");
+    // This entire test suite is @desktop-only, use authentication bypass
+    console.log("Using authentication bypass for @desktop-only accessibility tests");
     try {
       await authHelpers.authenticateWithBypass();
       await fileHelpers.waitForFilesLoaded();

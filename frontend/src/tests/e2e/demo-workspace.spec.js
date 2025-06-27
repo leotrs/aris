@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Demo Workspace Functionality @flaky", () => {
+test.describe("Demo Workspace Functionality", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
@@ -161,7 +161,7 @@ test.describe("Demo Workspace Functionality @flaky", () => {
 
     test(
       "editor and manuscript view work together in split mode",
-      { tag: "@flaky" },
+      { tag: "@desktop-only" },
       async ({ page }) => {
         // Open editor
         const editorButton = page
@@ -217,7 +217,7 @@ test.describe("Demo Workspace Functionality @flaky", () => {
   });
 
   test.describe("Focus Mode", () => {
-    test("can toggle focus mode with 'c' key", async ({ page }) => {
+    test("can toggle focus mode with 'c' key", { tag: "@desktop-only" }, async ({ page }) => {
       // Ensure demo content is loaded and focused
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
@@ -248,7 +248,7 @@ test.describe("Demo Workspace Functionality @flaky", () => {
       await expect(banner).toBeVisible();
     });
 
-    test("focus mode hides sidebar and banner", async ({ page }) => {
+    test("focus mode hides sidebar and banner", { tag: "@desktop-only" }, async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -276,7 +276,7 @@ test.describe("Demo Workspace Functionality @flaky", () => {
       }
     });
 
-    test("can exit focus mode", async ({ page }) => {
+    test("can exit focus mode", { tag: "@desktop-only" }, async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -298,7 +298,7 @@ test.describe("Demo Workspace Functionality @flaky", () => {
       expect(hasFocusClass).toBe(false);
     });
 
-    test("responsive layout in focus mode", async ({ page }) => {
+    test("responsive layout in focus mode", { tag: "@desktop-only" }, async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -318,7 +318,7 @@ test.describe("Demo Workspace Functionality @flaky", () => {
   });
 
   test.describe("Keyboard Navigation", () => {
-    test("keyboard focus management works correctly", async ({ page }) => {
+    test("keyboard focus management works correctly", { tag: "@desktop-only" }, async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -332,7 +332,7 @@ test.describe("Demo Workspace Functionality @flaky", () => {
       expect(typeof focusedElement).toBe("string");
     });
 
-    test("keyboard shortcuts work throughout demo", async ({ page }) => {
+    test("keyboard shortcuts work throughout demo", { tag: "@desktop-only" }, async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -348,7 +348,7 @@ test.describe("Demo Workspace Functionality @flaky", () => {
       expect(typeof hasFocusClass).toBe("boolean");
     });
 
-    test("can navigate with arrow keys", async ({ page }) => {
+    test("can navigate with arrow keys", { tag: "@desktop-only" }, async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -427,7 +427,7 @@ test.describe("Demo Workspace Functionality @flaky", () => {
   });
 
   test.describe("Content Interaction", () => {
-    test("can interact with RSM handrails", { tag: "@flaky" }, async ({ page }) => {
+    test("can interact with RSM handrails", { tag: "@desktop-only" }, async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
       });
