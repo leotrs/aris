@@ -22,7 +22,20 @@ test.describe("Cross-Browser Compatibility", () => {
     });
 
     test("should handle form submission in all browsers", async ({ page, browserName }) => {
+      // Listen for console errors
+      page.on('console', msg => {
+        if (msg.type() === 'error') {
+          console.error(`Browser console error: ${msg.text()}`);
+        }
+      });
+      
       await page.goto("/signup");
+
+      // Wait for Vue to be hydrated by checking for v-model binding
+      await page.waitForFunction(() => {
+        const emailInput = document.querySelector('input[type="email"]');
+        return emailInput && emailInput.__vueParentComponent;
+      }, { timeout: 5000 });
 
       // Form elements should be present and functional
       await expect(page.locator("form")).toBeVisible();
