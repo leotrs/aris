@@ -179,7 +179,7 @@ jobs:
     - name: Run unit tests
       run: npm run test:run
 
-  e2e-site:
+  site-e2e:
     runs-on: ubuntu-latest
     needs: [changes, site-test]
     if: ${{ always() && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
@@ -215,20 +215,18 @@ jobs:
     - name: Start marketing site server
       run: |
         echo "Starting marketing site server..."
-        npm run dev -- --host 0.0.0.0 --port 3001 > site.log 2>&1 &
+        npm run dev -- --host 0.0.0.0 --port 3000 > site.log 2>&1 &
         echo $! > site.pid
         echo "Marketing site server started with PID $(cat site.pid)"
 
     - name: Wait for marketing site to be ready
       run: |
         echo "Waiting for marketing site server..."
-        timeout 90 bash -c 'until curl -f http://localhost:3001; do echo "Marketing site not ready, waiting..."; sleep 3; done'
+        timeout 90 bash -c 'until curl -f http://localhost:3000; do echo "Marketing site not ready, waiting..."; sleep 3; done'
         echo "Marketing site server is ready!"
 
     - name: Run Site E2E tests (excluding demo integration)
-      run: npm run test:e2e -- --grep-invert "demo"
-      env:
-        SITE_URL: http://localhost:3001
+      run: npm run test:e2e:all -- --grep-invert "demo"
 
   e2e-auth:
     runs-on: ubuntu-latest
@@ -441,7 +439,14 @@ jobs:
         VITE_SKIP_AUTH_FOR_TESTS: true
 
     - name: Wait for servers to be ready
-      run: ./.github/scripts/wait-for-servers.sh
+      run: |
+        echo "Waiting for backend server..."
+        timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
+        echo "Backend server is ready!"
+        
+        echo "Waiting for frontend server..."
+        timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
+        echo "Frontend server is ready!"
 
     # Site setup for demo integration tests
     - name: Install site dependencies
@@ -466,13 +471,13 @@ jobs:
         timeout 90 bash -c 'until curl -f http://localhost:3000; do echo "Marketing site not ready, waiting..."; sleep 3; done'
         echo "Marketing site server is ready!"
 
-    - name: Run Demo E2E tests (no auth required)
+    - name: Run Demo E2E tests
       working-directory: frontend
-      run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep "@demo"'
+      run: npm run test:e2e -- --grep "@demo"
       env:
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_SKIP_AUTH_FOR_TESTS: true
-        SKIP_AUTH_FOR_TESTS: true
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     - name: Run Site Demo Integration tests
       working-directory: site
@@ -480,8 +485,118 @@ jobs:
       env:
         FRONTEND_URL: http://localhost:5173
 
-
   e2e-standard:
+    runs-on: ubuntu-latest
+    needs: [changes, backend-test, frontend-test, site-test]
+    if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
+    env:
+      ENV: CI
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Backend setup
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Setup backend
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --all-groups
+        uv pip install -e .
+
+    - name: Setup database and test data
+      working-directory: backend
+      run: |
+        uv run alembic upgrade head
+        uv run python scripts/reset_test_user.py
+
+    # Frontend setup
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('frontend/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
+    - name: Install Playwright browsers
+      working-directory: frontend
+      run: npx playwright install --with-deps
+
+    # Start servers
+    - name: Start backend server
+      working-directory: backend
+      run: |
+        echo "Starting backend server..."
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+        echo $! > backend.pid
+        echo "Backend server started with PID $(cat backend.pid)"
+
+    - name: Start frontend server
+      working-directory: frontend
+      run: |
+        echo "Starting frontend server..."
+        npm run dev -- --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
+        echo $! > frontend.pid
+        echo "Frontend server started with PID $(cat frontend.pid)"
+      env:
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_API_BASE_URL: http://localhost:8000
+
+    - name: Wait for servers to be ready
+      run: |
+        echo "Waiting for backend server..."
+        timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
+        echo "Backend server is ready!"
+        
+        echo "Waiting for frontend server..."
+        timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
+        echo "Frontend server is ready!"
+
+    - name: Run Standard E2E tests (no auth required)
+      working-directory: frontend
+      run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep "@standard"'
+      env:
+        VITE_API_BASE_URL: http://localhost:8000
+        VITE_SKIP_AUTH_FOR_TESTS: true
+        SKIP_AUTH_FOR_TESTS: true
+
+  e2e-uncategorized:
     runs-on: ubuntu-latest
     needs: [changes, backend-test, frontend-test, site-test]
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
@@ -581,19 +696,122 @@ jobs:
     - name: Wait for servers to be ready
       run: ./.github/scripts/wait-for-servers.sh
 
-    - name: Run Standard E2E tests (no auth required)
+    - name: Run uncategorized E2E tests (no auth required)
       working-directory: frontend
-      run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep "@standard"'
+      run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep-invert "@"'
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_SKIP_AUTH_FOR_TESTS: true
         SKIP_AUTH_FOR_TESTS: true
 
-  e2e-uncategorized:
+  e2e-desktop-only:
     runs-on: ubuntu-latest
     needs: [changes, backend-test, frontend-test, site-test]
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
     env:
+      ENV: CI
+      SKIP_AUTH_FOR_TESTS: true
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Backend setup
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Setup backend
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --all-groups
+        uv pip install -e .
+
+    - name: Setup database and test data
+      working-directory: backend
+      run: |
+        uv run alembic upgrade head
+        uv run python scripts/reset_test_user.py
+      env:
+        SKIP_AUTH_FOR_TESTS: true
+
+    # Frontend setup
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('frontend/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
+    # Install only desktop browsers (exclude mobile)
+    - name: Install Playwright desktop browsers only
+      working-directory: frontend
+      run: npx playwright install chromium firefox webkit --with-deps
+
+    # Start servers
+    - name: Start backend server
+      working-directory: backend
+      run: |
+        echo "Starting backend server with auth disabled..."
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+        echo $! > backend.pid
+        echo "Backend server started with PID $(cat backend.pid)"
+      env:
+        SKIP_AUTH_FOR_TESTS: true
+
+    - name: Start frontend server
+      working-directory: frontend
+      run: |
+        echo "Starting frontend server..."
+        npm run dev -- --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
+        echo $! > frontend.pid
+        echo "Frontend server started with PID $(cat frontend.pid)"
+      env:
+        VITE_API_BASE_URL: http://localhost:8000
+        VITE_SKIP_AUTH_FOR_TESTS: true
+
+    - name: Wait for servers to be ready
+      run: ./.github/scripts/wait-for-servers.sh
+
+    - name: Run Desktop-Only E2E tests (no auth required)
+      working-directory: frontend
+      run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep "@desktop-only" --project="chromium" --project="firefox" --project="webkit"'
+      env:
+        VITE_API_BASE_URL: http://localhost:8000
+        VITE_SKIP_AUTH_FOR_TESTS: true
+        SKIP_AUTH_FOR_TESTS: true
       ENV: CI
       SKIP_AUTH_FOR_TESTS: true
 
