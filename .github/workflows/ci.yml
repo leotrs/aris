@@ -284,6 +284,7 @@ jobs:
       run: npm run test:e2e -- --grep "@critical"
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_API_BASE_URL: http://localhost:8000
 
   e2e-standard:
     runs-on: ubuntu-latest
@@ -411,6 +412,7 @@ jobs:
       run: npm run test:e2e -- --grep "@standard"
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_API_BASE_URL: http://localhost:8000
 
     - name: Run Site E2E tests (excluding demo integration)
       working-directory: site
@@ -527,9 +529,11 @@ jobs:
       run: npm run test:e2e -- --grep "@flaky"
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_API_BASE_URL: http://localhost:8000
 
     - name: Run remaining uncategorized tests
       working-directory: frontend
       run: npm run test:e2e -- --grep-invert "@critical|@standard|@flaky"
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_API_BASE_URL: http://localhost:8000
