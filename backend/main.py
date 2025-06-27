@@ -168,6 +168,8 @@ app.mount(
 
 # Mount design assets (only if directory exists)
 import os
+
+
 if os.path.exists("static/design"):
     app.mount(
         "/design-assets",
