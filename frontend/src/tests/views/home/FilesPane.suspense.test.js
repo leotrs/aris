@@ -162,15 +162,20 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
   describe("Suspense Performance with Multiple Files", () => {
     it("should handle many async FilesItems efficiently", async () => {
-      const manyFiles = Array.from({ length: 20 }, (_, i) => ({
-        id: `file-${i}`,
-        title: `File ${i}`,
-        filtered: false,
-        focused: false,
+      const createMockFile = (id, title, filtered = false, focused = false) => ({
+        id,
+        title,
+        filtered,
+        focused,
+        last_edited_at: new Date().toISOString(),
         getFormattedDate: () => "2 hours ago",
         getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
         tags: [],
-      }));
+      });
+
+      const manyFiles = Array.from({ length: 20 }, (_, i) => 
+        createMockFile(`file-${i}`, `File ${i}`)
+      );
 
       const wrapper = createWrapper({
         provide: {
@@ -191,18 +196,21 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
     it.skip("should handle rapid file updates with Suspense", async () => {
       const wrapper = createWrapper();
 
+      const createMockFile = (id, title, filtered = false, focused = false) => ({
+        id,
+        title,
+        filtered,
+        focused,
+        last_edited_at: new Date().toISOString(),
+        getFormattedDate: () => "2 hours ago",
+        getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+        tags: [],
+      });
+
       // Rapid updates to test Suspense stability
       for (let i = 0; i < 5; i++) {
         mockFileStore.value.files = [
-          {
-            id: `rapid-${i}`,
-            title: `Rapid File ${i}`,
-            filtered: false,
-            focused: false,
-            getFormattedDate: () => "2 hours ago",
-            getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
-            tags: [],
-          },
+          createMockFile(`rapid-${i}`, `Rapid File ${i}`)
         ];
         await nextTick();
       }
@@ -218,18 +226,24 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
   describe("Suspense Error Handling", () => {
     it("should handle async component errors gracefully", async () => {
+      const createMockFile = (id, title, filtered = false, focused = false) => ({
+        id,
+        title,
+        filtered,
+        focused,
+        last_edited_at: new Date().toISOString(),
+        getFormattedDate: () => "2 hours ago",
+        getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+        tags: [],
+      });
+
       // Create a scenario that might cause async component errors
       const wrapper = createWrapper({
         provide: {
           fileStore: ref({
             files: [
               // Missing required properties to potentially trigger errors
-              {
-                id: "error-file",
-                getFormattedDate: () => "2 hours ago",
-                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
-                tags: [],
-              },
+              createMockFile("error-file", undefined), // undefined title might cause issues
             ],
           }),
         },
@@ -247,20 +261,23 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       const wrapper = createWrapper();
 
+      const createMockFile = (id, title, filtered = false, focused = false) => ({
+        id,
+        title,
+        filtered,
+        focused,
+        last_edited_at: new Date().toISOString(),
+        getFormattedDate: () => "2 hours ago",
+        getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+        tags: [],
+      });
+
       // Simulate an error condition
       mockFileStore.value.files = null;
       await nextTick();
 
       mockFileStore.value.files = [
-        {
-          id: "recovery",
-          title: "Recovery File",
-          filtered: false,
-          focused: false,
-          getFormattedDate: () => "2 hours ago",
-          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
-          tags: [],
-        },
+        createMockFile("recovery", "Recovery File")
       ];
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -364,26 +381,21 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));
 
+      const createMockFile = (id, title, filtered = false, focused = false) => ({
+        id,
+        title,
+        filtered,
+        focused,
+        last_edited_at: new Date().toISOString(),
+        getFormattedDate: () => "2 hours ago",
+        getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+        tags: [],
+      });
+
       // Replace files completely
       mockFileStore.value.files = [
-        {
-          id: "new-1",
-          title: "New File 1",
-          filtered: false,
-          focused: false,
-          getFormattedDate: () => "2 hours ago",
-          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
-          tags: [],
-        },
-        {
-          id: "new-2",
-          title: "New File 2",
-          filtered: false,
-          focused: false,
-          getFormattedDate: () => "2 hours ago",
-          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
-          tags: [],
-        },
+        createMockFile("new-1", "New File 1"),
+        createMockFile("new-2", "New File 2"),
       ];
 
       await nextTick();
