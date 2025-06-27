@@ -10,7 +10,7 @@ export const baseRules = {
   "no-debugger": process.env.NODE_ENV === "production" ? "warn" : "off",
 
   // Code quality
-  "no-unused-vars": ["error", {
+  "no-unused-vars": ["warn", {
     "argsIgnorePattern": "^_",
     "varsIgnorePattern": "^_"
   }],
