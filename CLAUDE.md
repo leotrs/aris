@@ -63,15 +63,23 @@ See [docker/README.md](docker/README.md) for detailed multi-clone setup instruct
 ### Test Separation Strategy
 The CI pipeline separates tests by type and dependency requirements for optimal performance and reliability:
 
-**Unit Test Jobs (Fast Feedback):**
+**Unit Test Jobs (Phase 1 - Parallel):**
 - `backend-test`: Backend unit tests with PostgreSQL
 - `frontend-test`: Frontend unit tests with coverage
 - `site-test`: Marketing site unit tests
 
-**Integration Test Jobs (Sequential, After Services Start):**
-- `e2e-critical`: Critical user paths (auth, demo, navigation) - fastest feedback
+**E2E Test Jobs (Phase 2 - After Unit Tests):**
+- `site-e2e`: Marketing site E2E tests (depends only on site-test) - ⚡ starts early
+- `e2e-auth`: Authentication & redirects (16 tests) - fastest feedback
+- `e2e-demo`: Demo functionality + site demo integration (35+ tests)
 - `e2e-standard`: Standard functionality (file management, account) 
-- `e2e-flaky`: Flaky tests and edge cases
+- `e2e-uncategorized`: Tests without specific category tags
+- `e2e-desktop-only`: Desktop-specific interactions (hover, keyboard shortcuts) - runs only on desktop browsers
+
+**Efficiency Benefits:**
+- Site E2E tests start as soon as site unit tests pass (don't wait for backend/frontend)
+- Frontend E2E tests run in parallel across 5 specialized jobs
+- Demo integration tests run in `e2e-demo` with both marketing site and frontend servers
 
 ### E2E Test Categories
 
@@ -105,9 +113,36 @@ The CI pipeline separates tests by type and dependency requirements for optimal 
 - **Browser Caching**: Playwright browsers cached between CI runs
 
 ### Test Categorization Tags
-- **@critical**: Authentication, demo access, core navigation (run first)
+- **@auth**: Authentication & redirects (16 tests) - fastest feedback
+- **@demo**: Demo functionality (35 tests) - critical user paths
 - **@standard**: File management, account features, main functionality
-- **@flaky**: Visual tests, accessibility tests, edge cases (run last)
+- **@desktop-only**: Desktop-specific interactions (hover, keyboard shortcuts, focus management) - excluded from mobile browsers
+- **No tag**: Uncategorized tests (run in e2e-uncategorized job)
+
+**Desktop-Only Test Categories:**
+- Hover interactions (RSM handrails, border dots)
+- Keyboard shortcuts (focus mode 'c' key, file operations '.', search '/', view switching 'v,l/v,c')
+- Keyboard navigation (j/k navigation, arrow keys, Enter/Space for file opening)
+- Focus management and accessibility keyboard tests
+- Split-screen desktop layouts
+
+### Test Category Commands
+```bash
+# Run authentication tests (fastest feedback)
+npm run test:e2e -- --grep "@auth"
+
+# Run demo functionality tests
+npm run test:e2e -- --grep "@demo"
+
+# Run all desktop-only tests (keyboard shortcuts, hover interactions)
+npm run test:e2e -- --grep "@desktop-only"
+
+# Run all uncategorized tests (no tags at all)
+npm run test:e2e -- --grep-invert "@"
+
+# Run all tests except desktop-only (mobile-compatible tests)
+npm run test:e2e -- --grep-invert "@desktop-only"
+```
 
 ## Frontend Commands
 ```bash
