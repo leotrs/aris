@@ -32,7 +32,7 @@
     if (!onload.value || !selfRef.value || !props.htmlString || isLoaded.value) return;
     await nextTick();
     onload.value(selfRef.value, { keys: props.keys });
-
+    
     // Mark as loaded after RSM scripts complete to prevent re-execution
     setTimeout(() => {
       isLoaded.value = true;
