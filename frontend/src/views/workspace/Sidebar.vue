@@ -1,10 +1,11 @@
 <script setup>
-  import { watch, inject, reactive, useTemplateRef } from "vue";
+  import { watch, inject, reactive, useTemplateRef, computed, nextTick, onMounted } from "vue";
   import { useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./SidebarItem.vue";
   import SidebarMenu from "./SidebarMenu.vue";
   import Drawer from "./Drawer.vue";
+  import Icon from "@/components/base/Icon.vue";
 
   const router = useRouter();
   const emit = defineEmits(["showComponent", "hideComponent"]);
@@ -93,6 +94,17 @@
   const focusMode = inject("focusMode");
   const mobileMode = inject("mobileMode");
   const xsMode = inject("xsMode");
+  const drawerOpen = inject("drawerOpen");
+
+  // Computed button position to avoid drawer overlap
+  const focusButtonLeft = computed(() => {
+    if (focusMode.value) {
+      // In focus mode, position relative to viewport since sidebar is translated away
+      return "16px";
+    }
+    // Normal mode: avoid drawer overlap if drawer is open
+    return drawerOpen.value ? "calc(64px + var(--sidebar-width))" : "64px";
+  });
 </script>
 
 <template>
@@ -109,14 +121,6 @@
     <SidebarMenu :items="items" @on="handleItemOn" @off="handleItemOff" />
     <Drawer :component="items.find((it) => it.type === 'drawer' && it.state)?.name ?? ''" />
 
-    <Button
-      v-show="focusMode"
-      ref="layout-on-ref"
-      class="layout-on"
-      kind="tertiary"
-      icon="Layout"
-      @click="focusMode = false"
-    />
     <Tooltip :anchor="layoutOnRef?.btn ?? null" content="Focus mode off" placement="top" />
   </div>
 </template>
@@ -166,13 +170,6 @@
       width: 30px;
       height: 30px;
     }
-  }
-
-  .layout-on {
-    position: fixed;
-    bottom: 16px;
-    margin: 8px;
-    left: 64px;
   }
 
   .sb-wrapper.mobile {
