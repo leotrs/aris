@@ -340,12 +340,16 @@ describe("FilesPane.vue - Accessibility Features", () => {
           Suspense: {
             template: '<div><slot name="fallback"></slot></div>',
           },
+          LoadingSpinner: {
+            template: '<div class="loading-container"><div class="loading-message">{{ message }}</div></div>',
+            props: ["message"],
+          },
         },
       });
 
-      const loadingElement = wrapper.find(".loading");
+      const loadingElement = wrapper.find(".loading-container");
       expect(loadingElement.exists()).toBe(true);
-      expect(loadingElement.text()).toBe("loading files...");
+      expect(loadingElement.text()).toBe("Loading files...");
     });
 
     it("announces file count changes", async () => {

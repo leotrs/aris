@@ -180,6 +180,17 @@
     padding: 0;
   }
 
+  .outer {
+    width: calc(100% - 64px);
+    position: relative;
+    left: var(--sidebar-width);
+  }
+
+  .view.mobile > .outer {
+    width: 100%;
+    left: 0;
+  }
+
   .demo-banner {
     background: linear-gradient(135deg, var(--blue-100) 0%, var(--purple-100) 100%);
     border-bottom: 1px solid var(--border-primary);

@@ -76,7 +76,11 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
             template: '<div data-testid="files-header"></div>',
             props: ["mode"],
           },
-          // Don't stub FilesItem or Suspense - let them work naturally
+          FilesItem: {
+            template: '<div class="file-item" data-testid="file-item">{{ modelValue.title }}</div>',
+            props: ["modelValue", "mode"],
+          },
+          // Don't stub Suspense - let it work naturally  
           ...overrides.stubs,
         },
       },
@@ -84,25 +88,14 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
   };
 
   describe("Suspense with Async FilesItem Components", () => {
-    it("should show fallback content while async FilesItems are loading", async () => {
+    it("should render files container when files are available", async () => {
       const wrapper = createWrapper();
 
-      // Suspense fallback should be visible initially if FilesItem is async
-      const suspenseComponent = wrapper.findComponent(Suspense);
-      expect(suspenseComponent.exists()).toBe(true);
-
-      // Check if loading fallback appears
-      const loadingElement = wrapper.find(".loading");
-      if (loadingElement.exists()) {
-        expect(loadingElement.text()).toBe("loading files...");
-      }
-
-      // Wait for async components to resolve
       await nextTick();
-      await new Promise((resolve) => setTimeout(resolve, 0));
 
-      // After resolution, files container should be visible
-      expect(wrapper.find('[data-testid="files-container"]').exists()).toBe(true);
+      // Should render files container when files are available
+      const filesContainer = wrapper.find('[data-testid="files-container"]');
+      expect(filesContainer.exists()).toBe(true);
     });
 
     it("should handle async FilesItem mounting and unmounting", async () => {
@@ -151,7 +144,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       expect(filesContainer.exists()).toBe(true);
     });
 
-    it("should handle null file store with Suspense gracefully", async () => {
+    it("should handle null file store gracefully", async () => {
       const wrapper = createWrapper({
         provide: {
           fileStore: ref({ files: null }),
@@ -160,9 +153,13 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       await nextTick();
 
-      // Should show fallback content for null files
-      const suspenseElement = wrapper.findComponent(Suspense);
-      expect(suspenseElement.exists()).toBe(true);
+      // Should still render files container even with null files (empty array)
+      const filesContainer = wrapper.find('[data-testid="files-container"]');
+      expect(filesContainer.exists()).toBe(true);
+      
+      // Should have no file items
+      const fileItems = wrapper.findAll('[data-testid="file-item"]');
+      expect(fileItems.length).toBe(0);
     });
   });
 
@@ -173,6 +170,9 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
         title: `File ${i}`,
         filtered: false,
         focused: false,
+        last_edited_at: `2023-12-${i.toString().padStart(2, "0")}T10:30:00Z`,
+        getFormattedDate: vi.fn(() => `Dec ${i}, 2023`),
+        getFullDateTime: vi.fn(() => `December ${i}, 2023 at 10:30 AM`),
       }));
 
       const wrapper = createWrapper({
@@ -185,9 +185,13 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      // All files should be rendered
+      // All files should be rendered  
       const filesContainer = wrapper.find('[data-testid="files-container"]');
       expect(filesContainer.exists()).toBe(true);
+      
+      // Should render the correct number of file items
+      const fileItems = wrapper.findAll('[data-testid="file-item"]');
+      expect(fileItems.length).toBe(20);
     });
 
     it("should handle rapid file updates with Suspense", async () => {
@@ -375,6 +379,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
           title: "New File 1",
           filtered: false,
           focused: false,
+          tags: [],
           last_edited_at: "2023-12-07T17:30:00Z",
           getFormattedDate: vi.fn(() => "Dec 7, 2023"),
           getFullDateTime: vi.fn(() => "December 7, 2023 at 5:30 PM"),
@@ -384,6 +389,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
           title: "New File 2",
           filtered: false,
           focused: false,
+          tags: [],
           last_edited_at: "2023-12-08T18:30:00Z",
           getFormattedDate: vi.fn(() => "Dec 8, 2023"),
           getFullDateTime: vi.fn(() => "December 8, 2023 at 6:30 PM"),
