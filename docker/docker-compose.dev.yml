@@ -1,8 +1,8 @@
 services:
   backend:
     build:
-      context: ../backend
-      dockerfile: ../docker/backend/Dockerfile.dev
+      context: ..
+      dockerfile: docker/backend/Dockerfile.dev
     ports:
       - "${BACKEND_PORT:-8000}:8000"
     volumes:
@@ -21,8 +21,8 @@ services:
     
   frontend:
     build:
-      context: ../frontend
-      dockerfile: ../docker/frontend/Dockerfile.dev
+      context: ..
+      dockerfile: docker/frontend/Dockerfile.dev
     ports:
       - "${FRONTEND_PORT:-5173}:5173"
       - "${STORYBOOK_PORT:-6006}:6006"
