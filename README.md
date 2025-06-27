@@ -1,5 +1,9 @@
 # Aris: Research publications. Web-native. Human-first.
 
+<p align="center">
+  <img src="design-assets/logos/logotype.svg" alt="Aris Logo" width="300">
+</p>
+
 [![CI](https://github.com/leotrs/aris/actions/workflows/ci.yml/badge.svg)](https://github.com/leotrs/aris/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/leotrs/aris/branch/main/graph/badge.svg)](https://codecov.io/gh/leotrs/aris)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
