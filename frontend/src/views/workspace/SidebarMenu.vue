@@ -127,11 +127,11 @@
 <style scoped>
   .sb-menu {
     position: fixed;
-    padding-bottom: 16px;
+    padding-bottom: 32px;
     left: 0;
     opacity: 1;
     will-change: opacity;
-    height: calc(100% - 64px);
+    height: calc(100% - 80px);
     display: flex;
   }
 
@@ -141,7 +141,6 @@
   }
 
   .sb-menu:not(.mobile) {
-    height: 100%;
     width: 64px;
     padding-inline: 8px;
     flex-direction: column;
