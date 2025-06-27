@@ -57,7 +57,6 @@ docker compose -f docker-compose.dev.yml up --build
 ```
 
 See [docker/README.md](docker/README.md) for detailed multi-clone setup instructions.
-
 ## CI/CD Test Architecture
 
 ### Test Separation Strategy
