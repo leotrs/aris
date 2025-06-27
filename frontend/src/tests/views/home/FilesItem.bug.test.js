@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { nextTick, ref } from "vue";
+import { nextTick, ref, Suspense } from "vue";
 import FilesItem from "@/views/home/FilesItem.vue";
 
 describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
@@ -18,6 +18,9 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
     });
 
     mockProvides = {
+      api: {
+        get: vi.fn().mockResolvedValue({ data: {} }),
+      },
       fileStore: ref({
         createFile: vi.fn(),
         deleteFile: vi.fn(),
@@ -33,7 +36,19 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
   });
 
   const createAsyncWrapper = async (overrides = {}) => {
-    const wrapper = mount(FilesItem, {
+    const AsyncFilesItem = {
+      template: `
+        <Suspense>
+          <FilesItem v-bind="$attrs" />
+          <template #fallback>
+            <div data-testid="loading-fallback">Loading file item...</div>
+          </template>
+        </Suspense>
+      `,
+      components: { FilesItem, Suspense },
+    };
+
+    const wrapper = mount(AsyncFilesItem, {
       props: {
         modelValue: mockFile.value,
         mode: "list",

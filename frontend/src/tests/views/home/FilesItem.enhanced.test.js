@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { nextTick, ref } from "vue";
+import { nextTick, ref, Suspense } from "vue";
 import FilesItem from "@/views/home/FilesItem.vue";
 
 // Mock router
@@ -62,6 +62,9 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     };
 
     mockProvides = {
+      api: {
+        get: vi.fn().mockResolvedValue({ data: {} }),
+      },
       fileStore: mockFileStoreRef,
       xsMode: ref(false),
       user: ref({ id: "user-1" }),
@@ -74,7 +77,19 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
   });
 
   const createWrapper = async (overrides = {}) => {
-    const wrapper = mount(FilesItem, {
+    const AsyncFilesItem = {
+      template: `
+        <Suspense>
+          <FilesItem v-bind="$attrs" />
+          <template #fallback>
+            <div data-testid="loading-fallback">Loading file item...</div>
+          </template>
+        </Suspense>
+      `,
+      components: { FilesItem, Suspense },
+    };
+
+    const wrapper = mount(AsyncFilesItem, {
       props: {
         modelValue: mockFile.value,
         mode: "list",
@@ -163,12 +178,12 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     it("syncs selection state correctly when file is selected", async () => {
       const wrapper = await createWrapper();
 
-      expect(wrapper.classes()).not.toContain("active");
+      const item = wrapper.find(".item");
+      expect(item.classes()).not.toContain("active");
       expect(mockFile.value.selected).toBe(false);
 
-      // Trigger selection by calling select method directly
-      wrapper.vm.select();
-
+      // Trigger selection by clicking the item (which calls select internally)
+      await item.trigger("click");
       expect(mockFileStore.value.selectFile).toHaveBeenCalledWith(mockFile.value);
     });
 
@@ -179,48 +194,47 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
       await nextTick();
 
-      // Check internal state and computed properties
-      expect(wrapper.vm.file.selected).toBe(true);
       // Check that the template binding uses the correct conditions
-      expect(wrapper.html()).toContain('class="item list active"');
+      const item = wrapper.find(".item");
+      expect(item.classes()).toContain("active");
     });
 
     it("removes active class when file is deselected", async () => {
       mockFile.value.selected = true;
       const wrapper = await createWrapper();
 
-      expect(wrapper.vm.file.selected).toBe(true);
-      expect(wrapper.html()).toContain("active");
+      const item = wrapper.find(".item");
+      expect(item.classes()).toContain("active");
 
       mockFile.value.selected = false;
       await nextTick();
 
-      expect(wrapper.vm.file.selected).toBe(false);
       // Check that active class is not in the main div element
-      expect(wrapper.find(".item").classes()).not.toContain("active");
+      expect(item.classes()).not.toContain("active");
     });
 
     it("maintains selection state across component updates", async () => {
       mockFile.value.selected = true;
       const wrapper = await createWrapper();
 
-      expect(wrapper.vm.file.selected).toBe(true);
-      expect(wrapper.html()).toContain("active");
+      const item = wrapper.find(".item");
+      expect(item.classes()).toContain("active");
 
       // Trigger component update
       await wrapper.setProps({ mode: "cards" });
+      await nextTick();
 
-      expect(wrapper.vm.file.selected).toBe(true);
-      expect(wrapper.html()).toContain("active");
+      expect(item.classes()).toContain("active");
     });
 
     it("handles rapid selection changes", async () => {
       const wrapper = await createWrapper();
 
-      // Call select method directly since click events need proper setup
-      wrapper.vm.select();
-      wrapper.vm.select();
-      wrapper.vm.select();
+      // Trigger rapid clicks to test selection handling
+      const item = wrapper.find(".item");
+      await item.trigger("click");
+      await item.trigger("click");
+      await item.trigger("click");
 
       expect(mockFileStore.value.selectFile).toHaveBeenCalledTimes(3);
     });
@@ -353,8 +367,14 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     it("handles successful file deletion", async () => {
       const wrapper = await createWrapper();
 
-      // Trigger delete action
-      await wrapper.vm.onDelete();
+      // First open the menu by clicking the trigger
+      const menuTrigger = wrapper.find('.context-menu-trigger');
+      await menuTrigger.trigger("click");
+      await nextTick();
+
+      // Then trigger delete action through menu
+      const deleteButton = wrapper.find('[data-testid="menu-delete"]');
+      await deleteButton.trigger("click");
       await nextTick();
 
       // Confirm deletion
@@ -371,7 +391,13 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       // Spy on console.error
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      await wrapper.vm.onDelete();
+      // First open the menu by clicking the trigger
+      const menuTrigger = wrapper.find('.context-menu-trigger');
+      await menuTrigger.trigger("click");
+      await nextTick();
+
+      const deleteButton = wrapper.find('[data-testid="menu-delete"]');
+      await deleteButton.trigger("click");
       await nextTick();
 
       // Confirm deletion
@@ -380,7 +406,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
       // Should log error and keep modal open
       expect(consoleSpy).toHaveBeenCalledWith("Failed to delete file:", expect.any(Error));
-      expect(wrapper.vm.showDeleteModal).toBe(true);
+      expect(wrapper.findComponent(FilesItem).vm.showDeleteModal).toBe(true);
 
       consoleSpy.mockRestore();
     });
@@ -388,7 +414,13 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     it("cancels file deletion", async () => {
       const wrapper = await createWrapper();
 
-      await wrapper.vm.onDelete();
+      // First open the menu by clicking the trigger
+      const menuTrigger = wrapper.find('.context-menu-trigger');
+      await menuTrigger.trigger("click");
+      await nextTick();
+
+      const deleteButton = wrapper.find('[data-testid="menu-delete"]');
+      await deleteButton.trigger("click");
       await nextTick();
 
       // Cancel deletion
@@ -396,7 +428,8 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       await cancelButton.trigger("click");
 
       expect(mockFileStore.value.deleteFile).not.toHaveBeenCalled();
-      expect(wrapper.vm.showDeleteModal).toBe(false);
+      const modal = wrapper.find('[data-testid="confirmation-modal"]');
+      expect(modal.exists()).toBe(false);
     });
 
     it("prevents delete when file is null", async () => {
@@ -406,19 +439,26 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
         },
       });
 
-      // Should not throw or show modal
-      wrapper.vm.onDelete();
-      expect(wrapper.vm.showDeleteModal).toBe(false);
+      // Should not show modal when file is null
+      const modal = wrapper.find('[data-testid="confirmation-modal"]');
+      expect(modal.exists()).toBe(false);
+
+      // File menu should not be rendered when file is null
+      const fileMenu = wrapper.find('[data-testid="file-menu"]');
+      expect(fileMenu.exists()).toBe(false);
     });
 
     it("handles race condition in delete confirmation", async () => {
       const wrapper = await createWrapper();
 
+      // Access the FilesItem component through the Suspense wrapper
+      const filesItemComponent = wrapper.findComponent(FilesItem);
+      
       // Close modal before handling confirm
-      wrapper.vm.showDeleteModal = false;
+      filesItemComponent.vm.showDeleteModal = false;
 
       // Should return early and not call deleteFile
-      await wrapper.vm.handleDeleteConfirm();
+      await filesItemComponent.vm.handleDeleteConfirm();
       expect(mockFileStore.value.deleteFile).not.toHaveBeenCalled();
     });
   });
@@ -427,16 +467,16 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     it("applies hover state correctly", async () => {
       const wrapper = await createWrapper();
 
-      expect(wrapper.vm.hovered).toBe(false);
+      expect(wrapper.findComponent(FilesItem).vm.hovered).toBe(false);
 
       // Set hovered state directly since DOM events may not trigger reactive updates in tests
-      wrapper.vm.hovered = true;
+      wrapper.findComponent(FilesItem).vm.hovered = true;
       await nextTick();
-      expect(wrapper.vm.hovered).toBe(true);
+      expect(wrapper.findComponent(FilesItem).vm.hovered).toBe(true);
 
-      wrapper.vm.hovered = false;
+      wrapper.findComponent(FilesItem).vm.hovered = false;
       await nextTick();
-      expect(wrapper.vm.hovered).toBe(false);
+      expect(wrapper.findComponent(FilesItem).vm.hovered).toBe(false);
     });
 
     it("applies focused state correctly", async () => {
@@ -444,13 +484,13 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       const wrapper = await createWrapper();
       await nextTick();
 
-      expect(wrapper.vm.file.focused).toBe(true);
+      expect(wrapper.findComponent(FilesItem).vm.file.focused).toBe(true);
       expect(wrapper.html()).toContain("focused");
 
       mockFile.value.focused = false;
       await nextTick();
 
-      expect(wrapper.vm.file.focused).toBe(false);
+      expect(wrapper.findComponent(FilesItem).vm.file.focused).toBe(false);
       // Check that focused class is not in the main div element
       expect(wrapper.find(".item").classes()).not.toContain("focused");
     });
@@ -464,12 +504,12 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       await nextTick();
 
       // Set hovered state directly since DOM events may not trigger reactive updates in tests
-      wrapper.vm.hovered = true;
+      wrapper.findComponent(FilesItem).vm.hovered = true;
       await nextTick();
 
-      expect(wrapper.vm.file.selected).toBe(true);
-      expect(wrapper.vm.file.focused).toBe(true);
-      expect(wrapper.vm.hovered).toBe(true);
+      expect(wrapper.findComponent(FilesItem).vm.file.selected).toBe(true);
+      expect(wrapper.findComponent(FilesItem).vm.file.focused).toBe(true);
+      expect(wrapper.findComponent(FilesItem).vm.hovered).toBe(true);
 
       // Check that classes are applied to the main item element
       const itemClasses = wrapper.find(".item").classes();
@@ -482,15 +522,15 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       const wrapper = await createWrapper();
 
       // Set hovered state directly since DOM events may not trigger reactive updates in tests
-      wrapper.vm.hovered = true;
+      wrapper.findComponent(FilesItem).vm.hovered = true;
       await nextTick();
-      expect(wrapper.vm.hovered).toBe(true);
+      expect(wrapper.findComponent(FilesItem).vm.hovered).toBe(true);
 
       mockFile.value.focused = true;
       await nextTick();
 
-      expect(wrapper.vm.hovered).toBe(true);
-      expect(wrapper.vm.file.focused).toBe(true);
+      expect(wrapper.findComponent(FilesItem).vm.hovered).toBe(true);
+      expect(wrapper.findComponent(FilesItem).vm.file.focused).toBe(true);
     });
   });
 
@@ -498,7 +538,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     it("renders correctly in list mode", async () => {
       const wrapper = await createWrapper({ props: { mode: "list" } });
 
-      expect(wrapper.props("mode")).toBe("list");
+      expect(wrapper.findComponent(FilesItem).props("mode")).toBe("list");
       expect(wrapper.html()).toContain("list");
       expect(wrapper.find('[data-testid="tag-row"]').exists()).toBe(true);
       expect(wrapper.find('[data-testid="file-date"]').exists()).toBe(true);
@@ -507,7 +547,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     it("renders correctly in cards mode", async () => {
       const wrapper = await createWrapper({ props: { mode: "cards" } });
 
-      expect(wrapper.props("mode")).toBe("cards");
+      expect(wrapper.findComponent(FilesItem).props("mode")).toBe("cards");
       expect(wrapper.html()).toContain("cards");
     });
 
@@ -582,7 +622,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       const wrapper = await createWrapper();
 
       // Call open method directly since dblclick event needs proper setup
-      wrapper.vm.open();
+      wrapper.findComponent(FilesItem).vm.open();
 
       expect(mockOpenFile).toHaveBeenCalledWith(mockFile.value, expect.any(Object));
     });
@@ -598,8 +638,14 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
     it("handles component unmounting during operations", async () => {
       const wrapper = await createWrapper();
 
+      // First open the menu by clicking the trigger
+      const menuTrigger = wrapper.find('.context-menu-trigger');
+      await menuTrigger.trigger("click");
+      await nextTick();
+
       // Start delete operation
-      await wrapper.vm.onDelete();
+      const deleteButton = wrapper.find('[data-testid="menu-delete"]');
+      await deleteButton.trigger("click");
 
       // Unmount component
       wrapper.unmount();

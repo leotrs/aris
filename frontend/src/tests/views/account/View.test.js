@@ -323,7 +323,7 @@ describe("AccountView", () => {
         new_password: "newpassword123",
       });
       expect(toast.success).toHaveBeenCalledWith("Password changed successfully");
-      
+
       // Fields should be cleared after success
       expect(wrapper.vm.currentPassword).toBe("");
       expect(wrapper.vm.newPassword).toBe("");
@@ -405,13 +405,13 @@ describe("AccountView", () => {
 
       // Start first change
       const firstChange = wrapper.vm.onChangePassword();
-      
+
       // Try to start second change immediately
       await wrapper.vm.onChangePassword();
 
       // Second call should be ignored
       expect(api.post).toHaveBeenCalledTimes(1);
-      
+
       await firstChange;
     });
   });

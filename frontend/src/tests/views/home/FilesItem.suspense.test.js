@@ -52,6 +52,9 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
     });
 
     mockProvides = {
+      api: {
+        get: vi.fn().mockResolvedValue({ data: {} }),
+      },
       fileStore: mockFileStore,
       xsMode: ref(false),
       user: ref({ id: "user-1" }),
@@ -63,7 +66,7 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
     vi.clearAllMocks();
   });
 
-  const createAsyncWrapper = (overrides = {}) => {
+  const createAsyncWrapper = async (overrides = {}) => {
     const AsyncFilesItem = {
       template: `
         <Suspense>
@@ -126,12 +129,18 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
         },
       },
     });
+
+    // Wait for async component to mount
+    await nextTick();
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    return wrapper;
   };
 
   describe("Async Component Lifecycle", () => {
     it("should be an async component that triggers Suspense", async () => {
       // This test will fail until we make FilesItem async
-      const wrapper = createAsyncWrapper();
+      const wrapper = await createAsyncWrapper();
 
       // Initially, loading fallback should show
       expect(wrapper.find('[data-testid="loading-fallback"]').exists()).toBe(true);
@@ -146,7 +155,7 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
     });
 
     it("should handle async component mounting with file data", async () => {
-      const wrapper = createAsyncWrapper();
+      const wrapper = await createAsyncWrapper();
 
       // Wait for component to fully mount
       await nextTick();
@@ -168,7 +177,7 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
           .mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(true), 100))),
       });
 
-      const wrapper = createAsyncWrapper({
+      const wrapper = await createAsyncWrapper({
         provide: { fileStore: slowDeleteStore },
       });
 
@@ -200,7 +209,7 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
           .mockImplementation(() => new Promise((resolve) => setTimeout(() => resolve(true), 100))),
       });
 
-      const wrapper = createAsyncWrapper({
+      const wrapper = await createAsyncWrapper({
         provide: { fileStore: slowCreateStore },
       });
 
@@ -230,7 +239,7 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
 
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const wrapper = createAsyncWrapper({
+      const wrapper = await createAsyncWrapper({
         provide: { fileStore: failingDeleteStore },
       });
 
@@ -261,19 +270,57 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
 
   describe("Suspense Integration", () => {
     it("should work correctly when wrapped in Suspense boundary", async () => {
-      const wrapper = createAsyncWrapper();
+      // Create the wrapper without waiting for async resolution
+      const AsyncFilesItem = {
+        template: `
+          <Suspense>
+            <FilesItem v-bind="$attrs" />
+            <template #fallback>
+              <div data-testid="loading-fallback">Loading file item...</div>
+            </template>
+          </Suspense>
+        `,
+        components: { FilesItem, Suspense },
+      };
 
-      // Suspense should handle the async component
-      expect(wrapper.findComponent(Suspense).exists()).toBe(true);
+      const wrapper = mount(AsyncFilesItem, {
+        props: {
+          modelValue: mockFile.value,
+          mode: "list",
+        },
+        global: {
+          provide: mockProvides,
+          stubs: {
+            FileTitle: {
+              template: '<div data-testid="file-title">{{ file.title }}</div>',
+              props: ["file"],
+            },
+            TagRow: {
+              template: '<div data-testid="tag-row"></div>',
+              props: ["file"],
+            },
+            Date: {
+              template: '<div data-testid="file-date"></div>',
+              props: ["file"],
+            },
+          },
+        },
+      });
+
+      // Initially should show loading fallback
+      expect(wrapper.find('[data-testid="loading-fallback"]').exists()).toBe(true);
 
       // Wait for async resolution
       await nextTick();
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 50)); // longer wait for async operations
 
-      // Component should be fully functional
+      // After resolution, component should be fully functional
       const fileItem = wrapper.find(".item");
       expect(fileItem.exists()).toBe(true);
       expect(fileItem.classes()).toContain("list");
+      
+      // Loading fallback should be gone
+      expect(wrapper.find('[data-testid="loading-fallback"]').exists()).toBe(false);
     });
 
     it("should handle multiple async FilesItems in the same Suspense boundary", async () => {
@@ -330,7 +377,7 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
     it("should handle async component errors gracefully", async () => {
       // This will be tested once we implement proper error handling
       // For now, we just ensure the test structure is in place
-      const wrapper = createAsyncWrapper();
+      const wrapper = await createAsyncWrapper();
 
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));

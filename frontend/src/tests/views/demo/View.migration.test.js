@@ -83,6 +83,12 @@ describe("Demo View Migration Tests", () => {
       wrapper = mount(DemoView);
       await nextTick();
 
+      // Wait for content to load
+      await vi.waitFor(() => {
+        return wrapper.vm.isContentLoaded;
+      });
+      await nextTick();
+
       const canvas = wrapper.findComponent({ name: "Canvas" });
 
       expect(canvas.exists()).toBe(true);
@@ -108,6 +114,12 @@ describe("Demo View Migration Tests", () => {
       wrapper = mount(DemoView);
       await nextTick();
 
+      // Wait for content to load
+      await vi.waitFor(() => {
+        return wrapper.vm.isContentLoaded;
+      });
+      await nextTick();
+
       const canvas = wrapper.findComponent({ name: "Canvas" });
 
       expect(canvas.props("showEditor")).toBe(false);
@@ -118,7 +130,13 @@ describe("Demo View Migration Tests", () => {
       wrapper = mount(DemoView);
       await nextTick();
 
-      const canvas = wrapper.find('[data-testid="workspace-canvas"]');
+      // Wait for content to load
+      await vi.waitFor(() => {
+        return wrapper.vm.isContentLoaded;
+      });
+      await nextTick();
+
+      const canvas = wrapper.find('[data-testid="demo-canvas"]');
 
       // Canvas should be rendered but not have demo-specific positioning classes
       expect(canvas.exists()).toBe(true);
