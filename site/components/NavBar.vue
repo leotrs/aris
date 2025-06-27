@@ -388,20 +388,7 @@
     list-style: none;
     margin: 0;
     z-index: 1010; /* Above navbar and other content */
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-8px);
-    transition: opacity 0.2s ease-out, visibility 0.2s ease-out, transform 0.2s ease-out;
-  }
-
-  /* Show dropdown when Vue reactive state is true OR on CSS hover as fallback */
-  .dropdown-menu[style*="display: block"],
-  .dropdown-menu[style*="display: list-item"],
-  .dropdown-menu:not([style*="display: none"]),
-  .has-dropdown:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
+    /* Vue's v-show will handle visibility */
   }
 
   .dropdown-menu li {

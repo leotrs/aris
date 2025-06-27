@@ -148,8 +148,13 @@
 <style scoped>
   .demo-root {
     height: 100vh;
+    width: 100vw;
+    max-width: 100vw;
+    overflow-x: hidden;
     display: flex;
     flex-direction: column;
+    box-sizing: border-box;
+    position: relative;
   }
 
   .view {
@@ -158,6 +163,7 @@
 
     display: flex;
     width: 100%;
+    max-width: 100vw;
     flex: 1;
     padding: 8px 8px 8px 0;
     will-change: padding;
@@ -202,9 +208,45 @@
   }
 
   .outer {
-    width: calc(100% - 64px);
+    width: calc(100vw - 128px);
+    max-width: calc(100vw - 128px);
     position: relative;
-    left: var(--sidebar-width);
+    left: 64px;
+    overflow-x: hidden;
+  }
+
+  /* Fix demo banner to stay within viewport */
+  .demo-banner {
+    width: 100vw !important;
+    max-width: 100vw !important;
+    overflow-x: hidden;
+  }
+
+  .demo-banner-content {
+    width: 100% !important;
+    max-width: calc(100vw - 32px) !important;
+    margin: 0 auto;
+    padding: 0 16px;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .demo-link {
+    flex-shrink: 0;
+  }
+
+  /* Force manuscript content to wrap and not expand horizontally */
+  .outer :deep(.rsm-manuscript) {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+    word-wrap: break-word !important;
+  }
+
+  .outer :deep(.inner) {
+    max-width: 100% !important;
+    overflow-x: hidden !important;
   }
 
   .view.mobile > .outer {
