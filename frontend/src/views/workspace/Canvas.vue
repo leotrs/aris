@@ -165,7 +165,7 @@
           v-if="!mobileMode || !showEditor"
           ref="inner-right-ref"
           data-testid="manuscript-container"
-          class="inner right"
+          class="inner right workspace-container"
           :class="{ 'no-annotations': !hasAnnotations }"
         >
           <div ref="left-column-ref" class="left-column">
@@ -294,6 +294,15 @@
     border-bottom-right-radius: 0;
   }
 
+  .inner.right .left-column {
+    /* Left column for navigation and tools */
+    flex: 0 0 60px; /* Fixed narrow width for left tools */
+    min-width: 50px; /* Minimum width to prevent collapse */
+    max-width: 80px; /* Maximum width to keep it compact */
+    display: flex;
+    flex-direction: column;
+  }
+
   .inner.right .middle-column {
     /* Use flex instead of fixed width to allow proper space distribution */
     /* between left, middle, and right columns in three-column layout */
@@ -373,6 +382,9 @@
     border-color: transparent;
     padding-inline: 0;
     padding-block: 16px;
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
   }
 
   .rsm-manuscript {
@@ -401,5 +413,18 @@
     font-family: v-bind(fileSettings.fontFamily) !important;
     line-height: v-bind(fileSettings.lineHeight) !important;
     padding-inline: v-bind(fileSettings.marginWidth) !important;
+  }
+
+  .outer.mobile :deep(.manuscriptwrapper),
+  .outer.mobile :deep(.manuscript),
+  .outer.mobile :deep(.hr),
+  .outer.mobile :deep(h1),
+  .outer.mobile :deep(h2),
+  .outer.mobile :deep(h3) {
+    visibility: visible !important;
+    opacity: 1 !important;
+    display: block !important;
+    position: static !important;
+    overflow: visible !important;
   }
 </style>

@@ -138,8 +138,14 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
         select(User).where(User.email == user_data.email, User.deleted_at.is_(None))
     )
     user = result.scalars().first()
-    if not user or not verify_password(user_data.password, user.password_hash):
-        logger.warning(f"Failed login attempt for email: {user_data.email}")
+    
+    if not user:
+        logger.warning(f"Failed login attempt for email: {user_data.email} - User not found")
+        raise HTTPException(status_code=400, detail="Invalid credentials")
+    
+    if not verify_password(user_data.password, user.password_hash):
+        logger.warning(f"Failed login attempt for email: {user_data.email} - Password verification failed")
+        logger.debug(f"Password length provided: {len(user_data.password)}")
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
     logger.info(f"Successful login for user_id: {user.id}")
