@@ -51,7 +51,7 @@
 
       <div class="footer-bottom">
         <div class="footer-branding">
-          <img src="@/assets/logo-32px-gray.svg" alt="Aris Logo" class="footer-logo" />
+          <Logo type="gray" alt="Aris Logo" class="footer-logo" />
           <p class="footer-tagline">
             Transforming scientific research through human-first technology
           </p>
