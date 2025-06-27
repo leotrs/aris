@@ -102,24 +102,51 @@ export class AuthHelpers {
       );
     }
 
-    // Perform one-time login to get tokens
+    console.log("Performing one-time authentication to get tokens...");
+
+    let uiError = null;
+
+    // Try UI login first
     try {
-      console.log("Performing one-time authentication to get tokens...");
       await this.login(testEmail, testPassword);
       await this.expectToBeLoggedIn();
 
       // Cache the authentication tokens
       const tokens = await this.getStoredTokens();
-      this._cachedAuth = {
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        user: tokens.user,
-      };
-
-      console.log("Authentication tokens cached successfully");
+      if (tokens.accessToken) {
+        this._cachedAuth = {
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          user: tokens.user,
+        };
+        console.log("Authentication tokens cached successfully via UI login");
+        return;
+      }
     } catch (error) {
-      console.error("Failed to get authentication tokens:", error);
-      throw new Error(`Authentication bypass failed: ${error.message}`);
+      uiError = error;
+      console.log("UI login failed, trying direct API authentication...", error.message);
+    }
+
+    // Fallback to direct API authentication
+    try {
+      const tokens = await this.authenticateViaAPI(testEmail, testPassword);
+
+      // Set tokens directly in browser storage
+      await this.setAuthState(tokens.accessToken, tokens.refreshToken, tokens.user);
+
+      // Cache for future use
+      this._cachedAuth = tokens;
+
+      // Navigate to home and verify login worked
+      await this.page.goto("/");
+      await this.expectToBeLoggedIn();
+
+      console.log("Authentication tokens cached successfully via direct API");
+    } catch (apiError) {
+      console.error("Both UI and API authentication failed:", apiError);
+      throw new Error(
+        `Authentication bypass failed: UI (${uiError?.message || "unknown"}), API (${apiError.message})`
+      );
     }
   }
 
@@ -130,10 +157,21 @@ export class AuthHelpers {
     // Wait for user menu to be visible, indicating successful authentication
     await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible({ timeout: 6000 });
 
-    // Verify authentication tokens exist
+    // Verify authentication tokens exist and are valid
     const tokens = await this.getStoredTokens();
     if (!tokens.accessToken) {
       throw new Error("Authentication tokens not found after login");
+    }
+
+    // Additional validation: tokens should be non-empty strings
+    if (typeof tokens.accessToken !== "string" || tokens.accessToken.length < 10) {
+      throw new Error(
+        `Invalid access token format: ${typeof tokens.accessToken}, length: ${tokens.accessToken?.length || 0}`
+      );
+    }
+
+    if (!tokens.user || !tokens.user.email) {
+      throw new Error("User information not found in stored tokens");
     }
   }
 
@@ -194,5 +232,55 @@ export class AuthHelpers {
     } catch {
       return { accessToken: null, refreshToken: null, user: null };
     }
+  }
+
+  /**
+   * Authenticate directly via API without using the UI
+   */
+  async authenticateViaAPI(email, password) {
+    // Get API base URL
+    const apiBaseUrl = process.env.VITE_API_BASE_URL || "http://localhost:8000";
+
+    // Make direct login request to API
+    const response = await this.page.request.post(`${apiBaseUrl}/login`, {
+      data: {
+        email: email,
+        password: password,
+      },
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok()) {
+      const errorText = await response.text();
+      throw new Error(`API login failed with status ${response.status()}: ${errorText}`);
+    }
+
+    const loginData = await response.json();
+
+    if (!loginData.access_token) {
+      throw new Error("API login response missing access_token");
+    }
+
+    // Get user info using the access token
+    const userResponse = await this.page.request.get(`${apiBaseUrl}/me`, {
+      headers: {
+        Authorization: `Bearer ${loginData.access_token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!userResponse.ok()) {
+      throw new Error(`Failed to get user info: ${userResponse.status()}`);
+    }
+
+    const userData = await userResponse.json();
+
+    return {
+      accessToken: loginData.access_token,
+      refreshToken: loginData.refresh_token,
+      user: userData,
+    };
   }
 }
