@@ -95,6 +95,9 @@ tmp/
 temp/
 .tmp/
 
+# Design assets (served from backend but sourced from design-assets/)
+backend/static/design/
+
 # Docker
 .dockerignore
 

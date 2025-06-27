@@ -166,9 +166,14 @@ app.mount(
     name="static",
 )
 
-# Mount design assets
-app.mount(
-    "/design-assets", 
-    StaticFiles(directory="static/design"),
-    name="design-assets"
-)
+# Mount design assets (only if directory exists)
+import os
+if os.path.exists("static/design"):
+    app.mount(
+        "/design-assets",
+        StaticFiles(directory="static/design"),
+        name="design-assets"
+    )
+    logger.info("Design assets mounted successfully at /design-assets")
+else:
+    logger.info("Design assets directory 'static/design' does not exist - skipping mount")

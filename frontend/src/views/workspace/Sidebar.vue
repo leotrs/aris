@@ -103,7 +103,7 @@
     :class="{ focus: focusMode, mobile: mobileMode, xs: xsMode }"
   >
     <div v-if="!mobileMode" id="logo" role="button" tabindex="0" @click="router?.push('/')">
-      <img src="@/assets/logo-32px.svg" />
+      <Logo type="small" />
     </div>
 
     <SidebarMenu :items="items" @on="handleItemOn" @off="handleItemOff" />

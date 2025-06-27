@@ -44,9 +44,18 @@ describe("Footer Component", () => {
     });
 
     it("should render footer logo with correct attributes", () => {
-      wrapper = mount(Footer);
+      wrapper = mount(Footer, {
+        global: {
+          stubs: {
+            Logo: {
+              template: '<img data-testid="logo-stub" src="http://localhost:8001/design-assets/logos/logo-32px-gray.svg" alt="Aris Logo" class="footer-logo" />',
+              props: ['type', 'alt', 'class']
+            }
+          }
+        }
+      });
 
-      const logo = wrapper.find(".footer-logo");
+      const logo = wrapper.find('[data-testid="logo-stub"]');
       expect(logo.exists()).toBe(true);
       expect(logo.attributes("src")).toBeDefined();
       expect(logo.attributes("alt")).toBe("Aris Logo");

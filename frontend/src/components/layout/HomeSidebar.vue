@@ -4,8 +4,6 @@
   import { File } from "@/models/File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import SidebarItem from "./HomeSidebarItem.vue";
-  import logoSmall from "@/assets/logo-32px.svg";
-  import logoFull from "@/assets/logotype.svg";
 
   defineOptions({
     name: "HomeSidebar",
@@ -80,7 +78,7 @@
   <div class="sb-wrapper" :class="{ mobile: mobileMode, collapsed: collapsed }">
     <template v-if="!mobileMode">
       <div id="logo">
-        <img :src="collapsed ? logoSmall : logoFull" alt="Aris logo" />
+        <Logo :type="collapsed ? 'small' : 'full'" alt="Aris logo" />
       </div>
     </template>
 

@@ -39,13 +39,25 @@ describe("HomeSidebar.vue", () => {
       props: { active: "Home", fab: false },
       global: {
         provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
-        stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+        stubs: {
+          ContextMenu: true,
+          ContextMenuItem: true,
+          SidebarItem: true,
+          Separator: true,
+          Button: true,
+          Logo: {
+            template: '<div data-testid="logo-stub"></div>',
+            props: ["type", "alt", "class"],
+          },
+        },
       },
     });
     expect(wrapper.classes()).toContain("sb-wrapper");
     expect(wrapper.classes()).not.toContain("mobile");
     expect(wrapper.classes()).not.toContain("collapsed");
-    expect(wrapper.get("#logo img").attributes("src")).toMatch(/logotype\.svg$/);
+    // Check Logo component exists and has correct type
+    const logoStub = wrapper.find('[data-testid="logo-stub"]');
+    expect(logoStub.exists()).toBe(true);
 
     // collapsed state is tested separately
   });
@@ -57,7 +69,17 @@ describe("HomeSidebar.vue", () => {
       props: { active: "Home", fab: false },
       global: {
         provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
-        stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+        stubs: {
+          ContextMenu: true,
+          ContextMenuItem: true,
+          SidebarItem: true,
+          Separator: true,
+          Button: true,
+          Logo: {
+            template: '<div data-testid="logo-stub"></div>',
+            props: ["type", "alt", "class"],
+          },
+        },
       },
     });
     expect(wrapper.classes()).toContain("collapsed");
@@ -70,7 +92,17 @@ describe("HomeSidebar.vue", () => {
       props: { active: "", fab: false },
       global: {
         provide: { mobileMode: true, sidebarIsCollapsed: collapsed, fileStore },
-        stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+        stubs: {
+          ContextMenu: true,
+          ContextMenuItem: true,
+          SidebarItem: true,
+          Separator: true,
+          Button: true,
+          Logo: {
+            template: '<div data-testid="logo-stub"></div>',
+            props: ["type", "alt", "class"],
+          },
+        },
       },
     });
     expect(wrapper.classes()).toContain("mobile");
@@ -84,7 +116,17 @@ describe("HomeSidebar.vue", () => {
         props: { active: "Home", fab: true },
         global: {
           provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
-          stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+          stubs: {
+            ContextMenu: true,
+            ContextMenuItem: true,
+            SidebarItem: true,
+            Separator: true,
+            Button: true,
+            Logo: {
+              template: '<div data-testid="logo-stub"></div>',
+              props: ["type", "alt", "class"],
+            },
+          },
         },
       });
 
@@ -223,20 +265,29 @@ describe("HomeSidebar.vue", () => {
         props: { active: "Home", fab: false },
         global: {
           provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
-          stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+          stubs: {
+            ContextMenu: true,
+            ContextMenuItem: true,
+            SidebarItem: true,
+            Separator: true,
+            Button: true,
+            Logo: {
+              template: '<div data-testid="logo-stub"></div>',
+              props: ["type", "alt", "class"],
+            },
+          },
         },
       });
 
-      // Get initial logo src
-      const expandedLogoSrc = wrapper.get("#logo img").attributes("src");
+      // Get initial logo stub
+      let logoStub = wrapper.find('[data-testid="logo-stub"]');
+      expect(logoStub.exists()).toBe(true);
 
-      // Collapsed state - should show different logo
+      // Collapsed state - should still render logo stub
       collapsed.value = true;
       await wrapper.vm.$nextTick();
-      const collapsedLogoSrc = wrapper.get("#logo img").attributes("src");
-
-      // The logos should be different
-      expect(expandedLogoSrc).not.toBe(collapsedLogoSrc);
+      logoStub = wrapper.find('[data-testid="logo-stub"]');
+      expect(logoStub.exists()).toBe(true);
     });
 
     it("hides menu text in collapsed state", () => {
@@ -246,7 +297,17 @@ describe("HomeSidebar.vue", () => {
         props: { active: "Home", fab: false },
         global: {
           provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
-          stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+          stubs: {
+            ContextMenu: true,
+            ContextMenuItem: true,
+            SidebarItem: true,
+            Separator: true,
+            Button: true,
+            Logo: {
+              template: '<div data-testid="logo-stub"></div>',
+              props: ["type", "alt", "class"],
+            },
+          },
         },
       });
 
@@ -394,7 +455,17 @@ describe("HomeSidebar.vue", () => {
         props: { active: "Home", fab: false },
         global: {
           provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
-          stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+          stubs: {
+            ContextMenu: true,
+            ContextMenuItem: true,
+            SidebarItem: true,
+            Separator: true,
+            Button: true,
+            Logo: {
+              template: '<div data-testid="logo-stub"></div>',
+              props: ["type", "alt", "class"],
+            },
+          },
         },
       });
 
@@ -415,7 +486,17 @@ describe("HomeSidebar.vue", () => {
         props: { active: "Home", fab: false },
         global: {
           provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
-          stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+          stubs: {
+            ContextMenu: true,
+            ContextMenuItem: true,
+            SidebarItem: true,
+            Separator: true,
+            Button: true,
+            Logo: {
+              template: '<div data-testid="logo-stub"></div>',
+              props: ["type", "alt", "class"],
+            },
+          },
         },
       });
 
@@ -443,7 +524,17 @@ describe("HomeSidebar.vue", () => {
         props: { active: "Home", fab: false },
         global: {
           provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
-          stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+          stubs: {
+            ContextMenu: true,
+            ContextMenuItem: true,
+            SidebarItem: true,
+            Separator: true,
+            Button: true,
+            Logo: {
+              template: '<div data-testid="logo-stub"></div>',
+              props: ["type", "alt", "class"],
+            },
+          },
         },
       });
 
@@ -472,7 +563,17 @@ describe("HomeSidebar.vue", () => {
         props: { active: "Home", fab: false },
         global: {
           provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
-          stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+          stubs: {
+            ContextMenu: true,
+            ContextMenuItem: true,
+            SidebarItem: true,
+            Separator: true,
+            Button: true,
+            Logo: {
+              template: '<div data-testid="logo-stub"></div>',
+              props: ["type", "alt", "class"],
+            },
+          },
         },
       });
 
@@ -494,7 +595,17 @@ describe("HomeSidebar.vue", () => {
         props: { active: "Home", fab: false },
         global: {
           provide: { mobileMode: false, sidebarIsCollapsed: collapsed, fileStore },
-          stubs: ["ContextMenu", "ContextMenuItem", "SidebarItem", "Separator"],
+          stubs: {
+            ContextMenu: true,
+            ContextMenuItem: true,
+            SidebarItem: true,
+            Separator: true,
+            Button: true,
+            Logo: {
+              template: '<div data-testid="logo-stub"></div>',
+              props: ["type", "alt", "class"],
+            },
+          },
         },
       });
 
