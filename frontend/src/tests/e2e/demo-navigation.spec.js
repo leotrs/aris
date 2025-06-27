@@ -56,9 +56,10 @@ test.describe("Demo Navigation & Access", () => {
       await expect(banner).toContainText("Demo Mode");
       await expect(banner).toContainText("Experience Aris workspace with sample content");
 
-      // Check for demo icon
+      // Check for demo icon (should be an SVG info icon)
       await expect(banner.locator(".demo-icon")).toBeVisible();
-      await expect(banner.locator(".demo-icon")).toContainText("ℹ️");
+      // Check that it's an SVG icon (not text emoji)
+      await expect(banner.locator(".demo-icon svg")).toBeVisible();
     });
 
     test("back to homepage link works correctly", async ({ page }) => {
