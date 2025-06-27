@@ -32,6 +32,32 @@ uv run mypy aris/                     # Type check
   - `CI=true` or `ENV=CI`: Forces PostgreSQL usage
 - **Local CI Simulation**: Use `./simulate-ci -- <command>` for 100% CI fidelity
 
+## Development Setup
+
+### Standard Development
+```bash
+cd backend && uv sync --all-groups   # Install backend dependencies
+cd frontend && npm install           # Install frontend dependencies
+```
+
+### Containerized Development (Multi-Clone Setup)
+```bash
+# Copy environment template and customize ports
+cp .env.example .env
+# Edit .env with unique ports for each clone:
+# Clone 1: BACKEND_PORT=8000, FRONTEND_PORT=5173, DB_PORT=5432
+# Clone 2: BACKEND_PORT=8001, FRONTEND_PORT=5174, DB_PORT=5433
+# Clone 3: BACKEND_PORT=8002, FRONTEND_PORT=5175, DB_PORT=5434
+
+# Start all services
+docker compose -f docker-compose.dev.yml up
+
+# Access services:
+# Backend API: http://localhost:${BACKEND_PORT}
+# Frontend: http://localhost:${FRONTEND_PORT}
+# Database: localhost:${DB_PORT}
+```
+
 ## Frontend Commands
 ```bash
 npm install                           # Install dependencies
