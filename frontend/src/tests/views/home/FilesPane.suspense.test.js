@@ -182,9 +182,9 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
         title: `File ${i}`,
         filtered: false,
         focused: false,
-        last_edited_at: `2023-12-${i.toString().padStart(2, "0")}T10:30:00Z`,
-        getFormattedDate: vi.fn(() => `Dec ${i}, 2023`),
-        getFullDateTime: vi.fn(() => `December ${i}, 2023 at 10:30 AM`),
+        getFormattedDate: () => "2 hours ago",
+        getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+        tags: [],
       }));
 
       const wrapper = createWrapper({
@@ -209,15 +209,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       // Rapid updates to test Suspense stability
       for (let i = 0; i < 5; i++) {
         mockFileStore.value.files = [
-          {
-            id: `rapid-${i}`,
-            title: `Rapid File ${i}`,
-            filtered: false,
-            focused: false,
-            last_edited_at: `2023-12-${i.toString().padStart(2, "0")}T14:30:00Z`,
-            getFormattedDate: vi.fn(() => `Dec ${i}, 2023`),
-            getFullDateTime: vi.fn(() => `December ${i}, 2023 at 2:30 PM`),
-          },
+          { id: `rapid-${i}`, title: `Rapid File ${i}`, filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
         ];
         await nextTick();
       }
@@ -239,15 +231,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
           fileStore: ref({
             files: [
               // Missing required properties to potentially trigger errors
-              {
-                id: "error-file",
-                title: "Error File",
-                filtered: false,
-                focused: false,
-                last_edited_at: "2023-12-05T15:30:00Z",
-                getFormattedDate: vi.fn(() => "Dec 5, 2023"),
-                getFullDateTime: vi.fn(() => "December 5, 2023 at 3:30 PM"),
-              },
+              { id: "error-file", getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
             ],
           }),
         },
@@ -270,15 +254,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       await nextTick();
 
       mockFileStore.value.files = [
-        {
-          id: "recovery",
-          title: "Recovery File",
-          filtered: false,
-          focused: false,
-          last_edited_at: "2023-12-06T16:30:00Z",
-          getFormattedDate: vi.fn(() => "Dec 6, 2023"),
-          getFullDateTime: vi.fn(() => "December 6, 2023 at 4:30 PM"),
-        },
+        { id: "recovery", title: "Recovery File", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
       ];
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -384,26 +360,8 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       // Replace files completely
       mockFileStore.value.files = [
-        {
-          id: "new-1",
-          title: "New File 1",
-          filtered: false,
-          focused: false,
-          tags: [],
-          last_edited_at: "2023-12-07T17:30:00Z",
-          getFormattedDate: vi.fn(() => "Dec 7, 2023"),
-          getFullDateTime: vi.fn(() => "December 7, 2023 at 5:30 PM"),
-        },
-        {
-          id: "new-2",
-          title: "New File 2",
-          filtered: false,
-          focused: false,
-          tags: [],
-          last_edited_at: "2023-12-08T18:30:00Z",
-          getFormattedDate: vi.fn(() => "Dec 8, 2023"),
-          getFullDateTime: vi.fn(() => "December 8, 2023 at 6:30 PM"),
-        },
+        { id: "new-1", title: "New File 1", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
+        { id: "new-2", title: "New File 2", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
       ];
 
       await nextTick();
