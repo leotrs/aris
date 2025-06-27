@@ -439,14 +439,7 @@ jobs:
         VITE_SKIP_AUTH_FOR_TESTS: true
 
     - name: Wait for servers to be ready
-      run: |
-        echo "Waiting for backend server..."
-        timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
-        echo "Backend server is ready!"
-        
-        echo "Waiting for frontend server..."
-        timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
-        echo "Frontend server is ready!"
+      run: ./.github/scripts/wait-for-servers.sh
 
     # Site setup for demo integration tests
     - name: Install site dependencies
@@ -473,7 +466,7 @@ jobs:
 
     - name: Run Demo E2E tests
       working-directory: frontend
-      run: npm run test:e2e -- --grep "@demo"
+      run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep "@demo"'
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
@@ -579,14 +572,7 @@ jobs:
         VITE_API_BASE_URL: http://localhost:8000
 
     - name: Wait for servers to be ready
-      run: |
-        echo "Waiting for backend server..."
-        timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
-        echo "Backend server is ready!"
-        
-        echo "Waiting for frontend server..."
-        timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
-        echo "Frontend server is ready!"
+      run: ./.github/scripts/wait-for-servers.sh
 
     - name: Run Standard E2E tests (no auth required)
       working-directory: frontend
@@ -696,7 +682,7 @@ jobs:
     - name: Wait for servers to be ready
       run: ./.github/scripts/wait-for-servers.sh
 
-    - name: Run uncategorized E2E tests (no auth required)
+    - name: Run uncategorized E2E tests
       working-directory: frontend
       run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep-invert "@"'
       env:
@@ -805,17 +791,13 @@ jobs:
     - name: Wait for servers to be ready
       run: ./.github/scripts/wait-for-servers.sh
 
-    - name: Run Desktop-Only E2E tests (no auth required)
+    - name: Run Desktop-Only E2E tests
       working-directory: frontend
       run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep "@desktop-only" --project="chromium" --project="firefox" --project="webkit"'
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_SKIP_AUTH_FOR_TESTS: true
         SKIP_AUTH_FOR_TESTS: true
-      ENV: CI
-      SKIP_AUTH_FOR_TESTS: true
-
-    services:
       postgres:
         image: postgres:15
         env:
