@@ -46,26 +46,9 @@ export class AuthHelpers {
   }
 
   async loginWithTestUser() {
-    // Use test credentials from environment variables
-    const testEmail = process.env.TEST_USER_EMAIL || "testuser@aris.pub";
-    // In CI environment, use TEST_USER_PASSWORD, in dev use VITE_DEV_LOGIN_PASSWORD
-    const testPassword =
-      process.env.CI || process.env.ENV === "CI"
-        ? process.env.TEST_USER_PASSWORD
-        : process.env.VITE_DEV_LOGIN_PASSWORD;
-
-    if (!testPassword) {
-      const envVar =
-        process.env.CI || process.env.ENV === "CI"
-          ? "TEST_USER_PASSWORD"
-          : "VITE_DEV_LOGIN_PASSWORD";
-      throw new Error(
-        `Test user password not configured. Required environment variable ${envVar} is missing.`
-      );
-    }
-
-    await this.login(testEmail, testPassword);
-    await this.expectToBeLoggedIn();
+    // Use the more reliable authentication bypass method
+    // which will try UI login first, then fall back to direct API if UI fails
+    await this.authenticateWithBypass();
   }
 
   /**

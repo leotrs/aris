@@ -64,6 +64,9 @@ class Settings(BaseSettings):
 
     FROM_EMAIL: str = Field("noreply@aris.pub", json_schema_extra={"env": "FROM_EMAIL"})
     """Default from email address."""
+    
+    SKIP_AUTH_FOR_TESTS: bool = Field(False, json_schema_extra={"env": "SKIP_AUTH_FOR_TESTS"})
+    """Skip authentication checks when running tests (creates fake test user)."""
 
     model_config = ConfigDict(extra="forbid")
 

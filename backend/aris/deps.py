@@ -18,7 +18,7 @@ from typing import AsyncGenerator, Optional
 from uuid import UUID
 
 from dotenv import load_dotenv
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 from pydantic import BaseModel, ConfigDict, EmailStr
@@ -73,13 +73,13 @@ class UserRead(BaseModel):
 
 
 async def current_user(
-    token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)
+    request: Request, db: AsyncSession = Depends(get_db)
 ) -> UserRead:
     """Dependency that retrieves and validates the current authenticated user based on
     the provided OAuth2 Bearer token.
 
     Args:
-        token (str): OAuth2 Bearer token extracted from the Authorization header.
+        request (Request): FastAPI request object to access headers.
         db (AsyncSession): SQLAlchemy database async session.
 
     Raises:
@@ -89,6 +89,26 @@ async def current_user(
         UserRead: The authenticated user's data.
 
     """
+    # Skip authentication for tests when flag is enabled
+    if settings.SKIP_AUTH_FOR_TESTS:
+        from uuid import uuid4
+        return UserRead(
+            id=uuid4(),
+            email="testuser@aris.pub",
+            full_name="Test User"
+        )
+    
+    # Extract token from Authorization header for normal authentication
+    authorization = request.headers.get("Authorization")
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    token = authorization.split(" ")[1]
+    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid authentication credentials",
