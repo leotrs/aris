@@ -4,46 +4,107 @@ Thank you for your interest in contributing to Aris! This guide will help you ge
 
 ## 🚀 Quick Start
 
-### Prerequisites
+### Setup Options
 
-**Backend (Python):**
-- Python 3.13+
-- [uv](https://docs.astral.sh/uv/) (Python package manager)
-- PostgreSQL (for production) or SQLite (for development)
+Choose your preferred development environment:
 
-**Frontend (Vue.js):**
-- Node.js 18+
-- npm
+#### Option A: Docker (Recommended) 🐳
 
-### 5-Minute Setup
+**Prerequisites:**
+- Docker and Docker Compose
+- Git
 
-1. **Clone the repository:**
-   ```bash
-   git clone https://github.com/your-org/aris.git
-   cd aris
-   ```
+**1-Minute Setup:**
+```bash
+# Clone and start
+git clone https://github.com/your-org/aris.git
+cd aris/docker
+docker compose -f docker-compose.dev.yml up --build
+```
 
-2. **Backend setup:**
-   ```bash
-   cd backend
-   uv sync                    # Install dependencies
-   alembic upgrade head       # Set up database
-   uvicorn main:app --reload  # Start development server (http://localhost:8000)
-   ```
+**✨ What you get automatically:**
+- 🌐 **Frontend**: http://localhost:5173
+- 🔧 **Backend API**: http://localhost:8000/docs  
+- 🗄️ **Database**: Pre-seeded with user and sample data
+- 👤 **Login**: `foo@bar.com` / `admin` (ready to use!)
 
-3. **Frontend setup (in new terminal):**
-   ```bash
-   cd frontend
-   npm install               # Install dependencies
-   npm run dev              # Start development server (http://localhost:5173)
-   ```
+**Benefits:**
+- Complete isolation (perfect for multiple repository clones)
+- No local dependencies required
+- Production-like PostgreSQL environment
+- Auto-seeded with realistic data
+- Hot reloading for both frontend and backend
 
-4. **Verify setup:**
-   - Backend API docs: http://localhost:8000/docs
-   - Frontend app: http://localhost:5173
-   - Run tests: `cd backend && uv run pytest` and `cd frontend && npm test`
+#### Option B: Local Development
+
+**Prerequisites:**
+- Python 3.13+ with [uv](https://docs.astral.sh/uv/)
+- Node.js 18+ with npm
+- PostgreSQL (production) or SQLite (development)
+
+**5-Minute Setup:**
+```bash
+# Clone the repository
+git clone https://github.com/your-org/aris.git
+cd aris
+
+# Backend setup
+cd backend
+uv sync                    # Install dependencies
+alembic upgrade head       # Set up database
+uvicorn main:app --reload  # Start development server (http://localhost:8000)
+
+# Frontend setup (in new terminal)
+cd frontend
+npm install               # Install dependencies
+npm run dev              # Start development server (http://localhost:5173)
+```
+
+**Verify setup:**
+- Backend API docs: http://localhost:8000/docs
+- Frontend app: http://localhost:5173
+- Run tests: `cd backend && uv run pytest` and `cd frontend && npm test`
 
 ## 📋 Development Workflow
+
+### Multi-Clone Development with Docker
+
+If you're working on multiple features or need to compare different branches:
+
+1. **Set up multiple clones with different ports:**
+   ```bash
+   # Clone 1 (main development)
+   cd aris-main/docker
+   cp .env.example .env
+   # Uses default ports: Backend 8000, Frontend 5173
+
+   # Clone 2 (feature branch)
+   cd aris-feature/docker  
+   cp .env.example .env
+   # Edit .env: BACKEND_PORT=8001, FRONTEND_PORT=5174, DB_PORT=5433
+
+   # Clone 3 (experimental)
+   cd aris-experiment/docker
+   cp .env.example .env  
+   # Edit .env: BACKEND_PORT=8002, FRONTEND_PORT=5175, DB_PORT=5434
+   ```
+
+2. **Each clone gets its own isolated environment:**
+   - Separate databases with auto-seeded data
+   - No port conflicts between clones
+   - Independent development and testing
+
+3. **Quick clone management:**
+   ```bash
+   # Start specific clone
+   docker compose -f docker-compose.dev.yml up -d
+
+   # Stop all containers in current clone
+   docker compose -f docker-compose.dev.yml down
+
+   # Reset clone to fresh state (removes all data)
+   docker compose -f docker-compose.dev.yml down -v
+   ```
 
 ### Branch Strategy
 
@@ -62,6 +123,18 @@ Thank you for your interest in contributing to Aris! This guide will help you ge
 2. **Make your changes following our standards (see below)**
 
 3. **Test your changes:**
+
+   **Docker Environment:**
+   ```bash
+   # Run tests in containers
+   docker compose -f docker-compose.dev.yml exec backend uv run pytest -n8
+   docker compose -f docker-compose.dev.yml exec backend uv run ruff check
+   docker compose -f docker-compose.dev.yml exec backend uv run mypy aris/
+   docker compose -f docker-compose.dev.yml exec frontend npm test
+   docker compose -f docker-compose.dev.yml exec frontend npm run lint
+   ```
+
+   **Local Environment:**
    ```bash
    # Backend
    cd backend
@@ -169,6 +242,26 @@ const isVisible = ref(false)
 - **User interaction**: Test user workflows
 
 ### Running Tests
+
+**Docker Environment:**
+```bash
+# Backend - Run all tests
+docker compose -f docker-compose.dev.yml exec backend uv run pytest
+
+# Backend - Run with coverage
+docker compose -f docker-compose.dev.yml exec backend uv run pytest --cov=aris --cov-report=term-missing
+
+# Backend - Run in parallel
+docker compose -f docker-compose.dev.yml exec backend uv run pytest -n8
+
+# Frontend - Run all tests
+docker compose -f docker-compose.dev.yml exec frontend npm test
+
+# Frontend - Run with coverage
+docker compose -f docker-compose.dev.yml exec frontend npm run test:coverage
+```
+
+**Local Environment:**
 ```bash
 # Backend - Run all tests
 cd backend && uv run pytest
