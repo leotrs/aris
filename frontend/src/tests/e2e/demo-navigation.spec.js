@@ -58,8 +58,8 @@ test.describe("Demo Navigation & Access @critical", () => {
 
       // Check for demo icon (should be an SVG info icon)
       await expect(banner.locator(".demo-icon")).toBeVisible();
-      // Check that it's an SVG icon (not text emoji)
-      await expect(banner.locator(".demo-icon svg")).toBeVisible();
+      // Check that it's an SVG icon (the demo-icon class is applied directly to the SVG)
+      await expect(banner.locator("svg.demo-icon")).toBeVisible();
     });
 
     test("back to homepage link works correctly", async ({ page }) => {

@@ -10,6 +10,9 @@ export class AuthHelpers {
     await this.page.fill('[data-testid="email-input"]', email);
     await this.page.fill('[data-testid="password-input"]', password);
 
+    // Log what credentials we're using for debugging
+    console.log(`Attempting login with email: ${email}, password length: ${password?.length || 0}`);
+
     // Click login button and wait for either navigation or error message
     await this.page.click('[data-testid="login-button"]');
 
@@ -17,13 +20,18 @@ export class AuthHelpers {
     try {
       await this.page.waitForURL(url => !url.includes('/login'), { timeout: 8000 });
       await this.page.waitForLoadState("domcontentloaded"); // Faster than networkidle
+      console.log("Login successful - navigated away from login page");
     } catch (error) {
       // If still on login page, check for error messages or other issues
       await this.page.waitForLoadState("domcontentloaded");
       const currentUrl = this.page.url();
       if (currentUrl.includes("/login")) {
-        // Still on login page - login likely failed
-        console.log("Login attempt did not navigate away from login page");
+        // Check if there's an error message on the page
+        const errorElement = await this.page.locator('[data-testid="login-error"]').isVisible();
+        const errorText = errorElement ? await this.page.locator('[data-testid="login-error"]').textContent() : "No error message found";
+        
+        console.log(`Login attempt did not navigate away from login page. Error visible: ${errorElement}, Error text: ${errorText}`);
+        console.log(`Current URL: ${currentUrl}`);
       } else {
         // Some other navigation issue, re-throw the error
         throw error;
@@ -34,10 +42,14 @@ export class AuthHelpers {
   async loginWithTestUser() {
     // Use test credentials from environment variables
     const testEmail = process.env.TEST_USER_EMAIL || "testuser@aris.pub";
-    const testPassword = process.env.VITE_DEV_LOGIN_PASSWORD || process.env.TEST_USER_PASSWORD;
+    // In CI environment, use TEST_USER_PASSWORD, in dev use VITE_DEV_LOGIN_PASSWORD
+    const testPassword = (process.env.CI || process.env.ENV === "CI") 
+      ? process.env.TEST_USER_PASSWORD 
+      : process.env.VITE_DEV_LOGIN_PASSWORD;
     
     if (!testPassword) {
-      throw new Error("Test user password not configured. Set VITE_DEV_LOGIN_PASSWORD or TEST_USER_PASSWORD environment variable.");
+      const envVar = (process.env.CI || process.env.ENV === "CI") ? "TEST_USER_PASSWORD" : "VITE_DEV_LOGIN_PASSWORD";
+      throw new Error(`Test user password not configured. Required environment variable ${envVar} is missing.`);
     }
     
     await this.login(testEmail, testPassword);
