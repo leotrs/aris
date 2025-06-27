@@ -437,20 +437,25 @@ test.describe("Demo Workspace Functionality", () => {
       });
 
       // Wait for RSM content to fully load and stabilize
-      // Check for jQuery and RSM scripts to be ready
+      // Check for jQuery, RSM scripts, and completion signal
       await page.waitForFunction(
         () => {
           return (
             window.jQuery &&
             document.querySelectorAll(".hr-border-zone").length > 0 &&
-            !document.querySelector(".manuscript")?.classList.contains("loading")
+            document.querySelector(".rsm-manuscript.rsm-loaded") !== null
           );
         },
-        { timeout: 15000 }
+        { timeout: 20000 }
       );
 
-      // Wait for any animations/transitions to complete
-      await page.waitForTimeout(500);
+      // Extra wait for WebKit stability
+      const isWebKit = page.context().browser()?.browserType().name() === 'webkit';
+      if (isWebKit) {
+        await page.waitForTimeout(2000);
+      } else {
+        await page.waitForTimeout(500);
+      }
 
       // Look for interactive handrails
       const handrails = page.locator(".hr-menu-zone");

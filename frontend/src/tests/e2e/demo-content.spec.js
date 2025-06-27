@@ -161,14 +161,19 @@ test.describe("Demo Content Rendering @demo", () => {
           return (
             window.jQuery &&
             document.querySelectorAll(".hr-border-zone").length > 0 &&
-            !document.querySelector(".manuscript")?.classList.contains("loading")
+            document.querySelector(".rsm-manuscript.rsm-loaded") !== null
           );
         },
-        { timeout: 15000 }
+        { timeout: 20000 }
       );
 
-      // Wait for any animations/transitions to complete
-      await page.waitForTimeout(500);
+      // Extra wait for WebKit stability
+      const isWebKit = page.context().browser()?.browserType().name() === 'webkit';
+      if (isWebKit) {
+        await page.waitForTimeout(2000);
+      } else {
+        await page.waitForTimeout(500);
+      }
 
       // Hover over content to reveal border dots
       await page.hover("h1"); // Hover over main heading
