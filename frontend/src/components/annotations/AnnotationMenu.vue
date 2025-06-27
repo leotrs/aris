@@ -2,6 +2,34 @@
   import { ref, reactive, computed, inject, onMounted, onUnmounted, useTemplateRef } from "vue";
   import { useFloating, autoUpdate, offset, flip, shift } from "@floating-ui/vue";
 
+  /**
+   * AnnotationMenu - Floating annotation menu with color selection
+   *
+   * A sophisticated floating menu component for creating annotations with color selection.
+   * Uses Floating UI for intelligent positioning and supports text selection-based annotation
+   * creation with expandable color palettes.
+   *
+   * Features:
+   * - Text selection-based positioning using Floating UI
+   * - Expandable color palette (3 colors default, 6 when expanded)
+   * - Intelligent viewport-aware positioning
+   * - Text range capture and annotation creation
+   * - Mouse and keyboard interaction support
+   * - Auto-hide on outside clicks and navigation
+   *
+   * @displayName AnnotationMenu
+   * @example
+   * // Basic usage (automatically positioned on text selection)
+   * <AnnotationMenu />
+   *
+   * @example
+   * // The component automatically handles:
+   * // - Text selection detection
+   * // - Floating menu positioning
+   * // - Color selection interface
+   * // - Annotation creation workflow
+   */
+
   const selfRef = useTemplateRef("selfRef");
   const visible = ref(false);
   const virtualEl = ref(null);

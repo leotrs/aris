@@ -2,14 +2,84 @@
   import { ref, useTemplateRef } from "vue";
   import { IconSearch } from "@tabler/icons-vue";
 
+  /**
+   * SearchBar - Interactive search input component
+   *
+   * A versatile search input component with keyboard navigation, search state management,
+   * and optional navigation buttons. Supports both simple search and advanced navigation
+   * through search results with prev/next functionality.
+   *
+   * Features:
+   * - Keyboard shortcuts: Enter (search/next), Shift+Enter (previous), Escape (cancel)
+   * - Optional search icon and close button
+   * - Navigation buttons for stepping through results
+   * - Custom placeholder text and hint display
+   * - Slot support for additional custom buttons
+   * - Accessible focus management
+   *
+   * @displayName SearchBar
+   * @example
+   * // Basic search
+   * <SearchBar
+   *   placeholder="Search documents..."
+   *   @submit="handleSearch"
+   *   @cancel="handleCancel"
+   * />
+   *
+   * @example
+   * // With navigation buttons
+   * <SearchBar
+   *   :with-buttons="true"
+   *   hint-text="3 of 15"
+   *   @submit="handleSearch"
+   *   @next="handleNext"
+   *   @prev="handlePrev"
+   * />
+   *
+   * @example
+   * // With custom buttons slot
+   * <SearchBar @submit="handleSearch">
+   *   <template #buttons>
+   *     <Button icon="Filter" @click="showFilters" />
+   *   </template>
+   * </SearchBar>
+   */
+
   const props = defineProps({
+    /**
+     * Whether to show navigation buttons (prev/next)
+     */
     withButtons: { type: Boolean, default: false },
+    /**
+     * Placeholder text for the search input
+     * @values "Search...", "Find in document...", "Search files..."
+     */
     placeholder: { type: String, default: "Search..." },
+    /**
+     * Hint text to display between navigation buttons (e.g., "3 of 15")
+     */
     hintText: { type: String, default: "" },
+    /**
+     * Whether to show the search icon
+     */
     showIcon: { type: Boolean, default: true },
+    /**
+     * Whether to show the close button
+     */
     buttonClose: { type: Boolean, default: false },
+    /**
+     * Whether navigation buttons are disabled
+     */
     buttonsDisabled: { type: Boolean, default: false },
   });
+
+  /**
+   * Events emitted by the component
+   * @event submit - Emitted when search is initiated (Enter key or first search)
+   * @event cancel - Emitted when search is cancelled (Escape key)
+   * @event next - Emitted when navigating to next result (Enter or next button)
+   * @event prev - Emitted when navigating to previous result (Shift+Enter or prev button)
+   */
   const emit = defineEmits(["submit", "cancel", "next", "prev"]);
   const searchText = ref("");
   const inputRef = useTemplateRef("inputRef");
@@ -37,6 +107,11 @@
   };
 
   const focusInput = () => inputRef.value?.focus();
+
+  /**
+   * Exposes methods for parent components
+   * @expose {Function} focusInput - Focus the search input programmatically
+   */
   defineExpose({ focusInput });
 </script>
 
