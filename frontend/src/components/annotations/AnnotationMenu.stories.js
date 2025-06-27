@@ -1,26 +1,26 @@
-import AnnotationMenu from './AnnotationMenu.vue';
-import { action } from '@storybook/addon-actions';
-import { ref } from 'vue';
+import AnnotationMenu from "./AnnotationMenu.vue";
+import { action } from "@storybook/addon-actions";
+import { ref } from "vue";
 
 // Mock annotation store for the component
 const createMockAnnotationStore = () => {
   const store = ref({
     addNote: (noteContent) => {
-      action('addNote')(noteContent);
-      console.log('Note added:', noteContent);
+      action("addNote")(noteContent);
+      console.log("Note added:", noteContent);
     },
     addComment: (commentContent) => {
-      action('addComment')(commentContent);
-      console.log('Comment added:', commentContent);
+      action("addComment")(commentContent);
+      console.log("Comment added:", commentContent);
     },
   });
   return store;
 };
 
 export default {
-  title: 'Annotations/AnnotationMenu',
+  title: "Annotations/AnnotationMenu",
   component: AnnotationMenu,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     (story) => ({
       components: { story },
@@ -33,13 +33,14 @@ export default {
           annotationStore: this.annotationStore,
         };
       },
-      template: '<story />',
+      template: "<story />",
     }),
   ],
   parameters: {
     docs: {
       description: {
-        component: 'A floating annotation menu that appears on text selection with color-coded annotation options.',
+        component:
+          "A floating annotation menu that appears on text selection with color-coded annotation options.",
       },
     },
   },
@@ -162,10 +163,10 @@ export const AnnotationWorkflow = {
     components: { AnnotationMenu },
     setup() {
       const annotations = ref([]);
-      const selectedText = ref('');
-      
+      const selectedText = ref("");
+
       const simulateAnnotation = (color) => {
-        const mockText = 'selected text';
+        const mockText = "selected text";
         const newAnnotation = {
           id: Date.now(),
           text: mockText,
@@ -173,9 +174,9 @@ export const AnnotationWorkflow = {
           timestamp: new Date().toLocaleTimeString(),
         };
         annotations.value.unshift(newAnnotation);
-        action('annotationCreated')(newAnnotation);
+        action("annotationCreated")(newAnnotation);
       };
-      
+
       return { annotations, selectedText, simulateAnnotation };
     },
     template: `

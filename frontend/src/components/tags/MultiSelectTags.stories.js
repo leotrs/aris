@@ -1,23 +1,23 @@
-import MultiSelectTags from './MultiSelectTags.vue';
-import { action } from '@storybook/addon-actions';
-import { ref, reactive } from 'vue';
+import MultiSelectTags from "./MultiSelectTags.vue";
+import { action } from "@storybook/addon-actions";
+import { ref, reactive } from "vue";
 
 // Mock tags data
 const mockTags = [
-  { id: 1, name: 'Frontend', color: 'blue' },
-  { id: 2, name: 'Backend', color: 'green' },
-  { id: 3, name: 'Critical', color: 'red' },
-  { id: 4, name: 'Design', color: 'purple' },
-  { id: 5, name: 'Testing', color: 'orange' },
-  { id: 6, name: 'Documentation', color: 'blue' },
-  { id: 7, name: 'Bug Fix', color: 'red' },
-  { id: 8, name: 'Feature', color: 'green' },
+  { id: 1, name: "Frontend", color: "blue" },
+  { id: 2, name: "Backend", color: "green" },
+  { id: 3, name: "Critical", color: "red" },
+  { id: 4, name: "Design", color: "purple" },
+  { id: 5, name: "Testing", color: "orange" },
+  { id: 6, name: "Documentation", color: "blue" },
+  { id: 7, name: "Bug Fix", color: "red" },
+  { id: 8, name: "Feature", color: "green" },
 ];
 
 // Mock file data
 const mockFile = {
   id: 123,
-  name: 'important-document.pdf',
+  name: "important-document.pdf",
   tags: [mockTags[0], mockTags[2]], // Frontend and Critical
 };
 
@@ -29,44 +29,44 @@ const createMockFileStore = (initialTags = mockTags) => {
       const newTag = {
         id: Date.now(),
         name,
-        color: ['blue', 'green', 'red', 'purple', 'orange'][Math.floor(Math.random() * 5)],
+        color: ["blue", "green", "red", "purple", "orange"][Math.floor(Math.random() * 5)],
       };
       store.tags.push(newTag);
-      action('createTag')(newTag);
+      action("createTag")(newTag);
       return newTag;
     },
     toggleFileTag: (file, tagId) => {
-      const tag = store.tags.find(t => t.id === tagId);
-      action('toggleFileTag')(file, tag);
-      
-      if (file.tags.some(t => t.id === tagId)) {
-        file.tags = file.tags.filter(t => t.id !== tagId);
+      const tag = store.tags.find((t) => t.id === tagId);
+      action("toggleFileTag")(file, tag);
+
+      if (file.tags.some((t) => t.id === tagId)) {
+        file.tags = file.tags.filter((t) => t.id !== tagId);
       } else {
         file.tags.push(tag);
       }
     },
   });
-  
+
   return { value: store };
 };
 
 export default {
-  title: 'Tags/MultiSelectTags',
+  title: "Tags/MultiSelectTags",
   component: MultiSelectTags,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     file: {
-      control: 'object',
-      description: 'File object to associate tags with (null for filter context)',
+      control: "object",
+      description: "File object to associate tags with (null for filter context)",
     },
     icon: {
-      control: 'select',
-      options: ['Tag', 'Filter', 'Hash', 'Bookmark'],
-      description: 'Icon for the trigger button',
+      control: "select",
+      options: ["Tag", "Filter", "Hash", "Bookmark"],
+      description: "Icon for the trigger button",
     },
     modelValue: {
-      control: 'object',
-      description: 'Array of currently selected tags (v-model)',
+      control: "object",
+      description: "Array of currently selected tags (v-model)",
     },
   },
   decorators: [
@@ -83,12 +83,12 @@ export default {
           fileStore: this.fileStore,
         };
       },
-      template: '<story />',
+      template: "<story />",
     }),
   ],
   args: {
     file: null,
-    icon: 'Tag',
+    icon: "Tag",
     modelValue: [],
   },
 };
@@ -139,14 +139,14 @@ export const FilterContext = {
 export const FileTagging = {
   args: {
     file: mockFile,
-    icon: 'Tag',
+    icon: "Tag",
   },
   render: (args) => ({
     components: { MultiSelectTags },
     setup() {
       const selectedTags = ref(args.modelValue || args.file?.tags || []);
       const fileData = ref({ ...args.file });
-      
+
       return { args, selectedTags, fileData };
     },
     template: `
@@ -199,7 +199,7 @@ export const DifferentIcons = {
       const filterTags = ref([]);
       const hashTags = ref([]);
       const bookmarkTags = ref([]);
-      
+
       return { filterTags, hashTags, bookmarkTags };
     },
     template: `
@@ -234,7 +234,7 @@ export const TagCreation = {
     setup() {
       const selectedTags = ref([]);
       const createdTags = ref([]);
-      
+
       return { selectedTags, createdTags };
     },
     template: `
@@ -291,24 +291,24 @@ export const MultipleFiles = {
       const files = ref([
         {
           id: 1,
-          name: 'frontend-guide.pdf',
+          name: "frontend-guide.pdf",
           tags: [mockTags[0], mockTags[3]], // Frontend, Design
           selectedTags: ref([mockTags[0], mockTags[3]]),
         },
         {
           id: 2,
-          name: 'api-documentation.md',
+          name: "api-documentation.md",
           tags: [mockTags[1], mockTags[5]], // Backend, Documentation
           selectedTags: ref([mockTags[1], mockTags[5]]),
         },
         {
           id: 3,
-          name: 'bug-report.txt',
+          name: "bug-report.txt",
           tags: [mockTags[6]], // Bug Fix
           selectedTags: ref([mockTags[6]]),
         },
       ]);
-      
+
       return { files };
     },
     template: `
@@ -363,48 +363,48 @@ export const InteractiveWorkflow = {
     components: { MultiSelectTags },
     setup() {
       const workspaceFiles = ref([
-        { id: 1, name: 'project-proposal.docx', tags: [], selectedTags: ref([]) },
-        { id: 2, name: 'design-mockups.fig', tags: [], selectedTags: ref([]) },
-        { id: 3, name: 'development-notes.md', tags: [], selectedTags: ref([]) },
+        { id: 1, name: "project-proposal.docx", tags: [], selectedTags: ref([]) },
+        { id: 2, name: "design-mockups.fig", tags: [], selectedTags: ref([]) },
+        { id: 3, name: "development-notes.md", tags: [], selectedTags: ref([]) },
       ]);
-      
+
       const filterTags = ref([]);
       const tagStats = ref({});
-      
+
       // Update tag statistics
       const updateStats = () => {
         const stats = {};
-        workspaceFiles.value.forEach(file => {
-          file.selectedTags.forEach(tag => {
+        workspaceFiles.value.forEach((file) => {
+          file.selectedTags.forEach((tag) => {
             stats[tag.name] = (stats[tag.name] || 0) + 1;
           });
         });
         tagStats.value = stats;
       };
-      
+
       const filteredFiles = ref([]);
-      
+
       // Filter files based on selected filter tags
       const updateFilteredFiles = () => {
         if (filterTags.value.length === 0) {
           filteredFiles.value = workspaceFiles.value;
         } else {
-          filteredFiles.value = workspaceFiles.value.filter(file => {
-            return filterTags.value.every(filterTag => 
-              file.selectedTags.some(fileTag => fileTag.id === filterTag.id)
+          filteredFiles.value = workspaceFiles.value.filter((file) => {
+            return filterTags.value.every((filterTag) =>
+              file.selectedTags.some((fileTag) => fileTag.id === filterTag.id)
             );
           });
         }
       };
-      
+
       // Watch for changes
-      workspaceFiles.value.forEach(file => {
+      workspaceFiles.value.forEach((file) => {
         file.selectedTags.value.$watch?.(() => {
           updateStats();
           updateFilteredFiles();
         });
       });
-      
+
       return {
         workspaceFiles,
         filterTags,

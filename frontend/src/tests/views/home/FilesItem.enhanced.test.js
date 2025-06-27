@@ -368,7 +368,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       const wrapper = await createWrapper();
 
       // First open the menu by clicking the trigger
-      const menuTrigger = wrapper.find('.context-menu-trigger');
+      const menuTrigger = wrapper.find(".context-menu-trigger");
       await menuTrigger.trigger("click");
       await nextTick();
 
@@ -392,7 +392,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       // First open the menu by clicking the trigger
-      const menuTrigger = wrapper.find('.context-menu-trigger');
+      const menuTrigger = wrapper.find(".context-menu-trigger");
       await menuTrigger.trigger("click");
       await nextTick();
 
@@ -415,7 +415,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       const wrapper = await createWrapper();
 
       // First open the menu by clicking the trigger
-      const menuTrigger = wrapper.find('.context-menu-trigger');
+      const menuTrigger = wrapper.find(".context-menu-trigger");
       await menuTrigger.trigger("click");
       await nextTick();
 
@@ -453,7 +453,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
 
       // Access the FilesItem component through the Suspense wrapper
       const filesItemComponent = wrapper.findComponent(FilesItem);
-      
+
       // Close modal before handling confirm
       filesItemComponent.vm.showDeleteModal = false;
 
@@ -639,7 +639,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       const wrapper = await createWrapper();
 
       // First open the menu by clicking the trigger
-      const menuTrigger = wrapper.find('.context-menu-trigger');
+      const menuTrigger = wrapper.find(".context-menu-trigger");
       await menuTrigger.trigger("click");
       await nextTick();
 

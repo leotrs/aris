@@ -1,46 +1,46 @@
-import SearchBar from './SearchBar.vue';
-import Button from '../base/Button.vue';
-import { action } from '@storybook/addon-actions';
-import { ref, computed } from 'vue';
+import SearchBar from "./SearchBar.vue";
+import Button from "../base/Button.vue";
+import { action } from "@storybook/addon-actions";
+import { ref, computed } from "vue";
 
 export default {
-  title: 'Utility/SearchBar',
+  title: "Utility/SearchBar",
   component: SearchBar,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     withButtons: {
-      control: 'boolean',
-      description: 'Whether to show navigation buttons (prev/next)',
+      control: "boolean",
+      description: "Whether to show navigation buttons (prev/next)",
     },
     placeholder: {
-      control: 'text',
-      description: 'Placeholder text for the search input',
+      control: "text",
+      description: "Placeholder text for the search input",
     },
     hintText: {
-      control: 'text',
+      control: "text",
       description: 'Hint text to display between navigation buttons (e.g., "3 of 15")',
     },
     showIcon: {
-      control: 'boolean',
-      description: 'Whether to show the search icon',
+      control: "boolean",
+      description: "Whether to show the search icon",
     },
     buttonClose: {
-      control: 'boolean',
-      description: 'Whether to show the close button',
+      control: "boolean",
+      description: "Whether to show the close button",
     },
     buttonsDisabled: {
-      control: 'boolean',
-      description: 'Whether navigation buttons are disabled',
+      control: "boolean",
+      description: "Whether navigation buttons are disabled",
     },
-    onSubmit: { action: 'submit' },
-    onCancel: { action: 'cancel' },
-    onNext: { action: 'next' },
-    onPrev: { action: 'prev' },
+    onSubmit: { action: "submit" },
+    onCancel: { action: "cancel" },
+    onNext: { action: "next" },
+    onPrev: { action: "prev" },
   },
   args: {
     withButtons: false,
-    placeholder: 'Search...',
-    hintText: '',
+    placeholder: "Search...",
+    hintText: "",
     showIcon: true,
     buttonClose: false,
     buttonsDisabled: false,
@@ -52,31 +52,31 @@ export const Default = {};
 export const WithoutIcon = {
   args: {
     showIcon: false,
-    placeholder: 'Type to search...',
+    placeholder: "Type to search...",
   },
 };
 
 export const WithNavigationButtons = {
   args: {
     withButtons: true,
-    hintText: '3 of 15',
-    placeholder: 'Find in document...',
+    hintText: "3 of 15",
+    placeholder: "Find in document...",
   },
 };
 
 export const NavigationButtonsDisabled = {
   args: {
     withButtons: true,
-    hintText: 'No results',
+    hintText: "No results",
     buttonsDisabled: true,
-    placeholder: 'Search documents...',
+    placeholder: "Search documents...",
   },
 };
 
 export const WithCloseButton = {
   args: {
     buttonClose: true,
-    placeholder: 'Search and filter...',
+    placeholder: "Search and filter...",
   },
 };
 
@@ -84,8 +84,8 @@ export const AllFeatures = {
   args: {
     withButtons: true,
     buttonClose: true,
-    hintText: '5 of 42',
-    placeholder: 'Search with all features...',
+    hintText: "5 of 42",
+    placeholder: "Search with all features...",
   },
 };
 
@@ -93,64 +93,63 @@ export const InteractiveSearch = {
   render: () => ({
     components: { SearchBar },
     setup() {
-      const searchQuery = ref('');
+      const searchQuery = ref("");
       const currentMatch = ref(0);
       const totalMatches = ref(0);
       const isSearching = ref(false);
-      
+
       // Mock search data
       const mockResults = [
-        'JavaScript fundamentals',
-        'Vue.js components',
-        'JavaScript async/await',
-        'TypeScript basics',
-        'JavaScript ES6 features',
+        "JavaScript fundamentals",
+        "Vue.js components",
+        "JavaScript async/await",
+        "TypeScript basics",
+        "JavaScript ES6 features",
       ];
-      
+
       const filteredResults = computed(() => {
         if (!searchQuery.value) return [];
-        return mockResults.filter(item => 
+        return mockResults.filter((item) =>
           item.toLowerCase().includes(searchQuery.value.toLowerCase())
         );
       });
-      
+
       const hintText = computed(() => {
-        if (!isSearching.value || filteredResults.value.length === 0) return '';
+        if (!isSearching.value || filteredResults.value.length === 0) return "";
         return `${currentMatch.value + 1} of ${filteredResults.value.length}`;
       });
-      
+
       const handleSubmit = (query) => {
-        action('submit')(query);
+        action("submit")(query);
         searchQuery.value = query;
         isSearching.value = true;
         totalMatches.value = filteredResults.value.length;
         currentMatch.value = 0;
       };
-      
+
       const handleNext = () => {
-        action('next')();
+        action("next")();
         if (filteredResults.value.length > 0) {
           currentMatch.value = (currentMatch.value + 1) % filteredResults.value.length;
         }
       };
-      
+
       const handlePrev = () => {
-        action('prev')();
+        action("prev")();
         if (filteredResults.value.length > 0) {
-          currentMatch.value = currentMatch.value === 0 
-            ? filteredResults.value.length - 1 
-            : currentMatch.value - 1;
+          currentMatch.value =
+            currentMatch.value === 0 ? filteredResults.value.length - 1 : currentMatch.value - 1;
         }
       };
-      
+
       const handleCancel = () => {
-        action('cancel')();
-        searchQuery.value = '';
+        action("cancel")();
+        searchQuery.value = "";
         isSearching.value = false;
         currentMatch.value = 0;
         totalMatches.value = 0;
       };
-      
+
       return {
         searchQuery,
         currentMatch,
@@ -221,15 +220,15 @@ export const WithCustomButtons = {
     components: { SearchBar, Button },
     setup() {
       const showFilters = () => {
-        action('show-filters')();
-        alert('Filters dialog would open here');
+        action("show-filters")();
+        alert("Filters dialog would open here");
       };
-      
+
       const showAdvanced = () => {
-        action('show-advanced')();
-        alert('Advanced search would open here');
+        action("show-advanced")();
+        alert("Advanced search would open here");
       };
-      
+
       return { showFilters, showAdvanced };
     },
     template: `
@@ -323,12 +322,12 @@ export const FocusManagement = {
     components: { SearchBar, Button },
     setup() {
       const searchBarRef = ref(null);
-      
+
       const focusSearchBar = () => {
         searchBarRef.value?.focusInput();
-        action('focus-triggered')();
+        action("focus-triggered")();
       };
-      
+
       return { searchBarRef, focusSearchBar };
     },
     template: `

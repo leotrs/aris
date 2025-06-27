@@ -1,27 +1,27 @@
-import UserMenu from './UserMenu.vue';
-import { action } from '@storybook/addon-actions';
+import UserMenu from "./UserMenu.vue";
+import { action } from "@storybook/addon-actions";
 
 // Mock user data
 const mockUser = {
   id: 1,
-  name: 'John Doe',
-  initials: 'JD',
-  color: '#007bff',
-  email: 'john.doe@example.com',
+  name: "John Doe",
+  initials: "JD",
+  color: "#007bff",
+  email: "john.doe@example.com",
 };
 
 // Mock router
 const mockRouter = {
   push: (path) => {
-    action('router.push')(path);
-    console.log('Navigate to:', path);
+    action("router.push")(path);
+    console.log("Navigate to:", path);
   },
 };
 
 export default {
-  title: 'Navigation/UserMenu',
+  title: "Navigation/UserMenu",
   component: UserMenu,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   decorators: [
     (story) => ({
       components: { story },
@@ -33,13 +33,13 @@ export default {
           $router: mockRouter,
         };
       },
-      template: '<story />',
+      template: "<story />",
     }),
   ],
   parameters: {
     docs: {
       description: {
-        component: 'User account dropdown menu with avatar trigger and navigation options.',
+        component: "User account dropdown menu with avatar trigger and navigation options.",
       },
     },
   },
@@ -54,10 +54,10 @@ export const DifferentUser = {
       provide: {
         user: {
           id: 2,
-          name: 'Jane Smith',
-          initials: 'JS',
-          color: '#28a745',
-          email: 'jane.smith@example.com',
+          name: "Jane Smith",
+          initials: "JS",
+          color: "#28a745",
+          email: "jane.smith@example.com",
         },
       },
       setup() {
@@ -65,7 +65,7 @@ export const DifferentUser = {
           $router: mockRouter,
         };
       },
-      template: '<story />',
+      template: "<story />",
     }),
   ],
 };
@@ -77,9 +77,9 @@ export const UserWithoutInitials = {
       provide: {
         user: {
           id: 3,
-          name: 'Alice Wonderland',
-          color: '#6f42c1',
-          email: 'alice@example.com',
+          name: "Alice Wonderland",
+          color: "#6f42c1",
+          email: "alice@example.com",
         },
       },
       setup() {
@@ -87,7 +87,7 @@ export const UserWithoutInitials = {
           $router: mockRouter,
         };
       },
-      template: '<story />',
+      template: "<story />",
     }),
   ],
 };
@@ -128,11 +128,11 @@ export const MenuActions = {
     setup() {
       const mockRouterWithLogging = {
         push: (path) => {
-          action('router.push')(path);
-          alert(\`Would navigate to: \${path}\`);
+          action("router.push")(path);
+          alert(`Would navigate to: ${path}`);
         },
       };
-      
+
       return {
         $router: mockRouterWithLogging,
       };

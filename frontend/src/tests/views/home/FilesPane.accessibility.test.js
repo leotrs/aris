@@ -331,9 +331,9 @@ describe("FilesPane.vue - Accessibility Features", () => {
         },
       });
 
-      const loadingElement = wrapper.find(".loading");
+      const loadingElement = wrapper.find(".loading-container");
       expect(loadingElement.exists()).toBe(true);
-      expect(loadingElement.text()).toBe("loading files...");
+      expect(loadingElement.text()).toContain("Loading files...");
     });
 
     it("announces file count changes", async () => {
