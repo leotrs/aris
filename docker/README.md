@@ -167,7 +167,6 @@ The auto-seeding happens automatically during container startup:
 2. User and sample data inserted with conflict handling
 3. Sequences updated to prevent ID conflicts
 4. Application starts with ready-to-use data
-
 ## 🔧 Configuration
 
 ### Environment Variables
