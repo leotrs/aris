@@ -226,15 +226,21 @@ async def perform_health_check(db: AsyncSession) -> HealthResponse:
     # Check if any critical systems are unhealthy
     critical_unhealthy = any(check["status"] == "unhealthy" for check in critical_checks)
 
-    # Check if any systems are degraded
-    any_degraded = any(
+    # Check if any critical systems are degraded
+    critical_degraded = any(
         check["status"] in ["degraded", "unhealthy"]
-        for check in critical_checks + non_critical_checks
+        for check in critical_checks
+    )
+    
+    # Check if any non-critical systems are unhealthy (degraded non-critical is okay)
+    non_critical_unhealthy = any(
+        check["status"] == "unhealthy"
+        for check in non_critical_checks
     )
 
     if critical_unhealthy:
         overall_status = "unhealthy"
-    elif any_degraded:
+    elif critical_degraded or non_critical_unhealthy:
         overall_status = "degraded"
     else:
         overall_status = "healthy"
