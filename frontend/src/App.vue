@@ -145,6 +145,11 @@
 
   // Handle authentication redirects after router is ready
   router.beforeResolve((to, from, next) => {
+    // Skip authentication entirely if testing with auth disabled
+    if (import.meta.env.VITE_SKIP_AUTH_FOR_TESTS === "true") {
+      return next();
+    }
+
     const token = localStorage.getItem("accessToken");
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const publicPages = ["/login", "/register", "/demo"];

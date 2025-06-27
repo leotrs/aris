@@ -30,6 +30,11 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
+  // Skip authentication entirely if testing with auth disabled
+  if (import.meta.env.VITE_SKIP_AUTH_FOR_TESTS === "true") {
+    return next();
+  }
+
   const publicPages = ["/login", "/register", "/demo"];
   const authRequired = !publicPages.includes(to.path);
   if (!authRequired) return next();
