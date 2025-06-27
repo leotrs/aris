@@ -16,6 +16,7 @@
 
   onBeforeMount(async () => {
     const base = api.getUri();
+
     try {
       await import(/* @vite-ignore */ `${base}/static/jquery-3.6.0.js`);
       await import(/* @vite-ignore */ `${base}/static/tooltipster.bundle.js`);
@@ -59,7 +60,7 @@
     <Manuscript ref="manuscript-ref" :html-string="htmlString" :settings="settings" />
 
     <div v-if="showFooter" class="middle-footer">
-      <div class="footer-logo"><img src="@/assets/logo-32px.svg" /></div>
+      <div class="footer-logo"><Logo type="small" /></div>
     </div>
 
     <AnnotationMenu />

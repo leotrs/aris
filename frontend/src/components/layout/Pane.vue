@@ -68,6 +68,8 @@
     flex-direction: column;
     border-radius: 16px;
     box-shadow: var(--shadow-soft);
+    min-height: 0;
+    flex: 1;
   }
 
   .pane.mobile {
@@ -96,7 +98,10 @@
 
   .content {
     overflow-x: auto;
+    overflow-y: auto;
     padding-block: 16px;
+    flex: 1;
+    min-height: 0;
   }
 
   .content :deep(.section:last-child) {

@@ -14,6 +14,7 @@ const hasModifiersAndNotQuestionMark = (ev) => {
 const components = reactive([]);
 const listeners = ref({});
 const componentMetadata = ref({}); // New: Store component metadata
+const componentOverrides = ref({}); // Track which components have override flag
 const lastKeyPressed = ref("");
 const sequenceTimeout = ref(null);
 const SEQUENCE_DELAY = 500;
@@ -110,8 +111,25 @@ const handleKeyDown = (ev) => {
   if (components.length === 0 && !fallbackComponent.value) return;
   // console.log('Key pressed:', key, '. Last key:', lastKeyPressed.value);
 
-  for (let i = components.length - 1; i >= 0; i--) {
-    if (tryHandleKeyEvent(ev, components[i], key)) return;
+  // Check for override components first
+  const overrideComponent = components
+    .slice()
+    .reverse()
+    .find((comp) => {
+      const componentId = refToKey(comp);
+      return componentOverrides.value[componentId];
+    });
+
+  if (overrideComponent) {
+    // Only process the override component, skip all others
+    tryHandleKeyEvent(ev, overrideComponent, key);
+    // Block all other processing when override component is active
+    return;
+  } else {
+    // Normal processing when no override component is active
+    for (let i = components.length - 1; i >= 0; i--) {
+      if (tryHandleKeyEvent(ev, components[i], key)) return;
+    }
   }
 
   if (!fallbackComponent.value) return;
@@ -143,12 +161,19 @@ if (typeof window !== "undefined") {
 }
 
 /* Global state management */
-function registerShortcuts(componentId, shortcuts, componentName = null) {
+function registerShortcuts(componentId, shortcuts, componentName = null, overrideOthers = false) {
   const existingShortcuts = listeners.value[componentId];
 
   // Store component metadata
   if (componentName) {
     componentMetadata.value[componentId] = { name: componentName };
+  }
+
+  // Store override flag
+  if (overrideOthers) {
+    componentOverrides.value[componentId] = true;
+  } else {
+    delete componentOverrides.value[componentId];
   }
 
   // Normalize shortcuts to support both old and new formats
@@ -202,7 +227,12 @@ export function getComponentMetadata() {
   return componentMetadata.value;
 }
 
-export function useKeyboardShortcuts(shortcuts = {}, autoActivate = true, componentName = null) {
+export function useKeyboardShortcuts(
+  shortcuts = {},
+  autoActivate = true,
+  componentName = null,
+  overrideOthers = false
+) {
   const instance = getCurrentInstance();
   if (!instance) {
     console.error("useKeyboardShortcuts must be used within setup()");
@@ -219,7 +249,7 @@ export function useKeyboardShortcuts(shortcuts = {}, autoActivate = true, compon
     instance.proxy?.$options?.name ||
     `Component-${componentId}`;
 
-  registerShortcuts(componentId, shortcuts, inferredName);
+  registerShortcuts(componentId, shortcuts, inferredName, overrideOthers);
 
   const isRegistered = () => components.some((comp) => refToKey(comp) === componentId);
   const deactivate = () => {
@@ -230,7 +260,8 @@ export function useKeyboardShortcuts(shortcuts = {}, autoActivate = true, compon
     deactivate();
     components.push(instance);
   };
-  const addShortcuts = (newShortcuts) => registerShortcuts(componentId, newShortcuts, inferredName);
+  const addShortcuts = (newShortcuts) =>
+    registerShortcuts(componentId, newShortcuts, inferredName, overrideOthers);
   const removeShortcuts = (keys) => {
     if (!listeners.value[componentId]) return;
     if (Array.isArray(keys)) {
@@ -245,6 +276,7 @@ export function useKeyboardShortcuts(shortcuts = {}, autoActivate = true, compon
     deactivate();
     removeShortcuts();
     delete componentMetadata.value[componentId];
+    delete componentOverrides.value[componentId];
   });
 
   return {

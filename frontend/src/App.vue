@@ -87,10 +87,20 @@
   );
   provide("api", api);
 
-  const link = document.createElement("link");
-  link.rel = "stylesheet";
-  link.href = `${api.getUri()}/static/rsm.css`;
-  document.head.appendChild(link);
+  // Load RSM CSS
+  const rsmLink = document.createElement("link");
+  rsmLink.rel = "stylesheet";
+  rsmLink.href = `${api.getUri()}/static/rsm.css`;
+  document.head.appendChild(rsmLink);
+
+  // Load design assets CSS
+  const designAssets = ["typography.css", "components.css", "layout.css", "variables.css"];
+  designAssets.forEach((filename) => {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = `${api.getUri()}/design-assets/css/${filename}`;
+    document.head.appendChild(link);
+  });
 
   // Provide viewport info
   const breakpoints = useBreakpoints({ xs: 425, ...breakpointsTailwind });
