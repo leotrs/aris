@@ -1,4 +1,25 @@
 <script setup>
+  /**
+   * ButtonClose - A simple button component for closing elements.
+   *
+   * This component renders a close button (an 'X' icon) that emits a 'close' event when clicked.
+   * It's typically used within modals, alerts, or other dismissible UI elements.
+   *
+   * @displayName ButtonClose
+   * @example
+   * // Basic usage
+   * <ButtonClose @close="handleClose" />
+   *
+   * @example
+   * // Within a modal header
+   * <Modal>
+   *   <template #header>
+   *     <h2>My Modal</h2>
+   *     <ButtonClose @close="closeModal" />
+   *   </template>
+   *   <!-- ... modal content ... -->
+   * </Modal>
+   */
   import {} from "vue";
   import { IconX } from "@tabler/icons-vue";
   defineEmits(["close"]);

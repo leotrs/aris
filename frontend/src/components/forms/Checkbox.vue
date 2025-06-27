@@ -1,4 +1,25 @@
 <script setup>
+  /**
+   * Checkbox - A custom checkbox component with text and optional icon.
+   *
+   * This component provides a visually distinct checkbox that can be toggled.
+   * It displays a text label and can optionally include an icon.
+   * The component uses `v-model` for its active state and applies different styles
+   * based on whether it's active or inactive.
+   *
+   * @displayName Checkbox
+   * @example
+   * // Basic usage with text label
+   * <Checkbox v-model="isChecked" text="Remember me" />
+   *
+   * @example
+   * // With an icon
+   * <Checkbox v-model="isAgreed" text="Agree to terms" icon="Check" />
+   *
+   * @example
+   * // Initial active state
+   * <Checkbox v-model="isSubscribed" text="Subscribe to newsletter" :active="true" />
+   */
   import {} from "vue";
 
   const props = defineProps({

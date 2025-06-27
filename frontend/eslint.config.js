@@ -3,6 +3,7 @@ import js from "@eslint/js";
 import pluginVue from "eslint-plugin-vue";
 import prettierConfig from "eslint-config-prettier";
 import prettierPlugin from "eslint-plugin-prettier";
+import storybookPlugin from "eslint-plugin-storybook";
 import babelParser from "@babel/eslint-parser";
 import globals from "globals";
 
@@ -88,6 +89,43 @@ export default [
       "vue/no-reserved-component-names": "warn",
       "vue/no-unused-vars": ["error", { ignorePattern: "^props$|^emit$" }],
       "no-unused-vars": "off",
+    },
+  },
+
+  // Storybook files - specific overrides for .stories.js files
+  {
+    files: ["**/*.stories.js", "**/*.stories.mjs"],
+    languageOptions: {
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+      },
+      parser: babelParser,
+      parserOptions: {
+        ecmaVersion: 2022,
+        sourceType: "module",
+        requireConfigFile: false,
+        babelOptions: {
+          plugins: ["@babel/plugin-syntax-import-assertions", "@babel/plugin-syntax-jsx"],
+        },
+      },
+    },
+    plugins: {
+      storybook: storybookPlugin,
+      prettier: prettierPlugin,
+    },
+    rules: {
+      ...baseRules,
+      ...storybookPlugin.configs.recommended.rules,
+      // Storybook-specific overrides
+      "no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          destructuredArrayIgnorePattern: "^_",
+        },
+      ],
     },
   },
 

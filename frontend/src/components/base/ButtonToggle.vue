@@ -1,4 +1,30 @@
 <script setup>
+  /**
+   * ButtonToggle - A customizable toggle button component.
+   *
+   * This component provides a button that can be toggled between active and inactive states.
+   * It supports displaying text, an icon, or both, and offers various styling options
+   * including size, hover color, active color, and button type (filled or outline).
+   *
+   * @displayName ButtonToggle
+   * @example
+   * // Basic usage with text
+   * <ButtonToggle v-model="isActive" text="Toggle Me" />
+   *
+   * @example
+   * // With icon and custom colors
+   * <ButtonToggle v-model="isActive" icon="Star" active-color="green" hover-color="var(--green-100)" />
+   *
+   * @example
+   * // Small, outline type with text and icon
+   * <ButtonToggle v-model="isActive" text="Filter" icon="Filter" size="sm" type="outline" />
+   *
+   * @example
+   * // Using default slot for custom content
+   * <ButtonToggle v-model="isActive">
+   *   <span>Custom Content</span>
+   * </ButtonToggle>
+   */
   import { watch, computed } from "vue";
 
   defineOptions({

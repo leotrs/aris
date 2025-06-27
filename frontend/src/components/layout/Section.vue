@@ -1,4 +1,34 @@
 <script setup>
+  /**
+   * Section - A styled container component for grouping related content.
+   *
+   * This component provides a visually distinct section with optional title, main content,
+   * and footer areas. It's useful for breaking down complex UIs into manageable parts.
+   * It supports a `danger` variant for highlighting critical information or actions.
+   *
+   * @displayName Section
+   * @example
+   * // Basic usage with title and content
+   * <Section>
+   *   <template #title>My Section Title</template>
+   *   <template #content><p>This is the content of the section.</p></template>
+   * </Section>
+   *
+   * @example
+   * // Section with a footer
+   * <Section>
+   *   <template #title>Actions</template>
+   *   <template #content><p>Perform an action here.</p></template>
+   *   <template #footer><Button>Save</Button></template>
+   * </Section>
+   *
+   * @example
+   * // Danger variant section
+   * <Section class="danger">
+   *   <template #title>Warning!</template>
+   *   <template #content><p>This operation is irreversible.</p></template>
+   * </Section>
+   */
   import {} from "vue";
 </script>
 

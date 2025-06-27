@@ -1,4 +1,31 @@
 <script setup>
+  /**
+   * HomeLayout - The main layout component for the application's home view.
+   *
+   * This component provides the overall structure for the home screen, including a sidebar,
+   * top-right menus (notifications, user menu), and a main content area via its default slot.
+   * It manages the display of file upload modals and integrates with keyboard shortcuts
+   * for navigation and user menu access.
+   *
+   * @displayName HomeLayout
+   * @example
+   * // Basic usage with default content
+   * <HomeLayout>
+   *   <div>Your main home content goes here.</div>
+   * </HomeLayout>
+   *
+   * @example
+   * // With a specific active sidebar item and floating action button disabled
+   * <HomeLayout active="Account" :fab="false">
+   *   <div>User account details.</div>
+   * </HomeLayout>
+   *
+   * @example
+   * // Mobile view simulation
+   * <HomeLayout :mobile-mode="true">
+   *   <div>Mobile-optimized content.</div>
+   * </HomeLayout>
+   */
   import { ref, inject, computed, useTemplateRef } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";

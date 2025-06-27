@@ -1,4 +1,33 @@
 <script setup>
+  /**
+   * HomeSidebarItem - A single item component for the HomeSidebar.
+   *
+   * This component represents an individual navigation item within the `HomeSidebar`.
+   * It displays an icon and text, and can visually indicate its active, collapsed,
+   * or non-clickable states. It also provides a tooltip for additional information
+   * on hover, especially useful when the sidebar is collapsed.
+   *
+   * @displayName HomeSidebarItem
+   * @example
+   * // Basic usage
+   * <HomeSidebarItem icon="Home" text="Dashboard" />
+   *
+   * @example
+   * // Active item
+   * <HomeSidebarItem icon="User" text="Profile" :active="true" />
+   *
+   * @example
+   * // Collapsed item (requires `collapsed` to be provided by parent)
+   * <HomeSidebarItem icon="Settings" text="Settings" :collapsed="true" />
+   *
+   * @example
+   * // Non-clickable item
+   * <HomeSidebarItem icon="Info" text="About" :clickable="false" />
+   *
+   * @example
+   * // Item with different icon when collapsed
+   * <HomeSidebarItem icon="LayoutSidebarLeftCollapse" icon-collapsed="LayoutSidebarLeftExpand" text="Collapse" />
+   */
   import { inject, useTemplateRef } from "vue";
 
   const props = defineProps({
