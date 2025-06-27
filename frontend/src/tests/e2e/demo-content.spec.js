@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Demo Content Rendering @critical", () => {
+test.describe("Demo Content Rendering @demo", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
