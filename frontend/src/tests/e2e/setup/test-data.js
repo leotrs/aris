@@ -4,7 +4,10 @@
 export const TEST_USERS = {
   VALID_USER: {
     email: "testuser@aris.pub",
-    password: process.env.VITE_DEV_LOGIN_PASSWORD,
+    // In CI environment, use TEST_USER_PASSWORD, otherwise use VITE_DEV_LOGIN_PASSWORD
+    password: (process.env.CI || process.env.ENV === "CI") 
+      ? process.env.TEST_USER_PASSWORD 
+      : process.env.VITE_DEV_LOGIN_PASSWORD,
     name: "Test User",
   },
 
@@ -57,10 +60,8 @@ This is a test file created at ${new Date().toISOString()}.
 ::`,
 });
 
-// Validate that required credentials are available
+// Validate that required credentials are available - fail if missing
 if (!TEST_USERS.VALID_USER.password) {
-  console.warn(
-    "VITE_DEV_LOGIN_PASSWORD not configured - using default test password for local development"
-  );
-  TEST_USERS.VALID_USER.password = "defaulttestpassword";
+  const envVar = (process.env.CI || process.env.ENV === "CI") ? "TEST_USER_PASSWORD" : "VITE_DEV_LOGIN_PASSWORD";
+  throw new Error(`Test user password not configured. Required environment variable ${envVar} is missing.`);
 }
