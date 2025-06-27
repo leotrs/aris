@@ -154,9 +154,9 @@ test.describe("Interactive Elements E2E", () => {
       await expect(navbar).toHaveClass(/navbar-scrolled/);
 
       // Scroll back to top more explicitly
-      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: "smooth" }));
       await page.waitForTimeout(500); // Wait for scroll event processing
-      
+
       // Ensure we're actually at the top
       await page.waitForFunction(() => window.scrollY === 0, { timeout: 2000 });
 
