@@ -18,6 +18,9 @@ RUN uv sync --all-groups --frozen --no-cache
 ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONPATH="/app"
 
+# Note: Design assets are mounted as volume in dev mode via docker-compose
+# For production builds, they would be copied here
+
 # Copy entrypoint script and seed data
 COPY docker/backend/docker-entrypoint.sh /usr/local/bin/
 COPY docker/backend/seed_user.sql /usr/local/share/
