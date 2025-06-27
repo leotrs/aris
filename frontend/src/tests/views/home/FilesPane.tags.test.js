@@ -133,8 +133,23 @@ describe("FilesPane.vue - Tag Functionality", () => {
         provide: {
           fileStore: ref({
             files: [
-              { id: "1", title: "No Tags File", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
-              { id: "2", title: "Undefined Tags File", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
+              {
+                id: "1",
+                title: "No Tags File",
+                filtered: false,
+                focused: false,
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+                tags: [],
+              },
+              {
+                id: "2",
+                title: "Undefined Tags File",
+                filtered: false,
+                focused: false,
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+              },
             ],
           }),
         },

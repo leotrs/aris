@@ -335,9 +335,24 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
         data() {
           return {
             files: [
-              { ...mockFile.value, id: "file-1", getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
-              { ...mockFile.value, id: "file-2", getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
-              { ...mockFile.value, id: "file-3", getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
+              {
+                ...mockFile.value,
+                id: "file-1",
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+              },
+              {
+                ...mockFile.value,
+                id: "file-2",
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+              },
+              {
+                ...mockFile.value,
+                id: "file-3",
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+              },
             ],
           };
         },
