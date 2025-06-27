@@ -151,7 +151,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
   describe("Suspense Performance with Multiple Files", () => {
     it("should handle many async FilesItems efficiently", async () => {
-      const manyFiles = Array.from({ length: 20 }, (_, i) =>
+      const manyFiles = Array.from({ length: 20 }, (_, i) => 
         createMockFile(`file-${i}`, `File ${i}`, false, false)
       );
 
@@ -176,7 +176,9 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       // Rapid updates to test Suspense stability
       for (let i = 0; i < 5; i++) {
-        mockFileStore.value.files = [createMockFile(`rapid-${i}`, `Rapid File ${i}`, false, false)];
+        mockFileStore.value.files = [
+          createMockFile(`rapid-${i}`, `Rapid File ${i}`, false, false),
+        ];
         await nextTick();
       }
 
@@ -219,7 +221,9 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       mockFileStore.value.files = null;
       await nextTick();
 
-      mockFileStore.value.files = [createMockFile("recovery", "Recovery File", false, false)];
+      mockFileStore.value.files = [
+        createMockFile("recovery", "Recovery File", false, false),
+      ];
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));
 
