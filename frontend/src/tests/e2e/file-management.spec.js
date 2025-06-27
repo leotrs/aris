@@ -24,7 +24,9 @@ test.describe("File Management Tests @standard", () => {
     const isDesktopOnly = testInfo.tags.includes("@desktop-only");
 
     if (isFlaky || isDesktopOnly) {
-      console.log(`Using authentication bypass for ${isDesktopOnly ? '@desktop-only' : '@flaky'} test`);
+      console.log(
+        `Using authentication bypass for ${isDesktopOnly ? "@desktop-only" : "@flaky"} test`
+      );
       try {
         await authHelpers.authenticateWithBypass();
       } catch (error) {
@@ -132,44 +134,48 @@ test.describe("File Management Tests @standard", () => {
     await fileHelpers.deleteFile(fileId);
   });
 
-  test("file operations work with keyboard shortcuts", { tag: "@desktop-only" }, async ({ page }) => {
-    // Create a file for keyboard testing
-    const fileId = await fileHelpers.createNewFile();
-    await fileHelpers.navigateToHome();
-
-    // Select the file item - this now handles both selection and focus
-    await fileHelpers.selectFile(fileId);
-
-    // Test keyboard shortcut to open file menu (.) - if implemented
-    await page.keyboard.press(".");
-    const contextMenu = page.locator('[data-testid="context-menu"]');
-
-    // Context menu may or may not appear depending on keyboard shortcut implementation
-    if ((await contextMenu.count()) > 0) {
-      await expect(contextMenu).toBeVisible();
-
-      // Close menu with Escape
-      await page.keyboard.press("Escape");
-      await expect(contextMenu).not.toBeVisible();
-    }
-
-    // Test Enter to open file (re-select to ensure focus)
-    await fileHelpers.selectFile(fileId);
-    await page.keyboard.press("Enter");
-
-    // Check if navigation happened (keyboard shortcut may not be implemented)
-    await page.waitForTimeout(300);
-    const currentUrl = page.url();
-
-    if (currentUrl.includes(`/file/${fileId}`)) {
-      // File opened successfully via keyboard
+  test(
+    "file operations work with keyboard shortcuts",
+    { tag: "@desktop-only" },
+    async ({ page }) => {
+      // Create a file for keyboard testing
+      const fileId = await fileHelpers.createNewFile();
       await fileHelpers.navigateToHome();
-    } else {
-      // Keyboard shortcut not implemented, that's okay
-      console.log("Enter key shortcut not implemented for file opening");
-    }
 
-    // Clean up
-    await fileHelpers.deleteFile(fileId);
-  });
+      // Select the file item - this now handles both selection and focus
+      await fileHelpers.selectFile(fileId);
+
+      // Test keyboard shortcut to open file menu (.) - if implemented
+      await page.keyboard.press(".");
+      const contextMenu = page.locator('[data-testid="context-menu"]');
+
+      // Context menu may or may not appear depending on keyboard shortcut implementation
+      if ((await contextMenu.count()) > 0) {
+        await expect(contextMenu).toBeVisible();
+
+        // Close menu with Escape
+        await page.keyboard.press("Escape");
+        await expect(contextMenu).not.toBeVisible();
+      }
+
+      // Test Enter to open file (re-select to ensure focus)
+      await fileHelpers.selectFile(fileId);
+      await page.keyboard.press("Enter");
+
+      // Check if navigation happened (keyboard shortcut may not be implemented)
+      await page.waitForTimeout(300);
+      const currentUrl = page.url();
+
+      if (currentUrl.includes(`/file/${fileId}`)) {
+        // File opened successfully via keyboard
+        await fileHelpers.navigateToHome();
+      } else {
+        // Keyboard shortcut not implemented, that's okay
+        console.log("Enter key shortcut not implemented for file opening");
+      }
+
+      // Clean up
+      await fileHelpers.deleteFile(fileId);
+    }
+  );
 });

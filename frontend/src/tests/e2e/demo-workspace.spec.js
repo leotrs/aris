@@ -318,19 +318,23 @@ test.describe("Demo Workspace Functionality", () => {
   });
 
   test.describe("Keyboard Navigation", () => {
-    test("keyboard focus management works correctly", { tag: "@desktop-only" }, async ({ page }) => {
-      await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
-        timeout: 10000,
-      });
+    test(
+      "keyboard focus management works correctly",
+      { tag: "@desktop-only" },
+      async ({ page }) => {
+        await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
+          timeout: 10000,
+        });
 
-      // Tab through interactive elements
-      await page.keyboard.press("Tab");
-      // Removed timeout for speed
+        // Tab through interactive elements
+        await page.keyboard.press("Tab");
+        // Removed timeout for speed
 
-      // Check that focus is managed properly
-      const focusedElement = await page.evaluate(() => document.activeElement?.tagName);
-      expect(typeof focusedElement).toBe("string");
-    });
+        // Check that focus is managed properly
+        const focusedElement = await page.evaluate(() => document.activeElement?.tagName);
+        expect(typeof focusedElement).toBe("string");
+      }
+    );
 
     test("keyboard shortcuts work throughout demo", { tag: "@desktop-only" }, async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
@@ -431,6 +435,22 @@ test.describe("Demo Workspace Functionality", () => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
       });
+
+      // Wait for RSM content to fully load and stabilize
+      // Check for jQuery and RSM scripts to be ready
+      await page.waitForFunction(
+        () => {
+          return (
+            window.jQuery &&
+            document.querySelectorAll(".hr-border-zone").length > 0 &&
+            !document.querySelector(".manuscript")?.classList.contains("loading")
+          );
+        },
+        { timeout: 15000 }
+      );
+
+      // Wait for any animations/transitions to complete
+      await page.waitForTimeout(500);
 
       // Look for interactive handrails
       const handrails = page.locator(".hr-menu-zone");
