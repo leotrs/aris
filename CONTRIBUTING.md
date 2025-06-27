@@ -96,15 +96,19 @@ If you're working on multiple features or need to compare different branches:
 
 3. **Quick clone management:**
    ```bash
-   # Start specific clone
-   docker compose -f docker-compose.dev.yml up -d
+   # Start specific clone (use unique project name)
+   docker compose -p aris-main -f docker-compose.dev.yml up -d
+   docker compose -p aris-feature -f docker-compose.dev.yml up -d
 
-   # Stop all containers in current clone
-   docker compose -f docker-compose.dev.yml down
+   # Stop specific clone
+   docker compose -p aris-main -f docker-compose.dev.yml down
+   docker compose -p aris-feature -f docker-compose.dev.yml down
 
    # Reset clone to fresh state (removes all data)
-   docker compose -f docker-compose.dev.yml down -v
+   docker compose -p aris-main -f docker-compose.dev.yml down -v
    ```
+
+   **Important**: Always use the `-p` flag with a unique project name to prevent clones from interfering with each other.
 
 ### Branch Strategy
 

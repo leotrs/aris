@@ -71,8 +71,8 @@ BACKEND_PORT=8001
 FRONTEND_PORT=5174
 STORYBOOK_PORT=6007
 DB_PORT=5433
-DB_NAME=aris_clone2
-TEST_DB_NAME=aris_clone2_test
+DB_NAME=aris
+TEST_DB_NAME=aris_test
 ```
 
 **Clone 3:**
@@ -81,8 +81,45 @@ BACKEND_PORT=8002
 FRONTEND_PORT=5175
 STORYBOOK_PORT=6008
 DB_PORT=5434
-DB_NAME=aris_clone3
-TEST_DB_NAME=aris_clone3_test
+DB_NAME=aris
+TEST_DB_NAME=aris_test
+```
+
+### 3. Start Your Clones
+
+**Important**: Use unique project names to prevent clones from interfering with each other:
+
+```bash
+# Clone 1 (main development)
+cd aris-main/docker
+docker compose -p aris-main -f docker-compose.dev.yml up --build
+
+# Clone 2 (feature branch) 
+cd aris-feature/docker
+docker compose -p aris-feature -f docker-compose.dev.yml up --build
+
+# Clone 3 (experimental)
+cd aris-experiment/docker  
+docker compose -p aris-experiment -f docker-compose.dev.yml up --build
+```
+
+**Access your clones:**
+- Clone 1: http://localhost:5173 (shows "LOCAL:8000")
+- Clone 2: http://localhost:5174 (shows "LOCAL:8001") 
+- Clone 3: http://localhost:5175 (shows "LOCAL:8002")
+
+### 4. Managing Multiple Clones
+
+```bash
+# Check all running containers
+docker ps --format "table {{.Names}}\t{{.Ports}}"
+
+# Stop specific clone
+docker compose -p aris-main down
+docker compose -p aris-feature down
+
+# Stop specific clone and remove volumes (fresh start)
+docker compose -p aris-main down -v
 ```
 
 ## 🏗️ Architecture
@@ -119,6 +156,8 @@ Every fresh container automatically includes a complete development dataset:
 
 ### Data Isolation
 - **Per-Clone Independence**: Each clone has its own complete dataset
+- **Container-Level Isolation**: Different ports create separate Docker containers with isolated databases
+- **Same Database Names**: All clones use `DB_NAME=aris` since isolation happens at the container level
 - **No Cross-Clone Syncing**: Data changes in one clone don't affect others
 - **Persistent Storage**: Data survives container restarts within each clone
 - **Fresh Start Option**: Use `docker compose down -v` to reset to clean state
