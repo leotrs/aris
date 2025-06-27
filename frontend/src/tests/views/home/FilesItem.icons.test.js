@@ -3,6 +3,12 @@ import { mount } from "@vue/test-utils";
 import { nextTick, ref, Suspense } from "vue";
 import FilesItem from "@/views/home/FilesItem.vue";
 
+// Mock router
+const mockPush = vi.fn();
+vi.mock("vue-router", () => ({
+  useRouter: () => ({ push: mockPush }),
+}));
+
 describe("FilesItem.vue - Icon Visibility and Colors", () => {
   let mockFile;
   let mockProvides;

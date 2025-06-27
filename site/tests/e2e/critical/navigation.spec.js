@@ -7,8 +7,9 @@ test.describe("Navigation Flow E2E", () => {
     await expect(page).toHaveTitle(/Aris/);
     await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
 
-    // Check if this is a mobile browser
-    const isMobile = browserName?.includes("Mobile");
+    // Check if this is a mobile viewport (based on responsive breakpoint - sm: 640px)
+    const viewport = page.viewportSize();
+    const isMobile = viewport.width <= 640;
 
     if (isMobile) {
       // Mobile navigation: use mobile menu
@@ -68,8 +69,9 @@ test.describe("Navigation Flow E2E", () => {
   test("should handle navbar navigation links", async ({ page, browserName }) => {
     await page.goto("/");
 
-    // Check if this is a mobile browser
-    const isMobile = browserName?.includes("Mobile");
+    // Check if this is a mobile viewport (based on responsive breakpoint - sm: 640px)
+    const viewport = page.viewportSize();
+    const isMobile = viewport.width <= 640;
 
     if (isMobile) {
       // Mobile: Open mobile menu first
@@ -262,8 +264,9 @@ test.describe("Navigation Flow E2E", () => {
     // Navigate through several pages
     await page.goto("/");
 
-    // Check if this is a mobile browser
-    const isMobile = browserName?.includes("Mobile");
+    // Check if this is a mobile viewport (based on responsive breakpoint - sm: 640px)
+    const viewport = page.viewportSize();
+    const isMobile = viewport.width <= 640;
 
     if (isMobile) {
       // Mobile navigation: use mobile menu
@@ -325,8 +328,9 @@ test.describe("Navigation Flow E2E", () => {
     expect(scrollPosition).toBeGreaterThan(100);
 
     // Navigate to another page and back
-    // Check if this is a mobile browser
-    const isMobile = browserName?.includes("Mobile");
+    // Check if this is a mobile viewport (based on responsive breakpoint - sm: 640px)
+    const viewport = page.viewportSize();
+    const isMobile = viewport.width <= 640;
 
     if (isMobile) {
       // Mobile navigation: use mobile menu
