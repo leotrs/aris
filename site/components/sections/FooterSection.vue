@@ -35,12 +35,7 @@
         <p>© 2025 Aris. All rights reserved.</p>
       </div>
       <div>
-        <Logo
-          id="logo"
-          type="small"
-          alt="Aris logo"
-          class="footer-logo-small"
-        />
+        <Logo id="logo" type="small" alt="Aris logo" class="footer-logo-small" />
       </div>
       <div>
         <ul>

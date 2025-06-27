@@ -6,9 +6,9 @@ import Logo from "../../components/Logo.vue";
 vi.mock("@/composables/useApi.js", () => ({
   default: {
     defaults: {
-      baseURL: "http://localhost:8001"
-    }
-  }
+      baseURL: "http://localhost:8001",
+    },
+  },
 }));
 
 describe("Logo Component", () => {
@@ -26,7 +26,7 @@ describe("Logo Component", () => {
 
   it("renders with default props (small logo)", () => {
     wrapper = mount(Logo);
-    
+
     const img = wrapper.find("img");
     expect(img.exists()).toBe(true);
     expect(img.attributes("src")).toBe("http://localhost:8001/design-assets/logos/logo-32px.svg");
@@ -36,10 +36,10 @@ describe("Logo Component", () => {
   it("renders full logo when type is 'full'", () => {
     wrapper = mount(Logo, {
       props: {
-        type: "full"
-      }
+        type: "full",
+      },
     });
-    
+
     const img = wrapper.find("img");
     expect(img.attributes("src")).toBe("http://localhost:8001/design-assets/logos/logotype.svg");
   });
@@ -47,21 +47,23 @@ describe("Logo Component", () => {
   it("renders gray logo when type is 'gray'", () => {
     wrapper = mount(Logo, {
       props: {
-        type: "gray"
-      }
+        type: "gray",
+      },
     });
-    
+
     const img = wrapper.find("img");
-    expect(img.attributes("src")).toBe("http://localhost:8001/design-assets/logos/logo-32px-gray.svg");
+    expect(img.attributes("src")).toBe(
+      "http://localhost:8001/design-assets/logos/logo-32px-gray.svg"
+    );
   });
 
   it("accepts custom alt text", () => {
     wrapper = mount(Logo, {
       props: {
-        alt: "Custom alt text"
-      }
+        alt: "Custom alt text",
+      },
     });
-    
+
     const img = wrapper.find("img");
     expect(img.attributes("alt")).toBe("Custom alt text");
   });
@@ -69,10 +71,10 @@ describe("Logo Component", () => {
   it("accepts custom CSS classes", () => {
     wrapper = mount(Logo, {
       props: {
-        class: "custom-class another-class"
-      }
+        class: "custom-class another-class",
+      },
     });
-    
+
     const img = wrapper.find("img");
     expect(img.attributes("class")).toBe("custom-class another-class");
   });
@@ -87,10 +89,10 @@ describe("Logo Component", () => {
   it("falls back to small logo for invalid type", () => {
     wrapper = mount(Logo, {
       props: {
-        type: "invalid"
-      }
+        type: "invalid",
+      },
     });
-    
+
     const img = wrapper.find("img");
     expect(img.attributes("src")).toBe("http://localhost:8001/design-assets/logos/logo-32px.svg");
   });

@@ -33,6 +33,10 @@ export default [
       globals: {
         ...globals.browser,
         ...globals.node,
+        // Nuxt globals
+        defineNuxtPlugin: "readonly",
+        useRuntimeConfig: "readonly",
+        process: "readonly",
       },
       parser: babelParser,
       parserOptions: {

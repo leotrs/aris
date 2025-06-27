@@ -11,7 +11,7 @@ describe("Design Assets API Integration", () => {
     try {
       const response = await axios.get(`${BACKEND_URL}/health`);
       backendAvailable = response.status === 200;
-    } catch (error) {
+    } catch (_error) {
       console.warn("Backend not available for design assets integration tests");
       backendAvailable = false;
     }
@@ -25,7 +25,7 @@ describe("Design Assets API Integration", () => {
       }
 
       const response = await axios.get(`${BACKEND_URL}/design-assets/logos/logo-32px.svg`);
-      
+
       expect(response.status).toBe(200);
       expect(response.headers["content-type"]).toMatch(/image\/svg/);
       expect(response.data).toContain("<svg");
@@ -39,7 +39,7 @@ describe("Design Assets API Integration", () => {
       }
 
       const response = await axios.get(`${BACKEND_URL}/design-assets/logos/logo-32px-gray.svg`);
-      
+
       expect(response.status).toBe(200);
       expect(response.headers["content-type"]).toMatch(/image\/svg/);
       expect(response.data).toContain("<svg");
@@ -53,7 +53,7 @@ describe("Design Assets API Integration", () => {
       }
 
       const response = await axios.get(`${BACKEND_URL}/design-assets/logos/logotype.svg`);
-      
+
       expect(response.status).toBe(200);
       expect(response.headers["content-type"]).toMatch(/image\/svg/);
       expect(response.data).toContain("<svg");
@@ -69,7 +69,7 @@ describe("Design Assets API Integration", () => {
       }
 
       const response = await axios.get(`${BACKEND_URL}/design-assets/css/typography.css`);
-      
+
       expect(response.status).toBe(200);
       expect(response.headers["content-type"]).toMatch(/text\/css/);
       expect(response.data).toContain("font-family");
@@ -82,7 +82,7 @@ describe("Design Assets API Integration", () => {
       }
 
       const response = await axios.get(`${BACKEND_URL}/design-assets/css/components.css`);
-      
+
       expect(response.status).toBe(200);
       expect(response.headers["content-type"]).toMatch(/text\/css/);
     });
@@ -94,7 +94,7 @@ describe("Design Assets API Integration", () => {
       }
 
       const response = await axios.get(`${BACKEND_URL}/design-assets/css/layout.css`);
-      
+
       expect(response.status).toBe(200);
       expect(response.headers["content-type"]).toMatch(/text\/css/);
     });
@@ -106,7 +106,7 @@ describe("Design Assets API Integration", () => {
       }
 
       const response = await axios.get(`${BACKEND_URL}/design-assets/css/variables.css`);
-      
+
       expect(response.status).toBe(200);
       expect(response.headers["content-type"]).toMatch(/text\/css/);
       expect(response.data).toContain("--");

@@ -47,11 +47,12 @@ describe("NavBar Component", () => {
         global: {
           stubs: {
             Logo: {
-              template: '<img data-testid="logo-stub" src="http://localhost:8001/design-assets/logos/logo-32px.svg" alt="Aris Logo" />',
-              props: ['type', 'alt', 'class']
-            }
-          }
-        }
+              template:
+                '<img data-testid="logo-stub" src="http://localhost:8001/design-assets/logos/logo-32px.svg" alt="Aris Logo" />',
+              props: ["type", "alt", "class"],
+            },
+          },
+        },
       });
 
       const logo = wrapper.find('[data-testid="logo-stub"]');

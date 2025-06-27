@@ -6,6 +6,7 @@
   import Sidebar from "./Sidebar.vue";
   import Canvas from "./Canvas.vue";
   import Icon from "@/components/base/Icon.vue";
+  import Button from "@/components/base/Button.vue";
 
   // Load and provide file
   const fileStore = inject("fileStore");
@@ -156,7 +157,7 @@
     <!-- Focus mode exit button - positioned outside sidebar to avoid transform issues -->
     <Transition name="focus-button" appear>
       <Button
-        v-show="focusMode"
+        v-if="focusMode"
         class="focus-mode-exit-button"
         kind="tertiary"
         icon="Layout"
