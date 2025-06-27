@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Account View E2E Tests", () => {
+test.describe("Account View E2E Tests @standard", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {

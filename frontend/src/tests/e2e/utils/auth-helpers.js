@@ -15,11 +15,11 @@ export class AuthHelpers {
 
     // Wait for either successful navigation away from login or error state
     try {
-      await this.page.waitForURL(url => !url.includes('/login'), { timeout: 10000 });
-      await this.page.waitForLoadState("networkidle");
+      await this.page.waitForURL(url => !url.includes('/login'), { timeout: 8000 });
+      await this.page.waitForLoadState("domcontentloaded"); // Faster than networkidle
     } catch (error) {
       // If still on login page, check for error messages or other issues
-      await this.page.waitForLoadState("networkidle");
+      await this.page.waitForLoadState("domcontentloaded");
       const currentUrl = this.page.url();
       if (currentUrl.includes("/login")) {
         // Still on login page - login likely failed
@@ -45,11 +45,11 @@ export class AuthHelpers {
   }
 
   async expectToBeLoggedIn() {
-    // Wait for redirect to home page with increased timeout
-    await expect(this.page).toHaveURL("/", { timeout: 10000 });
+    // Wait for redirect to home page with reduced timeout
+    await expect(this.page).toHaveURL("/", { timeout: 8000 });
 
     // Wait for user menu to be visible, indicating successful authentication
-    await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible({ timeout: 10000 });
+    await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible({ timeout: 6000 });
 
     // Verify authentication tokens exist
     const tokens = await this.getStoredTokens();
