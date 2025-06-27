@@ -5,7 +5,7 @@
   /**
    * FileMenu - Adaptive file operations menu
    *
-   * A dual-mode menu component that provides file operations (share, download, rename, 
+   * A dual-mode menu component that provides file operations (share, download, rename,
    * duplicate, delete) in either a dropdown context menu or horizontal button row layout.
    * Automatically adapts child component props based on the selected mode.
    *
