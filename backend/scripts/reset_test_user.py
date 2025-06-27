@@ -120,6 +120,7 @@ This is another stable test file for visual tests.
 
         print(f"✅ Test user {TEST_USER_EMAIL} reset successfully")
         print(f"   - User ID: {user_id}")
+        print(f"   - Password length: {len(TEST_USER_PASSWORD)}")
         print(f"   - Files created: {len(test_files)}")
         print(f"   - Tags created: {len(test_tags)}")
 

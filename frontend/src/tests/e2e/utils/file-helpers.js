@@ -41,8 +41,10 @@ export class FileHelpers {
    * Create a new empty file via the UI
    */
   async createNewFile() {
-    // The create file button is a ContextMenu with "New File" text
-    await this.page.click('text="New File"');
+    // The create file button is a ContextMenu with "New File" text on desktop
+    // or just an icon button on mobile
+    const createButton = this.page.locator('[data-testid="create-file-button"]');
+    await createButton.click();
 
     // Look for the "Empty file" option in the context menu
     await this.page.click('text="Empty file"');
