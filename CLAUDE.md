@@ -42,6 +42,7 @@ npm run test:e2e                      # Run E2E tests
 ```
 
 ## Critical Rules
+- **ALWAYS use `osascript` for macOS notifications** (allowed in any directory)
 - **ALWAYS use `git mv` to move files** (preserve history)
 - **ALWAYS add blank line at end of files**
 - **NEVER leave whitespace at the end of lines**
@@ -54,3 +55,4 @@ npm run test:e2e                      # Run E2E tests
 - **Always run e2e tests with --reporter=line**
 - **When using playwright or puppeteer, always run in headless mode**
 - Before starting any service, check if it is already running
+- **Send notifications when tasks complete or need user input**: `osascript -e "display notification \"message\" with title \"Claude Code\""`
