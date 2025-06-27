@@ -545,7 +545,119 @@ jobs:
 
     - name: Run remaining uncategorized tests
       working-directory: frontend
-      run: npm run test:e2e -- --grep-invert "@critical|@standard|@flaky"
+      run: npm run test:e2e -- --grep-invert "@critical|@standard|@flaky|@desktop-only"
+      env:
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_API_BASE_URL: http://localhost:8000
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+  e2e-desktop-only:
+    runs-on: ubuntu-latest
+    needs: [changes, backend-test, frontend-test, site-test]
+    if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
+    env:
+      ENV: CI
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    # Backend setup
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Setup backend
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --all-groups
+        uv pip install -e .
+
+    - name: Setup database and test data
+      working-directory: backend
+      run: |
+        uv run alembic upgrade head
+        uv run python scripts/reset_test_user.py
+
+    # Frontend setup
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('frontend/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
+    # Install only desktop browsers (exclude mobile)
+    - name: Install Playwright desktop browsers only
+      working-directory: frontend
+      run: npx playwright install chromium firefox webkit --with-deps
+
+    # Start servers
+    - name: Start backend server
+      working-directory: backend
+      run: |
+        echo "Starting backend server..."
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+        echo $! > backend.pid
+        echo "Backend server started with PID $(cat backend.pid)"
+
+    - name: Start frontend server
+      working-directory: frontend
+      run: |
+        echo "Starting frontend server..."
+        npm run dev -- --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
+        echo $! > frontend.pid
+        echo "Frontend server started with PID $(cat frontend.pid)"
+      env:
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_API_BASE_URL: http://localhost:8000
+
+    - name: Wait for servers to be ready
+      run: |
+        echo "Waiting for backend server..."
+        timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
+        echo "Backend server is ready!"
+        
+        echo "Waiting for frontend server..."
+        timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
+        echo "Frontend server is ready!"
+
+    - name: Run Desktop-Only E2E tests
+      working-directory: frontend
+      run: npm run test:e2e -- --grep "@desktop-only" --project="chromium" --project="firefox" --project="webkit"
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
