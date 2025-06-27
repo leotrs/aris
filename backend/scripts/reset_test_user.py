@@ -118,11 +118,28 @@ This is another stable test file for visual tests.
         session.add_all(test_tags)
         await session.commit()
 
+        # Verify the user was actually created/updated
+        verify_user = await session.execute(
+            text("SELECT id, email, password_hash FROM users WHERE email = :email"), 
+            {"email": TEST_USER_EMAIL}
+        )
+        verify_row = verify_user.first()
+        
         print(f"✅ Test user {TEST_USER_EMAIL} reset successfully")
         print(f"   - User ID: {user_id}")
         print(f"   - Password length: {len(TEST_USER_PASSWORD)}")
+        print(f"   - Password hash length: {len(verify_row.password_hash) if verify_row else 'None'}")
         print(f"   - Files created: {len(test_files)}")
         print(f"   - Tags created: {len(test_tags)}")
+        print(f"   - User verified in DB: {'Yes' if verify_row else 'No'}")
+        
+        # Test password verification
+        if verify_row:
+            from aris.security import verify_password
+            password_valid = verify_password(TEST_USER_PASSWORD, verify_row.password_hash)
+            print(f"   - Password verification test: {'✅ PASS' if password_valid else '❌ FAIL'}")
+        else:
+            print(f"   - ❌ Could not verify user in database")
 
     except Exception as e:
         await session.rollback()

@@ -134,10 +134,18 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
     Only allows login for non-deleted users.
     """
     logger.info(f"Login attempt for email: {user_data.email}")
+    logger.debug(f"Login password length: {len(user_data.password)}")
+    
     result = await db.execute(
         select(User).where(User.email == user_data.email, User.deleted_at.is_(None))
     )
     user = result.scalars().first()
+    
+    if user:
+        logger.debug(f"User found: ID={user.id}, email={user.email}")
+        logger.debug(f"Stored password hash length: {len(user.password_hash)}")
+    else:
+        logger.debug(f"No user found with email: {user_data.email}")
     
     if not user:
         logger.warning(f"Failed login attempt for email: {user_data.email} - User not found")
