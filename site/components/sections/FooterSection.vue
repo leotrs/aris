@@ -1,5 +1,5 @@
 <script setup>
-  import logoFull from "@/assets/logo-32px.svg";
+  // No need to import logoFull anymore - using Logo component
 </script>
 
 <template>
@@ -35,14 +35,11 @@
         <p>© 2025 Aris. All rights reserved.</p>
       </div>
       <div>
-        <NuxtImg
+        <Logo
           id="logo"
-          :src="logoFull"
+          type="small"
           alt="Aris logo"
-          width="30"
-          height="30"
-          format="svg"
-          loading="lazy"
+          class="footer-logo-small"
         />
       </div>
       <div>
@@ -90,7 +87,8 @@
     text-decoration: underline;
   }
 
-  .footer #logo {
+  .footer #logo,
+  .footer .footer-logo-small {
     width: 30px;
     height: 30px;
   }

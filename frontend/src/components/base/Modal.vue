@@ -56,6 +56,7 @@
    */
 
   import useClosable from "@/composables/useClosable.js";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
   defineOptions({
     name: "Modal",
@@ -68,12 +69,16 @@
    */
   const emit = defineEmits(["close"]);
 
+  // Use override flag to block other components' keyboard shortcuts when modal is active
+  const keyboardController = useKeyboardShortcuts({}, true, "Modal", true);
+
   useClosable({
     onClose: () => emit("close"),
     closeOnEsc: true,
     closeOnOutsideClick: true,
     closeOnCloseButton: true,
     autoActivate: true,
+    keyboardController, // Pass the existing controller to avoid duplicate registrations
   });
 </script>
 

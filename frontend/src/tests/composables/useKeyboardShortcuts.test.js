@@ -171,4 +171,178 @@ describe("useKeyboardShortcuts", () => {
     handler(eventB);
     expect(fn).toHaveBeenCalled();
   });
+
+  describe("overrideOthers functionality", () => {
+    it("accepts overrideOthers parameter", () => {
+      const api = useKeyboardShortcuts({}, false, "TestComponent", true);
+      expect(api).toEqual(
+        expect.objectContaining({
+          activate: expect.any(Function),
+          deactivate: expect.any(Function),
+          isRegistered: expect.any(Function),
+          addShortcuts: expect.any(Function),
+          removeShortcuts: expect.any(Function),
+          getShortcuts: expect.any(Function),
+        })
+      );
+    });
+
+    it("blocks other components when override is active", () => {
+      // Create two component instances
+      getCurrentInstance.mockReturnValueOnce({
+        uid: 1,
+        type: { name: "NormalComponent" },
+        proxy: { $options: { name: "NormalComponent" } },
+      });
+      const normalFn = vi.fn();
+      useKeyboardShortcuts({ a: normalFn }, true, "NormalComponent", false);
+
+      getCurrentInstance.mockReturnValueOnce({
+        uid: 2,
+        type: { name: "OverrideComponent" },
+        proxy: { $options: { name: "OverrideComponent" } },
+      });
+      const overrideFn = vi.fn();
+      useKeyboardShortcuts({ a: overrideFn }, true, "OverrideComponent", true);
+
+      // Get the global keydown handler
+      const [[, handler]] = window.addEventListener.mock.calls.filter((c) => c[0] === "keydown");
+
+      // Simulate keydown event
+      const event = new KeyboardEvent("keydown", { key: "a" });
+      Object.defineProperty(event, "target", { value: document.body, configurable: true });
+      handler(event);
+
+      // Override component should have been called, normal component should not
+      expect(overrideFn).toHaveBeenCalled();
+      expect(normalFn).not.toHaveBeenCalled();
+    });
+
+    it("processes all components normally when no override is active", () => {
+      // Create two component instances without override
+      getCurrentInstance.mockReturnValueOnce({
+        uid: 1,
+        type: { name: "Component1" },
+        proxy: { $options: { name: "Component1" } },
+      });
+      const fn1 = vi.fn();
+      useKeyboardShortcuts({ a: fn1 }, true, "Component1", false);
+
+      getCurrentInstance.mockReturnValueOnce({
+        uid: 2,
+        type: { name: "Component2" },
+        proxy: { $options: { name: "Component2" } },
+      });
+      const fn2 = vi.fn();
+      useKeyboardShortcuts({ b: fn2 }, true, "Component2", false);
+
+      // Get the global keydown handler
+      const [[, handler]] = window.addEventListener.mock.calls.filter((c) => c[0] === "keydown");
+
+      // Test both shortcuts work
+      const eventA = new KeyboardEvent("keydown", { key: "a" });
+      Object.defineProperty(eventA, "target", { value: document.body, configurable: true });
+      handler(eventA);
+      expect(fn1).toHaveBeenCalled();
+
+      const eventB = new KeyboardEvent("keydown", { key: "b" });
+      Object.defineProperty(eventB, "target", { value: document.body, configurable: true });
+      handler(eventB);
+      expect(fn2).toHaveBeenCalled();
+    });
+
+    it("handles multiple override components in stack order", () => {
+      // Create first override component
+      getCurrentInstance.mockReturnValueOnce({
+        uid: 1,
+        type: { name: "Override1" },
+        proxy: { $options: { name: "Override1" } },
+      });
+      const fn1 = vi.fn();
+      useKeyboardShortcuts({ a: fn1 }, true, "Override1", true);
+
+      // Create second override component (should take precedence)
+      getCurrentInstance.mockReturnValueOnce({
+        uid: 2,
+        type: { name: "Override2" },
+        proxy: { $options: { name: "Override2" } },
+      });
+      const fn2 = vi.fn();
+      useKeyboardShortcuts({ a: fn2 }, true, "Override2", true);
+
+      // Get the global keydown handler
+      const [[, handler]] = window.addEventListener.mock.calls.filter((c) => c[0] === "keydown");
+
+      // Simulate keydown event
+      const event = new KeyboardEvent("keydown", { key: "a" });
+      Object.defineProperty(event, "target", { value: document.body, configurable: true });
+      handler(event);
+
+      // Only the most recent override component should be called
+      expect(fn2).toHaveBeenCalled();
+      expect(fn1).not.toHaveBeenCalled();
+    });
+
+    it("override component with no shortcuts still blocks others", () => {
+      // Create normal component
+      getCurrentInstance.mockReturnValueOnce({
+        uid: 1,
+        type: { name: "NormalComponent" },
+        proxy: { $options: { name: "NormalComponent" } },
+      });
+      const normalFn = vi.fn();
+      useKeyboardShortcuts({ a: normalFn }, true, "NormalComponent", false);
+
+      // Create override component with no shortcuts
+      getCurrentInstance.mockReturnValueOnce({
+        uid: 2,
+        type: { name: "EmptyOverride" },
+        proxy: { $options: { name: "EmptyOverride" } },
+      });
+      useKeyboardShortcuts({}, true, "EmptyOverride", true);
+
+      // Get the global keydown handler
+      const [[, handler]] = window.addEventListener.mock.calls.filter((c) => c[0] === "keydown");
+
+      // Simulate keydown event
+      const event = new KeyboardEvent("keydown", { key: "a" });
+      Object.defineProperty(event, "target", { value: document.body, configurable: true });
+      handler(event);
+
+      // Normal component should be blocked
+      expect(normalFn).not.toHaveBeenCalled();
+    });
+
+    it("override component blocks others even for unhandled keys", () => {
+      // Create normal component with '/' shortcut
+      getCurrentInstance.mockReturnValueOnce({
+        uid: 1,
+        type: { name: "NormalComponent" },
+        proxy: { $options: { name: "NormalComponent" } },
+      });
+      const normalFn = vi.fn();
+      useKeyboardShortcuts({ "/": normalFn }, true, "NormalComponent", false);
+
+      // Create override component that only handles 'escape'
+      getCurrentInstance.mockReturnValueOnce({
+        uid: 2,
+        type: { name: "OverrideComponent" },
+        proxy: { $options: { name: "OverrideComponent" } },
+      });
+      const overrideFn = vi.fn();
+      useKeyboardShortcuts({ escape: overrideFn }, true, "OverrideComponent", true);
+
+      // Get the global keydown handler
+      const [[, handler]] = window.addEventListener.mock.calls.filter((c) => c[0] === "keydown");
+
+      // Simulate '/' keydown event (not handled by override component)
+      const event = new KeyboardEvent("keydown", { key: "/" });
+      Object.defineProperty(event, "target", { value: document.body, configurable: true });
+      handler(event);
+
+      // Normal component should be blocked even though override doesn't handle '/'
+      expect(normalFn).not.toHaveBeenCalled();
+      expect(overrideFn).not.toHaveBeenCalled();
+    });
+  });
 });

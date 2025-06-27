@@ -37,7 +37,7 @@ describe("ManuscriptWrapper.vue", () => {
       props: { htmlString: html, keys: true, settings },
       global: {
         provide: { api },
-        stubs: { Manuscript: stubManuscript, Teleport: true },
+        stubs: { Manuscript: stubManuscript, Teleport: true, AnnotationMenu: true },
       },
     });
     await flushPromises();
@@ -59,13 +59,22 @@ describe("ManuscriptWrapper.vue", () => {
       props: { htmlString: "", keys: false, showFooter: true },
       global: {
         provide: { api },
-        stubs: { Manuscript: true, Teleport: true },
+        stubs: {
+          Manuscript: true,
+          Teleport: true,
+          AnnotationMenu: true,
+          Logo: {
+            template: '<img data-testid="logo-stub" src="data:image/svg+xml;base64,stub" />',
+            props: ["type", "alt", "class"],
+          },
+        },
       },
     });
     expect(wrapper.find(".middle-footer").exists()).toBe(true);
-    // Vite inlines SVGs as data URLs, so check for SVG content instead of filename
-    const imgSrc = wrapper.find(".footer-logo img").attributes("src");
-    expect(imgSrc).toMatch(/^data:image\/svg\+xml/);
+    // Check that Logo stub is rendered in the footer
+    const logoStub = wrapper.find('[data-testid="logo-stub"]');
+    expect(logoStub.exists()).toBe(true);
+    expect(logoStub.attributes("src")).toMatch(/^data:image\/svg\+xml/);
   });
 
   it("does not render footer when showFooter is false", () => {
@@ -74,7 +83,7 @@ describe("ManuscriptWrapper.vue", () => {
       props: { htmlString: "", keys: false, showFooter: false },
       global: {
         provide: { api },
-        stubs: { Manuscript: true, Teleport: true },
+        stubs: { Manuscript: true, Teleport: true, AnnotationMenu: true },
       },
     });
     expect(wrapper.find(".middle-footer").exists()).toBe(false);

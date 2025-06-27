@@ -93,14 +93,6 @@
 </template>
 
 <style scoped>
-  .modal {
-    overflow-y: auto;
-  }
-
-  .content {
-    max-height: 70vh;
-  }
-
   .component-section {
     margin-bottom: 16px;
     border: var(--border-extrathin) solid var(--gray-200);

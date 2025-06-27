@@ -2,7 +2,7 @@ import axios from "axios";
 
 // Configure axios instance
 const api = axios.create({
-  baseURL: process.env.NODE_ENV === "production" ? "https://api.aris.pub" : "http://localhost:8000",
+  baseURL: process.env.NODE_ENV === "production" ? "https://api.aris.pub" : "http://localhost:8001",
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",

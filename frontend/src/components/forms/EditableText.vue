@@ -92,8 +92,10 @@
    * Component events
    * @event save - Emitted when text is saved (Enter key, blur, or programmatic save)
    * @event cancel - Emitted when editing is cancelled (Escape key or programmatic cancel)
+   * @event editing-start - Emitted when editing mode is activated
+   * @event editing-end - Emitted when editing mode is deactivated
    */
-  const emit = defineEmits(["save", "cancel"]);
+  const emit = defineEmits(["save", "cancel", "editing-start", "editing-end"]);
   const isEditing = ref(false);
   const inputRef = useTemplateRef("inputRef");
   const textRef = useTemplateRef("textRef");
@@ -110,6 +112,7 @@
     }
 
     isEditing.value = true;
+    emit("editing-start");
     await nextTick();
     if (!inputRef.value) return;
     inputRef.value.focus();
@@ -120,6 +123,7 @@
   const cancelEditing = () => {
     deactivate();
     isEditing.value = false;
+    emit("editing-end");
     inputValue.value = text.value;
     emit("cancel");
   };
@@ -127,11 +131,13 @@
     if (!isEditing.value) return;
     if (text.value === inputValue.value) {
       isEditing.value = false;
+      emit("editing-end");
       return;
     }
     text.value = inputValue.value;
     await nextTick();
     isEditing.value = false;
+    emit("editing-end");
     emit("save", text.value);
   };
   const { activate, deactivate } = useKeyboardShortcuts(
@@ -147,7 +153,11 @@
     // Only prevent space bar from bubbling up to parent button
     // Allow ESC, ENTER, and other keys to work normally
     if (event.key === " ") {
+      // Stop the event from bubbling up to parent elements
+      // but allow the default behavior (typing space in input)
+      event.stopImmediatePropagation();
       event.stopPropagation();
+      // Don't preventDefault - we want the space to be typed
     }
   };
 
@@ -181,8 +191,9 @@
    * Exposes methods for programmatic control
    * @expose {Function} startEditing - Programmatically activate edit mode
    * @expose {Function} cancelEditing - Programmatically cancel editing and revert changes
+   * @expose {Ref<boolean>} isEditing - Whether the component is currently in editing mode
    */
-  defineExpose({ startEditing, cancelEditing });
+  defineExpose({ startEditing, cancelEditing, isEditing });
 </script>
 <template>
   <span class="editable-text">

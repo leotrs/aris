@@ -3,7 +3,7 @@
     <div class="navbar-content-wrapper">
       <div class="navbar-logo">
         <a href="/" aria-label="Home - Aris">
-          <img src="@/assets/logo-32px.svg" alt="Aris Logo" />
+          <Logo type="small" alt="Aris Logo" />
         </a>
       </div>
 

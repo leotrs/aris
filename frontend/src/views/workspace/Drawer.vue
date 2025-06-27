@@ -7,6 +7,7 @@
 
   const props = defineProps({ component: { type: String, required: true } });
   const active = inject("drawerOpen");
+  const focusMode = inject("focusMode");
   useClosable({
     onClose: () => (active.value = false),
     closeOnOutsideClick: false,
@@ -19,7 +20,7 @@
 </script>
 
 <template>
-  <div class="drawer" :class="{ active }">
+  <div class="drawer" :class="{ active, focus: focusMode }">
     <component :is="componentMap[component]" v-if="component" />
   </div>
 </template>
@@ -45,6 +46,12 @@
   .drawer.active {
     left: 64px;
     opacity: 1;
+  }
+
+  .drawer.focus,
+  .drawer.active.focus {
+    opacity: 0 !important;
+    left: calc(-1 * var(--sidebar-width)) !important;
   }
 
   :deep(.pane) {

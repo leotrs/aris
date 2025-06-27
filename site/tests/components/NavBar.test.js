@@ -43,9 +43,18 @@ describe("NavBar Component", () => {
 
   describe("Basic Rendering", () => {
     it("should render navbar with logo", () => {
-      wrapper = mount(NavBar);
+      wrapper = mount(NavBar, {
+        global: {
+          stubs: {
+            Logo: {
+              template: '<img data-testid="logo-stub" src="http://localhost:8001/design-assets/logos/logo-32px.svg" alt="Aris Logo" />',
+              props: ['type', 'alt', 'class']
+            }
+          }
+        }
+      });
 
-      const logo = wrapper.find(".navbar-logo img");
+      const logo = wrapper.find('[data-testid="logo-stub"]');
       expect(logo.exists()).toBe(true);
       expect(logo.attributes("src")).toBeDefined();
       expect(logo.attributes("alt")).toBe("Aris Logo");

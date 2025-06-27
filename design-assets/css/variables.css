@@ -1,0 +1,19 @@
+/* CSS Custom Properties - Aris Design System */
+
+:root {
+  /* Scrollbar styling */
+  --scrollbar-size: 8px;
+  
+  /* Common transitions */
+  --transition-duration: 0.3s;
+  --transition-bg-color: background-color 0.2s ease;
+  --transition-bd-color: border-color 0.2s ease;
+}
+
+/* Note: Primary design variables are defined in RSM CSS package */
+/* This file contains application-specific variables that supplement */
+/* the main design system. The RSM package provides: */
+/* - Color system (--gray-*, --blue-*, --primary-*, etc.) */
+/* - Typography weights (--weight-*, --h*-size, etc.) */
+/* - Layout variables (--border-*, --shadow-*, etc.) */
+/* - Theme overrides (.dark-theme class) */

@@ -5,6 +5,7 @@
   import { File } from "@/models/File.js";
   import Sidebar from "./Sidebar.vue";
   import Canvas from "./Canvas.vue";
+  import Icon from "@/components/base/Icon.vue";
 
   // Load and provide file
   const fileStore = inject("fileStore");
@@ -152,6 +153,17 @@
       <Button kind="secondary" @click="$router.push('/')">Go back home</Button>
     </div>
 
+    <!-- Focus mode exit button - positioned outside sidebar to avoid transform issues -->
+    <Transition name="focus-button" appear>
+      <Button
+        v-show="focusMode"
+        class="focus-mode-exit-button"
+        kind="tertiary"
+        icon="Layout"
+        @click="focusMode = false"
+      />
+    </Transition>
+
     <!-- <div class="menus" :class="{ focus: focusMode, mobile: mobileMode }">
          <Button v-if="mobileMode" kind="tertiary" icon="Home" @click="goHome" />
          <UserMenu />
@@ -239,5 +251,30 @@
 
   .state-message.error {
     color: var(--error);
+  }
+
+  .focus-mode-exit-button {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: 9999;
+  }
+
+  .focus-button-enter-active {
+    transition: all 0.3s ease-out;
+  }
+
+  .focus-button-leave-active {
+    transition: all 0.3s ease-in;
+  }
+
+  .focus-button-enter-from {
+    transform: translateX(-60px);
+    opacity: 0;
+  }
+
+  .focus-button-leave-to {
+    transform: translateX(-60px);
+    opacity: 0;
   }
 </style>

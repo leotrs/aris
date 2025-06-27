@@ -95,4 +95,7 @@ describe("MultiSelectTags.vue - Bug: Tag Icon Issue", () => {
     );
     expect(wrapper.find('[data-testid="icon-display"]').text()).toBe("CustomIcon");
   });
+
+  // NOTE: This test has been replaced by SpacebarTagBug.regression.test.js
+  // which provides more comprehensive coverage of the spacebar bug fix
 });

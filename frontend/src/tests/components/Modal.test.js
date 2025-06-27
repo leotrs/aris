@@ -31,6 +31,7 @@ describe("Modal.vue", () => {
       closeOnOutsideClick: true,
       closeOnCloseButton: true,
       autoActivate: true,
+      keyboardController: expect.any(Object),
     });
     closableOptions.onClose();
     await nextTick();
