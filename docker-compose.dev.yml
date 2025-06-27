@@ -1,0 +1,56 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    volumes:
+      - ./backend:/app
+      - backend_venv:/app/.venv
+    environment:
+      - DATABASE_URL=postgresql://aris:aris@postgres:5432/${DB_NAME:-aris}
+      - TEST_DB_URL=postgresql://aris:aris@postgres:5432/${TEST_DB_NAME:-aris_test}
+      - ALEMBIC_DB_URL_LOCAL=postgresql://aris:aris@postgres:5432/${DB_NAME:-aris}
+      - DB_URL_LOCAL=postgresql+asyncpg://aris:aris@postgres:5432/${DB_NAME:-aris}
+      - ENV=LOCAL
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.dev
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+      - "${STORYBOOK_PORT:-6006}:6006"
+    volumes:
+      - ./frontend:/app
+      - frontend_node_modules:/app/node_modules
+    environment:
+      - VITE_API_BASE_URL=http://localhost:${BACKEND_PORT:-8000}
+    command: npm run dev -- --host 0.0.0.0
+    
+  postgres:
+    image: postgres:16
+    ports:
+      - "${DB_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_USER=aris
+      - POSTGRES_PASSWORD=aris
+      - POSTGRES_DB=${DB_NAME:-aris}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init_test_db.sql:/docker-entrypoint-initdb.d/init_test_db.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aris"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  backend_venv:
+  frontend_node_modules:
+  postgres_data:
