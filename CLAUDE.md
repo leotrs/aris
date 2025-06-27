@@ -33,6 +33,7 @@ uv run mypy aris/                     # Type check
 - **Local CI Simulation**: Use `./simulate-ci -- <command>` for 100% CI fidelity
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 ## Development Setup
 
 ### Standard Development
@@ -59,6 +60,8 @@ docker compose -f docker-compose.dev.yml up --build
 
 See [docker/README.md](docker/README.md) for detailed multi-clone setup instructions.
 =======
+=======
+>>>>>>> Stashed changes
 ## CI/CD Test Architecture
 
 ### Test Separation Strategy
@@ -109,6 +112,9 @@ The CI pipeline separates tests by type and dependency requirements for optimal 
 - **@critical**: Authentication, demo access, core navigation (run first)
 - **@standard**: File management, account features, main functionality
 - **@flaky**: Visual tests, accessibility tests, edge cases (run last)
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
 ## Frontend Commands
