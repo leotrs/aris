@@ -143,7 +143,6 @@ npm run test:e2e -- --grep-invert "@"
 # Run all tests except desktop-only (mobile-compatible tests)
 npm run test:e2e -- --grep-invert "@desktop-only"
 ```
-
 ## Frontend Commands
 ```bash
 npm install                           # Install dependencies
