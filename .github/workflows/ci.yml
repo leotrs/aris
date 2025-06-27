@@ -138,7 +138,7 @@ jobs:
     - name: Run linting
       run: npm run lint
 
-    - name: Run tests
+    - name: Run unit tests with coverage
       run: npm run test:coverage
 
     - name: Upload coverage to Codecov
@@ -178,12 +178,6 @@ jobs:
 
     - name: Run unit tests
       run: npm run test:run
-
-    - name: Install Playwright browsers
-      run: npx playwright install --with-deps
-
-    - name: Run E2E tests (all browsers, excluding demo integration)
-      run: npm run test:e2e:all -- --grep-invert "demo"
 
   e2e-test:
     runs-on: ubuntu-latest
@@ -309,11 +303,19 @@ jobs:
         
         echo "All servers are ready!"
 
+    - name: Install site Playwright browsers
+      working-directory: site
+      run: npx playwright install --with-deps
+
     - name: Run Frontend E2E tests
       working-directory: frontend
       run: npm run test:e2e
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+    - name: Run Site E2E tests (excluding demo integration)
+      working-directory: site
+      run: npm run test:e2e:all -- --grep-invert "demo"
 
     - name: Run Site Demo Integration tests
       working-directory: site
