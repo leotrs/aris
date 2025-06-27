@@ -278,6 +278,8 @@ jobs:
       run: |
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
+      env:
+        SKIP_AUTH_FOR_TESTS: true
 
     # Frontend setup
     - name: Setup Node.js
@@ -307,7 +309,7 @@ jobs:
     - name: Start backend server
       working-directory: backend
       run: |
-        echo "Starting backend server..."
+        echo "Starting backend server with auth enabled..."
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
         echo $! > backend.pid
         echo "Backend server started with PID $(cat backend.pid)"
@@ -347,7 +349,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      SKIP_AUTH_FOR_TESTS: true
 
     services:
       postgres:
@@ -389,6 +391,8 @@ jobs:
       run: |
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
+      env:
+        SKIP_AUTH_FOR_TESTS: true
 
     # Frontend setup
     - name: Setup Node.js
@@ -418,10 +422,12 @@ jobs:
     - name: Start backend server
       working-directory: backend
       run: |
-        echo "Starting backend server..."
+        echo "Starting backend server with auth disabled..."
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
         echo $! > backend.pid
         echo "Backend server started with PID $(cat backend.pid)"
+      env:
+        SKIP_AUTH_FOR_TESTS: true
 
     - name: Start frontend server
       working-directory: frontend
@@ -431,7 +437,6 @@ jobs:
         echo $! > frontend.pid
         echo "Frontend server started with PID $(cat frontend.pid)"
       env:
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
 
     - name: Wait for servers to be ready
@@ -460,13 +465,12 @@ jobs:
         timeout 90 bash -c 'until curl -f http://localhost:3000; do echo "Marketing site not ready, waiting..."; sleep 3; done'
         echo "Marketing site server is ready!"
 
-    - name: Run Demo E2E tests
+    - name: Run Demo E2E tests (no auth required)
       working-directory: frontend
       run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep "@demo"'
       env:
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
-        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        SKIP_AUTH_FOR_TESTS: true
 
     - name: Run Site Demo Integration tests
       working-directory: site
@@ -521,6 +525,9 @@ jobs:
       working-directory: backend
       run: |
         uv run alembic upgrade head
+        uv run python scripts/reset_test_user.py
+      env:
+        SKIP_AUTH_FOR_TESTS: true
 
     # Frontend setup
     - name: Setup Node.js
@@ -582,7 +589,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      SKIP_AUTH_FOR_TESTS: true
 
     services:
       postgres:
@@ -624,6 +631,8 @@ jobs:
       run: |
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
+      env:
+        SKIP_AUTH_FOR_TESTS: true
 
     # Frontend setup
     - name: Setup Node.js
@@ -653,10 +662,12 @@ jobs:
     - name: Start backend server
       working-directory: backend
       run: |
-        echo "Starting backend server..."
+        echo "Starting backend server with auth disabled..."
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
         echo $! > backend.pid
         echo "Backend server started with PID $(cat backend.pid)"
+      env:
+        SKIP_AUTH_FOR_TESTS: true
 
     - name: Start frontend server
       working-directory: frontend
@@ -666,19 +677,17 @@ jobs:
         echo $! > frontend.pid
         echo "Frontend server started with PID $(cat frontend.pid)"
       env:
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
 
     - name: Wait for servers to be ready
       run: ./.github/scripts/wait-for-servers.sh
 
-    - name: Run Standard E2E tests
+    - name: Run Standard E2E tests (no auth required)
       working-directory: frontend
       run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep "@standard"'
       env:
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
-        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        SKIP_AUTH_FOR_TESTS: true
 
   e2e-uncategorized:
     runs-on: ubuntu-latest
@@ -686,7 +695,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      SKIP_AUTH_FOR_TESTS: true
 
     services:
       postgres:
@@ -728,6 +737,8 @@ jobs:
       run: |
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
+      env:
+        SKIP_AUTH_FOR_TESTS: true
 
     # Frontend setup
     - name: Setup Node.js
@@ -757,10 +768,12 @@ jobs:
     - name: Start backend server
       working-directory: backend
       run: |
-        echo "Starting backend server..."
+        echo "Starting backend server with auth disabled..."
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
         echo $! > backend.pid
         echo "Backend server started with PID $(cat backend.pid)"
+      env:
+        SKIP_AUTH_FOR_TESTS: true
 
     - name: Start frontend server
       working-directory: frontend
@@ -770,19 +783,17 @@ jobs:
         echo $! > frontend.pid
         echo "Frontend server started with PID $(cat frontend.pid)"
       env:
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
 
     - name: Wait for servers to be ready
       run: ./.github/scripts/wait-for-servers.sh
 
-    - name: Run uncategorized E2E tests
+    - name: Run uncategorized E2E tests (no auth required)
       working-directory: frontend
       run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep-invert "@"'
       env:
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
-        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        SKIP_AUTH_FOR_TESTS: true
 
   e2e-desktop-only:
     runs-on: ubuntu-latest
@@ -790,7 +801,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      SKIP_AUTH_FOR_TESTS: true
 
     services:
       postgres:
@@ -832,6 +843,8 @@ jobs:
       run: |
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
+      env:
+        SKIP_AUTH_FOR_TESTS: true
 
     # Frontend setup
     - name: Setup Node.js
@@ -862,10 +875,12 @@ jobs:
     - name: Start backend server
       working-directory: backend
       run: |
-        echo "Starting backend server..."
+        echo "Starting backend server with auth disabled..."
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
         echo $! > backend.pid
         echo "Backend server started with PID $(cat backend.pid)"
+      env:
+        SKIP_AUTH_FOR_TESTS: true
 
     - name: Start frontend server
       working-directory: frontend
@@ -875,16 +890,14 @@ jobs:
         echo $! > frontend.pid
         echo "Frontend server started with PID $(cat frontend.pid)"
       env:
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
 
     - name: Wait for servers to be ready
       run: ./.github/scripts/wait-for-servers.sh
 
-    - name: Run Desktop-Only E2E tests
+    - name: Run Desktop-Only E2E tests (no auth required)
       working-directory: frontend
       run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep "@desktop-only" --project="chromium" --project="firefox" --project="webkit"'
       env:
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         VITE_API_BASE_URL: http://localhost:8000
-        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        SKIP_AUTH_FOR_TESTS: true

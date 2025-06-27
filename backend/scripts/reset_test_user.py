@@ -23,9 +23,10 @@ load_dotenv(env_file)
 
 TEST_USER_EMAIL = os.getenv("TEST_USER_EMAIL", "testuser@aris.pub")
 TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
+SKIP_AUTH_FOR_TESTS = os.getenv("SKIP_AUTH_FOR_TESTS", "false").lower() == "true"
 
-if not TEST_USER_PASSWORD:
-    raise ValueError("TEST_USER_PASSWORD not found in environment variables")
+if not TEST_USER_PASSWORD and not SKIP_AUTH_FOR_TESTS:
+    raise ValueError("TEST_USER_PASSWORD not found in environment variables (required unless SKIP_AUTH_FOR_TESTS=true)")
 
 
 async def reset_test_user():
@@ -54,16 +55,27 @@ async def reset_test_user():
                 text("DELETE FROM file_settings WHERE user_id = :user_id"), {"user_id": user_id}
             )
 
-            # Update user with fresh password hash
-            password_hash = hash_password(TEST_USER_PASSWORD)
-            await session.execute(
-                text("UPDATE users SET password_hash = :password_hash, name = :name WHERE id = :user_id"),
-                {"password_hash": password_hash, "name": "Test User", "user_id": user_id},
-            )
+            # Update user with fresh password hash (if password provided)
+            if TEST_USER_PASSWORD:
+                password_hash = hash_password(TEST_USER_PASSWORD)
+                await session.execute(
+                    text("UPDATE users SET password_hash = :password_hash, name = :name WHERE id = :user_id"),
+                    {"password_hash": password_hash, "name": "Test User", "user_id": user_id},
+                )
+            else:
+                # Just update name when no password needed (no-auth mode)
+                await session.execute(
+                    text("UPDATE users SET name = :name WHERE id = :user_id"),
+                    {"name": "Test User", "user_id": user_id},
+                )
             await session.commit()
         else:
             # Create new test user
-            password_hash = hash_password(TEST_USER_PASSWORD)
+            if TEST_USER_PASSWORD:
+                password_hash = hash_password(TEST_USER_PASSWORD)
+            else:
+                # Use empty password hash for no-auth mode
+                password_hash = ""
             user = User(name="Test User", email=TEST_USER_EMAIL, password_hash=password_hash)
             session.add(user)
             await session.commit()
@@ -127,17 +139,20 @@ This is another stable test file for visual tests.
         
         print(f"✅ Test user {TEST_USER_EMAIL} reset successfully")
         print(f"   - User ID: {user_id}")
-        print(f"   - Password length: {len(TEST_USER_PASSWORD)}")
+        print(f"   - Password length: {len(TEST_USER_PASSWORD) if TEST_USER_PASSWORD else 0}")
         print(f"   - Password hash length: {len(verify_row.password_hash) if verify_row else 'None'}")
         print(f"   - Files created: {len(test_files)}")
         print(f"   - Tags created: {len(test_tags)}")
         print(f"   - User verified in DB: {'Yes' if verify_row else 'No'}")
+        print(f"   - Skip auth mode: {SKIP_AUTH_FOR_TESTS}")
         
-        # Test password verification
-        if verify_row:
+        # Test password verification (only if password provided)
+        if verify_row and TEST_USER_PASSWORD:
             from aris.security import verify_password
             password_valid = verify_password(TEST_USER_PASSWORD, verify_row.password_hash)
             print(f"   - Password verification test: {'✅ PASS' if password_valid else '❌ FAIL'}")
+        elif SKIP_AUTH_FOR_TESTS:
+            print("   - ⏭️  Password verification skipped (no-auth mode)")
         else:
             print("   - ❌ Could not verify user in database")
 
