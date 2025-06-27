@@ -152,15 +152,23 @@ logger.info("All routers registered successfully")
 @app.middleware("http")
 async def add_no_cache_headers(request, call_next):
     response = await call_next(request)
-    if request.url.path.startswith("/static"):
+    if request.url.path.startswith("/static") or request.url.path.startswith("/design-assets"):
         response.headers["Cache-Control"] = "no-store"
     return response
 
 
+# Mount RSM static files
 app.mount(
     "/static",
     StaticFiles(
         directory=".venv/lib/python3.13/site-packages/rsm/static",
     ),
     name="static",
+)
+
+# Mount design assets
+app.mount(
+    "/design-assets", 
+    StaticFiles(directory="static/design"),
+    name="design-assets"
 )
