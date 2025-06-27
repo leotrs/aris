@@ -215,18 +215,20 @@ jobs:
     - name: Start marketing site server
       run: |
         echo "Starting marketing site server..."
-        npm run dev -- --host 0.0.0.0 --port 3000 > site.log 2>&1 &
+        npm run dev -- --host 0.0.0.0 --port 3001 > site.log 2>&1 &
         echo $! > site.pid
         echo "Marketing site server started with PID $(cat site.pid)"
 
     - name: Wait for marketing site to be ready
       run: |
         echo "Waiting for marketing site server..."
-        timeout 90 bash -c 'until curl -f http://localhost:3000; do echo "Marketing site not ready, waiting..."; sleep 3; done'
+        timeout 90 bash -c 'until curl -f http://localhost:3001; do echo "Marketing site not ready, waiting..."; sleep 3; done'
         echo "Marketing site server is ready!"
 
     - name: Run Site E2E tests (excluding demo integration)
       run: npm run test:e2e:all -- --grep-invert "demo"
+      env:
+        SITE_URL: http://localhost:3001
 
   e2e-auth:
     runs-on: ubuntu-latest
