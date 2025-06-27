@@ -1,5 +1,7 @@
 """Aris backend: FastApi app."""
 
+import os
+
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
@@ -167,9 +169,6 @@ app.mount(
 )
 
 # Mount design assets (only if directory exists)
-import os
-
-
 if os.path.exists("static/design"):
     app.mount(
         "/design-assets",
