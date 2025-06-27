@@ -12,11 +12,11 @@ test.describe("Home View Navigation & Keyboard", () => {
 
     await page.goto("/");
     await authHelpers.clearAuthState();
-    
+
     // Use authentication bypass for @flaky tests, regular login for others
     const testInfo = test.info();
     const isFlaky = testInfo.tags.includes("@flaky");
-    
+
     if (isFlaky) {
       console.log("Using authentication bypass for @flaky test");
       try {
