@@ -179,7 +179,7 @@ jobs:
     - name: Run unit tests
       run: npm run test:run
 
-  site-e2e:
+  e2e-site:
     runs-on: ubuntu-latest
     needs: [changes, site-test]
     if: ${{ always() && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
@@ -326,7 +326,7 @@ jobs:
         echo "Waiting for backend server..."
         timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
         echo "Backend server is ready!"
-        
+
         echo "Waiting for frontend server..."
         timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
         echo "Frontend server is ready!"
@@ -437,7 +437,7 @@ jobs:
         echo "Waiting for backend server..."
         timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
         echo "Backend server is ready!"
-        
+
         echo "Waiting for frontend server..."
         timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
         echo "Frontend server is ready!"
@@ -577,7 +577,7 @@ jobs:
         echo "Waiting for backend server..."
         timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
         echo "Backend server is ready!"
-        
+
         echo "Waiting for frontend server..."
         timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
         echo "Frontend server is ready!"
@@ -688,7 +688,7 @@ jobs:
         echo "Waiting for backend server..."
         timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
         echo "Backend server is ready!"
-        
+
         echo "Waiting for frontend server..."
         timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
         echo "Frontend server is ready!"
@@ -800,7 +800,7 @@ jobs:
         echo "Waiting for backend server..."
         timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
         echo "Backend server is ready!"
-        
+
         echo "Waiting for frontend server..."
         timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
         echo "Frontend server is ready!"

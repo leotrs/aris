@@ -19,7 +19,9 @@ test.describe("Home View Search & Filter", () => {
     const isDesktopOnly = testInfo.tags.includes("@desktop-only");
 
     if (isFlaky || isDesktopOnly) {
-      console.log(`Using authentication bypass for ${isDesktopOnly ? '@desktop-only' : '@flaky'} test`);
+      console.log(
+        `Using authentication bypass for ${isDesktopOnly ? "@desktop-only" : "@flaky"} test`
+      );
       try {
         await authHelpers.authenticateWithBypass();
         await fileHelpers.waitForFilesLoaded();

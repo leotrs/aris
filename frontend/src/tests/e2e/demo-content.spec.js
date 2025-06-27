@@ -155,13 +155,20 @@ test.describe("Demo Content Rendering @demo", () => {
         timeout: 10000,
       });
 
-      // Wait for RSM JavaScript to fully load
+      // Wait for RSM JavaScript to fully load and stabilize
       await page.waitForFunction(
         () => {
-          return window.jQuery && document.querySelectorAll(".hr-border-zone").length > 0;
+          return (
+            window.jQuery &&
+            document.querySelectorAll(".hr-border-zone").length > 0 &&
+            !document.querySelector(".manuscript")?.classList.contains("loading")
+          );
         },
         { timeout: 15000 }
       );
+
+      // Wait for any animations/transitions to complete
+      await page.waitForTimeout(500);
 
       // Hover over content to reveal border dots
       await page.hover("h1"); // Hover over main heading

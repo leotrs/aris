@@ -19,7 +19,9 @@ test.describe("Home View Navigation & Keyboard", () => {
     const isDesktopOnly = testInfo.tags.includes("@desktop-only");
 
     if (isFlaky || isDesktopOnly) {
-      console.log(`Using authentication bypass for ${isDesktopOnly ? '@desktop-only' : '@flaky'} test`);
+      console.log(
+        `Using authentication bypass for ${isDesktopOnly ? "@desktop-only" : "@flaky"} test`
+      );
       try {
         await authHelpers.authenticateWithBypass();
         // Ensure we have test files for navigation
@@ -35,26 +37,30 @@ test.describe("Home View Navigation & Keyboard", () => {
     }
   });
 
-  test("keyboard navigation with j/k updates focus correctly", { tag: "@desktop-only" }, async ({ page }) => {
-    // Wait for files to load
-    await page.waitForSelector('[data-testid="files-container"]');
-    const files = await page.locator('[data-testid^="file-item-"]').all();
-    expect(files.length).toBeGreaterThan(2);
+  test(
+    "keyboard navigation with j/k updates focus correctly",
+    { tag: "@desktop-only" },
+    async ({ page }) => {
+      // Wait for files to load
+      await page.waitForSelector('[data-testid="files-container"]');
+      const files = await page.locator('[data-testid^="file-item-"]').all();
+      expect(files.length).toBeGreaterThan(2);
 
-    // Start navigation - j should focus first item
-    await page.keyboard.press("j");
-    await expect(files[0]).toHaveClass(/focused/);
+      // Start navigation - j should focus first item
+      await page.keyboard.press("j");
+      await expect(files[0]).toHaveClass(/focused/);
 
-    // j again should move to second item
-    await page.keyboard.press("j");
-    await expect(files[0]).not.toHaveClass(/focused/);
-    await expect(files[1]).toHaveClass(/focused/);
+      // j again should move to second item
+      await page.keyboard.press("j");
+      await expect(files[0]).not.toHaveClass(/focused/);
+      await expect(files[1]).toHaveClass(/focused/);
 
-    // k should move back to first item
-    await page.keyboard.press("k");
-    await expect(files[1]).not.toHaveClass(/focused/);
-    await expect(files[0]).toHaveClass(/focused/);
-  });
+      // k should move back to first item
+      await page.keyboard.press("k");
+      await expect(files[1]).not.toHaveClass(/focused/);
+      await expect(files[0]).toHaveClass(/focused/);
+    }
+  );
 
   test("arrow key navigation works like j/k", async ({ page }) => {
     await page.goto("/");
@@ -118,44 +124,56 @@ test.describe("Home View Navigation & Keyboard", () => {
     expect(page.url()).toContain("/file/");
   });
 
-  test("dot key opens context menu for focused file", { tag: "@desktop-only" }, async ({ page }) => {
-    await page.goto("/");
+  test(
+    "dot key opens context menu for focused file",
+    { tag: "@desktop-only" },
+    async ({ page }) => {
+      await page.goto("/");
 
-    await page.waitForSelector('[data-testid="files-container"]');
+      await page.waitForSelector('[data-testid="files-container"]');
 
-    // Focus first file
-    await page.keyboard.press("j");
+      // Focus first file
+      await page.keyboard.press("j");
 
-    // Dot should open context menu
-    await page.keyboard.press(".");
-    await expect(page.locator('[data-testid="context-menu"]')).toBeVisible();
-  });
+      // Dot should open context menu
+      await page.keyboard.press(".");
+      await expect(page.locator('[data-testid="context-menu"]')).toBeVisible();
+    }
+  );
 
-  test("view mode shortcut v,l switches to list view", { tag: "@desktop-only" }, async ({ page }) => {
-    await page.goto("/");
+  test(
+    "view mode shortcut v,l switches to list view",
+    { tag: "@desktop-only" },
+    async ({ page }) => {
+      await page.goto("/");
 
-    await page.waitForSelector('[data-testid="files-container"]');
+      await page.waitForSelector('[data-testid="files-container"]');
 
-    // Switch to list view
-    await page.keyboard.press("v");
-    await page.keyboard.press("l");
+      // Switch to list view
+      await page.keyboard.press("v");
+      await page.keyboard.press("l");
 
-    const filesContainer = page.locator('[data-testid="files-container"]');
-    await expect(filesContainer).toHaveClass(/list/);
-  });
+      const filesContainer = page.locator('[data-testid="files-container"]');
+      await expect(filesContainer).toHaveClass(/list/);
+    }
+  );
 
-  test("view mode shortcut v,c switches to cards view", { tag: "@desktop-only" }, async ({ page }) => {
-    await page.goto("/");
+  test(
+    "view mode shortcut v,c switches to cards view",
+    { tag: "@desktop-only" },
+    async ({ page }) => {
+      await page.goto("/");
 
-    await page.waitForSelector('[data-testid="files-container"]');
+      await page.waitForSelector('[data-testid="files-container"]');
 
-    // Switch to cards view
-    await page.keyboard.press("v");
-    await page.keyboard.press("c");
+      // Switch to cards view
+      await page.keyboard.press("v");
+      await page.keyboard.press("c");
 
-    const filesContainer = page.locator('[data-testid="files-container"]');
-    await expect(filesContainer).toHaveClass(/cards/);
-  });
+      const filesContainer = page.locator('[data-testid="files-container"]');
+      await expect(filesContainer).toHaveClass(/cards/);
+    }
+  );
 
   test("search shortcut / focuses search input", { tag: "@desktop-only" }, async ({ page }) => {
     await page.goto("/");
