@@ -42,21 +42,21 @@ cd frontend && npm install           # Install frontend dependencies
 
 ### Containerized Development (Multi-Clone Setup)
 ```bash
-# Copy environment template and customize ports
-cp .env.example .env
-# Edit .env with unique ports for each clone:
-# Clone 1: BACKEND_PORT=8000, FRONTEND_PORT=5173, DB_PORT=5432
-# Clone 2: BACKEND_PORT=8001, FRONTEND_PORT=5174, DB_PORT=5433
-# Clone 3: BACKEND_PORT=8002, FRONTEND_PORT=5175, DB_PORT=5434
+# Quick setup for first clone
+cp docker/.env.example docker/.env
+cd docker
+docker compose -f docker-compose.dev.yml up --build
 
-# Start all services
-docker compose -f docker-compose.dev.yml up
+# For additional clones, use the setup script
+./docker/scripts/setup-clone.sh
 
 # Access services:
-# Backend API: http://localhost:${BACKEND_PORT}
-# Frontend: http://localhost:${FRONTEND_PORT}
-# Database: localhost:${DB_PORT}
+# Frontend: http://localhost:5173 (or your FRONTEND_PORT)
+# Backend API: http://localhost:8000/docs (or your BACKEND_PORT)
+# Database: localhost:5432 (or your DB_PORT)
 ```
+
+See [docker/README.md](docker/README.md) for detailed multi-clone setup instructions.
 
 ## Frontend Commands
 ```bash
