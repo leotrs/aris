@@ -20,9 +20,21 @@ const LOG_LEVELS = {
  */
 function getCurrentLogLevel() {
   const env = import.meta.env.VITE_ENV || import.meta.env.MODE;
+  const nodeEnv = typeof process !== "undefined" ? process.env.NODE_ENV : "";
+
+  // Check for test environment
+  const isTest =
+    env === "test" ||
+    nodeEnv === "test" ||
+    (typeof window !== "undefined" && window.__vitest__) ||
+    (typeof global !== "undefined" && global.__vitest__);
+
   const isDev = env === "development" || env === "DEV";
 
-  // Use DEBUG level in development, INFO in production
+  // Use WARN level in test environment to reduce noise, DEBUG in development, INFO in production
+  if (isTest) {
+    return LOG_LEVELS.WARN;
+  }
   return isDev ? LOG_LEVELS.DEBUG : LOG_LEVELS.INFO;
 }
 
@@ -61,6 +73,13 @@ class Logger {
   constructor(module) {
     this.module = module;
     this.currentLogLevel = getCurrentLogLevel();
+  }
+
+  /**
+   * Override log level for testing purposes
+   */
+  setLogLevel(level) {
+    this.currentLogLevel = level;
   }
 
   /**

@@ -23,11 +23,7 @@ describe("FileMenu.vue - Isolated Testing", () => {
       },
     });
 
-    console.log("FileMenu HTML:", wrapper.html());
-
     const fmWrapper = wrapper.find(".fm-wrapper");
-    console.log("fm-wrapper exists:", fmWrapper.exists());
-
     expect(fmWrapper.exists()).toBe(true);
   });
 
@@ -39,8 +35,6 @@ describe("FileMenu.vue - Isolated Testing", () => {
     });
 
     const contextMenu = wrapper.findComponent({ name: "ContextMenu" });
-    console.log("ContextMenu exists:", contextMenu.exists());
-
     expect(contextMenu.exists()).toBe(true);
   });
 });

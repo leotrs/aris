@@ -80,7 +80,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
             template: '<div class="file-item" data-testid="file-item">{{ modelValue.title }}</div>',
             props: ["modelValue", "mode"],
           },
-          // Don't stub Suspense - let it work naturally  
+          // Don't stub Suspense - let it work naturally
           ...overrides.stubs,
         },
       },
@@ -156,7 +156,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       // Should still render files container even with null files (empty array)
       const filesContainer = wrapper.find('[data-testid="files-container"]');
       expect(filesContainer.exists()).toBe(true);
-      
+
       // Should have no file items
       const fileItems = wrapper.findAll('[data-testid="file-item"]');
       expect(fileItems.length).toBe(0);
@@ -185,10 +185,10 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 100));
 
-      // All files should be rendered  
+      // All files should be rendered
       const filesContainer = wrapper.find('[data-testid="files-container"]');
       expect(filesContainer.exists()).toBe(true);
-      
+
       // Should render the correct number of file items
       const fileItems = wrapper.findAll('[data-testid="file-item"]');
       expect(fileItems.length).toBe(20);
