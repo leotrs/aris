@@ -91,7 +91,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       // Check if we can find the files container or loading state
       await nextTick();
-      
+
       // Check that the component renders some basic structure
       const filesWrapper = wrapper.find(".files-wrapper");
       expect(filesWrapper.exists()).toBe(true);
