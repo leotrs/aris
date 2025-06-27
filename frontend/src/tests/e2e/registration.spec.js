@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Registration Flow Tests", () => {
+test.describe("Registration Flow Tests @auth", () => {
   let authHelpers;
   let timestamp;
 

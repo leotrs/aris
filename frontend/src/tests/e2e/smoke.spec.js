@@ -1,6 +1,8 @@
 import { test, expect } from "@playwright/test";
 
-test("homepage loads successfully", async ({ page }) => {
-  await page.goto("/");
-  await expect(page).toHaveTitle(/Aris/);
+test.describe("Smoke Tests @standard", () => {
+  test("homepage loads successfully", async ({ page }) => {
+    await page.goto("/");
+    await expect(page).toHaveTitle(/Aris/);
+  });
 });

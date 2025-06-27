@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Demo Workspace Functionality", () => {
+test.describe("Demo Workspace Functionality @demo", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
@@ -159,30 +159,26 @@ test.describe("Demo Workspace Functionality", () => {
       }
     });
 
-    test(
-      "editor and manuscript view work together in split mode",
-      { tag: "@desktop-only" },
-      async ({ page }) => {
-        // Open editor
-        const editorButton = page
-          .locator('button:has-text("editor"), [data-testid*="editor"]')
-          .first();
+    test("editor and manuscript view work together in split mode", async ({ page }) => {
+      // Open editor
+      const editorButton = page
+        .locator('button:has-text("editor"), [data-testid*="editor"]')
+        .first();
 
-        if ((await editorButton.count()) > 0) {
-          await editorButton.click();
-          // Wait for editor to load instead of 1s timeout
+      if ((await editorButton.count()) > 0) {
+        await editorButton.click();
+        // Wait for editor to load instead of 1s timeout
 
-          // Both editor and manuscript should be visible in desktop mode
-          const editor = page.locator('[data-testid="workspace-editor"]');
-          const manuscript = page.locator('[data-testid="manuscript-container"]');
+        // Both editor and manuscript should be visible in desktop mode
+        const editor = page.locator('[data-testid="workspace-editor"]');
+        const manuscript = page.locator('[data-testid="manuscript-container"]');
 
-          if ((await editor.count()) > 0 && (await manuscript.count()) > 0) {
-            await expect(editor).toBeVisible();
-            await expect(manuscript).toBeVisible();
-          }
+        if ((await editor.count()) > 0 && (await manuscript.count()) > 0) {
+          await expect(editor).toBeVisible();
+          await expect(manuscript).toBeVisible();
         }
       }
-    );
+    });
 
     test("mobile responsive behavior (editor takes priority)", async ({ page }) => {
       // Set mobile viewport
@@ -217,7 +213,7 @@ test.describe("Demo Workspace Functionality", () => {
   });
 
   test.describe("Focus Mode", () => {
-    test("can toggle focus mode with 'c' key", { tag: "@desktop-only" }, async ({ page }) => {
+    test("can toggle focus mode with 'c' key", async ({ page }) => {
       // Ensure demo content is loaded and focused
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
@@ -248,7 +244,7 @@ test.describe("Demo Workspace Functionality", () => {
       await expect(banner).toBeVisible();
     });
 
-    test("focus mode hides sidebar and banner", { tag: "@desktop-only" }, async ({ page }) => {
+    test("focus mode hides sidebar and banner", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -276,7 +272,7 @@ test.describe("Demo Workspace Functionality", () => {
       }
     });
 
-    test("can exit focus mode", { tag: "@desktop-only" }, async ({ page }) => {
+    test("can exit focus mode", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -298,7 +294,7 @@ test.describe("Demo Workspace Functionality", () => {
       expect(hasFocusClass).toBe(false);
     });
 
-    test("responsive layout in focus mode", { tag: "@desktop-only" }, async ({ page }) => {
+    test("responsive layout in focus mode", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -318,25 +314,21 @@ test.describe("Demo Workspace Functionality", () => {
   });
 
   test.describe("Keyboard Navigation", () => {
-    test(
-      "keyboard focus management works correctly",
-      { tag: "@desktop-only" },
-      async ({ page }) => {
-        await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
-          timeout: 10000,
-        });
+    test("keyboard focus management works correctly", async ({ page }) => {
+      await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
+        timeout: 10000,
+      });
 
-        // Tab through interactive elements
-        await page.keyboard.press("Tab");
-        // Removed timeout for speed
+      // Tab through interactive elements
+      await page.keyboard.press("Tab");
+      // Removed timeout for speed
 
-        // Check that focus is managed properly
-        const focusedElement = await page.evaluate(() => document.activeElement?.tagName);
-        expect(typeof focusedElement).toBe("string");
-      }
-    );
+      // Check that focus is managed properly
+      const focusedElement = await page.evaluate(() => document.activeElement?.tagName);
+      expect(typeof focusedElement).toBe("string");
+    });
 
-    test("keyboard shortcuts work throughout demo", { tag: "@desktop-only" }, async ({ page }) => {
+    test("keyboard shortcuts work throughout demo", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -352,7 +344,7 @@ test.describe("Demo Workspace Functionality", () => {
       expect(typeof hasFocusClass).toBe("boolean");
     });
 
-    test("can navigate with arrow keys", { tag: "@desktop-only" }, async ({ page }) => {
+    test("can navigate with arrow keys", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -431,7 +423,7 @@ test.describe("Demo Workspace Functionality", () => {
   });
 
   test.describe("Content Interaction", () => {
-    test("can interact with RSM handrails", { tag: "@desktop-only" }, async ({ page }) => {
+    test("can interact with RSM handrails", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
       });

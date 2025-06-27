@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Demo Annotations Viewport", () => {
+test.describe("Demo Annotations Viewport @demo", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/demo", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
