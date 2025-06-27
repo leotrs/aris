@@ -1,15 +1,66 @@
 <script setup>
   import { ref, reactive, inject, watch, watchEffect, nextTick, computed } from "vue";
 
+  /**
+   * MultiSelectTags - Advanced tag selection dropdown
+   *
+   * A comprehensive tag management component that provides a dropdown interface for selecting,
+   * deselecting, and creating tags. Supports both file-specific tagging and filter contexts
+   * with reactive state management and tag creation capabilities.
+   *
+   * Features:
+   * - Multi-select tag interface with checkboxes
+   * - Real-time tag creation with inline editing
+   * - File-specific tagging or filter context mode
+   * - Reactive state synchronization with store
+   * - Tag color management and visual feedback
+   * - Accessible dropdown menu with keyboard navigation
+   *
+   * @displayName MultiSelectTags
+   * @example
+   * // File-specific tagging
+   * <MultiSelectTags
+   *   :file="currentFile"
+   *   v-model="selectedTags"
+   * />
+   *
+   * @example
+   * // Filter context (no file)
+   * <MultiSelectTags
+   *   v-model="filterTags"
+   *   icon="Filter"
+   * />
+   *
+   * @example
+   * // Custom trigger icon
+   * <MultiSelectTags
+   *   :file="document"
+   *   v-model="documentTags"
+   *   icon="Hash"
+   * />
+   */
+
   defineOptions({
     name: "MultiSelectTags",
   });
 
   const props = defineProps({
+    /**
+     * File object to associate tags with (null for filter context)
+     * @example { id: 123, name: "document.pdf", tags: [...] }
+     */
     file: { type: Object, default: null },
+    /**
+     * Icon for the trigger button
+     * @values "Tag", "Filter", "Hash", "Bookmark"
+     */
     icon: { type: String, default: "Tag" },
   });
 
+  /**
+   * Array of currently selected tags (v-model)
+   * @example [{ id: 1, name: "frontend", color: "blue" }, { id: 2, name: "urgent", color: "red" }]
+   */
   const tags = defineModel({ type: Array });
   const fileStore = inject("fileStore");
   const state = reactive({ tagIsAssigned: [] });

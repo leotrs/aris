@@ -1,10 +1,61 @@
 <script setup>
   import {} from "vue";
 
+  /**
+   * AnnotationInputBox - Expandable annotation input component
+   *
+   * A specialized input component for creating annotations with expandable states
+   * and integrated action buttons. Features a compact default state that can expand
+   * to show additional editing controls.
+   *
+   * Features:
+   * - Two states: compact and expanded
+   * - Integrated send and edit buttons
+   * - Enter key submission
+   * - Placeholder text for guidance
+   * - Responsive sizing based on state
+   *
+   * @displayName AnnotationInputBox
+   * @example
+   * // Basic usage
+   * <AnnotationInputBox
+   *   v-model="annotationText"
+   *   @submit="handleSubmit"
+   * />
+   *
+   * @example
+   * // Expanded state
+   * <AnnotationInputBox
+   *   v-model="annotationText"
+   *   :expanded="true"
+   *   @submit="handleSubmit"
+   * />
+   *
+   * @example
+   * // Compact state
+   * <AnnotationInputBox
+   *   v-model="annotationText"
+   *   :expanded="false"
+   *   @submit="handleSubmit"
+   * />
+   */
+
   const props = defineProps({
+    /**
+     * Whether the input is in expanded state (shows edit button)
+     */
     expanded: { type: Boolean, default: true },
   });
+
+  /**
+   * Events emitted by the component
+   * @event submit - Emitted when text is submitted (Enter key or send button)
+   */
   const emit = defineEmits(["submit"]);
+
+  /**
+   * The annotation text content (v-model)
+   */
   const value = defineModel({ type: String, default: "" });
 
   const onSubmit = () => {
