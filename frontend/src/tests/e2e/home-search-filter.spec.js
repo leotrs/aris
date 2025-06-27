@@ -3,7 +3,7 @@ import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 import { TEST_CREDENTIALS } from "./setup/test-data.js";
 
-test.describe("Home View Search & Filter", () => {
+test.describe("Home View Search & Filter @desktop-only", () => {
   let authHelpers, fileHelpers;
 
   test.beforeEach(async ({ page }) => {
@@ -52,7 +52,7 @@ test.describe("Home View Search & Filter", () => {
     }
   });
 
-  test("search keyboard shortcut opens search", { tag: "@desktop-only" }, async ({ page }) => {
+  test("search keyboard shortcut opens search", async ({ page }) => {
     // Test search shortcut
     await page.keyboard.press("/");
 
@@ -65,30 +65,26 @@ test.describe("Home View Search & Filter", () => {
     }
   });
 
-  test(
-    "file list remains functional with search functionality",
-    { tag: "@desktop-only" },
-    async ({ page }) => {
-      const filesContainer = page.locator('[data-testid="files-container"]');
-      await expect(filesContainer).toBeVisible();
+  test("file list remains functional with search functionality", async ({ page }) => {
+    const filesContainer = page.locator('[data-testid="files-container"]');
+    await expect(filesContainer).toBeVisible();
 
-      // Files should be visible
-      const fileItems = page.locator('[data-testid^="file-item-"]');
-      if ((await fileItems.count()) > 0) {
-        const firstFile = fileItems.first();
-        await expect(firstFile).toBeVisible();
+    // Files should be visible
+    const fileItems = page.locator('[data-testid^="file-item-"]');
+    if ((await fileItems.count()) > 0) {
+      const firstFile = fileItems.first();
+      await expect(firstFile).toBeVisible();
 
-        // Should be able to interact with files
-        await firstFile.click();
-        await page.waitForTimeout(200); // Wait for reactivity
+      // Should be able to interact with files
+      await firstFile.click();
+      await page.waitForTimeout(200); // Wait for reactivity
 
-        // Check for selection state (may be active, hovered, or other indicator)
-        try {
-          await expect(firstFile).toHaveClass(/active/);
-        } catch {
-          await expect(firstFile).toHaveClass(/hovered|selected|focused/);
-        }
+      // Check for selection state (may be active, hovered, or other indicator)
+      try {
+        await expect(firstFile).toHaveClass(/active/);
+      } catch {
+        await expect(firstFile).toHaveClass(/hovered|selected|focused/);
       }
     }
-  );
+  });
 });

@@ -3,7 +3,7 @@ import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 import { TEST_CREDENTIALS } from "./setup/test-data.js";
 
-test.describe("Home View Navigation & Keyboard", () => {
+test.describe("Home View Navigation & Keyboard @desktop-only", () => {
   let authHelpers, fileHelpers;
 
   test.beforeEach(async ({ page }) => {
@@ -96,7 +96,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     await expect(files[0]).not.toHaveClass(/focused/);
   });
 
-  test("enter key opens focused file", { tag: "@desktop-only" }, async ({ page }) => {
+  test("enter key opens focused file", async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
@@ -110,7 +110,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     expect(page.url()).toContain("/file/");
   });
 
-  test("space key opens focused file", { tag: "@desktop-only" }, async ({ page }) => {
+  test("space key opens focused file", async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
@@ -175,7 +175,7 @@ test.describe("Home View Navigation & Keyboard", () => {
     }
   );
 
-  test("search shortcut / focuses search input", { tag: "@desktop-only" }, async ({ page }) => {
+  test("search shortcut / focuses search input", async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
