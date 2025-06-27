@@ -108,7 +108,8 @@ describe("NavBar Component", () => {
       wrapper = mount(NavBar);
 
       const dropdownMenu = wrapper.find(".dropdown-menu");
-      expect(dropdownMenu.exists()).toBe(false);
+      expect(dropdownMenu.exists()).toBe(true);
+      expect(dropdownMenu.isVisible()).toBe(false);
     });
 
     it("should show dropdown menu on hover", async () => {
@@ -118,7 +119,7 @@ describe("NavBar Component", () => {
       await dropdownContainer.trigger("mouseenter");
 
       const dropdownMenu = wrapper.find(".dropdown-menu");
-      expect(dropdownMenu.exists()).toBe(true);
+      expect(dropdownMenu.isVisible()).toBe(true);
 
       const docLink = wrapper.find('a[href="/documentation"]');
       const blogLink = wrapper.find('a[href="/blog"]');
@@ -133,10 +134,10 @@ describe("NavBar Component", () => {
 
       const dropdownContainer = wrapper.find(".has-dropdown");
       await dropdownContainer.trigger("mouseenter");
-      expect(wrapper.find(".dropdown-menu").exists()).toBe(true);
+      expect(wrapper.find(".dropdown-menu").isVisible()).toBe(true);
 
       await dropdownContainer.trigger("mouseleave");
-      expect(wrapper.find(".dropdown-menu").exists()).toBe(false);
+      expect(wrapper.find(".dropdown-menu").attributes("style")).toBe("display: none;");
     });
 
     it("should toggle dropdown on click", async () => {
@@ -145,10 +146,10 @@ describe("NavBar Component", () => {
       const dropdownToggle = wrapper.find(".dropdown-toggle");
       await dropdownToggle.trigger("click");
 
-      expect(wrapper.find(".dropdown-menu").exists()).toBe(true);
+      expect(wrapper.find(".dropdown-menu").isVisible()).toBe(true);
 
       await dropdownToggle.trigger("click");
-      expect(wrapper.find(".dropdown-menu").exists()).toBe(false);
+      expect(wrapper.find(".dropdown-menu").attributes("style")).toBe("display: none;");
     });
 
     it("should toggle dropdown on Enter key", async () => {
@@ -157,7 +158,7 @@ describe("NavBar Component", () => {
       const dropdownToggle = wrapper.find(".dropdown-toggle");
       await dropdownToggle.trigger("keydown.enter");
 
-      expect(wrapper.find(".dropdown-menu").exists()).toBe(true);
+      expect(wrapper.find(".dropdown-menu").isVisible()).toBe(true);
     });
 
     it("should toggle dropdown on Space key", async () => {
@@ -166,7 +167,7 @@ describe("NavBar Component", () => {
       const dropdownToggle = wrapper.find(".dropdown-toggle");
       await dropdownToggle.trigger("keydown.space");
 
-      expect(wrapper.find(".dropdown-menu").exists()).toBe(true);
+      expect(wrapper.find(".dropdown-menu").isVisible()).toBe(true);
     });
 
     it("should close dropdown on Escape key", async () => {
@@ -174,10 +175,10 @@ describe("NavBar Component", () => {
 
       const dropdownToggle = wrapper.find(".dropdown-toggle");
       await dropdownToggle.trigger("click");
-      expect(wrapper.find(".dropdown-menu").exists()).toBe(true);
+      expect(wrapper.find(".dropdown-menu").isVisible()).toBe(true);
 
       await dropdownToggle.trigger("keydown.escape");
-      expect(wrapper.find(".dropdown-menu").exists()).toBe(false);
+      expect(wrapper.find(".dropdown-menu").attributes("style")).toBe("display: none;");
     });
   });
 
