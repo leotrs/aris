@@ -76,7 +76,7 @@
   <div class="settings">
     <Pane>
       <template v-if="header" #header>File Settings</template>
-      <Section>
+      <Section variant="enhanced" theme="purple">
         <template #title>Colors</template>
         <template #content>
           <div class="row theme">
@@ -94,7 +94,7 @@
         </template>
       </Section>
 
-      <Section>
+      <Section variant="enhanced" theme="purple">
         <template #title>Font</template>
         <template #content>
           <div class="row size">
@@ -135,7 +135,7 @@
         </template>
       </Section>
 
-      <Section>
+      <Section variant="enhanced" theme="purple">
         <template #title>Layout</template>
         <template #content>
           <div class="row">
@@ -180,10 +180,6 @@
     color: var(--purple-900);
   }
 
-  :deep(.title) {
-    background-color: var(--purple-50) !important;
-    color: var(--purple-900);
-  }
 
   .buttons {
     display: flex;
