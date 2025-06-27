@@ -43,14 +43,6 @@ show_logs() {
 echo "Waiting for backend server..."
 timeout 90 bash -c 'until curl -f http://localhost:8000/health >/dev/null 2>&1; do 
     echo "Backend not ready, waiting..."; 
-    
-    # Check if backend process is still running
-    if ! check_process "backend/backend.pid" "Backend"; then
-        echo "Backend process died! Checking logs:"
-        show_logs "backend/backend.log" "Backend"
-        exit 1
-    fi
-    
     sleep 3; 
 done' || {
     echo "Backend health check timed out or failed"
@@ -70,14 +62,6 @@ echo "Backend server is ready!"
 echo "Waiting for frontend server..."
 timeout 90 bash -c 'until curl -f http://localhost:5173 >/dev/null 2>&1; do 
     echo "Frontend not ready, waiting..."; 
-    
-    # Check if frontend process is still running
-    if ! check_process "frontend/frontend.pid" "Frontend"; then
-        echo "Frontend process died! Checking logs:"
-        show_logs "frontend/frontend.log" "Frontend"
-        exit 1
-    fi
-    
     sleep 3; 
 done' || {
     echo "Frontend health check timed out or failed"
