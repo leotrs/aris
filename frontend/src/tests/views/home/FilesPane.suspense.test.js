@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { ref, nextTick, Suspense } from "vue";
+import { ref, nextTick } from "vue";
 import FilesPane from "@/views/home/FilesPane.vue";
 
 // Mock useListKeyboardNavigation

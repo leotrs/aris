@@ -3,7 +3,6 @@ import { getLogger } from "@/utils/logger.js";
 
 describe("Logger", () => {
   let consoleSpy;
-  let originalEnv;
 
   beforeEach(() => {
     consoleSpy = {
