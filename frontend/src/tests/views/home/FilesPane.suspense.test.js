@@ -17,28 +17,28 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
   beforeEach(() => {
     mockFileStore = ref({
       files: [
-        { 
-          id: "1", 
-          title: "File 1", 
-          filtered: false, 
+        {
+          id: "1",
+          title: "File 1",
+          filtered: false,
           focused: false,
           last_edited_at: "2023-12-01T10:30:00Z",
           getFormattedDate: vi.fn(() => "Dec 1, 2023"),
           getFullDateTime: vi.fn(() => "December 1, 2023 at 10:30 AM"),
         },
-        { 
-          id: "2", 
-          title: "File 2", 
-          filtered: false, 
+        {
+          id: "2",
+          title: "File 2",
+          filtered: false,
           focused: false,
           last_edited_at: "2023-12-02T11:30:00Z",
           getFormattedDate: vi.fn(() => "Dec 2, 2023"),
           getFullDateTime: vi.fn(() => "December 2, 2023 at 11:30 AM"),
         },
-        { 
-          id: "3", 
-          title: "File 3", 
-          filtered: true, 
+        {
+          id: "3",
+          title: "File 3",
+          filtered: true,
           focused: false,
           last_edited_at: "2023-12-03T12:30:00Z",
           getFormattedDate: vi.fn(() => "Dec 3, 2023"),
@@ -117,15 +117,17 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       expect(filesContainer.exists()).toBe(true);
 
       // Update file store to trigger re-render
-      mockFileStore.value.files = [{ 
-        id: "4", 
-        title: "New File", 
-        filtered: false, 
-        focused: false,
-        last_edited_at: "2023-12-04T13:30:00Z",
-        getFormattedDate: vi.fn(() => "Dec 4, 2023"),
-        getFullDateTime: vi.fn(() => "December 4, 2023 at 1:30 PM"),
-      }];
+      mockFileStore.value.files = [
+        {
+          id: "4",
+          title: "New File",
+          filtered: false,
+          focused: false,
+          last_edited_at: "2023-12-04T13:30:00Z",
+          getFormattedDate: vi.fn(() => "Dec 4, 2023"),
+          getFullDateTime: vi.fn(() => "December 4, 2023 at 1:30 PM"),
+        },
+      ];
 
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -194,12 +196,12 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       // Rapid updates to test Suspense stability
       for (let i = 0; i < 5; i++) {
         mockFileStore.value.files = [
-          { 
-            id: `rapid-${i}`, 
-            title: `Rapid File ${i}`, 
-            filtered: false, 
+          {
+            id: `rapid-${i}`,
+            title: `Rapid File ${i}`,
+            filtered: false,
             focused: false,
-            last_edited_at: `2023-12-${i.toString().padStart(2, '0')}T14:30:00Z`,
+            last_edited_at: `2023-12-${i.toString().padStart(2, "0")}T14:30:00Z`,
             getFormattedDate: vi.fn(() => `Dec ${i}, 2023`),
             getFullDateTime: vi.fn(() => `December ${i}, 2023 at 2:30 PM`),
           },
@@ -224,7 +226,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
           fileStore: ref({
             files: [
               // Missing required properties to potentially trigger errors
-              { 
+              {
                 id: "error-file",
                 title: "Error File",
                 filtered: false,
@@ -255,10 +257,10 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       await nextTick();
 
       mockFileStore.value.files = [
-        { 
-          id: "recovery", 
-          title: "Recovery File", 
-          filtered: false, 
+        {
+          id: "recovery",
+          title: "Recovery File",
+          filtered: false,
           focused: false,
           last_edited_at: "2023-12-06T16:30:00Z",
           getFormattedDate: vi.fn(() => "Dec 6, 2023"),
@@ -368,19 +370,19 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       // Replace files completely
       mockFileStore.value.files = [
-        { 
-          id: "new-1", 
-          title: "New File 1", 
-          filtered: false, 
+        {
+          id: "new-1",
+          title: "New File 1",
+          filtered: false,
           focused: false,
           last_edited_at: "2023-12-07T17:30:00Z",
           getFormattedDate: vi.fn(() => "Dec 7, 2023"),
           getFullDateTime: vi.fn(() => "December 7, 2023 at 5:30 PM"),
         },
-        { 
-          id: "new-2", 
-          title: "New File 2", 
-          filtered: false, 
+        {
+          id: "new-2",
+          title: "New File 2",
+          filtered: false,
           focused: false,
           last_edited_at: "2023-12-08T18:30:00Z",
           getFormattedDate: vi.fn(() => "Dec 8, 2023"),

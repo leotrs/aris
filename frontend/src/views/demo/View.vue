@@ -125,22 +125,22 @@
     >
       <Sidebar @show-component="showComponent" @hide-component="hideComponent" />
 
-      <!-- Demo state -->
-      <div class="outer workspace-container" :class="{ focus: focusMode, mobile: mobileMode }">
-        <div v-if="!isContentLoaded" class="demo-loading" data-testid="demo-canvas">
-          <div class="loading-content">
-            <div class="loading-spinner"></div>
-            <p>Loading demo workspace...</p>
-          </div>
+      <!-- Demo loading state -->
+      <div v-if="!isContentLoaded" class="demo-loading" data-testid="demo-canvas">
+        <div class="loading-content">
+          <div class="loading-spinner"></div>
+          <p>Loading demo workspace...</p>
         </div>
-        <Canvas
-          v-else
-          v-model="demoFileReactive"
-          data-testid="demo-canvas"
-          :show-editor="showEditor"
-          :show-search="showSearch"
-        />
       </div>
+
+      <!-- Demo canvas -->
+      <Canvas
+        v-else
+        v-model="demoFileReactive"
+        data-testid="demo-canvas"
+        :show-editor="showEditor"
+        :show-search="showSearch"
+      />
     </div>
   </div>
 </template>
@@ -185,6 +185,15 @@
     border-bottom: 1px solid var(--border-primary);
     padding: 8px 16px;
     z-index: 1000;
+    position: relative;
+    flex-shrink: 0;
+    height: 40px;
+    box-sizing: border-box;
+  }
+
+  /* Push sidebar down to account for demo banner */
+  .demo-view :deep(.sb-wrapper) {
+    top: 56px;
   }
 
   .demo-banner-content {
@@ -207,14 +216,6 @@
     text-decoration: underline;
   }
 
-  .outer {
-    width: calc(100vw - 128px);
-    max-width: calc(100vw - 128px);
-    position: relative;
-    left: 64px;
-    overflow-x: hidden;
-  }
-
   /* Fix demo banner to stay within viewport */
   .demo-banner {
     width: 100vw !important;
@@ -235,23 +236,6 @@
 
   .demo-link {
     flex-shrink: 0;
-  }
-
-  /* Force manuscript content to wrap and not expand horizontally */
-  .outer :deep(.rsm-manuscript) {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-    word-wrap: break-word !important;
-  }
-
-  .outer :deep(.inner) {
-    max-width: 100% !important;
-    overflow-x: hidden !important;
-  }
-
-  .view.mobile > .outer {
-    width: 100%;
-    left: 0;
   }
 
   .demo-loading {
