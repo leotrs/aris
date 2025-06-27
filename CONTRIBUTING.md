@@ -109,7 +109,6 @@ If you're working on multiple features or need to compare different branches:
    ```
 
    **Important**: Always use the `-p` flag with a unique project name to prevent clones from interfering with each other.
-
 ### Branch Strategy
 
 - **`main`** - Production-ready code
