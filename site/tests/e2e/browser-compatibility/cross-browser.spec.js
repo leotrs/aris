@@ -59,8 +59,9 @@ test.describe("Cross-Browser Compatibility", () => {
     test("should handle navigation correctly in all browsers", async ({ page, browserName }) => {
       await page.goto("/");
 
-      // Check if this is a mobile browser
-      const isMobile = browserName.includes("Mobile");
+      // Check if this is a mobile viewport (based on responsive breakpoint - sm: 640px)
+      const viewport = page.viewportSize();
+      const isMobile = viewport.width <= 640;
 
       if (isMobile) {
         // Mobile navigation: use mobile menu
@@ -189,8 +190,9 @@ test.describe("Cross-Browser Compatibility", () => {
     test("should handle interactive features across browsers", async ({ page, browserName }) => {
       await page.goto("/");
 
-      // Check if this is a mobile browser
-      const isMobile = browserName.includes("Mobile");
+      // Check if this is a mobile viewport (based on responsive breakpoint - sm: 640px)
+      const viewport = page.viewportSize();
+      const isMobile = viewport.width <= 640;
 
       if (isMobile) {
         // Mobile: Test mobile menu functionality

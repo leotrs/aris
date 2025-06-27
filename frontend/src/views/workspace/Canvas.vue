@@ -104,7 +104,7 @@
   watch(
     () => [file.value, manuscriptRef.value],
     async () => {
-      if (!file.value || !manuscriptRef.value) return;
+      if (!file.value || !manuscriptRef.value || !manuscriptRef.value.$el) return;
       tearDown();
 
       const mainTitle = manuscriptRef.value.$el.querySelector("section.level-1 > .heading.hr");
