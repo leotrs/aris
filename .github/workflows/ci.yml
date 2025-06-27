@@ -198,6 +198,7 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
@@ -208,6 +209,17 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Debug job conditions
+      run: |
+        echo "=== E2E Test Job Conditions Debug ==="
+        echo "Backend test result: ${{ needs.backend-test.result }}"
+        echo "Frontend test result: ${{ needs.frontend-test.result }}"
+        echo "Site test result: ${{ needs.site-test.result }}"
+        echo "Backend changes: ${{ needs.changes.outputs.backend }}"
+        echo "Frontend changes: ${{ needs.changes.outputs.frontend }}"
+        echo "Site changes: ${{ needs.changes.outputs.site }}"
+        echo "====================================="
 
     # Backend setup
     - name: Install uv
@@ -255,23 +267,45 @@ jobs:
     # Start servers and run E2E tests
     - name: Start backend server
       working-directory: backend
-      run: uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+      run: |
+        echo "Starting backend server..."
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 > backend.log 2>&1 &
+        echo $! > backend.pid
+        echo "Backend server started with PID $(cat backend.pid)"
 
     - name: Start frontend server
       working-directory: frontend
-      run: npm run dev -- --host 0.0.0.0 --port 5173 &
+      run: |
+        echo "Starting frontend server..."
+        npm run dev -- --host 0.0.0.0 --port 5173 > frontend.log 2>&1 &
+        echo $! > frontend.pid
+        echo "Frontend server started with PID $(cat frontend.pid)"
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     - name: Start marketing site server
       working-directory: site
-      run: npm run dev -- --host 0.0.0.0 --port 3000 &
+      run: |
+        echo "Starting marketing site server..."
+        npm run dev -- --host 0.0.0.0 --port 3000 > site.log 2>&1 &
+        echo $! > site.pid
+        echo "Marketing site server started with PID $(cat site.pid)"
 
     - name: Wait for servers to be ready
       run: |
-        timeout 60 bash -c 'until curl -f http://localhost:8000/health; do sleep 2; done'
-        timeout 60 bash -c 'until curl -f http://localhost:5173; do sleep 2; done'
-        timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
+        echo "Waiting for backend server..."
+        timeout 90 bash -c 'until curl -f http://localhost:8000/health; do echo "Backend not ready, waiting..."; sleep 3; done'
+        echo "Backend server is ready!"
+        
+        echo "Waiting for frontend server..."
+        timeout 90 bash -c 'until curl -f http://localhost:5173; do echo "Frontend not ready, waiting..."; sleep 3; done'
+        echo "Frontend server is ready!"
+        
+        echo "Waiting for marketing site server..."
+        timeout 90 bash -c 'until curl -f http://localhost:3000; do echo "Marketing site not ready, waiting..."; sleep 3; done'
+        echo "Marketing site server is ready!"
+        
+        echo "All servers are ready!"
 
     - name: Run Frontend E2E tests
       working-directory: frontend
