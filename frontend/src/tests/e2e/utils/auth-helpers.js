@@ -18,7 +18,7 @@ export class AuthHelpers {
 
     // Wait for either successful navigation away from login or error state
     try {
-      await this.page.waitForURL(url => !url.includes('/login'), { timeout: 8000 });
+      await this.page.waitForURL((url) => !url.includes("/login"), { timeout: 8000 });
       await this.page.waitForLoadState("domcontentloaded"); // Faster than networkidle
       console.log("Login successful - navigated away from login page");
     } catch (error) {
@@ -28,9 +28,13 @@ export class AuthHelpers {
       if (currentUrl.includes("/login")) {
         // Check if there's an error message on the page
         const errorElement = await this.page.locator('[data-testid="login-error"]').isVisible();
-        const errorText = errorElement ? await this.page.locator('[data-testid="login-error"]').textContent() : "No error message found";
-        
-        console.log(`Login attempt did not navigate away from login page. Error visible: ${errorElement}, Error text: ${errorText}`);
+        const errorText = errorElement
+          ? await this.page.locator('[data-testid="login-error"]').textContent()
+          : "No error message found";
+
+        console.log(
+          `Login attempt did not navigate away from login page. Error visible: ${errorElement}, Error text: ${errorText}`
+        );
         console.log(`Current URL: ${currentUrl}`);
       } else {
         // Some other navigation issue, re-throw the error
@@ -43,15 +47,21 @@ export class AuthHelpers {
     // Use test credentials from environment variables
     const testEmail = process.env.TEST_USER_EMAIL || "testuser@aris.pub";
     // In CI environment, use TEST_USER_PASSWORD, in dev use VITE_DEV_LOGIN_PASSWORD
-    const testPassword = (process.env.CI || process.env.ENV === "CI") 
-      ? process.env.TEST_USER_PASSWORD 
-      : process.env.VITE_DEV_LOGIN_PASSWORD;
-    
+    const testPassword =
+      process.env.CI || process.env.ENV === "CI"
+        ? process.env.TEST_USER_PASSWORD
+        : process.env.VITE_DEV_LOGIN_PASSWORD;
+
     if (!testPassword) {
-      const envVar = (process.env.CI || process.env.ENV === "CI") ? "TEST_USER_PASSWORD" : "VITE_DEV_LOGIN_PASSWORD";
-      throw new Error(`Test user password not configured. Required environment variable ${envVar} is missing.`);
+      const envVar =
+        process.env.CI || process.env.ENV === "CI"
+          ? "TEST_USER_PASSWORD"
+          : "VITE_DEV_LOGIN_PASSWORD";
+      throw new Error(
+        `Test user password not configured. Required environment variable ${envVar} is missing.`
+      );
     }
-    
+
     await this.login(testEmail, testPassword);
     await this.expectToBeLoggedIn();
   }
