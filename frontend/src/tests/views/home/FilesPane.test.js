@@ -17,9 +17,30 @@ describe("FilesPane.vue", () => {
   beforeEach(() => {
     mockFileStore = ref({
       files: [
-        { id: "1", title: "File 1", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
-        { id: "2", title: "File 2", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
-        { id: "3", title: "File 3", filtered: true, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" }, // filtered out
+        {
+          id: "1",
+          title: "File 1",
+          filtered: false,
+          focused: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+        },
+        {
+          id: "2",
+          title: "File 2",
+          filtered: false,
+          focused: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+        },
+        {
+          id: "3",
+          title: "File 3",
+          filtered: true,
+          focused: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+        }, // filtered out
       ],
     });
 
@@ -110,8 +131,18 @@ describe("FilesPane.vue", () => {
         provide: {
           fileStore: ref({
             files: [
-              { id: "1", filtered: true, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" }, // all files filtered
-              { id: "2", filtered: true, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
+              {
+                id: "1",
+                filtered: true,
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+              }, // all files filtered
+              {
+                id: "2",
+                filtered: true,
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+              },
             ],
           }),
         },

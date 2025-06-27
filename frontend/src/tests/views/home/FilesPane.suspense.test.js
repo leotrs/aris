@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import { ref, nextTick, Suspense } from "vue";
+import { ref, nextTick } from "vue";
 import FilesPane from "@/views/home/FilesPane.vue";
 
 // Mock useListKeyboardNavigation
@@ -76,9 +76,9 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       // Check if we can find the files container or loading state
       await nextTick();
-      
+
       // Check that the component renders some basic structure
-      const filesWrapper = wrapper.find('.files-wrapper');
+      const filesWrapper = wrapper.find(".files-wrapper");
       expect(filesWrapper.exists()).toBe(true);
 
       // Check if loading fallback appears
@@ -104,7 +104,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       // Should render correctly
       await nextTick();
-      const filesWrapper = wrapper.find('.files-wrapper');
+      const filesWrapper = wrapper.find(".files-wrapper");
       expect(filesWrapper.exists()).toBe(true);
 
       // Update file store to trigger re-render
@@ -118,14 +118,14 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
         getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
         tags: [],
       });
-      
+
       mockFileStore.value.files = [createMockFile("4", "New File", false, false)];
 
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Should handle the change gracefully
-      const filesWrapper2 = wrapper.find('.files-wrapper');
+      const filesWrapper2 = wrapper.find(".files-wrapper");
       expect(filesWrapper2.exists()).toBe(true);
     });
 
@@ -155,7 +155,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       // Should handle null files gracefully
       await nextTick();
-      const wrapper_el = wrapper.find('.files-wrapper');
+      const wrapper_el = wrapper.find(".files-wrapper");
       expect(wrapper_el.exists()).toBe(true);
     });
   });
@@ -184,7 +184,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       // All files should be rendered
       await nextTick();
-      const filesWrapper = wrapper.find('.files-wrapper');
+      const filesWrapper = wrapper.find(".files-wrapper");
       expect(filesWrapper.exists()).toBe(true);
     });
 
@@ -194,7 +194,15 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       // Rapid updates to test Suspense stability
       for (let i = 0; i < 5; i++) {
         mockFileStore.value.files = [
-          { id: `rapid-${i}`, title: `Rapid File ${i}`, filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
+          {
+            id: `rapid-${i}`,
+            title: `Rapid File ${i}`,
+            filtered: false,
+            focused: false,
+            getFormattedDate: () => "2 hours ago",
+            getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+            tags: [],
+          },
         ];
         await nextTick();
       }
@@ -216,7 +224,12 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
           fileStore: ref({
             files: [
               // Missing required properties to potentially trigger errors
-              { id: "error-file", getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
+              {
+                id: "error-file",
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+                tags: [],
+              },
             ],
           }),
         },
@@ -239,7 +252,15 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       await nextTick();
 
       mockFileStore.value.files = [
-        { id: "recovery", title: "Recovery File", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
+        {
+          id: "recovery",
+          title: "Recovery File",
+          filtered: false,
+          focused: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+          tags: [],
+        },
       ];
       await nextTick();
       await new Promise((resolve) => setTimeout(resolve, 0));
@@ -272,7 +293,7 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
       }
 
       // Check final state - should have files wrapper
-      const filesWrapper = wrapper.find('.files-wrapper');
+      const filesWrapper = wrapper.find(".files-wrapper");
       expect(filesWrapper.exists()).toBe(true);
     });
 
@@ -345,8 +366,24 @@ describe("FilesPane.vue - Suspense and Async Behavior", () => {
 
       // Replace files completely
       mockFileStore.value.files = [
-        { id: "new-1", title: "New File 1", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
-        { id: "new-2", title: "New File 2", filtered: false, focused: false, getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM", tags: [] },
+        {
+          id: "new-1",
+          title: "New File 1",
+          filtered: false,
+          focused: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+          tags: [],
+        },
+        {
+          id: "new-2",
+          title: "New File 2",
+          filtered: false,
+          focused: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
+          tags: [],
+        },
       ];
 
       await nextTick();
