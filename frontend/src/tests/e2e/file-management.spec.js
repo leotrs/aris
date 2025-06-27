@@ -18,13 +18,26 @@ test.describe("File Management Tests @standard", () => {
     const hasValidCredentials = TEST_CREDENTIALS.valid.password;
     test.skip(!hasValidCredentials, "Requires valid test credentials for file operations");
 
-    // Login with valid credentials
-    await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
+    // Use authentication bypass for @flaky tests, regular login for others
+    const testInfo = test.info();
+    const isFlaky = testInfo.tags.includes("@flaky");
+    
+    if (isFlaky) {
+      console.log("Using authentication bypass for @flaky test");
+      try {
+        await authHelpers.authenticateWithBypass();
+      } catch (error) {
+        test.skip(true, `Authentication bypass failed: ${error.message}`);
+      }
+    } else {
+      // Login with valid credentials for @standard tests
+      await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
 
-    try {
-      await authHelpers.expectToBeLoggedIn();
-    } catch {
-      test.skip(true, "Login failed - cannot test file operations");
+      try {
+        await authHelpers.expectToBeLoggedIn();
+      } catch {
+        test.skip(true, "Login failed - cannot test file operations");
+      }
     }
   });
 

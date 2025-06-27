@@ -3,6 +3,8 @@ import { expect } from "@playwright/test";
 export class AuthHelpers {
   constructor(page) {
     this.page = page;
+    // Cache for authentication tokens to avoid repeated API calls
+    this._cachedAuth = null;
   }
 
   async login(email, password) {
@@ -64,6 +66,61 @@ export class AuthHelpers {
 
     await this.login(testEmail, testPassword);
     await this.expectToBeLoggedIn();
+  }
+
+  /**
+   * Reliable authentication bypass for @flaky tests
+   * Gets valid tokens once and reuses them to avoid repeated login flows
+   */
+  async authenticateWithBypass() {
+    // If we have cached authentication, use it
+    if (this._cachedAuth) {
+      await this.setAuthState(
+        this._cachedAuth.accessToken,
+        this._cachedAuth.refreshToken,
+        this._cachedAuth.user
+      );
+      await this.page.reload({ waitUntil: "domcontentloaded" });
+      await this.expectToBeLoggedIn();
+      return;
+    }
+
+    // Get credentials
+    const testEmail = process.env.TEST_USER_EMAIL || "testuser@aris.pub";
+    const testPassword =
+      process.env.CI || process.env.ENV === "CI"
+        ? process.env.TEST_USER_PASSWORD
+        : process.env.VITE_DEV_LOGIN_PASSWORD;
+
+    if (!testPassword) {
+      const envVar =
+        process.env.CI || process.env.ENV === "CI"
+          ? "TEST_USER_PASSWORD"
+          : "VITE_DEV_LOGIN_PASSWORD";
+      throw new Error(
+        `Test user password not configured. Required environment variable ${envVar} is missing.`
+      );
+    }
+
+    // Perform one-time login to get tokens
+    try {
+      console.log("Performing one-time authentication to get tokens...");
+      await this.login(testEmail, testPassword);
+      await this.expectToBeLoggedIn();
+      
+      // Cache the authentication tokens
+      const tokens = await this.getStoredTokens();
+      this._cachedAuth = {
+        accessToken: tokens.accessToken,
+        refreshToken: tokens.refreshToken,
+        user: tokens.user
+      };
+      
+      console.log("Authentication tokens cached successfully");
+    } catch (error) {
+      console.error("Failed to get authentication tokens:", error);
+      throw new Error(`Authentication bypass failed: ${error.message}`);
+    }
   }
 
   async expectToBeLoggedIn() {
