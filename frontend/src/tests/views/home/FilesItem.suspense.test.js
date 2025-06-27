@@ -129,12 +129,6 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
         },
       },
     });
-
-    // Wait for async component to mount
-    await nextTick();
-    await new Promise((resolve) => setTimeout(resolve, 0));
-
-    return wrapper;
   };
 
   describe("Async Component Lifecycle", () => {
@@ -318,7 +312,7 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
       const fileItem = wrapper.find(".item");
       expect(fileItem.exists()).toBe(true);
       expect(fileItem.classes()).toContain("list");
-      
+
       // Loading fallback should be gone
       expect(wrapper.find('[data-testid="loading-fallback"]').exists()).toBe(false);
     });

@@ -1,25 +1,25 @@
-import AnnotationInputBox from './AnnotationInputBox.vue';
-import { action } from '@storybook/addon-actions';
-import { ref } from 'vue';
+import AnnotationInputBox from "./AnnotationInputBox.vue";
+import { action } from "@storybook/addon-actions";
+import { ref } from "vue";
 
 export default {
-  title: 'Annotations/AnnotationInputBox',
+  title: "Annotations/AnnotationInputBox",
   component: AnnotationInputBox,
-  tags: ['autodocs'],
+  tags: ["autodocs"],
   argTypes: {
     expanded: {
-      control: 'boolean',
-      description: 'Whether the input is in expanded state (shows edit button)',
+      control: "boolean",
+      description: "Whether the input is in expanded state (shows edit button)",
     },
     modelValue: {
-      control: 'text',
-      description: 'The annotation text content (v-model)',
+      control: "text",
+      description: "The annotation text content (v-model)",
     },
-    onSubmit: { action: 'submit' },
+    onSubmit: { action: "submit" },
   },
   args: {
     expanded: true,
-    modelValue: '',
+    modelValue: "",
   },
 };
 
@@ -40,7 +40,8 @@ export const Compact = {
 export const WithText = {
   args: {
     expanded: true,
-    modelValue: 'This is a sample annotation text that demonstrates how the input looks with content.',
+    modelValue:
+      "This is a sample annotation text that demonstrates how the input looks with content.",
   },
 };
 
@@ -48,9 +49,9 @@ export const StateComparison = {
   render: () => ({
     components: { AnnotationInputBox },
     setup() {
-      const expandedText = ref('Expanded annotation with edit button');
-      const compactText = ref('Compact annotation input');
-      
+      const expandedText = ref("Expanded annotation with edit button");
+      const compactText = ref("Compact annotation input");
+
       return { expandedText, compactText };
     },
     template: `
@@ -83,10 +84,10 @@ export const InteractiveDemo = {
   render: () => ({
     components: { AnnotationInputBox },
     setup() {
-      const annotationText = ref('');
+      const annotationText = ref("");
       const isExpanded = ref(true);
       const submittedAnnotations = ref([]);
-      
+
       const handleSubmit = (text) => {
         if (text.trim()) {
           submittedAnnotations.value.unshift({
@@ -94,15 +95,15 @@ export const InteractiveDemo = {
             text: text,
             timestamp: new Date().toLocaleTimeString(),
           });
-          annotationText.value = '';
-          action('submit')(text);
+          annotationText.value = "";
+          action("submit")(text);
         }
       };
-      
+
       const clearAnnotations = () => {
         submittedAnnotations.value = [];
       };
-      
+
       return {
         annotationText,
         isExpanded,
@@ -165,15 +166,15 @@ export const KeyboardInteraction = {
   render: () => ({
     components: { AnnotationInputBox },
     setup() {
-      const annotationText = ref('');
-      const lastAction = ref('');
-      
+      const annotationText = ref("");
+      const lastAction = ref("");
+
       const handleSubmit = (text) => {
         lastAction.value = `Submitted: "${text}" at ${new Date().toLocaleTimeString()}`;
-        action('submit')(text);
-        annotationText.value = '';
+        action("submit")(text);
+        annotationText.value = "";
       };
-      
+
       return {
         annotationText,
         lastAction,
@@ -210,10 +211,12 @@ export const DifferentContent = {
   render: () => ({
     components: { AnnotationInputBox },
     setup() {
-      const shortText = ref('Short note');
-      const longText = ref('This is a much longer annotation that demonstrates how the input box handles text that extends beyond the normal width and might wrap to multiple lines in some contexts.');
-      const emptyText = ref('');
-      
+      const shortText = ref("Short note");
+      const longText = ref(
+        "This is a much longer annotation that demonstrates how the input box handles text that extends beyond the normal width and might wrap to multiple lines in some contexts."
+      );
+      const emptyText = ref("");
+
       return { shortText, longText, emptyText };
     },
     template: `

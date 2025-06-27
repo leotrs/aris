@@ -180,7 +180,6 @@
     color: var(--purple-900);
   }
 
-
   .buttons {
     display: flex;
     justify-content: flex-end;
