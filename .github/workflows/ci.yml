@@ -597,7 +597,7 @@ jobs:
     - name: Wait for servers to be ready
       run: ./.github/scripts/wait-for-servers.sh
 
-    - name: Run Standard E2E tests (no auth required)
+    - name: Run Standard E2E tests
       working-directory: frontend
       run: ../.github/scripts/run-e2e-tests.sh 'npm run test:e2e -- --grep "@standard"'
       env:
