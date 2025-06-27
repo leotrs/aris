@@ -39,6 +39,8 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
       selected: false,
       focused: false,
       lastModified: new Date().toISOString(),
+      getFormattedDate: () => "2 hours ago",
+      getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
       tags: [
         { id: "tag1", name: "research", color: "#blue" },
         { id: "tag2", name: "biology", color: "#green" },
@@ -333,9 +335,9 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
         data() {
           return {
             files: [
-              { ...mockFile.value, id: "file-1" },
-              { ...mockFile.value, id: "file-2" },
-              { ...mockFile.value, id: "file-3" },
+              { ...mockFile.value, id: "file-1", getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
+              { ...mockFile.value, id: "file-2", getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
+              { ...mockFile.value, id: "file-3", getFormattedDate: () => "2 hours ago", getFullDateTime: () => "December 27, 2024 at 8:33:46 AM" },
             ],
           };
         },

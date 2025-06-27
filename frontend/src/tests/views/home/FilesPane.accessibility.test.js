@@ -23,6 +23,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
           filtered: false,
           focused: false,
           selected: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
           tags: [{ id: "tag1", name: "research" }],
         },
         {
@@ -31,6 +33,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
           filtered: false,
           focused: false,
           selected: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
           tags: [{ id: "tag2", name: "biology" }],
         },
         {
@@ -39,6 +43,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
           filtered: true,
           focused: false,
           selected: false,
+          getFormattedDate: () => "2 hours ago",
+          getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
           tags: [],
         },
       ],
@@ -172,6 +178,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
                 title: "No Tags File",
                 filtered: false,
                 focused: false,
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
                 tags: [],
               },
             ],
@@ -388,6 +396,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
         title: "New File",
         filtered: false,
         focused: false,
+        getFormattedDate: () => "2 hours ago",
+        getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
         tags: [],
       });
 
@@ -524,6 +534,8 @@ describe("FilesPane.vue - Accessibility Features", () => {
                 title: undefined,
                 filtered: false,
                 focused: false,
+                getFormattedDate: () => "2 hours ago",
+                getFullDateTime: () => "December 27, 2024 at 8:33:46 AM",
                 tags: null,
               },
             ],
