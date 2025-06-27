@@ -117,8 +117,14 @@ describe("Demo View", () => {
       wrapper = mount(DemoView);
       await nextTick();
 
-      // Canvas is rendered with data-testid="workspace-canvas"
-      const canvas = wrapper.find('[data-testid="workspace-canvas"]');
+      // Wait for content to load
+      await vi.waitFor(() => {
+        return wrapper.vm.isContentLoaded;
+      });
+      await nextTick();
+
+      // Canvas is rendered with data-testid="demo-canvas"
+      const canvas = wrapper.find('[data-testid="demo-canvas"]');
       expect(canvas.exists()).toBe(true);
     });
 
@@ -181,6 +187,12 @@ describe("Demo View", () => {
       wrapper = mount(DemoView);
       await nextTick();
 
+      // Wait for content to load
+      await vi.waitFor(() => {
+        return wrapper.vm.isContentLoaded;
+      });
+      await nextTick();
+
       const sidebar = wrapper.findComponent({ name: "Sidebar" });
       await sidebar.vm.$emit("show-component", "DockableEditor");
 
@@ -190,6 +202,12 @@ describe("Demo View", () => {
 
     it("handles hideComponent event from Sidebar for editor", async () => {
       wrapper = mount(DemoView);
+      await nextTick();
+
+      // Wait for content to load
+      await vi.waitFor(() => {
+        return wrapper.vm.isContentLoaded;
+      });
       await nextTick();
 
       // First show the editor
@@ -209,6 +227,12 @@ describe("Demo View", () => {
       wrapper = mount(DemoView);
       await nextTick();
 
+      // Wait for content to load
+      await vi.waitFor(() => {
+        return wrapper.vm.isContentLoaded;
+      });
+      await nextTick();
+
       const sidebar = wrapper.findComponent({ name: "Sidebar" });
       await sidebar.vm.$emit("show-component", "DockableSearch");
 
@@ -218,6 +242,12 @@ describe("Demo View", () => {
 
     it("handles hideComponent event from Sidebar for search", async () => {
       wrapper = mount(DemoView);
+      await nextTick();
+
+      // Wait for content to load
+      await vi.waitFor(() => {
+        return wrapper.vm.isContentLoaded;
+      });
       await nextTick();
 
       // First show the search
