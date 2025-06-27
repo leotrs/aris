@@ -1,4 +1,24 @@
 <script setup>
+  /**
+   * ThemeSwitch - A component for toggling between light, dark, and system themes.
+   *
+   * This component provides a user interface to select a preferred theme mode:
+   * Light, Dark, or System (which follows the operating system's theme preference).
+   * It uses the `SegmentedControl` component internally and applies theme classes to the `documentElement`.
+   *
+   * @displayName ThemeSwitch
+   * @example
+   * // Basic usage without labels (icons only)
+   * <ThemeSwitch v-model="currentThemeMode" />
+   *
+   * @example
+   * // With labels displayed below the icons
+   * <ThemeSwitch v-model="currentThemeMode" :labels="true" />
+   *
+   * @example
+   * // Setting an initial mode (e.g., Dark theme)
+   * <ThemeSwitch v-model="currentThemeMode" :default-active="2" />
+   */
   import { watch, onMounted, onUnmounted } from "vue";
 
   const props = defineProps({

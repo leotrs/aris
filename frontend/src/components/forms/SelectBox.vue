@@ -1,4 +1,29 @@
 <script setup>
+  /**
+   * SelectBox - A custom dropdown select component.
+   *
+   * This component provides a styled dropdown interface for selecting a single value
+   * from a list of options. It displays the currently selected label and uses a
+   * `ContextMenu` for the dropdown options. It supports `v-model` for its value,
+   * and can display options in a row or column layout.
+   *
+   * @displayName SelectBox
+   * @example
+   * // Basic usage with string options
+   * <SelectBox v-model="selectedFruit" :options="['Apple', 'Banana', 'Orange']" />
+   *
+   * @example
+   * // With object options and column direction
+   * <SelectBox
+   *   v-model="selectedId"
+   *   :options="[{ value: 1, label: 'First' }, { value: 2, label: 'Second' }]"
+   *   direction="column"
+   * />
+   *
+   * @example
+   * // With a default selected value
+   * <SelectBox v-model="selectedStatus" :options="['Active', 'Inactive']" :model-value="'Active'" />
+   */
   import { ref, computed, watch } from "vue";
   import ContextMenu from "@/components/navigation/ContextMenu.vue";
   import ContextMenuItem from "@/components/navigation/ContextMenuItem.vue";

@@ -2,6 +2,24 @@
   import { inject, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
 
+  /**
+   * UserMenu - User account dropdown menu
+   *
+   * A dropdown menu component that displays user avatar and provides navigation
+   * to account settings, user profile, and logout functionality. Integrates with
+   * the application's authentication and routing systems.
+   *
+   * @displayName UserMenu
+   * @example
+   * // Basic usage (requires user injection)
+   * <UserMenu />
+   *
+   * @example
+   * // Programmatic control
+   * <UserMenu ref="userMenuRef" />
+   * // userMenuRef.value.toggle()
+   */
+
   const menuRef = useTemplateRef("menu-ref");
 
   const router = useRouter();
@@ -13,6 +31,10 @@
     router.push("/login");
   };
 
+  /**
+   * Exposes methods for parent components
+   * @expose {Function} toggle - Toggle the menu open/closed state
+   */
   defineExpose({ toggle: () => menuRef.value.toggle() });
   const user = inject("user");
 </script>

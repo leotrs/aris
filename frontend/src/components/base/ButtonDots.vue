@@ -1,4 +1,29 @@
 <script setup>
+  /**
+   * ButtonDots - A toggle button component displaying vertical dots.
+   *
+   * This component is a specialized toggle button that renders three vertical dots.
+   * It's typically used to indicate the presence of a context menu or more options.
+   * It inherits toggle functionality from `ButtonToggle` and allows customization of hover and active colors.
+   *
+   * @displayName ButtonDots
+   * @example
+   * // Basic usage (default colors)
+   * <ButtonDots v-model="isActive" />
+   *
+   * @example
+   * // With custom colors
+   * <ButtonDots v-model="isActive" hover-color="var(--blue-200)" active-color="var(--blue-500)" />
+   *
+   * @example
+   * // Used to trigger a context menu
+   * <ContextMenu>
+   *   <template #trigger>
+   *     <ButtonDots v-model="isMenuOpen" />
+   *   </template>
+   *   <!-- Context menu items -->
+   * </ContextMenu>
+   */
   import { watch } from "vue";
   import ButtonToggle from "@/components/base/ButtonToggle.vue";
   import { IconDotsVertical } from "@tabler/icons-vue";

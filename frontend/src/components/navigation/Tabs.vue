@@ -1,11 +1,51 @@
 <script setup>
   import { reactive, computed, watch, onMounted, useTemplateRef } from "vue";
 
+  /**
+   * Tabs - Complete tab navigation component
+   *
+   * A fully-featured tab component that manages multiple tab pages with labels and icons.
+   * Handles tab switching, content visibility, and keyboard navigation automatically.
+   *
+   * @displayName Tabs
+   * @example
+   * // Basic usage with labels
+   * <Tabs
+   *   :labels="['Dashboard', 'Settings', 'Profile']"
+   *   :icons="['Home', 'Settings', 'User']"
+   *   v-model="activeTabIndex"
+   * >
+   *   <TabPage>Dashboard content</TabPage>
+   *   <TabPage>Settings content</TabPage>
+   *   <TabPage>Profile content</TabPage>
+   * </Tabs>
+   *
+   * @example
+   * // Dynamic tabs
+   * <Tabs :labels="tabLabels" :icons="tabIcons" v-model="currentTab">
+   *   <TabPage v-for="(content, index) in tabContents" :key="index">
+   *     {{ content }}
+   *   </TabPage>
+   * </Tabs>
+   */
+
   const props = defineProps({
+    /**
+     * Array of tab labels to display
+     * @values ["Tab 1", "Tab 2", "Tab 3"]
+     */
     labels: { type: Array, default: null },
+    /**
+     * Array of icon names for each tab (from Tabler icons)
+     * @values ["Home", "Settings", "User"]
+     */
     icons: { type: Array, default: null },
   });
   const numTabs = computed(() => props.labels?.length ?? 0);
+
+  /**
+   * The index of the currently active tab (v-model)
+   */
   const activeIndex = defineModel({ type: Number, default: 0 });
   const tabStates = reactive({
     active: Array.from({ length: numTabs.value }).map(() => false),

@@ -1,4 +1,33 @@
 <script setup>
+  /**
+   * BaseInput - A flexible and accessible base input component.
+   *
+   * This component serves as a foundational input field, providing consistent styling,
+   * layout options, and integration with form validation. It supports different visual
+   * variants (e.g., standard input, search input), sizes, and layouts (row or column).
+   * It also includes slots for extending its functionality with prepended/appended content
+   * and custom error displays.
+   *
+   * @displayName BaseInput
+   * @example
+   * // Basic text input
+   * <BaseInput v-model="value" label="Username" placeholder="Enter your username" />
+   *
+   * @example
+   * // Search input with buttons and icon
+   * <BaseInput v-model="searchQuery" variant="search" show-icon with-buttons button-close />
+   *
+   * @example
+   * // Input with validation error
+   * <BaseInput v-model="email" label="Email" :error="emailError" />
+   *
+   * @example
+   * // Custom prepend and append content
+   * <BaseInput v-model="amount">
+   *   <template #prepend><span>$</span></template>
+   *   <template #append><span>.00</span></template>
+   * </BaseInput>
+   */
   import { computed, useTemplateRef, nextTick } from "vue";
   import { useFormField } from "@/composables/useFormField.js";
 

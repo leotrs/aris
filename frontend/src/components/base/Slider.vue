@@ -1,4 +1,24 @@
 <script setup>
+  /**
+   * Slider - A custom slider component with discrete stops.
+   *
+   * This component provides a visual slider with a fixed number of clickable stops.
+   * It can display optional icons and labels on its left and right sides.
+   * The active stop is highlighted, and the component emits a 'change' event when the active stop changes.
+   *
+   * @displayName Slider
+   * @example
+   * // Basic usage with 3 stops
+   * <Slider :number-stops="3" />
+   *
+   * @example
+   * // With icons and labels
+   * <Slider icon-left="VolumeOff" icon-right="VolumeUp" label-left="Mute" label-right="Max" :number-stops="5" />
+   *
+   * @example
+   * // Custom default active stop
+   * <Slider :number-stops="4" :default-active="2" @change="handleSliderChange" />
+   */
   import { ref, watch } from "vue";
 
   const props = defineProps({

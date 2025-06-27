@@ -1,4 +1,35 @@
 <script setup>
+  /**
+   * ColorPicker - A component for selecting a color from a predefined palette.
+   *
+   * This component displays a series of color swatches. Users can click on a swatch
+   * to select a color, which then becomes active. It supports displaying color names
+   * as labels and emits a 'change' event with the name of the selected color.
+   *
+   * @displayName ColorPicker
+   * @example
+   * // Basic usage with predefined colors and labels
+   * <ColorPicker
+   *   :colors="{ red: '#FF0000', green: '#00FF00', blue: '#0000FF' }"
+   *   default-active="red"
+   *   :labels="true"
+   *   @change="handleColorChange"
+   * />
+   *
+   * @example
+   * // Without labels
+   * <ColorPicker
+   *   :colors="{ primary: '#6200EE', secondary: '#03DAC6' }"
+   *   :labels="false"
+   * />
+   *
+   * @example
+   * // Custom color palette
+   * <ColorPicker
+   *   :colors="{ 'brand-a': '#FF6F00', 'brand-b': '#00B0FF', 'brand-c': '#76FF03' }"
+   *   default-active="brand-b"
+   * />
+   */
   import { ref } from "vue";
 
   const props = defineProps({

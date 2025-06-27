@@ -1,10 +1,37 @@
 <script setup>
   import {} from "vue";
 
+  /**
+   * Tab - Individual tab button component
+   *
+   * A single tab button that can be clicked to activate. Usually used within a Tabs component.
+   * Supports keyboard navigation and follows accessibility best practices.
+   *
+   * @displayName Tab
+   * @example
+   * // Basic usage
+   * <Tab v-model="isActive" label="Dashboard" icon="Home" />
+   *
+   * @example
+   * // Icon only tab
+   * <Tab v-model="isActive" icon="Settings" />
+   */
+
   const props = defineProps({
+    /**
+     * The text label displayed in the tab
+     */
     label: { type: String, default: "" },
+    /**
+     * Icon name to display in the tab (from Tabler icons)
+     * @values "Home", "Settings", "User", "File", "Search"
+     */
     icon: { type: String, default: "" },
   });
+
+  /**
+   * Whether this tab is currently active
+   */
   const active = defineModel({ type: Boolean, default: false });
 </script>
 

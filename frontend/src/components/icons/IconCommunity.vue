@@ -1,4 +1,27 @@
 <script setup>
+  /**
+   * IconCommunity - A custom SVG icon component representing a community.
+   *
+   * This component renders a static SVG graphic that visually represents a community or group.
+   * It's designed to be used as a standalone icon or integrated within other components
+   * that require a community-related symbol.
+   *
+   * @displayName IconCommunity
+   * @example
+   * // Basic usage
+   * <IconCommunity />
+   *
+   * @example
+   * // With custom sizing and color
+   * <IconCommunity class="w-8 h-8 text-green-500" />
+   *
+   * @example
+   * // Used in a navigation link
+   * <a href="/community">
+   *   <IconCommunity class="mr-2" />
+   *   Our Community
+   * </a>
+   */
   import {} from "vue";
 </script>
 

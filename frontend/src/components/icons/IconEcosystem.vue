@@ -1,4 +1,27 @@
 <script setup>
+  /**
+   * IconEcosystem - A custom SVG icon component representing an ecosystem or interconnected system.
+   *
+   * This component renders a static SVG graphic that visually represents a network of interconnected
+   * elements, symbolizing an ecosystem or a complex system. It's designed to be used as a standalone icon
+   * or integrated within other components that require such a symbol.
+   *
+   * @displayName IconEcosystem
+   * @example
+   * // Basic usage
+   * <IconEcosystem />
+   *
+   * @example
+   * // With custom sizing and color
+   * <IconEcosystem class="w-8 h-8 text-orange-500" />
+   *
+   * @example
+   * // Used in a section title for system architecture
+   * <h2>
+   *   <IconEcosystem class="mr-2" />
+   *   Our Platform Ecosystem
+   * </h2>
+   */
   import {} from "vue";
 </script>
 

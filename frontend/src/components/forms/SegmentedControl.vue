@@ -1,4 +1,29 @@
 <script setup>
+  /**
+   * SegmentedControl - A component for creating a group of mutually exclusive buttons.
+   *
+   * This component displays a set of buttons, where only one can be active at a time.
+   * It supports displaying icons, labels, or both, and can show tooltips on hover.
+   * The active button's index is managed via `v-model`.
+   *
+   * @displayName SegmentedControl
+   * @example
+   * // Basic usage with labels
+   * <SegmentedControl v-model="selectedOption" :labels="['Option A', 'Option B', 'Option C']" />
+   *
+   * @example
+   * // With icons and a default active item
+   * <SegmentedControl v-model="viewMode" :icons="['List', 'Grid']" :default-active="0" />
+   *
+   * @example
+   * // With labels, icons, and tooltips
+   * <SegmentedControl
+   *   v-model="alignment"
+   *   :labels="['Left', 'Center', 'Right']"
+   *   :icons="['AlignLeft', 'AlignCenter', 'AlignRight']"
+   *   :tooltips="['Align text left', 'Align text center', 'Align text right']"
+   * />
+   */
   import { computed, onMounted, ref } from "vue";
 
   const props = defineProps({

@@ -1,4 +1,28 @@
 <script setup>
+  /**
+   * IconTooling - A custom SVG icon component representing tools or tooling.
+   *
+   * This component renders a static SVG graphic that visually represents tools,
+   * often used to symbolize development, configuration, or utility functions.
+   * It's designed to be used as a standalone icon or integrated within other components
+   * that require a tooling-related symbol.
+   *
+   * @displayName IconTooling
+   * @example
+   * // Basic usage
+   * <IconTooling />
+   *
+   * @example
+   * // With custom sizing and color
+   * <IconTooling class="w-8 h-8 text-gray-700" />
+   *
+   * @example
+   * // Used in a settings or developer tools menu
+   * <button>
+   *   <IconTooling class="mr-2" />
+   *   Developer Tools
+   * </button>
+   */
   import {} from "vue";
 </script>
 

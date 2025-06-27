@@ -1,4 +1,27 @@
 <script setup>
+  /**
+   * IconDocumentation - A custom SVG icon component representing documentation.
+   *
+   * This component renders a static SVG graphic that visually represents documentation,
+   * such as a document or a manual. It's designed to be used as a standalone icon
+   * or integrated within other components that require a documentation-related symbol.
+   *
+   * @displayName IconDocumentation
+   * @example
+   * // Basic usage
+   * <IconDocumentation />
+   *
+   * @example
+   * // With custom sizing and color
+   * <IconDocumentation class="w-8 h-8 text-purple-500" />
+   *
+   * @example
+   * // Used in a navigation link for documentation
+   * <a href="/docs">
+   *   <IconDocumentation class="mr-2" />
+   *   View Docs
+   * </a>
+   */
   import {} from "vue";
 </script>
 

@@ -1,4 +1,24 @@
 <script setup>
+  /**
+   * Avatar - Displays a user's avatar, initials, or a colored circle.
+   *
+   * This component fetches and displays a user's avatar image. If no avatar is available,
+   * it falls back to displaying the user's initials or a colored circle based on provided user data.
+   * It also supports an optional tooltip to show the user's full name on hover.
+   *
+   * @displayName Avatar
+   * @example
+   * // Basic usage with user object
+   * <Avatar :user="{ id: 1, name: 'John Doe', initials: 'JD', color: '#FF5733' }" />
+   *
+   * @example
+   * // Small size with tooltip disabled
+   * <Avatar :user="{ id: 2, name: 'Jane Smith', initials: 'JS', color: '#33FF57' }" size="sm" :tooltip="false" />
+   *
+   * @example
+   * // User with only name and color (initials derived)
+   * <Avatar :user="{ id: 3, name: 'Alice', color: '#3357FF' }" />
+   */
   import { inject, computed, ref, onMounted, useTemplateRef } from "vue";
 
   const props = defineProps({

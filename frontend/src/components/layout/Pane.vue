@@ -1,4 +1,38 @@
 <script setup>
+  /**
+   * Pane - A versatile container component for organizing UI content.
+   *
+   * This component provides a styled panel or section with optional header and main content areas.
+   * It automatically wraps header content with a `Header` component unless `customHeader` is true.
+   * The pane adapts its styling based on `mobileMode` for responsive layouts.
+   *
+   * @displayName Pane
+   * @example
+   * // Basic usage with a simple title
+   * <Pane>
+   *   <template #header>My Panel Title</template>
+   *   <p>This is the content of the panel.</p>
+   * </Pane>
+   *
+   * @example
+   * // With a custom header (no automatic Header component wrapping)
+   * <Pane :custom-header="true">
+   *   <template #header>
+   *     <div style="display: flex; justify-content: space-between; align-items: center;">
+   *       <h2>Custom Header</h2>
+   *       <Button icon="Settings" />
+   *     </div>
+   *   </template>
+   *   <p>Content with a custom header layout.</p>
+   * </Pane>
+   *
+   * @example
+   * // Pane in mobile mode (styling adapts)
+   * <Pane :mobile-mode="true">
+   *   <template #header>Mobile Panel</template>
+   *   <p>This panel is optimized for mobile screens.</p>
+   * </Pane>
+   */
   import { inject } from "vue";
 
   const props = defineProps({

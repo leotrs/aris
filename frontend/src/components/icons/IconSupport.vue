@@ -1,4 +1,27 @@
 <script setup>
+  /**
+   * IconSupport - A custom SVG icon component representing support or help.
+   *
+   * This component renders a static SVG graphic that visually represents support, often
+   * depicted as a heart or a similar caring symbol. It's designed to be used as a standalone icon
+   * or integrated within other components that require a support-related symbol.
+   *
+   * @displayName IconSupport
+   * @example
+   * // Basic usage
+   * <IconSupport />
+   *
+   * @example
+   * // With custom sizing and color
+   * <IconSupport class="w-8 h-8 text-red-500" />
+   *
+   * @example
+   * // Used in a help or support section
+   * <button>
+   *   <IconSupport class="mr-2" />
+   *   Get Support
+   * </button>
+   */
   import {} from "vue";
 </script>
 

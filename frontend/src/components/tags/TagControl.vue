@@ -2,9 +2,42 @@
   import { useTemplateRef } from "vue";
   import { inject } from "vue";
 
+  /**
+   * TagControl - Interactive tag with editing controls
+   *
+   * A complete tag management component that combines a Tag component with a context menu
+   * for color changing, renaming, and deletion. Integrates with the file store for
+   * persistent tag operations.
+   *
+   * @displayName TagControl
+   * @example
+   * // Basic usage
+   * <TagControl
+   *   :tag="{ name: 'Important', color: 'red' }"
+   *   v-model="isTagActive"
+   * />
+   *
+   * @example
+   * // In a tag list
+   * <TagControl
+   *   v-for="tag in tags"
+   *   :key="tag.id"
+   *   :tag="tag"
+   *   v-model="selectedTags[tag.id]"
+   * />
+   */
+
   const props = defineProps({
+    /**
+     * Tag data object containing name and color information
+     * @example { name: "Frontend", color: "blue", id: "tag-123" }
+     */
     tag: { type: Object, required: true },
   });
+
+  /**
+   * Whether this tag is currently active/selected (v-model)
+   */
   const state = defineModel({ type: Boolean, default: false });
   const fileStore = inject("fileStore");
   const tagRef = useTemplateRef("tagRef");
