@@ -64,6 +64,15 @@
     newTag.name = newName;
     fileStore.value.updateTag(props.tag, newTag);
   };
+
+  const handleTagClick = () => {
+    // Only toggle if the tag is not currently being edited
+    // This prevents the spacebar bug where pressing space during rename would toggle the tag
+    if (tagRef.value?.isEditing) {
+      return; // Don't toggle while editing
+    }
+    state.value = !state.value;
+  };
 </script>
 
 <template>
@@ -73,7 +82,7 @@
       :tag="tag"
       :active="state"
       :editable="true"
-      @click.stop="state = !state"
+      @click.stop="handleTagClick"
       @rename="renameTag"
     />
     <ContextMenu variant="dots" placement="right-start">

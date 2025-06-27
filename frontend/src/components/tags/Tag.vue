@@ -96,15 +96,43 @@
 
   const newName = ref(props.tag.name);
   const editableTextRef = useTemplateRef("editableTextRef");
+  const isEditing = ref(false);
+
+  /**
+   * Handle keydown events on the button to prevent spacebar from triggering click during edit
+   */
+  const handleKeydown = (event) => {
+    // If spacebar is pressed and we're in editing mode, prevent the default button behavior
+    if (event.key === " " && isEditing.value) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+  };
+
+  /**
+   * Track editing state by listening to EditableText events
+   */
+  const onEditingStart = () => {
+    isEditing.value = true;
+  };
+
+  const onEditingEnd = () => {
+    isEditing.value = false;
+  };
 
   /**
    * Exposes methods for programmatic control
    * @expose {Function} startEditing - Programmatically activate edit mode (only if editable is true)
+   * @expose {Ref<boolean>} isEditing - Whether the tag is currently being edited
    */
   defineExpose({
     startEditing: () => {
-      props.editable && editableTextRef.value?.startEditing();
+      if (props.editable && editableTextRef.value?.startEditing) {
+        editableTextRef.value.startEditing();
+        isEditing.value = true;
+      }
     },
+    isEditing,
   });
 </script>
 
@@ -116,6 +144,7 @@
     role="checkbox"
     :aria-checked="active"
     tabindex="0"
+    @keydown="handleKeydown"
   >
     <EditableText
       v-if="editable"
@@ -125,6 +154,8 @@
       :clear-on-start="clearOnStartRenaming"
       :preserve-width="true"
       @save="(n) => emit('rename', n)"
+      @editing-start="onEditingStart"
+      @editing-end="onEditingEnd"
     />
     <span v-else>{{ tag.name }}</span>
   </button>
