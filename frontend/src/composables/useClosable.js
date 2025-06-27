@@ -9,13 +9,28 @@ export default function ({
   closeOnCloseButton = true,
   closeButtonSelector = "button.btn-close",
   autoActivate = true,
+  keyboardController = null, // Optional existing keyboard shortcuts controller
 }) {
   const instance = getCurrentInstance();
 
   // Handle ESC key press
-  const keyController = closeOnEsc ? useKeyboardShortcuts({ escape: onClose }, autoActivate) : null;
-  const setupEscKey = () => keyController.activate();
-  const tearDownEscKey = () => keyController.deactivate();
+  let keyController = null;
+  let setupEscKey, tearDownEscKey;
+
+  if (closeOnEsc) {
+    if (keyboardController) {
+      // Use existing keyboard controller and add escape shortcut
+      keyboardController.addShortcuts({ escape: onClose });
+      setupEscKey = () => {}; // No need to activate, already handled by existing controller
+      tearDownEscKey = () => keyboardController.removeShortcuts(["escape"]);
+      keyController = keyboardController;
+    } else {
+      // Create new keyboard controller
+      keyController = useKeyboardShortcuts({ escape: onClose }, autoActivate);
+      setupEscKey = () => keyController.activate();
+      tearDownEscKey = () => keyController.deactivate();
+    }
+  }
 
   // Handle clicks outside the component
   const handleOutsideClick = (event) => {
@@ -41,7 +56,7 @@ export default function ({
     let closeButton;
     if (el.querySelector) {
       closeButton = el.querySelector(closeButtonSelector);
-    } else {
+    } else if (el.parentElement) {
       closeButton = el.parentElement.querySelector(closeButtonSelector);
     }
     if (!closeButton) return null;

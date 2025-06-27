@@ -1,6 +1,7 @@
 <script setup>
-  import { toRef, computed, watch } from "vue";
+  import { toRef, computed } from "vue";
   import Modal from "@/components/base/Modal.vue";
+  import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
 
   /**
    * A reusable confirmation modal component for dangerous actions.
@@ -115,46 +116,54 @@
     emit("cancel");
   };
 
-  // Handle keyboard shortcuts
-  const handleKeydown = (event) => {
+  // Handle modal-specific keyboard shortcuts
+  const handleEnterKey = (event) => {
     if (!props.show) return;
 
-    if (event.key === "Escape") {
-      event.preventDefault();
-      handleCancel();
-    } else if (event.key === "Enter") {
-      // Enter to confirm (unless focused on cancel button)
-      const activeElement = document.activeElement;
-      const isCancelButton = activeElement?.textContent?.includes(props.cancelText);
+    // Enter to confirm (unless focused on cancel button)
+    const activeElement = document.activeElement;
+    const isCancelButton = activeElement?.textContent?.includes(props.cancelText);
 
-      if (!isCancelButton) {
-        event.preventDefault();
-        handleConfirm();
-      }
+    if (!isCancelButton) {
+      event.preventDefault();
+      handleConfirm();
     }
   };
 
-  // Add/remove keyboard listeners when modal visibility changes
+  const handleEscapeKey = (event) => {
+    if (!props.show) return;
+    event.preventDefault();
+    handleCancel();
+  };
+
+  // Use keyboard shortcuts with override to block other components
+  const { activate, deactivate } = useKeyboardShortcuts(
+    {
+      enter: handleEnterKey,
+      escape: handleEscapeKey,
+    },
+    false, // Don't auto-activate
+    "ConfirmationModal",
+    true // Override others
+  );
+
+  // Handle modal visibility changes
+  import { watch } from "vue";
   watch(
     () => props.show,
     (newShow) => {
       if (newShow) {
-        document.addEventListener("keydown", handleKeydown);
+        activate();
       } else {
-        document.removeEventListener("keydown", handleKeydown);
+        deactivate();
       }
     }
   );
 
-  // Cleanup on unmount
-  import { onUnmounted } from "vue";
-  onUnmounted(() => {
-    document.removeEventListener("keydown", handleKeydown);
-  });
-
   // Expose methods for testing
   defineExpose({
-    handleKeydown,
+    handleEnterKey,
+    handleEscapeKey,
     handleConfirm,
     handleCancel,
   });
