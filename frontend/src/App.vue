@@ -159,6 +159,10 @@
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const publicPages = ["/login", "/register", "/demo"];
 
+    // Check if authentication is disabled via environment variable
+    const isAuthDisabled = import.meta.env.VITE_DISABLE_AUTH === "true";
+    if (isAuthDisabled) return next();
+
     // If user is not authenticated and trying to access a protected page
     if (!token && !storedUser && !publicPages.includes(to.path)) {
       next("/login");
