@@ -35,8 +35,10 @@ export class AuthHelpers {
   async expectToBeLoggedIn() {
     // Check if auth is disabled (backend env var)
     const isAuthDisabled = await this.isAuthDisabled();
+    console.log(`Auth disabled check result: ${isAuthDisabled}`);
 
     if (isAuthDisabled) {
+      console.log("Using disabled auth flow - expecting mock user");
       // In disabled auth mode, just go to home page and verify it loads
       await this.page.goto("/");
       await this.page.waitForLoadState("networkidle");
@@ -50,6 +52,8 @@ export class AuthHelpers {
       );
       return;
     }
+
+    console.log("Using normal auth flow - expecting user menu");
 
     // Normal auth flow
     // Wait for redirect to home page with increased timeout
@@ -101,11 +105,16 @@ export class AuthHelpers {
       // If we get a successful response, check if it's the mock user (auth disabled)
       if (response.ok()) {
         const data = await response.json();
-        // Check if we got the mock user response indicating auth is disabled
-        return data.email === "test@example.com" && data.name === "Test User";
+        console.log(`/me endpoint response:`, data);
+        // Check if we got the test user response indicating auth is disabled
+        // When DISABLE_AUTH=true, the backend returns the actual test user from database
+        const isDisabled = data.email === "testuser@aris.pub" && data.name === "Test User";
+        console.log(`Auth disabled based on user data: ${isDisabled}`);
+        return isDisabled;
       }
 
       // If we get 401, auth is enabled and working normally
+      console.log(`/me endpoint returned status ${response.status()}, assuming auth is enabled`);
       return false;
     } catch (error) {
       console.log(`Auth check failed: ${error.message}`);
