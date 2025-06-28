@@ -11,21 +11,8 @@ test.describe("File Management Tests", () => {
     authHelpers = new AuthHelpers(page);
     fileHelpers = new FileHelpers(page);
 
-    // Clear auth state and login for file operations
-    await authHelpers.clearAuthState();
-
-    // Skip tests if no valid credentials available
-    const hasValidCredentials = TEST_CREDENTIALS.valid.password;
-    test.skip(!hasValidCredentials, "Requires valid test credentials for file operations");
-
-    // Login with valid credentials
-    await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
-
-    try {
-      await authHelpers.expectToBeLoggedIn();
-    } catch {
-      test.skip(true, "Login failed - cannot test file operations");
-    }
+    // Ensure logged in (handles both real auth and disabled auth)
+    await authHelpers.ensureLoggedIn();
   });
 
   test("create new RSM file and verify in file list", async ({ page }) => {
