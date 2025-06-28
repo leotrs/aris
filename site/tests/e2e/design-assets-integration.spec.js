@@ -7,6 +7,21 @@ test.describe("Design Assets Integration", () => {
   });
 
   test("should load navbar logo from backend design assets", async ({ page }) => {
+    // Mock the design assets API since backend may not be running in site tests
+    await page.route("**/design-assets/**", async (route) => {
+      // Return a simple SVG for any design assets request
+      const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+        <rect width="32" height="32" fill="#0e9ae9"/>
+        <text x="16" y="20" text-anchor="middle" fill="white" font-size="12">ARIS</text>
+      </svg>`;
+      
+      await route.fulfill({
+        status: 200,
+        contentType: "image/svg+xml",
+        body: svgContent,
+      });
+    });
+
     // Wait for the page to load
     await page.waitForLoadState("networkidle");
 

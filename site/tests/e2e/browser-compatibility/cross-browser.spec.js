@@ -59,8 +59,9 @@ test.describe("Cross-Browser Compatibility", () => {
     test("should handle navigation correctly in all browsers", async ({ page, browserName }) => {
       await page.goto("/");
 
-      // Check if this is a mobile browser
-      const isMobile = browserName.includes("Mobile");
+      // Check if viewport is mobile-sized (less than 640px wide)
+      const viewportSize = page.viewportSize();
+      const isMobile = viewportSize.width < 640;
 
       if (isMobile) {
         // Mobile navigation: use mobile menu
@@ -189,8 +190,9 @@ test.describe("Cross-Browser Compatibility", () => {
     test("should handle interactive features across browsers", async ({ page, browserName }) => {
       await page.goto("/");
 
-      // Check if this is a mobile browser
-      const isMobile = browserName.includes("Mobile");
+      // Check if viewport is mobile-sized (less than 640px wide)
+      const viewportSize = page.viewportSize();
+      const isMobile = viewportSize.width < 640;
 
       if (isMobile) {
         // Mobile: Test mobile menu functionality
@@ -238,9 +240,10 @@ test.describe("Cross-Browser Compatibility", () => {
   });
 
   test.describe("Mobile Browser Compatibility", () => {
-    test("should work correctly on mobile browsers", async ({ page, browserName }) => {
-      // Only run on mobile browser configs
-      if (!browserName.includes("Mobile")) {
+    test("should work correctly on mobile browsers", async ({ page }) => {
+      // Only run if viewport is mobile-sized (less than 640px wide)
+      const viewportSize = page.viewportSize();
+      if (viewportSize.width >= 640) {
         test.skip();
       }
 
@@ -266,8 +269,10 @@ test.describe("Cross-Browser Compatibility", () => {
       console.log(`✓ Mobile functionality works correctly in ${browserName}`);
     });
 
-    test("should handle touch events on mobile", async ({ page, browserName }) => {
-      if (!browserName.includes("Mobile")) {
+    test("should handle touch events on mobile", async ({ page }) => {
+      // Only run if viewport is mobile-sized (less than 640px wide)
+      const viewportSize = page.viewportSize();
+      if (viewportSize.width >= 640) {
         test.skip();
       }
 

@@ -65,6 +65,29 @@ export class AuthHelpers {
   }
 
   async isAuthDisabled() {
+    // Wait for backend to be available before checking auth status
+    let backendAvailable = false;
+    const maxRetries = 10;
+
+    for (let i = 0; i < maxRetries; i++) {
+      try {
+        const healthResponse = await this.page.request.get("http://localhost:8000/health");
+        if (healthResponse.ok()) {
+          backendAvailable = true;
+          break;
+        }
+      } catch {
+        console.log(`Backend health check attempt ${i + 1}/${maxRetries} failed, retrying...`);
+        await this.page.waitForTimeout(2000);
+      }
+    }
+
+    if (!backendAvailable) {
+      throw new Error(
+        "Backend server at http://localhost:8000 is not accessible after multiple attempts. Check if the server is running and reachable."
+      );
+    }
+
     try {
       // Try to access a protected endpoint without auth headers
       const response = await this.page.request.get("http://localhost:8000/me");
@@ -77,7 +100,8 @@ export class AuthHelpers {
       }
 
       return false;
-    } catch {
+    } catch (error) {
+      console.log(`Auth check failed: ${error.message}`);
       // Backend might not be ready yet, retry once
       try {
         await this.page.waitForTimeout(1000);
@@ -86,7 +110,8 @@ export class AuthHelpers {
           const data = await response.json();
           return data.email === "test@example.com" && data.full_name === "Test User";
         }
-      } catch {
+      } catch (retryError) {
+        console.log(`Auth check retry failed: ${retryError.message}`);
         // Still failing, auth is likely enabled
       }
       return false;
@@ -94,7 +119,18 @@ export class AuthHelpers {
   }
 
   async ensureLoggedIn() {
-    // First, try to go directly to home - this will work if auth is disabled
+    // First, check if auth is disabled (this will also verify backend connectivity)
+    const authDisabled = await this.isAuthDisabled();
+
+    if (authDisabled) {
+      // Auth is disabled, just go to home page
+      await this.page.goto("/");
+      await this.page.waitForLoadState("networkidle");
+      await this.expectToBeLoggedIn();
+      return;
+    }
+
+    // Auth is enabled, need to login
     await this.page.goto("/");
     await this.page.waitForLoadState("networkidle");
 
@@ -107,17 +143,51 @@ export class AuthHelpers {
     if (currentUrl.includes("/login")) {
       // We were redirected to login, so auth is enabled - need to login
       const email = TEST_CREDENTIALS.valid.email;
-      const password = process.env.VITE_DEV_LOGIN_PASSWORD || TEST_CREDENTIALS.valid.password || "testpassword123";
-      console.log(`Attempting login with email: ${email}, password length: ${password?.length || 'undefined'}, from env: ${!!process.env.VITE_DEV_LOGIN_PASSWORD}`);
+      const password =
+        process.env.VITE_DEV_LOGIN_PASSWORD || TEST_CREDENTIALS.valid.password || "testpassword123";
+      console.log(
+        `Attempting login with email: ${email}, password length: ${password?.length || "undefined"}, from env: ${!!process.env.VITE_DEV_LOGIN_PASSWORD}`
+      );
+
+      // Add backend connectivity check before attempting login
+      try {
+        const healthCheck = await this.page.request.get("http://localhost:8000/health");
+        if (!healthCheck.ok()) {
+          throw new Error(`Backend health check failed with status ${healthCheck.status()}`);
+        }
+        console.log("Backend health check passed, proceeding with login");
+      } catch (error) {
+        throw new Error(
+          `Backend connectivity check failed before login attempt: ${error.message}. Please ensure backend server is running and accessible.`
+        );
+      }
+
       await this.login(email, password);
-      
+
       // Check if login was successful
       await this.page.waitForTimeout(1000);
       const postLoginUrl = this.page.url();
       if (postLoginUrl.includes("/login")) {
         // Check for error messages on the page
-        const errorElement = await this.page.locator('[data-testid="login-error"]').textContent().catch(() => 'No error message found');
-        throw new Error(`Login failed: still on login page after attempting login with ${email}. Error: ${errorElement}. Check if test user exists and password is correct.`);
+        const errorElement = await this.page
+          .locator('[data-testid="login-error"]')
+          .textContent()
+          .catch(() => "Network Error");
+
+        // Provide specific error messages based on the error type
+        let errorMessage = `Login failed: still on login page after attempting login with ${email}.`;
+
+        if (errorElement === "Network Error" || errorElement.includes("Network Error")) {
+          errorMessage += ` Network Error detected - this usually means the backend server is not accessible or the API request failed. Check that the backend is running at http://localhost:8000 and is reachable from the test environment.`;
+        } else if (errorElement === "No error message found") {
+          errorMessage += ` No specific error message found on page. This could indicate invalid credentials or backend connectivity issues.`;
+        } else {
+          errorMessage += ` Error: ${errorElement}.`;
+        }
+
+        errorMessage += ` Check if test user exists, password is correct, and backend is accessible.`;
+
+        throw new Error(errorMessage);
       }
     }
 
