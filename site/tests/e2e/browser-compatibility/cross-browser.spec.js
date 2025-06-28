@@ -240,7 +240,7 @@ test.describe("Cross-Browser Compatibility", () => {
   });
 
   test.describe("Mobile Browser Compatibility", () => {
-    test("should work correctly on mobile browsers", async ({ page }) => {
+    test("should work correctly on mobile browsers", async ({ page, browserName }) => {
       // Only run if viewport is mobile-sized (less than 640px wide)
       const viewportSize = page.viewportSize();
       if (viewportSize.width >= 640) {
@@ -269,7 +269,7 @@ test.describe("Cross-Browser Compatibility", () => {
       console.log(`✓ Mobile functionality works correctly in ${browserName}`);
     });
 
-    test("should handle touch events on mobile", async ({ page }) => {
+    test("should handle touch events on mobile", async ({ page, browserName }) => {
       // Only run if viewport is mobile-sized (less than 640px wide)
       const viewportSize = page.viewportSize();
       if (viewportSize.width >= 640) {

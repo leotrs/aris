@@ -19,7 +19,8 @@ from aris.security import hash_password
 # Load environment variables using the same logic as config.py
 BASE_DIR = Path(__file__).resolve().parent.parent
 env_file = BASE_DIR / (".env.ci" if os.getenv("ENV") == "CI" else ".env")
-load_dotenv(env_file)
+# Load .env file but don't override existing environment variables
+load_dotenv(env_file, override=False)
 
 TEST_USER_EMAIL = os.getenv("TEST_USER_EMAIL", "testuser@aris.pub")
 TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
