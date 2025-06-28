@@ -341,6 +341,7 @@ jobs:
       working-directory: frontend
       run: npm run dev -- --host 0.0.0.0 --port 5173 &
       env:
+        VITE_DEV_LOGIN_EMAIL: testuser@aris.pub
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     - name: Wait for servers to be ready
@@ -352,6 +353,7 @@ jobs:
       working-directory: frontend
       run: npm run test:e2e -- --grep "(login|auth|registration|account)"
       env:
+        VITE_DEV_LOGIN_EMAIL: testuser@aris.pub
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
   frontend-e2e-demo-content:
