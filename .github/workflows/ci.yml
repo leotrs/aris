@@ -213,6 +213,7 @@ jobs:
     env:
       ENV: CI
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      # Only this job has real auth - others use DISABLE_AUTH=true
 
     services:
       postgres:
