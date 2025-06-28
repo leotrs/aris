@@ -95,11 +95,19 @@ async def current_user(
     if os.getenv("DISABLE_AUTH", "").lower() == "true":
         # Return a mock user for E2E testing
         from uuid import uuid4
-        return UserRead(
-            id=uuid4(),
-            email="test@example.com",
-            name="Test User"
-        )
+        from datetime import datetime
+        
+        # Create a mock user object that has all the fields the /me endpoint expects
+        class MockUser:
+            def __init__(self):
+                self.id = uuid4()
+                self.email = "test@example.com"
+                self.name = "Test User"
+                self.initials = "TU"
+                self.created_at = datetime.now()
+                self.avatar_color = "#0E9AE9"  # Default blue color
+        
+        return MockUser()
     
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
