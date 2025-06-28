@@ -26,7 +26,12 @@ TEST_USER_EMAIL = os.getenv("TEST_USER_EMAIL", "testuser@aris.pub")
 TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
 
 if not TEST_USER_PASSWORD:
-    raise ValueError("TEST_USER_PASSWORD not found in environment variables")
+    print("⚠️  TEST_USER_PASSWORD not found in environment variables, using default from .env.ci")
+    TEST_USER_PASSWORD = "testpassword123"
+
+print(f"📧 Using test user email: {TEST_USER_EMAIL}")
+print(f"🔑 Test password length: {len(TEST_USER_PASSWORD)} characters")
+print(f"🔑 Test password starts with: {TEST_USER_PASSWORD[:4]}...")
 
 
 async def reset_test_user():
