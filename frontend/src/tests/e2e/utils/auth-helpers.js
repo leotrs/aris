@@ -93,8 +93,8 @@ export class AuthHelpers {
       // The current_user dependency will still return mock user regardless of token validity
       const response = await this.page.request.get("http://localhost:8000/me", {
         headers: {
-          "Authorization": "Bearer fake-token-for-disabled-auth"
-        }
+          Authorization: "Bearer fake-token-for-disabled-auth",
+        },
       });
 
       // If we get a successful response, check if it's the mock user (auth disabled)

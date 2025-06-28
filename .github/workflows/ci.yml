@@ -428,6 +428,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DISABLE_AUTH: true
 
     - name: Wait for servers to be ready
       run: |
@@ -440,6 +441,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DISABLE_AUTH: true
 
   frontend-e2e-demo-interaction:
     runs-on: ubuntu-latest
@@ -521,6 +523,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DISABLE_AUTH: true
 
     - name: Wait for servers to be ready
       run: |
@@ -533,6 +536,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DISABLE_AUTH: true
 
   frontend-e2e-home-navigation:
     runs-on: ubuntu-latest
@@ -614,52 +618,12 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DISABLE_AUTH: true
 
     - name: Wait for servers to be ready
       run: |
         timeout 60 bash -c 'until curl -f http://localhost:8000/health; do sleep 2; done'
         timeout 60 bash -c 'until curl -f http://localhost:5173; do sleep 2; done'
-
-    - name: Debug auth detection in CI
-      run: |
-        echo "=== Environment Variables ==="
-        echo "DISABLE_AUTH: $DISABLE_AUTH"
-        echo "ENV: $ENV"
-        echo "CI: $CI"
-        echo ""
-        echo "=== Testing /me endpoint directly ==="
-        echo "Without auth header:"
-        curl -s http://localhost:8000/me || echo "Failed (expected)"
-        echo ""
-        echo "With fake auth header:"
-        curl -s -H "Authorization: Bearer fake-token-for-disabled-auth" http://localhost:8000/me || echo "Failed"
-        echo ""
-        echo "=== Testing auth detection logic ==="
-        cd frontend
-        node -e "
-        const { chromium } = require('playwright');
-        (async () => {
-          const browser = await chromium.launch();
-          const page = await browser.newPage();
-          
-          // Test the exact same logic as auth helpers
-          try {
-            const response = await page.request.get('http://localhost:8000/me', {
-              headers: { 'Authorization': 'Bearer fake-token-for-disabled-auth' }
-            });
-            console.log('Response status:', response.status());
-            if (response.ok()) {
-              const data = await response.json();
-              console.log('Response data:', JSON.stringify(data, null, 2));
-              console.log('Auth disabled check:', data.email === 'test@example.com' && data.name === 'Test User');
-            }
-          } catch (error) {
-            console.log('Error:', error.message);
-          }
-          
-          await browser.close();
-        })();
-        "
 
     - name: Run Frontend E2E tests (Home Navigation & Search)
       working-directory: frontend
@@ -667,6 +631,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DISABLE_AUTH: true
 
   frontend-e2e-home-files:
     runs-on: ubuntu-latest
@@ -748,6 +713,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DISABLE_AUTH: true
 
     - name: Wait for servers to be ready
       run: |
@@ -760,6 +726,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DISABLE_AUTH: true
 
   frontend-e2e-workspace:
     runs-on: ubuntu-latest
@@ -841,6 +808,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DISABLE_AUTH: true
 
     - name: Wait for servers to be ready
       run: |
@@ -853,5 +821,6 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DISABLE_AUTH: true
 
 # Trigger CI
