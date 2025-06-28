@@ -25,10 +25,15 @@ test.describe("Account View E2E Tests", () => {
     await expect(page.locator(".user-email")).toBeVisible();
     await expect(page.locator(".member-since")).toContainText("Member since");
 
-    // Update profile information - using input selectors that work with Vue components
-    const nameInput = page.locator('input').nth(0); // First input in the form group
-    const initialsInput = page.locator('input').nth(1); // Second input
-    const emailInput = page.locator('input').nth(2); // Third input
+    // Update profile information - use specific selectors targeting the InputText components
+    const nameInput = page.locator('.input-text').filter({ hasText: 'Full Name' }).locator('input');
+    const initialsInput = page.locator('.input-text').filter({ hasText: 'Initials' }).locator('input');
+    const emailInput = page.locator('.input-text').filter({ hasText: 'Email Address' }).locator('input');
+
+    // Wait for inputs to be visible and interactable
+    await expect(nameInput).toBeVisible();
+    await expect(initialsInput).toBeVisible();
+    await expect(emailInput).toBeVisible();
 
     await nameInput.fill("Test User Updated");
     await initialsInput.fill("TU");
