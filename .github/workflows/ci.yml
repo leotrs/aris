@@ -28,7 +28,7 @@ jobs:
 
   # PHASE 1: Unit Tests and Linting (Parallel)
   backend-test:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-latest-4-cores
     needs: changes
     if: ${{ always() }}
     env:
@@ -43,11 +43,14 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_aris
           POSTGRES_HOST_AUTH_METHOD: trust
+          # Performance optimizations for test database
+          POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB -c fsync=off -c synchronous_commit=off -c full_page_writes=off -c checkpoint_completion_target=0.9"
         options: >-
           --health-cmd pg_isready
-          --health-interval 10s
+          --health-interval 5s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 3
+          --shm-size=1g
         ports:
           - 5432:5432
 
@@ -62,44 +65,27 @@ jobs:
       uses: astral-sh/setup-uv@v6
       with:
         version: "latest"
-
-    - name: Create virtual environment
-      run: uv venv
+        enable-cache: true
 
     - name: Set up Python
       run: uv python install 3.13
 
-    - name: Sync dependencies
-      run: uv sync --group test
+    - name: Create virtual environment and sync dependencies
+      run: |
+        uv venv
+        uv sync --group test --group dev
 
     - name: Run linting (ruff)
       run: uv run ruff check
 
     - name: Wait for PostgreSQL to be ready
       run: |
-        until pg_isready -h localhost -p 5432 -U postgres; do
-          echo "Waiting for PostgreSQL..."
-          sleep 2
-        done
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
         echo "PostgreSQL is ready!"
 
-    - name: Test PostgreSQL connection
-      run: |
-        echo "Testing PostgreSQL connection..."
-        psql -h localhost -p 5432 -U postgres -d test_aris -c "SELECT version();"
-      env:
-        PGPASSWORD: postgres
-
-    - name: Debug env & .env.ci file
-      run: |
-        echo "ENV=$ENV"
-        echo "TEST_USER_PASSWORD is set: $([ -n "$TEST_USER_PASSWORD" ] && echo "yes" || echo "no")"
-        echo "GITHUB_ACTIONS=$GITHUB_ACTIONS"
-        ls -l .env.ci
-        cat .env.ci
 
     - name: Run tests
-      run: uv run pytest -n8 --cov=aris --cov-report=xml
+      run: uv run pytest -n auto --cov=aris --cov-report=xml --tb=short
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
