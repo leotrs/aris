@@ -2,26 +2,47 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Design Assets Integration", () => {
   test.beforeEach(async ({ page }) => {
+    // Mock design assets API since backend may not be running in site tests
+    await page.route("**/design-assets/**", async (route) => {
+      const url = route.request().url();
+
+      // Handle different asset types
+      if (url.includes("logo-32px.svg") || url.includes("logo-32px-gray.svg")) {
+        // Return a simple SVG for logo requests
+        const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+          <rect width="32" height="32" fill="#0e9ae9"/>
+          <text x="16" y="20" text-anchor="middle" fill="white" font-size="12">ARIS</text>
+        </svg>`;
+
+        await route.fulfill({
+          status: 200,
+          contentType: "image/svg+xml",
+          body: svgContent,
+        });
+      } else if (url.includes(".css")) {
+        // Return basic CSS for CSS file requests
+        const cssContent = `:root { --primary-500: #0e9ae9; --gray-100: #f5f5f5; --weight-regular: 400; }`;
+
+        await route.fulfill({
+          status: 200,
+          contentType: "text/css",
+          body: cssContent,
+        });
+      } else {
+        // For other design assets, return a generic response
+        await route.fulfill({
+          status: 200,
+          contentType: "text/plain",
+          body: "Mock design asset",
+        });
+      }
+    });
+
     // Go to the homepage
     await page.goto("/");
   });
 
   test("should load navbar logo from backend design assets", async ({ page }) => {
-    // Mock the design assets API since backend may not be running in site tests
-    await page.route("**/design-assets/**", async (route) => {
-      // Return a simple SVG for any design assets request
-      const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-        <rect width="32" height="32" fill="#0e9ae9"/>
-        <text x="16" y="20" text-anchor="middle" fill="white" font-size="12">ARIS</text>
-      </svg>`;
-
-      await route.fulfill({
-        status: 200,
-        contentType: "image/svg+xml",
-        body: svgContent,
-      });
-    });
-
     // Wait for the page to load
     await page.waitForLoadState("networkidle");
 
@@ -104,23 +125,6 @@ test.describe("Design Assets Integration", () => {
     expect(hasVariables.hasPrimary || hasVariables.hasGray || hasVariables.hasFont).toBe(true);
   });
 
-  test("should handle logo loading errors gracefully", async ({ page }) => {
-    // Intercept image requests and simulate failures for testing
-    await page.route("**/design-assets/logos/**", (route) => {
-      route.abort();
-    });
-
-    await page.goto("/");
-    await page.waitForLoadState("networkidle");
-
-    // Logo elements should still exist even if images fail to load
-    const navbarLogo = page.locator(".navbar-logo img");
-    await expect(navbarLogo).toBeVisible();
-
-    // Should have proper alt text for accessibility
-    await expect(navbarLogo).toHaveAttribute("alt", "Aris Logo");
-  });
-
   test("should have correct CORS headers for design assets", async ({ page }) => {
     let designAssetResponse = null;
 
@@ -164,5 +168,24 @@ test.describe("Design Assets Integration", () => {
 
     const naturalWidth = await navbarLogo.evaluate((img) => img.naturalWidth);
     expect(naturalWidth).toBeGreaterThan(0);
+  });
+});
+
+test.describe("Design Assets Error Handling", () => {
+  test("should handle logo loading errors gracefully", async ({ page }) => {
+    // Intercept image requests and simulate failures for testing
+    await page.route("**/design-assets/logos/**", (route) => {
+      route.abort();
+    });
+
+    await page.goto("/");
+    await page.waitForLoadState("networkidle");
+
+    // Logo elements should still exist even if images fail to load
+    const navbarLogo = page.locator(".navbar-logo img");
+    await expect(navbarLogo).toBeVisible();
+
+    // Should have proper alt text for accessibility
+    await expect(navbarLogo).toHaveAttribute("alt", "Aris Logo");
   });
 });

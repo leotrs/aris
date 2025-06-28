@@ -89,31 +89,26 @@ export class AuthHelpers {
     }
 
     try {
-      // Try to access a protected endpoint without auth headers
-      const response = await this.page.request.get("http://localhost:8000/me");
+      // When DISABLE_AUTH=true, we need to send a fake token to bypass OAuth2PasswordBearer
+      // The current_user dependency will still return mock user regardless of token validity
+      const response = await this.page.request.get("http://localhost:8000/me", {
+        headers: {
+          "Authorization": "Bearer fake-token-for-disabled-auth"
+        }
+      });
 
-      // If we get a successful response without sending auth headers, auth is disabled
+      // If we get a successful response, check if it's the mock user (auth disabled)
       if (response.ok()) {
         const data = await response.json();
-        // Check if we got the mock user response
-        return data.email === "test@example.com" && data.full_name === "Test User";
+        // Check if we got the mock user response indicating auth is disabled
+        return data.email === "test@example.com" && data.name === "Test User";
       }
 
+      // If we get 401, auth is enabled and working normally
       return false;
     } catch (error) {
       console.log(`Auth check failed: ${error.message}`);
-      // Backend might not be ready yet, retry once
-      try {
-        await this.page.waitForTimeout(1000);
-        const response = await this.page.request.get("http://localhost:8000/me");
-        if (response.ok()) {
-          const data = await response.json();
-          return data.email === "test@example.com" && data.full_name === "Test User";
-        }
-      } catch (retryError) {
-        console.log(`Auth check retry failed: ${retryError.message}`);
-        // Still failing, auth is likely enabled
-      }
+      // If there's a network error or other issue, assume auth is enabled for safety
       return false;
     }
   }

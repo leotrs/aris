@@ -65,12 +65,12 @@ class UserRead(BaseModel):
     Attributes:
         id (UUID): The unique identifier of the user.
         email (EmailStr): The user's email address.
-        full_name (str): The user's full name.
+        name (str): The user's name.
     """
 
     id: UUID
     email: EmailStr
-    full_name: str
+    name: str
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -98,7 +98,7 @@ async def current_user(
         return UserRead(
             id=uuid4(),
             email="test@example.com",
-            full_name="Test User"
+            name="Test User"
         )
     
     credentials_exception = HTTPException(
