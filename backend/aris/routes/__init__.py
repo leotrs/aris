@@ -1,4 +1,5 @@
 from .auth import router as auth_router
+from .copilot import router as copilot_router
 from .file import router as file_router
 from .file_annotations import router as file_annotations_router
 from .file_assets import router as file_assets_router
@@ -12,6 +13,7 @@ from .user_settings import router as user_settings_router
 
 __all__ = [
     "auth_router",
+    "copilot_router",
     "file_annotations_router",
     "file_router",
     "file_assets_router",
