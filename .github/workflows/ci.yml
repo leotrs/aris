@@ -33,7 +33,7 @@ jobs:
     if: ${{ always() }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
 
     services:
       postgres:
@@ -167,7 +167,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
 
     services:
       postgres:
@@ -260,7 +260,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
       # Only this job has real auth - others use DISABLE_AUTH=true
 
     services:
@@ -304,6 +304,9 @@ jobs:
         echo "Current working directory: $(pwd)"
         echo "Contents of .env.ci:"
         cat .env.ci
+        echo "Environment variables for auth:"
+        echo "TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
+        echo "TEST_USER_PASSWORD starts with: ${TEST_USER_PASSWORD:0:4}..."
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
 
@@ -342,7 +345,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_EMAIL: testuser@aris.pub
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
 
     - name: Wait for servers to be ready
       run: |
@@ -355,6 +358,30 @@ jobs:
         curl -v http://localhost:8000/health
         echo "Testing backend login endpoint availability..."
         curl -v -X POST http://localhost:8000/login -H "Content-Type: application/json" -d '{"email": "test@example.com", "password": "test"}' || echo "Login endpoint test complete (expected 400 for invalid credentials)"
+        
+        echo "Testing actual test user login..."
+        RESPONSE=$(curl -s -X POST http://localhost:8000/login \
+          -H "Content-Type: application/json" \
+          -d "{\"email\": \"testuser@aris.pub\", \"password\": \"${TEST_USER_PASSWORD}\"}")
+        echo "Login response: $RESPONSE"
+        if echo "$RESPONSE" | grep -q "access_token"; then
+          echo "✅ Test user login successful"
+        else
+          echo "❌ Test user login failed"
+          echo "This suggests password mismatch between backend and frontend"
+        fi
+
+    - name: Debug frontend environment variables
+      working-directory: frontend
+      run: |
+        echo "Frontend environment variables:"
+        echo "VITE_DEV_LOGIN_EMAIL: testuser@aris.pub"
+        echo "VITE_DEV_LOGIN_PASSWORD length: ${#VITE_DEV_LOGIN_PASSWORD}"
+        echo "VITE_DEV_LOGIN_PASSWORD starts with: ${VITE_DEV_LOGIN_PASSWORD:0:4}..."
+      env:
+        VITE_API_BASE_URL: http://localhost:8000
+        VITE_DEV_LOGIN_EMAIL: testuser@aris.pub
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
 
     - name: Run Frontend E2E tests (Auth)
       working-directory: frontend
@@ -362,7 +389,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DEV_LOGIN_EMAIL: testuser@aris.pub
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
 
   frontend-e2e-demo-content:
     runs-on: ubuntu-latest
@@ -370,7 +397,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
       DISABLE_AUTH: true
 
     services:
@@ -451,7 +478,7 @@ jobs:
       run: npm run dev -- --host 0.0.0.0 --port 5173 &
       env:
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
         VITE_DISABLE_AUTH: true
 
     - name: Wait for servers to be ready
@@ -464,7 +491,7 @@ jobs:
       run: npm run test:e2e -- --grep "demo.*(content|annotation)"
       env:
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
         VITE_DISABLE_AUTH: true
 
   frontend-e2e-demo-interaction:
@@ -473,7 +500,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
       DISABLE_AUTH: true
 
     services:
@@ -554,7 +581,7 @@ jobs:
       run: npm run dev -- --host 0.0.0.0 --port 5173 &
       env:
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
         VITE_DISABLE_AUTH: true
 
     - name: Wait for servers to be ready
@@ -567,7 +594,7 @@ jobs:
       run: npm run test:e2e -- --grep "demo.*(navigation|workspace)"
       env:
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
         VITE_DISABLE_AUTH: true
 
   frontend-e2e-home-navigation:
@@ -576,7 +603,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
       DISABLE_AUTH: true
 
     services:
@@ -657,7 +684,7 @@ jobs:
       run: npm run dev -- --host 0.0.0.0 --port 5173 &
       env:
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
         VITE_DISABLE_AUTH: true
 
     - name: Wait for servers to be ready
@@ -670,7 +697,7 @@ jobs:
       run: npm run test:e2e -- --grep "home.*(navigation|search)"
       env:
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
         VITE_DISABLE_AUTH: true
 
   frontend-e2e-home-files:
@@ -679,7 +706,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
       DISABLE_AUTH: true
 
     services:
@@ -760,7 +787,7 @@ jobs:
       run: npm run dev -- --host 0.0.0.0 --port 5173 &
       env:
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
         VITE_DISABLE_AUTH: true
 
     - name: Wait for servers to be ready
@@ -773,7 +800,7 @@ jobs:
       run: npm run test:e2e -- --grep "(home.*(accessibility|file)|file.*management)"
       env:
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
         VITE_DISABLE_AUTH: true
 
   frontend-e2e-workspace:
@@ -782,7 +809,7 @@ jobs:
     if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
       DISABLE_AUTH: true
 
     services:
@@ -863,7 +890,7 @@ jobs:
       run: npm run dev -- --host 0.0.0.0 --port 5173 &
       env:
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
         VITE_DISABLE_AUTH: true
 
     - name: Wait for servers to be ready
@@ -876,7 +903,7 @@ jobs:
       run: npm run test:e2e -- --grep "(workspace|sidebar|drawer|focus|debug|smoke)"
       env:
         VITE_API_BASE_URL: http://localhost:8000
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
         VITE_DISABLE_AUTH: true
 
 # Trigger CI
