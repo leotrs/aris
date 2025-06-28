@@ -94,8 +94,8 @@ async def current_user(
     # Check if authentication is disabled for E2E testing
     if os.getenv("DISABLE_AUTH", "").lower() == "true":
         # Return a mock user for E2E testing
-        from uuid import uuid4
         from datetime import datetime
+        from uuid import uuid4
         
         # Create a mock user object that has all the fields the /me endpoint expects
         class MockUser:
