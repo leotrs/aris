@@ -107,6 +107,13 @@ export class AuthHelpers {
       // We were redirected to login, so auth is enabled - need to login
       const testPassword = process.env.VITE_DEV_LOGIN_PASSWORD || "testpassword123";
       await this.login("testuser@aris.pub", testPassword);
+      
+      // Check if login was successful
+      await this.page.waitForTimeout(1000);
+      const postLoginUrl = this.page.url();
+      if (postLoginUrl.includes("/login")) {
+        throw new Error(`Login failed: still on login page after attempting login with testuser@aris.pub. Check if test user exists and TEST_USER_PASSWORD is correct.`);
+      }
     }
 
     // Always call expectToBeLoggedIn to verify final state
