@@ -14,7 +14,7 @@ test.describe("Design Assets Integration", () => {
         <rect width="32" height="32" fill="#0e9ae9"/>
         <text x="16" y="20" text-anchor="middle" fill="white" font-size="12">ARIS</text>
       </svg>`;
-      
+
       await route.fulfill({
         status: 200,
         contentType: "image/svg+xml",
