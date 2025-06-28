@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { TEST_CREDENTIALS } from "../setup/test-data.js";
 
 export class AuthHelpers {
   constructor(page) {
@@ -105,8 +106,7 @@ export class AuthHelpers {
 
     if (currentUrl.includes("/login")) {
       // We were redirected to login, so auth is enabled - need to login
-      const testPassword = process.env.VITE_DEV_LOGIN_PASSWORD || "testpassword123";
-      await this.login("testuser@aris.pub", testPassword);
+      await this.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
       
       // Check if login was successful
       await this.page.waitForTimeout(1000);
