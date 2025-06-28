@@ -224,6 +224,14 @@ jobs:
       working-directory: site
       run: npm ci
 
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
     - name: Install Playwright browsers
       working-directory: site
       run: npx playwright install --with-deps
@@ -310,6 +318,14 @@ jobs:
     - name: Install frontend dependencies
       working-directory: frontend
       run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
 
     - name: Install Playwright browsers
       working-directory: frontend
@@ -413,6 +429,14 @@ jobs:
       working-directory: frontend
       run: npm ci
 
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
     - name: Install Playwright browsers
       working-directory: frontend
       run: npx playwright install --with-deps
@@ -507,6 +531,14 @@ jobs:
     - name: Install frontend dependencies
       working-directory: frontend
       run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
 
     - name: Install Playwright browsers
       working-directory: frontend
@@ -603,6 +635,14 @@ jobs:
       working-directory: frontend
       run: npm ci
 
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
     - name: Install Playwright browsers
       working-directory: frontend
       run: npx playwright install --with-deps
@@ -698,6 +738,14 @@ jobs:
       working-directory: frontend
       run: npm ci
 
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
+
     - name: Install Playwright browsers
       working-directory: frontend
       run: npx playwright install --with-deps
@@ -792,6 +840,14 @@ jobs:
     - name: Install frontend dependencies
       working-directory: frontend
       run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ runner.os }}-playwright-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: |
+          ${{ runner.os }}-playwright-
 
     - name: Install Playwright browsers
       working-directory: frontend
