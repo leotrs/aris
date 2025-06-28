@@ -6,6 +6,7 @@ Will read ../alembic.ini and whatever is inside .env files in this dir or up.
 
 import os
 from logging.config import fileConfig
+from pathlib import Path
 
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
@@ -14,7 +15,10 @@ from alembic import context
 from aris.models import Base
 
 
-load_dotenv()
+# Load the appropriate .env file based on environment
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_file = BASE_DIR / (".env.ci" if os.getenv("ENV") == "CI" else ".env")
+load_dotenv(env_file)
 
 config = context.config
 
