@@ -27,9 +27,9 @@ test.describe("Demo Annotations Viewport", () => {
     const loadWait = isMobile ? 3000 : 2000;
     await page.waitForTimeout(loadWait);
 
-    // Wait for demo canvas with extended timeout
-    const demoCanvas = page.locator('[data-testid="demo-canvas"], .demo-container, .workspace');
-    await expect(demoCanvas.first()).toBeVisible({ timeout: 20000 });
+    // Wait for demo canvas to be loaded (not just the loading screen)
+    const demoCanvas = page.locator('[data-testid="demo-canvas"][data-loaded="true"]');
+    await expect(demoCanvas).toBeVisible({ timeout: 20000 });
 
     // For mobile browsers, wait for layout to stabilize
     if (isMobile) {
