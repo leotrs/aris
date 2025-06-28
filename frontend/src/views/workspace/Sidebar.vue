@@ -131,15 +131,15 @@
     <Button
       icon="Layout"
       kind="tertiary"
-      :style="{ 
-        position: 'fixed', 
-        left: focusButtonLeft, 
-        top: '16px', 
+      :style="{
+        position: 'fixed',
+        left: focusButtonLeft,
+        top: '16px',
         zIndex: 10,
-        display: focusMode ? 'block' : 'none'
+        display: focusMode ? 'block' : 'none',
       }"
-      @click="toggleFocusMode"
       aria-label="Exit focus mode"
+      @click="toggleFocusMode"
     />
 
     <Tooltip :anchor="layoutOnRef?.btn ?? null" content="Focus mode off" placement="top" />
