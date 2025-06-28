@@ -7,7 +7,7 @@ test.describe("Account View E2E Tests", () => {
   test.beforeEach(async ({ page }) => {
     authHelpers = new AuthHelpers(page);
     // Ensure authenticated state for account tests
-    await authHelpers.loginWithTestUser();
+    await authHelpers.ensureLoggedIn();
   });
 
   test.afterEach(async () => {
