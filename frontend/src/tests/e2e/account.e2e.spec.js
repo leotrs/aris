@@ -21,35 +21,35 @@ test.describe("Account View E2E Tests", () => {
     await expect(page).toHaveURL("/account");
 
     // Verify we're on the account page with user info displayed
-    await expect(page.locator("#username")).toBeVisible();
-    await expect(page.locator("text=alice@example.com")).toBeVisible();
-    await expect(page.locator("#since")).toContainText("Aris user since");
+    await expect(page.locator(".user-name")).toBeVisible();
+    await expect(page.locator(".user-email")).toBeVisible();
+    await expect(page.locator(".member-since")).toContainText("Member since");
 
-    // Update profile information
-    const nameInput = page.locator('input[placeholder*="Alice"]'); // Find input with Alice placeholder
-    const initialsInput = page.locator('input[placeholder*="AL"]');
-    const emailInput = page.locator('input[placeholder*="alice@example.com"]');
+    // Update profile information - using input selectors that work with Vue components
+    const nameInput = page.locator('input').nth(0); // First input in the form group
+    const initialsInput = page.locator('input').nth(1); // Second input
+    const emailInput = page.locator('input').nth(2); // Third input
 
-    await nameInput.fill("Alice Updated");
-    await initialsInput.fill("AU");
-    await emailInput.fill("alice.updated@example.com");
+    await nameInput.fill("Test User Updated");
+    await initialsInput.fill("TU");
+    await emailInput.fill("testuser.updated@aris.pub");
 
     // Save the changes
-    await page.locator("#cta").click(); // Save button
+    await page.locator('button:has-text("Save Changes")').click();
 
     // Verify the changes are reflected in the UI
     // Note: In a real test, we'd need to handle the API response
     // For now, we verify the form inputs were filled correctly
-    await expect(nameInput).toHaveValue("Alice Updated");
-    await expect(initialsInput).toHaveValue("AU");
-    await expect(emailInput).toHaveValue("alice.updated@example.com");
+    await expect(nameInput).toHaveValue("Test User Updated");
+    await expect(initialsInput).toHaveValue("TU");
+    await expect(emailInput).toHaveValue("testuser.updated@aris.pub");
   });
 
   test("avatar upload workflow", async ({ page }) => {
     await page.goto("/account");
 
     // Verify upload button is present
-    const uploadButton = page.locator(".pic-upload");
+    const uploadButton = page.locator(".avatar-upload");
     await expect(uploadButton).toBeVisible();
 
     // Test file upload interaction
@@ -73,7 +73,7 @@ test.describe("Account View E2E Tests", () => {
     // In a real test environment, we'd mock the API to return errors
 
     // Verify the upload button is functional
-    const uploadButton = page.locator(".pic-upload");
+    const uploadButton = page.locator(".avatar-upload");
     await expect(uploadButton).toBeVisible();
     await expect(uploadButton).toBeEnabled();
 
@@ -90,28 +90,28 @@ test.describe("Account View E2E Tests", () => {
     await page.setViewportSize({ width: 375, height: 667 }); // Mobile size
 
     // Verify mobile layout adaptations
-    const mainContainer = page.locator(".main");
+    const mainContainer = page.locator(".account-layout");
     await expect(mainContainer).toBeVisible();
 
     // Check if danger zone is visible
-    const dangerSection = page.locator(".danger");
+    const dangerSection = page.locator(".danger-zone");
     await expect(dangerSection).toBeVisible();
 
-    const deleteButton = page.locator("#danger");
+    const deleteButton = page.locator('button:has-text("Delete Account")');
     await expect(deleteButton).toBeVisible();
-    await expect(deleteButton).toContainText("Delete account");
+    await expect(deleteButton).toContainText("Delete Account");
 
     // Test desktop layout
     await page.setViewportSize({ width: 1280, height: 720 });
 
     // Verify helpful links are visible in desktop mode
-    const helpLink = page.locator("text=Help");
+    const helpLink = page.locator('button:has-text("Get Help")');
     await expect(helpLink).toBeVisible();
 
-    const contributeLink = page.locator("text=Contribute");
+    const contributeLink = page.locator('button:has-text("Contribute")');
     await expect(contributeLink).toBeVisible();
 
-    const donateLink = page.locator("text=Donate");
-    await expect(donateLink).toBeVisible();
+    const supportLink = page.locator('button:has-text("Support Us")');
+    await expect(supportLink).toBeVisible();
   });
 });
