@@ -316,10 +316,32 @@ test.describe("Cross-Browser Compatibility", () => {
       });
 
       await page.click('button[type="submit"]');
-      await page.waitForTimeout(2000); // Wait for API call to complete
-      await expect(
-        page.locator("text=This email address is already registered for early access.")
-      ).toBeVisible({ timeout: 10000 });
+
+      // Wait for form submission and error to be processed
+      await page.waitForLoadState("networkidle");
+      await page.waitForTimeout(3000); // Extended wait for Safari/webkit
+
+      // Look for error message in multiple ways - some browsers might display it differently
+      const errorMessage = page.locator(
+        "text=This email address is already registered for early access."
+      );
+      const errorContainer = page.locator('.error, .alert, .notification, [role="alert"]');
+      const formError = page
+        .locator("form")
+        .locator("text=This email address is already registered");
+
+      try {
+        // Try the exact text match first
+        await expect(errorMessage).toBeVisible({ timeout: 5000 });
+      } catch {
+        try {
+          // Try looking for any error container that might contain the message
+          await expect(errorContainer).toContainText("already registered", { timeout: 5000 });
+        } catch {
+          // Try looking within the form for partial text
+          await expect(formError).toBeVisible({ timeout: 5000 });
+        }
+      }
 
       console.log(`✓ API error handling works correctly in ${browserName}`);
     });

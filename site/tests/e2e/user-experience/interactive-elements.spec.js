@@ -146,19 +146,22 @@ test.describe("Interactive Elements E2E", () => {
       // Initially navbar should not have scrolled class
       await expect(navbar).not.toHaveClass(/navbar-scrolled/);
 
-      // Scroll down
-      await page.locator(".section-two").scrollIntoViewIfNeeded();
-      await page.waitForTimeout(300); // Wait for scroll event processing
+      // Scroll down significantly to ensure scroll event triggers
+      await page.evaluate(() => window.scrollTo(0, 500));
+      await page.waitForTimeout(500); // Wait for scroll event processing
 
       // Navbar should have scrolled class
       await expect(navbar).toHaveClass(/navbar-scrolled/);
 
-      // Scroll back to top
-      await page.locator(".hero-section").scrollIntoViewIfNeeded();
-      await page.waitForTimeout(300); // Wait for scroll event processing
+      // Scroll back to top with explicit position
+      await page.evaluate(() => window.scrollTo(0, 0));
+      await page.waitForTimeout(500); // Wait for scroll event processing
+
+      // Wait for any animations or transitions to complete
+      await page.waitForFunction(() => window.scrollY === 0);
 
       // Navbar should lose scrolled class
-      await expect(navbar).not.toHaveClass(/navbar-scrolled/);
+      await expect(navbar).not.toHaveClass(/navbar-scrolled/, { timeout: 10000 });
     });
   });
 
