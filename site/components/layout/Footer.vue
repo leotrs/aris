@@ -5,6 +5,7 @@
     IconBrandX,
     IconChevronUp,
   } from "@tabler/icons-vue";
+  import Logo from "./Logo.vue";
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: "smooth" });

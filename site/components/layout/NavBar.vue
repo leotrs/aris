@@ -67,9 +67,9 @@
       </ul>
 
       <div class="navbar-utility-links">
-        <a href="/login" class="nav-link nav-link-button">Login</a>
+        <a :href="frontendUrl + '/login'" class="nav-link nav-link-button">Login</a>
         <a href="/signup" class="nav-link nav-link-button nav-link-button-primary">Sign Up</a>
-        <a href="/demo" class="nav-link nav-link-cta">Try the Demo</a>
+        <a :href="frontendUrl + '/demo'" class="nav-link nav-link-cta">Try the Demo</a>
       </div>
 
       <button
@@ -79,41 +79,8 @@
         @keydown.enter.prevent="toggleMobileMenu"
         @keydown.space.prevent="toggleMobileMenu"
       >
-        <svg
-          v-if="!isMobileMenuOpen"
-          xmlns="http://www.w3.org/2000/svg"
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-menu-2"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-          <path d="M4 6h16"></path>
-          <path d="M4 12h16"></path>
-          <path d="M4 18h16"></path>
-        </svg>
-        <svg
-          v-else
-          xmlns="http://www.w3.org/2000/svg"
-          width="28"
-          height="28"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="2"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          class="icon icon-tabler icons-tabler-outline icon-tabler-x"
-        >
-          <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-          <path d="M18 6l-12 12"></path>
-          <path d="M6 6l12 12"></path>
-        </svg>
+        <IconMenu2 v-if="!isMobileMenuOpen" :size="28" />
+        <IconX v-else :size="28" />
       </button>
     </div>
 
@@ -146,13 +113,19 @@
           </li>
         </ul>
         <div class="mobile-navbar-utility-links">
-          <a href="/login" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu"
+          <a
+            :href="frontendUrl + '/login'"
+            class="mobile-nav-link mobile-nav-link-utility"
+            @click="closeMobileMenu"
             >Login</a
           >
           <a href="/signup" class="mobile-nav-link mobile-nav-link-utility" @click="closeMobileMenu"
             >Sign Up</a
           >
-          <a href="/demo" class="mobile-nav-link mobile-nav-link-cta" @click="closeMobileMenu"
+          <a
+            :href="frontendUrl + '/demo'"
+            class="mobile-nav-link mobile-nav-link-cta"
+            @click="closeMobileMenu"
             >Try the Demo</a
           >
         </div>
@@ -163,6 +136,11 @@
 
 <script setup>
   import { ref, onMounted, onUnmounted, nextTick } from "vue";
+  import { IconMenu2, IconX } from "@tabler/icons-vue";
+  import Logo from "./Logo.vue";
+
+  const config = useRuntimeConfig();
+  const frontendUrl = config.public.frontendUrl;
 
   const isMobileMenuOpen = ref(false);
   const isResourcesDropdownOpen = ref(false);

@@ -3,35 +3,35 @@ import { mount } from "@vue/test-utils";
 import IndexPage from "../../pages/index.vue";
 
 // Mock the section components
-vi.mock("~/components/sections/HeroSection.vue", () => ({
+vi.mock("~/components/home/HeroSection.vue", () => ({
   default: {
     name: "HeroSection",
     template: "<div data-testid='hero-section'>HeroSection</div>",
   },
 }));
 
-vi.mock("~/components/sections/SectionTwo.vue", () => ({
+vi.mock("~/components/home/ProblemSolutionSection.vue", () => ({
   default: {
     name: "SectionTwo",
     template: "<div data-testid='section-two'>SectionTwo</div>",
   },
 }));
 
-vi.mock("~/components/sections/SectionThree.vue", () => ({
+vi.mock("~/components/home/FeatureDemosSection.vue", () => ({
   default: {
     name: "SectionThree",
     template: "<div data-testid='section-three'>SectionThree</div>",
   },
 }));
 
-vi.mock("~/components/sections/SectionFour.vue", () => ({
+vi.mock("~/components/home/UserRolesSection.vue", () => ({
   default: {
     name: "SectionFour",
     template: "<div data-testid='section-four'>SectionFour</div>",
   },
 }));
 
-vi.mock("~/components/sections/SectionCTA.vue", () => ({
+vi.mock("~/components/home/HomeCTASection.vue", () => ({
   default: {
     name: "SectionCTA",
     template: "<div data-testid='section-cta'>SectionCTA</div>",

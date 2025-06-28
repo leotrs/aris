@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import SectionCTA from "../../../components/sections/SectionCTA.vue";
+import HomeCTASection from "../../../components/home/HomeCTASection.vue";
 
-describe("SectionCTA Component", () => {
+describe("HomeCTASection Component", () => {
   let wrapper;
 
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe("SectionCTA Component", () => {
 
   describe("Basic Rendering", () => {
     it("should render CTA section container", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const section = wrapper.find(".cta-section");
       expect(section.exists()).toBe(true);
@@ -25,7 +25,7 @@ describe("SectionCTA Component", () => {
     });
 
     it("should render CTA headline", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const headline = wrapper.find(".cta-headline");
       expect(headline.exists()).toBe(true);
@@ -34,7 +34,7 @@ describe("SectionCTA Component", () => {
     });
 
     it("should render content wrapper", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const contentWrapper = wrapper.find(".cta-content-wrapper");
       expect(contentWrapper.exists()).toBe(true);
@@ -43,7 +43,7 @@ describe("SectionCTA Component", () => {
 
   describe("Call-to-Action Elements", () => {
     it("should render primary CTA button", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const primaryButton = wrapper.find(".btn.btn-primary");
       expect(primaryButton.exists()).toBe(true);
@@ -52,7 +52,7 @@ describe("SectionCTA Component", () => {
     });
 
     it("should render secondary CTA link", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const secondaryLink = wrapper.find('a[href="/signup"]');
       expect(secondaryLink.exists()).toBe(true);
@@ -61,7 +61,7 @@ describe("SectionCTA Component", () => {
     });
 
     it("should render CTAs within buttons container", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const ctaButtons = wrapper.find(".cta-buttons");
       expect(ctaButtons.exists()).toBe(true);
@@ -76,7 +76,7 @@ describe("SectionCTA Component", () => {
 
   describe("Content Validation", () => {
     it("should have meaningful headline text", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const headline = wrapper.find(".cta-headline").text();
 
@@ -86,7 +86,7 @@ describe("SectionCTA Component", () => {
     });
 
     it("should have proper button text", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const primaryButton = wrapper.find(".btn.btn-primary");
       const secondaryLink = wrapper.find('a[href="/signup"]');
@@ -98,14 +98,14 @@ describe("SectionCTA Component", () => {
 
   describe("Accessibility", () => {
     it("should have proper heading hierarchy", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const headline = wrapper.find(".cta-headline");
       expect(headline.element.tagName.toLowerCase()).toBe("h2");
     });
 
     it("should have semantic HTML structure", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       // Should be a section element
       const section = wrapper.find("section");
@@ -119,7 +119,7 @@ describe("SectionCTA Component", () => {
 
   describe("Link and Navigation", () => {
     it("should have correct link target", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const signupLink = wrapper.find('a[href="/signup"]');
       expect(signupLink.exists()).toBe(true);
@@ -127,7 +127,7 @@ describe("SectionCTA Component", () => {
     });
 
     it("should not have any broken or empty links", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const links = wrapper.findAll("a");
       links.forEach((link) => {
@@ -141,7 +141,7 @@ describe("SectionCTA Component", () => {
 
   describe("CSS Classes", () => {
     it("should have proper CSS class structure", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       // Main container classes
       expect(wrapper.find(".cta-section").exists()).toBe(true);
@@ -157,7 +157,7 @@ describe("SectionCTA Component", () => {
 
   describe("Component Structure", () => {
     it("should have proper layout structure", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const contentWrapper = wrapper.find(".cta-content-wrapper");
       expect(contentWrapper.exists()).toBe(true);
@@ -168,7 +168,7 @@ describe("SectionCTA Component", () => {
     });
 
     it("should have centered layout elements", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const ctaButtons = wrapper.find(".cta-buttons");
       expect(ctaButtons.exists()).toBe(true);
@@ -181,7 +181,7 @@ describe("SectionCTA Component", () => {
 
   describe("Button Functionality", () => {
     it("should render link with proper href", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const button = wrapper.find(".btn.btn-primary");
       expect(button.exists()).toBe(true);
@@ -190,7 +190,7 @@ describe("SectionCTA Component", () => {
     });
 
     it("should have link element for secondary action", () => {
-      wrapper = mount(SectionCTA);
+      wrapper = mount(HomeCTASection);
 
       const link = wrapper.find('a[href="/signup"]');
       expect(link.exists()).toBe(true);
