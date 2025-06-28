@@ -46,6 +46,7 @@ docker compose -f docker-compose.dev.yml up --build
 
 **Access your services:**
 - 🌐 **Frontend**: http://localhost:5173
+- 📚 **Storybook**: http://localhost:6006
 - 🔧 **Backend API**: http://localhost:8000/docs
 - 📊 **Health Check**: http://localhost:8000/health
 - 🗄️ **Database**: localhost:5432
@@ -128,6 +129,7 @@ docker compose -p aris-main down -v
 
 - **Backend**: FastAPI with hot reload, async PostgreSQL connection
 - **Frontend**: Vue.js + Vite with hot module replacement
+- **Storybook**: Component library and design system documentation
 - **Database**: PostgreSQL 16 with automatic migrations and health checks
 
 ### Development Features

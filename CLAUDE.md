@@ -52,6 +52,7 @@ docker compose -f docker-compose.dev.yml up --build
 
 # Access services:
 # Frontend: http://localhost:5173 (or your FRONTEND_PORT)
+# Storybook: http://localhost:6006 (or your STORYBOOK_PORT)
 # Backend API: http://localhost:8000/docs (or your BACKEND_PORT)
 # Database: localhost:5432 (or your DB_PORT)
 ```
@@ -62,6 +63,7 @@ See [docker/README.md](docker/README.md) for detailed multi-clone setup instruct
 ```bash
 npm install                           # Install dependencies
 npm run dev                           # Run dev server
+npm run storybook                     # Run Storybook component library
 npm run lint                          # Lint code
 npm test                              # Run unit tests
 npm run test:e2e                      # Run E2E tests
