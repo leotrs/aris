@@ -251,6 +251,10 @@ jobs:
     - name: Setup database and test data
       working-directory: backend
       run: |
+        echo "ENV=$ENV"
+        echo "Current working directory: $(pwd)"
+        echo "Contents of .env.ci:"
+        cat .env.ci
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
 
@@ -338,6 +342,10 @@ jobs:
     - name: Setup database and test data
       working-directory: backend
       run: |
+        echo "ENV=$ENV"
+        echo "Current working directory: $(pwd)"
+        echo "Contents of .env.ci:"
+        cat .env.ci
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
 
