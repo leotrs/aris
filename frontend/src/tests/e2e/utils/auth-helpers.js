@@ -34,15 +34,18 @@ export class AuthHelpers {
   async expectToBeLoggedIn() {
     // Check if auth is disabled (backend env var)
     const isAuthDisabled = await this.isAuthDisabled();
-    
+
     if (isAuthDisabled) {
       // In disabled auth mode, just go to home page and verify it loads
       await this.page.goto("/");
       await this.page.waitForLoadState("networkidle");
       await expect(this.page).toHaveURL("/");
-      
+
       // Wait for the page to load with mock user
-      await this.page.waitForSelector('[data-testid="file-list"], [data-testid="empty-state"], .file-item', { timeout: 10000 });
+      await this.page.waitForSelector(
+        '[data-testid="file-list"], [data-testid="empty-state"], .file-item',
+        { timeout: 10000 }
+      );
       return;
     }
 
@@ -64,14 +67,14 @@ export class AuthHelpers {
     try {
       // Try to access a protected endpoint without auth headers
       const response = await this.page.request.get("http://localhost:8000/me");
-      
+
       // If we get a successful response without sending auth headers, auth is disabled
       if (response.ok()) {
         const data = await response.json();
         // Check if we got the mock user response
         return data.email === "test@example.com" && data.full_name === "Test User";
       }
-      
+
       return false;
     } catch {
       return false;
@@ -81,7 +84,7 @@ export class AuthHelpers {
   async ensureLoggedIn() {
     // Check if auth is disabled first
     const isAuthDisabled = await this.isAuthDisabled();
-    
+
     if (isAuthDisabled) {
       // Just go to home page - backend will provide mock user
       await this.page.goto("/");
@@ -91,7 +94,7 @@ export class AuthHelpers {
 
     // Normal auth flow - try to go to home, if redirected to login, then login
     await this.page.goto("/");
-    
+
     // Check if we're redirected to login
     const currentUrl = this.page.url();
     if (currentUrl.includes("/login")) {
@@ -99,7 +102,7 @@ export class AuthHelpers {
       const testPassword = process.env.VITE_DEV_LOGIN_PASSWORD || "testpassword123";
       await this.login("testuser@aris.pub", testPassword);
     }
-    
+
     await this.expectToBeLoggedIn();
   }
 
