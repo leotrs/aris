@@ -77,32 +77,39 @@ export class AuthHelpers {
 
       return false;
     } catch {
+      // Backend might not be ready yet, retry once
+      try {
+        await this.page.waitForTimeout(1000);
+        const response = await this.page.request.get("http://localhost:8000/me");
+        if (response.ok()) {
+          const data = await response.json();
+          return data.email === "test@example.com" && data.full_name === "Test User";
+        }
+      } catch {
+        // Still failing, auth is likely enabled
+      }
       return false;
     }
   }
 
   async ensureLoggedIn() {
-    // Check if auth is disabled first
-    const isAuthDisabled = await this.isAuthDisabled();
-
-    if (isAuthDisabled) {
-      // Just go to home page - backend will provide mock user
-      await this.page.goto("/");
-      await this.page.waitForLoadState("networkidle");
-      return;
-    }
-
-    // Normal auth flow - try to go to home, if redirected to login, then login
+    // First, try to go directly to home - this will work if auth is disabled
     await this.page.goto("/");
+    await this.page.waitForLoadState("networkidle");
 
-    // Check if we're redirected to login
+    // Wait a moment for any potential redirects to happen
+    await this.page.waitForTimeout(1500);
+
+    // Check where we ended up
     const currentUrl = this.page.url();
+
     if (currentUrl.includes("/login")) {
-      // We need to login
+      // We were redirected to login, so auth is enabled - need to login
       const testPassword = process.env.VITE_DEV_LOGIN_PASSWORD || "testpassword123";
       await this.login("testuser@aris.pub", testPassword);
     }
 
+    // Always call expectToBeLoggedIn to verify final state
     await this.expectToBeLoggedIn();
   }
 
