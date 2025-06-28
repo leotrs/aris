@@ -106,13 +106,18 @@ export class AuthHelpers {
 
     if (currentUrl.includes("/login")) {
       // We were redirected to login, so auth is enabled - need to login
-      await this.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
+      const email = TEST_CREDENTIALS.valid.email;
+      const password = process.env.VITE_DEV_LOGIN_PASSWORD || TEST_CREDENTIALS.valid.password || "testpassword123";
+      console.log(`Attempting login with email: ${email}, password length: ${password?.length || 'undefined'}, from env: ${!!process.env.VITE_DEV_LOGIN_PASSWORD}`);
+      await this.login(email, password);
       
       // Check if login was successful
       await this.page.waitForTimeout(1000);
       const postLoginUrl = this.page.url();
       if (postLoginUrl.includes("/login")) {
-        throw new Error(`Login failed: still on login page after attempting login with testuser@aris.pub. Check if test user exists and TEST_USER_PASSWORD is correct.`);
+        // Check for error messages on the page
+        const errorElement = await this.page.locator('[data-testid="login-error"]').textContent().catch(() => 'No error message found');
+        throw new Error(`Login failed: still on login page after attempting login with ${email}. Error: ${errorElement}. Check if test user exists and password is correct.`);
       }
     }
 
