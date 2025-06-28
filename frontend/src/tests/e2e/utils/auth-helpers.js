@@ -42,9 +42,10 @@ export class AuthHelpers {
       await this.page.waitForLoadState("networkidle");
       await expect(this.page).toHaveURL("/");
 
-      // Wait for the page to load with mock user
+      // Wait for the home page to load - the test user should always have files
+      // so we expect either the files container with files or the create button to be present
       await this.page.waitForSelector(
-        '[data-testid="file-list"], [data-testid="empty-state"], .file-item',
+        '[data-testid="files-container"], [data-testid="create-file-button"]',
         { timeout: 10000 }
       );
       return;
