@@ -10,10 +10,7 @@ test.describe("Account View E2E Tests", () => {
     await authHelpers.ensureLoggedIn();
   });
 
-  test.afterEach(async () => {
-    // Clean up auth state after each test
-    await authHelpers.clearAuthState();
-  });
+  // No afterEach cleanup - keep auth state for all account tests
 
   test("complete account profile update workflow", async ({ page }) => {
     // Navigate to account page
