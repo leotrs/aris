@@ -809,3 +809,4 @@ jobs:
       env:
         VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
+# Trigger CI
