@@ -11,9 +11,11 @@ Environment variables:
 - DB_URL_LOCAL: Local database connection URL.
 - DB_URL_PROD: Production database connection URL.
 - ENV: Environment indicator, "PROD" selects production DB URL.
+- DISABLE_AUTH: When set to "true", disables authentication for E2E testing.
 
 """
 
+import os
 from typing import AsyncGenerator, Optional
 from uuid import UUID
 
@@ -89,6 +91,16 @@ async def current_user(
         UserRead: The authenticated user's data.
 
     """
+    # Check if authentication is disabled for E2E testing
+    if os.getenv("DISABLE_AUTH", "").lower() == "true":
+        # Return a mock user for E2E testing
+        from uuid import uuid4
+        return UserRead(
+            id=uuid4(),
+            email="test@example.com",
+            full_name="Test User"
+        )
+    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid authentication credentials",
