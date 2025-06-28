@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import Footer from "../../components/Footer.vue";
+import Footer from "../../../components/layout/Footer.vue";
 
 // Mock Tabler icons
 vi.mock("@tabler/icons-vue", () => ({

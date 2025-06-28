@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import Logo from "../../components/Logo.vue";
+import Logo from "../../../components/layout/Logo.vue";
 
 // Mock the useApi composable
 vi.mock("@/composables/useApi.js", () => ({

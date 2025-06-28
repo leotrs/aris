@@ -1,18 +1,18 @@
 <script setup>
-  import HeroSection from "~/components/sections/HeroSection.vue";
-  import SectionTwo from "~/components/sections/SectionTwo.vue";
-  import SectionThree from "~/components/sections/SectionThree.vue";
-  import SectionFour from "~/components/sections/SectionFour.vue";
-  import SectionCTA from "~/components/sections/SectionCTA.vue";
+  import HeroSection from "~/components/home/HeroSection.vue";
+  import ProblemSolutionSection from "~/components/home/ProblemSolutionSection.vue";
+  import FeatureDemosSection from "~/components/home/FeatureDemosSection.vue";
+  import UserRolesSection from "~/components/home/UserRolesSection.vue";
+  import HomeCTASection from "~/components/home/HomeCTASection.vue";
 </script>
 
 <template>
   <div>
     <HeroSection />
-    <SectionTwo />
-    <SectionThree />
-    <SectionFour />
-    <SectionCTA />
+    <ProblemSolutionSection />
+    <FeatureDemosSection />
+    <UserRolesSection />
+    <HomeCTASection />
   </div>
 </template>
 

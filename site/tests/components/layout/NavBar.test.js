@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import NavBar from "../../components/NavBar.vue";
+import NavBar from "../../../components/layout/NavBar.vue";
 
 // Mock DOM methods that aren't available in jsdom
 Object.defineProperty(window, "scrollY", {
@@ -80,19 +80,38 @@ describe("NavBar Component", () => {
       expect(pricingLink.text()).toBe("Pricing");
     });
 
-    it("should render utility links", () => {
-      wrapper = mount(NavBar);
+    it("should render utility links with correct URLs", () => {
+      const mockUseRuntimeConfig = vi.fn(() => ({
+        public: {
+          frontendUrl: "http://localhost:5173",
+        },
+      }));
 
-      const loginLink = wrapper.find('a[href="/login"]');
-      const signupLink = wrapper.find('a[href="/signup"]');
-      const demoLink = wrapper.find('a[href="/demo"]');
+      wrapper = mount(NavBar, {
+        global: {
+          provide: {
+            useRuntimeConfig: mockUseRuntimeConfig,
+          },
+          stubs: {
+            useRuntimeConfig: mockUseRuntimeConfig,
+          },
+        },
+      });
 
-      expect(loginLink.exists()).toBe(true);
-      expect(loginLink.text()).toBe("Login");
-      expect(signupLink.exists()).toBe(true);
-      expect(signupLink.text()).toBe("Sign Up");
-      expect(demoLink.exists()).toBe(true);
-      expect(demoLink.text()).toBe("Try the Demo");
+      // Test that the links exist with the expected text
+      const loginLinks = wrapper.findAll("a").filter((link) => link.text() === "Login");
+      const signupLinks = wrapper.findAll("a").filter((link) => link.text() === "Sign Up");
+      const demoLinks = wrapper.findAll("a").filter((link) => link.text() === "Try the Demo");
+
+      expect(loginLinks.length).toBeGreaterThan(0);
+      expect(signupLinks.length).toBeGreaterThan(0);
+      expect(demoLinks.length).toBeGreaterThan(0);
+
+      // Check that at least one login link has the frontend URL
+      const hasCorrectLoginUrl = loginLinks.some((link) =>
+        link.attributes("href")?.includes("localhost:5173/login")
+      );
+      expect(hasCorrectLoginUrl).toBe(true);
     });
 
     it("should render mobile menu toggle button", () => {
@@ -233,22 +252,47 @@ describe("NavBar Component", () => {
       expect(mobilePricingLink.text()).toBe("Pricing");
     });
 
-    it("should render mobile utility links", async () => {
-      wrapper = mount(NavBar);
+    it("should render mobile utility links with correct URLs", async () => {
+      const mockUseRuntimeConfig = vi.fn(() => ({
+        public: {
+          frontendUrl: "http://localhost:5173",
+        },
+      }));
+
+      wrapper = mount(NavBar, {
+        global: {
+          provide: {
+            useRuntimeConfig: mockUseRuntimeConfig,
+          },
+          stubs: {
+            useRuntimeConfig: mockUseRuntimeConfig,
+          },
+        },
+      });
 
       const menuToggle = wrapper.find(".menu-toggle");
       await menuToggle.trigger("click");
 
-      const mobileLoginLink = wrapper.find('.mobile-nav-link[href="/login"]');
-      const mobileSignupLink = wrapper.find('.mobile-nav-link[href="/signup"]');
-      const mobileDemoLink = wrapper.find('.mobile-nav-link[href="/demo"]');
+      // Test that mobile links exist with expected text
+      const mobileLoginLinks = wrapper
+        .findAll(".mobile-nav-link")
+        .filter((link) => link.text() === "Login");
+      const mobileSignupLinks = wrapper
+        .findAll(".mobile-nav-link")
+        .filter((link) => link.text() === "Sign Up");
+      const mobileDemoLinks = wrapper
+        .findAll(".mobile-nav-link")
+        .filter((link) => link.text() === "Try the Demo");
 
-      expect(mobileLoginLink.exists()).toBe(true);
-      expect(mobileLoginLink.text()).toBe("Login");
-      expect(mobileSignupLink.exists()).toBe(true);
-      expect(mobileSignupLink.text()).toBe("Sign Up");
-      expect(mobileDemoLink.exists()).toBe(true);
-      expect(mobileDemoLink.text()).toBe("Try the Demo");
+      expect(mobileLoginLinks.length).toBeGreaterThan(0);
+      expect(mobileSignupLinks.length).toBeGreaterThan(0);
+      expect(mobileDemoLinks.length).toBeGreaterThan(0);
+
+      // Check that mobile login link has the correct frontend URL
+      const hasCorrectMobileLoginUrl = mobileLoginLinks.some((link) =>
+        link.attributes("href")?.includes("localhost:5173/login")
+      );
+      expect(hasCorrectMobileLoginUrl).toBe(true);
     });
 
     it("should close mobile menu when navigation link is clicked", async () => {
@@ -331,6 +375,84 @@ describe("NavBar Component", () => {
       wrapper.unmount();
 
       expect(window.removeEventListener).toHaveBeenCalledWith("scroll", expect.any(Function));
+    });
+  });
+
+  describe("Link Validation", () => {
+    it("should identify broken internal links", () => {
+      wrapper = mount(NavBar);
+
+      // These are currently broken links that need pages created
+      const brokenLinks = [
+        { selector: 'a[href="/about"]', text: "About" },
+        { selector: 'a[href="/ai-copilot"]', text: "AI Copilot" },
+        { selector: 'a[href="/pricing"]', text: "Pricing" },
+        { selector: 'a[href="/documentation"]', text: "Documentation" },
+        { selector: 'a[href="/blog"]', text: "Blog" },
+      ];
+
+      brokenLinks.forEach(({ selector, text }) => {
+        const link = wrapper.find(selector);
+        expect(link.exists()).toBe(true);
+        expect(link.text()).toBe(text);
+        // These currently point to non-existent pages
+        console.warn(`Broken link found: ${text} -> ${link.attributes("href")}`);
+      });
+    });
+
+    it("should verify external links point to frontend app", () => {
+      const mockUseRuntimeConfig = vi.fn(() => ({
+        public: {
+          frontendUrl: "http://localhost:5173",
+        },
+      }));
+
+      wrapper = mount(NavBar, {
+        global: {
+          provide: {
+            useRuntimeConfig: mockUseRuntimeConfig,
+          },
+          stubs: {
+            useRuntimeConfig: mockUseRuntimeConfig,
+          },
+        },
+      });
+
+      // Find all links and check that login/demo links point to frontend
+      const allLinks = wrapper.findAll("a");
+      const loginLinks = allLinks.filter((link) => link.text() === "Login");
+      const demoLinks = allLinks.filter((link) => link.text() === "Try the Demo");
+
+      expect(loginLinks.length).toBeGreaterThan(0);
+      expect(demoLinks.length).toBeGreaterThan(0);
+
+      // Verify at least one login link points to frontend
+      const hasCorrectLoginUrl = loginLinks.some((link) =>
+        link.attributes("href")?.includes("localhost:5173/login")
+      );
+      const hasCorrectDemoUrl = demoLinks.some((link) =>
+        link.attributes("href")?.includes("localhost:5173/demo")
+      );
+
+      expect(hasCorrectLoginUrl).toBe(true);
+      expect(hasCorrectDemoUrl).toBe(true);
+    });
+
+    it("should verify existing internal links", () => {
+      wrapper = mount(NavBar);
+
+      // These pages actually exist
+      const validLinks = [
+        { selector: 'a[href="/signup"]', text: "Sign Up" },
+        { selector: 'a[href="/"]', ariaLabel: "Home - Aris" },
+      ];
+
+      validLinks.forEach(({ selector, text, ariaLabel }) => {
+        const link = wrapper.find(selector);
+        expect(link.exists()).toBe(true);
+        if (text) expect(link.text()).toBe(text);
+        if (ariaLabel) expect(link.attributes("aria-label")).toBe(ariaLabel);
+      });
     });
   });
 

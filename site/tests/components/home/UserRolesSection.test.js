@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import SectionFour from "../../../components/sections/SectionFour.vue";
+import UserRolesSection from "../../../components/home/UserRolesSection.vue";
 
 // Mock Tabler icons
 vi.mock("@tabler/icons-vue", () => ({
@@ -12,7 +12,7 @@ vi.mock("@tabler/icons-vue", () => ({
   },
 }));
 
-describe("SectionFour Component", () => {
+describe("UserRolesSection Component", () => {
   let wrapper;
 
   beforeEach(() => {
@@ -27,7 +27,7 @@ describe("SectionFour Component", () => {
 
   describe("Basic Rendering", () => {
     it("should render section container", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const section = wrapper.find(".section-four");
       expect(section.exists()).toBe(true);
@@ -35,7 +35,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should render section heading", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const heading = wrapper.find(".section-heading");
       expect(heading.exists()).toBe(true);
@@ -44,7 +44,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should render content wrapper", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const contentWrapper = wrapper.find(".content-wrapper");
       expect(contentWrapper.exists()).toBe(true);
@@ -53,14 +53,14 @@ describe("SectionFour Component", () => {
 
   describe("User Role Cards", () => {
     it("should render all three user role cards", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const cards = wrapper.findAll(".user-role-card");
       expect(cards.length).toBe(3);
     });
 
     it("should render cards within grid container", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const grid = wrapper.find(".user-role-grid");
       expect(grid.exists()).toBe(true);
@@ -70,7 +70,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should render first card - Authors & Researchers", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const cards = wrapper.findAll(".user-role-card");
       const firstCard = cards[0];
@@ -91,7 +91,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should render second card - Readers & Learners", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const cards = wrapper.findAll(".user-role-card");
       const secondCard = cards[1];
@@ -109,7 +109,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should render third card - Reviewers & Editors", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const cards = wrapper.findAll(".user-role-card");
       const thirdCard = cards[2];
@@ -129,7 +129,7 @@ describe("SectionFour Component", () => {
 
   describe("Card Structure", () => {
     it("should have proper card structure", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const cards = wrapper.findAll(".user-role-card");
 
@@ -148,7 +148,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should have icons in proper containers", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const iconContainers = wrapper.findAll(".card-icon-container");
       expect(iconContainers.length).toBe(3);
@@ -163,7 +163,7 @@ describe("SectionFour Component", () => {
 
   describe("Content Validation", () => {
     it("should have meaningful content in all cards", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const cards = wrapper.findAll(".user-role-card");
 
@@ -178,7 +178,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should mention key user benefits", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const allText = wrapper.text();
 
@@ -192,7 +192,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should address different user personas", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const titles = wrapper.findAll(".card-title").map((title) => title.text());
 
@@ -204,7 +204,7 @@ describe("SectionFour Component", () => {
 
   describe("Accessibility", () => {
     it("should have proper heading hierarchy", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       // Main section heading should be h2
       const sectionHeading = wrapper.find(".section-heading");
@@ -218,7 +218,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should have semantic HTML structure", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       // Should be a section element
       const section = wrapper.find("section");
@@ -232,7 +232,7 @@ describe("SectionFour Component", () => {
 
   describe("Icons", () => {
     it("should render all required icons", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const userEditIcon = wrapper.find('[data-testid="user-edit-icon"]');
       const bookIcon = wrapper.find('[data-testid="book-icon"]');
@@ -244,7 +244,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should have appropriate icons for each user type", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const cards = wrapper.findAll(".user-role-card");
 
@@ -264,14 +264,14 @@ describe("SectionFour Component", () => {
 
   describe("Grid Layout", () => {
     it("should have user role grid container", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const grid = wrapper.find(".user-role-grid");
       expect(grid.exists()).toBe(true);
     });
 
     it("should contain all cards within the grid", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const grid = wrapper.find(".user-role-grid");
       const cardsInGrid = grid.findAll(".user-role-card");
@@ -284,7 +284,7 @@ describe("SectionFour Component", () => {
 
   describe("User Value Propositions", () => {
     it("should clearly articulate value for authors", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const cards = wrapper.findAll(".user-role-card");
       const authorsCard = cards[0];
@@ -297,7 +297,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should clearly articulate value for readers", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const cards = wrapper.findAll(".user-role-card");
       const readersCard = cards[1];
@@ -310,7 +310,7 @@ describe("SectionFour Component", () => {
     });
 
     it("should clearly articulate value for reviewers", () => {
-      wrapper = mount(SectionFour);
+      wrapper = mount(UserRolesSection);
 
       const cards = wrapper.findAll(".user-role-card");
       const reviewersCard = cards[2];

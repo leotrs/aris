@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import SectionTwo from "../../../components/sections/SectionTwo.vue";
+import ProblemSolutionSection from "../../../components/home/ProblemSolutionSection.vue";
 
 // Mock Tabler icons
 vi.mock("@tabler/icons-vue", () => ({
@@ -16,7 +16,7 @@ vi.mock("@tabler/icons-vue", () => ({
   IconFileOff: { name: "IconFileOff", template: "<svg data-testid='file-off-icon'></svg>" },
 }));
 
-describe("SectionTwo Component", () => {
+describe("ProblemSolutionSection Component", () => {
   let wrapper;
 
   beforeEach(() => {
@@ -31,7 +31,7 @@ describe("SectionTwo Component", () => {
 
   describe("Basic Rendering", () => {
     it("should render section container", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const section = wrapper.find(".section-two");
       expect(section.exists()).toBe(true);
@@ -39,7 +39,7 @@ describe("SectionTwo Component", () => {
     });
 
     it("should render section heading", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const heading = wrapper.find(".section-heading");
       expect(heading.exists()).toBe(true);
@@ -48,7 +48,7 @@ describe("SectionTwo Component", () => {
     });
 
     it("should render content wrapper", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const contentWrapper = wrapper.find(".content-wrapper");
       expect(contentWrapper.exists()).toBe(true);
@@ -57,14 +57,14 @@ describe("SectionTwo Component", () => {
 
   describe("Problem-Solution Cards", () => {
     it("should render all four problem-solution cards", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const cards = wrapper.findAll(".problem-solution-card");
       expect(cards.length).toBe(4);
     });
 
     it("should render cards within grid container", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const grid = wrapper.find(".problem-solution-grid");
       expect(grid.exists()).toBe(true);
@@ -74,7 +74,7 @@ describe("SectionTwo Component", () => {
     });
 
     it("should render first card - Fragmented Tools", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const cards = wrapper.findAll(".problem-solution-card");
       const firstCard = cards[0];
@@ -103,7 +103,7 @@ describe("SectionTwo Component", () => {
     });
 
     it("should render second card - Clunky Collaboration", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const cards = wrapper.findAll(".problem-solution-card");
       const secondCard = cards[1];
@@ -130,7 +130,7 @@ describe("SectionTwo Component", () => {
     });
 
     it("should render third card - Peer Review Bottleneck", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const cards = wrapper.findAll(".problem-solution-card");
       const thirdCard = cards[2];
@@ -155,7 +155,7 @@ describe("SectionTwo Component", () => {
     });
 
     it("should render fourth card - Impersonal Digital Engagement", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const cards = wrapper.findAll(".problem-solution-card");
       const fourthCard = cards[3];
@@ -182,7 +182,7 @@ describe("SectionTwo Component", () => {
 
   describe("Card Structure", () => {
     it("should have proper card header structure", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const cards = wrapper.findAll(".problem-solution-card");
 
@@ -200,7 +200,7 @@ describe("SectionTwo Component", () => {
     });
 
     it("should have proper content structure in each card", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const cards = wrapper.findAll(".problem-solution-card");
 
@@ -224,7 +224,7 @@ describe("SectionTwo Component", () => {
 
   describe("Content Validation", () => {
     it("should have meaningful content in all cards", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const cards = wrapper.findAll(".problem-solution-card");
 
@@ -243,7 +243,7 @@ describe("SectionTwo Component", () => {
     });
 
     it("should mention key Aris features in solutions", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const allText = wrapper.text();
 
@@ -258,7 +258,7 @@ describe("SectionTwo Component", () => {
 
   describe("Accessibility", () => {
     it("should have proper heading hierarchy", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       // Main section heading should be h2
       const sectionHeading = wrapper.find(".section-heading");
@@ -277,7 +277,7 @@ describe("SectionTwo Component", () => {
     });
 
     it("should have semantic HTML structure", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       // Should be a section element
       const section = wrapper.find("section");
@@ -291,7 +291,7 @@ describe("SectionTwo Component", () => {
 
   describe("Icons", () => {
     it("should render all required icons", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const gitForkIcon = wrapper.find('[data-testid="git-fork-icon"]');
       const messagesOffIcon = wrapper.find('[data-testid="messages-off-icon"]');
@@ -305,7 +305,7 @@ describe("SectionTwo Component", () => {
     });
 
     it("should have icons in proper containers", () => {
-      wrapper = mount(SectionTwo);
+      wrapper = mount(ProblemSolutionSection);
 
       const iconContainers = wrapper.findAll(".card-icon-container");
       expect(iconContainers.length).toBe(4);

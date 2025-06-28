@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import SectionThree from "../../../components/sections/SectionThree.vue";
+import FeatureDemosSection from "../../../components/home/FeatureDemosSection.vue";
 
-describe("SectionThree Component", () => {
+describe("FeatureDemosSection Component", () => {
   let wrapper;
 
   beforeEach(() => {
@@ -17,7 +17,7 @@ describe("SectionThree Component", () => {
 
   describe("Basic Rendering", () => {
     it("should render section container", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const section = wrapper.find(".section-three");
       expect(section.exists()).toBe(true);
@@ -25,7 +25,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should render section heading", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const heading = wrapper.find(".section-heading");
       expect(heading.exists()).toBe(true);
@@ -34,7 +34,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should render content wrapper", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const contentWrapper = wrapper.find(".content-wrapper");
       expect(contentWrapper.exists()).toBe(true);
@@ -43,14 +43,14 @@ describe("SectionThree Component", () => {
 
   describe("Feature Cards", () => {
     it("should render all four feature cards", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
       expect(cards.length).toBe(4);
     });
 
     it("should render cards within grid container", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const grid = wrapper.find(".feature-grid");
       expect(grid.exists()).toBe(true);
@@ -60,7 +60,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should render first card - Unified Research Environment", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
       const firstCard = cards[0];
@@ -78,7 +78,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should render second card - Intelligent Collaboration", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
       const secondCard = cards[1];
@@ -93,7 +93,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should render third card - Streamlined Peer Review", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
       const thirdCard = cards[2];
@@ -108,7 +108,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should render fourth card - Interactive Science", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
       const fourthCard = cards[3];
@@ -126,7 +126,7 @@ describe("SectionThree Component", () => {
 
   describe("Feature Visuals", () => {
     it("should render feature images in each card", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
 
@@ -142,7 +142,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should have proper image alt text", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const images = wrapper.findAll(".feature-gif");
 
@@ -159,7 +159,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should render video placeholders", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const placeholders = wrapper.findAll(".video-placeholder");
       expect(placeholders.length).toBe(4);
@@ -177,7 +177,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should use appropriate image sources", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const images = wrapper.findAll(".feature-gif");
 
@@ -191,7 +191,7 @@ describe("SectionThree Component", () => {
 
   describe("Card Structure", () => {
     it("should have proper card structure", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
 
@@ -215,7 +215,7 @@ describe("SectionThree Component", () => {
 
   describe("Content Validation", () => {
     it("should have meaningful content in all cards", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
 
@@ -230,7 +230,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should mention key product features", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const allText = wrapper.text();
 
@@ -246,7 +246,7 @@ describe("SectionThree Component", () => {
 
   describe("Accessibility", () => {
     it("should have proper heading hierarchy", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       // Main section heading should be h2
       const sectionHeading = wrapper.find(".section-heading");
@@ -260,7 +260,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should have semantic HTML structure", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       // Should be a section element
       const section = wrapper.find("section");
@@ -272,7 +272,7 @@ describe("SectionThree Component", () => {
     });
 
     it("should have descriptive image alt text", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const images = wrapper.findAll("img");
       images.forEach((image) => {
@@ -286,14 +286,14 @@ describe("SectionThree Component", () => {
 
   describe("Grid Layout", () => {
     it("should have feature grid container", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const grid = wrapper.find(".feature-grid");
       expect(grid.exists()).toBe(true);
     });
 
     it("should contain all cards within the grid", () => {
-      wrapper = mount(SectionThree);
+      wrapper = mount(FeatureDemosSection);
 
       const grid = wrapper.find(".feature-grid");
       const cardsInGrid = grid.findAll(".feature-card");

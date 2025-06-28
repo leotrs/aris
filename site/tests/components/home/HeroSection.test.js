@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
-import HeroSection from "../../../components/sections/HeroSection.vue";
+import HeroSection from "../../../components/home/HeroSection.vue";
 
 describe("HeroSection Component", () => {
   let wrapper;
