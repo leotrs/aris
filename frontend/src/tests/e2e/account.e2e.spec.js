@@ -23,9 +23,15 @@ test.describe("Account View E2E Tests", () => {
     await expect(page.locator(".member-since")).toContainText("Member since");
 
     // Update profile information - use specific selectors targeting the InputText components
-    const nameInput = page.locator('.input-text').filter({ hasText: 'Full Name' }).locator('input');
-    const initialsInput = page.locator('.input-text').filter({ hasText: 'Initials' }).locator('input');
-    const emailInput = page.locator('.input-text').filter({ hasText: 'Email Address' }).locator('input');
+    const nameInput = page.locator(".input-text").filter({ hasText: "Full Name" }).locator("input");
+    const initialsInput = page
+      .locator(".input-text")
+      .filter({ hasText: "Initials" })
+      .locator("input");
+    const emailInput = page
+      .locator(".input-text")
+      .filter({ hasText: "Email Address" })
+      .locator("input");
 
     // Wait for inputs to be visible and interactable
     await expect(nameInput).toBeVisible();

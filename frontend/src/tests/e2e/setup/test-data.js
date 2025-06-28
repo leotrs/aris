@@ -62,5 +62,6 @@ if (!TEST_USERS.VALID_USER.password) {
   console.warn(
     "VITE_DEV_LOGIN_PASSWORD not configured - using default test password for local development"
   );
-  TEST_USERS.VALID_USER.password = "defaulttestpassword";
+  // Use the same default password as the backend's .env.ci file
+  TEST_USERS.VALID_USER.password = "testpassword123";
 }
