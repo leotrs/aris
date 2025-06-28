@@ -43,14 +43,11 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_aris
           POSTGRES_HOST_AUTH_METHOD: trust
-          # Performance optimizations for test database
-          POSTGRES_INITDB_ARGS: "-c shared_buffers=256MB -c fsync=off -c synchronous_commit=off -c full_page_writes=off -c checkpoint_completion_target=0.9"
         options: >-
           --health-cmd pg_isready
           --health-interval 5s
           --health-timeout 5s
           --health-retries 3
-          --shm-size=1g
         ports:
           - 5432:5432
 
@@ -622,6 +619,47 @@ jobs:
       run: |
         timeout 60 bash -c 'until curl -f http://localhost:8000/health; do sleep 2; done'
         timeout 60 bash -c 'until curl -f http://localhost:5173; do sleep 2; done'
+
+    - name: Debug auth detection in CI
+      run: |
+        echo "=== Environment Variables ==="
+        echo "DISABLE_AUTH: $DISABLE_AUTH"
+        echo "ENV: $ENV"
+        echo "CI: $CI"
+        echo ""
+        echo "=== Testing /me endpoint directly ==="
+        echo "Without auth header:"
+        curl -s http://localhost:8000/me || echo "Failed (expected)"
+        echo ""
+        echo "With fake auth header:"
+        curl -s -H "Authorization: Bearer fake-token-for-disabled-auth" http://localhost:8000/me || echo "Failed"
+        echo ""
+        echo "=== Testing auth detection logic ==="
+        cd frontend
+        node -e "
+        const { chromium } = require('playwright');
+        (async () => {
+          const browser = await chromium.launch();
+          const page = await browser.newPage();
+          
+          // Test the exact same logic as auth helpers
+          try {
+            const response = await page.request.get('http://localhost:8000/me', {
+              headers: { 'Authorization': 'Bearer fake-token-for-disabled-auth' }
+            });
+            console.log('Response status:', response.status());
+            if (response.ok()) {
+              const data = await response.json();
+              console.log('Response data:', JSON.stringify(data, null, 2));
+              console.log('Auth disabled check:', data.email === 'test@example.com' && data.name === 'Test User');
+            }
+          } catch (error) {
+            console.log('Error:', error.message);
+          }
+          
+          await browser.close();
+        })();
+        "
 
     - name: Run Frontend E2E tests (Home Navigation & Search)
       working-directory: frontend
