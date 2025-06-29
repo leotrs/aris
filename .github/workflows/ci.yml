@@ -233,7 +233,21 @@ jobs:
           libxkbcommon-dev \
           libgtk-3-dev \
           libgbm-dev \
-          libasound2-dev
+          libasound2-dev \
+          libwoff1 \
+          libopus0 \
+          libwebp7 \
+          libenchant-2-2 \
+          libsecret-1-0 \
+          libmanette-0.2-0 \
+          libgles2-mesa \
+          gstreamer1.0-libav \
+          gstreamer1.0-plugins-bad \
+          gstreamer1.0-plugins-base \
+          gstreamer1.0-plugins-good \
+          libwoff2-1.0.2 \
+          libwoff2dec1.0.2 \
+          libwebkit2gtk-4.0-37
     
     - name: Install Playwright browsers
       working-directory: frontend
@@ -387,7 +401,21 @@ jobs:
           libxkbcommon-dev \
           libgtk-3-dev \
           libgbm-dev \
-          libasound2-dev
+          libasound2-dev \
+          libwoff1 \
+          libopus0 \
+          libwebp7 \
+          libenchant-2-2 \
+          libsecret-1-0 \
+          libmanette-0.2-0 \
+          libgles2-mesa \
+          gstreamer1.0-libav \
+          gstreamer1.0-plugins-bad \
+          gstreamer1.0-plugins-base \
+          gstreamer1.0-plugins-good \
+          libwoff2-1.0.2 \
+          libwoff2dec1.0.2 \
+          libwebkit2gtk-4.0-37
     
     - name: Install Playwright browsers
       working-directory: frontend
@@ -528,7 +556,21 @@ jobs:
           libxkbcommon-dev \
           libgtk-3-dev \
           libgbm-dev \
-          libasound2-dev
+          libasound2-dev \
+          libwoff1 \
+          libopus0 \
+          libwebp7 \
+          libenchant-2-2 \
+          libsecret-1-0 \
+          libmanette-0.2-0 \
+          libgles2-mesa \
+          gstreamer1.0-libav \
+          gstreamer1.0-plugins-bad \
+          gstreamer1.0-plugins-base \
+          gstreamer1.0-plugins-good \
+          libwoff2-1.0.2 \
+          libwoff2dec1.0.2 \
+          libwebkit2gtk-4.0-37
     
     - name: Install Playwright browsers
       working-directory: frontend
@@ -671,7 +713,21 @@ jobs:
           libxkbcommon-dev \
           libgtk-3-dev \
           libgbm-dev \
-          libasound2-dev
+          libasound2-dev \
+          libwoff1 \
+          libopus0 \
+          libwebp7 \
+          libenchant-2-2 \
+          libsecret-1-0 \
+          libmanette-0.2-0 \
+          libgles2-mesa \
+          gstreamer1.0-libav \
+          gstreamer1.0-plugins-bad \
+          gstreamer1.0-plugins-base \
+          gstreamer1.0-plugins-good \
+          libwoff2-1.0.2 \
+          libwoff2dec1.0.2 \
+          libwebkit2gtk-4.0-37
     
     - name: Install Playwright browsers
       working-directory: frontend
@@ -814,7 +870,21 @@ jobs:
           libxkbcommon-dev \
           libgtk-3-dev \
           libgbm-dev \
-          libasound2-dev
+          libasound2-dev \
+          libwoff1 \
+          libopus0 \
+          libwebp7 \
+          libenchant-2-2 \
+          libsecret-1-0 \
+          libmanette-0.2-0 \
+          libgles2-mesa \
+          gstreamer1.0-libav \
+          gstreamer1.0-plugins-bad \
+          gstreamer1.0-plugins-base \
+          gstreamer1.0-plugins-good \
+          libwoff2-1.0.2 \
+          libwoff2dec1.0.2 \
+          libwebkit2gtk-4.0-37
     
     - name: Install Playwright browsers
       working-directory: frontend
