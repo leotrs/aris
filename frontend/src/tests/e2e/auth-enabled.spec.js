@@ -25,16 +25,6 @@ test.describe("Auth Enabled - Production Mode", () => {
     // Test 4: Verify successful login works
     await auth.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
 
-    // Debug: Check if we're still on login page and why
-    const currentUrl = page.url();
-    console.log("Current URL after login:", currentUrl);
-    
-    // Check for any error messages
-    const errorMsg = await page.locator('[data-testid="login-error"]').textContent().catch(() => null);
-    if (errorMsg) {
-      console.log("Login error message:", errorMsg);
-    }
-
     // Should be redirected to home page after login (with longer timeout)
     await expect(page).toHaveURL("/", { timeout: 15000 });
 
