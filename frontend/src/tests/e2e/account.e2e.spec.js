@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 // @auth
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Account View E2E Tests", () => {
+test.describe("Account View E2E Tests @auth", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
