@@ -63,6 +63,7 @@
 
                 <div v-else-if="activeStep === 1" class="manuscript-mock">
                   <div class="mock-toolbar">
+                    <button class="arxiv-btn">📄 Import from arXiv</button>
                     <button>+ New Manuscript</button>
                     <button>Import LaTeX</button>
                   </div>
@@ -182,6 +183,7 @@
       icon: IconUserPlus,
       details: [
         "Use your institutional email for verification",
+        "Connect your ORCID profile",
         "Automatic affiliation detection",
         "No credit card required",
         "Instant access to all features",
@@ -193,8 +195,9 @@
       time: "1 minute",
       icon: IconFileText,
       details: [
-        "Multiple template options available",
+        "One-click import from arXiv",
         "Import from LaTeX files",
+        "Multiple template options available",
         "Auto-formatted reference sections",
         "Collaborative workspace setup",
       ],
@@ -522,6 +525,13 @@
     border: 1px solid var(--gray-300);
     border-radius: 4px;
     font-size: 12px;
+  }
+
+  .arxiv-btn {
+    background: var(--success-100) !important;
+    border-color: var(--success-300) !important;
+    color: var(--success-700) !important;
+    font-weight: 600 !important;
   }
 
   .mock-templates {

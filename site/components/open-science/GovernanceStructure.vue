@@ -74,7 +74,7 @@
         <h3 class="principles-title">Governance Principles</h3>
         <div class="principles-grid">
           <div class="principle-card">
-            <IconVote :size="28" />
+            <IconCheck :size="28" />
             <h4 class="principle-title">Democratic Decision Making</h4>
             <p class="principle-description">
               Major decisions require community input and consensus. No top-down mandates or
@@ -116,7 +116,7 @@
     IconUsers,
     IconBuilding,
     IconCode,
-    IconVote,
+    IconCheck,
     IconEye,
     IconShield,
   } from "@tabler/icons-vue";

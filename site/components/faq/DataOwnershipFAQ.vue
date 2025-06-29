@@ -20,12 +20,12 @@
         <div class="faq-item featured">
           <div class="faq-question" @click="toggleFAQ('data-export')">
             <h3 class="question-text">Can I export my data if you shut down?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQ === 'data-export' }">
+            <div class="question-toggle" :class="{ active: activeFAQs.includes('data-export') }">
               <IconChevronDown :size="20" />
             </div>
           </div>
           <Transition name="faq-answer">
-            <div v-if="activeFAQ === 'data-export'" class="faq-answer">
+            <div v-if="activeFAQs.includes('data-export')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
                   <strong>Absolutely.</strong> This is a fundamental right we guarantee. Your data
@@ -69,12 +69,12 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('ip-ownership')">
             <h3 class="question-text">Who owns the IP of my manuscripts?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQ === 'ip-ownership' }">
+            <div class="question-toggle" :class="{ active: activeFAQs.includes('ip-ownership') }">
               <IconChevronDown :size="20" />
             </div>
           </div>
           <Transition name="faq-answer">
-            <div v-if="activeFAQ === 'ip-ownership'" class="faq-answer">
+            <div v-if="activeFAQs.includes('ip-ownership')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
                   <strong>You do.</strong> Period. Aris has zero claims to your intellectual
@@ -126,12 +126,12 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('data-location')">
             <h3 class="question-text">Where is my data stored and who has access?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQ === 'data-location' }">
+            <div class="question-toggle" :class="{ active: activeFAQs.includes('data-location') }">
               <IconChevronDown :size="20" />
             </div>
           </div>
           <Transition name="faq-answer">
-            <div v-if="activeFAQ === 'data-location'" class="faq-answer">
+            <div v-if="activeFAQs.includes('data-location')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">Complete transparency about data handling and storage:</p>
                 <div class="data-info-grid">
@@ -175,12 +175,12 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('privacy-policy')">
             <h3 class="question-text">What does your privacy policy actually say?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQ === 'privacy-policy' }">
+            <div class="question-toggle" :class="{ active: activeFAQs.includes('privacy-policy') }">
               <IconChevronDown :size="20" />
             </div>
           </div>
           <Transition name="faq-answer">
-            <div v-if="activeFAQ === 'privacy-policy'" class="faq-answer">
+            <div v-if="activeFAQs.includes('privacy-policy')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">Plain English summary of our privacy commitments:</p>
                 <div class="privacy-summary">
@@ -223,12 +223,12 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('compliance')">
             <h3 class="question-text">What about GDPR and institutional compliance?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQ === 'compliance' }">
+            <div class="question-toggle" :class="{ active: activeFAQs.includes('compliance') }">
               <IconChevronDown :size="20" />
             </div>
           </div>
           <Transition name="faq-answer">
-            <div v-if="activeFAQ === 'compliance'" class="faq-answer">
+            <div v-if="activeFAQs.includes('compliance')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
                   Built from the ground up for institutional compliance requirements:
@@ -277,27 +277,6 @@
           </Transition>
         </div>
       </div>
-
-      <div class="trust-footer">
-        <div class="trust-content">
-          <h3 class="trust-title">Our Commitment to Trust</h3>
-          <p class="trust-description">
-            Academic research deserves platforms that respect researcher rights and intellectual
-            freedom. Our open-source nature, transparent governance, and legally binding commitments
-            ensure your work remains yours.
-          </p>
-          <div class="trust-actions">
-            <a href="/open-science" class="btn btn-primary">
-              <IconHeart :size="16" />
-              Our Values & Ethics
-            </a>
-            <a href="/security" class="btn btn-secondary">
-              <IconShield :size="16" />
-              Security Details
-            </a>
-          </div>
-        </div>
-      </div>
     </div>
   </section>
 </template>
@@ -316,13 +295,17 @@
     IconTrash,
     IconFileText,
     IconGlobe,
-    IconHeart,
   } from "@tabler/icons-vue";
 
-  const activeFAQ = ref(null);
+  const activeFAQs = ref([]);
 
   const toggleFAQ = (faqId) => {
-    activeFAQ.value = activeFAQ.value === faqId ? null : faqId;
+    const index = activeFAQs.value.indexOf(faqId);
+    if (index > -1) {
+      activeFAQs.value.splice(index, 1);
+    } else {
+      activeFAQs.value.push(faqId);
+    }
   };
 </script>
 
@@ -738,80 +721,6 @@
     color: var(--gray-900);
   }
 
-  /* Trust Footer */
-  .trust-footer {
-    background: linear-gradient(135deg, var(--primary-25), var(--primary-50));
-    border: 1px solid var(--primary-200);
-    border-radius: 16px;
-    padding: var(--space-2xl);
-    text-align: center;
-  }
-
-  .trust-content {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .trust-title {
-    font-family: "Montserrat", sans-serif;
-    font-size: 24px;
-    font-weight: 600;
-    color: var(--gray-900);
-    margin-bottom: var(--space-md);
-  }
-
-  .trust-description {
-    font-family: "Source Sans 3", sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--gray-700);
-    margin-bottom: var(--space-xl);
-  }
-
-  .trust-actions {
-    display: flex;
-    gap: var(--space-lg);
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-
-  .btn {
-    padding: var(--space-md) var(--space-xl);
-    border-radius: 8px;
-    font-family: "Source Sans 3", sans-serif;
-    font-weight: 600;
-    font-size: 16px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.2s ease-in-out;
-    text-decoration: none;
-    display: inline-flex;
-    align-items: center;
-    gap: var(--space-sm);
-    min-width: 160px;
-    justify-content: center;
-  }
-
-  .btn-primary {
-    background: var(--success-500);
-    color: var(--white);
-  }
-
-  .btn-primary:hover {
-    background: var(--success-600);
-    transform: translateY(-2px);
-  }
-
-  .btn-secondary {
-    background: var(--white);
-    color: var(--primary-600);
-    border: 1px solid var(--primary-300);
-  }
-
-  .btn-secondary:hover {
-    background: var(--primary-50);
-    transform: translateY(-2px);
-  }
 
   /* Responsive Adjustments */
   @media (max-width: 768px) {
@@ -843,19 +752,6 @@
       grid-template-columns: 1fr;
     }
 
-    .trust-footer {
-      padding: var(--space-xl);
-    }
-
-    .trust-actions {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .btn {
-      width: 100%;
-      max-width: 200px;
-    }
   }
 
   @media (max-width: 480px) {

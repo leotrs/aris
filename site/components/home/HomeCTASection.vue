@@ -1,14 +1,13 @@
 <template>
   <section class="cta-section">
     <div class="cta-content-wrapper">
-      <h2 class="cta-headline">Join the research community building the future.</h2>
+      <h2 class="cta-headline">Ready to start writing?</h2>
       <p class="cta-subtitle">
-        Be part of the movement creating better tools for academic publishing. Your voice shapes the
-        platform researchers actually want to use.
+        Join researchers who are already collaborating and sharing their work on Aris.
       </p>
       <div class="cta-buttons">
-        <a href="/beta-signup" class="btn btn-primary">Join Beta Community</a>
-        <a href="/demo" class="text-link">Or, explore the platform demo</a>
+        <a href="/getting-started" class="btn btn-primary">Get Started</a>
+        <a href="/contact" class="text-link">Questions? Contact us</a>
       </div>
     </div>
   </section>

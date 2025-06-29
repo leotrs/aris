@@ -122,7 +122,7 @@
                 <span>Instant revocation</span>
               </div>
               <div class="feature">
-                <IconClipboardList :size="16" />
+                <IconClipboard :size="16" />
                 <span>Complete audit logs</span>
               </div>
             </div>
@@ -320,7 +320,7 @@
     IconFingerprint,
     IconClock,
     IconUserX,
-    IconClipboardList,
+    IconClipboard,
     IconDatabase,
     IconArchive,
     IconGlobe,

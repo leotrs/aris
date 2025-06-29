@@ -12,7 +12,7 @@
       <div class="principles-grid">
         <div class="principle-card" data-principle="stories">
           <div class="card-icon">
-            <IconBook2 :size="40" />
+            <IconBook :size="40" />
           </div>
           <h3 class="card-title">Stories of Science</h3>
           <p class="card-description">
@@ -112,7 +112,7 @@
 
 <script setup>
   import {
-    IconBook2,
+    IconBook,
     IconFileText,
     IconTarget,
     IconStar,

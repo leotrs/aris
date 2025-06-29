@@ -4,22 +4,22 @@
       <div class="section-header">
         <h2 id="platform-overview-heading" class="section-title">What is Aris?</h2>
         <p class="section-tagline">
-          Collaborative writing. Smart peer review workflows. Web-native publishing.
+          A modern preprint server where your research lives and evolves from first draft to publication.
         </p>
         <p class="section-subtitle">
-          The ResOps platform that transforms research workflows with integrated tools, transparent
-          processes, and beautiful results.
+          Write collaboratively, share as preprints, and export to any journal format with one click.
+          Your paper's complete journey in one place.
         </p>
       </div>
 
-      <div class="resops-explanation">
-        <div class="resops-content">
-          <h3 class="resops-title">Why ResOps? Why One Platform?</h3>
-          <p class="resops-description">
-            Just like DevOps revolutionized software development by integrating previously
-            fragmented tools, <strong>ResOps transforms research workflows</strong>. No more
-            switching between separate writing tools, clunky review portals, and static publishing
-            systems.
+      <div class="workflow-explanation">
+        <div class="workflow-content">
+          <h3 class="workflow-title">Why Living Research Documents?</h3>
+          <p class="workflow-description">
+            Your research should evolve naturally from idea to publication.
+            <strong>Living documents grow with your work</strong>—collaborative writing becomes
+            transparent review becomes published preprint becomes journal submission. All in one place,
+            all connected, all building on each other.
           </p>
           <div class="workflow-comparison">
             <div class="workflow-before">
@@ -34,141 +34,65 @@
               <p class="workflow-pain">Context switching, version chaos, administrative overhead</p>
             </div>
             <div class="workflow-after">
-              <h4 class="workflow-label">ResOps Integration</h4>
+              <h4 class="workflow-label">Living Research Workflow</h4>
               <div class="integrated-platform">
-                <div class="unified-box">Aris Platform</div>
+                <div class="unified-box">Aris: Draft → Preprint → Any Journal</div>
               </div>
               <p class="workflow-benefit">
-                Seamless workflow, intelligent automation, beautiful results
+                Seamless evolution, zero friction export, continuous collaboration
               </p>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="capabilities-section">
-        <h3 class="capabilities-title">Four Core Capabilities</h3>
-        <div class="capabilities-grid">
-          <div class="capability-card">
-            <div class="card-header">
-              <div class="card-icon-container">
-                <IconUsers :size="32" />
-              </div>
-              <h4 class="card-title">Intelligent Reviewer Networks</h4>
+      <div class="journal-compatibility-section">
+        <h3 class="compatibility-title">Export to Any Journal with One Click</h3>
+        <p class="compatibility-description">
+          Continue your normal publication process with zero friction. Aris handles formatting for thousands of journals automatically.
+        </p>
+        <div class="journal-examples">
+          <div class="journal-flow">
+            <div class="aris-document">
+              <IconFileText :size="24" />
+              <span>Your Aris Document</span>
             </div>
-            <p class="card-description">
-              Transform every researcher into a potential reviewer. AI-powered expertise matching
-              across institutional boundaries creates the largest, most qualified reviewer pool in
-              academic publishing.
-            </p>
-            <div class="capability-highlights">
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Expert matching across institutions</span>
-              </div>
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Transparent conflict screening</span>
-              </div>
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Quality and speed metrics</span>
-              </div>
+            <div class="export-arrow">→</div>
+            <div class="journal-formats">
+              <div class="journal-option">Nature</div>
+              <div class="journal-option">Science</div>
+              <div class="journal-option">PLOS ONE</div>
+              <div class="journal-option">Cell</div>
+              <div class="journal-option">arXiv</div>
+              <div class="journal-option">+ 1000s more</div>
             </div>
           </div>
-
-          <div class="capability-card">
-            <div class="card-header">
-              <div class="card-icon-container">
-                <IconEdit :size="32" />
-              </div>
-              <h4 class="card-title">Real-time Collaborative Writing</h4>
-            </div>
-            <p class="card-description">
-              Write together without email chaos. See exactly who's working on what, track changes
-              with semantic diffs, and collaborate with co-authors seamlessly in RSM or LaTeX.
-            </p>
-            <div class="capability-highlights">
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Real-time co-authoring</span>
-              </div>
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Version control built-in</span>
-              </div>
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>RSM and LaTeX support</span>
-              </div>
-            </div>
+        </div>
+        <div class="compatibility-features">
+          <div class="compatibility-feature">
+            <IconCheck :size="16" />
+            <span>Automatic reference formatting</span>
           </div>
-
-          <div class="capability-card">
-            <div class="card-header">
-              <div class="card-icon-container">
-                <IconGitBranch :size="32" />
-              </div>
-              <h4 class="card-title">Smart Review Workflows</h4>
-            </div>
-            <p class="card-description">
-              Streamlined review processes with intelligent automation. Track every stage, enable
-              threaded discussions, and maintain transparency throughout the peer review process.
-            </p>
-            <div class="capability-highlights">
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Real-time review tracking</span>
-              </div>
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Contextual discussions</span>
-              </div>
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Transparent workflows</span>
-              </div>
-            </div>
+          <div class="compatibility-feature">
+            <IconCheck :size="16" />
+            <span>Journal-specific templates</span>
           </div>
-
-          <div class="capability-card">
-            <div class="card-header">
-              <div class="card-icon-container">
-                <IconDevices :size="32" />
-              </div>
-              <h4 class="card-title">Web-Native Publishing</h4>
-            </div>
-            <p class="card-description">
-              Beautiful, interactive manuscripts that adapt to any device. Interactive figures,
-              embedded data, and typography that readers actually enjoy—beyond PDF limitations.
-            </p>
-            <div class="capability-highlights">
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Interactive visualizations</span>
-              </div>
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Responsive design</span>
-              </div>
-              <div class="highlight-item">
-                <IconCheck :size="14" />
-                <span>Beautiful reading experience</span>
-              </div>
-            </div>
+          <div class="compatibility-feature">
+            <IconCheck :size="16" />
+            <span>Complete submission packages</span>
           </div>
         </div>
       </div>
 
       <div class="platform-cta">
         <div class="cta-content">
-          <h3 class="cta-title">Experience Research Operations</h3>
+          <h3 class="cta-title">Experience Integrated Research Workflows</h3>
           <p class="cta-description">
             Join researchers who've discovered what happens when writing, reviewing, and publishing
             work together instead of against each other.
           </p>
           <div class="cta-buttons">
-            <a href="/demo" class="btn btn-primary">See ResOps in Action</a>
+            <a href="/demo" class="btn btn-primary">See the Platform in Action</a>
             <a href="/getting-started" class="btn btn-secondary">Get Started</a>
           </div>
         </div>
@@ -178,7 +102,7 @@
 </template>
 
 <script setup>
-  import { IconUsers, IconEdit, IconGitBranch, IconDevices, IconCheck } from "@tabler/icons-vue";
+  import { IconCheck, IconFileText } from "@tabler/icons-vue";
 </script>
 
 <style scoped>
@@ -230,8 +154,8 @@
     color: var(--gray-700);
   }
 
-  /* ResOps Explanation */
-  .resops-explanation {
+  /* Workflow Explanation */
+  .workflow-explanation {
     background: linear-gradient(135deg, var(--primary-50), var(--primary-75));
     border: 1px solid var(--primary-200);
     border-radius: 16px;
@@ -240,12 +164,12 @@
     text-align: center;
   }
 
-  .resops-content {
+  .workflow-content {
     max-width: 800px;
     margin: 0 auto;
   }
 
-  .resops-title {
+  .workflow-title {
     font-family: "Montserrat", sans-serif;
     font-size: 28px;
     font-weight: 600;
@@ -253,7 +177,7 @@
     margin-bottom: var(--space-md);
   }
 
-  .resops-description {
+  .workflow-description {
     font-family: "Source Sans 3", sans-serif;
     font-size: 18px;
     line-height: 1.6;
@@ -347,86 +271,102 @@
     text-align: center;
   }
 
-  /* Capabilities Section */
-  .capabilities-section {
+
+  /* Journal Compatibility Section */
+  .journal-compatibility-section {
+    background: linear-gradient(135deg, var(--success-25), var(--success-50));
+    border: 1px solid var(--success-200);
+    border-radius: 16px;
+    padding: var(--space-2xl);
     margin-bottom: var(--space-4xl);
+    text-align: center;
   }
 
-  .capabilities-title {
+  .compatibility-title {
     font-family: "Montserrat", sans-serif;
-    font-size: 32px;
+    font-size: 28px;
     font-weight: 600;
     color: var(--gray-900);
-    text-align: center;
-    margin-bottom: var(--space-3xl);
+    margin-bottom: var(--space-md);
   }
 
-  .capabilities-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--space-xl);
+  .compatibility-description {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 18px;
+    line-height: 1.6;
+    color: var(--gray-700);
+    margin-bottom: var(--space-xl);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
-  .capability-card {
-    background: var(--surface-page);
-    border: 1px solid var(--border-primary);
-    border-radius: 12px;
-    padding: var(--space-xl);
-    transition: all 0.3s ease;
-    text-align: center;
+  .journal-examples {
+    margin-bottom: var(--space-xl);
   }
 
-  .capability-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-medium);
-  }
-
-  .card-header {
-    margin-bottom: var(--space-lg);
-  }
-
-  .card-icon-container {
-    width: 64px;
-    height: 64px;
-    background: linear-gradient(135deg, var(--primary-100), var(--primary-200));
-    border-radius: 50%;
+  .journal-flow {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 0 auto var(--space-md);
-    color: var(--primary-600);
-    transition: all 0.3s ease;
-  }
-
-  .capability-card:hover .card-icon-container {
-    transform: scale(1.1);
-  }
-
-  .card-title {
-    font-family: "Montserrat", sans-serif;
-    font-size: 20px;
-    font-weight: 600;
-    color: var(--gray-900);
-    margin: 0;
-    line-height: 1.3;
-  }
-
-  .card-description {
-    font-family: "Source Sans 3", sans-serif;
-    font-size: 16px;
-    line-height: 1.6;
-    color: var(--gray-700);
+    gap: var(--space-lg);
+    flex-wrap: wrap;
     margin-bottom: var(--space-lg);
   }
 
-  .capability-highlights {
+  .aris-document {
     display: flex;
     flex-direction: column;
-    gap: var(--space-sm);
     align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-lg);
+    background: var(--surface-page);
+    border: 2px solid var(--primary-300);
+    border-radius: 12px;
+    color: var(--primary-600);
+    font-family: "Source Sans 3", sans-serif;
+    font-weight: 600;
+    font-size: 14px;
   }
 
-  .highlight-item {
+  .export-arrow {
+    font-size: 24px;
+    color: var(--success-600);
+    font-weight: bold;
+  }
+
+  .journal-formats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    gap: var(--space-sm);
+    max-width: 400px;
+  }
+
+  .journal-option {
+    padding: var(--space-sm);
+    background: var(--surface-page);
+    border: 1px solid var(--success-300);
+    border-radius: 6px;
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--success-700);
+    transition: all 0.2s ease;
+  }
+
+  .journal-option:hover {
+    background: var(--success-100);
+    transform: translateY(-1px);
+  }
+
+  .compatibility-features {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+  }
+
+  .compatibility-feature {
     display: flex;
     align-items: center;
     gap: var(--space-sm);
@@ -436,9 +376,8 @@
     color: var(--gray-700);
   }
 
-  .highlight-item svg {
+  .compatibility-feature svg {
     color: var(--success-600);
-    flex-shrink: 0;
   }
 
   /* Platform CTA */
@@ -524,11 +463,11 @@
       padding: var(--space-3xl) 0;
     }
 
-    .resops-explanation {
+    .workflow-explanation {
       padding: var(--space-xl);
     }
 
-    .resops-title {
+    .workflow-title {
       font-size: 24px;
     }
 
@@ -537,13 +476,27 @@
       gap: var(--space-lg);
     }
 
-    .capabilities-grid {
-      grid-template-columns: 1fr;
-      gap: var(--space-lg);
+
+    .journal-compatibility-section {
+      padding: var(--space-xl);
     }
 
-    .capability-card {
-      padding: var(--space-lg);
+    .compatibility-title {
+      font-size: 24px;
+    }
+
+    .journal-flow {
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .journal-formats {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .compatibility-features {
+      flex-direction: column;
+      align-items: center;
     }
 
     .platform-cta {
@@ -566,26 +519,14 @@
   }
 
   @media (max-width: 480px) {
-    .resops-explanation {
+    .workflow-explanation {
       padding: var(--space-lg);
     }
 
-    .resops-title {
+    .workflow-title {
       font-size: 22px;
     }
 
-    .capability-card {
-      padding: var(--space-md);
-    }
-
-    .card-icon-container {
-      width: 56px;
-      height: 56px;
-    }
-
-    .card-title {
-      font-size: 18px;
-    }
 
     .cta-title {
       font-size: 22px;

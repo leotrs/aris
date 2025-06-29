@@ -173,7 +173,7 @@
               </div>
             </div>
             <div class="alternative-item">
-              <IconMessageSquare :size="16" />
+              <IconMessage :size="16" />
               <div class="alternative-content">
                 <span class="alternative-label">Community Forum</span>
                 <a href="https://forum.aris-platform.org" class="alternative-link"
@@ -210,7 +210,7 @@
     IconCalendar,
     IconHeart,
     IconMail,
-    IconMessageSquare,
+    IconMessage,
     IconBrandGithub,
   } from "@tabler/icons-vue";
 

@@ -20,35 +20,6 @@
             contain threats, preserve evidence, and restore services with minimal disruption to your
             research activities.
           </p>
-          <div class="response-metrics">
-            <div class="response-metric">
-              <div class="metric-icon">
-                <IconClock :size="24" />
-              </div>
-              <div class="metric-content">
-                <div class="metric-value">&lt; 15min</div>
-                <div class="metric-label">Initial Response Time</div>
-              </div>
-            </div>
-            <div class="response-metric">
-              <div class="metric-icon">
-                <IconShield :size="24" />
-              </div>
-              <div class="metric-content">
-                <div class="metric-value">&lt; 1hr</div>
-                <div class="metric-label">Containment Time</div>
-              </div>
-            </div>
-            <div class="response-metric">
-              <div class="metric-icon">
-                <IconUsers :size="24" />
-              </div>
-              <div class="metric-content">
-                <div class="metric-value">24/7</div>
-                <div class="metric-label">Expert Team Coverage</div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
 
@@ -170,8 +141,7 @@
               <div class="timeline-content">
                 <h4 class="timeline-title">Immediate Notification</h4>
                 <p class="timeline-text">
-                  Within 15 minutes: Initial incident alert with basic details and immediate actions
-                  taken
+                  Immediate incident alert with basic details and immediate actions taken
                 </p>
                 <div class="timeline-channels">
                   <span>Email</span>
@@ -263,11 +233,11 @@
           <div class="contact-methods">
             <div class="contact-method priority">
               <div class="method-icon">
-                <IconPhoneCall :size="24" />
+                <IconPhone :size="24" />
               </div>
               <div class="method-info">
                 <h4 class="method-title">Emergency Hotline</h4>
-                <p class="method-detail">+1 (555) 123-SECURITY</p>
+                <p class="method-detail">+1 (510) 555-0199</p>
                 <span class="method-note">Available 24/7 for critical incidents</span>
               </div>
             </div>
@@ -283,7 +253,7 @@
             </div>
             <div class="contact-method">
               <div class="method-icon">
-                <IconBug :size="24" />
+                <IconBugOff :size="24" />
               </div>
               <div class="method-info">
                 <h4 class="method-title">Security Portal</h4>
@@ -327,9 +297,9 @@
     IconUserShield,
     IconCode,
     IconGavel,
-    IconPhoneCall,
+    IconPhone,
     IconMail,
-    IconBug,
+    IconBugOff,
     IconAlertTriangle,
     IconBook,
   } from "@tabler/icons-vue";
@@ -408,56 +378,6 @@
     margin-right: auto;
   }
 
-  .response-metrics {
-    display: flex;
-    justify-content: center;
-    gap: var(--space-xl);
-    flex-wrap: wrap;
-  }
-
-  .response-metric {
-    display: flex;
-    align-items: center;
-    gap: var(--space-md);
-    padding: var(--space-lg);
-    background: linear-gradient(135deg, var(--error-50), var(--error-100));
-    border: 1px solid var(--error-200);
-    border-radius: 12px;
-    min-width: 200px;
-  }
-
-  .metric-icon {
-    width: 48px;
-    height: 48px;
-    background: var(--error-100);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--error-600);
-    flex-shrink: 0;
-  }
-
-  .metric-content {
-    flex: 1;
-  }
-
-  .metric-value {
-    font-family: "Montserrat", sans-serif;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--error-700);
-    margin-bottom: var(--space-xs);
-  }
-
-  .metric-label {
-    font-family: "Source Sans 3", sans-serif;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--gray-600);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
 
   /* Response Phases */
   .response-phases {
@@ -900,15 +820,6 @@
       padding: var(--space-xl);
     }
 
-    .response-metrics {
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .response-metric {
-      width: 100%;
-      max-width: 300px;
-    }
 
     .phases-grid {
       grid-template-columns: 1fr;

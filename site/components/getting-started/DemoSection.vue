@@ -4,8 +4,8 @@
       <div class="section-header">
         <h2 id="demo-heading" class="section-title">Try Aris Right Now</h2>
         <p class="section-subtitle">
-          Experience the power of ResOps without signing up. Interactive demos of key features that
-          make academic publishing better.
+          Experience the power of integrated research workflows without signing up. Interactive
+          demos of key features that make academic publishing better.
         </p>
       </div>
 
@@ -47,7 +47,7 @@
           </div>
           <div class="demo-cta">
             <a href="/demo/editor" class="btn btn-primary">
-              <IconPlay :size="16" />
+              <IconPlayerPlay :size="16" />
               Try Interactive Editor
             </a>
           </div>
@@ -88,7 +88,7 @@
           </div>
           <div class="demo-cta">
             <a href="/demo/collaboration" class="btn btn-secondary">
-              <IconPlay :size="16" />
+              <IconPlayerPlay :size="16" />
               See Collaboration
             </a>
           </div>
@@ -130,7 +130,7 @@
           </div>
           <div class="demo-cta">
             <a href="/demo/reviewer-matching" class="btn btn-secondary">
-              <IconPlay :size="16" />
+              <IconPlayerPlay :size="16" />
               Try Reviewer Matching
             </a>
           </div>
@@ -167,7 +167,7 @@
           </div>
           <div class="demo-cta">
             <a href="/demo/publication" class="btn btn-secondary">
-              <IconPlay :size="16" />
+              <IconPlayerPlay :size="16" />
               View Sample Publication
             </a>
           </div>
@@ -203,7 +203,7 @@
     IconUsers,
     IconSearch,
     IconWorld,
-    IconPlay,
+    IconPlayerPlay,
     IconRocket,
     IconDevices,
   } from "@tabler/icons-vue";

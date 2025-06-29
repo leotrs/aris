@@ -8,18 +8,18 @@
 
   // Set page meta
   useHead({
-    title: "Open Science & Ethics - Aris ResOps Platform",
+    title: "Open Science & Ethics - Aris Collaborative Preprint Server",
     meta: [
       {
         name: "description",
         content:
-          "100% open source research publishing infrastructure. Transparent governance, ethical practices, and community-driven development for the academic community.",
+          "100% open source collaborative preprint server. Transparent governance, ethical practices, and community-driven development for the academic community.",
       },
-      { property: "og:title", content: "Open Science & Ethics - Aris ResOps Platform" },
+      { property: "og:title", content: "Open Science & Ethics - Aris Collaborative Preprint Server" },
       {
         property: "og:description",
         content:
-          "100% open source research publishing infrastructure. Transparent governance, ethical practices, and community-driven development for the academic community.",
+          "100% open source collaborative preprint server. Transparent governance, ethical practices, and community-driven development for the academic community.",
       },
     ],
   });

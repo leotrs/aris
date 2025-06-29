@@ -65,10 +65,10 @@
           <div class="card-content">
             <div class="contact-methods">
               <div class="contact-method emergency">
-                <IconPhoneCall :size="20" />
+                <IconPhone :size="20" />
                 <div class="method-info">
                   <span class="method-label">24/7 Hotline</span>
-                  <span class="method-value">+1 (555) 123-SECURITY</span>
+                  <span class="method-value">+1 (510) 555-0199</span>
                 </div>
               </div>
               <div class="contact-method">
@@ -87,7 +87,7 @@
               </div>
             </div>
             <div class="emergency-note">
-              <IconInfo :size="16" />
+              <IconInfoCircle :size="16" />
               <span>Use this channel only for active security incidents or suspected breaches</span>
             </div>
           </div>
@@ -140,7 +140,7 @@
         <div class="contact-card vulnerability">
           <div class="card-header">
             <div class="card-icon">
-              <IconBug :size="32" />
+              <IconBugOff :size="32" />
             </div>
             <h3 class="card-title">Vulnerability Disclosure</h3>
             <p class="card-subtitle">Responsible security vulnerability reporting</p>
@@ -295,12 +295,12 @@
     IconClock,
     IconKey,
     IconAlertTriangle,
-    IconPhoneCall,
-    IconInfo,
+    IconPhone,
+    IconInfoCircle,
     IconCertificate,
     IconCalendar,
     IconFileText,
-    IconBug,
+    IconBugOff,
     IconBrandGithub,
     IconAward,
     IconBook,

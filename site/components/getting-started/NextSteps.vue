@@ -4,8 +4,8 @@
       <div class="section-header">
         <h2 id="next-steps-heading" class="section-title">Your Next Steps</h2>
         <p class="section-subtitle">
-          Ready to join the ResOps revolution? Choose your path and get started with the academic
-          publishing platform built for the modern web.
+          Ready to transform your research workflow? Choose your path and get started with the
+          academic publishing platform built for the modern web.
         </p>
       </div>
 
@@ -63,7 +63,7 @@
                 <span>Documentation</span>
               </a>
               <a href="/demo" class="resource-link">
-                <IconPlay :size="16" />
+                <IconPlayerPlay :size="16" />
                 <span>Interactive Demos</span>
               </a>
               <a href="/blog" class="resource-link">
@@ -178,7 +178,7 @@
             </a>
           </div>
           <div class="cta-note">
-            <IconInfo :size="16" />
+            <IconInfoCircle :size="16" />
             <span>100% open source • Free forever for individuals • No vendor lock-in</span>
           </div>
         </div>
@@ -192,7 +192,7 @@
     IconCheck,
     IconRocket,
     IconBook,
-    IconPlay,
+    IconPlayerPlay,
     IconFileText,
     IconUsers,
     IconBrandGithub,
@@ -201,7 +201,7 @@
     IconCalendar,
     IconMessageCircle,
     IconBuilding,
-    IconInfo,
+    IconInfoCircle,
   } from "@tabler/icons-vue";
 </script>
 

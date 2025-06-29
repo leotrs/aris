@@ -3,12 +3,12 @@
     <div class="about-hero-content-wrapper">
       <div class="about-hero-content">
         <h1 id="about-hero-heading" class="about-hero-headline">
-          Building the Future of Academic Publishing Together
+          Where Research Lives and Evolves
         </h1>
         <p class="about-hero-subheadline">
-          Aris is the open-source ResOps platform that makes research workflows faster, more
-          transparent, and more enjoyable for everyone involved. Built by the academic community,
-          for the academic community.
+          Aris is the collaborative preprint server that connects your entire research journey. 
+          From first draft through peer review to journal submission—all in one place, 
+          all building on each other.
         </p>
         <div class="what-you-get">
           <div class="rsm-explanation">
@@ -21,10 +21,10 @@
           </div>
           <div class="tagline-section">
             <p class="core-tagline">
-              Collaborative writing. Smart peer review workflows. Web-native publishing.
+              Collaborative writing. Living documents. Seamless journal export.
             </p>
           </div>
-          <h3 class="features-title">The only platform that integrates:</h3>
+          <h3 class="features-title">The preprint server that also provides:</h3>
           <div class="feature-comparison">
             <div class="feature-item">
               <div class="feature-icon">
@@ -48,7 +48,7 @@
               <div class="feature-icon">
                 <IconUsers :size="20" />
               </div>
-              <span class="feature-text">End-to-end research operations</span>
+              <span class="feature-text">One-click journal export</span>
             </div>
           </div>
         </div>

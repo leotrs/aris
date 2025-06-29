@@ -1,8 +1,5 @@
 <script setup>
   import {
-    IconBrandBluesky,
-    IconBrandLinkedin,
-    IconBrandX,
     IconChevronUp,
   } from "@tabler/icons-vue";
   import Logo from "./Logo.vue";
@@ -17,36 +14,30 @@
     <div class="footer-content-wrapper">
       <div class="footer-columns">
         <div class="footer-column">
-          <h4 class="column-heading">Resources</h4>
+          <h4 class="column-heading">Platform</h4>
           <ul class="footer-links">
-            <li><a href="/blog" class="footer-link">Blog</a></li>
-            <li><a href="https://docs.aris.pub/" class="footer-link">Documentation</a></li>
+            <li><a href="/about" class="footer-link">About</a></li>
+            <li><a href="/getting-started" class="footer-link">Getting Started</a></li>
+            <li><a href="/open-science" class="footer-link">Open Science</a></li>
+            <li><a href="/security" class="footer-link">Security</a></li>
+          </ul>
+        </div>
+
+        <div class="footer-column">
+          <h4 class="column-heading">Support</h4>
+          <ul class="footer-links">
+            <li><a href="/faq" class="footer-link">FAQ</a></li>
             <li><a href="/contact" class="footer-link">Contact</a></li>
+            <li><a href="https://github.com/aris-platform" class="footer-link" target="_blank">GitHub</a></li>
           </ul>
         </div>
 
         <div class="footer-column">
-          <h4 class="column-heading">Product</h4>
+          <h4 class="column-heading">Legal</h4>
           <ul class="footer-links">
-            <li><a href="https://app.aris.pub/demo" class="footer-link">Demo</a></li>
-            <li><a href="/pricing" class="footer-link">Pricing</a></li>
-            <li><a href="https://github.com/leotrs/aris" class="footer-link">GitHub</a></li>
+            <li><a href="/terms" class="footer-link">Terms</a></li>
+            <li><a href="/cookies" class="footer-link">Cookies</a></li>
           </ul>
-        </div>
-
-        <div class="footer-column">
-          <h4 class="column-heading">Connect</h4>
-          <div class="social-icons">
-            <a href="#" class="social-icon-link" aria-label="Follow us on BlueSky">
-              <IconBrandBluesky />
-            </a>
-            <a href="#" class="social-icon-link" aria-label="Follow us on LinkedIn">
-              <IconBrandLinkedin />
-            </a>
-            <a href="#" class="social-icon-link" aria-label="Follow us on X (Twitter)">
-              <IconBrandX />
-            </a>
-          </div>
         </div>
       </div>
 
@@ -54,7 +45,7 @@
         <div class="footer-branding">
           <Logo type="gray" alt="Aris Logo" class="footer-logo" />
           <p class="footer-tagline">
-            Transforming scientific research through human-first technology
+            The collaborative preprint server for modern research
           </p>
         </div>
 
@@ -149,37 +140,6 @@
     transform: translateX(4px);
   }
 
-  /* Social Icons */
-  .social-icons {
-    display: flex;
-    gap: 16px;
-    margin-top: 8px;
-  }
-
-  .social-icon-link {
-    color: var(--gray-300);
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(10px);
-  }
-
-  .social-icon-link:hover {
-    color: var(--primary-200);
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
-  }
-
-  .social-icon-link svg {
-    width: 22px;
-    height: 22px;
-  }
 
   /* Footer Bottom Section */
   .footer-bottom {
@@ -297,9 +257,6 @@
       margin-bottom: 10px;
     }
 
-    .social-icons {
-      justify-content: center;
-    }
 
     .footer-bottom {
       padding-top: 30px;

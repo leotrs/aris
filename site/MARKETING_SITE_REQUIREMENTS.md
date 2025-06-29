@@ -8,7 +8,7 @@ Based on critical academic feedback, we need to revise our messaging and positio
 **From**: "Academic Publishing Infrastructure" (too generic)  
 **To**: "Write, Review, and Share Research—All in One Place"
 
-**Key Formula**: Aris = Collaborative Writing + Built-in Peer Review + Modern Preprint Server
+**Key Formula**: Aris = Collaborative Preprint Server + Real-time Collaboration + Journal Export
 
 ### 📝 Immediate Messaging Changes (Phase 1)
 
@@ -17,10 +17,10 @@ Based on critical academic feedback, we need to revise our messaging and positio
 - **New**: "The first platform where your paper lives from first draft to public discussion"
 - **Focus**: Integrated workflow, not individual features
 
-#### 2. Replace "ResOps" Terminology
+#### 2. Replace "ResOps" Terminology ✅ COMPLETED
 - **Problem**: Too Silicon Valley, doesn't resonate with academics
 - **Replace with**:
-  - "Living Research Documents"
+  - "Living Research Documents" ✅ IMPLEMENTED
   - "Research as Conversation"
   - "From Draft to Discussion"
   - "The Complete Research Workflow"

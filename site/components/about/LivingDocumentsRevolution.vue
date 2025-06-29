@@ -2,10 +2,10 @@
   <section class="resops-revolution-section" aria-labelledby="resops-heading">
     <div class="resops-content-wrapper">
       <div class="section-header">
-        <h2 id="resops-heading" class="section-title">The ResOps Revolution</h2>
+        <h2 id="resops-heading" class="section-title">Living Research Documents</h2>
         <p class="section-subtitle">
-          Research deserves the same operational excellence that transformed software development.
-          Welcome to the future of academic workflows.
+          Research deserves documents that evolve and improve continuously. Welcome to the future of
+          academic workflows.
         </p>
       </div>
 
@@ -40,11 +40,11 @@
             <div class="analogy-icon">
               <IconFlask :size="40" />
             </div>
-            <h3 class="analogy-title">ResOps Transforms Research</h3>
+            <h3 class="analogy-title">Integrated Research Workflows</h3>
             <p class="analogy-description">
-              Research still suffers from the same fragmentation. Separate tools for writing,
-              reviewing, and publishing create the same inefficiencies that DevOps solved. It's time
-              for change.
+              Research deserves better than fragmented tools. Your paper should live and evolve in
+              one place—from first draft through peer review to final publication. No more switching
+              between separate tools.
             </p>
             <div class="transformation-visual">
               <div class="before-state">
@@ -56,7 +56,7 @@
                 <IconArrowRight :size="24" />
               </div>
               <div class="after-state">
-                <span class="unified-badge primary">Aris ResOps Platform</span>
+                <span class="unified-badge primary">Aris Platform</span>
               </div>
             </div>
           </div>
@@ -121,7 +121,7 @@
               you'll be part of building that future or waiting for others to build it for you."
             </blockquote>
             <div class="vision-cta">
-              <a href="/beta-signup" class="btn btn-primary">Join the ResOps Movement</a>
+              <a href="/beta-signup" class="btn btn-primary">Join the Research Revolution</a>
               <a href="/demo" class="btn btn-secondary">See the Future in Action</a>
             </div>
           </div>

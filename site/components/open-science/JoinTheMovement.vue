@@ -60,7 +60,7 @@
 
         <div class="path-card">
           <div class="path-icon">
-            <IconMegaphone :size="32" />
+            <IconSpeakerphone :size="32" />
           </div>
           <h3 class="path-title">Spread the Word</h3>
           <p class="path-description">
@@ -114,7 +114,7 @@
     IconCode,
     IconUsers,
     IconBuilding,
-    IconMegaphone,
+    IconSpeakerphone,
     IconBrandGithub,
   } from "@tabler/icons-vue";
 </script>

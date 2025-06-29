@@ -17,7 +17,7 @@
 
         <div class="user-role-card">
           <div class="card-icon-container">
-            <IconBook2 />
+            <IconBook />
           </div>
           <h3 class="card-title">Readers & Learners</h3>
           <p class="card-description">
@@ -43,7 +43,7 @@
 </template>
 
 <script setup>
-  import { IconUserEdit, IconBook2, IconClipboardCheck } from "@tabler/icons-vue";
+  import { IconUserEdit, IconBook, IconClipboardCheck } from "@tabler/icons-vue";
 </script>
 
 <style scoped>

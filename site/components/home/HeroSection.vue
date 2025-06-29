@@ -3,11 +3,11 @@
     <div class="hero-content-wrapper">
       <div class="hero-content">
         <h1 id="hero-heading" class="hero-headline">
-          Academic Publishing Infrastructure for the Modern Web
+          The Collaborative Preprint Server for Modern Research
         </h1>
         <p class="hero-subheadline">
-          The ResOps platform connecting researchers, reviewers, and readers through beautiful,
-          integrated workflows. Built by the academic community, for the academic community.
+          Like arXiv or bioRxiv, but with real-time collaboration built in. Write together, share immediately, 
+          and continue to any journal with zero friction.
         </p>
         <div class="hero-ctas" role="group" aria-label="Call to action buttons">
           <a href="/demo" class="btn btn-primary" aria-describedby="hero-heading"

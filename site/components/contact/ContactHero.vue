@@ -53,7 +53,7 @@
             </div>
             <div class="channel-item forum">
               <div class="channel-icon">
-                <IconMessageSquare :size="24" />
+                <IconMessage :size="24" />
               </div>
               <div class="channel-label">Community Forum</div>
             </div>
@@ -91,7 +91,7 @@
     IconMail,
     IconMessageCircle,
     IconHeart,
-    IconMessageSquare,
+    IconMessage,
     IconBrandGithub,
   } from "@tabler/icons-vue";
 </script>

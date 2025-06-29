@@ -1,25 +1,20 @@
 <script setup>
-  import ContactHero from "~/components/contact/ContactHero.vue";
-  import ContactForm from "~/components/contact/ContactForm.vue";
-  import SupportOptions from "~/components/contact/SupportOptions.vue";
-  import CommunityChannels from "~/components/contact/CommunityChannels.vue";
-  import OfficeHours from "~/components/contact/OfficeHours.vue";
-  import ContactResources from "~/components/contact/ContactResources.vue";
+  import SimpleContact from "~/components/contact/SimpleContact.vue";
 
   // Set page meta
   useHead({
-    title: "Contact & Support - Aris ResOps Platform",
+    title: "Contact - Aris Collaborative Preprint Server",
     meta: [
       {
         name: "description",
         content:
-          "Get support for Aris academic publishing platform. Contact our team, join community discussions, schedule office hours, and access comprehensive documentation.",
+          "Get in touch with the Aris team. Contact form and essential links.",
       },
-      { property: "og:title", content: "Contact & Support - Aris ResOps Platform" },
+      { property: "og:title", content: "Contact - Aris Collaborative Preprint Server" },
       {
         property: "og:description",
         content:
-          "Get support for Aris academic publishing platform. Contact our team, join community discussions, schedule office hours, and access comprehensive documentation.",
+          "Get in touch with the Aris team. Contact form and essential links.",
       },
     ],
   });
@@ -27,12 +22,7 @@
 
 <template>
   <div>
-    <ContactHero />
-    <ContactForm />
-    <SupportOptions />
-    <CommunityChannels />
-    <OfficeHours />
-    <ContactResources />
+    <SimpleContact />
   </div>
 </template>
 

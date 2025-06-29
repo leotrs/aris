@@ -21,19 +21,19 @@
           </p>
           <div class="card-features">
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Getting started guides</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>RSM syntax reference</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Integration tutorials</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Troubleshooting guides</span>
             </div>
           </div>
@@ -60,19 +60,19 @@
           </p>
           <div class="card-features">
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Peer-to-peer help</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Best practices sharing</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Feature discussions</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Academic workflows</span>
             </div>
           </div>
@@ -99,19 +99,19 @@
           </p>
           <div class="card-features">
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Expert engineering help</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Integration assistance</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Bug reports & fixes</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Performance optimization</span>
             </div>
           </div>
@@ -138,19 +138,19 @@
           </p>
           <div class="card-features">
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Security consultations</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Implementation planning</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Compliance assistance</span>
             </div>
             <div class="feature">
-              <IconCheckCircle :size="16" />
+              <IconCircleCheck :size="16" />
               <span>Training programs</span>
             </div>
           </div>
@@ -243,7 +243,7 @@
     IconUsers,
     IconSettings,
     IconBuilding,
-    IconCheckCircle,
+    IconCircleCheck,
     IconExternalLink,
     IconMail,
     IconCalendar,

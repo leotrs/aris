@@ -7,18 +7,18 @@
 
   // Set page meta
   useHead({
-    title: "About Aris - ResOps Platform for Academic Publishing",
+    title: "About Aris - Collaborative Preprint Server",
     meta: [
       {
         name: "description",
         content:
-          "Aris is the only ResOps platform integrating manuscript writing, peer review, and publishing. Write in RSM or LaTeX, get faster publication cycles with transparent peer review.",
+          "Aris is the collaborative preprint server where research lives and evolves. Write together, share as preprints, export to any journal format with one click.",
       },
-      { property: "og:title", content: "About Aris - ResOps Platform for Academic Publishing" },
+      { property: "og:title", content: "About Aris - Collaborative Preprint Server" },
       {
         property: "og:description",
         content:
-          "Aris is the only ResOps platform integrating manuscript writing, peer review, and publishing. Write in RSM or LaTeX, get faster publication cycles with transparent peer review.",
+          "Aris is the collaborative preprint server where research lives and evolves. Write together, share as preprints, export to any journal format with one click.",
       },
     ],
   });
