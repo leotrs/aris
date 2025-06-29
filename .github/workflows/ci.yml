@@ -229,7 +229,7 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         TEST_USER_EMAIL: testuser@aris.pub
-        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         ENV: PROD
         DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
         DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
@@ -380,7 +380,7 @@ jobs:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DISABLE_AUTH: true
         TEST_USER_EMAIL: testuser@aris.pub
-        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         ENV: CI
         DISABLE_AUTH: true
         DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
