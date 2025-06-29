@@ -101,4 +101,12 @@ export class AuthHelpers {
     await expect(this.page.locator('[data-testid="password-input"]')).toBeVisible();
     await expect(this.page.locator('[data-testid="login-button"]')).toBeVisible();
   }
+
+  async expectToBeLoggedIn() {
+    // Verify we're on the home page (not login page)
+    await expect(this.page).toHaveURL("/");
+    
+    // Verify that we have logged-in user elements visible
+    await expect(this.page.locator('[data-testid="user-menu"], [data-testid="create-file-button"], [data-testid="files-container"]')).toBeVisible();
+  }
 }
