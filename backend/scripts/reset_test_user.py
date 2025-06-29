@@ -7,7 +7,6 @@ with stable test data for visual regression testing.
 import asyncio
 import os
 import sys
-from datetime import datetime
 from pathlib import Path
 
 from dotenv import load_dotenv
