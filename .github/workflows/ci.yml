@@ -225,7 +225,7 @@ jobs:
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install
+      run: npx playwright install --with-deps
 
     - name: Start frontend and run auth-required E2E tests with backend running
       env:
@@ -366,7 +366,7 @@ jobs:
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install
+      run: npx playwright install --with-deps
     - name: Start frontend and run auth-flow E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -494,7 +494,7 @@ jobs:
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install
+      run: npx playwright install --with-deps
     - name: Start frontend and run demo content E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -624,7 +624,7 @@ jobs:
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install
+      run: npx playwright install --with-deps
     - name: Start frontend and run demo UI E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -754,7 +754,7 @@ jobs:
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install
+      run: npx playwright install --with-deps
     - name: Start frontend and run core E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
