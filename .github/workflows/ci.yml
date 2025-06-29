@@ -220,39 +220,12 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-all
+        key: playwright-browsers-${{ runner.os }}-chromium-firefox
 
-    - name: Install system dependencies for browsers
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          libnss3-dev \
-          libatk-bridge2.0-dev \
-          libdrm-dev \
-          libxkbcommon-dev \
-          libgtk-3-dev \
-          libgbm-dev \
-          libasound2-dev \
-          libwoff1 \
-          libopus0 \
-          libwebp7 \
-          libenchant-2-2 \
-          libsecret-1-0 \
-          libmanette-0.2-0 \
-          libgles2-mesa \
-          gstreamer1.0-libav \
-          gstreamer1.0-plugins-bad \
-          gstreamer1.0-plugins-base \
-          gstreamer1.0-plugins-good \
-          libwoff2-1.0.2 \
-          libwoff2dec1.0.2 \
-          libwebkit2gtk-4.0-37
-    
-    - name: Install Playwright browsers
+    - name: Install Playwright browsers (Ubuntu compatible)
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install --with-deps
+      run: npx playwright install chromium firefox --with-deps
 
     - name: Start frontend and run auth-required E2E tests with backend running
       env:
@@ -312,7 +285,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running auth-required E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@auth[^-]" --reporter=github
+        npx playwright test --grep "@auth[^-]" --project="chromium|firefox|Mobile Chrome" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -389,38 +362,11 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-all
-    - name: Install system dependencies for browsers
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          libnss3-dev \
-          libatk-bridge2.0-dev \
-          libdrm-dev \
-          libxkbcommon-dev \
-          libgtk-3-dev \
-          libgbm-dev \
-          libasound2-dev \
-          libwoff1 \
-          libopus0 \
-          libwebp7 \
-          libenchant-2-2 \
-          libsecret-1-0 \
-          libmanette-0.2-0 \
-          libgles2-mesa \
-          gstreamer1.0-libav \
-          gstreamer1.0-plugins-bad \
-          gstreamer1.0-plugins-base \
-          gstreamer1.0-plugins-good \
-          libwoff2-1.0.2 \
-          libwoff2dec1.0.2 \
-          libwebkit2gtk-4.0-37
-    
-    - name: Install Playwright browsers
+        key: playwright-browsers-${{ runner.os }}-chromium-firefox
+    - name: Install Playwright browsers (Ubuntu compatible)
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install --with-deps
+      run: npx playwright install chromium firefox --with-deps
     - name: Start frontend and run auth-flow E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -468,7 +414,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running auth-flows E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@auth-flows" --reporter=github
+        npx playwright test --grep "@auth-flows" --project="chromium|firefox|Mobile Chrome" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -544,38 +490,11 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-all
-    - name: Install system dependencies for browsers
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          libnss3-dev \
-          libatk-bridge2.0-dev \
-          libdrm-dev \
-          libxkbcommon-dev \
-          libgtk-3-dev \
-          libgbm-dev \
-          libasound2-dev \
-          libwoff1 \
-          libopus0 \
-          libwebp7 \
-          libenchant-2-2 \
-          libsecret-1-0 \
-          libmanette-0.2-0 \
-          libgles2-mesa \
-          gstreamer1.0-libav \
-          gstreamer1.0-plugins-bad \
-          gstreamer1.0-plugins-base \
-          gstreamer1.0-plugins-good \
-          libwoff2-1.0.2 \
-          libwoff2dec1.0.2 \
-          libwebkit2gtk-4.0-37
-    
-    - name: Install Playwright browsers
+        key: playwright-browsers-${{ runner.os }}-chromium-firefox
+    - name: Install Playwright browsers (Ubuntu compatible)
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install --with-deps
+      run: npx playwright install chromium firefox --with-deps
     - name: Start frontend and run demo content E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -625,7 +544,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running demo content E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@demo-content" --reporter=github
+        npx playwright test --grep "@demo-content" --project="chromium|firefox|Mobile Chrome" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -701,38 +620,11 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-all
-    - name: Install system dependencies for browsers
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          libnss3-dev \
-          libatk-bridge2.0-dev \
-          libdrm-dev \
-          libxkbcommon-dev \
-          libgtk-3-dev \
-          libgbm-dev \
-          libasound2-dev \
-          libwoff1 \
-          libopus0 \
-          libwebp7 \
-          libenchant-2-2 \
-          libsecret-1-0 \
-          libmanette-0.2-0 \
-          libgles2-mesa \
-          gstreamer1.0-libav \
-          gstreamer1.0-plugins-bad \
-          gstreamer1.0-plugins-base \
-          gstreamer1.0-plugins-good \
-          libwoff2-1.0.2 \
-          libwoff2dec1.0.2 \
-          libwebkit2gtk-4.0-37
-    
-    - name: Install Playwright browsers
+        key: playwright-browsers-${{ runner.os }}-chromium-firefox
+    - name: Install Playwright browsers (Ubuntu compatible)
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install --with-deps
+      run: npx playwright install chromium firefox --with-deps
     - name: Start frontend and run demo UI E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -782,7 +674,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running demo UI E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@demo-ui" --reporter=github
+        npx playwright test --grep "@demo-ui" --project="chromium|firefox|Mobile Chrome" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -858,38 +750,11 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-all
-    - name: Install system dependencies for browsers
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y \
-          libnss3-dev \
-          libatk-bridge2.0-dev \
-          libdrm-dev \
-          libxkbcommon-dev \
-          libgtk-3-dev \
-          libgbm-dev \
-          libasound2-dev \
-          libwoff1 \
-          libopus0 \
-          libwebp7 \
-          libenchant-2-2 \
-          libsecret-1-0 \
-          libmanette-0.2-0 \
-          libgles2-mesa \
-          gstreamer1.0-libav \
-          gstreamer1.0-plugins-bad \
-          gstreamer1.0-plugins-base \
-          gstreamer1.0-plugins-good \
-          libwoff2-1.0.2 \
-          libwoff2dec1.0.2 \
-          libwebkit2gtk-4.0-37
-    
-    - name: Install Playwright browsers
+        key: playwright-browsers-${{ runner.os }}-chromium-firefox
+    - name: Install Playwright browsers (Ubuntu compatible)
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install --with-deps
+      run: npx playwright install chromium firefox --with-deps
     - name: Start frontend and run core E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -939,7 +804,255 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running core E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@core" --reporter=github
+        npx playwright test --grep "@core" --project="chromium|firefox|Mobile Chrome" --reporter=github
+        TEST_EXIT_CODE=$?
+        
+        # Cleanup both processes
+        echo "Cleaning up processes..."
+        kill $FRONTEND_PID 2>/dev/null || true
+        kill $BACKEND_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
+
+  # macOS E2E Tests for WebKit/Safari
+  e2e-webkit-auth:
+    needs: [backend-test, frontend-test, site-test]
+    runs-on: macos-latest
+    env:
+      ENV: PROD
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      VITE_LOG_LEVEL: WARN
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/Library/Caches/ms-playwright
+        key: playwright-browsers-${{ runner.os }}-webkit
+
+    - name: Install Playwright webkit browser
+      working-directory: frontend
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install webkit
+
+    - name: Install Python (for backend)
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Install uv
+      run: pip install uv
+
+    - name: Setup PostgreSQL
+      run: |
+        brew install postgresql
+        brew services start postgresql
+        createdb test_aris
+
+    - name: Create virtual environment and sync dependencies
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --group test --group dev
+
+    - name: Run database migrations and create test user
+      working-directory: backend
+      env:
+        DB_URL_LOCAL: postgresql+asyncpg://localhost:5432/test_aris
+        DB_URL_PROD: postgresql+asyncpg://localhost:5432/test_aris
+        ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://localhost:5432/test_aris
+        ALEMBIC_DB_URL_PROD: postgresql+psycopg2://localhost:5432/test_aris
+      run: |
+        uv run alembic upgrade head
+        uv run python scripts/reset_test_user.py
+
+    - name: Start frontend and run webkit auth E2E tests
+      env:
+        VITE_API_BASE_URL: http://localhost:8000
+        TEST_USER_EMAIL: testuser@aris.pub
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        ENV: PROD
+        DB_URL_LOCAL: postgresql+asyncpg://localhost:5432/test_aris
+        DB_URL_PROD: postgresql+asyncpg://localhost:5432/test_aris
+        ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://localhost:5432/test_aris
+        ALEMBIC_DB_URL_PROD: postgresql+psycopg2://localhost:5432/test_aris
+        JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      run: |
+        # Start backend
+        echo "Starting backend for webkit auth E2E tests..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait for backend
+        sleep 8
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for webkit auth E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start for webkit auth E2E tests"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
+        
+        # Start frontend
+        cd ../frontend
+        npm run dev &
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait for frontend
+        sleep 15
+        
+        # Run webkit/Safari tests only
+        echo "Running webkit auth E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
+        npx playwright test --grep "@auth[^-]" --project="webkit|Mobile Safari" --reporter=github
+        TEST_EXIT_CODE=$?
+        
+        # Cleanup both processes
+        echo "Cleaning up processes..."
+        kill $FRONTEND_PID 2>/dev/null || true
+        kill $BACKEND_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
+
+  e2e-webkit-core:
+    needs: [backend-test, frontend-test, site-test]
+    runs-on: macos-latest
+    env:
+      ENV: CI
+      DISABLE_AUTH: true
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      VITE_LOG_LEVEL: WARN
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/Library/Caches/ms-playwright
+        key: playwright-browsers-${{ runner.os }}-webkit
+
+    - name: Install Playwright webkit browser
+      working-directory: frontend
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install webkit
+
+    - name: Install Python (for backend)
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Install uv
+      run: pip install uv
+
+    - name: Setup PostgreSQL
+      run: |
+        brew install postgresql
+        brew services start postgresql
+        createdb test_aris
+
+    - name: Create virtual environment and sync dependencies
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --group test --group dev
+
+    - name: Run database migrations
+      working-directory: backend
+      env:
+        DB_URL_LOCAL: postgresql+asyncpg://localhost:5432/test_aris
+        DB_URL_PROD: postgresql+asyncpg://localhost:5432/test_aris
+        ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://localhost:5432/test_aris
+        ALEMBIC_DB_URL_PROD: postgresql+psycopg2://localhost:5432/test_aris
+      run: uv run alembic upgrade head
+
+    - name: Start frontend and run webkit core E2E tests
+      env:
+        VITE_API_BASE_URL: http://localhost:8000
+        VITE_DISABLE_AUTH: true
+        TEST_USER_EMAIL: testuser@aris.pub
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        ENV: CI
+        DISABLE_AUTH: true
+        DB_URL_LOCAL: postgresql+asyncpg://localhost:5432/test_aris
+        DB_URL_PROD: postgresql+asyncpg://localhost:5432/test_aris
+        ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://localhost:5432/test_aris
+        ALEMBIC_DB_URL_PROD: postgresql+psycopg2://localhost:5432/test_aris
+        JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      run: |
+        # Start backend
+        echo "Starting backend for webkit core E2E tests..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait for backend
+        sleep 8
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for webkit core E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start for webkit core E2E tests"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
+        
+        # Start frontend
+        cd ../frontend
+        npm run dev &
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait for frontend
+        sleep 15
+        
+        # Run webkit/Safari tests only
+        echo "Running webkit core E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
+        npx playwright test --grep "@core|@demo-content|@demo-ui|@auth-flows" --project="webkit|Mobile Safari" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
