@@ -79,7 +79,7 @@ async def reset_test_user():
             await session.commit()
             print(f"🔧 RESET_TEST_USER: Updated existing user {user_id}")
         else:
-            print(f"🔧 RESET_TEST_USER: No existing user found, creating new one")
+            print("🔧 RESET_TEST_USER: No existing user found, creating new one")
             # Create new test user
             password_hash = hash_password(TEST_USER_PASSWORD)
             user = User(name="Test User", email=TEST_USER_EMAIL, password_hash=password_hash)
