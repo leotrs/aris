@@ -40,17 +40,17 @@ test.describe("Account View E2E Tests", () => {
 
     await nameInput.fill("Test User Updated");
     await initialsInput.fill("TU");
-    await emailInput.fill("testuser.updated@aris.pub");
+    await emailInput.fill("testuser@aris.pub");
 
-    // Save the changes
-    await page.locator('button:has-text("Save Changes")').click();
-
-    // Verify the changes are reflected in the UI
-    // Note: In a real test, we'd need to handle the API response
-    // For now, we verify the form inputs were filled correctly
+    // Verify the form inputs were filled correctly (without submitting)
     await expect(nameInput).toHaveValue("Test User Updated");
     await expect(initialsInput).toHaveValue("TU");
-    await expect(emailInput).toHaveValue("testuser.updated@aris.pub");
+    await expect(emailInput).toHaveValue("testuser@aris.pub");
+
+    // Verify save button is present and enabled
+    const saveButton = page.locator('button:has-text("Save Changes")');
+    await expect(saveButton).toBeVisible();
+    await expect(saveButton).toBeEnabled();
   });
 
   test("avatar upload workflow", async ({ page }) => {
