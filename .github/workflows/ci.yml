@@ -283,7 +283,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running auth-required E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test account.e2e.spec.js -g "complete account profile update workflow|avatar upload workflow" --project=chromium --reporter=github
+        npx playwright test account.e2e.spec.js debug-file-selection.spec.js file-management.spec.js home-accessibility.spec.js home-file-interactions.spec.js home-navigation.spec.js home-search-filter.spec.js --project=chromium --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
