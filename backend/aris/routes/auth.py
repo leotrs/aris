@@ -141,6 +141,13 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
         db_check = await db.execute(text("SELECT COUNT(*) FROM users"))
         total_users = db_check.scalar()
         logger.info(f"DEBUG: Database has {total_users} total users")
+        
+        # DEBUG: Show ALL users in the database
+        all_users_debug = await db.execute(text("SELECT id, email, name, deleted_at FROM users"))
+        all_user_rows = all_users_debug.fetchall()
+        logger.info(f"DEBUG: All users in database:")
+        for row in all_user_rows:
+            logger.info(f"  ID {row.id}: email='{row.email}', name='{row.name}', deleted_at={row.deleted_at}")
     except Exception as e:
         logger.error(f"DEBUG: Database connection error: {e}")
     
