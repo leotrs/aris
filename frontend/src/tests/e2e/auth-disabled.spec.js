@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 
+// @core
+
 test.describe("Auth Disabled - Development Mode", () => {
   test("verifies auth guards are bypassed and all routes are accessible", async ({ page }) => {
     // Test 1: Verify backend API is responding with auth disabled
