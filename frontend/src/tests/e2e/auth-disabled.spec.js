@@ -14,11 +14,7 @@ test.describe("Auth Disabled - Development Mode", () => {
     await expect(page).toHaveURL("/", { timeout: 10000 });
 
     // Test 3: Verify protected content is visible without login
-    await expect(
-      page.locator(
-        '[data-testid="user-menu"], [data-testid="create-file-button"], [data-testid="files-container"]'
-      )
-    ).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="files-container"]')).toBeVisible({ timeout: 10000 });
 
     // Test 4: Verify no login form is present on home page
     await expect(page.locator('[data-testid="email-input"]')).not.toBeVisible();
