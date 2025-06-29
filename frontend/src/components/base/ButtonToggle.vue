@@ -94,7 +94,7 @@
     }
 
     &:not(.active):hover {
-      background-color: v-bind("bgColor");
+      background-color: v-bind("hoverColor");
     }
 
     &.active {

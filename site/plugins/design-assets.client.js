@@ -1,9 +1,9 @@
 // Plugin to load design assets from backend
 /* eslint-env node */
-/* global defineNuxtPlugin */
 export default defineNuxtPlugin(() => {
   // Only run on client side
   if (process.client) {
+    const _config = useRuntimeConfig();
     // Determine backend URL based on environment
     const backendUrl =
       process.env.NODE_ENV === "production" ? "https://api.aris.pub" : "http://localhost:8000";
