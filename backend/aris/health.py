@@ -241,7 +241,7 @@ async def perform_health_check(db: AsyncSession) -> HealthResponse:
 
     # Log the result
     if overall_status == "healthy":
-        logger.info(f"Health check passed - total response time: {total_response_time}ms")
+        logger.debug(f"Health check passed - total response time: {total_response_time}ms")
     elif overall_status == "degraded":
         logger.warning("Health check degraded - some systems have issues")
     else:
