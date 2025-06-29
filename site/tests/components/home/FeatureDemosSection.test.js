@@ -29,7 +29,7 @@ describe("FeatureDemosSection Component", () => {
 
       const heading = wrapper.find(".section-heading");
       expect(heading.exists()).toBe(true);
-      expect(heading.text()).toBe("How Aris Transforms Your Research Experience");
+      expect(heading.text()).toBe("Beautiful Tools for Modern Research");
       expect(heading.element.tagName.toLowerCase()).toBe("h2");
     });
 
@@ -59,7 +59,7 @@ describe("FeatureDemosSection Component", () => {
       expect(cards.length).toBe(4);
     });
 
-    it("should render first card - Unified Research Environment", () => {
+    it("should render first card - Distraction-Free Writing Experience", () => {
       wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
@@ -67,60 +67,57 @@ describe("FeatureDemosSection Component", () => {
 
       const title = firstCard.find(".card-title");
       expect(title.exists()).toBe(true);
-      expect(title.text()).toBe("The Unified Research Environment");
+      expect(title.text()).toBe("Distraction-Free Writing Experience");
 
       const description = firstCard.find(".card-description");
       expect(description.exists()).toBe(true);
-      expect(description.text()).toContain(
-        "integrates writing, collaboration, review, and publishing"
-      );
-      expect(description.text()).toContain("solving fragmentation");
+      expect(description.text()).toContain("Clean, modern interface");
+      expect(description.text()).toContain("Write in RSM or LaTeX");
     });
 
-    it("should render second card - Intelligent Collaboration", () => {
+    it("should render second card - Effortless Real-Time Collaboration", () => {
       wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
       const secondCard = cards[1];
 
       const title = secondCard.find(".card-title");
-      expect(title.text()).toBe("Intelligent, Human-First Collaboration");
+      expect(title.text()).toBe("Effortless Real-Time Collaboration");
 
       const description = secondCard.find(".card-description");
       expect(description.text()).toContain("semantic diffs");
       expect(description.text()).toContain("AI Copilot");
-      expect(description.text()).toContain("facilitating human interaction");
+      expect(description.text()).toContain("keeping humans in control");
     });
 
-    it("should render third card - Streamlined Peer Review", () => {
+    it("should render third card - Modern Peer Review Interface", () => {
       wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
       const thirdCard = cards[2];
 
       const title = thirdCard.find(".card-title");
-      expect(title.text()).toBe("Streamlined Peer Review, Focused on Quality");
+      expect(title.text()).toBe("Modern Peer Review Interface");
 
       const description = thirdCard.find(".card-description");
-      expect(description.text()).toContain("built-in system for peer review");
-      expect(description.text()).toContain("AI recommendations for reviewers");
-      expect(description.text()).toContain("quality and integrity");
+      expect(description.text()).toContain("Track reviews in real-time");
+      expect(description.text()).toContain("threaded comments");
+      expect(description.text()).toContain("quality feedback");
     });
 
-    it("should render fourth card - Interactive Science", () => {
+    it("should render fourth card - Papers That Adapt to You", () => {
       wrapper = mount(FeatureDemosSection);
 
       const cards = wrapper.findAll(".feature-card");
       const fourthCard = cards[3];
 
       const title = fourthCard.find(".card-title");
-      expect(title.text()).toBe("Interactive Science for Deeper Engagement");
+      expect(title.text()).toBe("Papers That Adapt to You");
 
       const description = fourthCard.find(".card-description");
-      expect(description.text()).toContain("web-native content");
-      expect(description.text()).toContain("discoverability");
-      expect(description.text()).toContain("understandability");
-      expect(description.text()).toContain("engagement");
+      expect(description.text()).toContain("Web-native papers");
+      expect(description.text()).toContain("interactive figures");
+      expect(description.text()).toContain("responsive design");
     });
   });
 
@@ -235,11 +232,11 @@ describe("FeatureDemosSection Component", () => {
       const allText = wrapper.text();
 
       // Should mention key features
-      expect(allText).toContain("writing, collaboration, review, and publishing");
+      expect(allText).toContain("RSM or LaTeX");
       expect(allText).toContain("semantic diffs");
       expect(allText).toContain("AI Copilot");
-      expect(allText).toContain("peer review");
-      expect(allText).toContain("web-native content");
+      expect(allText).toContain("reviews");
+      expect(allText).toContain("Web-native papers");
       expect(allText.toLowerCase()).toContain("interactive");
     });
   });
