@@ -135,6 +135,16 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
     Only allows login for non-deleted users.
     """
     logger.info(f"Login attempt for email: {user_data.email}")
+    
+    # DEBUG: Check all users with this email first (including soft-deleted)
+    all_users_result = await db.execute(
+        select(User).where(User.email == user_data.email)
+    )
+    all_users = all_users_result.scalars().all()
+    logger.info(f"DEBUG: Found {len(all_users)} total users with email {user_data.email}")
+    for u in all_users:
+        logger.info(f"  User {u.id}: deleted_at={u.deleted_at}, created_at={u.created_at}")
+    
     result = await db.execute(
         select(User).where(User.email == user_data.email, User.deleted_at.is_(None))
     )
@@ -147,6 +157,8 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
         logger.info(f"Password hash starts with: {user.password_hash[:20]}...")
         if not password_valid:
             logger.warning(f"Password mismatch - provided password starts with: {user_data.password[:4]}...")
+    else:
+        logger.warning(f"No active user found with email {user_data.email}")
     
     if not user or not verify_password(user_data.password, user.password_hash):
         logger.warning(f"Failed login attempt for email: {user_data.email}")
