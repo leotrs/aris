@@ -139,6 +139,15 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
         select(User).where(User.email == user_data.email, User.deleted_at.is_(None))
     )
     user = result.scalars().first()
+    
+    # DEBUG: Log password verification details
+    if user:
+        password_valid = verify_password(user_data.password, user.password_hash)
+        logger.info(f"Password verification for user {user.id}: {password_valid}")
+        logger.info(f"Password hash starts with: {user.password_hash[:20]}...")
+        if not password_valid:
+            logger.warning(f"Password mismatch - provided password starts with: {user_data.password[:4]}...")
+    
     if not user or not verify_password(user_data.password, user.password_hash):
         logger.warning(f"Failed login attempt for email: {user_data.email}")
         raise HTTPException(status_code=400, detail="Invalid credentials")
