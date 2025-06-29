@@ -375,19 +375,46 @@ jobs:
         ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
         JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       run: |
-        cd backend && uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        # Start backend first
+        echo "Starting backend for auth-flows E2E tests..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait for backend
         sleep 8
         for i in {1..5}; do
-          if curl -f http://localhost:8000/health; then break; fi
-          if [ $i -eq 5 ]; then kill $BACKEND_PID 2>/dev/null || true; exit 1; fi
-          sleep 2
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for auth-flows E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start for auth-flows E2E tests"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
         done
-        cd ../frontend && npm run dev &
+        
+        # Start frontend
+        cd ../frontend
+        npm run dev &
         FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait for frontend
         sleep 15
+        
+        # Run tests with both backend and frontend running
+        echo "Running auth-flows E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
         npx playwright test --grep "@auth-flows" --project=chromium --reporter=github
         TEST_EXIT_CODE=$?
+        
+        # Cleanup both processes
+        echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
         kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
@@ -476,19 +503,46 @@ jobs:
         ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
         JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       run: |
-        cd backend && uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        # Start backend first
+        echo "Starting backend for demo E2E tests..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait for backend
         sleep 8
         for i in {1..5}; do
-          if curl -f http://localhost:8000/health; then break; fi
-          if [ $i -eq 5 ]; then kill $BACKEND_PID 2>/dev/null || true; exit 1; fi
-          sleep 2
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for demo E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start for demo E2E tests"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
         done
-        cd ../frontend && npm run dev &
+        
+        # Start frontend
+        cd ../frontend
+        npm run dev &
         FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait for frontend
         sleep 15
+        
+        # Run tests with both backend and frontend running
+        echo "Running demo E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
         npx playwright test --grep "@demo" --project=chromium --reporter=github
         TEST_EXIT_CODE=$?
+        
+        # Cleanup both processes
+        echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
         kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
@@ -577,19 +631,46 @@ jobs:
         ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
         JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       run: |
-        cd backend && uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        # Start backend first
+        echo "Starting backend for core E2E tests..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait for backend
         sleep 8
         for i in {1..5}; do
-          if curl -f http://localhost:8000/health; then break; fi
-          if [ $i -eq 5 ]; then kill $BACKEND_PID 2>/dev/null || true; exit 1; fi
-          sleep 2
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for core E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start for core E2E tests"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
         done
-        cd ../frontend && npm run dev &
+        
+        # Start frontend
+        cd ../frontend
+        npm run dev &
         FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait for frontend
         sleep 15
+        
+        # Run tests with both backend and frontend running
+        echo "Running core E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
         npx playwright test --grep "@core" --project=chromium --reporter=github
         TEST_EXIT_CODE=$?
+        
+        # Cleanup both processes
+        echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
         kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
@@ -678,19 +759,46 @@ jobs:
         ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
         JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       run: |
-        cd backend && uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        # Start backend first
+        echo "Starting backend for dev E2E tests..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait for backend
         sleep 8
         for i in {1..5}; do
-          if curl -f http://localhost:8000/health; then break; fi
-          if [ $i -eq 5 ]; then kill $BACKEND_PID 2>/dev/null || true; exit 1; fi
-          sleep 2
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for dev E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start for dev E2E tests"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
         done
-        cd ../frontend && npm run dev &
+        
+        # Start frontend
+        cd ../frontend
+        npm run dev &
         FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait for frontend
         sleep 15
+        
+        # Run tests with both backend and frontend running
+        echo "Running dev E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
         npx playwright test --grep "@dev" --project=chromium --reporter=github
         TEST_EXIT_CODE=$?
+        
+        # Cleanup both processes
+        echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
         kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
