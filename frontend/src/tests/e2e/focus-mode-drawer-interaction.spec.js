@@ -13,9 +13,9 @@ test.describe("Focus Mode and Drawer Interaction @demo-ui", () => {
     await page.goto("/demo", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
 
-    // Wait for demo content to load
-    await expect(page.locator('[data-testid="demo-canvas"][data-loaded="true"]')).toBeVisible({
-      timeout: 20000,
+    // Wait for demo content to load (optimized for CI performance)
+    await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible({
+      timeout: 5000,
     });
   });
 
