@@ -345,12 +345,10 @@ jobs:
         timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
         echo "PostgreSQL is ready!"
 
-    - name: Run database migrations and create test user
+    - name: Run database migrations
       working-directory: backend
       run: |
         uv run alembic upgrade head
-        uv run python scripts/reset_test_user.py
-
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
