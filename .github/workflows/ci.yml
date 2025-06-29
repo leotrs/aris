@@ -196,6 +196,12 @@ jobs:
         timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
         echo "PostgreSQL is ready!"
 
+    - name: Run database migrations and create test user
+      working-directory: backend
+      run: |
+        uv run alembic upgrade head
+        uv run python scripts/reset_test_user.py
+
     - name: Start backend API
       working-directory: backend
       run: |
@@ -220,6 +226,8 @@ jobs:
 
     - name: Start frontend and run auth-enabled E2E test
       working-directory: frontend
+      env:
+        VITE_API_BASE_URL: http://localhost:8000
       run: |
         npm run dev &
         sleep 10
@@ -278,6 +286,12 @@ jobs:
         timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
         echo "PostgreSQL is ready!"
 
+    - name: Run database migrations and create test user
+      working-directory: backend
+      run: |
+        uv run alembic upgrade head
+        uv run python scripts/reset_test_user.py
+
     - name: Start backend API
       working-directory: backend
       run: |
@@ -302,6 +316,8 @@ jobs:
 
     - name: Start frontend and run auth-disabled E2E test
       working-directory: frontend
+      env:
+        VITE_API_BASE_URL: http://localhost:8000
       run: |
         npm run dev &
         sleep 10
