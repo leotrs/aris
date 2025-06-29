@@ -68,7 +68,7 @@ export class MobileHelpers {
       try {
         await locator.scrollIntoViewIfNeeded({ timeout: 2000 });
         await this.page.waitForTimeout(300);
-      } catch (e) {
+      } catch {
         // Continue if scroll fails
       }
       
@@ -125,7 +125,7 @@ export class MobileHelpers {
           element.offsetParent !== null
         );
       });
-    } catch (e) {
+    } catch {
       return false;
     }
   }
