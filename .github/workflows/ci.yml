@@ -337,8 +337,6 @@ jobs:
 
     - name: Start backend API
       working-directory: backend
-      env:
-        DISABLE_AUTH: true
       run: |
         echo "Starting backend with ENV=$ENV DISABLE_AUTH=$DISABLE_AUTH"
         # Start backend and capture PID for cleanup
