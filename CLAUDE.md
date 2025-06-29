@@ -124,3 +124,7 @@ npx playwright test --reporter=html       # Generate HTML report
 - **When using playwright or puppeteer, always run in headless mode**
 - Before starting any service, check if it is already running
 - **Send notifications when tasks complete or need user input**: `osascript -e "display notification \"message\" with title \"Claude Code\""`
+```
+
+## Language Guidelines
+- Stop using the word 'absolutely'

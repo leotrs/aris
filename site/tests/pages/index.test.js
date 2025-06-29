@@ -3,38 +3,24 @@ import { mount } from "@vue/test-utils";
 import IndexPage from "../../pages/index.vue";
 
 // Mock the section components
-vi.mock("~/components/sections/HeroSection.vue", () => ({
+vi.mock("~/components/home/HeroSection.vue", () => ({
   default: {
     name: "HeroSection",
     template: "<div data-testid='hero-section'>HeroSection</div>",
   },
 }));
 
-vi.mock("~/components/sections/SectionTwo.vue", () => ({
+vi.mock("~/components/home/PlatformOverview.vue", () => ({
   default: {
-    name: "SectionTwo",
-    template: "<div data-testid='section-two'>SectionTwo</div>",
+    name: "PlatformOverview",
+    template: "<div data-testid='platform-overview'>PlatformOverview</div>",
   },
 }));
 
-vi.mock("~/components/sections/SectionThree.vue", () => ({
+vi.mock("~/components/home/HomeCTASection.vue", () => ({
   default: {
-    name: "SectionThree",
-    template: "<div data-testid='section-three'>SectionThree</div>",
-  },
-}));
-
-vi.mock("~/components/sections/SectionFour.vue", () => ({
-  default: {
-    name: "SectionFour",
-    template: "<div data-testid='section-four'>SectionFour</div>",
-  },
-}));
-
-vi.mock("~/components/sections/SectionCTA.vue", () => ({
-  default: {
-    name: "SectionCTA",
-    template: "<div data-testid='section-cta'>SectionCTA</div>",
+    name: "HomeCTASection",
+    template: "<div data-testid='home-cta-section'>HomeCTASection</div>",
   },
 }));
 
@@ -63,16 +49,12 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       const heroSection = wrapper.find('[data-testid="hero-section"]');
-      const sectionTwo = wrapper.find('[data-testid="section-two"]');
-      const sectionThree = wrapper.find('[data-testid="section-three"]');
-      const sectionFour = wrapper.find('[data-testid="section-four"]');
-      const sectionCTA = wrapper.find('[data-testid="section-cta"]');
+      const platformOverview = wrapper.find('[data-testid="platform-overview"]');
+      const homeCTASection = wrapper.find('[data-testid="home-cta-section"]');
 
       expect(heroSection.exists()).toBe(true);
-      expect(sectionTwo.exists()).toBe(true);
-      expect(sectionThree.exists()).toBe(true);
-      expect(sectionFour.exists()).toBe(true);
-      expect(sectionCTA.exists()).toBe(true);
+      expect(platformOverview.exists()).toBe(true);
+      expect(homeCTASection.exists()).toBe(true);
     });
   });
 
@@ -80,22 +62,18 @@ describe("Index Page", () => {
     it("should render sections in correct order", () => {
       wrapper = mount(IndexPage);
 
-      const sections = wrapper.findAll('[data-testid^="hero-section"], [data-testid^="section-"]');
+      const sections = wrapper.findAll("[data-testid]");
 
       expect(sections[0].attributes("data-testid")).toBe("hero-section");
-      expect(sections[1].attributes("data-testid")).toBe("section-two");
-      expect(sections[2].attributes("data-testid")).toBe("section-three");
-      expect(sections[3].attributes("data-testid")).toBe("section-four");
-      expect(sections[4].attributes("data-testid")).toBe("section-cta");
+      expect(sections[1].attributes("data-testid")).toBe("platform-overview");
+      expect(sections[2].attributes("data-testid")).toBe("home-cta-section");
     });
 
     it("should have proper section count", () => {
       wrapper = mount(IndexPage);
 
-      const allSections = wrapper.findAll(
-        '[data-testid^="hero-section"], [data-testid^="section-"]'
-      );
-      expect(allSections.length).toBe(5);
+      const allSections = wrapper.findAll("[data-testid]");
+      expect(allSections.length).toBe(3);
     });
   });
 
@@ -108,36 +86,20 @@ describe("Index Page", () => {
       expect(heroSection.text()).toBe("HeroSection");
     });
 
-    it("should import and use SectionTwo component", () => {
+    it("should import and use PlatformOverview component", () => {
       wrapper = mount(IndexPage);
 
-      const sectionTwo = wrapper.find('[data-testid="section-two"]');
-      expect(sectionTwo.exists()).toBe(true);
-      expect(sectionTwo.text()).toBe("SectionTwo");
+      const platformOverview = wrapper.find('[data-testid="platform-overview"]');
+      expect(platformOverview.exists()).toBe(true);
+      expect(platformOverview.text()).toBe("PlatformOverview");
     });
 
-    it("should import and use SectionThree component", () => {
+    it("should import and use HomeCTASection component", () => {
       wrapper = mount(IndexPage);
 
-      const sectionThree = wrapper.find('[data-testid="section-three"]');
-      expect(sectionThree.exists()).toBe(true);
-      expect(sectionThree.text()).toBe("SectionThree");
-    });
-
-    it("should import and use SectionFour component", () => {
-      wrapper = mount(IndexPage);
-
-      const sectionFour = wrapper.find('[data-testid="section-four"]');
-      expect(sectionFour.exists()).toBe(true);
-      expect(sectionFour.text()).toBe("SectionFour");
-    });
-
-    it("should import and use SectionCTA component", () => {
-      wrapper = mount(IndexPage);
-
-      const sectionCTA = wrapper.find('[data-testid="section-cta"]');
-      expect(sectionCTA.exists()).toBe(true);
-      expect(sectionCTA.text()).toBe("SectionCTA");
+      const homeCTASection = wrapper.find('[data-testid="home-cta-section"]');
+      expect(homeCTASection.exists()).toBe(true);
+      expect(homeCTASection.text()).toBe("HomeCTASection");
     });
   });
 
@@ -153,7 +115,7 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       const rootElement = wrapper.element;
-      const sections = wrapper.findAll('[data-testid^="hero-section"], [data-testid^="section-"]');
+      const sections = wrapper.findAll("[data-testid]");
 
       sections.forEach((section) => {
         expect(rootElement.contains(section.element)).toBe(true);
@@ -176,8 +138,8 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       // All sections should always be present
-      const sections = wrapper.findAll('[data-testid^="hero-section"], [data-testid^="section-"]');
-      expect(sections.length).toBe(5);
+      const sections = wrapper.findAll("[data-testid]");
+      expect(sections.length).toBe(3);
     });
   });
 
@@ -187,10 +149,8 @@ describe("Index Page", () => {
 
       // Each section should be rendered, indicating successful import
       expect(wrapper.find('[data-testid="hero-section"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="section-two"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="section-three"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="section-four"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="section-cta"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="platform-overview"]').exists()).toBe(true);
+      expect(wrapper.find('[data-testid="home-cta-section"]').exists()).toBe(true);
     });
   });
 
@@ -206,11 +166,11 @@ describe("Index Page", () => {
     it("should provide proper page content flow", () => {
       wrapper = mount(IndexPage);
 
-      const sections = wrapper.findAll('[data-testid^="hero-section"], [data-testid^="section-"]');
+      const sections = wrapper.findAll("[data-testid]");
 
       // Sections should flow from hero -> content sections -> CTA
       expect(sections[0].attributes("data-testid")).toBe("hero-section");
-      expect(sections[sections.length - 1].attributes("data-testid")).toBe("section-cta");
+      expect(sections[sections.length - 1].attributes("data-testid")).toBe("home-cta-section");
     });
   });
 
@@ -219,8 +179,8 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       // All sections should be immediately available
-      const sections = wrapper.findAll('[data-testid^="hero-section"], [data-testid^="section-"]');
-      expect(sections.length).toBe(5);
+      const sections = wrapper.findAll("[data-testid]");
+      expect(sections.length).toBe(3);
     });
 
     it("should not have any loading states", () => {

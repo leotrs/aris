@@ -127,7 +127,7 @@
 <template>
   <ContextMenu variant="slot" placement="bottom-end" menu-class="ms-tags">
     <template #trigger="{ toggle }">
-      <ButtonToggle :icon="icon" size="sm" @click="toggle" />
+      <ButtonToggle :icon="icon" size="sm" hover-color="var(--blue-300)" @click="toggle" />
     </template>
     <TagControl
       v-for="(tag, idx) in fileStore.tags"
