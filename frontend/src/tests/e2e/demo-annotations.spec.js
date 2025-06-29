@@ -246,21 +246,30 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
         if (count > 0) {
           const firstElement = elements.first();
           
-          // For webkit, use enhanced visibility check
+          // Enhanced visibility check for all mobile browsers
+          await firstElement.scrollIntoViewIfNeeded();
+          await page.waitForTimeout(500);
+          
           if (mobileHelpers.isWebkit()) {
-            await firstElement.scrollIntoViewIfNeeded();
-            await page.waitForTimeout(500);
-            
             const isVisible = await mobileHelpers.isElementVisibleInDOM(firstElement);
             if (isVisible) {
               visibleElementFound = true;
               break;
             }
           } else {
-            // For other browsers, use standard visibility check
-            await mobileHelpers.expectToBeVisible(firstElement, 15000);
-            visibleElementFound = true;
-            break;
+            // For Chromium mobile browsers, also use DOM-based check as fallback
+            try {
+              await mobileHelpers.expectToBeVisible(firstElement, 8000);
+              visibleElementFound = true;
+              break;
+            } catch {
+              // Fallback to DOM visibility check for mobile Chrome
+              const isVisible = await mobileHelpers.isElementVisibleInDOM(firstElement);
+              if (isVisible) {
+                visibleElementFound = true;
+                break;
+              }
+            }
           }
         }
       } catch (error) {

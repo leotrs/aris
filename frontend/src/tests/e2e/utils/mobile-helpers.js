@@ -22,6 +22,14 @@ export class MobileHelpers {
   }
 
   /**
+   * Check if we're running on Mobile Chrome (chromium with mobile viewport)
+   */
+  isMobileChrome() {
+    const browserName = this.page.context().browser()?.browserType()?.name();
+    return browserName === 'chromium' && this.isMobileViewport();
+  }
+
+  /**
    * Get mobile-optimized timeout values
    */
   getTimeouts() {
@@ -63,8 +71,8 @@ export class MobileHelpers {
     const timeouts = this.getTimeouts();
     const timeout = customTimeout || timeouts.medium;
     
-    // For webkit, ensure element is scrolled into view first
-    if (this.isWebkit()) {
+    // For webkit and mobile chrome, ensure element is scrolled into view first
+    if (this.isWebkit() || this.isMobileChrome()) {
       try {
         await locator.scrollIntoViewIfNeeded({ timeout: 2000 });
         await this.page.waitForTimeout(300);
@@ -72,13 +80,21 @@ export class MobileHelpers {
         // Continue if scroll fails
       }
       
-      // Force a repaint on webkit
-      await this.page.evaluate(() => {
-        document.body.style.transform = 'translateZ(0)';
-        setTimeout(() => {
-          document.body.style.transform = '';
-        }, 50);
-      });
+      // Force a repaint on webkit/mobile chrome
+      if (this.isWebkit()) {
+        await this.page.evaluate(() => {
+          document.body.style.transform = 'translateZ(0)';
+          setTimeout(() => {
+            document.body.style.transform = '';
+          }, 50);
+        });
+      } else if (this.isMobileChrome()) {
+        // For mobile chrome, trigger a different type of repaint
+        await this.page.evaluate(() => {
+          window.dispatchEvent(new Event('resize'));
+        });
+        await this.page.waitForTimeout(100);
+      }
     }
     
     await expect(locator).toBeVisible({ timeout });
