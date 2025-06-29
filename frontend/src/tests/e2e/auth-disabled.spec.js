@@ -6,9 +6,24 @@ test.describe("Auth Disabled - Development Mode", () => {
     const healthResponse = await page.request.get("http://localhost:8000/health");
     expect(healthResponse.ok()).toBeTruthy();
 
+    // Debug: Check environment variables
+    const envCheck = await page.evaluate(() => {
+      console.log("VITE_DISABLE_AUTH:", import.meta.env.VITE_DISABLE_AUTH);
+      console.log("VITE_API_BASE_URL:", import.meta.env.VITE_API_BASE_URL);
+      return {
+        disableAuth: import.meta.env.VITE_DISABLE_AUTH,
+        apiUrl: import.meta.env.VITE_API_BASE_URL
+      };
+    });
+    console.log("Environment check:", envCheck);
+
     // Test 2: Verify home page is directly accessible (no redirect to login)
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+
+    // Debug: Check current URL
+    const currentUrl = page.url();
+    console.log("Current URL after goto('/'):", currentUrl);
 
     // Should stay on home page, not redirect to login
     await expect(page).toHaveURL("/", { timeout: 10000 });
