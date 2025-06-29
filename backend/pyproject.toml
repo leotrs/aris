@@ -37,7 +37,7 @@ test = [
 ]
 dev = [
     "ruff>=0.8.0",
-    "mypy>=0.991,<0.992",
+    "mypy>=1.13",
     "types-python-jose>=3.5.0.20250531",
     "types-pillow>=10.2.0.20240822",
     "types-psycopg2>=2.9.21.20250516",
