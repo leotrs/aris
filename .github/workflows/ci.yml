@@ -7,30 +7,9 @@ on:
     branches: [ main ]
 
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      backend: ${{ steps.changes.outputs.backend }}
-      frontend: ${{ steps.changes.outputs.frontend }}
-      site: ${{ steps.changes.outputs.site }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            backend:
-              - 'backend/**'
-            frontend:
-              - 'frontend/**'
-            site:
-              - 'site/**'
-
-  # PHASE 1: Unit Tests and Linting (Parallel)
+  # Unit Tests and Linting (Parallel)
   backend-test:
     runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ always() }}
     env:
       ENV: CI
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
@@ -102,8 +81,6 @@ jobs:
 
   frontend-test:
     runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ always() }}
 
     defaults:
       run:
@@ -140,8 +117,6 @@ jobs:
 
   site-test:
     runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ always() }}
 
     defaults:
       run:
@@ -168,5 +143,168 @@ jobs:
 
     - name: Run unit tests
       run: npm run test:run
+
+  # E2E Tests with Auth
+  e2e-auth:
+    runs-on: ubuntu-latest
+    env:
+      ENV: PROD
+      DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 3
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Create virtual environment and sync dependencies
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --group test --group dev
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+
+    - name: Start backend API
+      working-directory: backend
+      run: |
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        sleep 5
+        curl -f http://localhost:8000/health || exit 1
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Install Playwright browsers
+      working-directory: frontend
+      run: npx playwright install chromium
+
+    - name: Start frontend and run auth-enabled E2E test
+      working-directory: frontend
+      run: |
+        npm run dev &
+        sleep 10
+        npx playwright test auth-enabled.spec.js --project=chromium --reporter=line
+
+  # E2E Tests without Auth
+  e2e-no-auth:
+    runs-on: ubuntu-latest
+    env:
+      ENV: CI
+      DISABLE_AUTH: true
+      DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 3
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Create virtual environment and sync dependencies
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --group test --group dev
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+
+    - name: Start backend API
+      working-directory: backend
+      run: |
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        sleep 5
+        curl -f http://localhost:8000/health || exit 1
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Install Playwright browsers
+      working-directory: frontend
+      run: npx playwright install chromium
+
+    - name: Start frontend and run auth-disabled E2E test
+      working-directory: frontend
+      run: |
+        npm run dev &
+        sleep 10
+        npx playwright test auth-disabled.spec.js --project=chromium --reporter=line
 
 # Trigger CI
