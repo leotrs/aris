@@ -15,8 +15,10 @@ test.describe("Demo Content Rendering", () => {
 
   test.describe("Content Loading", () => {
     test("demo manuscript content loads and displays", async ({ page }) => {
-      // Wait for demo canvas to be visible
-      await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible();
+      // Wait for demo canvas to be loaded (not just the loading screen)
+      await expect(page.locator('[data-testid="demo-canvas"][data-loaded="true"]')).toBeVisible({
+        timeout: 20000,
+      });
 
       // Wait for manuscript content to load
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({

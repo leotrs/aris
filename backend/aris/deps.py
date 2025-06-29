@@ -11,9 +11,11 @@ Environment variables:
 - DB_URL_LOCAL: Local database connection URL.
 - DB_URL_PROD: Production database connection URL.
 - ENV: Environment indicator, "PROD" selects production DB URL.
+- DISABLE_AUTH: When set to "true", disables authentication for E2E testing.
 
 """
 
+import os
 from typing import AsyncGenerator, Optional
 from uuid import UUID
 
@@ -54,7 +56,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         yield async_session
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login", auto_error=False)
 
 
 class UserRead(BaseModel):
@@ -63,12 +65,12 @@ class UserRead(BaseModel):
     Attributes:
         id (UUID): The unique identifier of the user.
         email (EmailStr): The user's email address.
-        full_name (str): The user's full name.
+        name (str): The user's name.
     """
 
     id: UUID
     email: EmailStr
-    full_name: str
+    name: str
     model_config = ConfigDict(from_attributes=True)
 
 
@@ -89,6 +91,44 @@ async def current_user(
         UserRead: The authenticated user's data.
 
     """
+    # Check if authentication is disabled for testing
+    disable_auth = os.getenv("DISABLE_AUTH", "")
+    print(f"DEBUG: DISABLE_AUTH env var = '{disable_auth}', type = {type(disable_auth)}")
+    if disable_auth.lower() == "true":
+        # Return the test user for local testing
+        from datetime import datetime
+
+        from sqlalchemy import text
+        
+        result = await db.execute(
+            text("SELECT id, email, name FROM users WHERE email = :email"),
+            {"email": "testuser@aris.pub"}
+        )
+        user_row = result.first()
+        
+        if not user_row:
+            raise RuntimeError("Test user 'testuser@aris.pub' not found. Run reset_test_user.py script.")
+        
+        # Create a mock user object with the actual test user data
+        class MockUser:
+            def __init__(self, user_id, email, name):
+                self.id = user_id
+                self.email = email
+                self.name = name
+                self.initials = "".join(word[0].upper() for word in name.split()[:2])
+                self.created_at = datetime.now()
+                self.avatar_color = "#0E9AE9"
+        
+        return MockUser(user_row.id, user_row.email, user_row.name)
+    
+    # If no token provided and auth is required, raise error
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Invalid authentication credentials",

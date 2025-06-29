@@ -203,7 +203,7 @@ async def test_me_endpoint_with_valid_token(client: AsyncClient):
     assert data["initials"] == "TU"
     assert "id" in data
     assert "created_at" in data
-    assert "color" in data
+    assert "avatar_color" in data
 
 
 async def test_me_endpoint_without_token(client: AsyncClient):

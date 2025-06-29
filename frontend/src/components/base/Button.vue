@@ -29,7 +29,7 @@
   import { useTemplateRef } from "vue";
 
   defineOptions({
-    name: "Button",
+    name: "BaseButton",
   });
 
   const props = defineProps({

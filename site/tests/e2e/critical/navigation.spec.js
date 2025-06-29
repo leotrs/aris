@@ -1,14 +1,15 @@
 import { test, expect } from "@playwright/test";
 
 test.describe("Navigation Flow E2E", () => {
-  test("should navigate between all main pages", async ({ page, browserName }) => {
+  test("should navigate between all main pages", async ({ page }) => {
     // Start at home page
     await page.goto("/");
     await expect(page).toHaveTitle(/Aris/);
     await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
 
-    // Check if this is a mobile browser
-    const isMobile = browserName?.includes("Mobile");
+    // Check if viewport is mobile-sized (less than 640px wide)
+    const viewportSize = page.viewportSize();
+    const isMobile = viewportSize.width < 640;
 
     if (isMobile) {
       // Mobile navigation: use mobile menu
@@ -39,8 +40,8 @@ test.describe("Navigation Flow E2E", () => {
       await expect(page).toHaveURL("/");
       await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
     } else {
-      // Desktop navigation: use regular nav links
-      await page.click('a[href="/signup"]');
+      // Desktop navigation: use visible nav links from navbar-utility-links
+      await page.click('.navbar-utility-links a[href="/signup"]');
       await page.waitForLoadState("networkidle");
       await expect(page).toHaveURL("/signup");
       await expect(page.locator("h1")).toContainText("Sign Up");
@@ -65,11 +66,12 @@ test.describe("Navigation Flow E2E", () => {
     }
   });
 
-  test("should handle navbar navigation links", async ({ page, browserName }) => {
+  test("should handle navbar navigation links", async ({ page }) => {
     await page.goto("/");
 
-    // Check if this is a mobile browser
-    const isMobile = browserName?.includes("Mobile");
+    // Check if viewport is mobile-sized (less than 640px wide)
+    const viewportSize = page.viewportSize();
+    const isMobile = viewportSize.width < 640;
 
     if (isMobile) {
       // Mobile: Open mobile menu first
@@ -133,7 +135,7 @@ test.describe("Navigation Flow E2E", () => {
 
       // Test utility links that should work
       const loginLink = page.locator('nav a[href="/login"]').first();
-      const signupLink = page.locator('nav a[href="/signup"]').first();
+      const signupLink = page.locator('.navbar-utility-links a[href="/signup"]');
       demoLink = page.locator('nav a[href="/demo"]').first();
 
       await expect(loginLink).toBeVisible();
@@ -255,15 +257,13 @@ test.describe("Navigation Flow E2E", () => {
     expect(tabCount).toBeLessThan(maxTabs);
   });
 
-  test("should handle navigation with browser back/forward buttons", async ({
-    page,
-    browserName,
-  }) => {
+  test("should handle navigation with browser back/forward buttons", async ({ page }) => {
     // Navigate through several pages
     await page.goto("/");
 
-    // Check if this is a mobile browser
-    const isMobile = browserName?.includes("Mobile");
+    // Check if viewport is mobile-sized (less than 640px wide)
+    const viewportSize = page.viewportSize();
+    const isMobile = viewportSize.width < 640;
 
     if (isMobile) {
       // Mobile navigation: use mobile menu
@@ -272,7 +272,7 @@ test.describe("Navigation Flow E2E", () => {
       await page.click('.mobile-nav-link[href="/signup"]');
     } else {
       // Desktop navigation: use regular nav links
-      await page.click('a[href="/signup"]');
+      await page.click('.navbar-utility-links a[href="/signup"]');
     }
 
     await expect(page).toHaveURL("/signup");
@@ -314,7 +314,7 @@ test.describe("Navigation Flow E2E", () => {
     expect(response?.status()).toBe(404);
   });
 
-  test("should maintain scroll position appropriately", async ({ page, browserName }) => {
+  test("should maintain scroll position appropriately", async ({ page }) => {
     await page.goto("/");
 
     // Scroll down to a section
@@ -325,8 +325,9 @@ test.describe("Navigation Flow E2E", () => {
     expect(scrollPosition).toBeGreaterThan(100);
 
     // Navigate to another page and back
-    // Check if this is a mobile browser
-    const isMobile = browserName?.includes("Mobile");
+    // Check if viewport is mobile-sized (less than 640px wide)
+    const viewportSize = page.viewportSize();
+    const isMobile = viewportSize.width < 640;
 
     if (isMobile) {
       // Mobile navigation: use mobile menu
@@ -335,7 +336,7 @@ test.describe("Navigation Flow E2E", () => {
       await page.click('.mobile-nav-link[href="/signup"]');
     } else {
       // Desktop navigation: use regular nav links
-      await page.click('a[href="/signup"]');
+      await page.click('.navbar-utility-links a[href="/signup"]');
     }
 
     await expect(page).toHaveURL("/signup");

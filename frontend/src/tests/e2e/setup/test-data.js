@@ -1,10 +1,8 @@
 // Test user credentials for e2e tests
-// These should match real users in the test database
-// Password comes from environment variables - CI will fail if not configured
 export const TEST_USERS = {
   VALID_USER: {
-    email: "testuser@aris.pub",
-    password: process.env.VITE_DEV_LOGIN_PASSWORD,
+    email: process.env.TEST_USER_EMAIL || "testuser@aris.pub",
+    password: process.env.TEST_USER_PASSWORD || "testpassword123",
     name: "Test User",
   },
 
@@ -56,11 +54,3 @@ This is a test file created at ${new Date().toISOString()}.
 
 ::`,
 });
-
-// Validate that required credentials are available
-if (!TEST_USERS.VALID_USER.password) {
-  console.warn(
-    "VITE_DEV_LOGIN_PASSWORD not configured - using default test password for local development"
-  );
-  TEST_USERS.VALID_USER.password = "defaulttestpassword";
-}

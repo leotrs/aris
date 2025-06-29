@@ -6,6 +6,7 @@ Will read ../alembic.ini and whatever is inside .env files in this dir or up.
 
 import os
 from logging.config import fileConfig
+from pathlib import Path
 
 from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
@@ -14,7 +15,10 @@ from alembic import context
 from aris.models import Base
 
 
-load_dotenv()
+# Load the appropriate .env file based on environment
+BASE_DIR = Path(__file__).resolve().parent.parent
+env_file = BASE_DIR / (".env.ci" if os.getenv("ENV") == "CI" else ".env")
+load_dotenv(env_file)
 
 config = context.config
 
@@ -24,12 +28,16 @@ def get_database_url() -> str:
 
     If ENV=LOCAL, use DB_URL_LOCAL.
     If ENV=PROD, use DB_URL_PROD.
+    If ENV=CI, use ALEMBIC_DB_URL_PROD (PostgreSQL test instance).
     Defaults to DB_URL_LOCAL if ENV is unset or unrecognized.
 
     :return: The selected database URL.
     """
     env = os.getenv("ENV", "LOCAL").upper()
     if env == "PROD":
+        url = os.getenv("ALEMBIC_DB_URL_PROD")
+    elif env == "CI":
+        # In CI, use the production DB URL which points to PostgreSQL test instance
         url = os.getenv("ALEMBIC_DB_URL_PROD")
     else:
         url = os.getenv("ALEMBIC_DB_URL_LOCAL")

@@ -177,7 +177,9 @@ describe("WorkspaceView", () => {
         stubs: { Sidebar: true, Canvas: true, Button: true },
       },
     });
-    expect(wrapper.findComponent({ name: "Button" }).exists()).toBe(false);
+    // In non-mobile mode, there is no focus mode BaseButton in the View component itself
+    // The focus mode button is handled by the Sidebar component as a SidebarItem
+    expect(wrapper.findComponent({ name: "BaseButton" }).exists()).toBe(false);
   });
 
   it("does not redirect when fileStore is empty (no files loaded)", () => {
