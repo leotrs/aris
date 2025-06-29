@@ -54,7 +54,7 @@ describe("HomeCTASection Component", () => {
     it("should render secondary CTA link", () => {
       wrapper = mount(HomeCTASection);
 
-      const secondaryLink = wrapper.find('.text-link');
+      const secondaryLink = wrapper.find(".text-link");
       expect(secondaryLink.exists()).toBe(true);
       expect(secondaryLink.text().length).toBeGreaterThan(3);
       expect(secondaryLink.classes()).toContain("text-link");
@@ -68,7 +68,7 @@ describe("HomeCTASection Component", () => {
 
       // Both CTAs should be within this container
       const button = ctaButtons.find(".btn.btn-primary");
-      const link = ctaButtons.find('.text-link');
+      const link = ctaButtons.find(".text-link");
       expect(button.exists()).toBe(true);
       expect(link.exists()).toBe(true);
     });
@@ -88,7 +88,7 @@ describe("HomeCTASection Component", () => {
       wrapper = mount(HomeCTASection);
 
       const primaryButton = wrapper.find(".btn.btn-primary");
-      const secondaryLink = wrapper.find('.text-link');
+      const secondaryLink = wrapper.find(".text-link");
 
       expect(primaryButton.text().length).toBeGreaterThan(3);
       expect(secondaryLink.text().length).toBeGreaterThan(3);
@@ -120,9 +120,9 @@ describe("HomeCTASection Component", () => {
     it("should have correct link target", () => {
       wrapper = mount(HomeCTASection);
 
-      const signupLink = wrapper.find('a[href="/signup"]');
-      expect(signupLink.exists()).toBe(true);
-      expect(signupLink.attributes("href")).toBe("/signup");
+      const contactLink = wrapper.find('a[href="/contact"]');
+      expect(contactLink.exists()).toBe(true);
+      expect(contactLink.attributes("href")).toBe("/contact");
     });
 
     it("should not have any broken or empty links", () => {
@@ -185,13 +185,13 @@ describe("HomeCTASection Component", () => {
       const button = wrapper.find(".btn.btn-primary");
       expect(button.exists()).toBe(true);
       expect(button.element.tagName.toLowerCase()).toBe("a");
-      expect(button.attributes("href")).toBe("/demo");
+      expect(button.attributes("href")).toBe("/getting-started");
     });
 
     it("should have link element for secondary action", () => {
       wrapper = mount(HomeCTASection);
 
-      const link = wrapper.find('a[href="/signup"]');
+      const link = wrapper.find('a[href="/contact"]');
       expect(link.exists()).toBe(true);
       expect(link.element.tagName.toLowerCase()).toBe("a");
     });
