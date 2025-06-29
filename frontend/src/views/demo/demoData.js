@@ -209,7 +209,8 @@ export const createDemoApi = () => ({
         return { data: html };
       } catch (error) {
         console.error("Failed to render RSM content:", error);
-        return { data: convertMarkdownToHtml(payload?.source || demoFile.source) };
+        // Return empty HTML - the /render endpoint MUST work in production
+        return { data: "" };
       }
     }
     if (url.includes("/settings")) {
@@ -225,38 +226,3 @@ export const createDemoApi = () => ({
   getUri: () => "http://localhost:8000",
 });
 
-// Simple markdown to HTML converter for demo purposes
-function convertMarkdownToHtml(markdown) {
-  return (
-    markdown
-      // Headers
-      .replace(/^### (.*$)/gm, "<h3>$1</h3>")
-      .replace(/^## (.*$)/gm, "<h2>$1</h2>")
-      .replace(/^# (.*$)/gm, "<h1>$1</h1>")
-      // Bold and italic
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      // Code blocks
-      .replace(/```[\s\S]*?```/g, "<pre><code>$&</code></pre>")
-      // Inline code
-      .replace(/`([^`]+)`/g, "<code>$1</code>")
-      // Tables (basic)
-      .replace(/\|(.+)\|/g, (match) => {
-        const cells = match.split("|").slice(1, -1);
-        return "<tr>" + cells.map((cell) => `<td>${cell.trim()}</td>`).join("") + "</tr>";
-      })
-      // Blockquotes
-      .replace(/^> (.*$)/gm, "<blockquote>$1</blockquote>")
-      // Line breaks
-      .replace(/\n\n/g, "</p><p>")
-      .replace(/\n/g, "<br>")
-      // Wrap in paragraphs
-      .split("</p><p>")
-      .map((p) =>
-        p.startsWith("<h") || p.startsWith("<table") || p.startsWith("<blockquote")
-          ? p
-          : `<p>${p}</p>`
-      )
-      .join("")
-  );
-}

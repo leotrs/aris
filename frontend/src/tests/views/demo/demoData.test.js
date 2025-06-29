@@ -224,7 +224,6 @@ describe("Demo Data Service", () => {
     describe("POST method - /render endpoint", () => {
       it("calls backend render endpoint with correct parameters", async () => {
         // Since /render now hits the real backend, we test that the call structure is correct
-        // The actual backend call will either succeed or fall back to markdown conversion
         const result = await api.post("/render", { source: demoFile.source });
 
         // Verify that the API returns some kind of rendered content
@@ -234,7 +233,7 @@ describe("Demo Data Service", () => {
       });
 
       it("returns rendered HTML from backend", async () => {
-        // Test that the API returns valid HTML content (either from backend or fallback)
+        // Test that the API returns valid HTML content from backend
         const result = await api.post("/render", { source: demoFile.source });
 
         expect(result).toHaveProperty("data");
@@ -243,7 +242,7 @@ describe("Demo Data Service", () => {
       });
 
       it("handles backend render success", async () => {
-        // Test that the API handles both success and fallback cases
+        // Test that the API handles backend responses
         const result = await api.post("/render", { source: demoFile.source });
 
         expect(result).toHaveProperty("data");
@@ -252,7 +251,7 @@ describe("Demo Data Service", () => {
       });
 
       it("handles error scenarios gracefully", async () => {
-        // Test that the API always returns valid data, either from backend or fallback
+        // Test that the API returns valid data from backend
         const result = await api.post("/render", { source: demoFile.source });
 
         expect(result.data).toBeDefined();
@@ -332,8 +331,7 @@ describe("Demo Data Service", () => {
     });
 
     it("render endpoint handles various scenarios gracefully", async () => {
-      // Test that the render API always returns valid data
-      // Either from successful backend call or fallback conversion
+      // Test that the render API returns valid data from backend
       const result = await api.post("/render");
 
       expect(result.data).toBeDefined();
@@ -341,8 +339,8 @@ describe("Demo Data Service", () => {
       expect(result.data.length).toBeGreaterThan(0);
     });
 
-    it("demonstrates fallback mechanism exists", () => {
-      // Test that the demo API has fallback logic built in
+    it("demonstrates backend integration", () => {
+      // Test that the demo API is properly configured
       expect(typeof api.post).toBe("function");
       expect(demoFile.source).toBeDefined();
       expect(demoFile.source.length).toBeGreaterThan(0);
