@@ -73,6 +73,7 @@ router = APIRouter()
     response_description="User profile information",
 )
 async def me(user: User = Depends(current_user)):
+    print(f"DEBUG: /me endpoint reached, user: {user}")
     """Get current authenticated user information.
 
     Parameters
