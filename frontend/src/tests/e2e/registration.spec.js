@@ -157,11 +157,11 @@ test.describe("Registration Flow Tests", () => {
 
   test("already authenticated user redirects to home", async ({ page }) => {
     // Skip this test if we don't have valid test credentials
-    const hasValidCredentials = process.env.VITE_DEV_LOGIN_PASSWORD;
+    const hasValidCredentials = process.env.TEST_USER_PASSWORD;
     test.skip(!hasValidCredentials, "Requires valid test credentials");
 
     // First login with valid credentials
-    await authHelpers.login("testuser@aris.pub", process.env.VITE_DEV_LOGIN_PASSWORD);
+    await authHelpers.login("testuser@aris.pub", process.env.TEST_USER_PASSWORD);
 
     try {
       await page.waitForURL("/", { timeout: 5000 });
