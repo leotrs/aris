@@ -6,19 +6,23 @@ with stable test data for visual regression testing.
 
 import asyncio
 import os
+import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
 from sqlalchemy import text
 
-from aris import ArisSession
+# Add the backend directory to Python path so we can import aris modules
+backend_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(backend_dir))
+
+from aris.deps import ArisSession
 from aris.models.models import File, FileStatus, Tag, User
 from aris.security import hash_password
 
 
 # Load environment variables using the same logic as config.py
-BASE_DIR = Path(__file__).resolve().parent.parent
-env_file = BASE_DIR / (".env.ci" if os.getenv("ENV") == "CI" else ".env")
+env_file = backend_dir / ".env"
 # Load .env file but don't override existing environment variables
 load_dotenv(env_file, override=False)
 
@@ -26,7 +30,7 @@ TEST_USER_EMAIL = os.getenv("TEST_USER_EMAIL", "testuser@aris.pub")
 TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
 
 if not TEST_USER_PASSWORD:
-    print("⚠️  TEST_USER_PASSWORD not found in environment variables, using default from .env.ci")
+    print("⚠️  TEST_USER_PASSWORD not found in environment variables, using default")
     TEST_USER_PASSWORD = "testpassword123"
 
 print(f"📧 Using test user email: {TEST_USER_EMAIL}")
