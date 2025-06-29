@@ -23,6 +23,8 @@ uv run mypy aris/                     # Type check
 ```
 
 ## Testing Infrastructure
+
+### Backend Testing
 - **Local Development**: Tests use SQLite for fast development iterations
 - **CI Environment**: Tests automatically use PostgreSQL for production-like testing
 - **Dual Database Support**: Same test suite runs on both databases
@@ -30,7 +32,30 @@ uv run mypy aris/                     # Type check
 - **Environment Variables**: 
   - `TEST_DB_URL`: Override test database URL
   - `CI=true` or `ENV=CI`: Forces PostgreSQL usage
+  - `TEST_USER_EMAIL` / `TEST_USER_PASSWORD`: Credentials for E2E test user
 - **Local CI Simulation**: Use `./simulate-ci -- <command>` for 100% CI fidelity
+
+### E2E Testing Strategy
+The E2E test suite is organized into **7 mutually exclusive jobs** for optimal parallelization:
+
+#### **Authentication-Required Tests** (with database + test user):
+1. **`e2e-auth`** (27 tests): User account, file management, authenticated features
+2. **`e2e-auth-flows`** (22 tests): Login, registration, auth redirects
+
+#### **Authentication-Disabled Tests** (public/demo content):
+3. **`e2e-core`** (4 tests): Smoke tests, auth-disabled mode, critical functionality
+4. **`e2e-demo-content`** (37 tests): Demo content rendering, navigation, backend integration
+5. **`e2e-demo-ui`** (33 tests): Demo workspace, annotations, focus mode interactions
+
+#### **Test Selection & Tagging**:
+- **Tag-based execution**: Tests use `@auth`, `@auth-flows`, `@core`, `@demo-content`, `@demo-ui` tags
+- **Precise pattern matching**: `@auth[^-]` pattern prevents tag collision with `@auth-flows`
+- **Mutually exclusive**: Each test runs exactly once across all jobs
+
+#### **Authentication Control**:
+- **`DISABLE_AUTH=true`**: Bypasses authentication for demo/public content testing
+- **Mock user injection**: Returns test user without database lookup when auth disabled
+- **Environment-aware**: Automatically detects CI vs local environments
 
 ## Development Setup
 
@@ -66,7 +91,22 @@ npm run dev                           # Run dev server
 npm run storybook                     # Run Storybook component library
 npm run lint                          # Lint code
 npm test                              # Run unit tests
-npm run test:e2e                      # Run E2E tests
+npm run test:e2e                      # Run all E2E tests (sequential)
+```
+
+### E2E Test Execution
+```bash
+# Run specific test suites (parallel-friendly)
+npx playwright test --grep "@auth[^-]"     # Auth-required tests (27 tests)
+npx playwright test --grep "@auth-flows"   # Auth flow tests (22 tests)  
+npx playwright test --grep "@core"         # Core functionality (4 tests)
+npx playwright test --grep "@demo-content" # Demo content tests (37 tests)
+npx playwright test --grep "@demo-ui"      # Demo UI tests (33 tests)
+
+# Debug and development
+npx playwright test --headed              # Run with browser visible
+npx playwright test --debug               # Run in debug mode
+npx playwright test --reporter=html       # Generate HTML report
 ```
 
 ## Critical Rules
