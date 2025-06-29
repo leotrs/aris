@@ -378,7 +378,6 @@
     margin-right: auto;
   }
 
-
   /* Response Phases */
   .response-phases {
     margin-bottom: var(--space-4xl);
@@ -819,7 +818,6 @@
     .incident-contact {
       padding: var(--space-xl);
     }
-
 
     .phases-grid {
       grid-template-columns: 1fr;

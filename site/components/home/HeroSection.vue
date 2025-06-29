@@ -6,8 +6,8 @@
           The Collaborative Preprint Server for Modern Research
         </h1>
         <p class="hero-subheadline">
-          Like arXiv or bioRxiv, but with real-time collaboration built in. Write together, share immediately, 
-          and continue to any journal with zero friction.
+          Like arXiv or bioRxiv, but with real-time collaboration built in. Write together, share
+          immediately, and continue to any journal with zero friction.
         </p>
         <div class="hero-ctas" role="group" aria-label="Call to action buttons">
           <a href="/demo" class="btn btn-primary" aria-describedby="hero-heading"

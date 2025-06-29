@@ -67,7 +67,10 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('sso-integration')">
             <h3 class="question-text">Does this integrate with our SSO system?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('sso-integration') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('sso-integration') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>
@@ -108,7 +111,10 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('pricing-institutions')">
             <h3 class="question-text">What's the pricing for institutions?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('pricing-institutions') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('pricing-institutions') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>

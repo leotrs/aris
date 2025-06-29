@@ -4,8 +4,8 @@
       <div class="hero-content">
         <h1 id="security-hero-heading" class="hero-headline">Security & Privacy</h1>
         <p class="hero-subheadline">
-          Transparent about where we are and where we're going. Security and privacy built 
-          from day one, with open source accountability.
+          Transparent about where we are and where we're going. Security and privacy built one, with
+          open source accountability.
         </p>
         <div class="hero-status">
           <div class="status-badge">
@@ -40,13 +40,7 @@
 </template>
 
 <script setup>
-  import {
-    IconShield,
-    IconAlertTriangle,
-    IconEye,
-    IconCode,
-    IconUsers,
-  } from "@tabler/icons-vue";
+  import { IconShield, IconAlertTriangle, IconEye, IconCode, IconUsers } from "@tabler/icons-vue";
 </script>
 
 <style scoped>

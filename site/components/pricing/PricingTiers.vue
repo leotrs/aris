@@ -4,7 +4,8 @@
       <div class="section-header">
         <h2 id="pricing-tiers-heading" class="section-title">Choose Your Plan</h2>
         <p class="section-subtitle">
-          Start free and upgrade when your team grows. All plans include complete data export and LaTeX support.
+          Start free and upgrade when your team grows. All plans include complete data export and
+          LaTeX support.
         </p>
       </div>
 
@@ -22,7 +23,7 @@
             </div>
             <p class="tier-description">Perfect for individual researchers and students</p>
           </div>
-          
+
           <div class="tier-features">
             <div class="feature-item">
               <IconCheck :size="16" />
@@ -73,7 +74,7 @@
             </div>
             <p class="tier-description">For research teams and academic institutions</p>
           </div>
-          
+
           <div class="tier-features">
             <div class="feature-group">
               <h4 class="feature-group-title">Everything in Individual, plus:</h4>
@@ -127,7 +128,7 @@
             </div>
             <p class="tier-description">For large institutions with specific requirements</p>
           </div>
-          
+
           <div class="tier-features">
             <div class="feature-group">
               <h4 class="feature-group-title">Everything in Institutional, plus:</h4>

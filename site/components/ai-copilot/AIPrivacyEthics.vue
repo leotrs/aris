@@ -7,8 +7,8 @@
         </div>
         <h2 id="privacy-heading" class="section-title">Privacy-First AI</h2>
         <p class="section-subtitle">
-          AI assistance that respects your intellectual property, maintains confidentiality, 
-          and upholds the highest standards of academic ethics.
+          AI assistance that respects your intellectual property, maintains confidentiality, upholds
+          the highest standards of academic ethics.
         </p>
       </div>
 
@@ -21,8 +21,8 @@
           </div>
           <div class="card-content">
             <p class="card-description">
-              Your research content never leaves your control. AI processing happens locally or through 
-              encrypted, ephemeral sessions that don't store your work.
+              Your research content never leaves your control. AI processing happens locally or
+              through encrypted, ephemeral sessions that don't store your work.
             </p>
             <div class="privacy-features">
               <div class="feature-item">
@@ -53,8 +53,8 @@
           </div>
           <div class="card-content">
             <p class="card-description">
-              AI assistance is clearly marked and traceable. You maintain full authorship and control, 
-              with transparent documentation of AI contributions.
+              AI assistance is clearly marked and traceable. You maintain full authorship and
+              control, with transparent documentation of AI contributions.
             </p>
             <div class="privacy-features">
               <div class="feature-item">
@@ -85,8 +85,8 @@
           </div>
           <div class="card-content">
             <p class="card-description">
-              Our AI models are trained ethically, without using copyrighted academic content, 
-              and designed to enhance rather than replace human expertise.
+              Our AI models are trained ethically, without using copyrighted academic content,
+              designed to enhance rather than replace human expertise.
             </p>
             <div class="privacy-features">
               <div class="feature-item">
@@ -117,8 +117,8 @@
           </div>
           <div class="card-content">
             <p class="card-description">
-              Full compliance with institutional policies, research ethics guidelines, 
-              and international data protection regulations.
+              Full compliance with institutional policies, research ethics guidelines, international
+              data protection regulations.
             </p>
             <div class="privacy-features">
               <div class="feature-item">
@@ -149,8 +149,9 @@
           </div>
           <h3 class="commitment-title">Our AI Ethics Commitment</h3>
           <p class="commitment-description">
-            We believe AI should empower researchers, not replace them. Our AI features are designed to enhance 
-            human creativity and insight while maintaining the highest standards of academic integrity and ethical responsibility.
+            We believe AI should empower researchers, not replace them. Our AI features are designed
+            to enhance human creativity and insight while maintaining the highest standards of
+            academic integrity and ethical responsibility.
           </p>
           <div class="commitment-principles">
             <div class="principle">

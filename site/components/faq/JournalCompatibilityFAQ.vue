@@ -20,7 +20,10 @@
         <div class="faq-item featured">
           <div class="faq-question" @click="toggleFAQ('journal-submission')">
             <h3 class="question-text">How does this work with journal submissions?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('journal-submission') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('journal-submission') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>
@@ -80,7 +83,10 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('prestigious-journals')">
             <h3 class="question-text">Can I still submit to Nature, Science, Cell, etc.?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('prestigious-journals') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('prestigious-journals') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>
@@ -194,7 +200,10 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('submission-package')">
             <h3 class="question-text">Is my review history included when I submit to journals?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('submission-package') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('submission-package') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>

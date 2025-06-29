@@ -6,9 +6,7 @@
           <IconQuestionMark :size="32" />
         </div>
         <h2 id="pricing-faq-heading" class="section-title">Pricing Questions</h2>
-        <p class="section-subtitle">
-          Common questions about our pricing, billing, and policies.
-        </p>
+        <p class="section-subtitle">Common questions about our pricing, billing, and policies.</p>
       </div>
 
       <div class="faq-grid">
@@ -23,9 +21,9 @@
             <div v-if="activeFAQs.includes('free-forever')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
-                  <strong>Yes, absolutely.</strong> Individual researchers can use Aris free forever with no
-                  hidden fees or time limits. This includes core features like LaTeX import, PDF export,
-                  basic collaboration (up to 3 people), and journal export templates.
+                  <strong>Yes, absolutely.</strong> Individual researchers can use Aris free forever
+                  with no hidden fees or time limits. This includes core features like LaTeX import,
+                  PDF export, basic collaboration (up to 3 people), and journal export templates.
                 </p>
                 <p class="answer-text">
                   Our business model is based on institutional subscriptions, not individual users.
@@ -39,7 +37,10 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('academic-discounts')">
             <h3 class="question-text">Do you offer academic discounts?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('academic-discounts') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('academic-discounts') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>
@@ -122,7 +123,10 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('billing-changes')">
             <h3 class="question-text">Can I change plans or cancel anytime?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('billing-changes') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('billing-changes') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>
@@ -169,16 +173,19 @@
             <div v-if="activeFAQs.includes('beta-pricing')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
-                  <strong>Early adopters get locked-in pricing for 2 years.</strong> If you sign up during
-                  beta, your pricing won't change until 2026, even if we raise prices for new customers.
+                  <strong>Early adopters get locked-in pricing for 2 years.</strong> If you sign up
+                  during beta, your pricing won't change until 2026, even if we raise prices for new
+                  customers.
                 </p>
                 <p class="answer-text">
-                  Individual plans will always remain free. Institutional pricing may adjust as we add
-                  more features, but early adopters are protected.
+                  Individual plans will always remain free. Institutional pricing may adjust as we
+                  add more features, but early adopters are protected.
                 </p>
                 <div class="pricing-guarantee">
                   <IconShield :size="20" />
-                  <span>Your early trust in Aris gets rewarded with long-term pricing protection.</span>
+                  <span
+                    >Your early trust in Aris gets rewarded with long-term pricing protection.</span
+                  >
                 </div>
               </div>
             </div>
@@ -188,16 +195,17 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('payment-methods')">
             <h3 class="question-text">What payment methods do you accept?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('payment-methods') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('payment-methods') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>
           <Transition name="faq-answer">
             <div v-if="activeFAQs.includes('payment-methods')" class="faq-answer">
               <div class="answer-content">
-                <p class="answer-text">
-                  We accept all major payment methods:
-                </p>
+                <p class="answer-text">We accept all major payment methods:</p>
                 <div class="payment-methods">
                   <div class="payment-item">
                     <IconCreditCard :size="16" />
@@ -217,8 +225,8 @@
                   </div>
                 </div>
                 <p class="answer-text">
-                  For institutional customers, we work with your procurement processes and can accommodate
-                  specific billing requirements.
+                  For institutional customers, we work with your procurement processes and can
+                  accommodate specific billing requirements.
                 </p>
               </div>
             </div>

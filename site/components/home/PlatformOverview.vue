@@ -4,11 +4,12 @@
       <div class="section-header">
         <h2 id="platform-overview-heading" class="section-title">What is Aris?</h2>
         <p class="section-tagline">
-          A modern preprint server where your research lives and evolves from first draft to publication.
+          A modern preprint server where your research lives and evolves from first draft to
+          publication.
         </p>
         <p class="section-subtitle">
-          Write collaboratively, share as preprints, and export to any journal format with one click.
-          Your paper's complete journey in one place.
+          Write collaboratively, share as preprints, and export to any journal format with one
+          click. Your paper's complete journey in one place.
         </p>
       </div>
 
@@ -18,8 +19,8 @@
           <p class="workflow-description">
             Your research should evolve naturally from idea to publication.
             <strong>Living documents grow with your work</strong>—collaborative writing becomes
-            transparent review becomes published preprint becomes journal submission. All in one place,
-            all connected, all building on each other.
+            transparent review becomes published preprint becomes journal submission. All in one
+            place, all connected, all building on each other.
           </p>
           <div class="workflow-comparison">
             <div class="workflow-before">
@@ -49,7 +50,8 @@
       <div class="journal-compatibility-section">
         <h3 class="compatibility-title">Export to Any Journal with One Click</h3>
         <p class="compatibility-description">
-          Continue your normal publication process with zero friction. Aris handles formatting for thousands of journals automatically.
+          Continue your normal publication process with zero friction. Aris handles formatting for
+          thousands of journals automatically.
         </p>
         <div class="journal-examples">
           <div class="journal-flow">
@@ -283,7 +285,6 @@
     text-align: center;
   }
 
-
   /* Journal Compatibility Section */
   .journal-compatibility-section {
     background: linear-gradient(135deg, var(--success-25), var(--success-50));
@@ -488,7 +489,6 @@
       gap: var(--space-lg);
     }
 
-
     .journal-compatibility-section {
       padding: var(--space-xl);
     }
@@ -538,7 +538,6 @@
     .workflow-title {
       font-size: 22px;
     }
-
 
     .cta-title {
       font-size: 22px;

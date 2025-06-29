@@ -6,11 +6,9 @@
           <IconSparkles :size="16" />
           <span>AI-Powered Research Assistant</span>
         </div>
-        <h1 id="ai-hero-heading" class="hero-headline">
-          Your AI Copilot for Academic Writing
-        </h1>
+        <h1 id="ai-hero-heading" class="hero-headline">Your AI Copilot for Academic Writing</h1>
         <p class="hero-subheadline">
-          Intelligent writing assistance that understands research. Get contextual suggestions, 
+          Intelligent writing assistance that understands research. Get contextual suggestions,
           citation help, and writing improvements while maintaining complete control over your work.
         </p>
         <div class="hero-features">
@@ -85,7 +83,12 @@
 <style scoped>
   /* AI Copilot Hero Section */
   .ai-copilot-hero-section {
-    background: linear-gradient(135deg, var(--primary-25) 0%, var(--success-25) 50%, var(--warning-25) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--primary-25) 0%,
+      var(--success-25) 50%,
+      var(--warning-25) 100%
+    );
     padding: var(--space-4xl) 0;
     position: relative;
     overflow: hidden;

@@ -23,12 +23,14 @@
             <div v-if="activeFAQs.includes('how-ai-works')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
-                  <strong>The AI Copilot provides contextual assistance</strong> while you write, offering suggestions 
-                  for improvement, citation help, and research insights based on your document's content and academic domain.
+                  <strong>The AI Copilot provides contextual assistance</strong> while you write,
+                  offering suggestions for improvement, citation help, and research insights based
+                  on your document's content and academic domain.
                 </p>
                 <p class="answer-text">
-                  It analyzes your writing in real-time to provide relevant suggestions, but you maintain complete 
-                  control over which suggestions to accept or reject. All AI contributions are clearly marked and traceable.
+                  It analyzes your writing in real-time to provide relevant suggestions, but you
+                  maintain complete control over which suggestions to accept or reject. All AI
+                  contributions are clearly marked and traceable.
                 </p>
               </div>
             </div>
@@ -46,8 +48,9 @@
             <div v-if="activeFAQs.includes('data-privacy')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
-                  <strong>Yes, your data privacy is our top priority.</strong> We use a combination of local processing 
-                  and encrypted, ephemeral cloud processing that doesn't store your content.
+                  <strong>Yes, your data privacy is our top priority.</strong> We use a combination
+                  of local processing and encrypted, ephemeral cloud processing that doesn't store
+                  your content.
                 </p>
                 <div class="privacy-guarantees">
                   <div class="guarantee-item">
@@ -75,7 +78,10 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('academic-integrity')">
             <h3 class="question-text">How does this maintain academic integrity?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('academic-integrity') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('academic-integrity') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>
@@ -83,14 +89,16 @@
             <div v-if="activeFAQs.includes('academic-integrity')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
-                  <strong>Academic integrity is built into every AI feature.</strong> All AI suggestions are clearly 
-                  marked, traceable, and require explicit author approval.
+                  <strong>Academic integrity is built into every AI feature.</strong> All AI
+                  suggestions are clearly marked, traceable, and require explicit author approval.
                 </p>
                 <div class="integrity-features">
                   <div class="feature-card">
                     <IconEdit :size="20" />
                     <h4 class="feature-title">Full Author Control</h4>
-                    <p class="feature-description">You decide which AI suggestions to accept or reject</p>
+                    <p class="feature-description">
+                      You decide which AI suggestions to accept or reject
+                    </p>
                   </div>
                   <div class="feature-card">
                     <IconEye :size="20" />
@@ -119,8 +127,9 @@
             <div v-if="activeFAQs.includes('ai-limitations')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
-                  <strong>We're transparent about AI limitations.</strong> The AI is a powerful assistant, 
-                  but it cannot replace human expertise, critical thinking, or domain knowledge.
+                  <strong>We're transparent about AI limitations.</strong> The AI is a powerful
+                  assistant, but it cannot replace human expertise, critical thinking, or domain
+                  knowledge.
                 </p>
                 <div class="limitations-list">
                   <div class="limitation-item">
@@ -141,7 +150,8 @@
                   </div>
                 </div>
                 <p class="answer-text">
-                  Always review AI suggestions critically and validate important claims independently.
+                  Always review AI suggestions critically and validate important claims
+                  independently.
                 </p>
               </div>
             </div>
@@ -159,34 +169,41 @@
             <div v-if="activeFAQs.includes('citation-help')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
-                  <strong>AI citation assistance helps you find and format references</strong> based on your 
-                  document content and research area.
+                  <strong>AI citation assistance helps you find and format references</strong> based
+                  on your document content and research area.
                 </p>
                 <div class="citation-features">
                   <div class="citation-step">
                     <div class="step-number">1</div>
                     <div class="step-content">
                       <h4 class="step-title">Context Analysis</h4>
-                      <p class="step-description">AI analyzes your text to understand citation needs</p>
+                      <p class="step-description">
+                        AI analyzes your text to understand citation needs
+                      </p>
                     </div>
                   </div>
                   <div class="citation-step">
                     <div class="step-number">2</div>
                     <div class="step-content">
                       <h4 class="step-title">Paper Suggestions</h4>
-                      <p class="step-description">Suggests relevant papers from academic databases</p>
+                      <p class="step-description">
+                        Suggests relevant papers from academic databases
+                      </p>
                     </div>
                   </div>
                   <div class="citation-step">
                     <div class="step-number">3</div>
                     <div class="step-content">
                       <h4 class="step-title">Format Integration</h4>
-                      <p class="step-description">Automatically formats citations in your chosen style</p>
+                      <p class="step-description">
+                        Automatically formats citations in your chosen style
+                      </p>
                     </div>
                   </div>
                 </div>
                 <p class="answer-text">
-                  You always review and approve suggested citations before they're added to your document.
+                  You always review and approve suggested citations before they're added to your
+                  document.
                 </p>
               </div>
             </div>
@@ -204,8 +221,9 @@
             <div v-if="activeFAQs.includes('ai-training')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
-                  <strong>No, absolutely not.</strong> We have a strict zero-retention policy. Your research 
-                  content is never used to train AI models or stored for any purpose beyond providing immediate assistance.
+                  <strong>No, absolutely not.</strong> We have a strict zero-retention policy. Your
+                  research content is never used to train AI models or stored for any purpose beyond
+                  providing immediate assistance.
                 </p>
                 <div class="training-policy">
                   <div class="policy-item">

@@ -1,7 +1,5 @@
 <script setup>
-  import {
-    IconChevronUp,
-  } from "@tabler/icons-vue";
+  import { IconChevronUp } from "@tabler/icons-vue";
   import Logo from "./Logo.vue";
 
   const scrollToTop = () => {
@@ -28,7 +26,11 @@
           <ul class="footer-links">
             <li><a href="/faq" class="footer-link">FAQ</a></li>
             <li><a href="/contact" class="footer-link">Contact</a></li>
-            <li><a href="https://github.com/aris-platform" class="footer-link" target="_blank">GitHub</a></li>
+            <li>
+              <a href="https://github.com/aris-platform" class="footer-link" target="_blank"
+                >GitHub</a
+              >
+            </li>
           </ul>
         </div>
 
@@ -44,9 +46,7 @@
       <div class="footer-bottom">
         <div class="footer-branding">
           <Logo type="gray" alt="Aris Logo" class="footer-logo" />
-          <p class="footer-tagline">
-            The collaborative preprint server for modern research
-          </p>
+          <p class="footer-tagline">The collaborative preprint server for modern research</p>
         </div>
 
         <div class="footer-legal">
@@ -139,7 +139,6 @@
     color: var(--primary-300);
     transform: translateX(4px);
   }
-
 
   /* Footer Bottom Section */
   .footer-bottom {
@@ -256,7 +255,6 @@
     .footer-links li {
       margin-bottom: 10px;
     }
-
 
     .footer-bottom {
       padding-top: 30px;
