@@ -335,33 +335,6 @@ jobs:
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
 
-    - name: Start backend API
-      working-directory: backend
-      run: |
-        echo "Starting backend with ENV=$ENV DISABLE_AUTH=$DISABLE_AUTH"
-        # Start backend and capture PID for cleanup
-        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
-        BACKEND_PID=$!
-        echo "Backend started with PID: $BACKEND_PID"
-        
-        # Wait longer for backend startup
-        sleep 8
-        
-        # Health check with retries
-        for i in {1..5}; do
-          if curl -f http://localhost:8000/health; then
-            echo "Backend health check passed"
-            break
-          else
-            echo "Backend health check failed, attempt $i/5"
-            if [ $i -eq 5 ]; then
-              echo "Backend failed to start properly"
-              kill $BACKEND_PID 2>/dev/null || true
-              exit 1
-            fi
-            sleep 2
-          fi
-        done
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -386,28 +359,73 @@ jobs:
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install chromium
 
-    - name: Start frontend and run no-auth E2E tests
-      working-directory: frontend
+    - name: Start frontend and run no-auth E2E tests with backend running
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DISABLE_AUTH: true
         TEST_USER_EMAIL: testuser@aris.pub
         TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
+        ENV: CI
+        DISABLE_AUTH: true
+        DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+        DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+        ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+        ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+        JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       run: |
-        # Start frontend and capture PID for cleanup
+        # Start backend first
+        echo "Starting backend for E2E tests..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait for backend
+        sleep 8
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start for E2E tests"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
+        
+        # Test /render endpoint before starting frontend
+        echo "Verifying /render endpoint works..."
+        RENDER_TEST=$(curl -s -w "%{http_code}" -X POST -H "Content-Type: application/json" -d '{"source": ":rsm:\n# Test\n::"}' http://localhost:8000/render)
+        if echo "$RENDER_TEST" | grep -q "200$"; then
+          echo "✅ /render endpoint confirmed working"
+        else
+          echo "❌ /render endpoint not working: $RENDER_TEST"
+          kill $BACKEND_PID 2>/dev/null || true
+          exit 1
+        fi
+        
+        # Start frontend
+        cd ../frontend
         npm run dev &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
         
-        # Wait longer for frontend startup and Vue app initialization
+        # Wait for frontend
         sleep 15
         
-        # Run no-auth tests with proper cleanup on exit (excluding auth-redirects which expects redirects)
+        # Run tests with both backend and frontend running
+        echo "Running E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
         npx playwright test demo-annotations.spec.js demo-content.spec.js demo-navigation.spec.js demo-workspace.spec.js login.spec.js registration.spec.js sidebar-scrolling-regression.spec.js smoke.spec.js --project=chromium --reporter=github
         TEST_EXIT_CODE=$?
         
-        # Cleanup processes
+        # Cleanup both processes
+        echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
+        kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
 
 # Trigger CI
