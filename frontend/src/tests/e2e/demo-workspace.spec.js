@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 // @demo
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Demo Workspace Functionality @demo", () => {
+test.describe("Demo Workspace Functionality @demo-ui", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {

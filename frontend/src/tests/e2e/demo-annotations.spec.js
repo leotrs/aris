@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 // @demo
 
-test.describe("Demo Annotations Viewport @demo", () => {
+test.describe("Demo Annotations Viewport @demo-ui", () => {
   test.beforeEach(async ({ page }) => {
     // Mock any backend requests that might fail in CI
     await page.route("**/api/**", async (route) => {
