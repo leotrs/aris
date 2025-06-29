@@ -6,16 +6,13 @@ test.describe("Auth Disabled - Development Mode", () => {
     const healthResponse = await page.request.get("http://localhost:8000/health");
     expect(healthResponse.ok()).toBeTruthy();
 
-    // Debug: Check environment variables
-    const envCheck = await page.evaluate(() => {
-      console.log("VITE_DISABLE_AUTH:", import.meta.env.VITE_DISABLE_AUTH);
-      console.log("VITE_API_BASE_URL:", import.meta.env.VITE_API_BASE_URL);
-      return {
-        disableAuth: import.meta.env.VITE_DISABLE_AUTH,
-        apiUrl: import.meta.env.VITE_API_BASE_URL
-      };
-    });
-    console.log("Environment check:", envCheck);
+    // Debug: Check if auth is disabled by testing backend directly
+    const meResponse = await page.request.get("http://localhost:8000/me");
+    console.log("Backend /me response status:", meResponse.status());
+    if (meResponse.ok()) {
+      const userData = await meResponse.json();
+      console.log("Backend user data:", userData);
+    }
 
     // Test 2: Verify home page is directly accessible (no redirect to login)
     await page.goto("/");
@@ -25,8 +22,15 @@ test.describe("Auth Disabled - Development Mode", () => {
     const currentUrl = page.url();
     console.log("Current URL after goto('/'):", currentUrl);
 
+    // Check if we're still on login page - if so, VITE_DISABLE_AUTH is not working
+    if (currentUrl.includes("/login")) {
+      console.log("❌ VITE_DISABLE_AUTH is not working - still redirected to login");
+      // Fail the test with a clear message
+      throw new Error("VITE_DISABLE_AUTH environment variable is not working. Frontend is still redirecting to login page.");
+    }
+
     // Should stay on home page, not redirect to login
-    await expect(page).toHaveURL("/", { timeout: 10000 });
+    await expect(page).toHaveURL("/", { timeout: 5000 });
 
     // Test 3: Verify protected content is visible without login
     await expect(page.locator('[data-testid="files-container"]')).toBeVisible({ timeout: 10000 });
