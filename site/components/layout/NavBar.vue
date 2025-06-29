@@ -8,8 +8,65 @@
       </div>
 
       <ul class="navbar-links" role="navigation" aria-label="Main navigation">
-        <li><a href="/about" class="nav-link">About</a></li>
-        <li><a href="/ai-copilot" class="nav-link">AI Copilot</a></li>
+        <li><a href="/getting-started" class="nav-link">Getting Started</a></li>
+        <li
+          class="has-dropdown"
+          @mouseenter="openDropdown('platform')"
+          @mouseleave="closeDropdown('platform')"
+        >
+          <a
+            ref="platformToggle"
+            href="#"
+            class="nav-link dropdown-toggle"
+            :aria-expanded="isPlatformDropdownOpen"
+            aria-haspopup="true"
+            aria-label="Platform menu"
+            role="button"
+            @click.prevent="toggleDropdown('platform')"
+            @keydown.enter.prevent="toggleDropdown('platform')"
+            @keydown.space.prevent="toggleDropdown('platform')"
+            @keydown.escape="closeDropdown('platform')"
+            @keydown.arrow-down.prevent="openDropdownAndFocus('platform')"
+          >
+            Platform
+          </a>
+          <ul
+            v-show="isPlatformDropdownOpen"
+            ref="platformDropdownMenu"
+            class="dropdown-menu"
+            role="menu"
+            aria-label="Platform submenu"
+            @keydown.escape="closeDropdownAndFocus('platform')"
+            @keydown.arrow-up.prevent="focusPreviousMenuItem"
+            @keydown.arrow-down.prevent="focusNextMenuItem"
+          >
+            <li role="none">
+              <a
+                ref="firstPlatformItem"
+                href="/about"
+                class="dropdown-link"
+                role="menuitem"
+                @keydown.tab.shift.prevent="closeDropdownAndFocus('platform')"
+                >About</a
+              >
+            </li>
+            <li role="none">
+              <a href="/open-science" class="dropdown-link" role="menuitem">Open Science</a>
+            </li>
+            <li role="none">
+              <a href="/ai-copilot" class="dropdown-link" role="menuitem">AI Copilot</a>
+            </li>
+            <li role="none">
+              <a
+                href="/security"
+                class="dropdown-link"
+                role="menuitem"
+                @keydown.tab.prevent="closeDropdown('platform')"
+                >Security</a
+              >
+            </li>
+          </ul>
+        </li>
         <li><a href="/pricing" class="nav-link">Pricing</a></li>
         <li
           class="has-dropdown"
@@ -54,6 +111,9 @@
               >
             </li>
             <li role="none">
+              <a href="/faq" class="dropdown-link" role="menuitem">FAQ</a>
+            </li>
+            <li role="none">
               <a
                 href="/blog"
                 class="dropdown-link"
@@ -64,6 +124,7 @@
             </li>
           </ul>
         </li>
+        <li><a href="/contact" class="nav-link">Contact</a></li>
       </ul>
 
       <div class="navbar-utility-links">
@@ -87,9 +148,39 @@
     <Transition name="mobile-menu">
       <div v-if="isMobileMenuOpen" class="mobile-menu-overlay">
         <ul class="mobile-navbar-links">
-          <li><a href="/about" class="mobile-nav-link" @click="closeMobileMenu">About</a></li>
           <li>
-            <a href="/ai-copilot" class="mobile-nav-link" @click="closeMobileMenu">AI Copilot</a>
+            <a href="/getting-started" class="mobile-nav-link" @click="closeMobileMenu"
+              >Getting Started</a
+            >
+          </li>
+          <li class="mobile-has-dropdown">
+            <a
+              href="#"
+              class="mobile-nav-link mobile-dropdown-toggle"
+              aria-label="Platform menu"
+              @click.prevent="toggleMobileDropdown('platform')"
+              >Platform</a
+            >
+            <ul v-if="isMobilePlatformDropdownOpen" class="mobile-dropdown-menu">
+              <li>
+                <a href="/about" class="mobile-dropdown-link" @click="closeMobileMenu">About</a>
+              </li>
+              <li>
+                <a href="/open-science" class="mobile-dropdown-link" @click="closeMobileMenu"
+                  >Open Science</a
+                >
+              </li>
+              <li>
+                <a href="/ai-copilot" class="mobile-dropdown-link" @click="closeMobileMenu"
+                  >AI Copilot</a
+                >
+              </li>
+              <li>
+                <a href="/security" class="mobile-dropdown-link" @click="closeMobileMenu"
+                  >Security</a
+                >
+              </li>
+            </ul>
           </li>
           <li><a href="/pricing" class="mobile-nav-link" @click="closeMobileMenu">Pricing</a></li>
           <li class="mobile-has-dropdown">
@@ -107,10 +198,14 @@
                 >
               </li>
               <li>
+                <a href="/faq" class="mobile-dropdown-link" @click="closeMobileMenu">FAQ</a>
+              </li>
+              <li>
                 <a href="/blog" class="mobile-dropdown-link" @click="closeMobileMenu">Blog</a>
               </li>
             </ul>
           </li>
+          <li><a href="/contact" class="mobile-nav-link" @click="closeMobileMenu">Contact</a></li>
         </ul>
         <div class="mobile-navbar-utility-links">
           <a
@@ -143,11 +238,16 @@
   const frontendUrl = config.public.frontendUrl;
 
   const isMobileMenuOpen = ref(false);
+  const isPlatformDropdownOpen = ref(false);
   const isResourcesDropdownOpen = ref(false);
+  const isMobilePlatformDropdownOpen = ref(false);
   const isMobileResourcesDropdownOpen = ref(false);
   const isScrolled = ref(false);
 
   // Template refs for focus management
+  const platformToggle = ref(null);
+  const platformDropdownMenu = ref(null);
+  const firstPlatformItem = ref(null);
   const resourcesToggle = ref(null);
   const resourcesDropdownMenu = ref(null);
   const firstDropdownItem = ref(null);
@@ -168,22 +268,34 @@
 
   // Toggle desktop dropdowns (on hover)
   const openDropdown = (menuName) => {
-    if (menuName === "resources") {
+    if (menuName === "platform") {
+      isPlatformDropdownOpen.value = true;
+    } else if (menuName === "resources") {
       isResourcesDropdownOpen.value = true;
     }
   };
 
   const closeDropdown = (menuName) => {
-    if (menuName === "resources") {
+    if (menuName === "platform") {
+      isPlatformDropdownOpen.value = false;
+    } else if (menuName === "resources") {
       isResourcesDropdownOpen.value = false;
     }
   };
 
   const toggleDropdown = (menuName) => {
-    if (menuName === "resources") {
+    if (menuName === "platform") {
+      isPlatformDropdownOpen.value = !isPlatformDropdownOpen.value;
+      if (isPlatformDropdownOpen.value) {
+        nextTick(() => {
+          if (firstPlatformItem.value) {
+            firstPlatformItem.value.focus();
+          }
+        });
+      }
+    } else if (menuName === "resources") {
       isResourcesDropdownOpen.value = !isResourcesDropdownOpen.value;
       if (isResourcesDropdownOpen.value) {
-        // Focus first dropdown item when opened via keyboard
         nextTick(() => {
           if (firstDropdownItem.value) {
             firstDropdownItem.value.focus();
@@ -195,7 +307,14 @@
 
   // Open dropdown and focus first item (for arrow down key)
   const openDropdownAndFocus = (menuName) => {
-    if (menuName === "resources") {
+    if (menuName === "platform") {
+      isPlatformDropdownOpen.value = true;
+      nextTick(() => {
+        if (firstPlatformItem.value) {
+          firstPlatformItem.value.focus();
+        }
+      });
+    } else if (menuName === "resources") {
       isResourcesDropdownOpen.value = true;
       nextTick(() => {
         if (firstDropdownItem.value) {
@@ -207,7 +326,14 @@
 
   // Close dropdown and return focus to toggle
   const closeDropdownAndFocus = (menuName) => {
-    if (menuName === "resources") {
+    if (menuName === "platform") {
+      isPlatformDropdownOpen.value = false;
+      nextTick(() => {
+        if (platformToggle.value) {
+          platformToggle.value.focus();
+        }
+      });
+    } else if (menuName === "resources") {
       isResourcesDropdownOpen.value = false;
       nextTick(() => {
         if (resourcesToggle.value) {
@@ -253,13 +379,16 @@
 
   const closeMobileMenu = () => {
     isMobileMenuOpen.value = false;
-    isMobileResourcesDropdownOpen.value = false; // Close mobile dropdown when menu closes
+    isMobilePlatformDropdownOpen.value = false; // Close mobile dropdowns when menu closes
+    isMobileResourcesDropdownOpen.value = false;
     document.body.style.overflow = ""; // Restore body scrolling
   };
 
   // Toggle mobile dropdowns (on click)
   const toggleMobileDropdown = (menuName) => {
-    if (menuName === "resources") {
+    if (menuName === "platform") {
+      isMobilePlatformDropdownOpen.value = !isMobilePlatformDropdownOpen.value;
+    } else if (menuName === "resources") {
       isMobileResourcesDropdownOpen.value = !isMobileResourcesDropdownOpen.value;
     }
   };

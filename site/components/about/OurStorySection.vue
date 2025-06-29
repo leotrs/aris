@@ -4,7 +4,8 @@
       <div class="section-header">
         <h2 id="our-story-heading" class="section-title">Our Story</h2>
         <p class="section-subtitle">
-          Born from the frustration of researchers who knew there had to be a better way to share scientific knowledge in the digital age.
+          Born from the frustration of researchers who knew there had to be a better way to share
+          scientific knowledge in the digital age.
         </p>
       </div>
 
@@ -16,7 +17,9 @@
             </div>
             <h3 class="story-title">The Problem We Saw</h3>
             <p class="story-description">
-              Research publishing was stuck in the past—static PDFs, broken collaboration workflows, and barriers between researchers and their audiences. The web had transformed every other industry, but scientific publishing remained unchanged.
+              Research publishing was stuck in the past—static PDFs, broken collaboration workflows,
+              and barriers between researchers and their audiences. The web had transformed every
+              other industry, but scientific publishing remained unchanged.
             </p>
           </div>
 
@@ -26,7 +29,9 @@
             </div>
             <h3 class="story-title">Our Solution</h3>
             <p class="story-description">
-              We built Aris as a web-native platform that treats research as living, collaborative documents. Using modern web technologies and semantic markup, we're creating the publishing infrastructure that research deserves.
+              We built Aris as a web-native platform that treats research as living, collaborative
+              documents. Using modern web technologies and semantic markup, we're creating the
+              publishing infrastructure that research deserves.
             </p>
           </div>
 
@@ -36,7 +41,9 @@
             </div>
             <h3 class="story-title">Our Mission</h3>
             <p class="story-description">
-              To accelerate scientific progress by removing friction from the research lifecycle. Every minute saved in publishing is a minute gained for discovery, collaboration, and breakthrough insights.
+              To accelerate scientific progress by removing friction from the research lifecycle.
+              Every minute saved in publishing is a minute gained for discovery, collaboration, and
+              breakthrough insights.
             </p>
           </div>
         </div>
@@ -47,20 +54,24 @@
               <div class="timeline-year">2024</div>
               <div class="timeline-event">
                 <h4 class="event-title">The Idea</h4>
-                <p class="event-description">Recognized the need for web-native research publishing</p>
+                <p class="event-description">
+                  Recognized the need for web-native research publishing
+                </p>
               </div>
             </div>
             <div class="timeline-connector"></div>
-            
+
             <div class="timeline-item">
               <div class="timeline-year">2025</div>
               <div class="timeline-event">
                 <h4 class="event-title">Platform Launch</h4>
-                <p class="event-description">Built FastAPI backend with Vue.js frontend, launched beta</p>
+                <p class="event-description">
+                  Built FastAPI backend with Vue.js frontend, launched beta
+                </p>
               </div>
             </div>
             <div class="timeline-connector"></div>
-            
+
             <div class="timeline-item future">
               <div class="timeline-year">2026</div>
               <div class="timeline-event">

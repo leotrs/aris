@@ -2,74 +2,97 @@
   <section class="human-first-section" aria-labelledby="human-first-heading">
     <div class="human-first-content-wrapper">
       <div class="section-header">
-        <h2 id="human-first-heading" class="section-title">The Human-First Philosophy</h2>
+        <h2 id="human-first-heading" class="section-title">Publish and Flourish</h2>
         <p class="section-subtitle">
-          Technology should amplify human intelligence, not replace it. At Aris, we believe the
-          researcher's mind is the source of all scientific breakthroughs.
+          Moving beyond "publish or perish" to a world where research communication helps careers
+          and communities thrive. Whether you're writing, reviewing, or reading research, we've
+          designed tools that respect your time and enhance your work.
         </p>
       </div>
 
       <div class="human-first-grid">
         <div class="philosophy-content">
           <div class="principle-block">
-            <h3 class="principle-title">Amplification, Not Automation</h3>
+            <h3 class="principle-title">For Authors</h3>
             <p class="principle-description">
-              Our AI tools enhance your thinking rather than think for you. From intelligent
-              collaboration suggestions to semantic change tracking, every feature is designed to
-              clear cognitive overhead so you can focus on what matters: your research.
+              Beautiful writing environment with real-time collaboration. See exactly who's working
+              on what, track changes with semantic diffs, and collaborate with co-authors without
+              email chaos. Your manuscripts look professional from day one.
             </p>
           </div>
 
           <div class="principle-block">
-            <h3 class="principle-title">Agency & Control</h3>
+            <h3 class="principle-title">For Reviewers</h3>
             <p class="principle-description">
-              You maintain complete control over your research process. Aris provides intelligent
-              recommendations and streamlined workflows, but every decision remains yours. We
-              eliminate friction, not autonomy.
+              Modern tools that respect your time. Clear commenting interfaces, version tracking
+              that actually works, and recognition for quality reviews. No more fighting with clunky
+              journal portals or losing track of your feedback.
             </p>
           </div>
 
           <div class="principle-block">
-            <h3 class="principle-title">Meaningful Connections</h3>
+            <h3 class="principle-title">For Readers</h3>
             <p class="principle-description">
-              Research is fundamentally collaborative. Our platform facilitates genuine human
-              connections—between researchers, with reviewers, and with readers—creating spaces for
-              empathy and understanding in scientific discourse.
+              Papers that adapt to your device and reading style. Interactive figures you can
+              explore, smooth typography that's easy on your eyes, and smart navigation that helps
+              you find exactly what you need.
             </p>
           </div>
         </div>
 
         <div class="philosophy-visual">
-          <div class="human-centered-diagram">
-            <div class="center-circle">
-              <div class="center-icon">
-                <IconUser :size="48" />
+          <div class="user-journey-visualization">
+            <h3 class="journey-title">Your Research Journey with Aris</h3>
+
+            <div class="journey-timeline">
+              <div class="journey-step" data-step="1">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                  <h4 class="step-title">Write & Collaborate</h4>
+                  <p class="step-description">
+                    Start writing in RSM or LaTeX with real-time co-author collaboration
+                  </p>
+                </div>
               </div>
-              <span class="center-label">Researcher</span>
+
+              <div class="journey-connector"></div>
+
+              <div class="journey-step" data-step="2">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                  <h4 class="step-title">Review & Iterate</h4>
+                  <p class="step-description">
+                    Track peer review progress with transparent, contextual feedback
+                  </p>
+                </div>
+              </div>
+
+              <div class="journey-connector"></div>
+
+              <div class="journey-step" data-step="3">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                  <h4 class="step-title">Publish & Share</h4>
+                  <p class="step-description">
+                    Release beautiful, interactive papers that readers actually enjoy
+                  </p>
+                </div>
+              </div>
             </div>
-            <div class="orbit-item orbit-1">
-              <div class="orbit-icon">
-                <IconUsers :size="28" />
+
+            <div class="journey-benefits">
+              <div class="benefit-highlight">
+                <IconCheck :size="16" />
+                <span>One platform, complete workflow</span>
               </div>
-              <span class="orbit-label">Collaboration</span>
-            </div>
-            <div class="orbit-item orbit-2">
-              <div class="orbit-icon">
-                <IconSearch :size="28" />
+              <div class="benefit-highlight">
+                <IconCheck :size="16" />
+                <span>Beautiful tools you'll want to use</span>
               </div>
-              <span class="orbit-label">Discovery</span>
-            </div>
-            <div class="orbit-item orbit-3">
-              <div class="orbit-icon">
-                <IconBulb :size="28" />
+              <div class="benefit-highlight">
+                <IconCheck :size="16" />
+                <span>Community-driven development</span>
               </div>
-              <span class="orbit-label">Innovation</span>
-            </div>
-            <div class="orbit-item orbit-4">
-              <div class="orbit-icon">
-                <IconChartLine :size="28" />
-              </div>
-              <span class="orbit-label">Analysis</span>
             </div>
           </div>
         </div>
@@ -79,7 +102,7 @@
 </template>
 
 <script setup>
-  import { IconUser, IconUsers, IconSearch, IconBulb, IconChartLine } from "@tabler/icons-vue";
+  import { IconCheck } from "@tabler/icons-vue";
 </script>
 
 <style scoped>
@@ -176,103 +199,112 @@
     min-height: 400px;
   }
 
-  .human-centered-diagram {
-    position: relative;
-    width: 400px;
-    height: 400px;
-  }
-
-  .center-circle {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 120px;
-    height: 120px;
-    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow-medium);
-    z-index: 2;
-  }
-
-  .center-icon {
-    margin-bottom: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .center-label {
-    font-family: "Source Sans 3", sans-serif;
-    font-size: 14px;
-    font-weight: 600;
-    color: var(--white);
-    text-align: center;
-  }
-
-  .orbit-item {
-    position: absolute;
-    width: 100px;
-    height: 100px;
+  .user-journey-visualization {
+    width: 100%;
+    max-width: 450px;
     background: var(--surface-page);
-    border: 2px solid var(--primary-200);
-    border-radius: 50%;
+    border: 1px solid var(--border-primary);
+    border-radius: 16px;
+    padding: var(--space-xl);
+    box-shadow: var(--shadow-soft);
+  }
+
+  .journey-title {
+    font-family: "Montserrat", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--gray-900);
+    text-align: center;
+    margin-bottom: var(--space-xl);
+  }
+
+  .journey-timeline {
     display: flex;
     flex-direction: column;
+    gap: var(--space-md);
+    margin-bottom: var(--space-xl);
+  }
+
+  .journey-step {
+    display: flex;
     align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow-soft);
+    gap: var(--space-md);
+    padding: var(--space-md);
+    background: var(--primary-25);
+    border: 1px solid var(--primary-100);
+    border-radius: 12px;
     transition: all 0.3s ease;
   }
 
-  .orbit-item:hover {
-    transform: scale(1.1);
-    border-color: var(--primary-400);
+  .journey-step:hover {
+    transform: translateX(4px);
+    background: var(--primary-50);
   }
 
-  .orbit-icon {
-    margin-bottom: 2px;
+  .step-number {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, var(--primary-500), var(--primary-600));
+    color: var(--white);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-  }
-
-  .orbit-label {
-    font-family: "Source Sans 3", sans-serif;
-    font-size: 12px;
+    font-family: "Montserrat", sans-serif;
+    font-size: 14px;
     font-weight: 600;
+    flex-shrink: 0;
+  }
+
+  .step-content {
+    flex: 1;
+  }
+
+  .step-title {
+    font-family: "Montserrat", sans-serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: var(--space-xs);
+  }
+
+  .step-description {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    color: var(--gray-600);
+    margin: 0;
+  }
+
+  .journey-connector {
+    width: 2px;
+    height: 16px;
+    background: var(--primary-200);
+    margin: 0 auto;
+    margin-left: 16px;
+  }
+
+  .journey-benefits {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    padding-top: var(--space-lg);
+    border-top: 1px solid var(--border-primary);
+  }
+
+  .benefit-highlight {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 14px;
     color: var(--gray-700);
-    text-align: center;
-    line-height: 1;
+    font-weight: 500;
   }
 
-  /* Orbit Positioning */
-  .orbit-1 {
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .orbit-2 {
-    top: 50%;
-    right: 0;
-    transform: translateY(-50%);
-  }
-
-  .orbit-3 {
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .orbit-4 {
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
+  .benefit-highlight svg {
+    color: var(--success-600);
+    flex-shrink: 0;
   }
 
   /* Responsive Adjustments */
@@ -291,54 +323,48 @@
       min-height: 300px;
     }
 
-    .human-centered-diagram {
-      width: 320px;
-      height: 320px;
+    .user-journey-visualization {
+      max-width: 400px;
+      padding: var(--space-lg);
     }
 
-    .center-circle {
-      width: 100px;
-      height: 100px;
+    .journey-step {
+      padding: var(--space-sm);
     }
 
-    .center-icon svg {
-      width: 24px;
-      height: 24px;
-    }
-
-    .center-label {
+    .step-number {
+      width: 28px;
+      height: 28px;
       font-size: 12px;
     }
 
-    .orbit-item {
-      width: 80px;
-      height: 80px;
+    .step-title {
+      font-size: 14px;
     }
 
-    .orbit-icon svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    .orbit-label {
-      font-size: 10px;
+    .step-description {
+      font-size: 12px;
     }
   }
 
   @media (max-width: 480px) {
-    .human-centered-diagram {
-      width: 280px;
-      height: 280px;
+    .user-journey-visualization {
+      max-width: 350px;
+      padding: var(--space-md);
     }
 
-    .center-circle {
-      width: 90px;
-      height: 90px;
+    .step-number {
+      width: 24px;
+      height: 24px;
+      font-size: 11px;
     }
 
-    .orbit-item {
-      width: 70px;
-      height: 70px;
+    .journey-title {
+      font-size: 18px;
+    }
+
+    .benefit-highlight {
+      font-size: 12px;
     }
   }
 </style>

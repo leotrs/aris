@@ -1,17 +1,19 @@
 <script setup>
   import HeroSection from "~/components/home/HeroSection.vue";
-  import ProblemSolutionSection from "~/components/home/ProblemSolutionSection.vue";
+  import PlatformOverview from "~/components/home/PlatformOverview.vue";
+  import InstitutionalReviewerNetworks from "~/components/home/InstitutionalReviewerNetworks.vue";
   import FeatureDemosSection from "~/components/home/FeatureDemosSection.vue";
-  import UserRolesSection from "~/components/home/UserRolesSection.vue";
+  import SustainableByDesign from "~/components/home/SustainableByDesign.vue";
   import HomeCTASection from "~/components/home/HomeCTASection.vue";
 </script>
 
 <template>
   <div>
     <HeroSection />
-    <ProblemSolutionSection />
+    <PlatformOverview />
+    <InstitutionalReviewerNetworks />
     <FeatureDemosSection />
-    <UserRolesSection />
+    <SustainableByDesign />
     <HomeCTASection />
   </div>
 </template>

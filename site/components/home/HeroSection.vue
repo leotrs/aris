@@ -3,16 +3,17 @@
     <div class="hero-content-wrapper">
       <div class="hero-content">
         <h1 id="hero-heading" class="hero-headline">
-          Aris: The Unified Platform for Human-First Scientific Research.
+          Academic Publishing Infrastructure for the Modern Web
         </h1>
         <p class="hero-subheadline">
-          Experience an integrated platform for collaborative writing, intelligent peer review, and
-          interactive publishing, making your science more discoverable, understandable, and deeply
-          engaging.
+          The ResOps platform connecting researchers, reviewers, and readers through beautiful,
+          integrated workflows. Built by the academic community, for the academic community.
         </p>
         <div class="hero-ctas" role="group" aria-label="Call to action buttons">
-          <a href="/demo" class="btn btn-primary" aria-describedby="hero-heading"> Try the Demo </a>
-          <a href="/signup" class="text-link">Or, sign up for the beta waitlist</a>
+          <a href="/demo" class="btn btn-primary" aria-describedby="hero-heading"
+            >Explore the Platform</a
+          >
+          <a href="/signup" class="text-link">Join Your Institution</a>
         </div>
       </div>
       <div class="hero-background" aria-hidden="true"></div>
