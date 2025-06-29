@@ -82,6 +82,15 @@ jobs:
 
 
     - name: Run tests
+      env:
+        DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+        DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+        ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+        ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+        JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+        TEST_USER_EMAIL: testuser@aris.pub
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        ENV: CI
       run: uv run pytest -n4 --cov=aris --cov-report=xml --tb=short
 
     - name: Upload coverage to Codecov

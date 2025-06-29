@@ -98,5 +98,5 @@ class Settings(BaseSettings):
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-env_file = BASE_DIR / (".env.ci" if os.getenv("ENV") == "CI" else ".env")
+env_file = BASE_DIR / ".env"
 settings = Settings(_env_file=str(env_file))
