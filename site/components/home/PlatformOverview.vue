@@ -64,11 +64,19 @@
               <div class="journal-option">PLOS ONE</div>
               <div class="journal-option">Cell</div>
               <div class="journal-option">arXiv</div>
-              <div class="journal-option">+ 1000s more</div>
+              <div class="journal-option">+ many more</div>
             </div>
           </div>
         </div>
         <div class="compatibility-features">
+          <div class="compatibility-feature">
+            <IconCheck :size="16" />
+            <span>LaTeX import</span>
+          </div>
+          <div class="compatibility-feature">
+            <IconCheck :size="16" />
+            <span>PDF export</span>
+          </div>
           <div class="compatibility-feature">
             <IconCheck :size="16" />
             <span>Automatic reference formatting</span>
@@ -76,6 +84,10 @@
           <div class="compatibility-feature">
             <IconCheck :size="16" />
             <span>Journal-specific templates</span>
+          </div>
+          <div class="compatibility-feature">
+            <IconCheck :size="16" />
+            <span>ORCID integration</span>
           </div>
           <div class="compatibility-feature">
             <IconCheck :size="16" />
