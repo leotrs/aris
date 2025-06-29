@@ -222,6 +222,19 @@ jobs:
         path: ~/.cache/ms-playwright
         key: playwright-browsers-${{ runner.os }}-all
 
+    - name: Install system dependencies for browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libnss3-dev \
+          libatk-bridge2.0-dev \
+          libdrm-dev \
+          libxkbcommon-dev \
+          libgtk-3-dev \
+          libgbm-dev \
+          libasound2-dev
+    
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -363,6 +376,19 @@ jobs:
       with:
         path: ~/.cache/ms-playwright
         key: playwright-browsers-${{ runner.os }}-all
+    - name: Install system dependencies for browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libnss3-dev \
+          libatk-bridge2.0-dev \
+          libdrm-dev \
+          libxkbcommon-dev \
+          libgtk-3-dev \
+          libgbm-dev \
+          libasound2-dev
+    
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -491,6 +517,19 @@ jobs:
       with:
         path: ~/.cache/ms-playwright
         key: playwright-browsers-${{ runner.os }}-all
+    - name: Install system dependencies for browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libnss3-dev \
+          libatk-bridge2.0-dev \
+          libdrm-dev \
+          libxkbcommon-dev \
+          libgtk-3-dev \
+          libgbm-dev \
+          libasound2-dev
+    
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -621,6 +660,19 @@ jobs:
       with:
         path: ~/.cache/ms-playwright
         key: playwright-browsers-${{ runner.os }}-all
+    - name: Install system dependencies for browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libnss3-dev \
+          libatk-bridge2.0-dev \
+          libdrm-dev \
+          libxkbcommon-dev \
+          libgtk-3-dev \
+          libgbm-dev \
+          libasound2-dev
+    
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
@@ -751,6 +803,19 @@ jobs:
       with:
         path: ~/.cache/ms-playwright
         key: playwright-browsers-${{ runner.os }}-all
+    - name: Install system dependencies for browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y \
+          libnss3-dev \
+          libatk-bridge2.0-dev \
+          libdrm-dev \
+          libxkbcommon-dev \
+          libgtk-3-dev \
+          libgbm-dev \
+          libasound2-dev
+    
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
