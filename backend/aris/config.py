@@ -8,8 +8,8 @@ import os
 import uuid
 from pathlib import Path
 
-from pydantic import ConfigDict, Field
-from pydantic_settings import BaseSettings
+from pydantic import Field
+from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -65,7 +65,7 @@ class Settings(BaseSettings):
     FROM_EMAIL: str = Field("noreply@aris.pub", json_schema_extra={"env": "FROM_EMAIL"})
     """Default from email address."""
 
-    model_config = ConfigDict(extra="forbid")
+    model_config = SettingsConfigDict(extra="forbid", env_file=".env")
 
     def get_test_database_url(self) -> str:
         """Get test database URL based on environment and configuration.
@@ -99,4 +99,4 @@ class Settings(BaseSettings):
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 env_file = BASE_DIR / ".env"
-settings = Settings(_env_file=str(env_file))
+settings = Settings()  # type: ignore

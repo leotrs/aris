@@ -103,7 +103,7 @@ class EmailService:
                 "text": text_content,
             }
             
-            resend.Emails.send(params)
+            resend.Emails.send(params)  # type: ignore
             logger.info(f"Successfully sent confirmation email to {to_email}")
             return True
             

@@ -421,7 +421,7 @@ async def delete_profile_picture(
 
         # Soft delete the profile picture
         user.profile_picture.deleted_at = datetime.now(UTC)
-        user.profile_picture_id = None
+        user.profile_picture_id = None  # type: ignore
         await db.commit()
         return {"message": "Profile picture deleted successfully"}
 
