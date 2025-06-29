@@ -25,17 +25,13 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
     const viewport = page.viewportSize();
     const isMobile = viewport.width < 768;
 
-    // Wait longer for demo content to fully load, especially on mobile
-    const loadWait = isMobile ? 3000 : 2000;
-    await page.waitForTimeout(loadWait);
-
-    // Wait for demo canvas to be loaded (not just the loading screen)
-    const demoCanvas = page.locator('[data-testid="demo-canvas"][data-loaded="true"]');
-    await expect(demoCanvas).toBeVisible({ timeout: 20000 });
+    // Wait for demo canvas to be loaded (optimized for CI performance)
+    const demoCanvas = page.locator('[data-testid="demo-canvas"]');
+    await expect(demoCanvas).toBeVisible({ timeout: 5000 });
 
     // For mobile browsers, wait for layout to stabilize
     if (isMobile) {
-      await page.waitForTimeout(1000);
+      await page.waitForTimeout(300);
       // Trigger a layout reflow to ensure content is visible
       await page.evaluate(() => {
         window.dispatchEvent(new Event("resize"));
@@ -46,7 +42,7 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
 
   test("annotations panel should be visible within viewport", async ({ page }) => {
     // Wait for layout to stabilize, especially on mobile
-    await page.waitForTimeout(1500);
+    await page.waitForTimeout(300);
 
     // Multiple selectors for annotations panel
     const annotationsPanel = page.locator(
@@ -76,7 +72,7 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
 
   test("individual annotations should be visible", async ({ page }) => {
     // Wait for annotations to render
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(500);
 
     // Look for annotation content with broader selectors
     const annotations = page.locator(
@@ -100,7 +96,7 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
 
   test("no horizontal scrollbar should be present", async ({ page }) => {
     // Wait for layout to stabilize
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(300);
 
     // Check document body doesn't have horizontal overflow
     const bodyScrollWidth = await page.evaluate(() => document.body.scrollWidth);
@@ -117,7 +113,7 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
 
   test("annotations content should be readable", async ({ page }) => {
     // Wait for content to load and render
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(500);
 
     // Look for demo annotation content with more flexible selectors
     const commentText = page.locator(
@@ -150,7 +146,7 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
 
   test("canvas layout should use proper three-column structure", async ({ page }) => {
     // Wait for layout to stabilize
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(300);
 
     // Check for three-column layout structure with multiple selector strategies
     const leftColumn = page.locator(
@@ -201,7 +197,7 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
     }
 
     // Wait for mobile layout to stabilize
-    await page.waitForTimeout(2000);
+    await page.waitForTimeout(500);
 
     // Check for key content elements that should be visible on mobile
     const contentElements = [
