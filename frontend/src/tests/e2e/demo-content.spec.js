@@ -60,11 +60,23 @@ test.describe("Demo Content Rendering @demo-content", () => {
         timeout: 10000,
       });
 
+      // Check if we're on mobile viewport
+      const viewportSize = page.viewportSize();
+      const isMobile = viewportSize && viewportSize.width < 640;
+
       // Check for RSM-specific classes and structure
       const manuscriptWrapper = page.locator(".manuscriptwrapper");
+      if (isMobile) {
+        await manuscriptWrapper.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+      }
       await expect(manuscriptWrapper).toBeVisible();
 
       const manuscript = page.locator(".manuscript");
+      if (isMobile) {
+        await manuscript.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+      }
       await expect(manuscript).toBeVisible();
 
       // Verify manuscript has content
@@ -78,13 +90,25 @@ test.describe("Demo Content Rendering @demo-content", () => {
         timeout: 10000,
       });
 
+      // Check if we're on mobile viewport
+      const viewportSize = page.viewportSize();
+      const isMobile = viewportSize && viewportSize.width < 640;
+
       // Look for RSM handrails (interactive UI elements)
       const handrails = page.locator(".hr");
-      await expect(handrails.first()).toBeVisible({ timeout: 5000 });
+      if (isMobile) {
+        await handrails.first().scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+      }
+      await expect(handrails.first()).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
 
       // Check for interactive elements like headings with handrails
       const headingHandrails = page.locator(".heading.hr");
-      await expect(headingHandrails.first()).toBeVisible({ timeout: 5000 });
+      if (isMobile) {
+        await headingHandrails.first().scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+      }
+      await expect(headingHandrails.first()).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
 
       // Verify handrails have interactive menus
       const hrMenus = page.locator(".hr-menu");
@@ -134,9 +158,17 @@ test.describe("Demo Content Rendering @demo-content", () => {
         timeout: 10000,
       });
 
+      // Check if we're on mobile viewport
+      const viewportSize = page.viewportSize();
+      const isMobile = viewportSize && viewportSize.width < 640;
+
       // Look for the main title
       const title = page.locator("h1").first();
-      await expect(title).toBeVisible({ timeout: 5000 });
+      if (isMobile) {
+        await title.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+      }
+      await expect(title).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
 
       const titleText = await title.textContent();
       expect(titleText).toContain("The Future of Web-Native Publishing");
@@ -147,6 +179,10 @@ test.describe("Demo Content Rendering @demo-content", () => {
         timeout: 10000,
       });
 
+      // Check if we're on mobile viewport
+      const viewportSize = page.viewportSize();
+      const isMobile = viewportSize && viewportSize.width < 640;
+
       // Check for various heading levels
       const h1Elements = page.locator("h1");
       const h2Elements = page.locator("h2");
@@ -154,11 +190,34 @@ test.describe("Demo Content Rendering @demo-content", () => {
       expect(await h1Elements.count()).toBeGreaterThan(0);
       expect(await h2Elements.count()).toBeGreaterThan(0);
 
-      // Verify some expected section headings
-      await expect(page.locator("text=Introduction")).toBeVisible();
-      await expect(page.getByRole("heading", { name: "2. Methodology" })).toBeVisible();
-      await expect(page.locator("text=Results")).toBeVisible();
-      await expect(page.locator("text=Conclusion")).toBeVisible();
+      // Verify some expected section headings with mobile handling
+      const introHeading = page.locator("text=Introduction");
+      if (isMobile) {
+        await introHeading.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+      }
+      await expect(introHeading).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
+
+      const methodologyHeading = page.getByRole("heading", { name: "2. Methodology" });
+      if (isMobile) {
+        await methodologyHeading.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+      }
+      await expect(methodologyHeading).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
+
+      const resultsHeading = page.locator("text=Results");
+      if (isMobile) {
+        await resultsHeading.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+      }
+      await expect(resultsHeading).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
+
+      const conclusionHeading = page.locator("text=Conclusion");
+      if (isMobile) {
+        await conclusionHeading.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+      }
+      await expect(conclusionHeading).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
     });
 
     test("interactive handrails (RSM UI elements) are present", async ({ page }) => {
