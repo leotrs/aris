@@ -127,7 +127,7 @@
                 </div>
               </div>
               <div class="access-item">
-                <IconClipboardList :size="20" />
+                <IconClipboard :size="20" />
                 <div class="access-info">
                   <h4 class="access-title">Audit Logging</h4>
                   <p class="access-text">Complete trails of all access and modifications</p>
@@ -157,7 +157,7 @@
               </div>
             </div>
             <div class="transparency-item">
-              <IconBug :size="24" />
+              <IconBugOff :size="24" />
               <div class="transparency-info">
                 <h4 class="transparency-item-title">Responsible Disclosure</h4>
                 <p class="transparency-item-text">
@@ -201,9 +201,9 @@
     IconServer,
     IconCertificate,
     IconUsers,
-    IconClipboardList,
+    IconClipboard,
     IconCode,
-    IconBug,
+    IconBugOff,
     IconFileText,
     IconBrandGithub,
   } from "@tabler/icons-vue";

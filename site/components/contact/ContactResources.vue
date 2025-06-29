@@ -60,7 +60,7 @@
           </p>
           <div class="video-stats">
             <div class="video-stat">
-              <IconPlay :size="16" />
+              <IconPlayerPlay :size="16" />
               <span>25+ tutorials</span>
             </div>
             <div class="video-stat">
@@ -68,14 +68,14 @@
               <span>5-15 min each</span>
             </div>
             <div class="video-stat">
-              <IconSubtitles :size="16" />
+              <IconFileText :size="16" />
               <span>Closed captions</span>
             </div>
           </div>
           <div class="featured-videos">
             <div class="video-item">
               <div class="video-thumbnail">
-                <IconPlay :size="20" />
+                <IconPlayerPlay :size="20" />
               </div>
               <div class="video-info">
                 <span class="video-title">Your First Manuscript</span>
@@ -84,7 +84,7 @@
             </div>
             <div class="video-item">
               <div class="video-thumbnail">
-                <IconPlay :size="20" />
+                <IconPlayerPlay :size="20" />
               </div>
               <div class="video-info">
                 <span class="video-title">Collaboration Workflows</span>
@@ -150,7 +150,7 @@
               <span>Open source</span>
             </div>
             <div class="github-stat">
-              <IconBug :size="16" />
+              <IconBugOff :size="16" />
               <span>Issue tracking</span>
             </div>
             <div class="github-stat">
@@ -168,7 +168,7 @@
 
         <div class="resource-card">
           <div class="card-icon">
-            <IconMessageSquare :size="32" />
+            <IconMessage :size="32" />
           </div>
           <h3 class="card-title">Status Page</h3>
           <p class="card-description">
@@ -199,7 +199,7 @@
 
         <div class="resource-card">
           <div class="card-icon">
-            <IconNewspaper :size="32" />
+            <IconNews :size="32" />
           </div>
           <h3 class="card-title">Blog & Updates</h3>
           <p class="card-description">
@@ -294,23 +294,23 @@
     IconVideo,
     IconQuestionMark,
     IconBrandGithub,
-    IconMessageSquare,
-    IconNewspaper,
+    IconMessage,
+    IconNews,
     IconRocket,
     IconCode,
     IconPlugConnected,
     IconTool,
     IconExternalLink,
     IconSearch,
-    IconPlay,
+    IconPlayerPlay,
     IconClock,
-    IconSubtitles,
+    IconFileText,
     IconShield,
     IconUsers,
     IconSettings,
     IconBuilding,
     IconGitBranch,
-    IconBug,
+    IconBugOff,
     IconGitCommit,
     IconApi,
   } from "@tabler/icons-vue";

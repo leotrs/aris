@@ -4,13 +4,12 @@
       <div class="hero-content">
         <h1 id="getting-started-hero-heading" class="hero-headline">Get Started with Aris</h1>
         <p class="hero-subheadline">
-          Join the ResOps revolution in under 5 minutes. Whether you're an individual researcher or
-          setting up for your institution, we'll guide you through every step.
+          Start writing and sharing research in 2 minutes. Choose your path below.
         </p>
         <div class="hero-stats">
           <div class="stat-item">
-            <div class="stat-number">&lt; 5</div>
-            <div class="stat-label">Minutes to Setup</div>
+            <div class="stat-number">2</div>
+            <div class="stat-label">Minutes to Start</div>
           </div>
           <div class="stat-item">
             <div class="stat-number">100%</div>

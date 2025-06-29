@@ -44,7 +44,7 @@
                     <span>Privacy</span>
                   </div>
                   <div class="criteria-item">
-                    <IconCheckCircle :size="16" />
+                    <IconCircleCheck :size="16" />
                     <span>Processing Integrity</span>
                   </div>
                 </div>
@@ -165,7 +165,7 @@
                 </div>
               </div>
               <div class="protection-item">
-                <IconClipboardList :size="20" />
+                <IconClipboard :size="20" />
                 <div class="protection-content">
                   <h4 class="protection-title">Consent Management</h4>
                   <p class="protection-text">
@@ -342,7 +342,7 @@
     IconActivity,
     IconLock,
     IconUserCheck,
-    IconCheckCircle,
+    IconCircleCheck,
     IconGlobe,
     IconEye,
     IconEdit,
@@ -352,7 +352,7 @@
     IconSchool,
     IconUserShield,
     IconKey,
-    IconClipboardList,
+    IconClipboard,
     IconAward,
     IconTarget,
     IconRefresh,

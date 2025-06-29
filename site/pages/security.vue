@@ -1,26 +1,21 @@
 <script setup>
   import SecurityHero from "~/components/security/SecurityHero.vue";
-  import SecurityOverview from "~/components/security/SecurityOverview.vue";
-  import DataProtection from "~/components/security/DataProtection.vue";
-  import ComplianceStandards from "~/components/security/ComplianceStandards.vue";
-  import InfrastructureSecurity from "~/components/security/InfrastructureSecurity.vue";
-  import IncidentResponse from "~/components/security/IncidentResponse.vue";
-  import SecurityContact from "~/components/security/SecurityContact.vue";
+  import SecurityPlanning from "~/components/security/SecurityPlanning.vue";
 
   // Set page meta
   useHead({
-    title: "Security & Privacy - Aris ResOps Platform",
+    title: "Security & Privacy - Aris Collaborative Preprint Server",
     meta: [
       {
         name: "description",
         content:
-          "Comprehensive security measures protecting your research. SOC 2, GDPR compliance, encryption, access controls, and transparent security practices for academic institutions.",
+          "Transparent security planning for Aris. Our commitment to building security from day one, with open source transparency and community accountability.",
       },
-      { property: "og:title", content: "Security & Privacy - Aris ResOps Platform" },
+      { property: "og:title", content: "Security & Privacy - Aris Collaborative Preprint Server" },
       {
         property: "og:description",
         content:
-          "Comprehensive security measures protecting your research. SOC 2, GDPR compliance, encryption, access controls, and transparent security practices for academic institutions.",
+          "Transparent security planning for Aris. Our commitment to building security from day one, with open source transparency and community accountability.",
       },
     ],
   });
@@ -29,12 +24,7 @@
 <template>
   <div>
     <SecurityHero />
-    <SecurityOverview />
-    <DataProtection />
-    <ComplianceStandards />
-    <InfrastructureSecurity />
-    <IncidentResponse />
-    <SecurityContact />
+    <SecurityPlanning />
   </div>
 </template>
 

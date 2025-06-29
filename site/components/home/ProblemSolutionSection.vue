@@ -24,7 +24,7 @@
         <div class="problem-solution-card">
           <div class="card-header">
             <div class="card-icon-container">
-              <IconMessagesOff />
+              <IconMessageOff />
             </div>
             <h3 class="card-problem">Clunky Collaboration</h3>
           </div>
@@ -41,7 +41,7 @@
         <div class="problem-solution-card">
           <div class="card-header">
             <div class="card-icon-container">
-              <IconHourglassHigh />
+              <IconHourglass />
             </div>
             <h3 class="card-problem">Peer Review Bottleneck</h3>
           </div>
@@ -77,7 +77,7 @@
 </template>
 
 <script setup>
-  import { IconGitFork, IconMessagesOff, IconHourglassHigh, IconFileOff } from "@tabler/icons-vue";
+  import { IconGitFork, IconMessageOff, IconHourglass, IconFileOff } from "@tabler/icons-vue";
 </script>
 
 <style scoped>

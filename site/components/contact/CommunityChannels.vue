@@ -17,7 +17,7 @@
         <div class="channel-card primary">
           <div class="card-header">
             <div class="card-icon">
-              <IconMessageSquare :size="32" />
+              <IconMessage :size="32" />
             </div>
             <h3 class="card-title">Community Forum</h3>
             <p class="card-subtitle">Main hub for discussions and community support</p>
@@ -75,14 +75,14 @@
             </p>
             <div class="github-categories">
               <div class="category">
-                <IconBug :size="16" />
+                <IconBugOff :size="16" />
                 <div class="category-info">
                   <span class="category-name">Bug Reports</span>
                   <span class="category-count">12 open</span>
                 </div>
               </div>
               <div class="category">
-                <IconLightbulb :size="16" />
+                <IconBulb :size="16" />
                 <div class="category-info">
                   <span class="category-name">Feature Requests</span>
                   <span class="category-count">8 open</span>
@@ -286,14 +286,14 @@
 <script setup>
   import { ref } from "vue";
   import {
-    IconMessageSquare,
+    IconMessage,
     IconUsers,
     IconMessageCircle,
     IconClock,
     IconExternalLink,
     IconBrandGithub,
-    IconBug,
-    IconLightbulb,
+    IconBugOff,
+    IconBulb,
     IconCode,
     IconBrandDiscord,
     IconHash,

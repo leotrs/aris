@@ -5,7 +5,7 @@
         <h2 class="section-heading">100% Open Source & Community Owned</h2>
         <p class="section-subtitle">
           Built by researchers, for researchers. No shareholders, no profit extraction, no
-          compromise. Open-source ResOps infrastructure with values aligned to the academic
+          compromise. Open-source collaborative preprint server with values aligned to the academic
           community.
         </p>
       </div>
@@ -89,7 +89,7 @@
               <span>Code contributions</span>
             </div>
             <div class="contribution-item">
-              <IconBug :size="16" />
+              <IconBugOff :size="16" />
               <span>Bug reports & fixes</span>
             </div>
             <div class="contribution-item">
@@ -162,7 +162,7 @@
     IconUsers,
     IconCheck,
     IconBrandGithub,
-    IconBug,
+    IconBugOff,
     IconBulb,
     IconBook,
     IconChartBar,

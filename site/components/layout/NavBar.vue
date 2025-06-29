@@ -140,7 +140,7 @@
         @keydown.enter.prevent="toggleMobileMenu"
         @keydown.space.prevent="toggleMobileMenu"
       >
-        <IconMenu2 v-if="!isMobileMenuOpen" :size="28" />
+        <IconMenu v-if="!isMobileMenuOpen" :size="28" />
         <IconX v-else :size="28" />
       </button>
     </div>
@@ -231,7 +231,7 @@
 
 <script setup>
   import { ref, onMounted, onUnmounted, nextTick } from "vue";
-  import { IconMenu2, IconX } from "@tabler/icons-vue";
+  import { IconMenu, IconX } from "@tabler/icons-vue";
   import Logo from "./Logo.vue";
 
   const config = useRuntimeConfig();
