@@ -9,9 +9,14 @@ test.describe("Auth Disabled - Development Mode", () => {
     // Debug: Check if auth is disabled by testing backend directly
     const meResponse = await page.request.get("http://localhost:8000/me");
     console.log("Backend /me response status:", meResponse.status());
+    console.log("Backend /me response headers:", await meResponse.allHeaders());
+    
     if (meResponse.ok()) {
       const userData = await meResponse.json();
       console.log("Backend user data:", userData);
+    } else {
+      const errorText = await meResponse.text();
+      console.log("Backend /me error response:", errorText);
     }
 
     // Test 2: Verify home page is directly accessible (no redirect to login)
