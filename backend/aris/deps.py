@@ -56,7 +56,7 @@ async def get_db() -> AsyncGenerator[AsyncSession, None]:
         yield async_session
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login", auto_error=False)
 
 
 class UserRead(BaseModel):
@@ -120,6 +120,14 @@ async def current_user(
                 self.avatar_color = "#0E9AE9"
         
         return MockUser(user_row.id, user_row.email, user_row.name)
+    
+    # If no token provided and auth is required, raise error
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid authentication credentials",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
     
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
