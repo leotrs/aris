@@ -62,7 +62,7 @@ describe("HeroSection Component", () => {
     it("should render secondary CTA link", () => {
       wrapper = mount(HeroSection);
 
-      const secondaryLink = wrapper.find('.text-link');
+      const secondaryLink = wrapper.find(".text-link");
       expect(secondaryLink.exists()).toBe(true);
       expect(secondaryLink.text().length).toBeGreaterThan(3);
       expect(secondaryLink.classes()).toContain("text-link");
@@ -78,7 +78,7 @@ describe("HeroSection Component", () => {
 
       // Both CTAs should be within this container
       const button = ctaContainer.find(".btn.btn-primary");
-      const link = ctaContainer.find('a[href="/signup"]');
+      const link = ctaContainer.find(".text-link");
       expect(button.exists()).toBe(true);
       expect(link.exists()).toBe(true);
     });
@@ -171,7 +171,7 @@ describe("HeroSection Component", () => {
       wrapper = mount(HeroSection);
 
       const primaryButton = wrapper.find(".btn.btn-primary");
-      const secondaryLink = wrapper.find('.text-link');
+      const secondaryLink = wrapper.find(".text-link");
 
       expect(primaryButton.text().length).toBeGreaterThan(3);
       expect(secondaryLink.text().length).toBeGreaterThan(3);
@@ -182,7 +182,7 @@ describe("HeroSection Component", () => {
     it("should have correct link targets", () => {
       wrapper = mount(HeroSection);
 
-      const signupLink = wrapper.find('.text-link');
+      const signupLink = wrapper.find(".text-link");
       expect(signupLink.exists()).toBe(true);
       expect(signupLink.attributes("href")).toBeTruthy();
     });

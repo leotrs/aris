@@ -62,7 +62,7 @@ describe("Index Page", () => {
     it("should render sections in correct order", () => {
       wrapper = mount(IndexPage);
 
-      const sections = wrapper.findAll('[data-testid]');
+      const sections = wrapper.findAll("[data-testid]");
 
       expect(sections[0].attributes("data-testid")).toBe("hero-section");
       expect(sections[1].attributes("data-testid")).toBe("platform-overview");
@@ -72,7 +72,7 @@ describe("Index Page", () => {
     it("should have proper section count", () => {
       wrapper = mount(IndexPage);
 
-      const allSections = wrapper.findAll('[data-testid]');
+      const allSections = wrapper.findAll("[data-testid]");
       expect(allSections.length).toBe(3);
     });
   });
@@ -115,7 +115,7 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       const rootElement = wrapper.element;
-      const sections = wrapper.findAll('[data-testid]');
+      const sections = wrapper.findAll("[data-testid]");
 
       sections.forEach((section) => {
         expect(rootElement.contains(section.element)).toBe(true);
@@ -138,7 +138,7 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       // All sections should always be present
-      const sections = wrapper.findAll('[data-testid]');
+      const sections = wrapper.findAll("[data-testid]");
       expect(sections.length).toBe(3);
     });
   });
@@ -166,7 +166,7 @@ describe("Index Page", () => {
     it("should provide proper page content flow", () => {
       wrapper = mount(IndexPage);
 
-      const sections = wrapper.findAll('[data-testid]');
+      const sections = wrapper.findAll("[data-testid]");
 
       // Sections should flow from hero -> content sections -> CTA
       expect(sections[0].attributes("data-testid")).toBe("hero-section");
@@ -179,7 +179,7 @@ describe("Index Page", () => {
       wrapper = mount(IndexPage);
 
       // All sections should be immediately available
-      const sections = wrapper.findAll('[data-testid]');
+      const sections = wrapper.findAll("[data-testid]");
       expect(sections.length).toBe(3);
     });
 
