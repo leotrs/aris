@@ -285,7 +285,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running auth-required E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@auth[^-]" --project="chromium|firefox|Mobile Chrome" --reporter=github
+        npx playwright test --grep "@auth[^-]" --project=chromium --project=firefox --project="Mobile Chrome" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -414,7 +414,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running auth-flows E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@auth-flows" --project="chromium|firefox|Mobile Chrome" --reporter=github
+        npx playwright test --grep "@auth-flows" --project=chromium --project=firefox --project="Mobile Chrome" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -544,7 +544,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running demo content E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@demo-content" --project="chromium|firefox|Mobile Chrome" --reporter=github
+        npx playwright test --grep "@demo-content" --project=chromium --project=firefox --project="Mobile Chrome" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -674,7 +674,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running demo UI E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@demo-ui" --project="chromium|firefox|Mobile Chrome" --reporter=github
+        npx playwright test --grep "@demo-ui" --project=chromium --project=firefox --project="Mobile Chrome" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -804,7 +804,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running core E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@core" --project="chromium|firefox|Mobile Chrome" --reporter=github
+        npx playwright test --grep "@core" --project=chromium --project=firefox --project="Mobile Chrome" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -942,7 +942,7 @@ jobs:
         
         # Run webkit/Safari tests only
         echo "Running webkit auth E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@auth[^-]" --project="webkit|Mobile Safari" --reporter=github
+        npx playwright test --grep "@auth[^-]" --project=webkit --project="Mobile Safari" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -1080,7 +1080,7 @@ jobs:
         
         # Run webkit/Safari tests only
         echo "Running webkit core E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@core|@demo-content|@demo-ui|@auth-flows" --project="webkit|Mobile Safari" --reporter=github
+        npx playwright test --grep "@core|@demo-content|@demo-ui|@auth-flows" --project=webkit --project="Mobile Safari" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
