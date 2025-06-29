@@ -136,6 +136,14 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
     """
     logger.info(f"Login attempt for email: {user_data.email}")
     
+    # DEBUG: Check database health and connection
+    try:
+        db_check = await db.execute(text("SELECT COUNT(*) FROM users"))
+        total_users = db_check.scalar()
+        logger.info(f"DEBUG: Database has {total_users} total users")
+    except Exception as e:
+        logger.error(f"DEBUG: Database connection error: {e}")
+    
     # DEBUG: Check all users with this email first (including soft-deleted)
     all_users_result = await db.execute(
         select(User).where(User.email == user_data.email)
@@ -144,6 +152,16 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
     logger.info(f"DEBUG: Found {len(all_users)} total users with email {user_data.email}")
     for u in all_users:
         logger.info(f"  User {u.id}: deleted_at={u.deleted_at}, created_at={u.created_at}")
+    
+    # DEBUG: Check if there are ANY users with testuser@aris.pub regardless of case
+    case_check_result = await db.execute(
+        text("SELECT id, email, deleted_at, created_at FROM users WHERE LOWER(email) = LOWER(:email)"),
+        {"email": user_data.email}
+    )
+    case_check_users = case_check_result.fetchall()
+    logger.info(f"DEBUG: Case-insensitive search found {len(case_check_users)} users")
+    for row in case_check_users:
+        logger.info(f"  ID {row.id}: email='{row.email}', deleted_at={row.deleted_at}")
     
     result = await db.execute(
         select(User).where(User.email == user_data.email, User.deleted_at.is_(None))
