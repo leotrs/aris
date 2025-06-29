@@ -141,6 +141,14 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
     )
     user = result.scalars().first()
     
+    # DEBUG: Log what user exists if login fails
+    if not user:
+        all_users_debug = await db.execute(text("SELECT id, email, name FROM users LIMIT 5"))
+        all_user_rows = all_users_debug.fetchall()
+        logger.warning(f"No user found with email {user_data.email}. Existing users:")
+        for row in all_user_rows:
+            logger.warning(f"  ID {row.id}: email='{row.email}', name='{row.name}'")
+    
     if not user or not verify_password(user_data.password, user.password_hash):
         logger.warning(f"Failed login attempt for email: {user_data.email}")
         raise HTTPException(status_code=400, detail="Invalid credentials")
