@@ -205,9 +205,30 @@ jobs:
     - name: Start backend API
       working-directory: backend
       run: |
+        echo "Starting backend with ENV=$ENV"
+        # Start backend and capture PID for cleanup
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
-        sleep 5
-        curl -f http://localhost:8000/health || exit 1
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait longer for backend startup
+        sleep 8
+        
+        # Health check with retries
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend health check passed"
+            break
+          else
+            echo "Backend health check failed, attempt $i/5"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start properly"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -234,12 +255,22 @@ jobs:
 
     - name: Start frontend and run auth-enabled E2E test
       working-directory: frontend
-      env:
-        VITE_API_BASE_URL: http://localhost:8000
       run: |
+        # Start frontend and capture PID for cleanup
         npm run dev &
-        sleep 10
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait longer for frontend startup and Vue app initialization
+        sleep 15
+        
+        # Run the test with proper cleanup on exit
         npx playwright test auth-enabled.spec.js --project=chromium --reporter=line
+        TEST_EXIT_CODE=$?
+        
+        # Cleanup processes
+        kill $FRONTEND_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
 
   # E2E Tests without Auth
   e2e-no-auth:
@@ -302,10 +333,33 @@ jobs:
 
     - name: Start backend API
       working-directory: backend
+      env:
+        DISABLE_AUTH: true
       run: |
+        echo "Starting backend with ENV=$ENV DISABLE_AUTH=$DISABLE_AUTH"
+        # Start backend and capture PID for cleanup
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
-        sleep 5
-        curl -f http://localhost:8000/health || exit 1
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait longer for backend startup
+        sleep 8
+        
+        # Health check with retries
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend health check passed"
+            break
+          else
+            echo "Backend health check failed, attempt $i/5"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start properly"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -332,11 +386,21 @@ jobs:
 
     - name: Start frontend and run auth-disabled E2E test
       working-directory: frontend
-      env:
-        VITE_API_BASE_URL: http://localhost:8000
       run: |
+        # Start frontend and capture PID for cleanup
         npm run dev &
-        sleep 10
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait longer for frontend startup and Vue app initialization
+        sleep 15
+        
+        # Run the test with proper cleanup on exit
         npx playwright test auth-disabled.spec.js --project=chromium --reporter=line
+        TEST_EXIT_CODE=$?
+        
+        # Cleanup processes
+        kill $FRONTEND_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
 
 # Trigger CI
