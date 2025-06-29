@@ -146,6 +146,7 @@ jobs:
 
   # E2E Tests with Auth
   e2e-auth:
+    needs: [backend-test, frontend-test, site-test]
     runs-on: ubuntu-latest
     env:
       ENV: PROD
@@ -295,6 +296,7 @@ jobs:
 
   # E2E Tests - Authentication Flows
   e2e-auth-flows:
+    needs: [backend-test, frontend-test, site-test]
     runs-on: ubuntu-latest
     env:
       ENV: CI
@@ -423,6 +425,7 @@ jobs:
 
   # E2E Tests - Demo Content & Navigation
   e2e-demo-content:
+    needs: [backend-test, frontend-test, site-test]
     runs-on: ubuntu-latest
     env:
       ENV: CI
@@ -552,6 +555,7 @@ jobs:
 
   # E2E Tests - Demo UI & Workspace
   e2e-demo-ui:
+    needs: [backend-test, frontend-test, site-test]
     runs-on: ubuntu-latest
     env:
       ENV: CI
@@ -681,6 +685,7 @@ jobs:
 
   # E2E Tests - Core Functionality
   e2e-core:
+    needs: [backend-test, frontend-test, site-test]
     runs-on: ubuntu-latest
     env:
       ENV: CI
