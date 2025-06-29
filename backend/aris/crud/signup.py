@@ -9,6 +9,7 @@ from datetime import datetime, timezone
 from typing import Optional
 
 from sqlalchemy import select
+from sqlalchemy.engine.result import Result
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -122,7 +123,7 @@ async def get_signup_by_email(email: str, db: AsyncSession) -> Optional[Signup]:
     Signup or None
         The signup record if found, None otherwise.
     """
-    result = await db.execute(
+    result: Result = await db.execute(
         select(Signup).where(Signup.email == email)
     )
     return result.scalars().first()
@@ -143,7 +144,7 @@ async def get_signup_by_id(signup_id: int, db: AsyncSession) -> Optional[Signup]
     Signup or None
         The signup record if found, None otherwise.
     """
-    result = await db.execute(
+    result: Result = await db.execute(
         select(Signup).where(Signup.id == signup_id)
     )
     return result.scalars().first()
@@ -236,7 +237,7 @@ async def get_active_signups_count(db: AsyncSession) -> int:
     int
         Number of active signups.
     """
-    result = await db.execute(
+    result: Result = await db.execute(
         select(Signup.id).where(Signup.status == SignupStatus.ACTIVE)
     )
     return len(result.scalars().all())
@@ -257,7 +258,7 @@ async def get_signup_by_token(token: str, db: AsyncSession) -> Optional[Signup]:
     Signup or None
         The signup record if found, None otherwise.
     """
-    result = await db.execute(
+    result: Result = await db.execute(
         select(Signup).where(Signup.unsubscribe_token == token)
     )
     return result.scalars().first()

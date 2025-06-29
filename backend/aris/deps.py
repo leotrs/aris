@@ -107,7 +107,7 @@ async def current_user(
                 self.created_at = datetime.now()
                 self.avatar_color = "#0E9AE9"
         
-        return MockUser(1, "testuser@aris.pub", "Test User")
+        return MockUser(1, "testuser@aris.pub", "Test User")  # type: ignore
     
     # If no token provided and auth is required, raise error
     if not token:
@@ -125,7 +125,7 @@ async def current_user(
 
     try:
         payload = jwt.decode(token, settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
-        user_id_str: str = payload.get("sub")
+        user_id_str: str | None = payload.get("sub")
         if user_id_str is None:
             raise credentials_exception
     except JWTError:
@@ -139,7 +139,7 @@ async def current_user(
     user = await crud.get_user(user_id, db)
     if user is None:
         raise credentials_exception
-    return user
+    return user  # type: ignore
 
 
 # Global singleton file service instance

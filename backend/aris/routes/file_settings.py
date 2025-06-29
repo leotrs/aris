@@ -58,7 +58,7 @@ async def get_file_settings(
     settings = await FileSettingsDB.get_file_settings(file_id, current_user.id, db)
 
     if not settings:
-        settings = FileSettingsResponse(
+        settings = FileSettingsResponse(  # type: ignore
             file_id=file_id,
             user_id=current_user.id,
             created_at=datetime.now(UTC),

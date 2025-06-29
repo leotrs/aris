@@ -3,7 +3,7 @@
 from fastapi import HTTPException, status
 
 
-def not_found_exception(resource: str, resource_id: int = None) -> HTTPException:
+def not_found_exception(resource: str, resource_id: int | None = None) -> HTTPException:
     """Create a standardized 404 Not Found exception.
 
     Parameters
