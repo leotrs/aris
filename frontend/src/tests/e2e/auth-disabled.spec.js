@@ -38,7 +38,7 @@ test.describe("Auth Disabled - Development Mode", () => {
     }
 
     // Test 7: Verify backend API calls work without auth headers
-    const response = await page.request.get("http://localhost:8000/api/health");
+    const response = await page.request.get("http://localhost:8000/health");
     expect(response.ok()).toBeTruthy();
   });
 });
