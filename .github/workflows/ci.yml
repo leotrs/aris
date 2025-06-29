@@ -403,6 +403,8 @@ jobs:
       ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
       ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
       JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     services:
       postgres:
@@ -464,6 +466,8 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DISABLE_AUTH: true
+        TEST_USER_EMAIL: testuser@aris.pub
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         ENV: CI
         DISABLE_AUTH: true
         DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
@@ -500,6 +504,8 @@ jobs:
       ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
       ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
       JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     services:
       postgres:
@@ -561,6 +567,8 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DISABLE_AUTH: true
+        TEST_USER_EMAIL: testuser@aris.pub
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         ENV: CI
         DISABLE_AUTH: true
         DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
@@ -597,6 +605,8 @@ jobs:
       ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
       ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
       JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
 
     services:
       postgres:
@@ -658,6 +668,8 @@ jobs:
       env:
         VITE_API_BASE_URL: http://localhost:8000
         VITE_DISABLE_AUTH: true
+        TEST_USER_EMAIL: testuser@aris.pub
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
         ENV: CI
         DISABLE_AUTH: true
         DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
