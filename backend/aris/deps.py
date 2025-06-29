@@ -93,7 +93,6 @@ async def current_user(
     """
     # Check if authentication is disabled for testing
     disable_auth = os.getenv("DISABLE_AUTH", "")
-    print(f"DEBUG: DISABLE_AUTH env var = '{disable_auth}', type = {type(disable_auth)}")
     if disable_auth.lower() == "true":
         # Return a mock test user without database dependency
         from datetime import datetime
