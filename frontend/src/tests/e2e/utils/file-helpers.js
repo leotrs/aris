@@ -1,30 +1,37 @@
 import { expect } from "@playwright/test";
+import { MobileHelpers } from "./mobile-helpers.js";
 
 export class FileHelpers {
   constructor(page) {
     this.page = page;
+    this.mobileHelpers = new MobileHelpers(page);
   }
 
   /**
    * Wait for the files container to be visible and loaded
    */
   async waitForFilesLoaded() {
+    const timeouts = this.mobileHelpers.getTimeouts();
+
     // Wait for network operations to complete (file creation/updates)
     await this.page.waitForLoadState("networkidle");
+    await this.mobileHelpers.waitForMobileRendering();
 
     try {
       // Wait for files container to be visible (handles Suspense loading states)
-      await expect(this.page.locator('[data-testid="files-container"]')).toBeVisible({
-        timeout: 3000,
-      });
+      await this.mobileHelpers.expectToBeVisible(
+        this.page.locator('[data-testid="files-container"]'),
+        timeouts.medium
+      );
     } catch {
       // If files container doesn't appear, the duplicate might have broken the app state
       // Refresh the page to restore the file list
       await this.page.reload();
       await this.page.waitForLoadState("networkidle");
-      await expect(this.page.locator('[data-testid="files-container"]')).toBeVisible({
-        timeout: 5000,
-      });
+      await this.mobileHelpers.expectToBeVisible(
+        this.page.locator('[data-testid="files-container"]'),
+        timeouts.long
+      );
     }
 
     // Wait for files to actually render instead of fixed timeout
@@ -33,7 +40,7 @@ export class FileHelpers {
         const container = document.querySelector('[data-testid="files-container"]');
         return container && container.children.length > 0;
       },
-      { timeout: 3000 }
+      { timeout: timeouts.medium }
     );
   }
 
@@ -41,14 +48,24 @@ export class FileHelpers {
    * Create a new empty file via the UI
    */
   async createNewFile() {
-    // The create file button is a ContextMenu with "New File" text
-    await this.page.click('text="New File"');
+    const timeouts = this.mobileHelpers.getTimeouts();
 
-    // Look for the "Empty file" option in the context menu
-    await this.page.click('text="Empty file"');
+    // Use test ID for more reliable mobile interaction
+    const createButton = this.page.locator('[data-testid="create-file-button"]');
+    await this.mobileHelpers.expectToBeVisible(createButton);
+    await this.mobileHelpers.clickElement(createButton);
+
+    // Wait for context menu to appear with mobile-optimized timeout
+    const contextMenu = this.page.locator('[data-testid="context-menu"]');
+    await this.mobileHelpers.expectToBeVisible(contextMenu, timeouts.medium);
+
+    // Click "Empty file" option with robust selector for mobile browsers
+    const emptyFileOption = contextMenu.locator('button[role="menuitem"]:has-text("Empty file")');
+    await this.mobileHelpers.expectToBeVisible(emptyFileOption);
+    await this.mobileHelpers.clickElement(emptyFileOption);
 
     // Wait for navigation to workspace (file creation should redirect)
-    await this.page.waitForURL(/\/file\//, { timeout: 10000 });
+    await this.mobileHelpers.waitForURLPattern(/\/file\//);
 
     // Extract file ID from URL
     const url = this.page.url();

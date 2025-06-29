@@ -13,6 +13,13 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
     await page.goto("/demo", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
+
+    // Mobile browsers need extra time for rendering
+    const viewportSize = page.viewportSize();
+    const isMobile = viewportSize && viewportSize.width < 640;
+    if (isMobile) {
+      await page.waitForTimeout(500);
+    }
   });
 
   test.describe("Content Loading", () => {
@@ -22,7 +29,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
       await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible({
         timeout: 20000,
       });
-      
+
       // Wait for either data-loaded="true" or manuscript content to be visible
       await Promise.race([
         expect(page.locator('[data-testid="demo-canvas"][data-loaded="true"]')).toBeVisible({
@@ -30,7 +37,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
         }),
         expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
           timeout: 5000,
-        })
+        }),
       ]);
 
       // Wait for manuscript content to load
@@ -159,25 +166,44 @@ test.describe("Demo Content Rendering @demo-content", () => {
         timeout: 10000,
       });
 
+      // Check if we're on mobile viewport
+      const viewportSize = page.viewportSize();
+      const isMobile = viewportSize && viewportSize.width < 640;
+
       // Wait for RSM JavaScript to fully load
       await page.waitForFunction(
         () => {
           return window.jQuery && document.querySelectorAll(".hr-border-zone").length > 0;
         },
-        { timeout: 15000 }
+        { timeout: isMobile ? 20000 : 15000 }
       );
 
-      // Hover over content to reveal border dots
-      await page.hover("h1"); // Hover over main heading
+      // On mobile, scroll to ensure heading is in viewport
+      if (isMobile) {
+        await page.locator("h1").first().scrollIntoViewIfNeeded();
+        await page.waitForTimeout(300);
+      }
 
-      // Wait for border dots to become visible on hover
-      await expect(page.locator(".hr-border-dots").first()).toBeVisible({ timeout: 5000 });
+      // Hover over content to reveal border dots (or tap on mobile)
+      const heading = page.locator("h1").first();
+      if (isMobile) {
+        await heading.tap();
+      } else {
+        await heading.hover();
+      }
+
+      // Wait for border dots to become visible on hover/tap
+      await expect(page.locator(".hr-border-dots").first()).toBeVisible({
+        timeout: isMobile ? 8000 : 5000,
+      });
 
       // Click the border dots to reveal the menu
       await page.locator(".hr-border-dots").first().click();
 
       // Now verify the menu zone becomes visible
-      await expect(page.locator(".hr-menu-zone").first()).toBeVisible({ timeout: 3000 });
+      await expect(page.locator(".hr-menu-zone").first()).toBeVisible({
+        timeout: isMobile ? 5000 : 3000,
+      });
 
       // Check for various handrail components
       const menuZones = page.locator(".hr-menu-zone");
