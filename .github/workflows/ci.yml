@@ -862,6 +862,20 @@ jobs:
       run: |
         brew install postgresql
         brew services start postgresql
+        # Wait for PostgreSQL to be ready
+        for i in {1..30}; do
+          if pg_isready -q; then
+            echo "PostgreSQL is ready!"
+            break
+          else
+            echo "Waiting for PostgreSQL to start... ($i/30)"
+            if [ $i -eq 30 ]; then
+              echo "PostgreSQL failed to start"
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
         createdb test_aris
 
     - name: Create virtual environment and sync dependencies
@@ -986,6 +1000,20 @@ jobs:
       run: |
         brew install postgresql
         brew services start postgresql
+        # Wait for PostgreSQL to be ready
+        for i in {1..30}; do
+          if pg_isready -q; then
+            echo "PostgreSQL is ready!"
+            break
+          else
+            echo "Waiting for PostgreSQL to start... ($i/30)"
+            if [ $i -eq 30 ]; then
+              echo "PostgreSQL failed to start"
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
         createdb test_aris
 
     - name: Create virtual environment and sync dependencies
