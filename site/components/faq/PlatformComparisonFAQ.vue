@@ -126,6 +126,105 @@
         </div>
 
         <div class="faq-item">
+          <div class="faq-question" @click="toggleFAQ('vs-latex')">
+            <h3 class="question-text">How does this compare to LaTeX editors?</h3>
+            <div class="question-toggle" :class="{ active: activeFAQs.includes('vs-latex') }">
+              <IconChevronDown :size="20" />
+            </div>
+          </div>
+          <Transition name="faq-answer">
+            <div v-if="activeFAQs.includes('vs-latex')" class="faq-answer">
+              <div class="answer-content">
+                <p class="answer-text">
+                  <strong>Aris supports LaTeX import and maintains LaTeX-quality typesetting</strong> while adding modern collaboration features:
+                </p>
+                <div class="workflow-comparison">
+                  <div class="tool-limitations">
+                    <h4 class="limitation-title">Traditional LaTeX Workflow</h4>
+                    <div class="limitation-item">
+                      <IconX :size="16" />
+                      <span>Complex setup and learning curve</span>
+                    </div>
+                    <div class="limitation-item">
+                      <IconX :size="16" />
+                      <span>No real-time collaboration</span>
+                    </div>
+                    <div class="limitation-item">
+                      <IconX :size="16" />
+                      <span>Manual journal formatting</span>
+                    </div>
+                    <div class="limitation-item">
+                      <IconX :size="16" />
+                      <span>Separate tools for review/publishing</span>
+                    </div>
+                  </div>
+                  <div class="aris-advantages">
+                    <h4 class="advantage-title">Aris + LaTeX</h4>
+                    <div class="advantage-item">
+                      <IconCheck :size="16" />
+                      <span>Import existing LaTeX documents</span>
+                    </div>
+                    <div class="advantage-item">
+                      <IconCheck :size="16" />
+                      <span>Visual editor with LaTeX output</span>
+                    </div>
+                    <div class="advantage-item">
+                      <IconCheck :size="16" />
+                      <span>Automatic journal formatting</span>
+                    </div>
+                    <div class="advantage-item">
+                      <IconCheck :size="16" />
+                      <span>Integrated collaboration and publishing</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Transition>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-question" @click="toggleFAQ('vs-institutional')">
+            <h3 class="question-text">What about institutional repositories and systems?</h3>
+            <div class="question-toggle" :class="{ active: activeFAQs.includes('vs-institutional') }">
+              <IconChevronDown :size="20" />
+            </div>
+          </div>
+          <Transition name="faq-answer">
+            <div v-if="activeFAQs.includes('vs-institutional')" class="faq-answer">
+              <div class="answer-content">
+                <p class="answer-text">
+                  <strong>Aris complements institutional systems</strong> rather than replacing them. We integrate with your existing workflows:
+                </p>
+                <div class="integration-features">
+                  <div class="feature-card">
+                    <IconDatabase :size="24" />
+                    <h4 class="feature-title">Repository Integration</h4>
+                    <p class="feature-description">
+                      Automatic deposits to institutional repositories with proper metadata
+                    </p>
+                  </div>
+                  <div class="feature-card">
+                    <IconShield :size="24" />
+                    <h4 class="feature-title">Institutional Auth</h4>
+                    <p class="feature-description">
+                      SSO integration with university authentication systems
+                    </p>
+                  </div>
+                  <div class="feature-card">
+                    <IconUsers :size="24" />
+                    <h4 class="feature-title">Department Workflows</h4>
+                    <p class="feature-description">
+                      Custom approval processes that match institutional requirements
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Transition>
+        </div>
+
+        <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('journal-formatting')">
             <h3 class="question-text">What about journal formatting requirements?</h3>
             <div class="question-toggle" :class="{ active: activeFAQs.includes('journal-formatting') }">
@@ -137,14 +236,14 @@
               <div class="answer-content">
                 <p class="answer-text">
                   <strong>Aris handles journal formatting automatically.</strong> We maintain
-                  templates for thousands of journals:
+                  templates for major journals and publishers:
                 </p>
                 <div class="formatting-features">
                   <div class="feature-card">
                     <IconLayout :size="24" />
                     <h4 class="feature-title">Automatic Formatting</h4>
                     <p class="feature-description">
-                      Export to any journal's specific requirements with one click
+                      Export to journal-specific requirements with one click
                     </p>
                   </div>
                   <div class="feature-card">
@@ -181,6 +280,9 @@
     IconLayout,
     IconRefresh,
     IconSettings,
+    IconDatabase,
+    IconShield,
+    IconUsers,
   } from "@tabler/icons-vue";
 
   const activeFAQs = ref([]);
@@ -445,8 +547,9 @@
     color: var(--success-600);
   }
 
-  /* Formatting Features */
-  .formatting-features {
+  /* Formatting Features & Integration Features */
+  .formatting-features,
+  .integration-features {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: var(--space-lg);
@@ -507,7 +610,8 @@
       grid-template-columns: 1fr;
     }
 
-    .formatting-features {
+    .formatting-features,
+    .integration-features {
       grid-template-columns: 1fr;
     }
   }
