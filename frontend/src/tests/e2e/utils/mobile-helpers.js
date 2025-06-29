@@ -14,6 +14,14 @@ export class MobileHelpers {
   }
 
   /**
+   * Check if we're running on webkit (Safari/Mobile Safari)
+   */
+  isWebkit() {
+    const browserName = this.page.context().browser()?.browserType()?.name();
+    return browserName === 'webkit';
+  }
+
+  /**
    * Get mobile-optimized timeout values
    */
   getTimeouts() {
@@ -49,11 +57,30 @@ export class MobileHelpers {
   }
 
   /**
-   * Wait for element visibility with mobile-optimized timeout
+   * Wait for element visibility with mobile and webkit-optimized checks
    */
   async expectToBeVisible(locator, customTimeout = null) {
     const timeouts = this.getTimeouts();
     const timeout = customTimeout || timeouts.medium;
+    
+    // For webkit, ensure element is scrolled into view first
+    if (this.isWebkit()) {
+      try {
+        await locator.scrollIntoViewIfNeeded({ timeout: 2000 });
+        await this.page.waitForTimeout(300);
+      } catch (e) {
+        // Continue if scroll fails
+      }
+      
+      // Force a repaint on webkit
+      await this.page.evaluate(() => {
+        document.body.style.transform = 'translateZ(0)';
+        setTimeout(() => {
+          document.body.style.transform = '';
+        }, 50);
+      });
+    }
+    
     await expect(locator).toBeVisible({ timeout });
   }
 
@@ -75,6 +102,32 @@ export class MobileHelpers {
     const timeouts = this.getTimeouts();
     const timeout = customTimeout || timeouts.navigation;
     await this.page.waitForURL(pattern, { timeout });
+  }
+
+  /**
+   * Webkit-specific visibility check using DOM evaluation
+   */
+  async isElementVisibleInDOM(locator) {
+    try {
+      return await locator.evaluate((element) => {
+        if (!element) return false;
+        
+        const style = window.getComputedStyle(element);
+        const rect = element.getBoundingClientRect();
+        
+        // Check various visibility conditions
+        return (
+          style.display !== 'none' &&
+          style.visibility !== 'hidden' &&
+          style.opacity !== '0' &&
+          rect.width > 0 &&
+          rect.height > 0 &&
+          element.offsetParent !== null
+        );
+      });
+    } catch (e) {
+      return false;
+    }
   }
 
   /**

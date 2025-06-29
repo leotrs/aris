@@ -52,7 +52,33 @@ export class FileHelpers {
 
     // Use test ID for more reliable mobile interaction
     const createButton = this.page.locator('[data-testid="create-file-button"]');
-    await this.mobileHelpers.expectToBeVisible(createButton);
+    
+    // For webkit, ensure we're on the right page and wait for layout
+    if (this.mobileHelpers.isWebkit()) {
+      await this.page.waitForLoadState('domcontentloaded');
+      await this.page.waitForTimeout(1000); // Extra wait for webkit layout
+      
+      // Check if element exists first
+      const buttonExists = await createButton.count() > 0;
+      if (!buttonExists) {
+        throw new Error('Create file button not found in DOM - may need to navigate to home page first');
+      }
+      
+      // Use DOM visibility check for webkit
+      const isVisible = await this.mobileHelpers.isElementVisibleInDOM(createButton);
+      if (!isVisible) {
+        await createButton.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(500);
+      }
+      
+      const finalVisibility = await this.mobileHelpers.isElementVisibleInDOM(createButton);
+      if (!finalVisibility) {
+        throw new Error('Create file button exists but is not visible in webkit');
+      }
+    } else {
+      await this.mobileHelpers.expectToBeVisible(createButton);
+    }
+    
     await this.mobileHelpers.clickElement(createButton);
 
     // Wait for context menu to appear with mobile-optimized timeout

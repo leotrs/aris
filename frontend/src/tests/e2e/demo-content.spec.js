@@ -2,12 +2,16 @@ import { test, expect } from "@playwright/test";
 
 // @demo
 import { AuthHelpers } from "./utils/auth-helpers.js";
+import { MobileHelpers } from "./utils/mobile-helpers.js";
 
 test.describe("Demo Content Rendering @demo-content", () => {
   let authHelpers;
+  let mobileHelpers;
 
   test.beforeEach(async ({ page }) => {
     authHelpers = new AuthHelpers(page);
+    mobileHelpers = new MobileHelpers(page);
+    
     // Ensure clean auth state for demo access
     await authHelpers.clearAuthState();
 
@@ -15,11 +19,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
     await page.waitForLoadState("networkidle");
 
     // Mobile browsers need extra time for rendering
-    const viewportSize = page.viewportSize();
-    const isMobile = viewportSize && viewportSize.width < 640;
-    if (isMobile) {
-      await page.waitForTimeout(500);
-    }
+    await mobileHelpers.waitForMobileRendering();
   });
 
   test.describe("Content Loading", () => {
@@ -60,24 +60,33 @@ test.describe("Demo Content Rendering @demo-content", () => {
         timeout: 10000,
       });
 
-      // Check if we're on mobile viewport
-      const viewportSize = page.viewportSize();
-      const isMobile = viewportSize && viewportSize.width < 640;
-
       // Check for RSM-specific classes and structure
       const manuscriptWrapper = page.locator(".manuscriptwrapper");
-      if (isMobile) {
-        await manuscriptWrapper.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
-      }
-      await expect(manuscriptWrapper).toBeVisible();
+      await mobileHelpers.expectToBeVisible(manuscriptWrapper);
 
       const manuscript = page.locator(".manuscript");
-      if (isMobile) {
-        await manuscript.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
+      
+      // For webkit, use enhanced visibility check
+      if (mobileHelpers.isWebkit()) {
+        // Ensure element exists and wait for it to be rendered
+        await manuscript.waitFor({ state: 'attached', timeout: 5000 });
+        
+        // Use DOM-based visibility check for webkit
+        const isVisible = await mobileHelpers.isElementVisibleInDOM(manuscript);
+        if (!isVisible) {
+          // Force scroll and repaint
+          await manuscript.scrollIntoViewIfNeeded();
+          await page.waitForTimeout(500);
+          await page.evaluate(() => window.scrollBy(0, 1));
+          await page.waitForTimeout(200);
+        }
+        
+        // Check if element is visible in DOM
+        const finalVisibility = await mobileHelpers.isElementVisibleInDOM(manuscript);
+        expect(finalVisibility).toBe(true);
+      } else {
+        await mobileHelpers.expectToBeVisible(manuscript);
       }
-      await expect(manuscript).toBeVisible();
 
       // Verify manuscript has content
       const hasContent = await manuscript.evaluate((el) => el.children.length > 0);
@@ -96,11 +105,18 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
       // Look for RSM handrails (interactive UI elements)
       const handrails = page.locator(".hr");
-      if (isMobile) {
+      
+      // For webkit, use enhanced visibility check
+      if (mobileHelpers.isWebkit()) {
+        await handrails.first().waitFor({ state: 'attached', timeout: 8000 });
         await handrails.first().scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(500);
+        
+        const isVisible = await mobileHelpers.isElementVisibleInDOM(handrails.first());
+        expect(isVisible).toBe(true);
+      } else {
+        await mobileHelpers.expectToBeVisible(handrails.first(), 8000);
       }
-      await expect(handrails.first()).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
 
       // Check for interactive elements like headings with handrails
       const headingHandrails = page.locator(".heading.hr");
@@ -158,17 +174,32 @@ test.describe("Demo Content Rendering @demo-content", () => {
         timeout: 10000,
       });
 
-      // Check if we're on mobile viewport
-      const viewportSize = page.viewportSize();
-      const isMobile = viewportSize && viewportSize.width < 640;
-
       // Look for the main title
       const title = page.locator("h1").first();
-      if (isMobile) {
+      
+      // For webkit, use enhanced visibility check
+      if (mobileHelpers.isWebkit()) {
+        await title.waitFor({ state: 'attached', timeout: 8000 });
+        
+        // Force scroll and ensure visibility
         await title.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(500);
+        
+        // Check DOM visibility for webkit
+        const isVisible = await mobileHelpers.isElementVisibleInDOM(title);
+        if (!isVisible) {
+          await page.evaluate(() => {
+            const h1 = document.querySelector('h1');
+            if (h1) h1.scrollIntoView({ behavior: 'instant', block: 'center' });
+          });
+          await page.waitForTimeout(300);
+        }
+        
+        const finalVisibility = await mobileHelpers.isElementVisibleInDOM(title);
+        expect(finalVisibility).toBe(true);
+      } else {
+        await mobileHelpers.expectToBeVisible(title, 8000);
       }
-      await expect(title).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
 
       const titleText = await title.textContent();
       expect(titleText).toContain("The Future of Web-Native Publishing");

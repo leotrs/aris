@@ -225,4 +225,3 @@ export const createDemoApi = () => ({
   // Return the backend URI for static assets
   getUri: () => "http://localhost:8000",
 });
-

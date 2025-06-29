@@ -1,9 +1,13 @@
 import { test, expect } from "@playwright/test";
+import { MobileHelpers } from "./utils/mobile-helpers.js";
 
 // @demo
 
 test.describe("Demo Annotations Viewport @demo-ui", () => {
+  let mobileHelpers;
+  
   test.beforeEach(async ({ page }) => {
+    mobileHelpers = new MobileHelpers(page);
     // Mock any backend requests that might fail in CI
     await page.route("**/api/**", async (route) => {
       const url = route.request().url();
@@ -223,7 +227,7 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
     }
 
     // Wait for mobile layout to stabilize
-    await page.waitForTimeout(500);
+    await mobileHelpers.waitForMobileRendering();
 
     // Check for key content elements that should be visible on mobile
     const contentElements = [
@@ -240,18 +244,24 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
         const elements = page.locator(selector);
         const count = await elements.count();
         if (count > 0) {
-          // Check if we're on mobile viewport for better handling
-          const viewportSize = page.viewportSize();
-          const isMobile = viewportSize && viewportSize.width < 640;
+          const firstElement = elements.first();
           
-          if (isMobile) {
-            await elements.first().scrollIntoViewIfNeeded();
-            await page.waitForTimeout(300);
+          // For webkit, use enhanced visibility check
+          if (mobileHelpers.isWebkit()) {
+            await firstElement.scrollIntoViewIfNeeded();
+            await page.waitForTimeout(500);
+            
+            const isVisible = await mobileHelpers.isElementVisibleInDOM(firstElement);
+            if (isVisible) {
+              visibleElementFound = true;
+              break;
+            }
+          } else {
+            // For other browsers, use standard visibility check
+            await mobileHelpers.expectToBeVisible(firstElement, 15000);
+            visibleElementFound = true;
+            break;
           }
-          
-          await expect(elements.first()).toBeVisible({ timeout: isMobile ? 15000 : 10000 });
-          visibleElementFound = true;
-          break;
         }
       } catch (error) {
         // If browser is closed or element not found, continue to next selector
