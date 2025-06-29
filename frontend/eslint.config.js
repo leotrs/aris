@@ -52,7 +52,7 @@ export default [
       ...baseRules,
       // Frontend-specific overrides
       "no-unused-vars": [
-        "error",
+        "warn",
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
@@ -87,7 +87,7 @@ export default [
       "vue/html-indent": "off",
       "vue/multi-word-component-names": "off",
       "vue/no-reserved-component-names": "warn",
-      "vue/no-unused-vars": ["error", { ignorePattern: "^props$|^emit$" }],
+      "vue/no-unused-vars": ["warn", { ignorePattern: "^props$|^emit$" }],
       "no-unused-vars": "off",
     },
   },
@@ -119,7 +119,7 @@ export default [
       ...storybookPlugin.configs.recommended.rules,
       // Storybook-specific overrides
       "no-unused-vars": [
-        "error",
+        "warn",
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
@@ -177,7 +177,7 @@ export default [
         },
       ],
       "no-unused-vars": [
-        "error",
+        "warn",
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",

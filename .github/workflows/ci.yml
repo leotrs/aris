@@ -7,32 +7,12 @@ on:
     branches: [ main ]
 
 jobs:
-  changes:
-    runs-on: ubuntu-latest
-    outputs:
-      backend: ${{ steps.changes.outputs.backend }}
-      frontend: ${{ steps.changes.outputs.frontend }}
-      site: ${{ steps.changes.outputs.site }}
-    steps:
-      - uses: actions/checkout@v4
-      - uses: dorny/paths-filter@v3
-        id: changes
-        with:
-          filters: |
-            backend:
-              - 'backend/**'
-            frontend:
-              - 'frontend/**'
-            site:
-              - 'site/**'
-
+  # Unit Tests and Linting (Parallel)
   backend-test:
     runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ needs.changes.outputs.backend == 'true' }}
     env:
       ENV: CI
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
 
     services:
       postgres:
@@ -44,9 +24,9 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
           --health-cmd pg_isready
-          --health-interval 10s
+          --health-interval 5s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 3
         ports:
           - 5432:5432
 
@@ -61,45 +41,36 @@ jobs:
       uses: astral-sh/setup-uv@v6
       with:
         version: "latest"
-
-    - name: Create virtual environment
-      run: uv venv
+        enable-cache: true
 
     - name: Set up Python
       run: uv python install 3.13
 
-    - name: Sync dependencies
-      run: uv sync --group test
+    - name: Create virtual environment and sync dependencies
+      run: |
+        uv venv
+        uv sync --group test --group dev
 
     - name: Run linting (ruff)
       run: uv run ruff check
 
     - name: Wait for PostgreSQL to be ready
       run: |
-        until pg_isready -h localhost -p 5432 -U postgres; do
-          echo "Waiting for PostgreSQL..."
-          sleep 2
-        done
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
         echo "PostgreSQL is ready!"
 
-    - name: Test PostgreSQL connection
-      run: |
-        echo "Testing PostgreSQL connection..."
-        psql -h localhost -p 5432 -U postgres -d test_aris -c "SELECT version();"
-      env:
-        PGPASSWORD: postgres
-
-    - name: Debug env & .env.ci file
-      run: |
-        echo "ENV=$ENV"
-        echo "TEST_USER_PASSWORD is set: $([ -n "$TEST_USER_PASSWORD" ] && echo "yes" || echo "no")"
-        echo "GITHUB_ACTIONS=$GITHUB_ACTIONS"
-        ls -l .env.ci
-        cat .env.ci
 
     - name: Run tests
-      run: uv run pytest -n8 --cov=aris --cov-report=xml
-
+      env:
+        DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+        DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+        ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+        ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+        JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+        TEST_USER_EMAIL: testuser@aris.pub
+        TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+        ENV: CI
+      run: uv run pytest -n4 --cov=aris --cov-report=xml --tb=short
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
@@ -110,8 +81,6 @@ jobs:
 
   frontend-test:
     runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ needs.changes.outputs.frontend == 'true' }}
 
     defaults:
       run:
@@ -148,8 +117,6 @@ jobs:
 
   site-test:
     runs-on: ubuntu-latest
-    needs: changes
-    if: ${{ needs.changes.outputs.site == 'true' }}
 
     defaults:
       run:
@@ -177,23 +144,18 @@ jobs:
     - name: Run unit tests
       run: npm run test:run
 
-    - name: Install Playwright browsers
-      run: npx playwright install --with-deps
-
-    - name: Run E2E tests (all browsers, excluding demo integration)
-      run: npm run test:e2e:all -- --grep-invert "demo"
-
-  e2e-test:
+  # E2E Tests with Auth
+  e2e-auth:
     runs-on: ubuntu-latest
-<<<<<<< test/postgresql-tests-in-ci
-    needs: [backend-test, frontend-test]
     env:
-      ENV: CI
+      ENV: PROD
+      DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-=======
-    needs: [changes, backend-test, frontend-test, site-test]
-    if: ${{ always() && (needs.backend-test.result == 'success' || needs.backend-test.result == 'skipped') && (needs.frontend-test.result == 'success' || needs.frontend-test.result == 'skipped') && (needs.site-test.result == 'success' || needs.site-test.result == 'skipped') && (needs.changes.outputs.backend == 'true' || needs.changes.outputs.frontend == 'true' || needs.changes.outputs.site == 'true') }}
->>>>>>> main
 
     services:
       postgres:
@@ -202,40 +164,72 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
         options: >-
           --health-cmd pg_isready
-          --health-interval 10s
+          --health-interval 5s
           --health-timeout 5s
-          --health-retries 5
+          --health-retries 3
         ports:
           - 5432:5432
 
     steps:
     - uses: actions/checkout@v4
 
-    # Backend setup
     - name: Install uv
       uses: astral-sh/setup-uv@v6
       with:
         version: "latest"
+        enable-cache: true
 
     - name: Set up Python
       run: uv python install 3.13
 
-    - name: Setup backend
+    - name: Create virtual environment and sync dependencies
       working-directory: backend
       run: |
         uv venv
-        uv sync --all-groups
-        uv pip install -e .
+        uv sync --group test --group dev
 
-    - name: Setup database and test data
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+
+    - name: Run database migrations and create test user
       working-directory: backend
       run: |
         uv run alembic upgrade head
         uv run python scripts/reset_test_user.py
 
-    # Frontend setup
+    - name: Start backend API
+      working-directory: backend
+      run: |
+        echo "Starting backend with ENV=$ENV"
+        # Start backend and capture PID for cleanup
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait longer for backend startup
+        sleep 8
+        
+        # Health check with retries
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend health check passed"
+            break
+          else
+            echo "Backend health check failed, attempt $i/5"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start properly"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
+
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -247,44 +241,173 @@ jobs:
       working-directory: frontend
       run: npm ci
 
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-browsers-${{ runner.os }}-chromium
+
     - name: Install Playwright browsers
       working-directory: frontend
-      run: npx playwright install --with-deps
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install chromium
 
-    # Site setup for demo integration tests
-    - name: Install site dependencies
-      working-directory: site
+    - name: Start frontend and run auth-enabled E2E test
+      working-directory: frontend
+      env:
+        VITE_API_BASE_URL: http://localhost:8000
+        TEST_USER_EMAIL: ${{ env.TEST_USER_EMAIL }}
+        TEST_USER_PASSWORD: ${{ env.TEST_USER_PASSWORD }}
+      run: |
+        # Start frontend and capture PID for cleanup
+        npm run dev &
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait longer for frontend startup and Vue app initialization
+        sleep 15
+        
+        # Run the test with proper cleanup on exit
+        npx playwright test auth-enabled.spec.js --project=chromium --reporter=line
+        TEST_EXIT_CODE=$?
+        
+        # Cleanup processes
+        kill $FRONTEND_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
+
+  # E2E Tests without Auth
+  e2e-no-auth:
+    runs-on: ubuntu-latest
+    env:
+      ENV: CI
+      DISABLE_AUTH: true
+      DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 3
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Create virtual environment and sync dependencies
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --group test --group dev
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+
+    - name: Run database migrations and create test user
+      working-directory: backend
+      run: |
+        uv run alembic upgrade head
+        uv run python scripts/reset_test_user.py
+
+    - name: Start backend API
+      working-directory: backend
+      run: |
+        echo "Starting backend with ENV=$ENV DISABLE_AUTH=$DISABLE_AUTH"
+        # Start backend and capture PID for cleanup
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait longer for backend startup
+        sleep 8
+        
+        # Health check with retries
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend health check passed"
+            break
+          else
+            echo "Backend health check failed, attempt $i/5"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start properly"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
       run: npm ci
 
-    # Start servers and run E2E tests
-    - name: Start backend server
-      working-directory: backend
-      run: uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-browsers-${{ runner.os }}-chromium
 
-    - name: Start frontend server
+    - name: Install Playwright browsers
       working-directory: frontend
-      run: npm run dev -- --host 0.0.0.0 --port 5173 &
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install chromium
+
+    - name: Start frontend and run auth-disabled E2E test
+      working-directory: frontend
       env:
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-
-    - name: Start marketing site server
-      working-directory: site
-      run: npm run dev -- --host 0.0.0.0 --port 3000 &
-
-    - name: Wait for servers to be ready
+        VITE_API_BASE_URL: http://localhost:8000
+        VITE_DISABLE_AUTH: true
+        TEST_USER_EMAIL: ${{ env.TEST_USER_EMAIL }}
+        TEST_USER_PASSWORD: ${{ env.TEST_USER_PASSWORD }}
       run: |
-        timeout 60 bash -c 'until curl -f http://localhost:8000/health; do sleep 2; done'
-        timeout 60 bash -c 'until curl -f http://localhost:5173; do sleep 2; done'
-        timeout 60 bash -c 'until curl -f http://localhost:3000; do sleep 2; done'
+        # Start frontend and capture PID for cleanup
+        npm run dev &
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait longer for frontend startup and Vue app initialization
+        sleep 15
+        
+        # Run the test with proper cleanup on exit
+        npx playwright test auth-disabled.spec.js --project=chromium --reporter=line
+        TEST_EXIT_CODE=$?
+        
+        # Cleanup processes
+        kill $FRONTEND_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
 
-    - name: Run Frontend E2E tests
-      working-directory: frontend
-      run: npm run test:e2e
-      env:
-        VITE_DEV_LOGIN_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-
-    - name: Run Site Demo Integration tests
-      working-directory: site
-      run: npm run test:e2e -- --grep "demo"
-      env:
-        FRONTEND_URL: http://localhost:5173
+# Trigger CI

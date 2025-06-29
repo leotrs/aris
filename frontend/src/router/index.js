@@ -33,6 +33,11 @@ router.beforeEach((to, from, next) => {
   const publicPages = ["/login", "/register", "/demo"];
   const authRequired = !publicPages.includes(to.path);
   if (!authRequired) return next();
+
+  // Check if authentication is disabled via environment variable
+  const isAuthDisabled = import.meta.env.VITE_DISABLE_AUTH === "true";
+  if (isAuthDisabled) return next();
+
   const token = localStorage.getItem("accessToken")?.trim();
   return !token ? next("/login") : next();
 });

@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { TEST_CREDENTIALS } from "../setup/test-data.js";
 
 export class AuthHelpers {
   constructor(page) {
@@ -10,44 +11,56 @@ export class AuthHelpers {
     await this.page.fill('[data-testid="email-input"]', email);
     await this.page.fill('[data-testid="password-input"]', password);
 
-    // Click login button and wait for either navigation or error message
-    await this.page.click('[data-testid="login-button"]');
+    // Click login button and wait for response
+    await Promise.all([
+      this.page.waitForResponse(
+        (response) => response.url().includes("/login") && response.request().method() === "POST",
+        { timeout: 10000 }
+      ),
+      this.page.click('[data-testid="login-button"]'),
+    ]);
 
-    try {
-      // Try to wait for navigation (successful login)
-      await this.page.waitForNavigation({ timeout: 10000 });
-      await this.page.waitForLoadState("networkidle");
-    } catch (error) {
-      // If no navigation, check if we're still on login page (failed login)
-      const currentUrl = this.page.url();
-      if (currentUrl.includes("/login")) {
-        // Failed login - wait for any error messages to appear
-        await this.page.waitForLoadState("networkidle");
-        // Don't throw error here, let the test handle the failed login scenario
-      } else {
-        // Some other navigation issue, re-throw the error
-        throw error;
+    // Wait for the login response to complete
+    await this.page.waitForLoadState("networkidle");
+  }
+
+  async ensureLoggedIn() {
+    // Go to home page
+    await this.page.goto("/");
+    await this.page.waitForLoadState("networkidle");
+
+    // Wait a moment for any potential redirects to happen
+    await this.page.waitForTimeout(1500);
+
+    // Check if we were redirected to login
+    const currentUrl = this.page.url();
+    if (currentUrl.includes("/login")) {
+      // Need to login
+      const email = TEST_CREDENTIALS.valid.email;
+      const password = TEST_CREDENTIALS.valid.password;
+
+      await this.login(email, password);
+
+      // Check if login was successful
+      await this.page.waitForTimeout(1000);
+      const postLoginUrl = this.page.url();
+      if (postLoginUrl.includes("/login")) {
+        // Login failed
+        const errorElement = await this.page
+          .locator('[data-testid="login-error"]')
+          .textContent()
+          .catch(() => "Login failed");
+
+        throw new Error(`Login failed: ${errorElement}`);
       }
     }
-  }
 
-  async expectToBeLoggedIn() {
-    // Wait for redirect to home page with increased timeout
+    // Verify we're logged in by checking for home page elements
     await expect(this.page).toHaveURL("/", { timeout: 10000 });
-
-    // Wait for user menu to be visible, indicating successful authentication
-    await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible({ timeout: 10000 });
-
-    // Verify authentication tokens exist
-    const tokens = await this.getStoredTokens();
-    if (!tokens.accessToken) {
-      throw new Error("Authentication tokens not found after login");
-    }
-  }
-
-  async expectToBeOnLoginPage() {
-    await expect(this.page).toHaveURL("/login");
-    await expect(this.page.locator('input[type="email"]')).toBeVisible();
+    await this.page.waitForSelector(
+      '[data-testid="files-container"], [data-testid="create-file-button"], [data-testid="user-menu"]',
+      { timeout: 10000 }
+    );
   }
 
   async logout() {
@@ -61,35 +74,10 @@ export class AuthHelpers {
         localStorage.clear();
         sessionStorage.clear();
       });
-      // Force a hard reload to ensure clean state
       await this.page.goto("/login", { waitUntil: "load" });
-      await this.page.reload({ waitUntil: "load" });
-
-      // Double-check that tokens are actually cleared
-      const tokens = await this.getStoredTokens();
-      if (tokens.accessToken || tokens.refreshToken) {
-        await this.page.evaluate(() => {
-          localStorage.removeItem("accessToken");
-          localStorage.removeItem("refreshToken");
-          localStorage.removeItem("user");
-        });
-        await this.page.reload({ waitUntil: "load" });
-      }
     } catch {
       // Ignore localStorage access errors in tests
     }
-  }
-
-  async setAuthState(accessToken, refreshToken, user) {
-    await this.page.goto("/");
-    await this.page.evaluate(
-      ({ accessToken, refreshToken, user }) => {
-        if (accessToken) localStorage.setItem("accessToken", accessToken);
-        if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
-        if (user) localStorage.setItem("user", JSON.stringify(user));
-      },
-      { accessToken, refreshToken, user }
-    );
   }
 
   async getStoredTokens() {

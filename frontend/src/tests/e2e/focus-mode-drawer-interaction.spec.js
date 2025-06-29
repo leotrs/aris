@@ -12,7 +12,9 @@ test.describe("Focus Mode and Drawer Interaction", () => {
     await page.waitForLoadState("networkidle");
 
     // Wait for demo content to load
-    await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible();
+    await expect(page.locator('[data-testid="demo-canvas"][data-loaded="true"]')).toBeVisible({
+      timeout: 20000,
+    });
   });
 
   test.describe("Focus Mode Button Visibility with Drawer", () => {

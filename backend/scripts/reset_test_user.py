@@ -6,26 +6,38 @@ with stable test data for visual regression testing.
 
 import asyncio
 import os
+import sys
 from pathlib import Path
 
 from dotenv import load_dotenv
 from sqlalchemy import text
 
-from aris import ArisSession
-from aris.models.models import File, FileStatus, Tag, User
-from aris.security import hash_password
+
+# Add the backend directory to Python path so we can import aris modules
+backend_dir = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(backend_dir))
+
+# Import aris modules after adding to path
+from aris.deps import ArisSession  # noqa: E402
+from aris.models.models import File, FileStatus, Tag, User  # noqa: E402
+from aris.security import hash_password  # noqa: E402
 
 
 # Load environment variables using the same logic as config.py
-BASE_DIR = Path(__file__).resolve().parent.parent
-env_file = BASE_DIR / (".env.ci" if os.getenv("ENV") == "CI" else ".env")
-load_dotenv(env_file)
+env_file = backend_dir / ".env"
+# Load .env file but don't override existing environment variables
+load_dotenv(env_file, override=False)
 
 TEST_USER_EMAIL = os.getenv("TEST_USER_EMAIL", "testuser@aris.pub")
 TEST_USER_PASSWORD = os.getenv("TEST_USER_PASSWORD")
 
 if not TEST_USER_PASSWORD:
-    raise ValueError("TEST_USER_PASSWORD not found in environment variables")
+    print("⚠️  TEST_USER_PASSWORD not found in environment variables, using default")
+    TEST_USER_PASSWORD = "testpassword123"
+
+print(f"📧 Using test user email: {TEST_USER_EMAIL}")
+print(f"🔑 Test password length: {len(TEST_USER_PASSWORD)} characters")
+print(f"🔑 Test password starts with: {TEST_USER_PASSWORD[:4]}...")
 
 
 async def reset_test_user():

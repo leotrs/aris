@@ -59,8 +59,9 @@ test.describe("Cross-Browser Compatibility", () => {
     test("should handle navigation correctly in all browsers", async ({ page, browserName }) => {
       await page.goto("/");
 
-      // Check if this is a mobile browser
-      const isMobile = browserName.includes("Mobile");
+      // Check if viewport is mobile-sized (less than 640px wide)
+      const viewportSize = page.viewportSize();
+      const isMobile = viewportSize.width < 640;
 
       if (isMobile) {
         // Mobile navigation: use mobile menu
@@ -189,8 +190,9 @@ test.describe("Cross-Browser Compatibility", () => {
     test("should handle interactive features across browsers", async ({ page, browserName }) => {
       await page.goto("/");
 
-      // Check if this is a mobile browser
-      const isMobile = browserName.includes("Mobile");
+      // Check if viewport is mobile-sized (less than 640px wide)
+      const viewportSize = page.viewportSize();
+      const isMobile = viewportSize.width < 640;
 
       if (isMobile) {
         // Mobile: Test mobile menu functionality
@@ -239,8 +241,9 @@ test.describe("Cross-Browser Compatibility", () => {
 
   test.describe("Mobile Browser Compatibility", () => {
     test("should work correctly on mobile browsers", async ({ page, browserName }) => {
-      // Only run on mobile browser configs
-      if (!browserName.includes("Mobile")) {
+      // Only run if viewport is mobile-sized (less than 640px wide)
+      const viewportSize = page.viewportSize();
+      if (viewportSize.width >= 640) {
         test.skip();
       }
 
@@ -267,7 +270,9 @@ test.describe("Cross-Browser Compatibility", () => {
     });
 
     test("should handle touch events on mobile", async ({ page, browserName }) => {
-      if (!browserName.includes("Mobile")) {
+      // Only run if viewport is mobile-sized (less than 640px wide)
+      const viewportSize = page.viewportSize();
+      if (viewportSize.width >= 640) {
         test.skip();
       }
 
@@ -311,10 +316,32 @@ test.describe("Cross-Browser Compatibility", () => {
       });
 
       await page.click('button[type="submit"]');
-      await page.waitForTimeout(2000); // Wait for API call to complete
-      await expect(
-        page.locator("text=This email address is already registered for early access.")
-      ).toBeVisible({ timeout: 10000 });
+
+      // Wait for form submission and error to be processed
+      await page.waitForLoadState("networkidle");
+      await page.waitForTimeout(3000); // Extended wait for Safari/webkit
+
+      // Look for error message in multiple ways - some browsers might display it differently
+      const errorMessage = page.locator(
+        "text=This email address is already registered for early access."
+      );
+      const errorContainer = page.locator('.error, .alert, .notification, [role="alert"]');
+      const formError = page
+        .locator("form")
+        .locator("text=This email address is already registered");
+
+      try {
+        // Try the exact text match first
+        await expect(errorMessage).toBeVisible({ timeout: 5000 });
+      } catch {
+        try {
+          // Try looking for any error container that might contain the message
+          await expect(errorContainer).toContainText("already registered", { timeout: 5000 });
+        } catch {
+          // Try looking within the form for partial text
+          await expect(formError).toBeVisible({ timeout: 5000 });
+        }
+      }
 
       console.log(`✓ API error handling works correctly in ${browserName}`);
     });

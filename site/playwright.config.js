@@ -90,6 +90,6 @@ export default defineConfig({
   webServer: {
     command: "NODE_ENV=test npm run dev",
     url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
+    reuseExistingServer: true, // Always reuse existing server (CI starts it manually)
   },
 });
