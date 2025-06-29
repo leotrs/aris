@@ -91,39 +91,33 @@ async def current_user(
         UserRead: The authenticated user's data.
 
     """
-    # Check if authentication is disabled for E2E testing
+    # Check if authentication is disabled for testing
     if os.getenv("DISABLE_AUTH", "").lower() == "true":
-        # Return a mock user for E2E testing - use the same user as reset_test_user.py creates
+        # Return the test user for local testing
         from datetime import datetime
-        
-        # Get the test user from database to ensure we have the right ID
-        # This MUST succeed - the reset_test_user.py script should have created this user
+
         from sqlalchemy import text
-        try:
-            result = await db.execute(
-                text("SELECT id, email, name FROM users WHERE email = :email"),
-                {"email": "testuser@aris.pub"}
-            )
-            user_row = result.first()
-            
-            if not user_row:
-                raise ValueError("Test user 'testuser@aris.pub' not found in database. Ensure reset_test_user.py has been run.")
-            
-            # Create a mock user object with the actual test user data
-            class MockUser:
-                def __init__(self, user_id, email, name):
-                    self.id = user_id
-                    self.email = email
-                    self.name = name
-                    self.initials = "".join(word[0].upper() for word in name.split()[:2])
-                    self.created_at = datetime.now()
-                    self.avatar_color = "#0E9AE9"  # Default blue color
-            
-            return MockUser(user_row.id, user_row.email, user_row.name)
-            
-        except Exception as e:
-            # This should never happen in CI - it indicates a setup problem
-            raise RuntimeError(f"Failed to fetch test user from database when DISABLE_AUTH=true. This indicates the test environment is not properly set up. Error: {e}")
+        
+        result = await db.execute(
+            text("SELECT id, email, name FROM users WHERE email = :email"),
+            {"email": "testuser@aris.pub"}
+        )
+        user_row = result.first()
+        
+        if not user_row:
+            raise RuntimeError("Test user 'testuser@aris.pub' not found. Run reset_test_user.py script.")
+        
+        # Create a mock user object with the actual test user data
+        class MockUser:
+            def __init__(self, user_id, email, name):
+                self.id = user_id
+                self.email = email
+                self.name = name
+                self.initials = "".join(word[0].upper() for word in name.split()[:2])
+                self.created_at = datetime.now()
+                self.avatar_color = "#0E9AE9"
+        
+        return MockUser(user_row.id, user_row.email, user_row.name)
     
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
