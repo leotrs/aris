@@ -1,4 +1,6 @@
 import { test, expect } from "@playwright/test";
+
+// @auth-flows
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
 test.describe("Authentication Redirect Tests", () => {

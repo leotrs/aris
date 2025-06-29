@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 
+// @demo
+
 test.describe("Demo Annotations Viewport", () => {
   test.beforeEach(async ({ page }) => {
     // Mock any backend requests that might fail in CI
