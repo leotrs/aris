@@ -220,12 +220,12 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-chromium
+        key: playwright-browsers-${{ runner.os }}-all
 
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install chromium
+      run: npx playwright install
 
     - name: Start frontend and run auth-required E2E tests with backend running
       env:
@@ -285,7 +285,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running auth-required E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@auth[^-]" --project=chromium --reporter=github
+        npx playwright test --grep "@auth[^-]" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -362,11 +362,11 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-chromium
+        key: playwright-browsers-${{ runner.os }}-all
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install chromium
+      run: npx playwright install
     - name: Start frontend and run auth-flow E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -414,7 +414,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running auth-flows E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@auth-flows" --project=chromium --reporter=github
+        npx playwright test --grep "@auth-flows" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -490,11 +490,11 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-chromium
+        key: playwright-browsers-${{ runner.os }}-all
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install chromium
+      run: npx playwright install
     - name: Start frontend and run demo content E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -544,7 +544,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running demo content E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@demo-content" --project=chromium --reporter=github
+        npx playwright test --grep "@demo-content" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -620,11 +620,11 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-chromium
+        key: playwright-browsers-${{ runner.os }}-all
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install chromium
+      run: npx playwright install
     - name: Start frontend and run demo UI E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -674,7 +674,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running demo UI E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@demo-ui" --project=chromium --reporter=github
+        npx playwright test --grep "@demo-ui" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
@@ -750,11 +750,11 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-chromium
+        key: playwright-browsers-${{ runner.os }}-all
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install chromium
+      run: npx playwright install
     - name: Start frontend and run core E2E tests
       env:
         VITE_API_BASE_URL: http://localhost:8000
@@ -804,7 +804,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running core E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test --grep "@core" --project=chromium --reporter=github
+        npx playwright test --grep "@core" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
