@@ -1,10 +1,14 @@
 <template>
   <section class="cta-section">
     <div class="cta-content-wrapper">
-      <h2 class="cta-headline">Experience what research should feel like.</h2>
+      <h2 class="cta-headline">Join the research community building the future.</h2>
+      <p class="cta-subtitle">
+        Be part of the movement creating better tools for academic publishing. Your voice shapes the
+        platform researchers actually want to use.
+      </p>
       <div class="cta-buttons">
-        <a href="/demo" class="btn btn-primary">Try the Demo</a>
-        <a href="/signup" class="text-link">Or, sign up for the beta waitlist</a>
+        <a href="/beta-signup" class="btn btn-primary">Join Beta Community</a>
+        <a href="/demo" class="text-link">Or, explore the platform demo</a>
       </div>
     </div>
   </section>
@@ -35,8 +39,20 @@
     font-size: 56px;
     font-weight: 700;
     color: var(--gray-900);
-    margin-bottom: 40px;
+    margin-bottom: 24px;
     line-height: 1.2;
+  }
+
+  /* CTA Subtitle */
+  .cta-subtitle {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 20px;
+    line-height: 1.6;
+    color: var(--gray-700);
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   /* CTA Buttons Container */
@@ -97,6 +113,11 @@
 
     .cta-headline {
       font-size: 42px; /* Smaller headline on mobile */
+      margin-bottom: 20px;
+    }
+
+    .cta-subtitle {
+      font-size: 18px;
       margin-bottom: 30px;
     }
 
@@ -124,6 +145,9 @@
     }
     .cta-headline {
       font-size: 32px;
+    }
+    .cta-subtitle {
+      font-size: 16px;
     }
     .btn {
       width: 90%;

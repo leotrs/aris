@@ -3,23 +3,53 @@
     <div class="about-hero-content-wrapper">
       <div class="about-hero-content">
         <h1 id="about-hero-heading" class="about-hero-headline">
-          About Aris
+          Building the Future of Academic Publishing Together
         </h1>
         <p class="about-hero-subheadline">
-          Aris is a web-native scientific publishing platform that transforms how researchers write, collaborate, and share their work. Built with a FastAPI backend and Vue.js frontend, we support RSM (Readable Science Markup) manuscripts for modern, interactive research publishing.
+          Aris is the open-source ResOps platform that makes research workflows faster, more
+          transparent, and more enjoyable for everyone involved. Built by the academic community,
+          for the academic community.
         </p>
-        <div class="company-stats">
-          <div class="stat-item">
-            <div class="stat-number">2025</div>
-            <div class="stat-label">Founded</div>
+        <div class="what-you-get">
+          <div class="rsm-explanation">
+            <h3 class="rsm-title">Write in RSM or Import LaTeX</h3>
+            <p class="rsm-description">
+              RSM (Readable Research Markup) is our modern alternative to LaTeX—designed for the
+              web, easier to learn, but just as powerful. Already have LaTeX manuscripts? Import
+              them seamlessly.
+            </p>
           </div>
-          <div class="stat-item">
-            <div class="stat-number">Beta</div>
-            <div class="stat-label">Current Stage</div>
+          <div class="tagline-section">
+            <p class="core-tagline">
+              Collaborative writing. Smart peer review workflows. Web-native publishing.
+            </p>
           </div>
-          <div class="stat-item">
-            <div class="stat-number">Web-First</div>
-            <div class="stat-label">Platform</div>
+          <h3 class="features-title">The only platform that integrates:</h3>
+          <div class="feature-comparison">
+            <div class="feature-item">
+              <div class="feature-icon">
+                <IconEdit :size="20" />
+              </div>
+              <span class="feature-text">Collaborative manuscript writing</span>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">
+                <IconEye :size="20" />
+              </div>
+              <span class="feature-text">Built-in peer review workflows</span>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">
+                <IconGlobe :size="20" />
+              </div>
+              <span class="feature-text">Web-native publication (no more PDFs)</span>
+            </div>
+            <div class="feature-item">
+              <div class="feature-icon">
+                <IconUsers :size="20" />
+              </div>
+              <span class="feature-text">End-to-end research operations</span>
+            </div>
           </div>
         </div>
       </div>
@@ -38,7 +68,9 @@
                 <IconUsers :size="32" />
               </div>
               <h4 class="feature-title">Real-time Collaboration</h4>
-              <p class="feature-description">Multiple authors, threaded comments, version control</p>
+              <p class="feature-description">
+                Multiple authors, threaded comments, version control
+              </p>
             </div>
             <div class="product-feature">
               <div class="feature-icon">
@@ -55,7 +87,7 @@
 </template>
 
 <script setup>
-  import { IconFileText, IconUsers, IconGlobe } from "@tabler/icons-vue";
+  import { IconFileText, IconUsers, IconGlobe, IconEdit, IconEye } from "@tabler/icons-vue";
 </script>
 
 <style scoped>
@@ -185,35 +217,103 @@
     margin-bottom: var(--space-2xl);
   }
 
-  /* Company Stats Section */
-  .company-stats {
-    display: flex;
-    gap: var(--space-xl);
+  /* What You Get Section */
+  .what-you-get {
     margin-top: var(--space-2xl);
-    flex-wrap: wrap;
   }
 
-  .stat-item {
-    text-align: center;
-    flex: 1;
-    min-width: 100px;
+  /* RSM Explanation */
+  .rsm-explanation {
+    background: var(--primary-25);
+    border: 1px solid var(--primary-100);
+    border-radius: 12px;
+    padding: var(--space-lg);
+    margin-bottom: var(--space-xl);
   }
 
-  .stat-number {
+  .rsm-title {
     font-family: "Montserrat", sans-serif;
-    font-size: 24px;
-    font-weight: 700;
-    color: var(--primary-600);
-    margin-bottom: var(--space-xs);
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--primary-700);
+    margin-bottom: var(--space-sm);
+    line-height: 1.3;
   }
 
-  .stat-label {
+  .rsm-description {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--gray-700);
+    margin: 0;
+  }
+
+  /* Tagline Section */
+  .tagline-section {
+    text-align: center;
+    margin: var(--space-lg) 0;
+    padding: var(--space-lg) 0;
+    border-top: 1px solid var(--border-primary);
+    border-bottom: 1px solid var(--border-primary);
+  }
+
+  .core-tagline {
+    font-family: "Montserrat", sans-serif;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--primary-700);
+    margin: 0;
+    line-height: 1.4;
+  }
+
+  .features-title {
+    font-family: "Montserrat", sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: var(--space-lg);
+  }
+
+  .feature-comparison {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm);
+    background: var(--primary-25);
+    border: 1px solid var(--primary-100);
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .feature-item:hover {
+    background: var(--primary-50);
+    border-color: var(--primary-200);
+  }
+
+  .feature-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    background: var(--primary-100);
+    color: var(--primary-600);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .feature-text {
     font-family: "Source Sans 3", sans-serif;
     font-size: 14px;
     font-weight: 500;
-    color: var(--gray-600);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+    color: var(--gray-700);
+    line-height: 1.3;
   }
 
   /* Responsive Adjustments */
@@ -262,17 +362,22 @@
       font-size: 12px;
     }
 
-    .company-stats {
-      justify-content: center;
-      gap: var(--space-lg);
+    .feature-comparison {
+      grid-template-columns: 1fr;
+      gap: var(--space-sm);
     }
 
-    .stat-number {
-      font-size: 20px;
+    .feature-item {
+      padding: var(--space-xs);
     }
 
-    .stat-label {
-      font-size: 12px;
+    .feature-icon {
+      width: 28px;
+      height: 28px;
+    }
+
+    .feature-text {
+      font-size: 13px;
     }
   }
 

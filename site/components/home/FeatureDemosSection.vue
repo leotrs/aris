@@ -1,7 +1,7 @@
 <template>
   <section class="section-three">
     <div class="content-wrapper">
-      <h2 class="section-heading">How Aris Transforms Your Research Experience</h2>
+      <h2 class="section-heading">Beautiful Tools for Modern Research</h2>
 
       <div class="feature-grid">
         <div class="feature-card">
@@ -16,11 +16,10 @@
             </div>
           </div>
           <div class="feature-content">
-            <h3 class="card-title">The Unified Research Environment</h3>
+            <h3 class="card-title">Distraction-Free Writing Experience</h3>
             <p class="card-description">
-              Aris integrates writing, collaboration, review, and publishing into a single, cohesive
-              environment, solving fragmentation and reclaiming time lost to tool-juggling and email
-              exchanges.
+              Clean, modern interface designed for focus. Write in RSM or LaTeX with real-time
+              preview, smart formatting, and beautiful typography that makes research a joy to read.
             </p>
           </div>
         </div>
@@ -37,11 +36,11 @@
             </div>
           </div>
           <div class="feature-content">
-            <h3 class="card-title">Intelligent, Human-First Collaboration</h3>
+            <h3 class="card-title">Effortless Real-Time Collaboration</h3>
             <p class="card-description">
-              Focuses on semantic diffs for meaningful change tracking, and the AI Copilot's role in
-              facilitating human interaction by suggesting feedback requests and proposing
-              collaborators (not generating content).
+              See changes as they happen with semantic diffs that highlight meaningful edits. AI
+              Copilot suggests reviewers and facilitates discussions, keeping humans in control of
+              every decision.
             </p>
           </div>
         </div>
@@ -58,11 +57,11 @@
             </div>
           </div>
           <div class="feature-content">
-            <h3 class="card-title">Streamlined Peer Review, Focused on Quality</h3>
+            <h3 class="card-title">Modern Peer Review Interface</h3>
             <p class="card-description">
-              Explains the built-in system for peer review, highlighting how AI recommendations for
-              reviewers lead to more relevant, insightful, and robust evaluations, emphasizing
-              quality and integrity.
+              Track reviews in real-time with clear progress indicators. Reviewers enjoy a clean
+              interface with threaded comments and contextual discussions that make quality feedback
+              easier to provide.
             </p>
           </div>
         </div>
@@ -75,11 +74,11 @@
             </div>
           </div>
           <div class="feature-content">
-            <h3 class="card-title">Interactive Science for Deeper Engagement</h3>
+            <h3 class="card-title">Papers That Adapt to You</h3>
             <p class="card-description">
-              Describes the power of web-native content (embedding data/multimedia), how it boosts
-              discoverability (intelligent tagging/search), understandability (tooltips/smart
-              navigation), and engagement (layered reading, annotations, direct feedback).
+              Web-native papers with interactive figures, embedded data, and responsive design. Read
+              comfortably on any device with smart navigation, tooltips, and layered content that
+              reveals depth when you need it.
             </p>
           </div>
         </div>
