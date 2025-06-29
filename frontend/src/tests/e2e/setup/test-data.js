@@ -1,8 +1,8 @@
 // Test user credentials for e2e tests
 export const TEST_USERS = {
   VALID_USER: {
-    email: "testuser@aris.pub",
-    password: "testpassword123",
+    email: process.env.TEST_USER_EMAIL || "testuser@aris.pub",
+    password: process.env.TEST_USER_PASSWORD || "testpassword123",
     name: "Test User",
   },
 
