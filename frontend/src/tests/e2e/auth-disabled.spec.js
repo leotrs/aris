@@ -1,37 +1,16 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Auth Disabled - Development Mode", () => {
+// @core
+
+test.describe("Auth Disabled - Development Mode @core", () => {
   test("verifies auth guards are bypassed and all routes are accessible", async ({ page }) => {
     // Test 1: Verify backend API is responding with auth disabled
     const healthResponse = await page.request.get("http://localhost:8000/health");
     expect(healthResponse.ok()).toBeTruthy();
 
-    // Debug: Check if auth is disabled by testing backend directly
-    const meResponse = await page.request.get("http://localhost:8000/me");
-    console.log("Backend /me response status:", meResponse.status());
-    
-    if (meResponse.ok()) {
-      const userData = await meResponse.json();
-      console.log("Backend user data:", userData);
-    } else {
-      const errorText = await meResponse.text();
-      console.log("Backend /me error response:", errorText);
-    }
-
     // Test 2: Verify home page is directly accessible (no redirect to login)
     await page.goto("/");
     await page.waitForLoadState("networkidle");
-
-    // Debug: Check current URL
-    const currentUrl = page.url();
-    console.log("Current URL after goto('/'):", currentUrl);
-
-    // Check if we're still on login page - if so, VITE_DISABLE_AUTH is not working
-    if (currentUrl.includes("/login")) {
-      console.log("❌ VITE_DISABLE_AUTH is not working - still redirected to login");
-      // Fail the test with a clear message
-      throw new Error("VITE_DISABLE_AUTH environment variable is not working. Frontend is still redirecting to login page.");
-    }
 
     // Should stay on home page, not redirect to login
     await expect(page).toHaveURL("/", { timeout: 5000 });
@@ -61,7 +40,7 @@ test.describe("Auth Disabled - Development Mode", () => {
     }
 
     // Test 7: Verify backend API calls work without auth headers
-    const response = await page.request.get("http://localhost:8000/api/health");
+    const response = await page.request.get("http://localhost:8000/health");
     expect(response.ok()).toBeTruthy();
   });
 });

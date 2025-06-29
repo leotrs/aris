@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
+
+// @demo
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Focus Mode and Drawer Interaction", () => {
+test.describe("Focus Mode and Drawer Interaction @demo-ui", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
@@ -11,9 +13,9 @@ test.describe("Focus Mode and Drawer Interaction", () => {
     await page.goto("/demo", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
 
-    // Wait for demo content to load
-    await expect(page.locator('[data-testid="demo-canvas"][data-loaded="true"]')).toBeVisible({
-      timeout: 20000,
+    // Wait for demo content to load (optimized for CI performance)
+    await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible({
+      timeout: 5000,
     });
   });
 

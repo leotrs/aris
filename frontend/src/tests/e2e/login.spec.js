@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
+
+// @auth-flows
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { TEST_CREDENTIALS } from "./setup/test-data.js";
 
-test.describe("Login Flow Tests", () => {
+test.describe("Login Flow Tests @auth-flows", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {

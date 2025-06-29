@@ -14,11 +14,11 @@ export default defineConfig({
   /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
   /* Retry configuration */
-  retries: process.env.CI ? 2 : 1, // Always retry flaky tests at least once
+  retries: process.env.CI ? 1 : 0, // Minimal retries in CI, none locally
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : 2, // Limit workers for faster startup
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: process.env.CI ? "html" : "line", // Use line reporter for faster local feedback
+  reporter: process.env.CI ? "github" : "line", // Use github reporter in CI for cleaner output
   /* Global timeout for each test */
   timeout: 15000, // 15 seconds - allows for auth operations
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
@@ -45,35 +45,29 @@ export default defineConfig({
         {
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
-          retries: 3, // Extra retries for flaky tests in CI
         },
         {
           name: "firefox",
           use: { ...devices["Desktop Firefox"] },
-          retries: 3,
         },
         {
           name: "webkit",
           use: { ...devices["Desktop Safari"] },
-          retries: 3,
         },
         {
           name: "Mobile Chrome",
           use: { ...devices["Pixel 5"] },
-          retries: 3,
         },
         {
           name: "Mobile Safari",
           use: { ...devices["iPhone 12"] },
-          retries: 3,
         },
       ]
     : [
-        // Development: Run on Chromium only for speed with retries for flaky tests
+        // Development: Run on Chromium only for speed
         {
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
-          retries: 2, // Retry flaky tests locally
         },
       ],
 

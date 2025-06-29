@@ -19,15 +19,23 @@ const LOG_LEVELS = {
  * Get current log level based on environment
  */
 function getCurrentLogLevel() {
+  // Check for explicit log level override
+  const explicitLogLevel = import.meta.env.VITE_LOG_LEVEL;
+  if (explicitLogLevel && LOG_LEVELS[explicitLogLevel] !== undefined) {
+    return LOG_LEVELS[explicitLogLevel];
+  }
+
   const env = import.meta.env.VITE_ENV || import.meta.env.MODE;
   const nodeEnv = typeof process !== "undefined" ? process.env.NODE_ENV : "";
 
-  // Check for test environment
+  // Check for test environment (including Playwright E2E tests)
   const isTest =
     env === "test" ||
     nodeEnv === "test" ||
     (typeof window !== "undefined" && window.__vitest__) ||
-    (typeof global !== "undefined" && global.__vitest__);
+    (typeof global !== "undefined" && global.__vitest__) ||
+    (typeof window !== "undefined" && window.playwright) ||
+    (typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.includes("Playwright"));
 
   const isDev = env === "development" || env === "DEV";
 

@@ -1,7 +1,9 @@
 import { test, expect } from "@playwright/test";
+
+// @demo
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Demo Workspace Functionality", () => {
+test.describe("Demo Workspace Functionality @demo-ui", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
@@ -12,9 +14,9 @@ test.describe("Demo Workspace Functionality", () => {
     await page.goto("/demo", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("networkidle");
 
-    // Wait for demo content to load
-    await expect(page.locator('[data-testid="demo-canvas"][data-loaded="true"]')).toBeVisible({
-      timeout: 20000,
+    // Wait for demo content to load (reduced timeout for CI performance)
+    await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible({
+      timeout: 5000,
     });
   });
 

@@ -1,9 +1,11 @@
 import { test } from "@playwright/test";
+
+// @auth
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 import { TEST_CREDENTIALS } from "./setup/test-data.js";
 
-test.describe("Debug File Selection", () => {
+test.describe("Debug File Selection @auth", () => {
   let authHelpers;
   let fileHelpers;
 
