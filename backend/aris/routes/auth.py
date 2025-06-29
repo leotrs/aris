@@ -136,54 +136,10 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
     """
     logger.info(f"Login attempt for email: {user_data.email}")
     
-    # DEBUG: Check database health and connection
-    try:
-        db_check = await db.execute(text("SELECT COUNT(*) FROM users"))
-        total_users = db_check.scalar()
-        logger.info(f"DEBUG: Database has {total_users} total users")
-        
-        # DEBUG: Show ALL users in the database
-        all_users_debug = await db.execute(text("SELECT id, email, name, deleted_at FROM users"))
-        all_user_rows = all_users_debug.fetchall()
-        logger.info(f"DEBUG: All users in database:")
-        for row in all_user_rows:
-            logger.info(f"  ID {row.id}: email='{row.email}', name='{row.name}', deleted_at={row.deleted_at}")
-    except Exception as e:
-        logger.error(f"DEBUG: Database connection error: {e}")
-    
-    # DEBUG: Check all users with this email first (including soft-deleted)
-    all_users_result = await db.execute(
-        select(User).where(User.email == user_data.email)
-    )
-    all_users = all_users_result.scalars().all()
-    logger.info(f"DEBUG: Found {len(all_users)} total users with email {user_data.email}")
-    for u in all_users:
-        logger.info(f"  User {u.id}: deleted_at={u.deleted_at}, created_at={u.created_at}")
-    
-    # DEBUG: Check if there are ANY users with testuser@aris.pub regardless of case
-    case_check_result = await db.execute(
-        text("SELECT id, email, deleted_at, created_at FROM users WHERE LOWER(email) = LOWER(:email)"),
-        {"email": user_data.email}
-    )
-    case_check_users = case_check_result.fetchall()
-    logger.info(f"DEBUG: Case-insensitive search found {len(case_check_users)} users")
-    for row in case_check_users:
-        logger.info(f"  ID {row.id}: email='{row.email}', deleted_at={row.deleted_at}")
-    
     result = await db.execute(
         select(User).where(User.email == user_data.email, User.deleted_at.is_(None))
     )
     user = result.scalars().first()
-    
-    # DEBUG: Log password verification details
-    if user:
-        password_valid = verify_password(user_data.password, user.password_hash)
-        logger.info(f"Password verification for user {user.id}: {password_valid}")
-        logger.info(f"Password hash starts with: {user.password_hash[:20]}...")
-        if not password_valid:
-            logger.warning(f"Password mismatch - provided password starts with: {user_data.password[:4]}...")
-    else:
-        logger.warning(f"No active user found with email {user_data.email}")
     
     if not user or not verify_password(user_data.password, user.password_hash):
         logger.warning(f"Failed login attempt for email: {user_data.email}")

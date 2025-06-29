@@ -43,7 +43,6 @@ print(f"🔑 Test password starts with: {TEST_USER_PASSWORD[:4]}...")
 
 async def reset_test_user():
     """Reset test user and their data to known stable state."""
-    print(f"🔧 RESET_TEST_USER: Starting at {datetime.now()}")
     session = ArisSession()
 
     try:
@@ -55,7 +54,6 @@ async def reset_test_user():
 
         if user_row:
             user_id = user_row.id
-            print(f"🔧 RESET_TEST_USER: Found existing user {user_id}, cleaning up data")
             # Delete all existing data for test user
             await session.execute(
                 text("DELETE FROM file_tags WHERE file_id IN (SELECT id FROM files WHERE owner_id = :user_id)"),
@@ -68,25 +66,21 @@ async def reset_test_user():
             await session.execute(
                 text("DELETE FROM file_settings WHERE user_id = :user_id"), {"user_id": user_id}
             )
-            print(f"🔧 RESET_TEST_USER: Cleaned up data for user {user_id}")
 
             # Update user with fresh password hash
             password_hash = hash_password(TEST_USER_PASSWORD)
             await session.execute(
-                text("UPDATE users SET password_hash = :password_hash, name = :name WHERE id = :user_id"),
-                {"password_hash": password_hash, "name": "Test User", "user_id": user_id},
+                text("UPDATE users SET password_hash = :password_hash, name = :name, email = :email WHERE id = :user_id"),
+                {"password_hash": password_hash, "name": "Test User", "email": TEST_USER_EMAIL, "user_id": user_id},
             )
             await session.commit()
-            print(f"🔧 RESET_TEST_USER: Updated existing user {user_id}")
         else:
-            print("🔧 RESET_TEST_USER: No existing user found, creating new one")
             # Create new test user
             password_hash = hash_password(TEST_USER_PASSWORD)
             user = User(name="Test User", email=TEST_USER_EMAIL, password_hash=password_hash)
             session.add(user)
             await session.commit()
             user_id = user.id
-            print(f"🔧 RESET_TEST_USER: Created new user {user_id}")
 
         # Create stable test files
         test_files = [
@@ -141,12 +135,10 @@ This is another stable test file for visual tests.
         print(f"   - User ID: {user_id}")
         print(f"   - Files created: {len(test_files)}")
         print(f"   - Tags created: {len(test_tags)}")
-        print(f"🔧 RESET_TEST_USER: Completed at {datetime.now()}")
 
     except Exception as e:
         await session.rollback()
         print(f"❌ Error resetting test user: {e}")
-        print(f"🔧 RESET_TEST_USER: Failed at {datetime.now()}")
         raise
     finally:
         await session.close()
