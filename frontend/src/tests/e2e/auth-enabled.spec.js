@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { TEST_CREDENTIALS } from "./setup/test-data.js";
 
-test.describe("Auth Enabled - Production Mode", () => {
+test.describe("Auth Enabled - Production Mode @auth-flows", () => {
   test("verifies auth guards are active and login flow works", async ({ page }) => {
     const auth = new AuthHelpers(page);
 

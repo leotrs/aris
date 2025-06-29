@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 // @core
 
-test.describe("Auth Disabled - Development Mode", () => {
+test.describe("Auth Disabled - Development Mode @core", () => {
   test("verifies auth guards are bypassed and all routes are accessible", async ({ page }) => {
     // Test 1: Verify backend API is responding with auth disabled
     const healthResponse = await page.request.get("http://localhost:8000/health");
