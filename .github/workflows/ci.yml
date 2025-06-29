@@ -433,7 +433,7 @@ jobs:
         
         # Run tests with both backend and frontend running
         echo "Running E2E tests with backend PID $BACKEND_PID and frontend PID $FRONTEND_PID"
-        npx playwright test auth-disabled.spec.js --project=chromium --reporter=github
+        npx playwright test auth-disabled.spec.js auth-enabled.spec.js auth-redirects.spec.js demo-annotations.spec.js demo-content.spec.js demo-navigation.spec.js demo-workspace.spec.js focus-mode-drawer-interaction.spec.js login.spec.js registration.spec.js sidebar-scrolling-regression.spec.js smoke.spec.js --project=chromium --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup both processes
