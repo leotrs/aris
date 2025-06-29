@@ -255,10 +255,11 @@ jobs:
 
     - name: Start frontend and run auth-enabled E2E test
       working-directory: frontend
-      env:
-        TEST_USER_EMAIL: ${{ env.TEST_USER_EMAIL }}
-        TEST_USER_PASSWORD: ${{ env.TEST_USER_PASSWORD }}
       run: |
+        # Export environment variables for child processes
+        export TEST_USER_EMAIL="${{ env.TEST_USER_EMAIL }}"
+        export TEST_USER_PASSWORD="${{ env.TEST_USER_PASSWORD }}"
+        
         # Start frontend and capture PID for cleanup
         npm run dev &
         FRONTEND_PID=$!
@@ -389,11 +390,12 @@ jobs:
 
     - name: Start frontend and run auth-disabled E2E test
       working-directory: frontend
-      env:
-        VITE_DISABLE_AUTH: true
-        TEST_USER_EMAIL: ${{ env.TEST_USER_EMAIL }}
-        TEST_USER_PASSWORD: ${{ env.TEST_USER_PASSWORD }}
       run: |
+        # Export environment variables for child processes
+        export VITE_DISABLE_AUTH=true
+        export TEST_USER_EMAIL="${{ env.TEST_USER_EMAIL }}"
+        export TEST_USER_PASSWORD="${{ env.TEST_USER_PASSWORD }}"
+        
         # Start frontend and capture PID for cleanup
         npm run dev &
         FRONTEND_PID=$!
