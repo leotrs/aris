@@ -144,52 +144,22 @@ jobs:
     - name: Run unit tests
       run: npm run test:run
 
-  # E2E Tests Matrix
-  e2e-tests:
+  # Ubuntu E2E Tests
+  e2e-ubuntu:
     needs: [backend-test, frontend-test, site-test]
     strategy:
       fail-fast: false
       matrix:
-        include:
-          # Ubuntu runners - Chrome/Firefox/Mobile Chrome
-          - os: ubuntu-latest
-            auth-mode: disabled
-            test-tags: "@core|@demo-content|@demo-ui"
-            browsers: "chromium firefox"
-            projects: "chromium --project=firefox --project=\"Mobile Chrome\""
-            postgres-type: "service"
-            
-          - os: ubuntu-latest
-            auth-mode: enabled
-            test-tags: "@auth[^-]|@auth-flows"
-            browsers: "chromium firefox"
-            projects: "chromium --project=firefox --project=\"Mobile Chrome\""
-            postgres-type: "service"
-            
-          # macOS runners - Safari/Mobile Safari
-          - os: macos-latest
-            auth-mode: disabled
-            test-tags: "@core|@demo-content|@demo-ui"
-            browsers: "webkit"
-            projects: "webkit --project=\"Mobile Safari\""
-            postgres-type: "brew"
-            
-          - os: macos-latest
-            auth-mode: enabled
-            test-tags: "@auth[^-]|@auth-flows"
-            browsers: "webkit"
-            projects: "webkit --project=\"Mobile Safari\""
-            postgres-type: "brew"
-
-    runs-on: ${{ matrix.os }}
+        auth-mode: [disabled, enabled]
+    runs-on: ubuntu-latest
     env:
       ENV: ${{ matrix.auth-mode == 'enabled' && 'PROD' || 'CI' }}
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      DB_URL_LOCAL: ${{ matrix.os == 'ubuntu-latest' && 'postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris' || 'postgresql+asyncpg://localhost:5432/test_aris' }}
-      DB_URL_PROD: ${{ matrix.os == 'ubuntu-latest' && 'postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris' || 'postgresql+asyncpg://localhost:5432/test_aris' }}
-      ALEMBIC_DB_URL_LOCAL: ${{ matrix.os == 'ubuntu-latest' && 'postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris' || 'postgresql+psycopg2://localhost:5432/test_aris' }}
-      ALEMBIC_DB_URL_PROD: ${{ matrix.os == 'ubuntu-latest' && 'postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris' || 'postgresql+psycopg2://localhost:5432/test_aris' }}
+      DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
       JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
@@ -198,68 +168,37 @@ jobs:
 
     services:
       postgres:
-        image: ${{ matrix.postgres-type == 'service' && 'postgres:15' || '' }}
+        image: postgres:15
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: test_aris
           POSTGRES_HOST_AUTH_METHOD: trust
-        options: ${{ matrix.postgres-type == 'service' && '--health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 3' || '' }}
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 3
         ports:
-          - ${{ matrix.postgres-type == 'service' && '5432:5432' || '' }}
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v4
 
-    # Ubuntu setup
-    - name: Install uv (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+    - name: Install uv
       uses: astral-sh/setup-uv@v6
       with:
         version: "latest"
         enable-cache: true
 
-    - name: Set up Python (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+    - name: Set up Python
       run: uv python install 3.13
 
-    - name: Wait for PostgreSQL to be ready (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+    - name: Wait for PostgreSQL to be ready
       run: |
         timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
         echo "PostgreSQL is ready!"
 
-    # macOS setup
-    - name: Install Python (macOS)
-      if: matrix.os == 'macos-latest'
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-
-    - name: Install uv (macOS)
-      if: matrix.os == 'macos-latest'
-      run: pip install uv
-
-    - name: Setup PostgreSQL (macOS)
-      if: matrix.os == 'macos-latest'
-      run: |
-        brew install postgresql
-        brew services start postgresql
-        # Wait for PostgreSQL to be ready
-        for i in {1..30}; do
-          if pg_isready -q; then
-            echo "PostgreSQL is ready!"
-            break
-          fi
-          if [ $i -eq 30 ]; then
-            echo "PostgreSQL failed to start"
-            exit 1
-          fi
-          sleep 2
-        done
-        createdb test_aris
-
-    # Common backend setup
     - name: Create virtual environment and sync dependencies
       working-directory: backend
       run: |
@@ -272,7 +211,6 @@ jobs:
         uv run alembic upgrade head
         ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
 
-    # Frontend setup
     - name: Setup Node.js
       uses: actions/setup-node@v4
       with:
@@ -284,38 +222,22 @@ jobs:
       working-directory: frontend
       run: npm ci
 
-    # Browser installation
-    - name: Cache Playwright browsers (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
+    - name: Cache Playwright browsers
       uses: actions/cache@v4
-      id: playwright-cache-ubuntu
+      id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-${{ matrix.browsers }}
+        key: playwright-browsers-${{ runner.os }}-chromium-firefox
 
-    - name: Cache Playwright browsers (macOS)
-      if: matrix.os == 'macos-latest'
-      uses: actions/cache@v4
-      id: playwright-cache-macos
-      with:
-        path: ~/Library/Caches/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-webkit
-
-    - name: Install Playwright browsers (Ubuntu)
+    - name: Install Playwright browsers
       working-directory: frontend
-      if: matrix.os == 'ubuntu-latest' && steps.playwright-cache-ubuntu.outputs.cache-hit != 'true'
-      run: npx playwright install ${{ matrix.browsers }} --with-deps
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install chromium firefox --with-deps
 
-    - name: Install Playwright browsers (macOS)
-      working-directory: frontend
-      if: matrix.os == 'macos-latest' && steps.playwright-cache-macos.outputs.cache-hit != 'true'
-      run: npx playwright install webkit
-
-    # Run tests
     - name: Start backend and frontend, run E2E tests
       run: |
         # Start backend
-        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on ${{ matrix.os }}..."
+        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on Ubuntu..."
         cd backend
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
@@ -347,9 +269,151 @@ jobs:
         # Wait for frontend
         sleep 15
         
-        # Run tests
-        echo "Running ${{ matrix.auth-mode }} E2E tests: ${{ matrix.test-tags }}"
-        npx playwright test --grep "${{ matrix.test-tags }}" --project=${{ matrix.projects }} --reporter=github
+        # Run tests based on auth mode
+        if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
+          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui"
+          npx playwright test --grep "@core|@demo-content|@demo-ui" --project=chromium --project=firefox --project="Mobile Chrome" --reporter=github
+        else
+          echo "Running auth E2E tests: @auth[^-]|@auth-flows"
+          npx playwright test --grep "@auth[^-]|@auth-flows" --project=chromium --project=firefox --project="Mobile Chrome" --reporter=github
+        fi
+        TEST_EXIT_CODE=$?
+        
+        # Cleanup
+        echo "Cleaning up processes..."
+        kill $FRONTEND_PID 2>/dev/null || true
+        kill $BACKEND_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
+
+  # macOS E2E Tests  
+  e2e-macos:
+    needs: [backend-test, frontend-test, site-test]
+    strategy:
+      fail-fast: false
+      matrix:
+        auth-mode: [disabled, enabled]
+    runs-on: macos-latest
+    env:
+      ENV: ${{ matrix.auth-mode == 'enabled' && 'PROD' || 'CI' }}
+      DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
+      VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
+      DB_URL_LOCAL: postgresql+asyncpg://localhost:5432/test_aris
+      DB_URL_PROD: postgresql+asyncpg://localhost:5432/test_aris
+      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://localhost:5432/test_aris
+      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://localhost:5432/test_aris
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      VITE_LOG_LEVEL: WARN
+      VITE_API_BASE_URL: http://localhost:8000
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Install uv
+      run: pip install uv
+
+    - name: Setup PostgreSQL
+      run: |
+        brew install postgresql
+        brew services start postgresql
+        # Wait for PostgreSQL to be ready
+        for i in {1..30}; do
+          if pg_isready -q; then
+            echo "PostgreSQL is ready!"
+            break
+          fi
+          if [ $i -eq 30 ]; then
+            echo "PostgreSQL failed to start"
+            exit 1
+          fi
+          sleep 2
+        done
+        createdb test_aris
+
+    - name: Create virtual environment and sync dependencies
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --group test --group dev
+
+    - name: Run database migrations
+      working-directory: backend
+      run: |
+        uv run alembic upgrade head
+        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/Library/Caches/ms-playwright
+        key: playwright-browsers-${{ runner.os }}-webkit
+
+    - name: Install Playwright browsers
+      working-directory: frontend
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install webkit
+
+    - name: Start backend and frontend, run E2E tests
+      run: |
+        # Start backend
+        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on macOS..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait for backend
+        sleep 8
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
+        
+        # Start frontend
+        cd ../frontend
+        npm run dev &
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait for frontend
+        sleep 15
+        
+        # Run tests based on auth mode
+        if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
+          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui"
+          npx playwright test --grep "@core|@demo-content|@demo-ui" --project=webkit --project="Mobile Safari" --reporter=github
+        else
+          echo "Running auth E2E tests: @auth[^-]|@auth-flows"
+          npx playwright test --grep "@auth[^-]|@auth-flows" --project=webkit --project="Mobile Safari" --reporter=github
+        fi
         TEST_EXIT_CODE=$?
         
         # Cleanup
