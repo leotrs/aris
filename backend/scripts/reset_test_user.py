@@ -12,13 +12,15 @@ from pathlib import Path
 from dotenv import load_dotenv
 from sqlalchemy import text
 
+
 # Add the backend directory to Python path so we can import aris modules
 backend_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(backend_dir))
 
-from aris.deps import ArisSession
-from aris.models.models import File, FileStatus, Tag, User
-from aris.security import hash_password
+# Import aris modules after adding to path
+from aris.deps import ArisSession  # noqa: E402
+from aris.models.models import File, FileStatus, Tag, User  # noqa: E402
+from aris.security import hash_password  # noqa: E402
 
 
 # Load environment variables using the same logic as config.py
