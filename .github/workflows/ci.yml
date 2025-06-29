@@ -220,8 +220,16 @@ jobs:
       working-directory: frontend
       run: npm ci
 
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-browsers-${{ runner.os }}-chromium
+
     - name: Install Playwright browsers
       working-directory: frontend
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install chromium
 
     - name: Start frontend and run auth-enabled E2E test
@@ -310,8 +318,16 @@ jobs:
       working-directory: frontend
       run: npm ci
 
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-browsers-${{ runner.os }}-chromium
+
     - name: Install Playwright browsers
       working-directory: frontend
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install chromium
 
     - name: Start frontend and run auth-disabled E2E test
