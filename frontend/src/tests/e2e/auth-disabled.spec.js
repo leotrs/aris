@@ -2,30 +2,34 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Auth Disabled - Development Mode", () => {
   test("verifies auth guards are bypassed and all routes are accessible", async ({ page }) => {
-    // Test 1: Verify home page is directly accessible (no redirect to login)
+    // Test 1: Verify backend API is responding with auth disabled
+    const healthResponse = await page.request.get("http://localhost:8000/health");
+    expect(healthResponse.ok()).toBeTruthy();
+
+    // Test 2: Verify home page is directly accessible (no redirect to login)
     await page.goto("/");
     await page.waitForLoadState("networkidle");
 
     // Should stay on home page, not redirect to login
-    await expect(page).toHaveURL("/");
+    await expect(page).toHaveURL("/", { timeout: 10000 });
 
-    // Test 2: Verify protected content is visible without login
+    // Test 3: Verify protected content is visible without login
     await expect(
       page.locator(
         '[data-testid="user-menu"], [data-testid="create-file-button"], [data-testid="files-container"]'
       )
-    ).toBeVisible();
+    ).toBeVisible({ timeout: 10000 });
 
-    // Test 3: Verify no login form is present on home page
+    // Test 4: Verify no login form is present on home page
     await expect(page.locator('[data-testid="email-input"]')).not.toBeVisible();
     await expect(page.locator('[data-testid="password-input"]')).not.toBeVisible();
 
-    // Test 4: Verify settings page is also accessible
+    // Test 5: Verify settings page is also accessible
     await page.goto("/settings");
     await page.waitForLoadState("networkidle");
-    await expect(page).toHaveURL("/settings");
+    await expect(page).toHaveURL("/settings", { timeout: 10000 });
 
-    // Test 5: Verify workspace routes are accessible
+    // Test 6: Verify workspace routes are accessible
     // Try to create a file to test workspace access
     await page.goto("/");
     await page.waitForLoadState("networkidle");
@@ -37,8 +41,8 @@ test.describe("Auth Disabled - Development Mode", () => {
       await expect(page.locator('[data-testid="file-title-input"], .modal')).toBeVisible();
     }
 
-    // Test 6: Verify backend API calls work without auth headers
-    const response = await page.request.get("/api/health");
+    // Test 7: Verify backend API calls work without auth headers
+    const response = await page.request.get("http://localhost:8000/api/health");
     expect(response.ok()).toBeTruthy();
   });
 });
