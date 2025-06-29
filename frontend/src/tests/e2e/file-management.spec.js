@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
+
+// @auth
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 
-test.describe("File Management Tests", () => {
+test.describe("File Management Tests @auth", () => {
   let authHelpers;
   let fileHelpers;
 

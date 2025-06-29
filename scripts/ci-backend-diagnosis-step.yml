@@ -1,0 +1,29 @@
+# Replace the "Start backend API" step in CI with this step to run diagnosis
+
+    - name: Diagnose backend process and /render endpoint
+      working-directory: .
+      run: |
+        echo "🔍 Running backend diagnosis instead of normal startup"
+        echo "This will prove whether backend gets killed or /render fails"
+        
+        # Set up environment same as normal CI
+        export ENV=PROD
+        export DB_URL_LOCAL=postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+        export DB_URL_PROD=postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+        export ALEMBIC_DB_URL_LOCAL=postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+        export ALEMBIC_DB_URL_PROD=postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+        export JWT_SECRET_KEY=test_secret_key_for_ci_environment_32_chars_minimum
+        export TEST_USER_EMAIL=testuser@aris.pub
+        export TEST_USER_PASSWORD="${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}"
+        
+        # Run the diagnosis
+        ./scripts/run-backend-diagnosis.sh
+        
+        # The script will either:
+        # 1. Prove backend dies during execution
+        # 2. Prove backend stays alive but /render fails  
+        # 3. Prove everything works (problem is elsewhere)
+        
+        echo ""
+        echo "🎯 DIAGNOSIS COMPLETE"
+        echo "Check the logs above for definitive evidence of what's wrong"

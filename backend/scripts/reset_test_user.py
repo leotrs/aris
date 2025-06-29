@@ -69,8 +69,8 @@ async def reset_test_user():
             # Update user with fresh password hash
             password_hash = hash_password(TEST_USER_PASSWORD)
             await session.execute(
-                text("UPDATE users SET password_hash = :password_hash, name = :name WHERE id = :user_id"),
-                {"password_hash": password_hash, "name": "Test User", "user_id": user_id},
+                text("UPDATE users SET password_hash = :password_hash, name = :name, email = :email WHERE id = :user_id"),
+                {"password_hash": password_hash, "name": "Test User", "email": TEST_USER_EMAIL, "user_id": user_id},
             )
             await session.commit()
         else:

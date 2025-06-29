@@ -10,7 +10,9 @@
 
 import { test, expect } from "@playwright/test";
 
-test.describe("Sidebar Scrolling Regression", () => {
+// @core
+
+test.describe("Sidebar Scrolling Regression @core", () => {
   test("sidebar scrolls properly in short viewport to show user menu", async ({ page }) => {
     // Set viewport to wide but short (the problematic case)
     await page.setViewportSize({ width: 1400, height: 600 });

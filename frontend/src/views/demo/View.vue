@@ -78,22 +78,15 @@
   // Initialize demo content
   onMounted(async () => {
     try {
-      console.log(
-        "Initializing demo content with source:",
-        file.value.source.substring(0, 100) + "..."
-      );
       const response = await api.post("/render", { source: file.value.source });
       demoFileReactive.html = response.data;
       isContentLoaded.value = true;
-      console.log("Demo content initialized, HTML length:", demoFileReactive.html.length);
-      console.log("HTML preview:", demoFileReactive.html.substring(0, 200) + "...");
     } catch (error) {
       console.error("Failed to initialize demo content:", error);
       // Provide fallback HTML content
       demoFileReactive.html =
         "<div class='manuscript'><h1>The Future of Web-Native Publishing</h1><p>Demo content loaded with fallback.</p></div>";
       isContentLoaded.value = true;
-      console.log("Demo content initialized with fallback HTML");
     }
   });
 

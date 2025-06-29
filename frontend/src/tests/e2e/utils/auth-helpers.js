@@ -91,4 +91,22 @@ export class AuthHelpers {
       return { accessToken: null, refreshToken: null, user: null };
     }
   }
+
+  async expectToBeOnLoginPage() {
+    // Verify we're on the login page
+    await expect(this.page).toHaveURL("/login");
+    
+    // Verify login form elements are visible
+    await expect(this.page.locator('[data-testid="email-input"]')).toBeVisible();
+    await expect(this.page.locator('[data-testid="password-input"]')).toBeVisible();
+    await expect(this.page.locator('[data-testid="login-button"]')).toBeVisible();
+  }
+
+  async expectToBeLoggedIn() {
+    // Verify we're on the home page (not login page)
+    await expect(this.page).toHaveURL("/");
+    
+    // Verify that we have logged-in user elements visible (check for user-menu specifically)
+    await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible();
+  }
 }

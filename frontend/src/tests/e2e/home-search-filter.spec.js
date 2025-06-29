@@ -1,8 +1,10 @@
 import { test, expect } from "@playwright/test";
+
+// @auth
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 
-test.describe("Home View Search & Filter", () => {
+test.describe("Home View Search & Filter @auth", () => {
   let authHelpers, fileHelpers;
 
   test.beforeEach(async ({ page }) => {
