@@ -59,12 +59,7 @@
 </template>
 
 <script setup>
-  import {
-    IconUser,
-    IconBuilding,
-    IconRocket,
-    IconCalendar,
-  } from "@tabler/icons-vue";
+  import { IconUser, IconBuilding, IconRocket, IconCalendar } from "@tabler/icons-vue";
 </script>
 
 <style scoped>

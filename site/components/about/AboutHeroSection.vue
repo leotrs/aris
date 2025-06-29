@@ -6,9 +6,9 @@
           Where Research Lives and Evolves
         </h1>
         <p class="about-hero-subheadline">
-          Aris is the collaborative preprint server that connects your entire research journey. 
-          From first draft through peer review to journal submission—all in one place, 
-          all building on each other.
+          Aris is the collaborative preprint server that connects your entire research journey.
+          first draft through peer review to journal submission—all in one place, all building on
+          each other.
         </p>
         <div class="what-you-get">
           <div class="rsm-explanation">

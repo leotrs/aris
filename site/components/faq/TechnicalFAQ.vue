@@ -16,7 +16,10 @@
         <div class="faq-item featured">
           <div class="faq-question" @click="toggleFAQ('orcid-integration')">
             <h3 class="question-text">Does this work with ORCID?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('orcid-integration') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('orcid-integration') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>

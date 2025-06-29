@@ -20,7 +20,10 @@
         <div class="faq-item featured">
           <div class="faq-question" @click="toggleFAQ('vs-preprint-servers')">
             <h3 class="question-text">How is this different from preprint servers?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('vs-preprint-servers') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('vs-preprint-servers') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>
@@ -136,7 +139,10 @@
             <div v-if="activeFAQs.includes('vs-latex')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
-                  <strong>Aris supports LaTeX import and maintains LaTeX-quality typesetting</strong> while adding modern collaboration features:
+                  <strong
+                    >Aris supports LaTeX import and maintains LaTeX-quality typesetting</strong
+                  >
+                  while adding modern collaboration features:
                 </p>
                 <div class="workflow-comparison">
                   <div class="tool-limitations">
@@ -186,7 +192,10 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('vs-institutional')">
             <h3 class="question-text">What about institutional repositories and systems?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('vs-institutional') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('vs-institutional') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>
@@ -194,7 +203,8 @@
             <div v-if="activeFAQs.includes('vs-institutional')" class="faq-answer">
               <div class="answer-content">
                 <p class="answer-text">
-                  <strong>Aris complements institutional systems</strong> rather than replacing them. We integrate with your existing workflows:
+                  <strong>Aris complements institutional systems</strong> rather than replacing
+                  them. We integrate with your existing workflows:
                 </p>
                 <div class="integration-features">
                   <div class="feature-card">
@@ -227,7 +237,10 @@
         <div class="faq-item">
           <div class="faq-question" @click="toggleFAQ('journal-formatting')">
             <h3 class="question-text">What about journal formatting requirements?</h3>
-            <div class="question-toggle" :class="{ active: activeFAQs.includes('journal-formatting') }">
+            <div
+              class="question-toggle"
+              :class="{ active: activeFAQs.includes('journal-formatting') }"
+            >
               <IconChevronDown :size="20" />
             </div>
           </div>

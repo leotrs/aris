@@ -6,8 +6,8 @@
           Simple, Transparent Pricing for Research
         </h1>
         <p class="hero-subheadline">
-          Always free for individual researchers. Institutional plans that scale with your team.
-          No vendor lock-in, with complete data export at any time.
+          Always free for individual researchers. Institutional plans that scale with your team. No
+          vendor lock-in, with complete data export at any time.
         </p>
         <div class="hero-badges">
           <div class="badge">

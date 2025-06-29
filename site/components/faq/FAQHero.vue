@@ -31,12 +31,7 @@
 </template>
 
 <script setup>
-  import {
-    IconQuestionMark,
-    IconCheck,
-    IconBulb,
-    IconHeart,
-  } from "@tabler/icons-vue";
+  import { IconQuestionMark, IconCheck, IconBulb, IconHeart } from "@tabler/icons-vue";
 </script>
 
 <style scoped>
@@ -86,7 +81,6 @@
     margin-bottom: var(--space-xl);
   }
 
-
   /* Hero Visual */
   .hero-visual {
     flex: 1;
@@ -97,7 +91,6 @@
     gap: var(--space-2xl);
     min-height: 400px;
   }
-
 
   /* Help Illustration */
   .help-illustration {
@@ -192,8 +185,6 @@
     .hero-visual {
       min-height: 300px;
     }
-
-
 
     .help-illustration {
       width: 150px;

@@ -15,7 +15,10 @@
         content:
           "100% open source collaborative preprint server. Transparent governance, ethical practices, and community-driven development for the academic community.",
       },
-      { property: "og:title", content: "Open Science & Ethics - Aris Collaborative Preprint Server" },
+      {
+        property: "og:title",
+        content: "Open Science & Ethics - Aris Collaborative Preprint Server",
+      },
       {
         property: "og:description",
         content:

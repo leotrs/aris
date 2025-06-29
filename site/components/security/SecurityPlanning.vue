@@ -26,7 +26,8 @@
                   Open Source Foundation
                 </h4>
                 <p class="area-description">
-                  All code will be publicly available for security review. No hidden algorithms or proprietary black boxes.
+                  All code will be publicly available for security review. No hidden algorithms or
+                  proprietary black boxes.
                 </p>
                 <div class="area-status">
                   <IconCircle :size="12" />
@@ -40,7 +41,8 @@
                   Data Protection by Design
                 </h4>
                 <p class="area-description">
-                  Encryption at rest and in transit, minimal data collection, and user-controlled privacy settings.
+                  Encryption at rest and in transit, minimal data collection, and user-controlled
+                  privacy settings.
                 </p>
                 <div class="area-status">
                   <IconCircle :size="12" />
@@ -54,7 +56,8 @@
                   Community Accountability
                 </h4>
                 <p class="area-description">
-                  Open development process with security reviews by the academic community before launch.
+                  Open development process with security reviews by the academic community before
+                  launch.
                 </p>
                 <div class="area-status">
                   <IconCircle :size="12" />
@@ -111,15 +114,21 @@
             <div class="compliance-goals">
               <div class="goal">
                 <h4 class="goal-title">SOC 2 Type II</h4>
-                <p class="goal-description">Independent audit of security controls once we have production systems.</p>
+                <p class="goal-description">
+                  Independent audit of security controls once we have production systems.
+                </p>
               </div>
               <div class="goal">
                 <h4 class="goal-title">GDPR Compliance</h4>
-                <p class="goal-description">Full compliance with EU privacy regulations for international users.</p>
+                <p class="goal-description">
+                  Full compliance with EU privacy regulations for international users.
+                </p>
               </div>
               <div class="goal">
                 <h4 class="goal-title">ISO 27001</h4>
-                <p class="goal-description">Information security management certification as we scale.</p>
+                <p class="goal-description">
+                  Information security management certification as we scale.
+                </p>
               </div>
             </div>
           </div>

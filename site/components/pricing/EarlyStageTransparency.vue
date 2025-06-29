@@ -7,7 +7,8 @@
         </div>
         <h2 id="transparency-heading" class="section-title">Early Stage Commitment</h2>
         <p class="section-subtitle">
-          We're building Aris in the open with the research community. Here's what that means for pricing and your data.
+          We're building Aris in the open with the research community. Here's what that means for
+          pricing and your data.
         </p>
       </div>
 
@@ -18,8 +19,8 @@
           </div>
           <h3 class="card-title">Pricing Lock Guarantee</h3>
           <p class="card-description">
-            Early adopters get locked-in pricing for 2 years, even as we add features and improve the platform.
-            Your trust in our early stage gets rewarded.
+            Early adopters get locked-in pricing for 2 years, even as we add features and improve
+            the platform. Your trust in our early stage gets rewarded.
           </p>
         </div>
 
@@ -29,8 +30,8 @@
           </div>
           <h3 class="card-title">Complete Data Ownership</h3>
           <p class="card-description">
-            Full export of all your data in standard formats (LaTeX, Word, JSON) at any time.
-            No vendor lock-in, no data hostage situations. Your research belongs to you.
+            Full export of all your data in standard formats (LaTeX, Word, JSON) at any time. No
+            vendor lock-in, no data hostage situations. Your research belongs to you.
           </p>
         </div>
 
@@ -40,8 +41,8 @@
           </div>
           <h3 class="card-title">Academic-First Principles</h3>
           <p class="card-description">
-            Individual researchers stay free forever. Institutional pricing designed for academic budgets,
-            not corporate profit maximization.
+            Individual researchers stay free forever. Institutional pricing designed for academic
+            budgets, not corporate profit maximization.
           </p>
         </div>
 
@@ -51,8 +52,8 @@
           </div>
           <h3 class="card-title">Open Development</h3>
           <p class="card-description">
-            Feature development guided by researcher feedback. Request features, report bugs,
-            and influence our roadmap directly.
+            Feature development guided by researcher feedback. Request features, report bugs, and
+            influence our roadmap directly.
           </p>
         </div>
       </div>

@@ -11,24 +11,12 @@
           <form class="contact-form" @submit.prevent="submitForm">
             <div class="form-group">
               <label for="name" class="form-label">Name</label>
-              <input
-                id="name"
-                v-model="form.name"
-                type="text"
-                class="form-input"
-                required
-              />
+              <input id="name" v-model="form.name" type="text" class="form-input" required />
             </div>
 
             <div class="form-group">
               <label for="email" class="form-label">Email</label>
-              <input
-                id="email"
-                v-model="form.email"
-                type="email"
-                class="form-input"
-                required
-              />
+              <input id="email" v-model="form.email" type="email" class="form-input" required />
             </div>
 
             <div class="form-group">
@@ -64,7 +52,7 @@
 
         <div class="contact-info">
           <h3 class="info-title">Quick Links</h3>
-          
+
           <div class="contact-links">
             <a href="mailto:hello@aris-platform.org" class="contact-link">
               <IconMail :size="20" />
@@ -93,42 +81,36 @@
 </template>
 
 <script setup>
-  import { ref } from 'vue';
-  import {
-    IconSend,
-    IconMail,
-    IconShield,
-    IconBrandGithub,
-    IconVideo,
-  } from "@tabler/icons-vue";
+  import { ref } from "vue";
+  import { IconSend, IconMail, IconShield, IconBrandGithub, IconVideo } from "@tabler/icons-vue";
 
   const form = ref({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    name: "",
+    email: "",
+    subject: "",
+    message: "",
   });
 
   const isSubmitting = ref(false);
 
   const submitForm = async () => {
     isSubmitting.value = true;
-    
+
     // Simple form submission (replace with actual implementation)
     try {
-      console.log('Form submitted:', form.value);
+      console.log("Form submitted:", form.value);
       // Add actual form submission logic here
-      alert('Thank you! We\'ll get back to you soon.');
-      
+      alert("Thank you! We'll get back to you soon.");
+
       // Reset form
       form.value = {
-        name: '',
-        email: '',
-        subject: '',
-        message: ''
+        name: "",
+        email: "",
+        subject: "",
+        message: "",
       };
     } catch (error) {
-      alert('Sorry, there was an error sending your message. Please try emailing us directly.');
+      alert("Sorry, there was an error sending your message. Please try emailing us directly.");
     } finally {
       isSubmitting.value = false;
     }

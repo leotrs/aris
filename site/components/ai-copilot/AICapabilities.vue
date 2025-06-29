@@ -1,10 +1,15 @@
 <template>
-  <section id="ai-capabilities" class="ai-capabilities-section" aria-labelledby="capabilities-heading">
+  <section
+    id="ai-capabilities"
+    class="ai-capabilities-section"
+    aria-labelledby="capabilities-heading"
+  >
     <div class="capabilities-content-wrapper">
       <div class="section-header">
         <h2 id="capabilities-heading" class="section-title">AI That Understands Research</h2>
         <p class="section-subtitle">
-          Purpose-built AI features designed specifically for academic writing and research workflows.
+          Purpose-built AI features designed specifically for academic writing and research
+          workflows.
         </p>
       </div>
 
@@ -16,8 +21,8 @@
           </div>
           <h3 class="card-title">Smart Writing Assistance</h3>
           <p class="card-description">
-            Context-aware suggestions that understand academic writing conventions, research terminology, 
-            and disciplinary standards.
+            Context-aware suggestions that understand academic writing conventions, research
+            terminology, and disciplinary standards.
           </p>
           <div class="card-features">
             <div class="feature-item">
@@ -46,8 +51,8 @@
           </div>
           <h3 class="card-title">Citation Intelligence</h3>
           <p class="card-description">
-            Intelligent citation assistance that finds relevant papers, formats references, 
-            and ensures proper attribution throughout your document.
+            Intelligent citation assistance that finds relevant papers, formats references, ensures
+            proper attribution throughout your document.
           </p>
           <div class="card-features">
             <div class="feature-item">
@@ -76,8 +81,8 @@
           </div>
           <h3 class="card-title">Research Context</h3>
           <p class="card-description">
-            AI that understands your research domain and provides contextual insights, 
-            helping identify gaps and connections in your work.
+            AI that understands your research domain and provides contextual insights, identify gaps
+            and connections in your work.
           </p>
           <div class="card-features">
             <div class="feature-item">
@@ -106,8 +111,8 @@
           </div>
           <h3 class="card-title">Document Structure</h3>
           <p class="card-description">
-            AI-powered organization that helps structure your paper logically, 
-            ensuring clear flow and proper academic formatting.
+            AI-powered organization that helps structure your paper logically, ensuring clear flow
+            and proper academic formatting.
           </p>
           <div class="card-features">
             <div class="feature-item">
@@ -136,8 +141,8 @@
           </div>
           <h3 class="card-title">Collaboration Intelligence</h3>
           <p class="card-description">
-            Smart features that enhance team writing, track contributions, 
-            and facilitate seamless collaboration between co-authors.
+            Smart features that enhance team writing, track contributions, and facilitate seamless
+            collaboration between co-authors.
           </p>
           <div class="card-features">
             <div class="feature-item">
@@ -166,8 +171,8 @@
           </div>
           <h3 class="card-title">Quality Assurance</h3>
           <p class="card-description">
-            Comprehensive quality checks that ensure your research meets academic standards 
-            and publication requirements.
+            Comprehensive quality checks that ensure your research meets academic standards
+            publication requirements.
           </p>
           <div class="card-features">
             <div class="feature-item">
@@ -193,7 +198,8 @@
       <div class="capabilities-cta">
         <h3 class="cta-title">Experience AI-Enhanced Research Writing</h3>
         <p class="cta-description">
-          See how AI can accelerate your research workflow while maintaining the highest standards of academic integrity.
+          See how AI can accelerate your research workflow while maintaining the highest standards
+          of academic integrity.
         </p>
         <div class="cta-buttons">
           <a href="/demo" class="btn btn-primary">Try AI Features</a>

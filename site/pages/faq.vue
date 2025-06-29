@@ -16,7 +16,10 @@
         content:
           "Common questions about Aris collaborative preprint server. Data ownership, journal compatibility, platform comparisons, and technical details.",
       },
-      { property: "og:title", content: "Frequently Asked Questions - Aris Collaborative Preprint Server" },
+      {
+        property: "og:title",
+        content: "Frequently Asked Questions - Aris Collaborative Preprint Server",
+      },
       {
         property: "og:description",
         content:

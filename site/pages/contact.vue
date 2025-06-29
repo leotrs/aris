@@ -7,14 +7,12 @@
     meta: [
       {
         name: "description",
-        content:
-          "Get in touch with the Aris team. Contact form and essential links.",
+        content: "Get in touch with the Aris team. Contact form and essential links.",
       },
       { property: "og:title", content: "Contact - Aris Collaborative Preprint Server" },
       {
         property: "og:description",
-        content:
-          "Get in touch with the Aris team. Contact form and essential links.",
+        content: "Get in touch with the Aris team. Contact form and essential links.",
       },
     ],
   });

@@ -721,7 +721,6 @@
     color: var(--gray-900);
   }
 
-
   /* Responsive Adjustments */
   @media (max-width: 768px) {
     .data-ownership-faq-section {
@@ -751,7 +750,6 @@
     .compliance-grid {
       grid-template-columns: 1fr;
     }
-
   }
 
   @media (max-width: 480px) {
