@@ -95,21 +95,10 @@ async def current_user(
     disable_auth = os.getenv("DISABLE_AUTH", "")
     print(f"DEBUG: DISABLE_AUTH env var = '{disable_auth}', type = {type(disable_auth)}")
     if disable_auth.lower() == "true":
-        # Return the test user for local testing
+        # Return a mock test user without database dependency
         from datetime import datetime
 
-        from sqlalchemy import text
-        
-        result = await db.execute(
-            text("SELECT id, email, name FROM users WHERE email = :email"),
-            {"email": "testuser@aris.pub"}
-        )
-        user_row = result.first()
-        
-        if not user_row:
-            raise RuntimeError("Test user 'testuser@aris.pub' not found. Run reset_test_user.py script.")
-        
-        # Create a mock user object with the actual test user data
+        # Create a mock user object without database lookup
         class MockUser:
             def __init__(self, user_id, email, name):
                 self.id = user_id
@@ -119,7 +108,7 @@ async def current_user(
                 self.created_at = datetime.now()
                 self.avatar_color = "#0E9AE9"
         
-        return MockUser(user_row.id, user_row.email, user_row.name)
+        return MockUser(1, "testuser@aris.pub", "Test User")
     
     # If no token provided and auth is required, raise error
     if not token:
