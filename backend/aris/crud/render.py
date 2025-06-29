@@ -16,7 +16,7 @@ async def render(src: str, db: AsyncSession):
     try:
         result = rsm.render(src, handrails=True)
         render_time = time.time() - start_time
-        logger.info(f"RSM render completed successfully in {render_time:.3f}s")
+        logger.debug(f"RSM render completed successfully in {render_time:.3f}s")
     except rsm.RSMApplicationError as e:
         render_time = time.time() - start_time
         logger.error(f"RSM render failed after {render_time:.3f}s: {e}")
