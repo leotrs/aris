@@ -54,6 +54,9 @@ jobs:
     - name: Run linting (ruff)
       run: uv run ruff check
 
+    - name: Run type checking (mypy)
+      run: uv run mypy aris/
+
     - name: Wait for PostgreSQL to be ready
       run: |
         timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
