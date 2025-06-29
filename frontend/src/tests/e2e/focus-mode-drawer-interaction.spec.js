@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 // @demo
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Focus Mode and Drawer Interaction @demo", () => {
+test.describe("Focus Mode and Drawer Interaction @demo-ui", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
