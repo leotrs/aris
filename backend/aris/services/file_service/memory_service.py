@@ -257,7 +257,7 @@ class InMemoryFileService(FileServiceInterface):
             return
             
         async with self._lock:
-            logger.info("Syncing files from database to memory")
+            logger.debug("Syncing files from database to memory")
             
             # Clear existing data
             self._files.clear()
@@ -295,7 +295,7 @@ class InMemoryFileService(FileServiceInterface):
             # Set next ID to be one greater than max existing ID
             self._next_id = max_id + 1
             
-            logger.info(f"Loaded {len(db_files)} files from database")
+            logger.debug(f"Loaded {len(db_files)} files from database")
     
     async def sync_to_database(self, db: AsyncSession) -> None:
         """Save all in-memory files to database."""
@@ -304,13 +304,13 @@ class InMemoryFileService(FileServiceInterface):
             return
             
         async with self._lock:
-            logger.info("Syncing all files from memory to database")
+            logger.debug("Syncing all files from memory to database")
             
             for file_data in self._files.values():
                 await self._save_or_update_file_in_db(file_data, db)
             
             await db.commit()
-            logger.info(f"Synced {len(self._files)} files to database")
+            logger.debug(f"Synced {len(self._files)} files to database")
     
     async def save_file_to_database(self, file_id: int, db: AsyncSession) -> bool:
         """Save a specific file to database."""
