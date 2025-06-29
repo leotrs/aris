@@ -1,4 +1,57 @@
-# Marketing Site Requirements & Missing Elements
+# Marketing Site Requirements & Implementation Plan
+
+## Academic Insights Integration (NEW PRIORITY)
+
+Based on critical academic feedback, we need to revise our messaging and positioning:
+
+### 🎯 Core Positioning Shift
+**From**: "Academic Publishing Infrastructure" (too generic)  
+**To**: "Write, Review, and Share Research—All in One Place"
+
+**Key Formula**: Aris = Collaborative Writing + Built-in Peer Review + Modern Preprint Server
+
+### 📝 Immediate Messaging Changes (Phase 1)
+
+#### 1. Homepage Hero Revision
+- **Old**: Generic infrastructure messaging
+- **New**: "The first platform where your paper lives from first draft to public discussion"
+- **Focus**: Integrated workflow, not individual features
+
+#### 2. Replace "ResOps" Terminology
+- **Problem**: Too Silicon Valley, doesn't resonate with academics
+- **Replace with**:
+  - "Living Research Documents"
+  - "Research as Conversation"
+  - "From Draft to Discussion"
+  - "The Complete Research Workflow"
+
+#### 3. Create "How It Works" Section
+Show the complete integrated workflow:
+1. **Start Writing**: Import from arXiv/LaTeX, real-time collaboration
+2. **Invite Review**: Transparent process with threaded discussions
+3. **Share as Preprint**: Publish while review continues
+4. **Journal Ready**: Export with complete review history
+
+### 🚀 Critical Feature Additions
+
+#### Infrastructure Integrations (Add to Technical Pages)
+- [ ] ORCID authentication and profiles
+- [ ] DOI minting partnerships
+- [ ] CrossRef integration
+- [ ] Export to journal formats
+- [ ] arXiv import capabilities (one-click)
+
+#### Preprint Server Positioning
+- [ ] "A Modern Preprint Server—And So Much More"
+- [ ] Not replacing journals, enhancing the journey to them
+- [ ] Compatible with all journal submission requirements
+- [ ] Share immediately while peer review happens
+
+### 📊 What We're NOT Doing
+- **No popularity metrics**: Focus on quality engagement, not views
+- **No "revolutionary" language**: Respect academic culture
+- **No journal replacement**: We complement, not compete
+- **No AI hype**: Practical tools, not buzzwords
 
 ## Critical Missing Elements (Phase 1)
 
@@ -36,7 +89,7 @@
   - [ ] Multi-institutional research
   - [ ] Journal submission process
 
-### ✅ Site Structure Improvements (COMPLETED)
+### ✅ Site Structure Improvements (COMPLETED IN PHASE 2)
 - [x] **Streamline Home Page (8 → 6 sections)**
   - [x] Consolidate WhatIsAris + WhatArisEnables → PlatformOverview
   - [x] Remove UserRolesSection entirely
@@ -58,36 +111,37 @@
   - [x] SustainableByDesign → "100% Open Source & Community Owned"
   - [x] Strong CTA linking to Open Science page
 
-- [ ] **Security & Privacy**
-  - [ ] Security practices documentation
-  - [ ] Data location and encryption
-  - [ ] Privacy policy
-  - [ ] GDPR compliance
-  - [ ] Institutional IT requirements
+- [x] **Security & Privacy** (COMPLETED IN PHASE 2)
+  - [x] Security practices documentation
+  - [x] Data location and encryption
+  - [x] Privacy policy
+  - [x] GDPR compliance
+  - [x] Institutional IT requirements
 
-### 📞 User Support & Contact
-- [ ] **Contact/Support System**
-  - [ ] Contact form
-  - [ ] Support email/documentation
-  - [ ] Community forum link
-  - [ ] Office hours for institutions
-  - [ ] GitHub discussions link
+### ✅ User Support & Contact (COMPLETED IN PHASE 2)
+- [x] **Contact/Support System**
+  - [x] Contact form
+  - [x] Support email/documentation
+  - [x] Community forum link
+  - [x] Office hours for institutions
+  - [x] GitHub discussions link
 
-- [ ] **FAQ/Objection Handling**
-  - [ ] "Can I export my data if you shut down?"
-  - [ ] "Who owns the IP of my manuscripts?"
-  - [ ] "How is this different from preprint servers?"
-  - [ ] "What about journal formatting requirements?"
-  - [ ] "Can I use this for grant applications?"
-  - [ ] "Why not just use Overleaf/Google Docs?"
+- [x] **FAQ/Objection Handling**
+  - [x] "Can I export my data if you shut down?"
+  - [x] "Who owns the IP of my manuscripts?"
+  - [x] "How is this different from preprint servers?"
+  - [x] "What about journal formatting requirements?"
+  - [x] "Can I use this for grant applications?"
+  - [x] "Why not just use Overleaf/Google Docs?"
 
-### 🗺️ Navigation & User Flow  
+### ✅ Navigation & User Flow (COMPLETED IN PHASE 2)
 - [x] **Updated Navigation**
   - [x] Added "Open Science" to main nav (between About and AI Copilot)
   - [x] Added to both desktop and mobile navigation
-  - [ ] Add "Getting Started" path
-  - [ ] Add "Pricing" clarity  
-  - [ ] Researcher vs Institution paths
+  - [x] Add "Getting Started" path
+  - [x] Reorganized navbar: Platform dropdown (About, Open Science, AI Copilot, Security)
+  - [x] Resources dropdown (Documentation, FAQ, Blog)
+  - [x] Contact as main navigation item
 
 - [ ] **Footer Enhancement**
   - [ ] Product: Features, RSM, Integrations, Security
@@ -165,55 +219,82 @@
 - [x] Update navigation to include Open Science link
 - [x] All linters passed, code quality maintained
 
-### 🚀 Phase 2 (STARTING NOW)
-**Priority Order Based on User Flow Impact:**
+### ✅ Phase 2 (COMPLETED)
+- [x] **Getting Started Page** with researcher/institution paths
+- [x] **FAQ Section** with 20+ questions addressing key objections
+- [x] **Security Page** with comprehensive compliance information
+- [x] **Contact/Support System** with 6 components
+- [x] **Navigation Improvements** - cleaned up from 7 to 5 main links
+- [x] Fixed non-existent Tabler icons
+- [x] All components follow consistent Vue.js patterns
 
-1. **Getting Started Page** - Critical for conversion
-   - [ ] Quick start guide/video walkthrough  
-   - [ ] Interactive demo section
-   - [ ] Clear researcher vs institution paths
-   - [ ] "See yourself using it in 5 minutes"
+### 🚀 Phase 3 (NEW PRIORITY - Academic Insights Implementation)
+**Based on critical academic feedback:**
 
-2. **FAQ/Objection Handling** - Critical for trust
-   - [ ] "Can I export my data if you shut down?"
-   - [ ] "Who owns the IP of my manuscripts?" 
-   - [ ] "How is this different from preprint servers?"
-   - [ ] "What about journal formatting requirements?"
-   - [ ] "Why not just use Overleaf/Google Docs?"
+#### Week 1: Core Messaging Overhaul
+1. **Revise Homepage Hero**
+   - [ ] Change to "Write, Review, and Share Research—All in One Place"
+   - [ ] Add workflow animation showing integrated process
+   - [ ] Remove generic "infrastructure" language
 
-3. **Security Page** - Required for institutions
-   - [ ] Security practices documentation
-   - [ ] Data location and encryption
-   - [ ] Privacy policy summary
-   - [ ] GDPR compliance
-   - [ ] Institutional IT requirements
+2. **Create "How It Works" Section**
+   - [ ] Visual workflow: Draft → Collaborate → Review → Share
+   - [ ] Emphasize all happening in same interface
+   - [ ] Add "Import from arXiv" prominently
 
-4. **Contact/Support System** - Essential for engagement
-   - [ ] Contact form component
-   - [ ] Support email/documentation
-   - [ ] Community forum link
-   - [ ] GitHub discussions link
+3. **Replace "ResOps" Throughout Site**
+   - [ ] Find all instances of ResOps
+   - [ ] Replace with "Living Research Documents" or similar
+   - [ ] Update About page philosophy sections
 
-### Week 3
-- [ ] Create Pricing page
-- [ ] Update navigation
-- [ ] Add contact/support
-- [ ] Integration documentation
+#### Week 2: Feature Clarifications
+4. **Add Infrastructure Integrations**
+   - [ ] Update Security/Technical pages with ORCID, DOI, CrossRef
+   - [ ] Add "Import from arXiv" to Getting Started
+   - [ ] Mention journal format exports
 
-### Week 4
-- [ ] Polish and test flows
-- [ ] Final review
-- [ ] Performance optimization
-- [ ] Launch preparation
+5. **Enhance Preprint Positioning**
+   - [ ] Add "Modern Preprint Server" section to homepage
+   - [ ] Clarify "not replacing journals" message
+   - [ ] Show compatibility with existing systems
+
+6. **Update About Page**
+   - [ ] Focus on "living documents" concept
+   - [ ] Remove Silicon Valley language
+   - [ ] Add researcher journey visualization
+
+#### Week 3: FAQ and Philosophy Updates
+7. **Expand FAQ with Journal Questions**
+   - [ ] "How does this work with journal submissions?"
+   - [ ] "Can I still submit to Nature/Science/etc?"
+   - [ ] "What happens to peer review after journal acceptance?"
+
+8. **Remove Metrics Focus**
+   - [ ] Review all mentions of analytics/metrics
+   - [ ] Replace with quality engagement language
+   - [ ] Update "Publish and Flourish" messaging
+
+#### Week 4: Polish and Launch
+- [ ] Final messaging consistency check
+- [ ] Ensure integrated workflow story is clear throughout
+- [ ] Test user flows with academic volunteers
+- [ ] Launch updated site
 
 ## Success Metrics
 
 ### Pre-Launch Goals
-- [ ] Clear value proposition in 30 seconds
-- [ ] Two distinct user paths (researchers/institutions)
-- [ ] All critical questions answered
-- [ ] No confusing or redundant sections
-- [ ] Strong open source/ethics positioning
+- [x] Clear value proposition in 30 seconds
+- [x] Two distinct user paths (researchers/institutions)
+- [x] All critical questions answered
+- [x] No confusing or redundant sections
+- [x] Strong open source/ethics positioning
+
+### Phase 3 Goals
+- [ ] Integrated workflow story clear throughout
+- [ ] "Write, Review, Share" message prominent
+- [ ] No Silicon Valley jargon
+- [ ] Clear preprint server positioning
+- [ ] Journal compatibility emphasized
 
 ### Post-Implementation
 - [ ] Reduced bounce rate
@@ -224,9 +305,31 @@
 
 ---
 
+## Key Messaging Framework (NEW)
+
+### Primary Message
+"Write, Review, and Share Research—All in One Place"
+
+### Supporting Messages
+- "From first draft to public discussion"
+- "Transparent peer review built-in"
+- "Share immediately, improve continuously"
+- "Compatible with journal submissions"
+- "The preprint server that does more"
+
+### What We DON'T Say
+- "Revolutionary" or "Disruptive"
+- "Replacing journals"
+- "AI-powered everything"
+- "Metrics-driven impact"
+- "ResOps" (except in technical documentation)
+
+---
+
 ## Notes
 - Target audience: Sophisticated academics who appreciate technical precision
 - No fake social proof or made-up statistics
 - Emphasize open source, ethics, and transparency
-- ResOps concept as core differentiator
+- Integrated workflow as core differentiator
+- Position as enhancing existing systems, not replacing them
 - Pre-launch positioning: "Join the founding community"
