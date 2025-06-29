@@ -209,9 +209,31 @@ For E2E tests to run in CI, the following repository secret must be configured:
 3. Add `TEST_USER_PASSWORD` with the test user password value
 
 #### CI Test Coverage
-- **Backend**: 352 tests with 8 parallel workers, linting (ruff), type checking (mypy)
-- **Frontend**: Unit tests, linting (eslint)  
-- **E2E**: Full integration tests with real backend (Playwright on multiple browsers)
+
+**Backend Testing**
+- **Tests**: 352 tests with 8 parallel workers
+- **Database**: PostgreSQL 15 with per-worker isolation
+- **Quality**: Linting (ruff), type checking (mypy)
+- **Coverage**: Generated in `htmlcov/` directory
+
+**Frontend Testing**
+- **Unit Tests**: Component and utility testing with Vitest
+- **Linting**: ESLint for code quality
+- **E2E Tests**: 7 mutually exclusive job categories for comprehensive coverage
+
+**E2E Test Architecture**
+- **Total Coverage**: 123 tests across 7 specialized job categories
+- **Authentication Control**: Uses `DISABLE_AUTH=true` for auth-free testing
+- **Tag-Based Selection**: Precise test categorization with `@tag` patterns
+- **Mutually Exclusive**: Each test runs exactly once, no overlap
+- **Parallel Execution**: All 7 jobs run simultaneously for maximum speed
+
+**E2E Job Categories**
+1. **e2e-auth** (27 tests): `@auth[^-]` - Core authentication-required functionality
+2. **e2e-auth-flows** (22 tests): `@auth-flows` - Login, registration, redirects
+3. **e2e-demo-content** (37 tests): `@demo-content` - Content rendering, navigation
+4. **e2e-demo-ui** (33 tests): `@demo-ui` - Workspace, annotations, interactions
+5. **e2e-core** (4 tests): `@core` - Critical smoke tests, auth-disabled verification
 
 ### Running Individual Test Suites
 
@@ -225,6 +247,13 @@ cd frontend && npm test
 
 # E2E tests only (requires both servers running)
 cd frontend && npm run test:e2e
+
+# E2E tests by category (with both servers running)
+cd frontend && npm run test:e2e -- --grep "@auth[^-]"      # Auth-required tests
+cd frontend && npm run test:e2e -- --grep "@auth-flows"     # Auth flow tests  
+cd frontend && npm run test:e2e -- --grep "@demo-content"   # Demo content tests
+cd frontend && npm run test:e2e -- --grep "@demo-ui"        # Demo UI tests
+cd frontend && npm run test:e2e -- --grep "@core"           # Core smoke tests
 
 # Run all tests
 cd backend && uv run pytest -n8
@@ -256,10 +285,11 @@ npm run test:e2e                        # All E2E tests pass (requires backend)
 ```
 
 **Testing Infrastructure Notes**
-- Local development uses SQLite for fast iteration
-- CI uses PostgreSQL with per-worker database isolation
-- Use `./simulate-ci` to debug CI-specific issues locally
-- All tests run in parallel with 8 workers for maximum speed
+- **Backend**: Local development uses SQLite for fast iteration; CI uses PostgreSQL with per-worker database isolation
+- **E2E**: Uses tag-based test selection for precise categorization and mutually exclusive execution
+- **Authentication**: E2E tests use `DISABLE_AUTH=true` to bypass authentication for faster, more reliable testing
+- **Performance**: Backend tests run with 8 parallel workers; E2E tests run in 7 parallel job categories
+- **Debug**: Use `./simulate-ci` to debug CI-specific issues locally with 100% fidelity
 
 ## License
 

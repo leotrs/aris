@@ -156,6 +156,7 @@ jobs:
       JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      VITE_LOG_LEVEL: WARN
 
     services:
       postgres:
@@ -304,6 +305,7 @@ jobs:
       JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      VITE_LOG_LEVEL: WARN
 
     services:
       postgres:
@@ -432,6 +434,7 @@ jobs:
       JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      VITE_LOG_LEVEL: WARN
 
     services:
       postgres:
@@ -560,6 +563,7 @@ jobs:
       JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      VITE_LOG_LEVEL: WARN
 
     services:
       postgres:
@@ -688,6 +692,7 @@ jobs:
       JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      VITE_LOG_LEVEL: WARN
 
     services:
       postgres:
