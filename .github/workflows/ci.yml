@@ -156,7 +156,7 @@ jobs:
         auth-mode: [disabled, enabled]
     runs-on: ubuntu-latest
     env:
-      ENV: ${{ matrix.auth-mode == 'enabled' && 'PROD' || 'CI' }}
+      ENV: CI
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
@@ -297,7 +297,7 @@ jobs:
         auth-mode: [disabled, enabled]
     runs-on: macos-latest
     env:
-      ENV: ${{ matrix.auth-mode == 'enabled' && 'PROD' || 'CI' }}
+      ENV: CI
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       DB_URL_LOCAL: postgresql+asyncpg://localhost:5432/test_aris
