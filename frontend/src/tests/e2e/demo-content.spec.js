@@ -71,19 +71,20 @@ test.describe("Demo Content Rendering @demo-content", () => {
         // Ensure element exists and wait for it to be rendered
         await manuscript.waitFor({ state: 'attached', timeout: 5000 });
         
-        // Use DOM-based visibility check for webkit
-        const isVisible = await mobileHelpers.isElementVisibleInDOM(manuscript);
-        if (!isVisible) {
-          // Force scroll and repaint
+        // Try standard Playwright visibility check first
+        try {
+          await expect(manuscript).toBeVisible({ timeout: 5000 });
+        } catch {
+          // Fallback to enhanced DOM check if standard check fails
           await manuscript.scrollIntoViewIfNeeded();
           await page.waitForTimeout(500);
           await page.evaluate(() => window.scrollBy(0, 1));
           await page.waitForTimeout(200);
+          
+          // Use simplified DOM check as final fallback
+          const finalVisibility = await mobileHelpers.isElementVisibleInDOM(manuscript);
+          expect(finalVisibility).toBe(true);
         }
-        
-        // Check if element is visible in DOM
-        const finalVisibility = await mobileHelpers.isElementVisibleInDOM(manuscript);
-        expect(finalVisibility).toBe(true);
       } else {
         await mobileHelpers.expectToBeVisible(manuscript);
       }
@@ -106,14 +107,21 @@ test.describe("Demo Content Rendering @demo-content", () => {
       // Look for RSM handrails (interactive UI elements)
       const handrails = page.locator(".hr");
       
-      // For webkit, use enhanced visibility check
+      // For webkit, use enhanced visibility check with fallback
       if (mobileHelpers.isWebkit()) {
         await handrails.first().waitFor({ state: 'attached', timeout: 8000 });
-        await handrails.first().scrollIntoViewIfNeeded();
-        await page.waitForTimeout(500);
         
-        const isVisible = await mobileHelpers.isElementVisibleInDOM(handrails.first());
-        expect(isVisible).toBe(true);
+        // Try standard Playwright visibility check first
+        try {
+          await expect(handrails.first()).toBeVisible({ timeout: 5000 });
+        } catch {
+          // Fallback to enhanced DOM check if standard check fails
+          await handrails.first().scrollIntoViewIfNeeded();
+          await page.waitForTimeout(500);
+          
+          const isVisible = await mobileHelpers.isElementVisibleInDOM(handrails.first());
+          expect(isVisible).toBe(true);
+        }
       } else {
         await mobileHelpers.expectToBeVisible(handrails.first(), 8000);
       }
@@ -177,26 +185,27 @@ test.describe("Demo Content Rendering @demo-content", () => {
       // Look for the main title
       const title = page.locator("h1").first();
       
-      // For webkit, use enhanced visibility check
+      // For webkit, use enhanced visibility check with fallback
       if (mobileHelpers.isWebkit()) {
         await title.waitFor({ state: 'attached', timeout: 8000 });
         
-        // Force scroll and ensure visibility
-        await title.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(500);
-        
-        // Check DOM visibility for webkit
-        const isVisible = await mobileHelpers.isElementVisibleInDOM(title);
-        if (!isVisible) {
+        // Try standard Playwright visibility check first
+        try {
+          await expect(title).toBeVisible({ timeout: 5000 });
+        } catch {
+          // Fallback to enhanced scroll and DOM check
+          await title.scrollIntoViewIfNeeded();
+          await page.waitForTimeout(500);
+          
           await page.evaluate(() => {
             const h1 = document.querySelector('h1');
             if (h1) h1.scrollIntoView({ behavior: 'instant', block: 'center' });
           });
           await page.waitForTimeout(300);
+          
+          const finalVisibility = await mobileHelpers.isElementVisibleInDOM(title);
+          expect(finalVisibility).toBe(true);
         }
-        
-        const finalVisibility = await mobileHelpers.isElementVisibleInDOM(title);
-        expect(finalVisibility).toBe(true);
       } else {
         await mobileHelpers.expectToBeVisible(title, 8000);
       }
