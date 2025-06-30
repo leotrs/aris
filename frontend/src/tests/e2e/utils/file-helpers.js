@@ -13,8 +13,8 @@ export class FileHelpers {
   async waitForFilesLoaded() {
     const timeouts = this.mobileHelpers.getTimeouts();
 
-    // Wait for network operations to complete (file creation/updates)
-    await this.page.waitForLoadState("networkidle");
+    // Wait for DOM content to be loaded (more reliable than networkidle)
+    await this.page.waitForLoadState("domcontentloaded");
     await this.mobileHelpers.waitForMobileRendering();
 
     try {
@@ -32,7 +32,7 @@ export class FileHelpers {
       // If files container doesn't appear, the duplicate might have broken the app state
       // Refresh the page to restore the file list
       await this.page.reload();
-      await this.page.waitForLoadState("networkidle");
+      await this.page.waitForLoadState("domcontentloaded");
       await this.mobileHelpers.expectToBeVisible(
         this.page.locator('[data-testid="files-container"]'),
         timeouts.long
@@ -59,7 +59,7 @@ export class FileHelpers {
     await this.navigateToHome();
 
     // Wait for home page to fully load with sidebar
-    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForLoadState("domcontentloaded");
     await this.page.waitForTimeout(500);
 
     // Try multiple selectors for the create button
@@ -172,7 +172,7 @@ export class FileHelpers {
       await this.page.goto("/");
     }
     
-    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForLoadState("domcontentloaded");
 
     // Wait for either files or the create button to be present (empty state)
     await this.page.waitForSelector(

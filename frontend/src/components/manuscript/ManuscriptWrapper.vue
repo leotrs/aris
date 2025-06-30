@@ -43,7 +43,7 @@
     <div class="css-links">
       <link
         rel="stylesheet"
-        href="https://cdn.jsdelivr.net/npm/pseudocode@latest/build/pseudocode.min.css"
+        :href="`${api.getUri()}/static/pseudocode.min.css`"
       />
     </div>
 
