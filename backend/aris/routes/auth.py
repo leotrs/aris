@@ -133,7 +133,7 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
     Verifies password using bcrypt and creates both access and refresh tokens.
     Only allows login for non-deleted users.
     """
-    logger.info(f"Login attempt for email: {user_data.email}")
+    logger.debug(f"Login attempt for email: {user_data.email}")
     
     result = await db.execute(
         select(User).where(User.email == user_data.email, User.deleted_at.is_(None))
@@ -152,7 +152,7 @@ async def login(user_data: UserLogin, db: AsyncSession = Depends(get_db)):
         logger.warning(f"Failed login attempt for email: {user_data.email}")
         raise HTTPException(status_code=400, detail="Invalid credentials")
 
-    logger.info(f"Successful login for user_id: {user.id}")
+    logger.debug(f"Successful login for user_id: {user.id}")
     access = jwt.create_access_token(data={"sub": str(user.id)})
     refresh = jwt.create_refresh_token(data={"sub": str(user.id)})
     return {"token_type": "bearer", "access_token": access, "refresh_token": refresh}

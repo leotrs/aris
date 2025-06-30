@@ -35,7 +35,9 @@ function getCurrentLogLevel() {
     (typeof window !== "undefined" && window.__vitest__) ||
     (typeof global !== "undefined" && global.__vitest__) ||
     (typeof window !== "undefined" && window.playwright) ||
-    (typeof navigator !== "undefined" && navigator.userAgent && navigator.userAgent.includes("Playwright"));
+    (typeof navigator !== "undefined" &&
+      navigator.userAgent &&
+      navigator.userAgent.includes("Playwright"));
 
   const isDev = env === "development" || env === "DEV";
 

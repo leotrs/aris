@@ -131,7 +131,7 @@
 
       // Check if authentication is disabled
       const isAuthDisabled = import.meta.env.VITE_DISABLE_AUTH === "true";
-      
+
       if (token && storedUser) {
         logger.info("Found existing auth credentials", { userId: storedUser.id });
         user.value = storedUser;
@@ -147,7 +147,7 @@
           const response = await api.get("/me");
           user.value = response.data;
           fileStore.value = createFileStore(api, user.value);
-          
+
           logger.debug("Loading test user files and tags");
           await fileStore.value.loadFiles();
           await fileStore.value.loadTags();

@@ -227,8 +227,8 @@
   }
 
   .sb-wrapper.mobile {
-    width: 0;
-    height: 0;
+    width: auto;
+    height: auto;
     position: fixed;
     z-index: 999;
   }

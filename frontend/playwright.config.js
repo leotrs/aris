@@ -41,7 +41,7 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: process.env.CI
     ? [
-        // CI: Run on all browsers for comprehensive testing
+        // CI: All browsers for comprehensive testing across different OS runners
         {
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
