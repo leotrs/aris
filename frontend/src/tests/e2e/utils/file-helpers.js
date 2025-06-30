@@ -57,23 +57,59 @@ export class FileHelpers {
     await this.page.waitForLoadState("networkidle");
     await this.page.waitForTimeout(500);
 
-    // Use test ID for more reliable mobile interaction
-    const createButton = this.page.locator('[data-testid="create-file-button"]');
+    // Try multiple selectors for the create button
+    let createButton = null;
+    const buttonSelectors = [
+      '[data-testid="create-file-button"]',
+      'button:has-text("New File")',
+      '[data-testid*="create"]',
+      'button[data-testid*="file"]',
+      ".fab", // floating action button
+      'button:has([data-testid*="plus"])',
+    ];
 
-    // Wait for create button to exist with longer timeout
-    try {
-      await createButton.waitFor({ state: "attached", timeout: 10000 });
-    } catch {
-      // Debug information for CI
-      const url = this.page.url();
-      const title = await this.page.title();
-      const bodyContent = await this.page.evaluate(() =>
-        document.body.textContent.substring(0, 200)
-      );
+    let buttonFound = false;
+    for (const selector of buttonSelectors) {
+      try {
+        createButton = this.page.locator(selector);
+        await createButton.waitFor({ state: "attached", timeout: 3000 });
+        buttonFound = true;
+        break;
+      } catch {
+        continue;
+      }
+    }
 
-      throw new Error(
-        `Create file button not found after 10s. URL: ${url}, Title: ${title}, Body start: ${bodyContent}`
-      );
+    if (!buttonFound) {
+      // Debug information for CI - handle browser closure
+      let debugInfo = "Browser closed or page unavailable";
+      try {
+        const url = this.page.url();
+        const title = await this.page.title();
+        const bodyContent = await this.page.evaluate(() =>
+          document.body.textContent.substring(0, 200)
+        );
+
+        // Also check what buttons are actually present
+        const allButtons = await this.page.locator("button").all();
+        const buttonTexts = await Promise.all(
+          allButtons.slice(0, 5).map(async (btn) => {
+            try {
+              const text = await btn.textContent();
+              const testId = await btn.getAttribute("data-testid");
+              return `Button: "${text}" testid="${testId}"`;
+            } catch {
+              return "Button: [unreadable]";
+            }
+          })
+        );
+
+        debugInfo = `URL: ${url}, Title: ${title}, Body start: ${bodyContent}, Buttons: ${buttonTexts.join(", ")}`;
+      } catch {
+        // Browser already closed, use fallback message
+      }
+
+      throw new Error(`Create file button not found after 10s. ${debugInfo}`);
     }
 
     // For webkit, ensure we're on the right page and wait for layout
