@@ -50,28 +50,35 @@ export class FileHelpers {
   async createNewFile() {
     const timeouts = this.mobileHelpers.getTimeouts();
 
-    // Ensure we're on the home page first
+    // Ensure we're on the home page and wait for it to be ready
     await this.navigateToHome();
+
+    // Wait for home page to fully load with sidebar
+    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForTimeout(500);
 
     // Use test ID for more reliable mobile interaction
     const createButton = this.page.locator('[data-testid="create-file-button"]');
 
+    // Wait for create button to exist with longer timeout
+    try {
+      await createButton.waitFor({ state: "attached", timeout: 10000 });
+    } catch {
+      // Debug information for CI
+      const url = this.page.url();
+      const title = await this.page.title();
+      const bodyContent = await this.page.evaluate(() =>
+        document.body.textContent.substring(0, 200)
+      );
+
+      throw new Error(
+        `Create file button not found after 10s. URL: ${url}, Title: ${title}, Body start: ${bodyContent}`
+      );
+    }
+
     // For webkit, ensure we're on the right page and wait for layout
     if (this.mobileHelpers.isWebkit()) {
-      await this.page.waitForLoadState("domcontentloaded");
       await this.page.waitForTimeout(1000); // Extra wait for webkit layout
-
-      // Check if element exists first
-      const buttonExists = (await createButton.count()) > 0;
-      if (!buttonExists) {
-        // Try navigating to home again if button not found
-        await this.navigateToHome();
-        await this.page.waitForTimeout(1000);
-        const buttonExistsAfterNav = (await createButton.count()) > 0;
-        if (!buttonExistsAfterNav) {
-          throw new Error("Create file button not found in DOM after navigating to home page");
-        }
-      }
 
       // Use DOM visibility check for webkit
       const isVisible = await this.mobileHelpers.isElementVisibleInDOM(createButton);
@@ -113,6 +120,14 @@ export class FileHelpers {
    */
   async navigateToHome() {
     await this.page.goto("/");
+    await this.page.waitForLoadState("networkidle");
+
+    // Wait for either files or the create button to be present (empty state)
+    await this.page.waitForSelector(
+      '[data-testid="files-container"], [data-testid="create-file-button"]',
+      { timeout: 10000 }
+    );
+
     await this.waitForFilesLoaded();
   }
 
