@@ -18,7 +18,7 @@ export class MobileHelpers {
    */
   isWebkit() {
     const browserName = this.page.context().browser()?.browserType()?.name();
-    return browserName === 'webkit';
+    return browserName === "webkit";
   }
 
   /**
@@ -26,7 +26,7 @@ export class MobileHelpers {
    */
   isMobileChrome() {
     const browserName = this.page.context().browser()?.browserType()?.name();
-    return browserName === 'chromium' && this.isMobileViewport();
+    return browserName === "chromium" && this.isMobileViewport();
   }
 
   /**
@@ -70,7 +70,7 @@ export class MobileHelpers {
   async expectToBeVisible(locator, customTimeout = null) {
     const timeouts = this.getTimeouts();
     const timeout = customTimeout || timeouts.medium;
-    
+
     // For webkit and mobile chrome, ensure element is scrolled into view first
     if (this.isWebkit() || this.isMobileChrome()) {
       try {
@@ -79,24 +79,24 @@ export class MobileHelpers {
       } catch {
         // Continue if scroll fails
       }
-      
+
       // Force a repaint on webkit/mobile chrome
       if (this.isWebkit()) {
         await this.page.evaluate(() => {
-          document.body.style.transform = 'translateZ(0)';
+          document.body.style.transform = "translateZ(0)";
           setTimeout(() => {
-            document.body.style.transform = '';
+            document.body.style.transform = "";
           }, 50);
         });
       } else if (this.isMobileChrome()) {
         // For mobile chrome, trigger a different type of repaint
         await this.page.evaluate(() => {
-          window.dispatchEvent(new Event('resize'));
+          window.dispatchEvent(new Event("resize"));
         });
         await this.page.waitForTimeout(100);
       }
     }
-    
+
     await expect(locator).toBeVisible({ timeout });
   }
 
@@ -127,14 +127,30 @@ export class MobileHelpers {
     try {
       return await locator.evaluate((element) => {
         if (!element) return false;
-        
+
         const style = window.getComputedStyle(element);
         const rect = element.getBoundingClientRect();
-        
-        // Simplified visibility check - more forgiving for CI
+
+        // Enhanced visibility check for mobile browsers
+        const isDisplayed = style.display !== "none";
+        const hasSize = rect.width > 0 && rect.height > 0;
+        const isNotHidden = style.visibility !== "hidden" && style.opacity !== "0";
+
+        // Check if element is in viewport for mobile browsers
+        const viewport = {
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+
+        const isInViewport =
+          rect.top < viewport.height &&
+          rect.bottom > 0 &&
+          rect.left < viewport.width &&
+          rect.right > 0;
+
+        // More comprehensive check for mobile browsers
         return (
-          element.offsetParent !== null ||
-          (style.display !== 'none' && rect.width > 0 && rect.height > 0)
+          isDisplayed && hasSize && isNotHidden && (element.offsetParent !== null || isInViewport)
         );
       });
     } catch {

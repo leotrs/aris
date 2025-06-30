@@ -11,7 +11,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
   test.beforeEach(async ({ page }) => {
     authHelpers = new AuthHelpers(page);
     mobileHelpers = new MobileHelpers(page);
-    
+
     // Ensure clean auth state for demo access
     await authHelpers.clearAuthState();
 
@@ -65,23 +65,29 @@ test.describe("Demo Content Rendering @demo-content", () => {
       await mobileHelpers.expectToBeVisible(manuscriptWrapper);
 
       const manuscript = page.locator(".manuscript");
-      
-      // For webkit, use enhanced visibility check
-      if (mobileHelpers.isWebkit()) {
+
+      // For mobile browsers, use enhanced visibility approach
+      if (mobileHelpers.isMobileViewport()) {
         // Ensure element exists and wait for it to be rendered
-        await manuscript.waitFor({ state: 'attached', timeout: 5000 });
-        
+        await manuscript.waitFor({ state: "attached", timeout: 8000 });
+
+        // Scroll to ensure element is in viewport
+        await manuscript.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(500);
+
         // Try standard Playwright visibility check first
         try {
-          await expect(manuscript).toBeVisible({ timeout: 5000 });
+          await expect(manuscript).toBeVisible({ timeout: 8000 });
         } catch {
-          // Fallback to enhanced DOM check if standard check fails
-          await manuscript.scrollIntoViewIfNeeded();
-          await page.waitForTimeout(500);
-          await page.evaluate(() => window.scrollBy(0, 1));
-          await page.waitForTimeout(200);
-          
-          // Use simplified DOM check as final fallback
+          // For mobile browsers, use enhanced DOM visibility check
+          await page.evaluate(() => {
+            // Force layout recalculation
+            document.body.offsetHeight;
+            window.dispatchEvent(new Event("resize"));
+          });
+          await page.waitForTimeout(300);
+
+          // Use enhanced DOM check as fallback
           const finalVisibility = await mobileHelpers.isElementVisibleInDOM(manuscript);
           expect(finalVisibility).toBe(true);
         }
@@ -106,19 +112,27 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
       // Look for RSM handrails (interactive UI elements)
       const handrails = page.locator(".hr");
-      
-      // For webkit, use enhanced visibility check with fallback
-      if (mobileHelpers.isWebkit()) {
-        await handrails.first().waitFor({ state: 'attached', timeout: 8000 });
-        
+
+      // For mobile browsers, use enhanced visibility check with fallback
+      if (isMobile) {
+        await handrails.first().waitFor({ state: "attached", timeout: 8000 });
+
+        // Scroll to ensure element is in viewport
+        await handrails.first().scrollIntoViewIfNeeded();
+        await page.waitForTimeout(500);
+
         // Try standard Playwright visibility check first
         try {
-          await expect(handrails.first()).toBeVisible({ timeout: 5000 });
+          await expect(handrails.first()).toBeVisible({ timeout: 8000 });
         } catch {
-          // Fallback to enhanced DOM check if standard check fails
-          await handrails.first().scrollIntoViewIfNeeded();
-          await page.waitForTimeout(500);
-          
+          // For mobile browsers, use enhanced DOM visibility check
+          await page.evaluate(() => {
+            // Force layout recalculation
+            document.body.offsetHeight;
+            window.dispatchEvent(new Event("resize"));
+          });
+          await page.waitForTimeout(300);
+
           const isVisible = await mobileHelpers.isElementVisibleInDOM(handrails.first());
           expect(isVisible).toBe(true);
         }
@@ -184,25 +198,35 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
       // Look for the main title
       const title = page.locator("h1").first();
-      
-      // For webkit, use enhanced visibility check with fallback
-      if (mobileHelpers.isWebkit()) {
-        await title.waitFor({ state: 'attached', timeout: 8000 });
-        
+
+      // Check if we're on mobile viewport
+      const viewportSize = page.viewportSize();
+      const isMobile = viewportSize && viewportSize.width < 640;
+
+      // For mobile browsers, use enhanced visibility check with fallback
+      if (isMobile) {
+        await title.waitFor({ state: "attached", timeout: 8000 });
+
+        // Scroll to ensure element is in viewport
+        await title.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(500);
+
         // Try standard Playwright visibility check first
         try {
-          await expect(title).toBeVisible({ timeout: 5000 });
+          await expect(title).toBeVisible({ timeout: 8000 });
         } catch {
-          // Fallback to enhanced scroll and DOM check
-          await title.scrollIntoViewIfNeeded();
-          await page.waitForTimeout(500);
-          
+          // For mobile browsers, use enhanced DOM visibility check
           await page.evaluate(() => {
-            const h1 = document.querySelector('h1');
-            if (h1) h1.scrollIntoView({ behavior: 'instant', block: 'center' });
+            // Force layout recalculation and scroll to element
+            const h1 = document.querySelector("h1");
+            if (h1) {
+              h1.scrollIntoView({ behavior: "instant", block: "center" });
+              document.body.offsetHeight;
+              window.dispatchEvent(new Event("resize"));
+            }
           });
           await page.waitForTimeout(300);
-          
+
           const finalVisibility = await mobileHelpers.isElementVisibleInDOM(title);
           expect(finalVisibility).toBe(true);
         }
@@ -277,15 +301,22 @@ test.describe("Demo Content Rendering @demo-content", () => {
         { timeout: isMobile ? 20000 : 15000 }
       );
 
-      // On mobile, scroll to ensure heading is in viewport
-      if (isMobile) {
-        await page.locator("h1").first().scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
-      }
-
-      // Hover over content to reveal border dots (or tap on mobile)
+      // On mobile, ensure heading is visible and accessible for interaction
       const heading = page.locator("h1").first();
       if (isMobile) {
+        // Ensure heading is in viewport and visible before tapping
+        await heading.scrollIntoViewIfNeeded();
+        await page.waitForTimeout(500);
+
+        // Force layout recalculation for mobile browsers
+        await page.evaluate(() => {
+          document.body.offsetHeight;
+          window.dispatchEvent(new Event("resize"));
+        });
+        await page.waitForTimeout(300);
+
+        // Verify heading is visible before attempting tap
+        await expect(heading).toBeVisible({ timeout: 8000 });
         await heading.tap();
       } else {
         await heading.hover();

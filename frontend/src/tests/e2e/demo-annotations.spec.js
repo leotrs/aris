@@ -5,7 +5,7 @@ import { MobileHelpers } from "./utils/mobile-helpers.js";
 
 test.describe("Demo Annotations Viewport @demo-ui", () => {
   let mobileHelpers;
-  
+
   test.beforeEach(async ({ page }) => {
     mobileHelpers = new MobileHelpers(page);
     // Mock any backend requests that might fail in CI
@@ -245,11 +245,11 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
         const count = await elements.count();
         if (count > 0) {
           const firstElement = elements.first();
-          
+
           // Enhanced visibility check for all mobile browsers
           await firstElement.scrollIntoViewIfNeeded();
           await page.waitForTimeout(500);
-          
+
           // Try standard Playwright visibility check first for all browsers
           try {
             await expect(firstElement).toBeVisible({ timeout: 5000 });
@@ -266,7 +266,7 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
         }
       } catch (error) {
         // If browser is closed or element not found, continue to next selector
-        if (error.message?.includes('Target page, context or browser has been closed')) {
+        if (error.message?.includes("Target page, context or browser has been closed")) {
           break; // Exit the loop if browser is closed
         }
         // Continue to next selector for other errors
