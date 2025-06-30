@@ -250,25 +250,17 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
           await firstElement.scrollIntoViewIfNeeded();
           await page.waitForTimeout(500);
           
-          if (mobileHelpers.isWebkit()) {
+          // Try standard Playwright visibility check first for all browsers
+          try {
+            await expect(firstElement).toBeVisible({ timeout: 5000 });
+            visibleElementFound = true;
+            break;
+          } catch {
+            // Fallback to DOM visibility check for both webkit and chromium
             const isVisible = await mobileHelpers.isElementVisibleInDOM(firstElement);
             if (isVisible) {
               visibleElementFound = true;
               break;
-            }
-          } else {
-            // For Chromium mobile browsers, also use DOM-based check as fallback
-            try {
-              await mobileHelpers.expectToBeVisible(firstElement, 8000);
-              visibleElementFound = true;
-              break;
-            } catch {
-              // Fallback to DOM visibility check for mobile Chrome
-              const isVisible = await mobileHelpers.isElementVisibleInDOM(firstElement);
-              if (isVisible) {
-                visibleElementFound = true;
-                break;
-              }
             }
           }
         }
