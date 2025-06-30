@@ -169,12 +169,24 @@ app.mount(
 )
 
 # Mount design assets (only if directory exists)
-if os.path.exists("../design-assets"):
+design_assets_paths = [
+    "../design-assets",  # When running from backend/ directory
+    "design-assets",     # When running from project root
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "design-assets")  # Absolute path fallback
+]
+
+design_assets_dir = None
+for path in design_assets_paths:
+    if os.path.exists(path):
+        design_assets_dir = path
+        break
+
+if design_assets_dir:
     app.mount(
         "/design-assets",
-        StaticFiles(directory="../design-assets"),
+        StaticFiles(directory=design_assets_dir),
         name="design-assets"
     )
-    logger.info("Design assets mounted successfully at /design-assets")
+    logger.info(f"Design assets mounted successfully at /design-assets from {design_assets_dir}")
 else:
-    logger.info("Design assets directory '../design-assets' does not exist - skipping mount")
+    logger.info(f"Design assets directory not found. Tried paths: {design_assets_paths}")
