@@ -90,7 +90,7 @@
   // Load RSM CSS
   const rsmLink = document.createElement("link");
   rsmLink.rel = "stylesheet";
-  rsmLink.href = `${api.getUri()}/static/rsm.css`;
+  rsmLink.href = `${api.defaults.baseURL}/static/rsm.css`;
   document.head.appendChild(rsmLink);
 
   // Load design assets CSS
@@ -98,7 +98,7 @@
   designAssets.forEach((filename) => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = `${api.getUri()}/design-assets/css/${filename}`;
+    link.href = `${api.defaults.baseURL}/design-assets/css/${filename}`;
     document.head.appendChild(link);
   });
 

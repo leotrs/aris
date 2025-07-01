@@ -28,7 +28,7 @@ describe("ManuscriptWrapper.vue", () => {
       fontFamily: "ff",
       marginWidth: "mw",
     };
-    const api = { getUri: () => "" };
+    const api = { defaults: { baseURL: "" } };
     const stubManuscript = defineComponent({
       props: { htmlString: { type: String }, settings: { type: Object } },
       template: '<div data-test="manuscript">{{ htmlString }}</div>',
@@ -54,7 +54,7 @@ describe("ManuscriptWrapper.vue", () => {
   // that should be tested in E2E tests rather than unit tests
 
   it("renders footer when showFooter is true", () => {
-    const api = { getUri: () => "" };
+    const api = { defaults: { baseURL: "" } };
     const wrapper = mount(ManuscriptWrapper, {
       props: { htmlString: "", keys: false, showFooter: true },
       global: {
@@ -78,7 +78,7 @@ describe("ManuscriptWrapper.vue", () => {
   });
 
   it("does not render footer when showFooter is false", () => {
-    const api = { getUri: () => "" };
+    const api = { defaults: { baseURL: "" } };
     const wrapper = mount(ManuscriptWrapper, {
       props: { htmlString: "", keys: false, showFooter: false },
       global: {

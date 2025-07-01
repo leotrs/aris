@@ -5,7 +5,7 @@
 const loadedStylesheets = new Set();
 
 export function loadCSS(api, filename) {
-  const url = `${api.getUri()}/design-assets/css/${filename}`;
+  const url = `${api.defaults.baseURL}/design-assets/css/${filename}`;
 
   // Avoid loading the same CSS file multiple times
   if (loadedStylesheets.has(url)) {

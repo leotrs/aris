@@ -28,7 +28,7 @@ export class FileHelpers {
       if (this.page.isClosed()) {
         throw new Error("Browser closed during test - cannot recover files list");
       }
-      
+
       // If files container doesn't appear, the duplicate might have broken the app state
       // Refresh the page to restore the file list
       await this.page.reload();
@@ -164,14 +164,14 @@ export class FileHelpers {
     if (this.mobileHelpers.isWebkit()) {
       // For WebKit, use window.location instead of page.goto to avoid crashes
       await this.page.evaluate(() => {
-        window.location.href = '/';
+        window.location.href = "/";
       });
       // Give WebKit extra time to handle the navigation
       await this.page.waitForTimeout(1000);
     } else {
       await this.page.goto("/");
     }
-    
+
     await this.page.waitForLoadState("domcontentloaded");
 
     // Wait for either files or the create button to be present (empty state)

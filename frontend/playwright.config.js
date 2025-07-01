@@ -69,11 +69,6 @@ export default defineConfig({
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
         },
-        // Temporarily enable WebKit for debugging
-        {
-          name: "webkit",
-          use: { ...devices["Desktop Safari"] },
-        },
       ],
 
   /* Run your local dev server before starting the tests */
