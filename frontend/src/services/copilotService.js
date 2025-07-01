@@ -8,7 +8,7 @@
  * @returns {string|null} JWT token or null if not found
  */
 function getAuthToken() {
-  return localStorage.getItem("token");
+  return localStorage.getItem("accessToken");
 }
 
 /**
@@ -34,8 +34,10 @@ async function sendMessage(message, fileId = null) {
     requestBody.context.file_id = fileId;
   }
 
+  const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8001";
+  
   try {
-    const response = await fetch("/copilot/chat", {
+    const response = await fetch(`${apiBaseUrl}/copilot/chat`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

@@ -117,13 +117,17 @@
         return props.modelValue.trim().length > 0;
       });
 
-      const handleInput = (event) => {
-        emit("update:modelValue", event.target.value);
+      const resizeTextarea = () => {
         if (props.autoResize && textarea.value) {
           textarea.value.style.height = "auto";
           textarea.value.style.height =
             Math.min(textarea.value.scrollHeight, parseInt(props.maxHeight)) + "px";
         }
+      };
+
+      const handleInput = (event) => {
+        emit("update:modelValue", event.target.value);
+        resizeTextarea();
         emit("input", event.target.value);
       };
 
@@ -164,7 +168,7 @@
         () => props.modelValue,
         () => {
           if (props.autoResize) {
-            handleInput();
+            resizeTextarea();
           }
         }
       );
@@ -176,6 +180,7 @@
         handleSubmit,
         handleKeydown,
         focus,
+        resizeTextarea,
       };
     },
   };
