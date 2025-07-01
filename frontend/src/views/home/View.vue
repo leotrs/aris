@@ -1,11 +1,13 @@
 <script setup>
   import { ref, inject, computed, watch, useTemplateRef } from "vue";
+  import { useRoute } from "vue-router";
   import { useElementSize } from "@vueuse/core";
   import FilesPane from "./FilesPane.vue";
   import PreviewPane from "./PreviewPane.vue";
 
   import DragBorder from "./DragBorder.vue";
   const fileStore = inject("fileStore");
+  const route = useRoute();
 
   // Handle draggable border and pane height
   const panesRef = useTemplateRef("panes-ref");
@@ -36,10 +38,43 @@
   /* Since the gap between panes is 8px but the outer padding is 16px, when the Preview
    * pane is inactive, its top edge peeks out by 8px. This hides it. */
   const previewTop = computed(() => (fileStore?.value?.selectedFile?.value?.id ? "0" : "8px"));
+
+  // Sidebar navigation items for home view
+  const homeSidebarItems = computed(() => [
+    {
+      icon: "Home",
+      text: "Home",
+      active: route.name === "home" || route.path === "/",
+      route: "/",
+    },
+    { separator: true },
+    { includeRecentFiles: true },
+    { separator: true },
+    {
+      icon: "User",
+      text: "Account",
+      active: route.path === "/account",
+      route: "/account",
+    },
+    {
+      icon: "Settings",
+      text: "Settings",
+      active: route.path === "/settings",
+      route: "/settings",
+    },
+    { separator: true },
+    {
+      icon: "LayoutSidebarLeftCollapse",
+      iconCollapsed: "LayoutSidebarLeftExpand",
+      text: "Collapse",
+      tooltip: "Expand",
+      action: "collapse",
+    },
+  ]);
 </script>
 
 <template>
-  <HomeLayout active="Home">
+  <BaseLayout :sidebar-items="homeSidebarItems">
     <div ref="panes-ref" class="panes">
       <FilesPane :style="{ height: '100%' }" />
 
@@ -56,7 +91,7 @@
            :style="{ height: previewHeight, top: previewTop }"
            /> -->
     </div>
-  </HomeLayout>
+  </BaseLayout>
 </template>
 
 <style scoped>

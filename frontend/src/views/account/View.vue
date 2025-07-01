@@ -1,5 +1,6 @@
 <script setup>
   import { ref, computed, inject, onMounted, onUnmounted, watch } from "vue";
+  import { useRoute } from "vue-router";
   import { IconUserCircle } from "@tabler/icons-vue";
   import { toast } from "@/utils/toast.js";
   import PasswordStrength from "@/components/ui/PasswordStrength.vue";
@@ -8,6 +9,7 @@
   const mobileMode = inject("mobileMode");
   const user = inject("user");
   const api = inject("api");
+  const route = useRoute();
 
   // Profile section form submission
   const newName = ref(null);
@@ -233,10 +235,43 @@
     if (serverAvatarUrl.value) URL.revokeObjectURL(serverAvatarUrl.value);
     window.removeEventListener("beforeunload", handleBeforeUnload);
   });
+
+  // Sidebar navigation items for account view
+  const accountSidebarItems = computed(() => [
+    {
+      icon: "Home",
+      text: "Home",
+      active: route.path === "/",
+      route: "/",
+    },
+    { separator: true },
+    { includeRecentFiles: true },
+    { separator: true },
+    {
+      icon: "User",
+      text: "Account",
+      active: route.path === "/account",
+      route: "/account",
+    },
+    {
+      icon: "Settings",
+      text: "Settings",
+      active: route.path === "/settings",
+      route: "/settings",
+    },
+    { separator: true },
+    {
+      icon: "LayoutSidebarLeftCollapse",
+      iconCollapsed: "LayoutSidebarLeftExpand",
+      text: "Collapse",
+      tooltip: "Expand",
+      action: "collapse",
+    },
+  ]);
 </script>
 
 <template>
-  <HomeLayout :fab="false" active="Account">
+  <BaseLayout :sidebar-items="accountSidebarItems" :fab="false">
     <Pane>
       <template #header>
         <Icon name="User" />
@@ -415,7 +450,7 @@
         </div>
       </div>
     </Pane>
-  </HomeLayout>
+  </BaseLayout>
 </template>
 
 <style scoped>
