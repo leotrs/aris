@@ -8,6 +8,10 @@ const WorkspaceView = isTest ? {} : () => import("@/views/workspace/View.vue");
 const DemoView = () => import("@/views/demo/View.vue");
 const AccountView = isTest ? {} : () => import("@/views/account/View.vue");
 const SettingsView = isTest ? {} : () => import("@/views/settings/View.vue");
+const SettingsDocumentView = isTest ? {} : () => import("@/views/settings/DocumentView.vue");
+const SettingsBehaviorView = isTest ? {} : () => import("@/views/settings/BehaviorView.vue");
+const SettingsPrivacyView = isTest ? {} : () => import("@/views/settings/PrivacyView.vue");
+const SettingsSecurityView = isTest ? {} : () => import("@/views/settings/SecurityView.vue");
 const NotFoundView = isTest ? {} : () => import("@/views/notfound/View.vue");
 
 const routes = [
@@ -17,7 +21,17 @@ const routes = [
   { path: "/file/:file_id", component: WorkspaceView },
   { path: "/demo", component: DemoView },
   { path: "/account", component: AccountView },
-  { path: "/settings", component: SettingsView },
+  {
+    path: "/settings",
+    component: SettingsView,
+    redirect: "/settings/document",
+    children: [
+      { path: "document", component: SettingsDocumentView },
+      { path: "behavior", component: SettingsBehaviorView },
+      { path: "privacy", component: SettingsPrivacyView },
+      { path: "security", component: SettingsSecurityView },
+    ],
+  },
   // dedicated 404 route
   { path: "/404", name: "NotFound", component: NotFoundView },
   // catch-all route: redirect to 404
