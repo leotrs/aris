@@ -63,7 +63,7 @@
     <span class="text-h6 sb-text">{{ text }}</span>
 
     <!--for seamless transition to the panes-->
-    <span class="join"></span>
+    <span v-if="!isSubItem" class="join"></span>
 
     <Tooltip
       v-if="tooltipAlways || (collapsed && (tooltip || text))"
@@ -136,66 +136,47 @@
   }
 
   /* Sub-item styling */
+
   .sb-item.sub-item {
-    background-color: var(--gray-200) !important;
-    padding-inline: 0 !important;
-    margin-inline: 12px;
-  }
-
-
-  .sb-item.sub-item:not(.collapsed) {
-    padding-left: calc(var(--padding-inline) - var(--border-left-width) + 8px); /* Add 8px indentation only when expanded */
+    padding-left: 4px;
   }
 
   .sb-item.sub-item {
-    /* All sub-items get background tint when their parent section is active */
-    background-color: var(--gray-50); /* Very light gray background for ALL sub-items (inactive) */
-    margin-block: 0; /* Remove vertical spacing for tighter grouping */
-  }
-
-  .sb-item.sub-item.collapsed {
-    /* No indentation when collapsed - icons need to be centered */
-    background-color: var(--gray-50); /* Same very light gray background in collapsed mode */
+    margin-block: 2px;
   }
 
   .sb-item.sub-item .sb-text {
     font-weight: 300;
-    color: var(--gray-600); /* Slightly darker than before for better contrast on gray background */
+    color: var(--gray-600);
     transition: color 0.3s ease;
   }
 
   .sb-item.sub-item .sb-icon {
     stroke-width: 1.5px;
-    color: var(--gray-600); /* Slightly darker than before for better contrast on gray background */
+    color: var(--gray-600);
     transition: color 0.3s ease, stroke-width 0.3s ease;
   }
 
-  .sb-item.sub-item:hover .sb-text {
-    color: var(--gray-800); /* Darker on hover */
-  }
+  .sb-item.sub-item:not(.active):hover {
+    background-color: var(--gray-200);
 
-  .sb-item.sub-item:hover .sb-icon {
-    color: var(--gray-800);
-    stroke-width: 1.75px;
-  }
+    & > .sb-text {
+      color: var(--gray-800);
+    }
+    .sb-icon {
+      color: var(--gray-800);
+      stroke-width: 1.75px;
+    }
 
-  .sb-item.sub-item:hover {
-    background-color: var(--gray-200); /* Darker background on hover */
-  }
-
-  /* Active sub-item styling - different from main item active styling */
-  .sb-item.sub-item.active {
-    background-color: var(--gray-300); /* Darker gray background for active sub-item */
-    border-left-color: var(--gray-500); /* Gray left border instead of primary blue */
   }
 
   .sb-item.sub-item.active .sb-text {
-    color: var(--gray-900); /* Dark gray text instead of primary blue */
-    font-weight: 400; /* Slightly bolder than other sub-items */
+    color: var(--gray-900);
+    font-weight: 400;
   }
 
   .sb-item.sub-item.active .sb-icon {
-    color: var(--gray-900); /* Dark gray icon instead of primary blue */
-    stroke-width: 2px; /* Bold stroke for active state */
+    color: var(--gray-900);
+    stroke-width: 2px;
   }
 </style>
