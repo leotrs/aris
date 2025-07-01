@@ -45,22 +45,32 @@ export default defineConfig({
         {
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
+          grep: /@mobile-only/,
+          grepInvert: true, // Skip mobile-only tests on desktop
         },
         {
           name: "firefox",
           use: { ...devices["Desktop Firefox"] },
+          grep: /@mobile-only/,
+          grepInvert: true, // Skip mobile-only tests on desktop
         },
         {
           name: "webkit",
           use: { ...devices["Desktop Safari"] },
+          grep: /@mobile-only/,
+          grepInvert: true, // Skip mobile-only tests on desktop
         },
         {
           name: "Mobile Chrome",
           use: { ...devices["Pixel 5"] },
+          grep: /@desktop-only/,
+          grepInvert: true, // Skip desktop-only tests on mobile
         },
         {
           name: "Mobile Safari",
           use: { ...devices["iPhone 12"] },
+          grep: /@desktop-only/,
+          grepInvert: true, // Skip desktop-only tests on mobile
         },
       ]
     : [
@@ -68,6 +78,8 @@ export default defineConfig({
         {
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
+          grep: /@mobile-only/,
+          grepInvert: true, // Skip mobile-only tests on desktop
         },
       ],
 
