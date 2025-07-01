@@ -236,42 +236,27 @@
     window.removeEventListener("beforeunload", handleBeforeUnload);
   });
 
-  // Sidebar navigation items for account view
-  const accountSidebarItems = computed(() => [
-    {
-      icon: "Home",
-      text: "Home",
-      active: route.path === "/",
-      route: "/",
-    },
-    { separator: true },
-    { includeRecentFiles: true },
-    { separator: true },
-    {
-      icon: "User",
-      text: "Account",
-      active: route.path === "/account",
-      route: "/account",
-    },
-    {
-      icon: "Settings",
-      text: "Settings",
-      active: route.path === "/settings",
-      route: "/settings",
-    },
-    { separator: true },
-    {
-      icon: "LayoutSidebarLeftCollapse",
-      iconCollapsed: "LayoutSidebarLeftExpand",
-      text: "Collapse",
-      tooltip: "Expand",
-      action: "collapse",
-    },
+  // Account could have sub-sections in the future (Profile, Security, Preferences, etc.)
+  // For now, no sub-items
+  const contextSubItems = computed(() => [
+    // Future account sub-sections could go here:
+    // {
+    //   icon: "User",
+    //   text: "Profile",
+    //   active: route.path === "/account/profile",
+    //   route: "/account/profile",
+    // },
+    // {
+    //   icon: "Shield",
+    //   text: "Security",
+    //   active: route.path === "/account/security",
+    //   route: "/account/security",
+    // },
   ]);
 </script>
 
 <template>
-  <BaseLayout :sidebar-items="accountSidebarItems" :fab="false">
+  <BaseLayout :context-sub-items="contextSubItems" :fab="false">
     <Pane>
       <template #header>
         <Icon name="User" />
