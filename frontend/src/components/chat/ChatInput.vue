@@ -1,5 +1,6 @@
 <template>
   <TextareaInput
+    ref="textareaInput"
     v-model="message"
     :placeholder="placeholder"
     :disabled="disabled"
@@ -34,14 +35,23 @@
     emits: ["send"],
     setup(props, { emit }) {
       const message = ref("");
+      const textareaInput = ref(null);
 
       const handleSendMessage = (messageText) => {
         emit("send", messageText);
       };
 
+      const focus = () => {
+        if (textareaInput.value) {
+          textareaInput.value.focus();
+        }
+      };
+
       return {
         message,
+        textareaInput,
         handleSendMessage,
+        focus,
       };
     },
   };
