@@ -14,7 +14,7 @@
   const onload = ref(null);
 
   onBeforeMount(async () => {
-    const base = api.getUri();
+    const base = api.defaults.baseURL;
 
     try {
       await import(/* @vite-ignore */ `${base}/static/jquery-3.6.0.js`);
@@ -41,10 +41,7 @@
 <template>
   <div ref="self-ref" class="rsm-manuscript">
     <div class="css-links">
-      <link
-        rel="stylesheet"
-        :href="`${api.getUri()}/static/pseudocode.min.css`"
-      />
+      <link rel="stylesheet" :href="`${api.defaults.baseURL}/static/pseudocode.min.css`" />
     </div>
 
     <Manuscript ref="manuscript-ref" :html-string="htmlString" :settings="settings" />
