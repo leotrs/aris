@@ -125,6 +125,9 @@ class User(Base):
     file_settings = relationship(
         "FileSettings", back_populates="user", cascade="all, delete-orphan"
     )
+    user_settings = relationship(
+        "UserSettings", back_populates="user", cascade="all, delete-orphan", uselist=False
+    )
     file_assets = relationship(
         "FileAsset", back_populates="owner", cascade="all, delete-orphan"
     )
@@ -347,6 +350,100 @@ class FileAsset(Base):
 
     owner = relationship("User", back_populates="file_assets")
     file = relationship("File", back_populates="file_assets")
+
+
+class UserSettings(Base):
+    """User behavioral and privacy preferences.
+
+    Stores user preferences for application behavior, privacy controls, and 
+    communication settings that are separate from document display settings.
+
+    Attributes
+    ----------
+    id : int
+        Primary key.
+    user_id : int
+        Foreign key to User (owner of the settings).
+    auto_save_interval : int
+        Auto-save interval in seconds.
+    focus_mode_auto_hide : bool
+        Whether to auto-hide UI elements in focus mode.
+    sidebar_auto_collapse : bool
+        Whether to auto-collapse sidebar.
+    drawer_default_annotations : bool
+        Default state for annotations drawer.
+    drawer_default_margins : bool
+        Default state for margins drawer.
+    drawer_default_settings : bool
+        Default state for settings drawer.
+    sound_notifications : bool
+        Whether to enable sound notifications.
+    auto_compile_delay : int
+        Auto-compile delay in milliseconds.
+    mobile_menu_behavior : str
+        Mobile menu behavior preference.
+    allow_anonymous_feedback : bool
+        Whether to allow anonymous feedback on content.
+    email_digest_frequency : str
+        Email digest frequency (daily/weekly/none).
+    notification_preference : str
+        Notification preference (in-app/email/both).
+    notification_mentions : bool
+        Enable mention notifications.
+    notification_comments : bool
+        Enable comment notifications.
+    notification_shares : bool
+        Enable share notifications.
+    notification_system : bool
+        Enable system update notifications.
+    created_at : datetime
+        Timestamp of settings creation.
+    updated_at : datetime
+        Timestamp of last update.
+    deleted_at : datetime
+        Soft delete marker.
+    user : User
+        User relationship.
+
+    """
+
+    __tablename__ = "user_settings"
+    __table_args__ = (
+        UniqueConstraint("user_id", name="uq_user_settings_per_user"),
+    )
+
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    user_id = Column(
+        Integer, ForeignKey("users.id", ondelete="CASCADE"), nullable=False
+    )
+
+    # Behavioral preferences
+    auto_save_interval = Column(Integer, nullable=False, default=30)
+    focus_mode_auto_hide = Column(Boolean, nullable=False, default=True)
+    sidebar_auto_collapse = Column(Boolean, nullable=False, default=False)
+    drawer_default_annotations = Column(Boolean, nullable=False, default=False)
+    drawer_default_margins = Column(Boolean, nullable=False, default=False)
+    drawer_default_settings = Column(Boolean, nullable=False, default=False)
+    sound_notifications = Column(Boolean, nullable=False, default=True)
+    auto_compile_delay = Column(Integer, nullable=False, default=1000)
+    mobile_menu_behavior = Column(String, nullable=False, default="standard")
+
+    # Privacy and communication preferences
+    allow_anonymous_feedback = Column(Boolean, nullable=False, default=False)
+    email_digest_frequency = Column(String, nullable=False, default="weekly")
+    notification_preference = Column(String, nullable=False, default="in-app")
+    notification_mentions = Column(Boolean, nullable=False, default=True)
+    notification_comments = Column(Boolean, nullable=False, default=True)
+    notification_shares = Column(Boolean, nullable=False, default=True)
+    notification_system = Column(Boolean, nullable=False, default=True)
+
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
+    updated_at = Column(
+        DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
+    )
+    deleted_at = Column(DateTime(timezone=True), nullable=True)
+
+    user = relationship("User", back_populates="user_settings")
 
 
 class FileSettings(Base):
