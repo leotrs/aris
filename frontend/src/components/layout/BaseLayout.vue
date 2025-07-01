@@ -20,20 +20,14 @@
    *   <Pane>Content without FAB.</Pane>
    * </BaseLayout>
    */
-  import { ref, computed, inject, useTemplateRef } from "vue";
+  import { ref, computed, inject, useTemplateRef, provide } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import UploadFile from "@/views/home/ModalUploadFile.vue";
 
   const props = defineProps({
-    sidebarItems: {
-      type: Array,
-      default: () => [],
-      validator: (items) => {
-        return items.every((item) => item.separator || (item.text && (item.icon || item.action)));
-      },
-    },
     fab: { type: Boolean, default: true },
+    contextSubItems: { type: Array, default: () => [] },
   });
 
   const emit = defineEmits(["newEmptyFile", "showFileUploadModal"]);
@@ -41,9 +35,62 @@
   const mobileMode = inject("mobileMode");
   const fileStore = inject("fileStore");
   const user = inject("user");
+  const route = useRoute();
+  const router = useRouter();
+
+  // Create unified main sidebar items
+  const mainSidebarItems = computed(() => [
+    {
+      icon: "Home",
+      text: "Home",
+      active: route.path === "/" || route.name === "home",
+      route: "/",
+    },
+    { separator: true },
+    {
+      icon: "User",
+      text: "Account",
+      active: route.path === "/account",
+      route: "/account",
+    },
+    {
+      icon: "Settings",
+      text: "Settings",
+      active: route.path.startsWith("/settings"),
+      route: "/settings",
+    },
+    { separator: true },
+    {
+      icon: "LayoutSidebarLeftCollapse",
+      iconCollapsed: "LayoutSidebarLeftExpand",
+      text: "Collapse",
+      tooltip: "Expand",
+      action: "collapse",
+    },
+  ]);
+
+  // Combine main items with context sub-items
+  const allSidebarItems = computed(() => {
+    const items = [];
+
+    mainSidebarItems.value.forEach((item) => {
+      items.push(item);
+
+      // Insert context sub-items after the active main item
+      if (item.active && !item.separator && !item.action) {
+        props.contextSubItems.forEach((subItem) => {
+          items.push({
+            ...subItem,
+            isSubItem: true,
+          });
+        });
+      }
+    });
+
+    return items;
+  });
 
   // New empty file
-  const router = useRouter();
   const newEmptyFile = async () => {
     try {
       const newFile = await fileStore.value.createFile({
@@ -58,7 +105,6 @@
   };
 
   const showModal = ref(false);
-  const route = useRoute();
   const isHome = computed(() => route.fullPath === "/");
 
   const userMenuRef = useTemplateRef("user-menu");
@@ -91,7 +137,7 @@
 <template>
   <div class="view" :class="{ mobile: mobileMode }">
     <BaseSidebar
-      :sidebar-items="sidebarItems"
+      :sidebar-items="allSidebarItems"
       :fab="fab"
       @action="handleSidebarAction"
       @new-empty-file="newEmptyFile"
