@@ -29,7 +29,7 @@ uv run mypy aris/                     # Type check
 - **CI Environment**: Tests automatically use PostgreSQL for production-like testing
 - **Dual Database Support**: Same test suite runs on both databases
 - **Integration Tests**: `tests/integration/` contains RSM processing and database constraint tests
-- **Environment Variables**: 
+- **Environment Variables**:
   - `TEST_DB_URL`: Override test database URL
   - `CI=true` or `ENV=CI`: Forces PostgreSQL usage
   - `TEST_USER_EMAIL` / `TEST_USER_PASSWORD`: Credentials for E2E test user
@@ -98,7 +98,7 @@ npm run test:e2e                      # Run all E2E tests (sequential)
 ```bash
 # Run specific test suites (parallel-friendly)
 npx playwright test --grep "@auth[^-]"     # Auth-required tests (27 tests)
-npx playwright test --grep "@auth-flows"   # Auth flow tests (22 tests)  
+npx playwright test --grep "@auth-flows"   # Auth flow tests (22 tests)
 npx playwright test --grep "@core"         # Core functionality (4 tests)
 npx playwright test --grep "@demo-content" # Demo content tests (37 tests)
 npx playwright test --grep "@demo-ui"      # Demo UI tests (33 tests)
@@ -128,3 +128,4 @@ npx playwright test --reporter=html       # Generate HTML report
 
 ## Language Guidelines
 - Stop using the word 'absolutely'
+- **Playwright MUST always be used in headless mode**
