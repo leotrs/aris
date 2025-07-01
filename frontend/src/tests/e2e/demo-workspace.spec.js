@@ -431,7 +431,7 @@ test.describe("Demo Workspace Functionality @demo-ui", () => {
   });
 
   test.describe("Content Interaction", () => {
-    test("can interact with RSM handrails", { tag: "@flaky" }, async ({ page }) => {
+    test("can interact with RSM handrails @desktop-only", { tag: "@flaky" }, async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
       });
