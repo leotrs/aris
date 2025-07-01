@@ -103,38 +103,9 @@
     };
   });
 
-  // Generate menu items including recent files
+  // Process sidebar items (no longer need to inject recent files here)
   const menuItems = computed(() => {
-    const items = [];
-
-    props.sidebarItems.forEach((item) => {
-      if (item.includeRecentFiles) {
-        // Add the "Recent Files" header
-        items.push({
-          icon: "Clock",
-          text: "Recent Files",
-          clickable: false,
-        });
-
-        // Add recent files
-        recentFiles.value.forEach((file, idx) => {
-          if (file) {
-            items.push({
-              icon: "File",
-              text: file.title || "Untitled",
-              tooltip: `Open "${file.title}"`,
-              tooltipAlways: true,
-              class: "recent-file",
-              onClick: () => File.openFile(file, router),
-            });
-          }
-        });
-      } else {
-        items.push(item);
-      }
-    });
-
-    return items;
+    return props.sidebarItems;
   });
 </script>
 
@@ -174,7 +145,7 @@
             :tooltip-always="item.tooltipAlways"
             :active="item.active"
             :clickable="item.clickable"
-            :class="item.class"
+            :class="[item.class, { 'sub-item': item.isSubItem }]"
             @click="handleItemClick(item)"
           />
         </template>
@@ -315,26 +286,36 @@
     margin-block: 12px;
   }
 
-  .sb-menu > :deep(.recent-file) {
+  /* Sub-item styling (recent files, settings sections, etc.) */
+  .sb-menu > :deep(.sub-item) {
     margin-block: 4px;
+    margin-left: 12px; /* Indentation for hierarchy */
   }
 
-  .sb-menu > :deep(.recent-file) > :deep(.tabler-icon) {
+  .sb-menu > :deep(.sub-item) > :deep(.tabler-icon) {
     color: var(--gray-800);
     transition:
       opacity 0.3s ease,
       color 0.3s ease;
+    width: 16px; /* Smaller icons for sub-items */
+    height: 16px;
   }
 
-  .sb-menu > :deep(.recent-file.collapsed) > :deep(.tabler-icon) {
+  .sb-menu > :deep(.sub-item.collapsed) {
+    margin-left: 4px; /* Less indentation when collapsed */
+  }
+
+  .sb-menu > :deep(.sub-item.collapsed) > :deep(.tabler-icon) {
     opacity: 1;
+    width: 14px; /* Even smaller when collapsed */
+    height: 14px;
   }
 
-  .sb-menu > :deep(.recent-file:not(.collapsed)) > :deep(.tabler-icon) {
-    opacity: 0;
+  .sb-menu > :deep(.sub-item:not(.collapsed)) > :deep(.tabler-icon) {
+    opacity: 0.7;
   }
 
-  .sb-menu > :deep(.recent-file:not(.collapsed):hover) {
+  .sb-menu > :deep(.sub-item:not(.collapsed):hover) {
     & > :deep(.tabler-icon) {
       opacity: 1;
       color: var(--extra-dark);
@@ -345,30 +326,47 @@
     }
   }
 
-  .sb-menu > :deep(.recent-file.collapsed:hover) {
+  .sb-menu > :deep(.sub-item.collapsed:hover) {
     & > :deep(.tabler-icon) {
       color: var(--almost-black);
     }
   }
 
-  .sb-menu > :deep(.recent-file) > :deep(.sb-text) {
-    max-width: calc(var(--expanded-width) - 32px - 4px - 16px - 4px) !important;
+  .sb-menu > :deep(.sub-item) > :deep(.sb-text) {
+    max-width: calc(
+      var(--expanded-width) - 32px - 4px - 16px - 12px
+    ) !important; /* Account for indentation */
     overflow-x: clip;
     text-overflow: ellipsis;
   }
 
-  .sb-menu > :deep(.recent-file) > :deep(*) {
+  .sb-menu > :deep(.sub-item) > :deep(*) {
     font-family: "Source Sans 3", sans-serif;
     text-transform: none;
     font-weight: 350;
     color: var(--gray-800);
-    font-style: italic;
-    font-size: 14px;
+    font-size: 14px; /* Smaller text for sub-items */
   }
 
-  .sb-menu > :deep(.recent-file.collapsed) > :deep(*) {
+  .sb-menu > :deep(.sub-item.collapsed) > :deep(*) {
     stroke-width: 1.5px;
     color: var(--gray-700);
+  }
+
+  /* Active sub-item styling */
+  .sb-menu > :deep(.sub-item.active) {
+    background-color: var(--surface-primary);
+    border-left-color: var(--border-action);
+
+    & > :deep(.tabler-icon) {
+      color: var(--primary-600);
+      stroke-width: 2px;
+    }
+
+    & > :deep(.sb-text) {
+      color: var(--primary-600);
+      font-weight: var(--weight-medium);
+    }
   }
 
   .sb-menu > *:first-child {
