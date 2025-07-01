@@ -223,7 +223,7 @@
   .form-group input {
     width: 100%;
     padding: 10px 12px;
-    border: var(--border-thin) solid var(--border-subtle);
+    border: var(--border-thin) solid var(--border-primary);
     border-radius: 6px;
     background: var(--surface-page);
     color: var(--text-primary);
@@ -232,7 +232,7 @@
 
   .form-group input:focus {
     outline: none;
-    border-color: var(--accent-500);
+    border-color: var(--border-action);
   }
 
   .field-description {
@@ -242,7 +242,7 @@
   }
 
   .error-message {
-    color: var(--error-500);
+    color: var(--error-700);
     font-size: 14px;
     margin-bottom: 16px;
     padding: 8px 12px;
@@ -274,18 +274,18 @@
   }
 
   .action-button.primary {
-    background: var(--accent-500);
+    background: var(--surface-action);
     color: white;
   }
 
   .action-button.primary:hover:not(:disabled) {
-    background: var(--accent-600);
+    background: var(--surface-action-hover);
   }
 
   .action-button.secondary {
-    background: var(--surface-subtle);
+    background: var(--surface-page);
     color: var(--text-primary);
-    border: var(--border-thin) solid var(--border-subtle);
+    border: var(--border-thin) solid var(--border-primary);
   }
 
   .action-button.secondary:hover:not(:disabled) {
