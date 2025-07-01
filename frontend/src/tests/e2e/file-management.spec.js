@@ -101,8 +101,10 @@ test.describe("File Management Tests @auth", () => {
     // Close menu by clicking elsewhere
     const isMobile = await page.evaluate(() => "ontouchstart" in window);
     if (isMobile) {
-      // Tap on body at a safe coordinate to close the menu
-      await page.tap('body', { position: { x: 50, y: 50 } });
+      // Tap the same context menu trigger (three dots) to close the menu
+      const fileItem = await page.locator(`[data-testid="file-item-${fileId}"]`);
+      const dotsButton = fileItem.locator('[data-testid="trigger-button"]');
+      await dotsButton.tap();
     } else {
       await page.click('[data-testid="files-container"]');
     }
