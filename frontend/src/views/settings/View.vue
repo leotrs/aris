@@ -9,7 +9,7 @@
   const contextSubItems = computed(() => [
     {
       icon: "FileText",
-      text: "Document Display",
+      text: "File",
       active: route.path === "/settings/document",
       route: "/settings/document",
     },
@@ -21,13 +21,13 @@
     },
     {
       icon: "Shield",
-      text: "Privacy & Communication",
+      text: "Privacy",
       active: route.path === "/settings/privacy",
       route: "/settings/privacy",
     },
     {
       icon: "Lock",
-      text: "Account Security",
+      text: "Security",
       active: route.path === "/settings/security",
       route: "/settings/security",
     },
