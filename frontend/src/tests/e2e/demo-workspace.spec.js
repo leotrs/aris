@@ -221,7 +221,7 @@ test.describe("Demo Workspace Functionality @demo-ui", () => {
   });
 
   test.describe("Focus Mode", () => {
-    test("can toggle focus mode with 'c' key", async ({ page }) => {
+    test("can toggle focus mode with 'c' key @desktop-only", async ({ page }) => {
       // Ensure demo content is loaded and focused
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
@@ -252,7 +252,7 @@ test.describe("Demo Workspace Functionality @demo-ui", () => {
       await expect(banner).toBeVisible();
     });
 
-    test("focus mode hides sidebar and banner", async ({ page }) => {
+    test("focus mode hides sidebar and banner @desktop-only", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -280,7 +280,7 @@ test.describe("Demo Workspace Functionality @demo-ui", () => {
       }
     });
 
-    test("can exit focus mode", async ({ page }) => {
+    test("can exit focus mode @desktop-only", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -302,7 +302,7 @@ test.describe("Demo Workspace Functionality @demo-ui", () => {
       expect(hasFocusClass).toBe(false);
     });
 
-    test("responsive layout in focus mode", async ({ page }) => {
+    test("responsive layout in focus mode @desktop-only", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -322,7 +322,7 @@ test.describe("Demo Workspace Functionality @demo-ui", () => {
   });
 
   test.describe("Keyboard Navigation", () => {
-    test("keyboard focus management works correctly", async ({ page }) => {
+    test("keyboard focus management works correctly @desktop-only", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -336,7 +336,7 @@ test.describe("Demo Workspace Functionality @demo-ui", () => {
       expect(typeof focusedElement).toBe("string");
     });
 
-    test("keyboard shortcuts work throughout demo", async ({ page }) => {
+    test("keyboard shortcuts work throughout demo @desktop-only", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -352,7 +352,7 @@ test.describe("Demo Workspace Functionality @demo-ui", () => {
       expect(typeof hasFocusClass).toBe("boolean");
     });
 
-    test("can navigate with arrow keys", async ({ page }) => {
+    test("can navigate with arrow keys @desktop-only", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -431,7 +431,7 @@ test.describe("Demo Workspace Functionality @demo-ui", () => {
   });
 
   test.describe("Content Interaction", () => {
-    test("can interact with RSM handrails", { tag: "@flaky" }, async ({ page }) => {
+    test("can interact with RSM handrails @desktop-only", { tag: "@flaky" }, async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
       });

@@ -94,93 +94,11 @@ export class FileHelpers {
     await this.page.waitForLoadState("domcontentloaded");
     await this.page.waitForTimeout(500);
 
-    // Try multiple selectors for the create button
-    let createButton = null;
-    const buttonSelectors = [
-      '[data-testid="create-file-button"]',
-      'button:has-text("New File")',
-      '[data-testid*="create"]',
-      'button[data-testid*="file"]',
-      ".fab", // floating action button
-      'button:has([data-testid*="plus"])',
-    ];
+    // Get the create file button using the correct selector
+    const createButton = this.page.locator('[data-testid="create-file-button"]');
 
-    let buttonFound = false;
-    for (const selector of buttonSelectors) {
-      try {
-        createButton = this.page.locator(selector);
-        await createButton.waitFor({ state: "attached", timeout: 3000 });
-        buttonFound = true;
-        break;
-      } catch {
-        continue;
-      }
-    }
-
-    if (!buttonFound) {
-      // Progressive fallback strategy
-      let debugInfo = "Browser closed or page unavailable";
-
-      try {
-        if (this.page.isClosed()) {
-          throw new Error("Create file button not found - browser closed");
-        }
-
-        const url = this.page.url();
-        const title = await this.page.title();
-
-        // Try basic fallback selectors as last resort
-        const fallbackSelectors = ["button", ".btn", "[role='button']"];
-        let fallbackButton = null;
-
-        for (const selector of fallbackSelectors) {
-          try {
-            const buttons = await this.page.locator(selector).all();
-            for (const btn of buttons) {
-              const text = await btn.textContent();
-              if (text && (text.includes("New") || text.includes("Create") || text.includes("+"))) {
-                fallbackButton = btn;
-                console.log(`Found fallback button with text: "${text}"`);
-                break;
-              }
-            }
-            if (fallbackButton) break;
-          } catch {
-            continue;
-          }
-        }
-
-        if (fallbackButton) {
-          createButton = fallbackButton;
-          buttonFound = true;
-          console.log("Using fallback button detection");
-        } else {
-          // Gather debug info
-          const bodyContent = await this.page.evaluate(() =>
-            document.body.textContent.substring(0, 200)
-          );
-          const allButtons = await this.page.locator("button").all();
-          const buttonTexts = await Promise.all(
-            allButtons.slice(0, 5).map(async (btn) => {
-              try {
-                const text = await btn.textContent();
-                const testId = await btn.getAttribute("data-testid");
-                return `Button: "${text}" testid="${testId}"`;
-              } catch {
-                return "Button: [unreadable]";
-              }
-            })
-          );
-          debugInfo = `URL: ${url}, Title: ${title}, Body start: ${bodyContent}, Buttons: ${buttonTexts.join(", ")}`;
-        }
-      } catch (error) {
-        debugInfo = `Error during fallback: ${error.message}`;
-      }
-
-      if (!buttonFound) {
-        throw new Error(`Create file button not found after 10s. ${debugInfo}`);
-      }
-    }
+    // Wait for the button to be attached to the DOM
+    await createButton.waitFor({ state: "attached", timeout: 10000 });
 
     // Use standard visibility check for all browsers
     await this.mobileHelpers.expectToBeVisible(createButton);

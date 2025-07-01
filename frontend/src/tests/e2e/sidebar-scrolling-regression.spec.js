@@ -12,7 +12,7 @@ import { test, expect } from "@playwright/test";
 
 // @core
 
-test.describe("Sidebar Scrolling Regression @core", () => {
+test.describe("Sidebar Scrolling Regression @core @desktop-only", () => {
   test("sidebar scrolls properly in short viewport to show user menu", async ({ page }) => {
     // Set viewport to wide but short (the problematic case)
     await page.setViewportSize({ width: 1400, height: 600 });
@@ -23,7 +23,20 @@ test.describe("Sidebar Scrolling Regression @core", () => {
     // Wait for sidebar to load
     await expect(page.locator('[data-testid="workspace-sidebar"]')).toBeVisible();
 
-    // Get sidebar menu element
+    // Check if we're running in Mobile Safari/Chrome where enhanced mobile detection
+    // will add .mobile class even with large viewports due to mobile user agent
+    const browserName = page.context().browser()?.browserType()?.name();
+    const isMobileBrowserType =
+      browserName === "webkit" ||
+      (browserName === "chromium" && process.env.PLAYWRIGHT_PROJECT_NAME?.includes("Mobile"));
+
+    // Skip this test for actual mobile browsers since it tests desktop sidebar behavior
+    if (isMobileBrowserType && process.env.PLAYWRIGHT_PROJECT_NAME?.includes("Mobile")) {
+      test.skip();
+      return;
+    }
+
+    // Get sidebar menu element (desktop version)
     const sidebarMenu = page.locator(".sb-menu:not(.mobile)");
     await expect(sidebarMenu).toBeVisible();
 
@@ -80,6 +93,19 @@ test.describe("Sidebar Scrolling Regression @core", () => {
   test("sidebar maintains scrollability across different short viewport heights", async ({
     page,
   }) => {
+    // Check if we're running in Mobile Safari/Chrome where enhanced mobile detection
+    // will add .mobile class even with large viewports due to mobile user agent
+    const browserName = page.context().browser()?.browserType()?.name();
+    const isMobileBrowserType =
+      browserName === "webkit" ||
+      (browserName === "chromium" && process.env.PLAYWRIGHT_PROJECT_NAME?.includes("Mobile"));
+
+    // Skip this test for actual mobile browsers since it tests desktop sidebar behavior
+    if (isMobileBrowserType && process.env.PLAYWRIGHT_PROJECT_NAME?.includes("Mobile")) {
+      test.skip();
+      return;
+    }
+
     // Test various short viewport heights to ensure robustness
     const testHeights = [500, 600, 700, 800];
 

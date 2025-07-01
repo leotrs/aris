@@ -113,6 +113,7 @@
    */
   const fileStore = inject("fileStore");
   const xsMode = inject("xsMode");
+  const mobileMode = inject("mobileMode");
 
   // State
   const hovered = ref(false);
@@ -207,6 +208,7 @@
       active: file?.selected,
       focused: file?.focused,
       hovered: hovered,
+      mobile: mobileMode,
     }"
     @mouseenter="hovered = true"
     @mouseleave="hovered = false"
@@ -441,7 +443,8 @@
     transition: opacity 0.3s ease;
   }
 
-  :is(.item:hover, .item.focused, .item.hovered) :deep(.context-menu-trigger) {
+  :is(.item:hover, .item.focused, .item.hovered) :deep(.context-menu-trigger),
+  .item.mobile :deep(.context-menu-trigger) {
     opacity: 1;
   }
 
