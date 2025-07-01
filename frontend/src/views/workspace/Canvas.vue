@@ -21,10 +21,12 @@
   import DockableMinimap from "./DockableMinimap.vue";
   import DockableSearch from "./DockableSearch.vue";
   import DockableAnnotations from "./DockableAnnotations.vue";
+  import DockableChat from "./DockableChat.vue";
 
   const props = defineProps({
     showEditor: { type: Boolean, default: false },
     showSearch: { type: Boolean, default: false },
+    showAiCopilot: { type: Boolean, default: false },
   });
   const file = defineModel({ type: Object });
   defineOptions({ inheritAttrs: false });
@@ -143,6 +145,9 @@
   const annotations = inject("annotations", []);
   const hasAnnotations = computed(() => annotations && annotations.length > 0);
   const middleTopWidth = computed(() => `${columnSizes.middle.width + 8}px`);
+
+  // Chat functionality - controlled by sidebar
+  const showChat = computed(() => props.showAiCopilot);
 </script>
 
 <template>
@@ -166,11 +171,13 @@
           ref="inner-right-ref"
           data-testid="manuscript-container"
           class="inner right"
-          :class="{ 'no-annotations': !hasAnnotations }"
+          :class="{ 'no-annotations': !hasAnnotations, 'has-chat': showChat }"
         >
           <div ref="left-column-ref" class="left-column">
             <Dock class="dock left top"> </Dock>
-            <Dock class="dock left main"> </Dock>
+            <Dock class="dock left main">
+              <DockableChat v-if="showChat" :file-id="file.id" />
+            </Dock>
           </div>
           <div ref="middle-column-ref" class="middle-column">
             <Dock class="dock middle top">
@@ -265,13 +272,13 @@
 
     &.right {
       flex: 1;
-      overflow-y: auto;
-      scrollbar-gutter: stable;
+      overflow: hidden;
       border-bottom-left-radius: calc(16px - 12px);
       border-bottom-right-radius: calc(16px - 2px);
       padding-inline: 16px 8px;
       padding-bottom: 16px;
       display: flex;
+      height: 100vh;
     }
   }
 
@@ -300,7 +307,8 @@
     /* Give middle column (manuscript) the majority of space */
     flex: 4; /* Increase flex ratio to give middle column even more space */
     min-width: 0; /* Allow flex shrinking when needed */
-    height: fit-content;
+    height: 100vh;
+    overflow-y: auto;
     scrollbar-gutter: stable;
   }
 
@@ -310,12 +318,43 @@
     max-width: none; /* Remove any width constraints */
   }
 
+  /* When both chat and annotations are closed, middle column takes all space */
+  .inner.right.no-annotations:not(.has-chat) .middle-column {
+    flex: 1; /* Take all available space when no side panels */
+    max-width: none; /* Remove any width constraints */
+  }
+
+  .inner.right .left-column {
+    /* Left column base styling - no width when empty */
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 0px;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow: hidden;
+    align-items: flex-start;
+    padding: 16px;
+    box-sizing: border-box;
+  }
+
+  .inner.right.has-chat .left-column {
+    /* Chat panel styling when docked */
+    flex: 0 0 350px; /* Fixed width for chat panel */
+    min-width: 300px; /* Minimum width to prevent collapse */
+    max-width: 400px; /* Maximum width to keep it reasonable */
+  }
+
   .inner.right .right-column {
     /* Make annotations panel much narrower */
     /* Annotations should be compact to keep focus on main content */
     flex: 0 0 280px; /* Fixed width for annotations panel - even narrower */
     min-width: 250px; /* Minimum width to prevent collapse */
     max-width: 300px; /* Maximum width to keep it compact */
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
   }
 
   .outer.mobile .inner.right .middle-column {
@@ -357,6 +396,11 @@
     &.middle {
       min-height: 100%;
       max-width: 720px;
+    }
+
+    &.left {
+      min-height: auto;
+      max-width: none;
     }
   }
 
