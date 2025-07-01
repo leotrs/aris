@@ -1,5 +1,5 @@
 <script setup>
-  import {} from "vue";
+  import TextareaInput from "@/components/base/TextareaInput.vue";
 
   /**
    * AnnotationInputBox - Expandable annotation input component
@@ -65,44 +65,28 @@
 
 <template>
   <div class="ann-input-box" :class="expanded ? 'expanded' : ''">
-    <InputText v-model="value" placeholder="What's on your mind?" @keyup.enter="onSubmit" />
-    <div class="buttons">
-      <Button v-if="expanded" class="edit" kind="tertiary" size="sm" icon="Edit" />
-      <Button class="send" kind="tertiary" size="sm" icon="Send2" @click="onSubmit" />
-    </div>
+    <TextareaInput
+      v-model="value"
+      placeholder="What's on your mind?"
+      layout="inline"
+      :show-edit-button="expanded"
+      submit-button-icon="Send2"
+      submit-button-kind="tertiary"
+      submit-button-size="sm"
+      :compact="true"
+      :rows="expanded ? 3 : 1"
+      :max-height="expanded ? '64px' : '32px'"
+      @submit="onSubmit"
+    />
   </div>
 </template>
 
 <style scoped>
   .ann-input-box {
-    position: relative;
-    display: flex;
-  }
-
-  .buttons {
-    position: absolute;
-    right: 1px;
-    top: 1px;
-
-    & > button {
-      height: 30px;
-      width: 30px;
-    }
-
-    & :deep(.tabler-icon) {
-      color: var(--dark) !important;
-    }
-  }
-
-  .input-text {
-    height: 32px;
-  }
-
-  .input-text :deep(input) {
     width: 204px;
   }
 
-  .ann-input-box.expanded .input-text {
-    height: 64px;
+  .ann-input-box.expanded {
+    /* Additional styling for expanded state if needed */
   }
 </style>
