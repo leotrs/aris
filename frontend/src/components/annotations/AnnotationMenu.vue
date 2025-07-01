@@ -136,13 +136,32 @@
   }
 
   onMounted(() => {
-    document.addEventListener("mouseup", handleMouseUp);
+    // FIXED: Scope mouseup listener to manuscript container instead of global document
+    // This prevents interference with input fields outside the manuscript
+    const manuscriptContainer =
+      document.querySelector('[data-testid="manuscript-viewer"]') ||
+      document.querySelector(".rsm-manuscript") ||
+      document.querySelector('[data-testid="manuscript-container"]');
+
+    if (manuscriptContainer) {
+      manuscriptContainer.addEventListener("mouseup", handleMouseUp);
+    }
+
     document.addEventListener("scroll", updateFloatingPosition, true);
     window.addEventListener("resize", updateFloatingPosition);
   });
 
   onUnmounted(() => {
-    document.removeEventListener("mouseup", handleMouseUp);
+    // FIXED: Remove from scoped container instead of global document
+    const manuscriptContainer =
+      document.querySelector('[data-testid="manuscript-viewer"]') ||
+      document.querySelector(".rsm-manuscript") ||
+      document.querySelector('[data-testid="manuscript-container"]');
+
+    if (manuscriptContainer) {
+      manuscriptContainer.removeEventListener("mouseup", handleMouseUp);
+    }
+
     document.removeEventListener("scroll", updateFloatingPosition, true);
     window.removeEventListener("resize", updateFloatingPosition);
   });
