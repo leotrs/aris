@@ -96,7 +96,7 @@ export class FileHelpers {
 
     // Get the create file button using the correct selector
     const createButton = this.page.locator('[data-testid="create-file-button"]');
-    
+
     // Wait for the button to be attached to the DOM
     await createButton.waitFor({ state: "attached", timeout: 10000 });
 
