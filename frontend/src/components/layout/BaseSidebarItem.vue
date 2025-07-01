@@ -49,7 +49,12 @@
     ref="self-ref"
     class="sb-item"
     :data-testid="`sidebar-item-${text.toLowerCase().replace(/\s+/g, '-')}`"
-    :class="{ collapsed: collapsed, active: active, 'not-clickable': !clickable, 'sub-item': isSubItem }"
+    :class="{
+      collapsed: collapsed,
+      active: active,
+      'not-clickable': !clickable,
+      'sub-item': isSubItem,
+    }"
   >
     <template v-if="!collapsed">
       <Icon v-if="icon" :name="icon" class="sb-icon" />
@@ -154,7 +159,9 @@
   .sb-item.sub-item .sb-icon {
     stroke-width: 1.5px;
     color: var(--gray-600);
-    transition: color 0.3s ease, stroke-width 0.3s ease;
+    transition:
+      color 0.3s ease,
+      stroke-width 0.3s ease;
   }
 
   .sb-item.sub-item:not(.active):hover {
@@ -167,7 +174,6 @@
       color: var(--gray-800);
       stroke-width: 1.75px;
     }
-
   }
 
   .sb-item.sub-item.active .sb-text {

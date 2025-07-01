@@ -70,7 +70,6 @@
 
   // Combine main items with context sub-items
   const allSidebarItems = computed(() => {
-    console.log('BaseLayout: Computing allSidebarItems, contextSubItems:', props.contextSubItems);
     const items = [];
 
     mainSidebarItems.value.forEach((item) => {
@@ -80,10 +79,10 @@
       if (item.active && !item.separator && !item.action && props.contextSubItems.length > 0) {
         items.push({
           isSubItemsContainer: true,
-          subItems: props.contextSubItems.map(subItem => ({
+          subItems: props.contextSubItems.map((subItem) => ({
             ...subItem,
             isSubItem: true,
-          }))
+          })),
         });
       }
     });
