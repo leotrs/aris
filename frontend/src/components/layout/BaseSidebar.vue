@@ -145,7 +145,8 @@
             :tooltip-always="item.tooltipAlways"
             :active="item.active"
             :clickable="item.clickable"
-            :class="[item.class, { 'sub-item': item.isSubItem }]"
+            :is-sub-item="item.isSubItem"
+            :class="item.class"
             @click="handleItemClick(item)"
           />
         </template>
@@ -286,88 +287,7 @@
     margin-block: 12px;
   }
 
-  /* Sub-item styling (recent files, settings sections, etc.) */
-  .sb-menu > :deep(.sub-item) {
-    margin-block: 4px;
-    margin-left: 12px; /* Indentation for hierarchy */
-  }
-
-  .sb-menu > :deep(.sub-item) > :deep(.tabler-icon) {
-    color: var(--gray-800);
-    transition:
-      opacity 0.3s ease,
-      color 0.3s ease;
-    width: 16px; /* Smaller icons for sub-items */
-    height: 16px;
-  }
-
-  .sb-menu > :deep(.sub-item.collapsed) {
-    margin-left: 4px; /* Less indentation when collapsed */
-  }
-
-  .sb-menu > :deep(.sub-item.collapsed) > :deep(.tabler-icon) {
-    opacity: 1;
-    width: 14px; /* Even smaller when collapsed */
-    height: 14px;
-  }
-
-  .sb-menu > :deep(.sub-item:not(.collapsed)) > :deep(.tabler-icon) {
-    opacity: 0.7;
-  }
-
-  .sb-menu > :deep(.sub-item:not(.collapsed):hover) {
-    & > :deep(.tabler-icon) {
-      opacity: 1;
-      color: var(--extra-dark);
-    }
-
-    & > :deep(.sb-text) {
-      color: var(--almost-black);
-    }
-  }
-
-  .sb-menu > :deep(.sub-item.collapsed:hover) {
-    & > :deep(.tabler-icon) {
-      color: var(--almost-black);
-    }
-  }
-
-  .sb-menu > :deep(.sub-item) > :deep(.sb-text) {
-    max-width: calc(
-      var(--expanded-width) - 32px - 4px - 16px - 12px
-    ) !important; /* Account for indentation */
-    overflow-x: clip;
-    text-overflow: ellipsis;
-  }
-
-  .sb-menu > :deep(.sub-item) > :deep(*) {
-    font-family: "Source Sans 3", sans-serif;
-    text-transform: none;
-    font-weight: 350;
-    color: var(--gray-800);
-    font-size: 14px; /* Smaller text for sub-items */
-  }
-
-  .sb-menu > :deep(.sub-item.collapsed) > :deep(*) {
-    stroke-width: 1.5px;
-    color: var(--gray-700);
-  }
-
-  /* Active sub-item styling */
-  .sb-menu > :deep(.sub-item.active) {
-    background-color: var(--surface-primary);
-    border-left-color: var(--border-action);
-
-    & > :deep(.tabler-icon) {
-      color: var(--primary-600);
-      stroke-width: 2px;
-    }
-
-    & > :deep(.sb-text) {
-      color: var(--primary-600);
-      font-weight: var(--weight-medium);
-    }
-  }
+  /* Sub-item styling moved to BaseSidebarItem.vue for proper CSS specificity */
 
   .sb-menu > *:first-child {
     margin-top: 2px;
