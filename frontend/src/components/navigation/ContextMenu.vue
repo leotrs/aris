@@ -215,7 +215,12 @@
     />
 
     <!-- Slot variant trigger -->
-    <div v-else-if="variant === 'slot'" ref="trigger-ref" class="context-menu-trigger">
+    <div
+      v-else-if="variant === 'slot'"
+      ref="trigger-ref"
+      class="context-menu-trigger"
+      v-bind="$attrs"
+    >
       <!--
         @slot trigger - Custom trigger element (only used when variant="slot")
         @binding {Function} toggle - Function to toggle menu open/closed
