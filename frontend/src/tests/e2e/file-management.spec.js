@@ -99,7 +99,12 @@ test.describe("File Management Tests @auth", () => {
     await expect(page.locator('text="Duplicate"')).toBeVisible();
 
     // Close menu by clicking elsewhere
-    await page.tap("body");
+    const isMobile = await page.evaluate(() => 'ontouchstart' in window);
+    if (isMobile) {
+      await page.tap('[data-testid^="file-item"]');
+    } else {
+      await page.click('[data-testid^="file-item"]');
+    }
     await expect(contextMenu).not.toBeVisible();
 
     // Clean up
