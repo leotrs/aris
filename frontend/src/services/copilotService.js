@@ -35,7 +35,7 @@ async function sendMessage(message, fileId = null) {
   }
 
   const apiBaseUrl = import.meta.env.VITE_API_BASE_URL || "http://localhost:8001";
-  
+
   try {
     const response = await fetch(`${apiBaseUrl}/copilot/chat`, {
       method: "POST",
