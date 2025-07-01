@@ -147,8 +147,8 @@ jobs:
     - name: Run unit tests
       run: npm run test:run
 
-  # Ubuntu E2E Tests
-  e2e-ubuntu:
+  # Desktop E2E Tests (Chrome/Firefox)
+  e2e-desktop-other:
     needs: [backend-test, frontend-test, site-test]
     strategy:
       fail-fast: false
@@ -240,7 +240,7 @@ jobs:
     - name: Start backend and frontend, run E2E tests
       run: |
         # Start backend
-        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on Ubuntu..."
+        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on Ubuntu (Chrome/Firefox)..."
         cd backend
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
@@ -288,8 +288,8 @@ jobs:
         kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
 
-  # macOS E2E Tests  
-  e2e-macos:
+  # Desktop E2E Tests (Safari)
+  e2e-desktop-safari:
     needs: [backend-test, frontend-test, site-test]
     strategy:
       fail-fast: false
@@ -377,7 +377,7 @@ jobs:
     - name: Start backend and frontend, run E2E tests
       run: |
         # Start backend
-        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on macOS..."
+        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on macOS (Safari)..."
         cd backend
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
