@@ -97,11 +97,11 @@ export class FileHelpers {
     // Try multiple selectors for the create button
     let createButton = null;
     const buttonSelectors = [
-      '[data-testid="create-file-button"]',
-      'button:has-text("New File")',
+      '[data-testid="create-file-button"] button', // The actual button inside the ContextMenu
+      '[data-testid="create-file-button"]', // Fallback to ContextMenu wrapper
       '[data-testid*="create"]',
       'button[data-testid*="file"]',
-      ".fab", // floating action button
+      ".fab button", // floating action button - target button inside FAB
       'button:has([data-testid*="plus"])',
     ];
 
@@ -138,9 +138,13 @@ export class FileHelpers {
             const buttons = await this.page.locator(selector).all();
             for (const btn of buttons) {
               const text = await btn.textContent();
-              if (text && (text.includes("New") || text.includes("Create") || text.includes("+"))) {
+              // In mobile mode, the create button has no text, so also check for CirclePlus icon
+              const hasCreateText = text && (text.includes("New") || text.includes("Create") || text.includes("+"));
+              const hasCreateIcon = await btn.locator('[data-icon="CirclePlus"]').count() > 0;
+              
+              if (hasCreateText || hasCreateIcon) {
                 fallbackButton = btn;
-                console.log(`Found fallback button with text: "${text}"`);
+                console.log(`Found fallback button with text: "${text}" or create icon`);
                 break;
               }
             }
