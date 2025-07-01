@@ -3,7 +3,7 @@ import { MobileHelpers } from "./utils/mobile-helpers.js";
 
 // @demo
 
-test.describe("Demo Annotations Viewport @demo-ui", () => {
+test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
   let mobileHelpers;
 
   test.beforeEach(async ({ page }) => {

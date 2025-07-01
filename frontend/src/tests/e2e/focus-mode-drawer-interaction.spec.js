@@ -68,7 +68,7 @@ test.describe("Focus Mode and Drawer Interaction @demo-ui", () => {
       }
     });
 
-    test("focus mode can be activated and deactivated with drawer open using keyboard shortcut", async ({
+    test("focus mode can be activated and deactivated with drawer open using keyboard shortcut @desktop-only", async ({
       page,
     }) => {
       // Open a drawer first

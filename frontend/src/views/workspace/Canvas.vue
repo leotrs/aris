@@ -189,7 +189,7 @@
               />
             </Dock>
           </div>
-          <div v-if="hasAnnotations" ref="right-column-ref" class="right-column">
+          <div v-if="hasAnnotations && !mobileMode" ref="right-column-ref" class="right-column">
             <Dock class="dock right top"> </Dock>
             <Dock class="dock right main">
               <DockableAnnotations />

@@ -35,8 +35,8 @@ test.describe("Auth Disabled - Development Mode @core", () => {
     const createButton = page.locator('[data-testid="create-file-button"]');
     if (await createButton.isVisible()) {
       await createButton.click();
-      // If modal opens, that's a good sign auth is disabled
-      await expect(page.locator('[data-testid="file-title-input"], .modal')).toBeVisible();
+      // If context menu opens, that's a good sign auth is disabled
+      await expect(page.locator('[data-testid="context-menu"]')).toBeVisible();
     }
 
     // Test 7: Verify backend API calls work without auth headers

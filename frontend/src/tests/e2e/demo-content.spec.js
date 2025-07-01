@@ -284,7 +284,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
       await expect(conclusionHeading).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
     });
 
-    test("interactive handrails (RSM UI elements) are present", async ({ page }) => {
+    test("interactive handrails (RSM UI elements) are present @desktop-only", async ({ page }) => {
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
       });
