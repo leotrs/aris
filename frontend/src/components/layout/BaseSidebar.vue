@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, toRef, computed, inject, provide, watchEffect, useTemplateRef } from "vue";
+  import { ref, computed, inject, provide, watchEffect, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { File } from "@/models/File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
@@ -14,13 +14,25 @@
       type: Array,
       default: () => [],
       validator: (items) => {
-        return items.every((item) => item.separator || (item.text && (item.icon || item.action)));
+        return items.every((item) =>
+          item.separator ||
+          item.isSubItemsContainer ||
+          (item.text && (item.icon || item.action))
+        );
       },
     },
     fab: { type: Boolean, default: true },
   });
   const emit = defineEmits(["action", "newEmptyFile", "showFileUploadModal"]);
-  const menuItems = toRef(props.sidebarItems);
+  const menuItems = computed(() => {
+    console.log('BaseSidebar: Computing menuItems, sidebarItems:', props.sidebarItems);
+    // Log the sub-items container specifically
+    const subItemsContainer = props.sidebarItems.find(item => item.isSubItemsContainer);
+    if (subItemsContainer) {
+      console.log('BaseSidebar: Sub-items:', subItemsContainer.subItems);
+    }
+    return props.sidebarItems;
+  });
 
   // Collapsing - use only the global state
   const collapsed = inject("sidebarIsCollapsed");
@@ -133,6 +145,22 @@
       <div class="sb-menu">
         <template v-for="(item, index) in menuItems" :key="`item-${index}`">
           <Separator v-if="item.separator" />
+          <div v-else-if="item.isSubItemsContainer" class="sub-items-container">
+            <BaseSidebarItem
+              v-for="(subItem, subIndex) in item.subItems"
+              :key="`sub-item-${subIndex}`"
+              :icon="subItem.icon"
+              :icon-collapsed="subItem.iconCollapsed"
+              :text="subItem.text"
+              :tooltip="subItem.tooltip"
+              :tooltip-always="subItem.tooltipAlways"
+              :active="subItem.active"
+              :clickable="subItem.clickable"
+              :is-sub-item="subItem.isSubItem"
+              :class="subItem.class"
+              @click="handleItemClick(subItem)"
+            />
+          </div>
           <BaseSidebarItem
             v-else
             :icon="item.icon"
@@ -284,7 +312,13 @@
     margin-block: 12px;
   }
 
-  /* Sub-item styling moved to BaseSidebarItem.vue for proper CSS specificity */
+  /* Sub-items container */
+  .sub-items-container {
+    background-color: var(--gray-200);
+    border-radius: 8px;
+    margin-inline: 8px;
+    padding-block: 6px;
+  }
 
   .sb-menu > *:first-child {
     margin-top: 2px;
