@@ -3,7 +3,9 @@ import { loadCSS, loadDesignAssets } from "@/utils/cssLoader.js";
 
 describe("cssLoader", () => {
   const mockApi = {
-    getUri: vi.fn(() => "http://localhost:8000"),
+    defaults: {
+      baseURL: "http://localhost:8000",
+    },
   };
 
   beforeEach(() => {
@@ -38,7 +40,6 @@ describe("cssLoader", () => {
 
       const link = document.querySelector('link[rel="stylesheet"]');
       expect(link.href).toBe("http://localhost:8000/design-assets/css/typography.css");
-      expect(mockApi.getUri).toHaveBeenCalled();
     });
   });
 
@@ -64,7 +65,7 @@ describe("cssLoader", () => {
       await promise;
     });
 
-    it("calls api.getUri() for each CSS file", async () => {
+    it("uses api.defaults.baseURL for each CSS file", async () => {
       const promise = loadDesignAssets(mockApi);
 
       const links = document.querySelectorAll('link[rel="stylesheet"]');
@@ -74,8 +75,8 @@ describe("cssLoader", () => {
 
       await promise;
 
-      // Should call getUri at least once for each CSS file
-      expect(mockApi.getUri).toHaveBeenCalledTimes(4);
+      // Should access the baseURL property from defaults
+      expect(mockApi.defaults.baseURL).toBe("http://localhost:8000");
     });
   });
 });

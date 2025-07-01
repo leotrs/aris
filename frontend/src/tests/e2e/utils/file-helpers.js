@@ -1,30 +1,74 @@
 import { expect } from "@playwright/test";
+import { MobileHelpers } from "./mobile-helpers.js";
 
 export class FileHelpers {
   constructor(page) {
     this.page = page;
+    this.mobileHelpers = new MobileHelpers(page);
   }
 
   /**
    * Wait for the files container to be visible and loaded
    */
   async waitForFilesLoaded() {
-    // Wait for network operations to complete (file creation/updates)
-    await this.page.waitForLoadState("networkidle");
+    const timeouts = this.mobileHelpers.getTimeouts();
 
     try {
+      // Check browser state before proceeding
+      if (this.page.isClosed()) {
+        throw new Error("Browser already closed at start of waitForFilesLoaded");
+      }
+
+      // Wait for DOM content to be loaded (more reliable than networkidle)
+      await this.page.waitForLoadState("domcontentloaded");
+      await this.mobileHelpers.waitForMobileRendering();
+
+      // Check browser state after load
+      if (this.page.isClosed()) {
+        throw new Error("Browser closed after DOM load - cannot continue");
+      }
+
       // Wait for files container to be visible (handles Suspense loading states)
-      await expect(this.page.locator('[data-testid="files-container"]')).toBeVisible({
-        timeout: 3000,
-      });
-    } catch {
-      // If files container doesn't appear, the duplicate might have broken the app state
-      // Refresh the page to restore the file list
-      await this.page.reload();
-      await this.page.waitForLoadState("networkidle");
-      await expect(this.page.locator('[data-testid="files-container"]')).toBeVisible({
-        timeout: 5000,
-      });
+      await this.mobileHelpers.expectToBeVisible(
+        this.page.locator('[data-testid="files-container"]'),
+        timeouts.medium
+      );
+    } catch (error) {
+      // Comprehensive crash debugging
+      let debugInfo = "Unknown error";
+
+      try {
+        if (this.page.isClosed()) {
+          debugInfo = "Browser closed during test - cannot recover files list";
+        } else {
+          const url = this.page.url();
+          const title = await this.page.title();
+          const readyState = await this.page.evaluate(() => document.readyState);
+          debugInfo = `URL: ${url}, Title: ${title}, ReadyState: ${readyState}, Error: ${error.message}`;
+
+          // Try page reload as fallback
+          console.log("Attempting page reload due to files container not found");
+          await this.page.reload();
+          await this.page.waitForLoadState("domcontentloaded");
+
+          if (this.page.isClosed()) {
+            throw new Error("Browser closed during reload - cannot recover");
+          }
+
+          await this.mobileHelpers.expectToBeVisible(
+            this.page.locator('[data-testid="files-container"]'),
+            timeouts.long
+          );
+        }
+      } catch (secondaryError) {
+        throw new Error(
+          `Files container load failed. ${debugInfo}. Secondary error: ${secondaryError.message}`
+        );
+      }
+
+      if (this.page.isClosed()) {
+        throw new Error(debugInfo);
+      }
     }
 
     // Wait for files to actually render instead of fixed timeout
@@ -33,7 +77,7 @@ export class FileHelpers {
         const container = document.querySelector('[data-testid="files-container"]');
         return container && container.children.length > 0;
       },
-      { timeout: 3000 }
+      { timeout: timeouts.medium }
     );
   }
 
@@ -41,14 +85,119 @@ export class FileHelpers {
    * Create a new empty file via the UI
    */
   async createNewFile() {
-    // The create file button is a ContextMenu with "New File" text
-    await this.page.click('text="New File"');
+    const timeouts = this.mobileHelpers.getTimeouts();
 
-    // Look for the "Empty file" option in the context menu
-    await this.page.click('text="Empty file"');
+    // Ensure we're on the home page and wait for it to be ready
+    await this.navigateToHome();
+
+    // Wait for home page to fully load with sidebar
+    await this.page.waitForLoadState("domcontentloaded");
+    await this.page.waitForTimeout(500);
+
+    // Try multiple selectors for the create button
+    let createButton = null;
+    const buttonSelectors = [
+      '[data-testid="create-file-button"]',
+      'button:has-text("New File")',
+      '[data-testid*="create"]',
+      'button[data-testid*="file"]',
+      ".fab", // floating action button
+      'button:has([data-testid*="plus"])',
+    ];
+
+    let buttonFound = false;
+    for (const selector of buttonSelectors) {
+      try {
+        createButton = this.page.locator(selector);
+        await createButton.waitFor({ state: "attached", timeout: 3000 });
+        buttonFound = true;
+        break;
+      } catch {
+        continue;
+      }
+    }
+
+    if (!buttonFound) {
+      // Progressive fallback strategy
+      let debugInfo = "Browser closed or page unavailable";
+
+      try {
+        if (this.page.isClosed()) {
+          throw new Error("Create file button not found - browser closed");
+        }
+
+        const url = this.page.url();
+        const title = await this.page.title();
+
+        // Try basic fallback selectors as last resort
+        const fallbackSelectors = ["button", ".btn", "[role='button']"];
+        let fallbackButton = null;
+
+        for (const selector of fallbackSelectors) {
+          try {
+            const buttons = await this.page.locator(selector).all();
+            for (const btn of buttons) {
+              const text = await btn.textContent();
+              if (text && (text.includes("New") || text.includes("Create") || text.includes("+"))) {
+                fallbackButton = btn;
+                console.log(`Found fallback button with text: "${text}"`);
+                break;
+              }
+            }
+            if (fallbackButton) break;
+          } catch {
+            continue;
+          }
+        }
+
+        if (fallbackButton) {
+          createButton = fallbackButton;
+          buttonFound = true;
+          console.log("Using fallback button detection");
+        } else {
+          // Gather debug info
+          const bodyContent = await this.page.evaluate(() =>
+            document.body.textContent.substring(0, 200)
+          );
+          const allButtons = await this.page.locator("button").all();
+          const buttonTexts = await Promise.all(
+            allButtons.slice(0, 5).map(async (btn) => {
+              try {
+                const text = await btn.textContent();
+                const testId = await btn.getAttribute("data-testid");
+                return `Button: "${text}" testid="${testId}"`;
+              } catch {
+                return "Button: [unreadable]";
+              }
+            })
+          );
+          debugInfo = `URL: ${url}, Title: ${title}, Body start: ${bodyContent}, Buttons: ${buttonTexts.join(", ")}`;
+        }
+      } catch (error) {
+        debugInfo = `Error during fallback: ${error.message}`;
+      }
+
+      if (!buttonFound) {
+        throw new Error(`Create file button not found after 10s. ${debugInfo}`);
+      }
+    }
+
+    // Use standard visibility check for all browsers
+    await this.mobileHelpers.expectToBeVisible(createButton);
+
+    await this.mobileHelpers.clickElement(createButton);
+
+    // Wait for context menu to appear with mobile-optimized timeout
+    const contextMenu = this.page.locator('[data-testid="context-menu"]');
+    await this.mobileHelpers.expectToBeVisible(contextMenu, timeouts.medium);
+
+    // Click "Empty file" option with robust selector for mobile browsers
+    const emptyFileOption = contextMenu.locator('button[role="menuitem"]:has-text("Empty file")');
+    await this.mobileHelpers.expectToBeVisible(emptyFileOption);
+    await this.mobileHelpers.clickElement(emptyFileOption);
 
     // Wait for navigation to workspace (file creation should redirect)
-    await this.page.waitForURL(/\/file\//, { timeout: 10000 });
+    await this.mobileHelpers.waitForURLPattern(/\/file\//);
 
     // Extract file ID from URL
     const url = this.page.url();
@@ -60,7 +209,25 @@ export class FileHelpers {
    * Navigate back to home to see file list
    */
   async navigateToHome() {
-    await this.page.goto("/");
+    // Use standard navigation for all browsers
+    try {
+      await this.page.goto("/");
+    } catch (error) {
+      console.log("Navigation error:", error.message);
+      if (this.page.isClosed()) {
+        throw new Error("Browser closed during navigation - cannot recover");
+      }
+      throw error;
+    }
+
+    await this.page.waitForLoadState("domcontentloaded");
+
+    // Wait for either files or the create button to be present (empty state)
+    await this.page.waitForSelector(
+      '[data-testid="files-container"], [data-testid="create-file-button"]',
+      { timeout: 10000 }
+    );
+
     await this.waitForFilesLoaded();
   }
 

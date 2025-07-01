@@ -1,9 +1,13 @@
 import { test, expect } from "@playwright/test";
+import { MobileHelpers } from "./utils/mobile-helpers.js";
 
 // @demo
 
 test.describe("Demo Annotations Viewport @demo-ui", () => {
+  let mobileHelpers;
+
   test.beforeEach(async ({ page }) => {
+    mobileHelpers = new MobileHelpers(page);
     // Mock any backend requests that might fail in CI
     await page.route("**/api/**", async (route) => {
       const url = route.request().url();
@@ -183,17 +187,17 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
     if (leftExists) {
       const leftColumnElement = leftColumn.first();
       const isLeftVisible = await leftColumnElement.isVisible();
-      
+
       // If left column is visible, verify layout positioning
       if (isLeftVisible && middleExists && rightExists) {
         const leftBox = await leftColumnElement.boundingBox();
         const middleBox = await middleColumn.first().boundingBox();
-        
+
         if (leftBox && middleBox) {
           // Verify left comes before middle
           expect(leftBox.x).toBeLessThan(middleBox.x);
         }
-        
+
         // If right column is also visible, verify full layout
         const rightColumnElement = rightColumn.first();
         const isRightVisibleForLayout = await rightColumnElement.isVisible();
@@ -223,7 +227,7 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
     }
 
     // Wait for mobile layout to stabilize
-    await page.waitForTimeout(500);
+    await mobileHelpers.waitForMobileRendering();
 
     // Check for key content elements that should be visible on mobile
     const contentElements = [
@@ -236,15 +240,36 @@ test.describe("Demo Annotations Viewport @demo-ui", () => {
     let visibleElementFound = false;
 
     for (const selector of contentElements) {
-      const elements = page.locator(selector);
-      if ((await elements.count()) > 0) {
-        try {
-          await expect(elements.first()).toBeVisible({ timeout: 10000 });
-          visibleElementFound = true;
-          break;
-        } catch {
-          // Continue to next selector
+      try {
+        const elements = page.locator(selector);
+        const count = await elements.count();
+        if (count > 0) {
+          const firstElement = elements.first();
+
+          // Enhanced visibility check for all mobile browsers
+          await firstElement.scrollIntoViewIfNeeded();
+          await page.waitForTimeout(500);
+
+          // Try standard Playwright visibility check first for all browsers
+          try {
+            await expect(firstElement).toBeVisible({ timeout: 5000 });
+            visibleElementFound = true;
+            break;
+          } catch {
+            // Fallback to DOM visibility check for both webkit and chromium
+            const isVisible = await mobileHelpers.isElementVisibleInDOM(firstElement);
+            if (isVisible) {
+              visibleElementFound = true;
+              break;
+            }
+          }
         }
+      } catch (error) {
+        // If browser is closed or element not found, continue to next selector
+        if (error.message?.includes("Target page, context or browser has been closed")) {
+          break; // Exit the loop if browser is closed
+        }
+        // Continue to next selector for other errors
       }
     }
 

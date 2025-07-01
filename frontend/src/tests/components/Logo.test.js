@@ -1,9 +1,11 @@
 import { mount } from "@vue/test-utils";
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect } from "vitest";
 import Logo from "@/components/base/Logo.vue";
 
 const mockApi = {
-  getUri: vi.fn(() => "http://localhost:8000"),
+  defaults: {
+    baseURL: "http://localhost:8000",
+  },
 };
 
 describe("Logo.vue", () => {

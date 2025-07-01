@@ -224,5 +224,11 @@ export const createDemoApi = () => ({
   delete: () => Promise.resolve({ data: {} }),
   // Return the backend URI for static assets
   getUri: () => "http://localhost:8000",
+  // Mirror axios instance interface - components depend on defaults.baseURL and defaults.headers
+  defaults: {
+    baseURL: "http://localhost:8000",
+    headers: {
+      common: {},
+    },
+  },
 });
-
