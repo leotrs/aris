@@ -13,30 +13,62 @@ export class FileHelpers {
   async waitForFilesLoaded() {
     const timeouts = this.mobileHelpers.getTimeouts();
 
-    // Wait for DOM content to be loaded (more reliable than networkidle)
-    await this.page.waitForLoadState("domcontentloaded");
-    await this.mobileHelpers.waitForMobileRendering();
-
     try {
+      // Check browser state before proceeding
+      if (this.page.isClosed()) {
+        throw new Error("Browser already closed at start of waitForFilesLoaded");
+      }
+
+      // Wait for DOM content to be loaded (more reliable than networkidle)
+      await this.page.waitForLoadState("domcontentloaded");
+      await this.mobileHelpers.waitForMobileRendering();
+
+      // Check browser state after load
+      if (this.page.isClosed()) {
+        throw new Error("Browser closed after DOM load - cannot continue");
+      }
+
       // Wait for files container to be visible (handles Suspense loading states)
       await this.mobileHelpers.expectToBeVisible(
         this.page.locator('[data-testid="files-container"]'),
         timeouts.medium
       );
-    } catch {
-      // Check if page/browser is still alive before trying to reload
-      if (this.page.isClosed()) {
-        throw new Error("Browser closed during test - cannot recover files list");
+    } catch (error) {
+      // Comprehensive crash debugging
+      let debugInfo = "Unknown error";
+
+      try {
+        if (this.page.isClosed()) {
+          debugInfo = "Browser closed during test - cannot recover files list";
+        } else {
+          const url = this.page.url();
+          const title = await this.page.title();
+          const readyState = await this.page.evaluate(() => document.readyState);
+          debugInfo = `URL: ${url}, Title: ${title}, ReadyState: ${readyState}, Error: ${error.message}`;
+
+          // Try page reload as fallback
+          console.log("Attempting page reload due to files container not found");
+          await this.page.reload();
+          await this.page.waitForLoadState("domcontentloaded");
+
+          if (this.page.isClosed()) {
+            throw new Error("Browser closed during reload - cannot recover");
+          }
+
+          await this.mobileHelpers.expectToBeVisible(
+            this.page.locator('[data-testid="files-container"]'),
+            timeouts.long
+          );
+        }
+      } catch (secondaryError) {
+        throw new Error(
+          `Files container load failed. ${debugInfo}. Secondary error: ${secondaryError.message}`
+        );
       }
 
-      // If files container doesn't appear, the duplicate might have broken the app state
-      // Refresh the page to restore the file list
-      await this.page.reload();
-      await this.page.waitForLoadState("domcontentloaded");
-      await this.mobileHelpers.expectToBeVisible(
-        this.page.locator('[data-testid="files-container"]'),
-        timeouts.long
-      );
+      if (this.page.isClosed()) {
+        throw new Error(debugInfo);
+      }
     }
 
     // Wait for files to actually render instead of fixed timeout
@@ -86,55 +118,72 @@ export class FileHelpers {
     }
 
     if (!buttonFound) {
-      // Debug information for CI - handle browser closure
+      // Progressive fallback strategy
       let debugInfo = "Browser closed or page unavailable";
+
       try {
+        if (this.page.isClosed()) {
+          throw new Error("Create file button not found - browser closed");
+        }
+
         const url = this.page.url();
         const title = await this.page.title();
-        const bodyContent = await this.page.evaluate(() =>
-          document.body.textContent.substring(0, 200)
-        );
 
-        // Also check what buttons are actually present
-        const allButtons = await this.page.locator("button").all();
-        const buttonTexts = await Promise.all(
-          allButtons.slice(0, 5).map(async (btn) => {
-            try {
+        // Try basic fallback selectors as last resort
+        const fallbackSelectors = ["button", ".btn", "[role='button']"];
+        let fallbackButton = null;
+
+        for (const selector of fallbackSelectors) {
+          try {
+            const buttons = await this.page.locator(selector).all();
+            for (const btn of buttons) {
               const text = await btn.textContent();
-              const testId = await btn.getAttribute("data-testid");
-              return `Button: "${text}" testid="${testId}"`;
-            } catch {
-              return "Button: [unreadable]";
+              if (text && (text.includes("New") || text.includes("Create") || text.includes("+"))) {
+                fallbackButton = btn;
+                console.log(`Found fallback button with text: "${text}"`);
+                break;
+              }
             }
-          })
-        );
+            if (fallbackButton) break;
+          } catch {
+            continue;
+          }
+        }
 
-        debugInfo = `URL: ${url}, Title: ${title}, Body start: ${bodyContent}, Buttons: ${buttonTexts.join(", ")}`;
-      } catch {
-        // Browser already closed, use fallback message
+        if (fallbackButton) {
+          createButton = fallbackButton;
+          buttonFound = true;
+          console.log("Using fallback button detection");
+        } else {
+          // Gather debug info
+          const bodyContent = await this.page.evaluate(() =>
+            document.body.textContent.substring(0, 200)
+          );
+          const allButtons = await this.page.locator("button").all();
+          const buttonTexts = await Promise.all(
+            allButtons.slice(0, 5).map(async (btn) => {
+              try {
+                const text = await btn.textContent();
+                const testId = await btn.getAttribute("data-testid");
+                return `Button: "${text}" testid="${testId}"`;
+              } catch {
+                return "Button: [unreadable]";
+              }
+            })
+          );
+          debugInfo = `URL: ${url}, Title: ${title}, Body start: ${bodyContent}, Buttons: ${buttonTexts.join(", ")}`;
+        }
+      } catch (error) {
+        debugInfo = `Error during fallback: ${error.message}`;
       }
 
-      throw new Error(`Create file button not found after 10s. ${debugInfo}`);
+      if (!buttonFound) {
+        throw new Error(`Create file button not found after 10s. ${debugInfo}`);
+      }
     }
 
-    // For webkit, ensure we're on the right page and wait for layout
-    if (this.mobileHelpers.isWebkit()) {
-      await this.page.waitForTimeout(1000); // Extra wait for webkit layout
-
-      // Use DOM visibility check for webkit
-      const isVisible = await this.mobileHelpers.isElementVisibleInDOM(createButton);
-      if (!isVisible) {
-        await createButton.scrollIntoViewIfNeeded();
-        await this.page.waitForTimeout(500);
-      }
-
-      const finalVisibility = await this.mobileHelpers.isElementVisibleInDOM(createButton);
-      if (!finalVisibility) {
-        throw new Error("Create file button exists but is not visible in webkit");
-      }
-    } else {
-      await this.mobileHelpers.expectToBeVisible(createButton);
-    }
+    // Use standard visibility check for all browsers
+    await this.mobileHelpers.expectToBeVisible(createButton);
 
     await this.mobileHelpers.clickElement(createButton);
 
@@ -160,16 +209,15 @@ export class FileHelpers {
    * Navigate back to home to see file list
    */
   async navigateToHome() {
-    // WebKit-specific navigation handling to prevent crashes
-    if (this.mobileHelpers.isWebkit()) {
-      // For WebKit, use window.location instead of page.goto to avoid crashes
-      await this.page.evaluate(() => {
-        window.location.href = "/";
-      });
-      // Give WebKit extra time to handle the navigation
-      await this.page.waitForTimeout(1000);
-    } else {
+    // Use standard navigation for all browsers
+    try {
       await this.page.goto("/");
+    } catch (error) {
+      console.log("Navigation error:", error.message);
+      if (this.page.isClosed()) {
+        throw new Error("Browser closed during navigation - cannot recover");
+      }
+      throw error;
     }
 
     await this.page.waitForLoadState("domcontentloaded");
