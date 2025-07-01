@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, computed, inject, provide, watchEffect, useTemplateRef } from "vue";
+  import { ref, toRef, computed, inject, provide, watchEffect, useTemplateRef } from "vue";
   import { useRouter } from "vue-router";
   import { File } from "@/models/File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
@@ -19,8 +19,8 @@
     },
     fab: { type: Boolean, default: true },
   });
-
   const emit = defineEmits(["action", "newEmptyFile", "showFileUploadModal"]);
+  const menuItems = toRef(props.sidebarItems);
 
   // Collapsing - use only the global state
   const collapsed = inject("sidebarIsCollapsed");
@@ -103,10 +103,7 @@
     };
   });
 
-  // Process sidebar items (no longer need to inject recent files here)
-  const menuItems = computed(() => {
-    return props.sidebarItems;
-  });
+
 </script>
 
 <template>
