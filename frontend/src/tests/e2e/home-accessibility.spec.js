@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 
-test.describe("Home View Accessibility @auth", () => {
+test.describe("Home View Accessibility @auth @desktop-only", () => {
   let authHelpers, fileHelpers;
 
   test.beforeEach(async ({ page }) => {

@@ -106,7 +106,7 @@ test.describe("File Management Tests @auth", () => {
     await fileHelpers.deleteFile(fileId);
   });
 
-  test("file operations work with keyboard shortcuts", { tag: "@flaky" }, async ({ page }) => {
+  test("file operations work with keyboard shortcuts @desktop-only", { tag: "@flaky" }, async ({ page }) => {
     // Create a file for keyboard testing
     const fileId = await fileHelpers.createNewFile();
     await fileHelpers.navigateToHome();
