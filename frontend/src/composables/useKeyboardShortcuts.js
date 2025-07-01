@@ -101,10 +101,13 @@ const tryHandleKeyEvent = (ev, componentRef, key) => {
 const handleKeyDown = (ev) => {
   const tag = ev.target.tagName?.toUpperCase();
   const isEditableElement = tag === "INPUT" || tag === "TEXTAREA" || ev.target.isContentEditable;
-  const shouldIgnore =
-    isForwardingEvent ||
-    hasModifiersAndNotQuestionMark(ev) ||
-    (isEditableElement && !["Enter", "Escape"].includes(ev.key));
+
+  // ALWAYS ignore ALL keys in editable elements except Enter and Escape
+  if (isEditableElement && !["Enter", "Escape"].includes(ev.key)) {
+    return; // Exit early, don't process any shortcuts
+  }
+
+  const shouldIgnore = isForwardingEvent || hasModifiersAndNotQuestionMark(ev);
   if (shouldIgnore) return;
 
   const key = ev.key.toLowerCase();
