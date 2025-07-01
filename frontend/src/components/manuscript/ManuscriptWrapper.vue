@@ -40,7 +40,6 @@
 
 <template>
   <div ref="self-ref" class="rsm-manuscript">
-    <!-- Testing components one by one to find the culprit -->
     <div class="css-links">
       <link rel="stylesheet" :href="`${api.defaults.baseURL}/static/pseudocode.min.css`" />
     </div>
@@ -51,7 +50,6 @@
       <div class="footer-logo"><Logo type="small" /></div>
     </div>
 
-    <!-- Re-enabled for TDD: Should cause regression tests to fail initially -->
     <AnnotationMenu />
   </div>
 </template>
