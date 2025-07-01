@@ -14,10 +14,9 @@
       type: Array,
       default: () => [],
       validator: (items) => {
-        return items.every((item) =>
-          item.separator ||
-          item.isSubItemsContainer ||
-          (item.text && (item.icon || item.action))
+        return items.every(
+          (item) =>
+            item.separator || item.isSubItemsContainer || (item.text && (item.icon || item.action))
         );
       },
     },
@@ -25,12 +24,6 @@
   });
   const emit = defineEmits(["action", "newEmptyFile", "showFileUploadModal"]);
   const menuItems = computed(() => {
-    console.log('BaseSidebar: Computing menuItems, sidebarItems:', props.sidebarItems);
-    // Log the sub-items container specifically
-    const subItemsContainer = props.sidebarItems.find(item => item.isSubItemsContainer);
-    if (subItemsContainer) {
-      console.log('BaseSidebar: Sub-items:', subItemsContainer.subItems);
-    }
     return props.sidebarItems;
   });
 
@@ -114,8 +107,6 @@
       class: collapsed.value ? "collapsed" : "",
     };
   });
-
-
 </script>
 
 <template>
