@@ -5,6 +5,7 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { demoFile, demoUser, demoFileStore, demoAnnotations, createDemoApi } from "./demoData.js";
   import { File } from "@/models/File.js";
+  import { useEnhancedMobileMode } from "@/composables/useEnhancedMobileMode.js";
   import Sidebar from "@/views/workspace/Sidebar.vue";
   import Canvas from "@/views/workspace/Canvas.vue";
   import Icon from "@/components/base/Icon.vue";
@@ -19,7 +20,10 @@
 
   const xsMode = computed(() => breakpoints.smallerOrEqual("xs").value);
   provide("xsMode", xsMode);
-  const mobileMode = computed(() => breakpoints.smallerOrEqual("sm").value);
+
+  // Enhanced mobile detection: small viewport + (mobile device OR touch device)
+  const isSmallViewport = computed(() => breakpoints.smallerOrEqual("sm").value);
+  const mobileMode = useEnhancedMobileMode(isSmallViewport);
   provide("mobileMode", mobileMode);
 
   // Demo user and file store
