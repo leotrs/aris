@@ -99,7 +99,7 @@ test.describe("File Management Tests @auth", () => {
     await expect(page.locator('text="Duplicate"')).toBeVisible();
 
     // Close menu by clicking elsewhere
-    await page.click("body");
+    await page.tap("body");
     await expect(contextMenu).not.toBeVisible();
 
     // Clean up
