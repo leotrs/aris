@@ -34,7 +34,7 @@ class InMemoryFileService(FileServiceInterface):
         """Initialize the service."""
         async with self._lock:
             if not self._initialized:
-                logger.info("Initializing InMemoryFileService")
+                logger.debug("Initializing InMemoryFileService")
                 self._initialized = True
     
     async def get_file(self, file_id: int) -> Optional[FileData]:

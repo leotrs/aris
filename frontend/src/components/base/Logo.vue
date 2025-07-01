@@ -24,7 +24,7 @@
   const api = inject("api");
 
   const logoUrl = computed(() => {
-    const base = api.getUri();
+    const base = api.defaults.baseURL;
     switch (props.type) {
       case "full":
         return `${base}/design-assets/logos/logotype.svg`;

@@ -90,7 +90,7 @@
   // Load RSM CSS
   const rsmLink = document.createElement("link");
   rsmLink.rel = "stylesheet";
-  rsmLink.href = `${api.getUri()}/static/rsm.css`;
+  rsmLink.href = `${api.defaults.baseURL}/static/rsm.css`;
   document.head.appendChild(rsmLink);
 
   // Load design assets CSS
@@ -98,7 +98,7 @@
   designAssets.forEach((filename) => {
     const link = document.createElement("link");
     link.rel = "stylesheet";
-    link.href = `${api.getUri()}/design-assets/css/${filename}`;
+    link.href = `${api.defaults.baseURL}/design-assets/css/${filename}`;
     document.head.appendChild(link);
   });
 
@@ -131,7 +131,7 @@
 
       // Check if authentication is disabled
       const isAuthDisabled = import.meta.env.VITE_DISABLE_AUTH === "true";
-      
+
       if (token && storedUser) {
         logger.info("Found existing auth credentials", { userId: storedUser.id });
         user.value = storedUser;
@@ -147,7 +147,7 @@
           const response = await api.get("/me");
           user.value = response.data;
           fileStore.value = createFileStore(api, user.value);
-          
+
           logger.debug("Loading test user files and tags");
           await fileStore.value.loadFiles();
           await fileStore.value.loadTags();
