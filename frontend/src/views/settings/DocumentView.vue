@@ -92,7 +92,7 @@ Insightful remark goes here, with a reference to the earlier :ref:sec::.
             />
           </template>
         </Section>
-        
+
         <Section>
           <template #content>
             <div class="info">
@@ -118,7 +118,6 @@ Insightful remark goes here, with a reference to the earlier :ref:sec::.
 </template>
 
 <style scoped>
-
   .settings-main {
     display: flex;
     flex-direction: row;
