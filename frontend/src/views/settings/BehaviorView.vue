@@ -81,10 +81,7 @@
       <template #title>Focus Mode</template>
       <template #content>
         <div class="setting-item">
-          <Checkbox
-            id="focus-mode-auto-hide"
-            v-model="settings.focusModeAutoHide"
-          >
+          <Checkbox id="focus-mode-auto-hide" v-model="settings.focusModeAutoHide">
             Auto-hide UI elements in focus mode
           </Checkbox>
           <p class="setting-description">
@@ -98,10 +95,7 @@
       <template #title>Interface Layout</template>
       <template #content>
         <div class="setting-item">
-          <Checkbox
-            id="sidebar-auto-collapse"
-            v-model="settings.sidebarAutoCollapse"
-          >
+          <Checkbox id="sidebar-auto-collapse" v-model="settings.sidebarAutoCollapse">
             Auto-collapse sidebar
           </Checkbox>
           <p class="setting-description">Automatically collapse the sidebar when not in use</p>
@@ -113,30 +107,21 @@
       <template #title>Drawer Defaults</template>
       <template #content>
         <p class="setting-description">Set the default open/closed state for workspace drawers</p>
-        
+
         <div class="setting-item">
-          <Checkbox
-            id="drawer-annotations"
-            v-model="settings.drawerDefaultAnnotations"
-          >
+          <Checkbox id="drawer-annotations" v-model="settings.drawerDefaultAnnotations">
             Open annotations drawer by default
           </Checkbox>
         </div>
 
         <div class="setting-item">
-          <Checkbox
-            id="drawer-margins"
-            v-model="settings.drawerDefaultMargins"
-          >
+          <Checkbox id="drawer-margins" v-model="settings.drawerDefaultMargins">
             Open margins drawer by default
           </Checkbox>
         </div>
 
         <div class="setting-item">
-          <Checkbox
-            id="drawer-settings"
-            v-model="settings.drawerDefaultSettings"
-          >
+          <Checkbox id="drawer-settings" v-model="settings.drawerDefaultSettings">
             Open settings drawer by default
           </Checkbox>
         </div>
@@ -147,10 +132,7 @@
       <template #title>Audio & Mobile</template>
       <template #content>
         <div class="setting-item">
-          <Checkbox
-            id="sound-notifications"
-            v-model="settings.soundNotifications"
-          >
+          <Checkbox id="sound-notifications" v-model="settings.soundNotifications">
             Enable sound notifications
           </Checkbox>
           <p class="setting-description">Play audio feedback for actions and notifications</p>

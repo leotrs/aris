@@ -169,32 +169,34 @@
     <Section>
       <template #title>Download Your Data</template>
       <template #content>
-        <p class="section-description">Download a copy of all your account data including manuscripts, settings, and metadata</p>
-        
+        <p class="section-description">
+          Download a copy of all your account data including manuscripts, settings, and metadata
+        </p>
+
         <div class="data-export">
-        <div class="export-info">
-          <p><strong>What's included:</strong></p>
-          <ul>
-            <li>All your manuscripts and their content</li>
-            <li>File settings and preferences</li>
-            <li>Tags and organizational data</li>
-            <li>Account information and settings</li>
-            <li>Upload history and file assets</li>
-          </ul>
-          <p class="export-note">
-            The export will be provided as a JSON file that you can download immediately.
-          </p>
-        </div>
+          <div class="export-info">
+            <p><strong>What's included:</strong></p>
+            <ul>
+              <li>All your manuscripts and their content</li>
+              <li>File settings and preferences</li>
+              <li>Tags and organizational data</li>
+              <li>Account information and settings</li>
+              <li>Upload history and file assets</li>
+            </ul>
+            <p class="export-note">
+              The export will be provided as a JSON file that you can download immediately.
+            </p>
+          </div>
 
-        <div v-if="exportSuccess" class="success-message">
-          Your data has been downloaded successfully!
-        </div>
+          <div v-if="exportSuccess" class="success-message">
+            Your data has been downloaded successfully!
+          </div>
 
-        <button :disabled="exportLoading" class="action-button secondary" @click="exportData">
-          <IconDownload v-if="!exportLoading" />
-          {{ exportLoading ? "Preparing download..." : "Download All My Data" }}
-        </button>
-      </div>
+          <button :disabled="exportLoading" class="action-button secondary" @click="exportData">
+            <IconDownload v-if="!exportLoading" />
+            {{ exportLoading ? "Preparing download..." : "Download All My Data" }}
+          </button>
+        </div>
       </template>
     </Section>
   </Pane>

@@ -54,10 +54,7 @@
       <template #title>Content Privacy</template>
       <template #content>
         <div class="setting-item">
-          <Checkbox
-            id="anonymous-feedback"
-            v-model="settings.allowAnonymousFeedback"
-          >
+          <Checkbox id="anonymous-feedback" v-model="settings.allowAnonymousFeedback">
             Allow anonymous feedback and comments
           </Checkbox>
           <p class="setting-description">
@@ -104,23 +101,19 @@
     <Section>
       <template #title>Notification Types</template>
       <template #content>
-        <p class="setting-description">Choose which types of activities you want to be notified about</p>
+        <p class="setting-description">
+          Choose which types of activities you want to be notified about
+        </p>
 
         <div class="setting-item">
-          <Checkbox
-            id="notification-mentions"
-            v-model="settings.notificationMentions"
-          >
+          <Checkbox id="notification-mentions" v-model="settings.notificationMentions">
             Mentions
           </Checkbox>
           <p class="setting-description">When someone mentions you in a comment or annotation</p>
         </div>
 
         <div class="setting-item">
-          <Checkbox
-            id="notification-comments"
-            v-model="settings.notificationComments"
-          >
+          <Checkbox id="notification-comments" v-model="settings.notificationComments">
             Comments
           </Checkbox>
           <p class="setting-description">
@@ -129,10 +122,7 @@
         </div>
 
         <div class="setting-item">
-          <Checkbox
-            id="notification-shares"
-            v-model="settings.notificationShares"
-          >
+          <Checkbox id="notification-shares" v-model="settings.notificationShares">
             Shares and collaboration invites
           </Checkbox>
           <p class="setting-description">
@@ -141,10 +131,7 @@
         </div>
 
         <div class="setting-item">
-          <Checkbox
-            id="notification-system"
-            v-model="settings.notificationSystem"
-          >
+          <Checkbox id="notification-system" v-model="settings.notificationSystem">
             System updates
           </Checkbox>
           <p class="setting-description">
