@@ -101,7 +101,8 @@ test.describe("File Management Tests @auth", () => {
     // Close menu by clicking elsewhere
     const isMobile = await page.evaluate(() => "ontouchstart" in window);
     if (isMobile) {
-      await page.tap('[data-testid="files-container"]');
+      // Tap on body at a safe coordinate to close the menu
+      await page.tap('body', { position: { x: 50, y: 50 } });
     } else {
       await page.click('[data-testid="files-container"]');
     }
