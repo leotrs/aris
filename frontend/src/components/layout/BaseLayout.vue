@@ -46,7 +46,6 @@
       active: route.path === "/" || route.name === "home",
       route: "/",
     },
-    { separator: true },
     {
       icon: "User",
       text: "Account",

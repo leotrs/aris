@@ -38,6 +38,7 @@
     tooltipAlways: { type: Boolean, default: false },
     active: { type: Boolean, default: false },
     clickable: { type: Boolean, default: true },
+    isSubItem: { type: Boolean, default: false },
   });
   const collapsed = inject("collapsed");
   const selfRef = useTemplateRef("self-ref");
@@ -48,7 +49,7 @@
     ref="self-ref"
     class="sb-item"
     :data-testid="`sidebar-item-${text.toLowerCase().replace(/\s+/g, '-')}`"
-    :class="{ collapsed: collapsed, active: active, 'not-clickable': !clickable }"
+    :class="{ collapsed: collapsed, active: active, 'not-clickable': !clickable, 'sub-item': isSubItem }"
   >
     <template v-if="!collapsed">
       <Icon v-if="icon" :name="icon" class="sb-icon" />
@@ -132,5 +133,69 @@
   .sb-icon {
     flex-shrink: 0;
     stroke-width: 1.75px;
+  }
+
+  /* Sub-item styling */
+  .sb-item.sub-item {
+    background-color: var(--gray-200) !important;
+    padding-inline: 0 !important;
+    margin-inline: 12px;
+  }
+
+
+  .sb-item.sub-item:not(.collapsed) {
+    padding-left: calc(var(--padding-inline) - var(--border-left-width) + 8px); /* Add 8px indentation only when expanded */
+  }
+
+  .sb-item.sub-item {
+    /* All sub-items get background tint when their parent section is active */
+    background-color: var(--gray-50); /* Very light gray background for ALL sub-items (inactive) */
+    margin-block: 0; /* Remove vertical spacing for tighter grouping */
+  }
+
+  .sb-item.sub-item.collapsed {
+    /* No indentation when collapsed - icons need to be centered */
+    background-color: var(--gray-50); /* Same very light gray background in collapsed mode */
+  }
+
+  .sb-item.sub-item .sb-text {
+    font-weight: 300;
+    color: var(--gray-600); /* Slightly darker than before for better contrast on gray background */
+    transition: color 0.3s ease;
+  }
+
+  .sb-item.sub-item .sb-icon {
+    stroke-width: 1.5px;
+    color: var(--gray-600); /* Slightly darker than before for better contrast on gray background */
+    transition: color 0.3s ease, stroke-width 0.3s ease;
+  }
+
+  .sb-item.sub-item:hover .sb-text {
+    color: var(--gray-800); /* Darker on hover */
+  }
+
+  .sb-item.sub-item:hover .sb-icon {
+    color: var(--gray-800);
+    stroke-width: 1.75px;
+  }
+
+  .sb-item.sub-item:hover {
+    background-color: var(--gray-200); /* Darker background on hover */
+  }
+
+  /* Active sub-item styling - different from main item active styling */
+  .sb-item.sub-item.active {
+    background-color: var(--gray-300); /* Darker gray background for active sub-item */
+    border-left-color: var(--gray-500); /* Gray left border instead of primary blue */
+  }
+
+  .sb-item.sub-item.active .sb-text {
+    color: var(--gray-900); /* Dark gray text instead of primary blue */
+    font-weight: 400; /* Slightly bolder than other sub-items */
+  }
+
+  .sb-item.sub-item.active .sb-icon {
+    color: var(--gray-900); /* Dark gray icon instead of primary blue */
+    stroke-width: 2px; /* Bold stroke for active state */
   }
 </style>
