@@ -44,7 +44,6 @@ describe("WorkspaceView", () => {
             props: ["modelValue", "showEditor", "showSearch"],
             template: '<div class="canvas-stub" />',
           },
-          Button: { name: "Button", template: "<button />" },
         },
       },
     });
@@ -67,7 +66,7 @@ describe("WorkspaceView", () => {
     const wrapper = mount(WorkspaceView, {
       global: {
         provide: { fileStore, api, mobileMode: false },
-        stubs: { Sidebar: true, Canvas: true, Button: true },
+        stubs: { Sidebar: true, Canvas: true },
       },
     });
     await nextTick();
@@ -87,7 +86,6 @@ describe("WorkspaceView", () => {
             emits: ["show-component", "hide-component"],
           },
           Canvas: { name: "Canvas", template: "<div />", props: ["showEditor", "showSearch"] },
-          Button: true,
         },
       },
     });
@@ -110,7 +108,7 @@ describe("WorkspaceView", () => {
     const wrapper = mount(WorkspaceView, {
       global: {
         provide: { fileStore, api, mobileMode: false },
-        stubs: { Sidebar: true, Canvas: true, Button: true },
+        stubs: { Sidebar: true, Canvas: true },
       },
     });
     expect(wrapper.vm.drawerOpen).toBe(false);
@@ -124,7 +122,7 @@ describe("WorkspaceView", () => {
     mount(WorkspaceView, {
       global: {
         provide: { fileStore, api, mobileMode: false },
-        stubs: { Sidebar: true, Canvas: true, Button: true },
+        stubs: { Sidebar: true, Canvas: true },
       },
     });
     expect(useKSSpy).toHaveBeenCalledWith({
@@ -174,7 +172,7 @@ describe("WorkspaceView", () => {
     const wrapper = mount(WorkspaceView, {
       global: {
         provide: { fileStore, api, mobileMode: false },
-        stubs: { Sidebar: true, Canvas: true, Button: true },
+        stubs: { Sidebar: true, Canvas: true },
       },
     });
     // In non-mobile mode, there is no focus mode BaseButton in the View component itself
@@ -188,7 +186,7 @@ describe("WorkspaceView", () => {
     mount(WorkspaceView, {
       global: {
         provide: { fileStore: emptyStore, api, mobileMode: false },
-        stubs: { Sidebar: true, Canvas: true, Button: true },
+        stubs: { Sidebar: true, Canvas: true },
       },
     });
     // Empty fileStore should NOT redirect (might be due to API failure)
@@ -205,7 +203,7 @@ describe("WorkspaceView", () => {
       mount(WorkspaceView, {
         global: {
           provide: { fileStore: nullStore, api, mobileMode: false },
-          stubs: { Sidebar: true, Canvas: true, Button: true },
+          stubs: { Sidebar: true, Canvas: true },
         },
       });
       expect(pushMock).not.toHaveBeenCalledWith({ name: "NotFound" });
@@ -221,7 +219,7 @@ describe("WorkspaceView", () => {
       mount(WorkspaceView, {
         global: {
           provide: { fileStore: loadingStore, api, mobileMode: false },
-          stubs: { Sidebar: true, Canvas: true, Button: true },
+          stubs: { Sidebar: true, Canvas: true },
         },
       });
       expect(pushMock).not.toHaveBeenCalledWith({ name: "NotFound" });
@@ -237,7 +235,7 @@ describe("WorkspaceView", () => {
       const wrapper = mount(WorkspaceView, {
         global: {
           provide: { fileStore: loadingStore, api, mobileMode: false },
-          stubs: { Sidebar: true, Canvas: true, Button: true },
+          stubs: { Sidebar: true, Canvas: true },
         },
       });
       expect(wrapper.text()).toContain("Loading");
@@ -254,7 +252,7 @@ describe("WorkspaceView", () => {
       const wrapper = mount(WorkspaceView, {
         global: {
           provide: { fileStore: errorStore, api, mobileMode: false },
-          stubs: { Sidebar: true, Canvas: true, Button: true },
+          stubs: { Sidebar: true, Canvas: true },
         },
       });
       expect(wrapper.text()).toContain("Error loading files");
@@ -271,7 +269,7 @@ describe("WorkspaceView", () => {
       mount(WorkspaceView, {
         global: {
           provide: { fileStore: loadedStoreWithoutTargetFile, api, mobileMode: false },
-          stubs: { Sidebar: true, Canvas: true, Button: true },
+          stubs: { Sidebar: true, Canvas: true },
         },
       });
       expect(pushMock).toHaveBeenCalledWith({ name: "NotFound" });
@@ -287,7 +285,7 @@ describe("WorkspaceView", () => {
       mount(WorkspaceView, {
         global: {
           provide: { fileStore: emptyStoreAfterFailure, api, mobileMode: false },
-          stubs: { Sidebar: true, Canvas: true, Button: true },
+          stubs: { Sidebar: true, Canvas: true },
         },
       });
       // Should NOT redirect when files array is empty (likely due to API failure)
