@@ -99,7 +99,7 @@
   <Pane>
     <template #header>
       <IconLock />
-      <span class="title">Account Security</span>
+      <h1>Account Security</h1>
     </template>
     <Section>
       <template #title>Change Password</template>

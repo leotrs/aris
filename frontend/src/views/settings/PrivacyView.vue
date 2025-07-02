@@ -48,7 +48,7 @@
   <Pane>
     <template #header>
       <IconShield />
-      <span class="title">Privacy & Communication</span>
+      <h1>Privacy & Communication</h1>
     </template>
     <Section>
       <template #title>Content Privacy</template>

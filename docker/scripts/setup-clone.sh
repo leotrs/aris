@@ -4,6 +4,9 @@ set -e
 # Aris Multi-Clone Setup Script
 # Automates the setup of additional repository clones
 
+# Validate environment variables first
+node ../env-check.js
+
 echo "🚀 Aris Multi-Clone Setup"
 echo "========================="
 

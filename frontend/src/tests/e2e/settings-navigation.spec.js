@@ -18,7 +18,7 @@ test.describe("Settings Navigation @auth", () => {
   test("should navigate to settings and show sub-items", async ({ page }) => {
     // Navigate to settings
     await page.click('text="Settings"');
-    await expect(page).toHaveURL("/settings");
+    await expect(page).toHaveURL("/settings/document");
 
     // Should show settings sub-items in sidebar
     await expect(page.locator(".sub-items-container")).toBeVisible();
@@ -31,7 +31,7 @@ test.describe("Settings Navigation @auth", () => {
   test("should navigate between settings sub-sections", async ({ page }) => {
     // Start at settings
     await page.click('text="Settings"');
-    await expect(page).toHaveURL("/settings");
+    await expect(page).toHaveURL("/settings/document");
 
     // Click on File sub-item
     await page.click('.sub-items-container >> text="File"');
@@ -74,6 +74,7 @@ test.describe("Settings Navigation @auth", () => {
   test("should maintain settings active state when on sub-pages", async ({ page }) => {
     // Navigate to settings sub-page
     await page.click('text="Settings"');
+    await expect(page).toHaveURL("/settings/document");
     await page.click('.sub-items-container >> text="Behavior"');
     await expect(page).toHaveURL("/settings/behavior");
 
@@ -88,14 +89,18 @@ test.describe("Settings Navigation @auth", () => {
   test("should hide sub-items when navigating away from settings", async ({ page }) => {
     // Start at settings to show sub-items
     await page.click('text="Settings"');
+    await expect(page).toHaveURL("/settings/document");
     await expect(page.locator(".sub-items-container")).toBeVisible();
 
     // Navigate to Home
     await page.click('text="Home"');
     await expect(page).toHaveURL("/");
 
-    // Sub-items container should not be visible
-    await expect(page.locator(".sub-items-container")).not.toBeVisible();
+    // Settings sub-items should not be visible (Home may have its own sub-items)
+    await expect(page.locator('.sub-items-container >> text="File"')).not.toBeVisible();
+    await expect(page.locator('.sub-items-container >> text="Behavior"')).not.toBeVisible();
+    await expect(page.locator('.sub-items-container >> text="Privacy"')).not.toBeVisible();
+    await expect(page.locator('.sub-items-container >> text="Security"')).not.toBeVisible();
 
     // Settings main item should not be active
     const settingsItem = page.locator('text="Settings"').locator("..");
@@ -165,10 +170,11 @@ test.describe("Settings Navigation in Collapsed Sidebar @auth", () => {
   test("should handle sub-items in collapsed sidebar", async ({ page }) => {
     // Navigate to settings first
     await page.click('text="Settings"');
+    await expect(page).toHaveURL("/settings/document");
     await expect(page.locator(".sub-items-container")).toBeVisible();
 
     // Collapse the sidebar
-    await page.click('[title="Expand"]'); // Collapse button
+    await page.click('[data-testid="sidebar-item-collapse"]'); // Collapse button
     await expect(page.locator(".sb-wrapper")).toHaveClass(/collapsed/);
 
     // Sub-items should still be accessible (implementation dependent)
@@ -194,7 +200,7 @@ test.describe("Settings Mobile Navigation @auth", () => {
   test("should handle settings navigation on mobile", async ({ page }) => {
     // Mobile navigation may be different - adjust based on implementation
     await page.click('text="Settings"');
-    await expect(page).toHaveURL("/settings");
+    await expect(page).toHaveURL("/settings/document");
 
     // Check if sub-items are handled differently on mobile
     // This test may need significant adjustment based on mobile implementation
@@ -225,6 +231,7 @@ test.describe("Settings Error Handling @auth", () => {
 
   test("should maintain navigation state during network issues", async ({ page }) => {
     await page.click('text="Settings"');
+    await expect(page).toHaveURL("/settings/document");
     await page.click('.sub-items-container >> text="Behavior"');
 
     // Simulate network issues

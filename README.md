@@ -33,7 +33,17 @@ readable on any device, bringing scientific publications to the web. See more at
    cd aris
    ```
 
-2. **Frontend Setup**
+2. **Environment Configuration (REQUIRED)**
+
+   ```bash
+   # Copy environment template and configure ports
+   cp .env.example .env
+   # Edit .env with your desired port configuration
+   ```
+   
+   **CRITICAL**: All environment variables are REQUIRED. The system will crash immediately if any are missing.
+
+3. **Frontend Setup**
 
    ```bash
    cd frontend
@@ -41,7 +51,7 @@ readable on any device, bringing scientific publications to the web. See more at
    npm run dev
    ```
 
-3. **Backend Setup**
+4. **Backend Setup**
 
    ```bash
    cd backend

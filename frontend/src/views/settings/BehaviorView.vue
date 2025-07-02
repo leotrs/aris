@@ -50,7 +50,7 @@
   <Pane>
     <template #header>
       <IconSettings2 />
-      <span class="title">Behavior</span>
+      <h1>Behavior</h1>
     </template>
     <Section>
       <template #title>Auto-save & Performance</template>
