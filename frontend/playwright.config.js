@@ -64,12 +64,10 @@ export default defineConfig({
         },
       ]
     : [
-        // Development: Run on Chromium only for speed (skip mobile-only tests)
+        // Development: Run on Chromium only for speed
         {
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
-          grep: /@mobile-only/,
-          grepInvert: true, // Skip mobile-only tests on desktop for local dev
         },
       ],
 
