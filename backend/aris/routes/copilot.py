@@ -4,7 +4,7 @@ from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from ..deps import UserRead, current_user
+from ..deps import UserRead, current_user, get_file_service
 from ..logging_config import get_logger
 from ..models.copilot import ChatRequest, ChatResponse
 from ..services.copilot.factory import ProviderFactory
@@ -24,7 +24,7 @@ router = APIRouter(prefix="/copilot", tags=["copilot"])
 _copilot_service: Optional[CopilotService] = None
 
 
-async def get_copilot_service() -> CopilotService:
+async def get_copilot_service(file_service=Depends(get_file_service)) -> CopilotService:
     """Get or create the copilot service instance."""
     global _copilot_service
     
@@ -35,7 +35,7 @@ async def get_copilot_service() -> CopilotService:
             
             # Check if provider is available and log details
             if await provider.is_available():
-                _copilot_service = CopilotService(provider)
+                _copilot_service = CopilotService(provider, file_service=file_service)
                 logger.info(f"Initialized copilot service with provider: {provider.name}")
             else:
                 raise ProviderUnavailableError(f"Provider {provider.name} is not available", provider.name)
@@ -45,7 +45,7 @@ async def get_copilot_service() -> CopilotService:
             # Fall back to mock provider for development
             from ..services.copilot.mock_provider import MockLLMProvider
             provider = MockLLMProvider()
-            _copilot_service = CopilotService(provider)
+            _copilot_service = CopilotService(provider, file_service=file_service)
             logger.warning("Falling back to mock provider for copilot service")
     
     return _copilot_service
@@ -72,7 +72,7 @@ async def chat(
     try:
         logger.info(f"Chat request from user {user.id}: {request.message[:100]}...")
         
-        response = await copilot_service.chat(request)
+        response = await copilot_service.chat(request, user=user)
         
         logger.info(f"Chat response generated for user {user.id}")
         return response
