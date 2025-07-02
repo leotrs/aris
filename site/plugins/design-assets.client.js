@@ -6,7 +6,7 @@ export default defineNuxtPlugin(() => {
     const _config = useRuntimeConfig();
     // Determine backend URL based on environment
     const backendUrl =
-      process.env.NODE_ENV === "production" ? "https://api.aris.pub" : "http://localhost:8000";
+      process.env.NODE_ENV === "production" ? "https://api.aris.pub" : process.env.NUXT_BACKEND_URL;
 
     // Load design assets CSS
     const designAssets = ["typography.css", "components.css", "layout.css", "variables.css"];

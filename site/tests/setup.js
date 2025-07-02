@@ -4,7 +4,7 @@ import { vi } from "vitest";
 global.defineNuxtConfig = vi.fn();
 global.useRuntimeConfig = vi.fn(() => ({
   public: {
-    apiBase: "http://localhost:8000",
+    apiBase: process.env.NUXT_BACKEND_URL,
   },
 }));
 
@@ -52,7 +52,7 @@ global.process = {
 Object.defineProperty(window, "location", {
   writable: true,
   value: {
-    href: "http://localhost:3000",
+    href: process.env.SITE_URL,
     assign: vi.fn(),
     replace: vi.fn(),
     reload: vi.fn(),

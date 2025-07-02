@@ -3,12 +3,10 @@ import { mount } from "@vue/test-utils";
 import Logo from "../../../components/layout/Logo.vue";
 
 // Mock the useApi composable
-const BACKEND_URL = process.env.NUXT_BACKEND_URL || "http://localhost:8000";
-
 vi.mock("@/composables/useApi.js", () => ({
   default: {
     defaults: {
-      baseURL: BACKEND_URL,
+      baseURL: process.env.NUXT_process.env.NUXT_BACKEND_URL,
     },
   },
 }));
@@ -31,7 +29,7 @@ describe("Logo Component", () => {
 
     const img = wrapper.find("img");
     expect(img.exists()).toBe(true);
-    expect(img.attributes("src")).toBe(`${BACKEND_URL}/design-assets/logos/logo-32px.svg`);
+    expect(img.attributes("src")).toBe(`${process.env.NUXT_BACKEND_URL}/design-assets/logos/logo-32px.svg`);
     expect(img.attributes("alt")).toBe("Aris logo");
   });
 
@@ -43,7 +41,7 @@ describe("Logo Component", () => {
     });
 
     const img = wrapper.find("img");
-    expect(img.attributes("src")).toBe(`${BACKEND_URL}/design-assets/logos/logotype.svg`);
+    expect(img.attributes("src")).toBe(`${process.env.NUXT_BACKEND_URL}/design-assets/logos/logotype.svg`);
   });
 
   it("renders gray logo when type is 'gray'", () => {
@@ -55,7 +53,7 @@ describe("Logo Component", () => {
 
     const img = wrapper.find("img");
     expect(img.attributes("src")).toBe(
-      `${BACKEND_URL}/design-assets/logos/logo-32px-gray.svg`
+      `${process.env.NUXT_BACKEND_URL}/design-assets/logos/logo-32px-gray.svg`
     );
   });
 
@@ -96,6 +94,6 @@ describe("Logo Component", () => {
     });
 
     const img = wrapper.find("img");
-    expect(img.attributes("src")).toBe(`${BACKEND_URL}/design-assets/logos/logo-32px.svg`);
+    expect(img.attributes("src")).toBe(`${process.env.NUXT_BACKEND_URL}/design-assets/logos/logo-32px.svg`);
   });
 });
