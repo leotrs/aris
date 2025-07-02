@@ -15,7 +15,7 @@ const SearchBarStub = defineComponent({
   setup(_, { expose, slots }) {
     const focusInput = vi.fn();
     expose({ focusInput });
-    return () => slots.default && slots.default();
+    return () => [slots.default && slots.default(), slots.buttons && slots.buttons()];
   },
 });
 
@@ -101,7 +101,7 @@ describe("DockableSearch.vue", () => {
     expect(wrapper.find(".match-count").exists()).toBe(false);
   });
 
-  it("toggles between simple and advanced search modes", async () => {
+  it("hides advanced search toggle button when feature is disabled", async () => {
     const manuscriptRef = ref({ $el: {} });
     const file = ref({ source: "" });
     const wrapper = mount(DockableSearch, {
@@ -110,7 +110,7 @@ describe("DockableSearch.vue", () => {
         stubs: {
           SearchBar: SearchBarStub,
           ButtonClose: true,
-          Button: { template: "<button><slot/></button>" },
+          Button: { template: "<button class='test-button'><slot/></button>" },
           SelectBox: { template: "<div/>", props: ["modelValue", "options"] },
           InputText: { template: "<input/>", props: ["modelValue"] },
         },
@@ -121,11 +121,36 @@ describe("DockableSearch.vue", () => {
     expect(wrapper.classes()).toContain("simple");
     expect(wrapper.classes()).not.toContain("advanced");
 
-    // Simulate advanced mode by directly accessing the component instance
-    wrapper.vm.advanced = true;
+    // Advanced search toggle button should not be visible
+    expect(wrapper.find(".test-button").exists()).toBe(false);
+  });
+
+  it("shows advanced search toggle when feature is enabled", async () => {
+    const manuscriptRef = ref({ $el: {} });
+    const file = ref({ source: "" });
+    const wrapper = mount(DockableSearch, {
+      global: {
+        provide: { manuscriptRef, file },
+        stubs: {
+          SearchBar: SearchBarStub,
+          ButtonClose: true,
+          Button: { template: "<button class='test-button'><slot/></button>" },
+          SelectBox: { template: "<div/>", props: ["modelValue", "options"] },
+          InputText: { template: "<input/>", props: ["modelValue"] },
+        },
+      },
+    });
+
+    // Enable advanced search feature
+    wrapper.vm.enableAdvancedSearch = true;
     await nextTick();
 
-    // Should switch to advanced mode
+    // Advanced search toggle button should now be visible
+    expect(wrapper.find(".test-button").exists()).toBe(true);
+
+    // Can switch to advanced mode
+    wrapper.vm.advanced = true;
+    await nextTick();
     expect(wrapper.classes()).toContain("advanced");
     expect(wrapper.classes()).not.toContain("simple");
   });
@@ -150,7 +175,8 @@ describe("DockableSearch.vue", () => {
       },
     });
 
-    // Switch to advanced mode
+    // Enable advanced search feature and switch to advanced mode
+    wrapper.vm.enableAdvancedSearch = true;
     wrapper.vm.advanced = true;
     await nextTick();
 
@@ -177,7 +203,8 @@ describe("DockableSearch.vue", () => {
       },
     });
 
-    // Switch to advanced mode
+    // Enable advanced search feature and switch to advanced mode
+    wrapper.vm.enableAdvancedSearch = true;
     wrapper.vm.advanced = true;
     await nextTick();
 
@@ -207,7 +234,8 @@ describe("DockableSearch.vue", () => {
       },
     });
 
-    // Switch to advanced mode and replace mode
+    // Enable advanced search feature, switch to advanced mode and replace mode
+    wrapper.vm.enableAdvancedSearch = true;
     wrapper.vm.advanced = true;
     wrapper.vm.selectMode = "replace";
     await nextTick();

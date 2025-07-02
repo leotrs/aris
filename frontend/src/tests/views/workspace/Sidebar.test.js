@@ -113,13 +113,9 @@ describe("Workspace Sidebar", () => {
       const items = wrapper.vm.items;
 
       const drawerItems = items.filter((item) => item.type === "drawer");
-      expect(drawerItems).toHaveLength(5);
+      expect(drawerItems).toHaveLength(1);
 
       const drawerNames = drawerItems.map((item) => item.name);
-      expect(drawerNames).toContain("DrawerMargins");
-      expect(drawerNames).toContain("DrawerActivity");
-      expect(drawerNames).toContain("DrawerCollaborate");
-      expect(drawerNames).toContain("DrawerMeta");
       expect(drawerNames).toContain("DrawerSettings");
     });
 
@@ -255,37 +251,36 @@ describe("Workspace Sidebar", () => {
       expect(drawerComponent.props("component")).toBe("");
 
       // Activate a drawer
-      const marginsItem = wrapper.vm.items.find((item) => item.name === "DrawerMargins");
-      marginsItem.state = true;
+      const settingsItem = wrapper.vm.items.find((item) => item.name === "DrawerSettings");
+      settingsItem.state = true;
       await nextTick();
 
       // Should pass the active drawer name
       drawerComponent = wrapper.findComponent({ name: "Drawer" });
-      expect(drawerComponent.props("component")).toBe("DrawerMargins");
+      expect(drawerComponent.props("component")).toBe("DrawerSettings");
     });
 
     it("only shows one drawer at a time", async () => {
       const wrapper = createWrapper();
 
-      const marginsItem = wrapper.vm.items.find((item) => item.name === "DrawerMargins");
-      const activityItem = wrapper.vm.items.find((item) => item.name === "DrawerActivity");
+      // Since we only have one drawer component left (DrawerSettings),
+      // this test primarily verifies the drawer mechanism still works
+      const settingsItem = wrapper.vm.items.find((item) => item.name === "DrawerSettings");
 
-      // Activate first drawer
-      marginsItem.state = true;
+      // Activate settings drawer
+      settingsItem.state = true;
       await nextTick();
 
       let drawerComponent = wrapper.findComponent({ name: "Drawer" });
-      expect(drawerComponent.props("component")).toBe("DrawerMargins");
+      expect(drawerComponent.props("component")).toBe("DrawerSettings");
 
-      // Activate second drawer - this should close the first one automatically
-      activityItem.state = true;
+      // Deactivate drawer
+      settingsItem.state = false;
       await nextTick();
 
-      // Note: The Sidebar component doesn't automatically close other drawers
-      // This behavior might be handled by SidebarMenu. For now, test current behavior
+      // Should show no drawer
       drawerComponent = wrapper.findComponent({ name: "Drawer" });
-      // Both drawers are active, so it shows the first one that matches the find condition
-      expect(drawerComponent.props("component")).toBe("DrawerMargins");
+      expect(drawerComponent.props("component")).toBe("");
     });
   });
 
