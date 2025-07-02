@@ -57,6 +57,7 @@ describe("FilesItem.vue - Suspense and Async Behavior", () => {
       },
       fileStore: mockFileStore,
       xsMode: ref(false),
+      mobileMode: ref(false),
       user: ref({ id: "user-1" }),
       shouldShowColumn: vi.fn(() => true),
     };

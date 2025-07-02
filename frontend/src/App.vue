@@ -199,9 +199,9 @@
 
   // Determine which clone this is based on backend port
   const getCloneInfo = () => {
-    const apiUrl = import.meta.env.VITE_API_BASE_URL || "";
+    const apiUrl = import.meta.env.VITE_API_BASE_URL;
     const portMatch = apiUrl.match(/:(\d+)/);
-    const port = portMatch ? parseInt(portMatch[1]) : 8000;
+    const port = portMatch ? parseInt(portMatch[1]) : undefined;
     return `LOCAL:${port}`;
   };
 

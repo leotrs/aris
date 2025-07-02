@@ -6,7 +6,7 @@ import Logo from "../../../components/layout/Logo.vue";
 vi.mock("@/composables/useApi.js", () => ({
   default: {
     defaults: {
-      baseURL: "http://localhost:8001",
+      baseURL: process.env.NUXT_BACKEND_URL,
     },
   },
 }));
@@ -29,7 +29,9 @@ describe("Logo Component", () => {
 
     const img = wrapper.find("img");
     expect(img.exists()).toBe(true);
-    expect(img.attributes("src")).toBe("http://localhost:8001/design-assets/logos/logo-32px.svg");
+    expect(img.attributes("src")).toBe(
+      `${process.env.NUXT_BACKEND_URL}/design-assets/logos/logo-32px.svg`
+    );
     expect(img.attributes("alt")).toBe("Aris logo");
   });
 
@@ -41,7 +43,9 @@ describe("Logo Component", () => {
     });
 
     const img = wrapper.find("img");
-    expect(img.attributes("src")).toBe("http://localhost:8001/design-assets/logos/logotype.svg");
+    expect(img.attributes("src")).toBe(
+      `${process.env.NUXT_BACKEND_URL}/design-assets/logos/logotype.svg`
+    );
   });
 
   it("renders gray logo when type is 'gray'", () => {
@@ -53,7 +57,7 @@ describe("Logo Component", () => {
 
     const img = wrapper.find("img");
     expect(img.attributes("src")).toBe(
-      "http://localhost:8001/design-assets/logos/logo-32px-gray.svg"
+      `${process.env.NUXT_BACKEND_URL}/design-assets/logos/logo-32px-gray.svg`
     );
   });
 
@@ -94,6 +98,8 @@ describe("Logo Component", () => {
     });
 
     const img = wrapper.find("img");
-    expect(img.attributes("src")).toBe("http://localhost:8001/design-assets/logos/logo-32px.svg");
+    expect(img.attributes("src")).toBe(
+      `${process.env.NUXT_BACKEND_URL}/design-assets/logos/logo-32px.svg`
+    );
   });
 });

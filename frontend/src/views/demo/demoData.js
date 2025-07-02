@@ -191,7 +191,7 @@ export const createDemoApi = () => ({
     if (url.includes("/render")) {
       // Use the actual backend /render endpoint for RSM content
       try {
-        const response = await fetch("http://localhost:8000/render", {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/render`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -223,10 +223,10 @@ export const createDemoApi = () => ({
   put: () => Promise.resolve({ data: {} }),
   delete: () => Promise.resolve({ data: {} }),
   // Return the backend URI for static assets
-  getUri: () => "http://localhost:8000",
+  getUri: () => import.meta.env.VITE_API_BASE_URL,
   // Mirror axios instance interface - components depend on defaults.baseURL and defaults.headers
   defaults: {
-    baseURL: "http://localhost:8000",
+    baseURL: import.meta.env.VITE_API_BASE_URL,
     headers: {
       common: {},
     },
