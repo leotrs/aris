@@ -2,7 +2,8 @@ import axios from "axios";
 
 // Configure axios instance
 const api = axios.create({
-  baseURL: process.env.NODE_ENV === "production" ? "https://api.aris.pub" : process.env.NUXT_BACKEND_URL,
+  baseURL:
+    process.env.NODE_ENV === "production" ? "https://api.aris.pub" : process.env.NUXT_BACKEND_URL,
   timeout: 10000,
   headers: {
     "Content-Type": "application/json",
