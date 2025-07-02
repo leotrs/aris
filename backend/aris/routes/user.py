@@ -1,6 +1,7 @@
 import base64
 import json
 from datetime import UTC, datetime
+from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
 from pydantic import BaseModel
@@ -455,7 +456,7 @@ async def export_user_data(
         query = (
             select(User)
             .options(
-                selectinload(User.files).selectinload_all(),
+                selectinload(User.files),
                 selectinload(User.tags),
                 selectinload(User.file_settings),
                 selectinload(User.user_settings),
@@ -471,7 +472,7 @@ async def export_user_data(
             raise HTTPException(status_code=404, detail="User not found")
 
         # Build export data structure
-        export_data = {
+        export_data: Dict[str, Any] = {
             "export_info": {
                 "exported_at": datetime.now(UTC).isoformat(),
                 "user_id": user.id,
@@ -493,9 +494,10 @@ async def export_user_data(
         }
 
         # Add files
+        files_list: List[Dict[str, Any]] = export_data["files"]
         for file in user.files:
             if not file.deleted_at:
-                export_data["files"].append({
+                files_list.append({
                     "id": file.id,
                     "title": file.title,
                     "source": file.source,
@@ -508,9 +510,10 @@ async def export_user_data(
                 })
 
         # Add tags
+        tags_list: List[Dict[str, Any]] = export_data["tags"]
         for tag in user.tags:
             if not tag.deleted_at:
-                export_data["tags"].append({
+                tags_list.append({
                     "id": tag.id,
                     "name": tag.name,
                     "color": tag.color,
@@ -542,9 +545,10 @@ async def export_user_data(
             }
 
         # Add file settings
+        file_settings_list: List[Dict[str, Any]] = export_data["file_settings"]
         for file_setting in user.file_settings:
             if not file_setting.deleted_at:
-                export_data["file_settings"].append({
+                file_settings_list.append({
                     "file_id": file_setting.file_id,
                     "background": file_setting.background,
                     "font_size": file_setting.font_size,
@@ -557,9 +561,10 @@ async def export_user_data(
                 })
 
         # Add file assets (without binary content for size reasons)
+        file_assets_list: List[Dict[str, Any]] = export_data["file_assets"]
         for asset in user.file_assets:
             if not asset.deleted_at:
-                export_data["file_assets"].append({
+                file_assets_list.append({
                     "id": asset.id,
                     "file_id": asset.file_id,
                     "filename": asset.filename,
