@@ -32,7 +32,7 @@ describe("BehaviorView", () => {
         components: {
           Pane: {
             name: "Pane",
-            template: '<div data-testid="pane"><slot name="header" /><slot /></div>',
+            template: '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
           },
           Section: {
             name: "Section",
@@ -48,7 +48,7 @@ describe("BehaviorView", () => {
           },
           IconSettings2: {
             name: "IconSettings2",
-            template: '<div data-testid="icon-settings2" />',
+            template: '<svg data-testid="icon-settings2" />',
           },
         },
       },
@@ -61,7 +61,7 @@ describe("BehaviorView", () => {
     });
 
     it("renders the header with icon and title", () => {
-      expect(wrapper.find('[data-testid="icon-settings2"]').exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "IconSettings2" }).exists()).toBe(true);
       expect(wrapper.text()).toContain("Behavior");
     });
 
@@ -167,7 +167,7 @@ describe("BehaviorView", () => {
             Pane: { template: "<div><slot /></div>" },
             Section: { template: '<div><slot name="content" /></div>' },
             Checkbox: { template: "<div />" },
-            IconSettings2: { template: "<div />" },
+            IconSettings2: { template: '<svg data-testid="icon-settings2" />' },
           },
         },
       });
@@ -210,6 +210,7 @@ describe("BehaviorView", () => {
 
       const saveButton = wrapper.find(".save-button");
       await saveButton.trigger("click");
+      await wrapper.vm.$nextTick();
 
       expect(wrapper.vm.saved).toBe(true);
       expect(saveButton.text()).toBe("Saved!");
@@ -264,7 +265,7 @@ describe("BehaviorView", () => {
     });
 
     it("has descriptive text for settings", () => {
-      expect(wrapper.text()).toContain("Automatically hide UI elements in focus mode");
+      expect(wrapper.text()).toContain("Automatically hide navigation and toolbars when entering focus mode");
       expect(wrapper.text()).toContain("Play audio feedback for actions and notifications");
       expect(wrapper.text()).toContain("Set the default open/closed state for workspace drawers");
     });
