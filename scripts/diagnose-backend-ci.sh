@@ -4,6 +4,9 @@ set -e
 # Backend Process Diagnostic Script for CI
 # This script will prove definitively whether the backend process is being killed before E2E tests run
 
+# Validate environment variables first
+node docker/env-check.js
+
 SCRIPT_START=$(date +%s)
 LOG_FILE="/tmp/backend-diagnosis.log"
 BACKEND_PID_FILE="/tmp/backend.pid"

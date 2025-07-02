@@ -1,11 +1,25 @@
 import { test, expect } from "@playwright/test";
+import dotenv from "dotenv";
+import path from "path";
 
 // @core
+
+// Load environment variables from root .env file
+dotenv.config({ path: path.resolve("../../../.env") });
+
+// Get backend port from environment - NO fallback, will crash if not set
+const BACKEND_PORT = process.env.BACKEND_PORT;
+
+if (!BACKEND_PORT) {
+  console.error('❌ FATAL: BACKEND_PORT environment variable not set');
+  console.error('   Ensure .env file exists at project root with all required variables');
+  process.exit(1);
+}
 
 test.describe("Auth Disabled - Development Mode @core", () => {
   test("verifies auth guards are bypassed and all routes are accessible", async ({ page }) => {
     // Test 1: Verify backend API is responding with auth disabled
-    const healthResponse = await page.request.get("http://localhost:8000/health");
+    const healthResponse = await page.request.get(`http://localhost:${BACKEND_PORT}/health`);
     expect(healthResponse.ok()).toBeTruthy();
 
     // Test 2: Verify home page is directly accessible (no redirect to login)
@@ -25,7 +39,7 @@ test.describe("Auth Disabled - Development Mode @core", () => {
     // Test 5: Verify settings page is also accessible
     await page.goto("/settings");
     await page.waitForLoadState("networkidle");
-    await expect(page).toHaveURL("/settings", { timeout: 10000 });
+    await expect(page).toHaveURL("/settings/document", { timeout: 10000 });
 
     // Test 6: Verify workspace routes are accessible
     // Try to create a file to test workspace access
@@ -40,7 +54,7 @@ test.describe("Auth Disabled - Development Mode @core", () => {
     }
 
     // Test 7: Verify backend API calls work without auth headers
-    const response = await page.request.get("http://localhost:8000/health");
+    const response = await page.request.get(`http://localhost:${BACKEND_PORT}/health`);
     expect(response.ok()).toBeTruthy();
   });
 });

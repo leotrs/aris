@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Validate environment variables first
+node docker/env-check.js
+
 echo "🔍 DEBUGGING AUTH FAILURE - Let's find the real problem"
 echo ""
 

@@ -84,7 +84,7 @@ Insightful remark goes here, with a reference to the earlier :ref:sec::.
   <Pane>
     <template #header>
       <IconFileText />
-      <span class="title">Document Display</span>
+      <h1>Document Display</h1>
     </template>
 
     <div class="settings-main">
