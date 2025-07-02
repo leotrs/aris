@@ -9,15 +9,15 @@
    * @displayName Avatar
    * @example
    * // Basic usage with user object
-   * <Avatar :user="{ id: 1, name: 'John Doe', initials: 'JD', color: '#FF5733' }" />
+   * <Avatar :user="{ id: 1, name: 'John Doe', initials: 'JD', avatar_color: '#FF5733' }" />
    *
    * @example
    * // Small size with tooltip disabled
-   * <Avatar :user="{ id: 2, name: 'Jane Smith', initials: 'JS', color: '#33FF57' }" size="sm" :tooltip="false" />
+   * <Avatar :user="{ id: 2, name: 'Jane Smith', initials: 'JS', avatar_color: '#33FF57' }" size="sm" :tooltip="false" />
    *
    * @example
-   * // User with only name and color (initials derived)
-   * <Avatar :user="{ id: 3, name: 'Alice', color: '#3357FF' }" />
+   * // User with only name and avatar_color (initials derived)
+   * <Avatar :user="{ id: 3, name: 'Alice', avatar_color: '#3357FF' }" />
    */
   import { inject, computed, ref, onMounted, useTemplateRef } from "vue";
 
@@ -50,11 +50,11 @@
   const style = computed(() => {
     if (props.size === "sm") {
       return {
-        backgroundColor: props.user.color,
+        backgroundColor: props.user.avatar_color,
       };
     }
     return {
-      backgroundColor: hasAvatar.value ? "transparent" : props.user.color,
+      backgroundColor: hasAvatar.value ? "transparent" : props.user.avatar_color,
       backgroundImage: hasAvatar.value ? `url(${avatarUrl.value})` : "none",
     };
   });
@@ -103,7 +103,7 @@
   }
 
   .av-wrapper.has-avatar:not(.size-sm) {
-    border: 2px solid v-bind(props.user.color);
+    border: 2px solid v-bind(props.user.avatar_color);
     box-shadow: var(--shadow-soft);
   }
 </style>

@@ -35,7 +35,7 @@ describe("Avatar.vue", () => {
   }
 
   it("renders user initials when api.get fails and user.initials provided", async () => {
-    const userValue = { id: 1, name: "Alice", initials: "AL", color: "blue" };
+    const userValue = { id: 1, name: "Alice", initials: "AL", avatar_color: "blue" };
     api = { get: vi.fn().mockRejectedValue(new Error("not found")) };
     wrapper = await mountAvatarWith(userValue, api);
 
@@ -53,7 +53,7 @@ describe("Avatar.vue", () => {
   });
 
   it("renders first character of user.name when no initials and api.get fails", async () => {
-    const userValue = { id: 2, name: "Bob", color: "green" };
+    const userValue = { id: 2, name: "Bob", avatar_color: "green" };
     api = { get: vi.fn().mockRejectedValue(new Error("not found")) };
     wrapper = await mountAvatarWith(userValue, api);
 
@@ -63,7 +63,7 @@ describe("Avatar.vue", () => {
 
   it("fetches avatar and renders background image on success", async () => {
     const blob = new Blob(["data"], { type: "image/png" });
-    const userValue = { id: 3, name: "Carol", initials: "C", color: "red" };
+    const userValue = { id: 3, name: "Carol", initials: "C", avatar_color: "red" };
     api = { get: vi.fn().mockResolvedValue({ data: blob }) };
     wrapper = await mountAvatarWith(userValue, api);
 
