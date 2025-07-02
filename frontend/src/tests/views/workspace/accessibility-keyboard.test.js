@@ -106,16 +106,6 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     });
 
     it("should have keyboard-accessible drawer toggles", () => {
-      const items = [
-        {
-          name: "DrawerMargins",
-          icon: "LayoutDistributeVertical",
-          label: "margins",
-          key: "m",
-          state: false,
-          type: "drawer",
-        },
-      ];
 
       const wrapper = mount(Sidebar, {
         global: {
@@ -288,18 +278,6 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     });
 
     it("should handle sequential keyboard shortcuts correctly", async () => {
-      const items = [
-        {
-          name: "DrawerMargins",
-          key: "m",
-          type: "drawer",
-        },
-        {
-          name: "DrawerActivity",
-          key: "a",
-          type: "drawer",
-        },
-      ];
 
       const wrapper = mount(Sidebar, {
         global: {
@@ -337,8 +315,6 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     });
 
     it("should prevent keyboard shortcut conflicts", () => {
-      const mockShortcuts1 = { s: vi.fn(), "p,m": vi.fn() };
-      const mockShortcuts2 = { "/": vi.fn(), escape: vi.fn() };
 
       // Mock multiple components registering shortcuts
       useKSSpy.mockImplementationOnce((shortcuts) => {
@@ -546,7 +522,6 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
       const mockFocus = vi.fn();
 
       // Mock element with focus method
-      const triggerElement = { focus: mockFocus };
 
       const wrapper = mount(Sidebar, {
         global: {

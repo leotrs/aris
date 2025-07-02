@@ -18,12 +18,11 @@ vi.mock("@/composables/useKeyboardShortcuts.js", () => ({
 
 describe("WorkspaceView Error Handling", () => {
   let getSettingsSpy;
-  let consoleErrorSpy;
 
   beforeEach(() => {
     pushMock.mockClear();
     getSettingsSpy = vi.spyOn(File, "getSettings");
-    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    vi.spyOn(console, "error").mockImplementation(() => {});
   });
 
   afterEach(() => {
