@@ -58,6 +58,7 @@ services:
       - site_node_modules:/app/node_modules
     environment:
       - FRONTEND_URL=http://localhost:${FRONTEND_PORT}
+      - NUXT_BACKEND_URL=http://localhost:${BACKEND_PORT}
     command: npm run dev
     
   postgres:
