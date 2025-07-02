@@ -34,11 +34,11 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
       };
     });
 
-    fileStore = { 
-      value: { 
+    fileStore = {
+      value: {
         files: [{ id: 42, content: "test file", source: "# Test" }],
-        isLoading: false 
-      } 
+        isLoading: false,
+      },
     };
 
     vi.clearAllMocks();
@@ -52,22 +52,22 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     it("should have proper ARIA labels for main workspace regions", () => {
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
-            api: { 
+          provide: {
+            fileStore,
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { 
+            Sidebar: {
               template: '<nav role="navigation" aria-label="workspace sidebar"><slot/></nav>',
             },
-            Canvas: { 
+            Canvas: {
               template: '<main role="main" aria-label="document editor"><slot/></main>',
             },
-            Icon: { template: '<span />' },
+            Icon: { template: "<span />" },
           },
         },
       });
@@ -77,8 +77,8 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
 
       expect(sidebar.exists()).toBe(true);
       expect(canvas.exists()).toBe(true);
-      expect(sidebar.attributes('aria-label')).toBe('workspace sidebar');
-      expect(canvas.attributes('aria-label')).toBe('document editor');
+      expect(sidebar.attributes("aria-label")).toBe("workspace sidebar");
+      expect(canvas.attributes("aria-label")).toBe("document editor");
     });
 
     it("should have accessible focus management", async () => {
@@ -91,18 +91,18 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
           },
           stubs: {
-            SidebarMenu: { 
+            SidebarMenu: {
               template: '<div tabindex="0" role="menubar" aria-label="workspace tools"></div>',
             },
-            UserMenu: { template: '<div />' },
+            UserMenu: { template: "<div />" },
           },
         },
       });
 
       const menubar = wrapper.find('[role="menubar"]');
       expect(menubar.exists()).toBe(true);
-      expect(menubar.attributes('tabindex')).toBe('0');
-      expect(menubar.attributes('aria-label')).toBe('workspace tools');
+      expect(menubar.attributes("tabindex")).toBe("0");
+      expect(menubar.attributes("aria-label")).toBe("workspace tools");
     });
 
     it("should have keyboard-accessible drawer toggles", () => {
@@ -126,7 +126,7 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
           },
           stubs: {
-            SidebarMenu: { 
+            SidebarMenu: {
               template: `
                 <div role="menubar">
                   <button 
@@ -140,21 +140,21 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
                 </div>
               `,
             },
-            UserMenu: { template: '<div />' },
+            UserMenu: { template: "<div />" },
           },
         },
       });
 
       const drawerButton = wrapper.find('[role="menuitem"]');
       expect(drawerButton.exists()).toBe(true);
-      expect(drawerButton.attributes('aria-pressed')).toBe('false');
-      expect(drawerButton.attributes('aria-label')).toBe('Toggle margins drawer');
-      expect(drawerButton.attributes('tabindex')).toBe('0');
+      expect(drawerButton.attributes("aria-pressed")).toBe("false");
+      expect(drawerButton.attributes("aria-label")).toBe("Toggle margins drawer");
+      expect(drawerButton.attributes("tabindex")).toBe("0");
     });
 
     it("should announce focus mode state changes", async () => {
       const focusMode = ref(false);
-      
+
       const wrapper = mount(Canvas, {
         props: {
           modelValue: { id: 42, source: "test" },
@@ -169,24 +169,24 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
             fileSettings: ref({}),
             annotations: reactive([]),
-            api: { 
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
-            FocusModeButton: { 
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
+            FocusModeButton: {
               template: `
                 <button 
                   :aria-label="focusMode ? 'Exit focus mode' : 'Enter focus mode'"
                   :aria-pressed="focusMode.toString()"
                 />
               `,
-              props: ['focusMode'],
+              props: ["focusMode"],
             },
           },
         },
@@ -207,18 +207,18 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     it("should register workspace-level keyboard shortcuts", () => {
       mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
-            api: { 
+          provide: {
+            fileStore,
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { template: '<div />' },
-            Canvas: { template: '<div />' },
-            Icon: { template: '<div />' },
+            Sidebar: { template: "<div />" },
+            Canvas: { template: "<div />" },
+            Icon: { template: "<div />" },
           },
         },
       });
@@ -230,19 +230,19 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
 
     it("should handle focus mode keyboard shortcut", async () => {
       const focusMode = ref(false);
-      
+
       // Mock the keyboard shortcut callback to simulate 'c' key functionality
-      const mockFocusToggle = vi.fn(() => { 
+      const mockFocusToggle = vi.fn(() => {
         focusMode.value = !focusMode.value;
       });
-      
+
       // Set up keyboard shortcuts mock to include focus mode toggle
       vi.mocked(KSMod.useKeyboardShortcuts).mockReturnValue({
         activate: vi.fn(),
         deactivate: vi.fn(),
         c: mockFocusToggle, // 'c' key for focus mode
       });
-      
+
       mount(Canvas, {
         props: {
           modelValue: { id: 42, source: "test" },
@@ -257,22 +257,22 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
             fileSettings: ref({}),
             annotations: reactive([]),
-            api: { 
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
-            FocusModeButton: { 
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
+            FocusModeButton: {
               template: '<button @click="toggleFocus" />',
               methods: {
                 toggleFocus() {
                   focusMode.value = !focusMode.value;
-                }
+                },
               },
             },
           },
@@ -282,7 +282,7 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
       // Simulate 'c' key shortcut activation
       mockFocusToggle();
       await nextTick();
-      
+
       // Focus mode should be toggled
       expect(focusMode.value).toBe(true);
     });
@@ -295,7 +295,7 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
           type: "drawer",
         },
         {
-          name: "DrawerActivity", 
+          name: "DrawerActivity",
           key: "a",
           type: "drawer",
         },
@@ -310,24 +310,24 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
           },
           stubs: {
-            SidebarMenu: { 
-              template: '<div />',
-              emits: ['on', 'off'],
+            SidebarMenu: {
+              template: "<div />",
+              emits: ["on", "off"],
             },
-            UserMenu: { template: '<div />' },
+            UserMenu: { template: "<div />" },
           },
         },
       });
 
       // Simulate rapid keyboard shortcuts
       if (keyboardShortcuts) {
-        if (keyboardShortcuts['p,m']) {
-          keyboardShortcuts['p,m']();
+        if (keyboardShortcuts["p,m"]) {
+          keyboardShortcuts["p,m"]();
           await nextTick();
         }
-        
-        if (keyboardShortcuts['p,a']) {
-          keyboardShortcuts['p,a']();
+
+        if (keyboardShortcuts["p,a"]) {
+          keyboardShortcuts["p,a"]();
           await nextTick();
         }
       }
@@ -337,8 +337,8 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     });
 
     it("should prevent keyboard shortcut conflicts", () => {
-      const mockShortcuts1 = { 's': vi.fn(), 'p,m': vi.fn() };
-      const mockShortcuts2 = { '/': vi.fn(), 'escape': vi.fn() };
+      const mockShortcuts1 = { s: vi.fn(), "p,m": vi.fn() };
+      const mockShortcuts2 = { "/": vi.fn(), escape: vi.fn() };
 
       // Mock multiple components registering shortcuts
       useKSSpy.mockImplementationOnce((shortcuts) => {
@@ -348,18 +348,18 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
 
       mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
-            api: { 
+          provide: {
+            fileStore,
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { template: '<div />' },
-            Canvas: { template: '<div />' },
-            Icon: { template: '<div />' },
+            Sidebar: { template: "<div />" },
+            Canvas: { template: "<div />" },
+            Icon: { template: "<div />" },
           },
         },
       });
@@ -375,17 +375,17 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     it("should provide live region for status announcements", () => {
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
-            api: { 
+          provide: {
+            fileStore,
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { template: '<div />' },
-            Canvas: { 
+            Sidebar: { template: "<div />" },
+            Canvas: {
               template: `
                 <div>
                   <div aria-live="polite" aria-atomic="true" class="sr-only">
@@ -394,14 +394,14 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
                 </div>
               `,
             },
-            Icon: { template: '<div />' },
+            Icon: { template: "<div />" },
           },
         },
       });
 
       const liveRegion = wrapper.find('[aria-live="polite"]');
       expect(liveRegion.exists()).toBe(true);
-      expect(liveRegion.attributes('aria-atomic')).toBe('true');
+      expect(liveRegion.attributes("aria-atomic")).toBe("true");
     });
 
     it("should have descriptive labels for interactive elements", () => {
@@ -414,7 +414,7 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
           },
           stubs: {
-            SidebarMenu: { 
+            SidebarMenu: {
               template: `
                 <nav role="navigation" aria-label="Workspace tools">
                   <button aria-label="Toggle editor panel" aria-describedby="editor-help">
@@ -426,22 +426,22 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
                 </nav>
               `,
             },
-            UserMenu: { template: '<div />' },
+            UserMenu: { template: "<div />" },
           },
         },
       });
 
       const button = wrapper.find('button[aria-label="Toggle editor panel"]');
-      const helpText = wrapper.find('#editor-help');
-      
+      const helpText = wrapper.find("#editor-help");
+
       expect(button.exists()).toBe(true);
       expect(helpText.exists()).toBe(true);
-      expect(button.attributes('aria-describedby')).toBe('editor-help');
+      expect(button.attributes("aria-describedby")).toBe("editor-help");
     });
 
     it("should announce drawer state changes", async () => {
       const drawerOpen = ref(false);
-      
+
       // Create a test component that includes the aria-live region
       const TestComponent = {
         template: `
@@ -454,10 +454,10 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
         computed: {
           drawerOpen() {
             return drawerOpen.value;
-          }
+          },
         },
       };
-      
+
       const wrapper = mount(TestComponent, {
         global: {
           provide: {
@@ -467,9 +467,9 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
             fileSettings: ref({}),
             annotations: reactive([]),
-            api: { 
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
           },
         },
@@ -477,19 +477,19 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
 
       const statusRegion = wrapper.find('[aria-live="polite"]');
       expect(statusRegion.exists()).toBe(true);
-      expect(statusRegion.text()).toContain('Drawer closed');
+      expect(statusRegion.text()).toContain("Drawer closed");
 
       drawerOpen.value = true;
       await nextTick();
 
-      expect(statusRegion.text()).toContain('Drawer opened');
+      expect(statusRegion.text()).toContain("Drawer opened");
     });
   });
 
   describe("Focus Management", () => {
     it("should trap focus within drawers when open", async () => {
       const drawerOpen = ref(true);
-      
+
       const wrapper = mount(Canvas, {
         props: {
           modelValue: { id: 42, source: "test" },
@@ -504,14 +504,14 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
             fileSettings: ref({}),
             annotations: reactive([]),
-            api: { 
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { 
+            ReaderTopbar: { template: "<div />" },
+            Dock: {
               template: `
                 <div v-if="drawerOpen" role="dialog" aria-modal="true">
                   <button class="first-focusable">First</button>
@@ -521,22 +521,22 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
               computed: {
                 drawerOpen() {
                   return drawerOpen.value;
-                }
+                },
               },
             },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
           },
         },
       });
 
       const dialog = wrapper.find('[role="dialog"]');
       expect(dialog.exists()).toBe(true);
-      expect(dialog.attributes('aria-modal')).toBe('true');
-      
-      const firstButton = wrapper.find('.first-focusable');
-      const lastButton = wrapper.find('.last-focusable');
-      
+      expect(dialog.attributes("aria-modal")).toBe("true");
+
+      const firstButton = wrapper.find(".first-focusable");
+      const lastButton = wrapper.find(".last-focusable");
+
       expect(firstButton.exists()).toBe(true);
       expect(lastButton.exists()).toBe(true);
     });
@@ -544,10 +544,10 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     it("should restore focus when drawers close", async () => {
       const drawerOpen = ref(true);
       const mockFocus = vi.fn();
-      
+
       // Mock element with focus method
       const triggerElement = { focus: mockFocus };
-      
+
       const wrapper = mount(Sidebar, {
         global: {
           provide: {
@@ -557,7 +557,7 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
           },
           stubs: {
-            SidebarMenu: { 
+            SidebarMenu: {
               template: `
                 <div>
                   <button ref="drawerTrigger" @click="closeDrawer">
@@ -570,10 +570,10 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
                   drawerOpen.value = false;
                   // Simulate focus restoration
                   this.$refs.drawerTrigger?.focus();
-                }
+                },
               },
             },
-            UserMenu: { template: '<div />' },
+            UserMenu: { template: "<div />" },
           },
         },
       });
@@ -589,16 +589,16 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     it("should handle tab navigation correctly", async () => {
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
-            api: { 
+          provide: {
+            fileStore,
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { 
+            Sidebar: {
               template: `
                 <nav>
                   <button tabindex="0">Tool 1</button>
@@ -606,27 +606,27 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
                 </nav>
               `,
             },
-            Canvas: { 
+            Canvas: {
               template: `
                 <main>
                   <textarea tabindex="0" aria-label="Document content"></textarea>
                 </main>
               `,
             },
-            Icon: { template: '<div />' },
+            Icon: { template: "<div />" },
           },
         },
       });
 
       const buttons = wrapper.findAll('button[tabindex="0"]');
       const textarea = wrapper.find('textarea[tabindex="0"]');
-      
+
       expect(buttons.length).toBeGreaterThan(0);
       expect(textarea.exists()).toBe(true);
-      
+
       // All interactive elements should have proper tab order
-      buttons.forEach(button => {
-        expect(button.attributes('tabindex')).toBe('0');
+      buttons.forEach((button) => {
+        expect(button.attributes("tabindex")).toBe("0");
       });
     });
   });
@@ -642,7 +642,7 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
           },
           stubs: {
-            SidebarMenu: { 
+            SidebarMenu: {
               template: `
                 <div>
                   <button class="mobile-touch-target" style="min-height: 44px; min-width: 44px;">
@@ -651,23 +651,23 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
                 </div>
               `,
             },
-            UserMenu: { template: '<div />' },
+            UserMenu: { template: "<div />" },
           },
         },
       });
 
-      const touchTarget = wrapper.find('.mobile-touch-target');
+      const touchTarget = wrapper.find(".mobile-touch-target");
       expect(touchTarget.exists()).toBe(true);
-      
+
       // Should have adequate touch target size
-      const styles = touchTarget.attributes('style');
-      expect(styles).toContain('min-height: 44px');
-      expect(styles).toContain('min-width: 44px');
+      const styles = touchTarget.attributes("style");
+      expect(styles).toContain("min-height: 44px");
+      expect(styles).toContain("min-width: 44px");
     });
 
     it("should support gesture navigation", async () => {
       const focusMode = ref(false);
-      
+
       const wrapper = mount(Canvas, {
         props: {
           modelValue: { id: 42, source: "test" },
@@ -682,15 +682,15 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
             fileSettings: ref({}),
             annotations: reactive([]),
-            api: { 
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { 
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: {
               template: `
                 <div @touchstart="handleTouch" @swipe="handleSwipe">
                   Touch area
@@ -702,10 +702,10 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
                 },
                 handleSwipe() {
                   // Handle swipe gestures
-                }
+                },
               },
             },
-            DockableAnnotations: { template: '<div />' },
+            DockableAnnotations: { template: "<div />" },
           },
         },
       });
@@ -720,38 +720,38 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     it("should support high contrast mode", () => {
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
-            api: { 
+          provide: {
+            fileStore,
+            api: {
               get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-              post: vi.fn().mockResolvedValue({ data: "success" })
+              post: vi.fn().mockResolvedValue({ data: "success" }),
             },
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { 
+            Sidebar: {
               template: `
                 <nav style="border: 1px solid; background: contrast(white black);">
                   Sidebar
                 </nav>
               `,
             },
-            Canvas: { 
+            Canvas: {
               template: `
                 <main style="outline: 2px solid currentColor;">
                   Content
                 </main>
               `,
             },
-            Icon: { template: '<div />' },
+            Icon: { template: "<div />" },
           },
         },
       });
 
       // Components should have proper contrast and borders
-      const sidebar = wrapper.find('nav');
-      const canvas = wrapper.find('main');
-      
+      const sidebar = wrapper.find("nav");
+      const canvas = wrapper.find("main");
+
       expect(sidebar.exists()).toBe(true);
       expect(canvas.exists()).toBe(true);
     });
@@ -766,7 +766,7 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
             xsMode: false,
           },
           stubs: {
-            SidebarMenu: { 
+            SidebarMenu: {
               template: `
                 <div>
                   <button aria-label="Active tool" class="active">
@@ -776,17 +776,17 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
                 </div>
               `,
             },
-            UserMenu: { template: '<div />' },
+            UserMenu: { template: "<div />" },
           },
         },
       });
 
-      const activeButton = wrapper.find('.active');
+      const activeButton = wrapper.find(".active");
       expect(activeButton.exists()).toBe(true);
-      
+
       // Should have text indicator in addition to visual styling
-      expect(activeButton.text()).toContain('Tool Name');
-      expect(activeButton.attributes('aria-label')).toBe('Active tool');
+      expect(activeButton.text()).toContain("Tool Name");
+      expect(activeButton.attributes("aria-label")).toBe("Active tool");
     });
   });
 });

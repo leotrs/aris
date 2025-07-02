@@ -331,7 +331,7 @@ describe("Canvas Layout", () => {
 
       const outer = wrapper.find(".outer");
       expect(outer.classes()).toContain("mobile");
-      
+
       // Should still render all columns even in narrow viewport
       const leftColumn = wrapper.find(".left-column");
       const middleColumn = wrapper.find(".middle-column");
@@ -351,10 +351,10 @@ describe("Canvas Layout", () => {
 
       const innerRight = wrapper.find(".inner.right");
       const middleColumn = wrapper.find(".middle-column");
-      
+
       expect(innerRight.exists()).toBe(true);
       expect(middleColumn.exists()).toBe(true);
-      
+
       // Layout should not break on very wide screens
       expect(wrapper.exists()).toBe(true);
     });
@@ -411,20 +411,18 @@ describe("Canvas Layout", () => {
       await wrapper.vm.$nextTick();
 
       const outer = wrapper.find(".outer");
-      
+
       // Should handle multiple classes simultaneously
       expect(outer.classes()).toContain("focus");
       expect(outer.classes()).toContain("narrow");
       expect(outer.classes()).toContain("mobile");
-      
+
       // Layout should still be functional
       expect(wrapper.exists()).toBe(true);
     });
 
     it("should handle dynamic annotation changes", async () => {
-      const annotations = reactive([
-        { id: 1, type: "comment", content: "Test comment" }
-      ]);
+      const annotations = reactive([{ id: 1, type: "comment", content: "Test comment" }]);
 
       wrapper = createWrapper({}, { annotations });
       await wrapper.vm.$nextTick();
@@ -450,13 +448,13 @@ describe("Canvas Layout", () => {
 
     it("should handle empty or malformed file data", async () => {
       const emptyFile = { id: null, html: null };
-      
+
       wrapper = createWrapper({ modelValue: emptyFile });
       await wrapper.vm.$nextTick();
 
       // Should not crash with empty file
       expect(wrapper.exists()).toBe(true);
-      
+
       const undefinedFile = { id: undefined, html: undefined };
       await wrapper.setProps({ modelValue: undefinedFile });
       await wrapper.vm.$nextTick();
@@ -477,7 +475,7 @@ describe("Canvas Layout", () => {
       });
 
       // Trigger resize event
-      const resizeEvent = new Event('resize');
+      const resizeEvent = new Event("resize");
       window.dispatchEvent(resizeEvent);
       await wrapper.vm.$nextTick();
 
@@ -498,7 +496,7 @@ describe("Canvas Layout", () => {
       // Should handle constrained container gracefully
       const innerRight = wrapper.find(".inner.right");
       expect(innerRight.exists()).toBe(true);
-      
+
       // Layout should not overflow or break
       expect(wrapper.exists()).toBe(true);
     });
@@ -518,7 +516,7 @@ describe("Canvas Layout", () => {
       // At tablet size, layout should still be functional
       const middleColumn = wrapper.find(".middle-column");
       const rightColumn = wrapper.find(".right-column");
-      
+
       expect(middleColumn.exists()).toBe(true);
       expect(rightColumn.exists()).toBe(true);
     });
@@ -537,7 +535,7 @@ describe("Canvas Layout", () => {
       const leftColumn = wrapper.find(".left-column");
       const middleColumn = wrapper.find(".middle-column");
       const rightColumn = wrapper.find(".right-column");
-      
+
       expect(leftColumn.exists()).toBe(true);
       expect(middleColumn.exists()).toBe(true);
       expect(rightColumn.exists()).toBe(true);
@@ -590,7 +588,7 @@ describe("Canvas Layout", () => {
       for (let i = 0; i < 20; i++) {
         annotations.push({ id: i, type: "comment", content: `Comment ${i}` });
         await wrapper.vm.$nextTick();
-        
+
         if (i % 2 === 0) {
           annotations.splice(0, 1);
           await wrapper.vm.$nextTick();
@@ -634,7 +632,7 @@ describe("Canvas Layout", () => {
       // Mobile layout should accommodate touch interaction
       const outer = wrapper.find(".outer");
       expect(outer.classes()).toContain("mobile");
-      
+
       // Layout should be optimized for touch
       expect(wrapper.exists()).toBe(true);
     });
@@ -646,7 +644,7 @@ describe("Canvas Layout", () => {
       // Layout should work with high contrast themes
       const outerElement = wrapper.find(".outer");
       expect(outerElement.exists()).toBe(true);
-      
+
       // Should not rely solely on color for layout
       expect(wrapper.exists()).toBe(true);
     });
