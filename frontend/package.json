@@ -23,7 +23,7 @@
     "build-storybook": "node ../docker/env-check.js && storybook build"
   },
   "dependencies": {
-    "@floating-ui/vue": "^1.1.6",
+    "@floating-ui/vue": "^1.1.7",
     "@openai/codex": "^0.1.2504301751",
     "@tabler/icons-vue": "^3.34.0",
     "@vueuse/core": "^13.4.0",
