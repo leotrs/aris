@@ -8,6 +8,7 @@ on:
 
 env:
   # Common environment variables for all jobs
+  ENV: CI
   BACKEND_PORT: 8000
   FRONTEND_PORT: 5173
   SITE_PORT: 3000
