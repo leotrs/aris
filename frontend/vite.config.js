@@ -23,6 +23,9 @@ export default defineConfig({
         minThreads: 1,
       },
     },
+    env: {
+      VITE_API_BASE_URL: process.env.VITE_API_BASE_URL,
+    },
     exclude: [
       "**/node_modules/**",
       "**/dist/**",
