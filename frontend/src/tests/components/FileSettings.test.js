@@ -4,15 +4,7 @@ import { defineComponent } from "vue";
 
 import FileSettings from "@/components/manuscript/FileSettings.vue";
 
-// Stub child components
-const PaneStub = defineComponent({
-  name: "Pane",
-  template: '<div class="pane-stub"><slot name="header"/><slot/></div>',
-});
-const SectionStub = defineComponent({
-  name: "Section",
-  template: '<div class="section-stub"><slot name="title"/><slot name="content"/></div>',
-});
+// Stub complex child components (keep simple layout components real)
 const ThemeSwitchStub = defineComponent({
   name: "ThemeSwitch",
   template: '<div class="theme-switch"/>',
@@ -29,25 +21,37 @@ const SegmentedControlStub = defineComponent({
   emits: ["update:modelValue"],
   template: "<div/>",
 });
-const ButtonStub = defineComponent({
-  name: "Button",
-  props: ["kind", "text"],
-  emits: ["click"],
-  template: "<div @click=\"$emit('click')\"/>",
-});
 
 describe("FileSettings.vue", () => {
   const mountFileSettings = (settings, header = true) => {
     return mount(FileSettings, {
       props: { modelValue: settings, header },
       global: {
+        provide: {
+          mobileMode: false,
+        },
         stubs: {
-          Pane: PaneStub,
-          Section: SectionStub,
+          // Keep layout components simple but functional
+          Pane: {
+            name: "Pane",
+            template: '<div class="pane"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
+            inject: { mobileMode: { default: false } },
+          },
+          Section: {
+            name: "Section", 
+            template: '<div class="section"><div v-if="$slots.title" class="title"><slot name="title" /></div><div class="content"><slot name="content" /></div></div>',
+            props: ["variant", "theme"],
+          },
+          Button: {
+            name: "Button",
+            template: '<button @click="$emit(\'click\')" :class="kind"><slot>{{ text }}</slot></button>',
+            props: ["kind", "text"],
+            emits: ["click"],
+          },
+          // Keep complex components stubbed
           ThemeSwitch: ThemeSwitchStub,
           ColorPicker: ColorPickerStub,
           SegmentedControl: SegmentedControlStub,
-          Button: ButtonStub,
         },
       },
     });
@@ -57,15 +61,31 @@ describe("FileSettings.vue", () => {
     const settings = {};
     const wrapperHide = shallowMount(FileSettings, {
       props: { modelValue: settings, header: false },
-      global: { stubs: { Pane: PaneStub } },
+      global: { 
+        provide: { mobileMode: false },
+        stubs: {
+          Pane: {
+            name: "Pane",
+            template: '<div class="pane"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
+          },
+        },
+      },
     });
-    expect(wrapperHide.findComponent(PaneStub).html()).not.toContain("File Settings");
+    expect(wrapperHide.findComponent({ name: "Pane" }).html()).not.toContain("File Settings");
 
     const wrapperShow = shallowMount(FileSettings, {
       props: { modelValue: settings, header: true },
-      global: { stubs: { Pane: PaneStub } },
+      global: { 
+        provide: { mobileMode: false },
+        stubs: {
+          Pane: {
+            name: "Pane",
+            template: '<div class="pane"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
+          },
+        },
+      },
     });
-    expect(wrapperShow.findComponent(PaneStub).html()).toContain("File Settings");
+    expect(wrapperShow.findComponent({ name: "Pane" }).html()).toContain("File Settings");
   });
 
   it("updates background when ColorPicker emits change", async () => {
@@ -115,7 +135,7 @@ describe("FileSettings.vue", () => {
     wrapper.vm.startReceivingUserInput();
     // mutate settings
     settings.fontSize = "18px";
-    await wrapper.findAllComponents(ButtonStub)[0].trigger("click");
+    await wrapper.findAllComponents({ name: "Button" })[0].trigger("click");
     expect(settings).toEqual(initial);
   });
 
@@ -130,7 +150,7 @@ describe("FileSettings.vue", () => {
     const wrapper = mountFileSettings(settings);
     wrapper.vm.startReceivingUserInput();
     const saveBtn = wrapper
-      .findAllComponents(ButtonStub)
+      .findAllComponents({ name: "Button" })
       .find((btn) => btn.props("kind") === "primary");
     await saveBtn.trigger("click");
     expect(wrapper.emitted("save")).toBeTruthy();
