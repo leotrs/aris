@@ -94,7 +94,7 @@ describe("Workspace State Management", () => {
 
     it("should handle file settings loading errors gracefully", async () => {
       const settingsError = new Error("Failed to load settings");
-      
+
       // Mock with proper error handling to prevent unhandled rejection
       File.getSettings.mockImplementation(() => {
         return Promise.reject(settingsError).catch(() => {
@@ -119,7 +119,7 @@ describe("Workspace State Management", () => {
       });
 
       await nextTick();
-      
+
       // Wait for getSettings to be called
       await vi.waitFor(() => {
         expect(File.getSettings).toHaveBeenCalled();

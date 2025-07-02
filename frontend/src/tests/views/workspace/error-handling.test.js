@@ -189,7 +189,7 @@ describe("WorkspaceView Error Handling", () => {
 
   it("should handle File.getSettings API failure", async () => {
     const apiError = new Error("Settings API failed");
-    
+
     // Mock with proper error handling
     getSettingsSpy.mockImplementation(() => {
       return Promise.reject(apiError).catch(() => {
