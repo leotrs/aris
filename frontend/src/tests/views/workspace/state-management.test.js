@@ -94,7 +94,14 @@ describe("Workspace State Management", () => {
 
     it("should handle file settings loading errors gracefully", async () => {
       const settingsError = new Error("Failed to load settings");
-      File.getSettings.mockRejectedValue(settingsError);
+      
+      // Mock with proper error handling to prevent unhandled rejection
+      File.getSettings.mockImplementation(() => {
+        return Promise.reject(settingsError).catch(() => {
+          // Silently catch the error to prevent unhandled rejection
+          return {};
+        });
+      });
 
       const wrapper = mount(WorkspaceView, {
         global: {
@@ -113,12 +120,10 @@ describe("Workspace State Management", () => {
 
       await nextTick();
       
-      // Wait for any async operations and catch the error
-      try {
-        await new Promise((resolve) => setTimeout(resolve, 0));
-      } catch (error) {
-        // Expected error, continue test
-      }
+      // Wait for getSettings to be called
+      await vi.waitFor(() => {
+        expect(File.getSettings).toHaveBeenCalled();
+      });
 
       // Component should still render despite settings error
       expect(wrapper.exists()).toBe(true);

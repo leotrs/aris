@@ -153,7 +153,7 @@ describe("Demo View Migration Tests", () => {
 
       // Verify the demo API is provided
       expect(provided.api).toBeDefined();
-      expect(provided.api.getUri()).toBe("http://localhost:8000");
+      expect(provided.api.getUri()).toBe(import.meta.env.VITE_API_BASE_URL);
     });
 
     it("demo API supports file content endpoint", async () => {
