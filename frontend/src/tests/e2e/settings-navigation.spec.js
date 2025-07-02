@@ -11,7 +11,7 @@ test.describe("Settings Navigation @auth", () => {
     await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
   });
 
-  test.afterEach(async ({ _page }) => {
+  test.afterEach(async () => {
     await authHelpers.clearAuthState();
   });
 
@@ -158,7 +158,7 @@ test.describe("Settings Navigation in Collapsed Sidebar @auth", () => {
     await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
   });
 
-  test.afterEach(async ({ _page }) => {
+  test.afterEach(async () => {
     await authHelpers.clearAuthState();
   });
 
@@ -187,7 +187,7 @@ test.describe("Settings Mobile Navigation @auth", () => {
     await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
   });
 
-  test.afterEach(async ({ _page }) => {
+  test.afterEach(async () => {
     await authHelpers.clearAuthState();
   });
 
@@ -210,7 +210,7 @@ test.describe("Settings Error Handling @auth", () => {
     await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
   });
 
-  test.afterEach(async ({ _page }) => {
+  test.afterEach(async () => {
     await authHelpers.clearAuthState();
   });
 
