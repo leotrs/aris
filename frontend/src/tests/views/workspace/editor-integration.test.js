@@ -207,7 +207,7 @@ describe("Editor Integration Tests", () => {
 
     it("handles compilation errors gracefully", async () => {
       const compilationError = new Error("Compilation failed");
-      
+
       // Mock with proper error handling to prevent unhandled rejection
       mockApi.post.mockImplementation(() => {
         return Promise.reject(compilationError).catch(() => {
@@ -215,7 +215,7 @@ describe("Editor Integration Tests", () => {
           return { data: null };
         });
       });
-      
+
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const wrapper = mount(Editor, {
