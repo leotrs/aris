@@ -66,7 +66,7 @@ export default defineNuxtConfig({
   // Runtime config for frontend URL
   runtimeConfig: {
     public: {
-      frontendUrl: process.env.FRONTEND_URL || 'http://localhost:5173'
+      frontendUrl: process.env.FRONTEND_URL
     }
   },
 

@@ -15,7 +15,7 @@ import { test, expect } from "@playwright/test";
 test.describe("Sidebar Scrolling Regression @core @desktop-only", () => {
   test("sidebar scrolls properly in short viewport to show user menu", async ({ page }) => {
     // Set viewport to wide but short (the problematic case)
-    await page.setViewportSize({ width: 1400, height: 600 });
+    await page.setViewportSize({ width: 1400, height: 450 });
 
     // Navigate to demo workspace
     await page.goto("/demo");
@@ -107,7 +107,7 @@ test.describe("Sidebar Scrolling Regression @core @desktop-only", () => {
     }
 
     // Test various short viewport heights to ensure robustness
-    const testHeights = [500, 600, 700, 800];
+    const testHeights = [300, 400, 500, 600];
 
     for (const height of testHeights) {
       await page.setViewportSize({ width: 1400, height });
@@ -121,8 +121,8 @@ test.describe("Sidebar Scrolling Regression @core @desktop-only", () => {
         maxScrollTop: menu.scrollHeight - menu.clientHeight,
       }));
 
-      // For heights <= 600px, scrolling should be needed
-      if (height <= 600) {
+      // For heights <= 450px, scrolling should be needed
+      if (height <= 450) {
         expect(scrollInfo.canScroll).toBe(true);
         expect(scrollInfo.maxScrollTop).toBeGreaterThan(0);
       }

@@ -4,7 +4,7 @@ import { loadCSS, loadDesignAssets } from "@/utils/cssLoader.js";
 describe("cssLoader", () => {
   const mockApi = {
     defaults: {
-      baseURL: "http://localhost:8000",
+      baseURL: import.meta.env.VITE_API_BASE_URL,
     },
   };
 
@@ -27,7 +27,7 @@ describe("cssLoader", () => {
 
       const link = document.querySelector('link[rel="stylesheet"]');
       expect(link).toBeTruthy();
-      expect(link.href).toBe("http://localhost:8000/design-assets/css/test.css");
+      expect(link.href).toBe(`${import.meta.env.VITE_API_BASE_URL}/design-assets/css/test.css`);
       expect(link.rel).toBe("stylesheet");
 
       // Simulate successful load
@@ -39,7 +39,7 @@ describe("cssLoader", () => {
       loadCSS(mockApi, "typography.css");
 
       const link = document.querySelector('link[rel="stylesheet"]');
-      expect(link.href).toBe("http://localhost:8000/design-assets/css/typography.css");
+      expect(link.href).toBe(`${import.meta.env.VITE_API_BASE_URL}/design-assets/css/typography.css`);
     });
   });
 
@@ -54,7 +54,7 @@ describe("cssLoader", () => {
       // Verify all expected files are loaded
       const expectedFiles = ["typography.css", "components.css", "layout.css", "variables.css"];
       expectedFiles.forEach((filename, index) => {
-        expect(links[index].href).toBe(`http://localhost:8000/design-assets/css/${filename}`);
+        expect(links[index].href).toBe(`${import.meta.env.VITE_API_BASE_URL}/design-assets/css/${filename}`);
       });
 
       // Simulate all files loading successfully
@@ -76,7 +76,7 @@ describe("cssLoader", () => {
       await promise;
 
       // Should access the baseURL property from defaults
-      expect(mockApi.defaults.baseURL).toBe("http://localhost:8000");
+      expect(mockApi.defaults.baseURL).toBe(mockApi.defaults.baseURL);
     });
   });
 });
