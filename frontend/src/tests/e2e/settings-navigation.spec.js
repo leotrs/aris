@@ -229,28 +229,19 @@ test.describe("Settings Error Handling @auth", () => {
     await expect(page).toHaveURL(/\/settings|\/404/);
   });
 
-  test("should maintain navigation state during network issues", async ({ page, browserName }) => {
+  test("should maintain navigation state during network issues", async ({ page }) => {
     await page.click('text="Settings"');
     await expect(page).toHaveURL("/settings/document");
     await page.click('.sub-items-container >> text="Behavior"');
 
-    // Simulate network issues - WebKit doesn't support setOffline()
-    if (browserName === "webkit") {
-      // Use route blocking for WebKit
-      await page.route("**/*", (route) => route.abort());
-    } else {
-      await page.setOffline(true);
-    }
+    // Simulate network issues using route blocking (works across all browsers)
+    await page.route("**/*", (route) => route.abort());
 
     // UI should remain responsive for navigation
     await page.click('.sub-items-container >> text="File"');
     await expect(page).toHaveURL("/settings/document");
 
     // Restore network
-    if (browserName === "webkit") {
-      await page.unroute("**/*");
-    } else {
-      await page.setOffline(false);
-    }
+    await page.unroute("**/*");
   });
 });
