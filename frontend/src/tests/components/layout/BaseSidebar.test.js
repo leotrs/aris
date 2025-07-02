@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import { ref } from "vue";
 import { mount } from "@vue/test-utils";
 import BaseSidebar from "@/components/layout/BaseSidebar.vue";
 
@@ -58,9 +59,9 @@ describe("BaseSidebar", () => {
   ];
 
   const mockProvideValues = {
-    sidebarIsCollapsed: { value: false },
-    mobileMode: { value: false },
-    fileStore: { value: { getRecentFiles: () => [] } },
+    sidebarIsCollapsed: ref(false),
+    mobileMode: ref(false),
+    fileStore: ref({ getRecentFiles: () => [] }),
   };
 
   beforeEach(() => {
@@ -103,7 +104,7 @@ describe("BaseSidebar", () => {
         global: {
           provide: {
             ...mockProvideValues,
-            mobileMode: { value: true },
+            mobileMode: ref(true),
           },
           components: {
             Logo: { template: '<div data-testid="logo" />' },
@@ -125,7 +126,7 @@ describe("BaseSidebar", () => {
         global: {
           provide: {
             ...mockProvideValues,
-            sidebarIsCollapsed: { value: true },
+            sidebarIsCollapsed: ref(true),
           },
           stubs: {
             Logo: true,
@@ -253,13 +254,14 @@ describe("BaseSidebar", () => {
     });
 
     it("conditionally renders logo and menu based on mobile mode", async () => {
-      // Test non-mobile mode
+      // Test non-mobile mode - create fresh wrapper to ensure clean state
       const desktopWrapper = mount(BaseSidebar, {
         props: { sidebarItems: mockSidebarItems },
         global: {
           provide: {
-            ...mockProvideValues,
-            mobileMode: { value: false },
+            sidebarIsCollapsed: ref(false),
+            mobileMode: ref(false), // Explicitly set to false for desktop
+            fileStore: ref({ getRecentFiles: () => [] }),
           },
           components: {
             Logo: { template: '<div data-testid="logo" />' },
@@ -281,7 +283,7 @@ describe("BaseSidebar", () => {
         global: {
           provide: {
             ...mockProvideValues,
-            mobileMode: { value: true },
+            mobileMode: ref(true),
           },
           components: {
             Logo: { template: '<div data-testid="logo" />' },

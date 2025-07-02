@@ -200,8 +200,11 @@ describe("BaseLayout", () => {
       // Create wrapper with route that doesn't match any main item
       const nonMatchingRoute = { path: "/some-other-page", fullPath: "/some-other-page" };
       
+      // Save original route values
+      const originalPath = mockRoute.path;
+      const originalFullPath = mockRoute.fullPath;
+      
       // Temporarily override the mock route
-      const originalRoute = mockRoute;
       Object.assign(mockRoute, nonMatchingRoute);
 
       const newWrapper = mount(BaseLayout, {
@@ -227,7 +230,8 @@ describe("BaseLayout", () => {
       expect(subItemsContainer).toBeUndefined();
       
       // Restore original route
-      Object.assign(mockRoute, originalRoute);
+      mockRoute.path = originalPath;
+      mockRoute.fullPath = originalFullPath;
     });
 
     it("does not insert sub-items for separator or action items", () => {
@@ -267,6 +271,7 @@ describe("BaseLayout", () => {
       const sidebarItems = baseSidebar.props("sidebarItems");
 
       const subItemsContainer = sidebarItems.find((item) => item.isSubItemsContainer);
+      expect(subItemsContainer).toBeDefined();
       expect(subItemsContainer.subItems).toHaveLength(1);
       expect(subItemsContainer.subItems[0].text).toBe("New Item");
     });
