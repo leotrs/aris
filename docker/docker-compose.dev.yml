@@ -20,6 +20,8 @@ services:
       - ALEMBIC_DB_URL_LOCAL=postgresql://aris:aris@postgres:5432/${DB_NAME}
       - DB_URL_LOCAL=postgresql+asyncpg://aris:aris@postgres:5432/${DB_NAME}
       - ENV=LOCAL
+      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - COPILOT_PROVIDER=${COPILOT_PROVIDER}
     depends_on:
       postgres:
         condition: service_healthy
