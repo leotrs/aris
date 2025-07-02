@@ -35,13 +35,13 @@ describe("WorkspaceView Error Handling", () => {
 
     const wrapper = mount(WorkspaceView, {
       global: {
-        provide: { 
-          fileStore, 
-          api: { 
+        provide: {
+          fileStore,
+          api: {
             get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-            post: vi.fn().mockResolvedValue({ data: "success" })
+            post: vi.fn().mockResolvedValue({ data: "success" }),
           },
-          mobileMode: false 
+          mobileMode: false,
         },
         stubs: {
           Sidebar: { template: "<div />" },
@@ -58,23 +58,23 @@ describe("WorkspaceView Error Handling", () => {
   });
 
   it("should handle file store error state", async () => {
-    const fileStore = { 
-      value: { 
+    const fileStore = {
+      value: {
         error: "Failed to load files",
         files: [],
-        isLoading: false 
-      } 
+        isLoading: false,
+      },
     };
 
     const wrapper = mount(WorkspaceView, {
       global: {
-        provide: { 
-          fileStore, 
-          api: { 
+        provide: {
+          fileStore,
+          api: {
             get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-            post: vi.fn().mockResolvedValue({ data: "success" })
+            post: vi.fn().mockResolvedValue({ data: "success" }),
           },
-          mobileMode: false 
+          mobileMode: false,
         },
         stubs: {
           Sidebar: { template: "<div />" },
@@ -91,22 +91,22 @@ describe("WorkspaceView Error Handling", () => {
   });
 
   it("should redirect to NotFound when file doesn't exist", async () => {
-    const fileStore = { 
-      value: { 
+    const fileStore = {
+      value: {
         files: [{ id: 1, content: "other file" }], // File 42 doesn't exist
-        isLoading: false 
-      } 
+        isLoading: false,
+      },
     };
 
     const wrapper = mount(WorkspaceView, {
       global: {
-        provide: { 
-          fileStore, 
-          api: { 
+        provide: {
+          fileStore,
+          api: {
             get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-            post: vi.fn().mockResolvedValue({ data: "success" })
+            post: vi.fn().mockResolvedValue({ data: "success" }),
           },
-          mobileMode: false 
+          mobileMode: false,
         },
         stubs: {
           Sidebar: { template: "<div />" },
@@ -122,23 +122,23 @@ describe("WorkspaceView Error Handling", () => {
   });
 
   it("should not redirect when fileStore has no files due to API failure", async () => {
-    const fileStore = { 
-      value: { 
+    const fileStore = {
+      value: {
         files: [], // Empty due to API failure
         isLoading: false,
-        error: "Network error"
-      } 
+        error: "Network error",
+      },
     };
 
     const wrapper = mount(WorkspaceView, {
       global: {
-        provide: { 
-          fileStore, 
-          api: { 
+        provide: {
+          fileStore,
+          api: {
             get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-            post: vi.fn().mockResolvedValue({ data: "success" })
+            post: vi.fn().mockResolvedValue({ data: "success" }),
           },
-          mobileMode: false 
+          mobileMode: false,
         },
         stubs: {
           Sidebar: { template: "<div />" },
@@ -156,23 +156,23 @@ describe("WorkspaceView Error Handling", () => {
 
   it("should handle invalid file_id parameter", async () => {
     mockRoute.mockReturnValue({ params: { file_id: "invalid" } });
-    
-    const fileStore = { 
-      value: { 
+
+    const fileStore = {
+      value: {
         files: [{ id: 42, content: "valid file" }],
-        isLoading: false 
-      } 
+        isLoading: false,
+      },
     };
 
     const wrapper = mount(WorkspaceView, {
       global: {
-        provide: { 
-          fileStore, 
-          api: { 
+        provide: {
+          fileStore,
+          api: {
             get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-            post: vi.fn().mockResolvedValue({ data: "success" })
+            post: vi.fn().mockResolvedValue({ data: "success" }),
           },
-          mobileMode: false 
+          mobileMode: false,
         },
         stubs: {
           Sidebar: { template: "<div />" },
@@ -192,24 +192,24 @@ describe("WorkspaceView Error Handling", () => {
     const apiError = new Error("Settings API failed");
     getSettingsSpy.mockRejectedValue(apiError);
 
-    const fileStore = { 
-      value: { 
+    const fileStore = {
+      value: {
         files: [{ id: 42, content: "test file" }],
-        isLoading: false 
-      } 
+        isLoading: false,
+      },
     };
 
-    const mockApi = { 
+    const mockApi = {
       get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-      post: vi.fn().mockResolvedValue({ data: "success" })
+      post: vi.fn().mockResolvedValue({ data: "success" }),
     };
 
     const wrapper = mount(WorkspaceView, {
       global: {
-        provide: { 
-          fileStore, 
+        provide: {
+          fileStore,
           api: mockApi,
-          mobileMode: false 
+          mobileMode: false,
         },
         stubs: {
           Sidebar: { template: "<div />" },
@@ -220,10 +220,10 @@ describe("WorkspaceView Error Handling", () => {
     });
 
     await nextTick();
-    
+
     // Wait for getSettings call and handle the rejection
     try {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     } catch (error) {
       // Expected error from mock rejection
     }
@@ -234,27 +234,27 @@ describe("WorkspaceView Error Handling", () => {
   });
 
   it("should handle malformed file data", async () => {
-    const fileStore = { 
-      value: { 
+    const fileStore = {
+      value: {
         files: [
           { id: 42 }, // Missing content
           { content: "orphaned content" }, // Missing id
           null, // Null file
           undefined, // Undefined file
         ],
-        isLoading: false 
-      } 
+        isLoading: false,
+      },
     };
 
     const wrapper = mount(WorkspaceView, {
       global: {
-        provide: { 
-          fileStore, 
-          api: { 
+        provide: {
+          fileStore,
+          api: {
             get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-            post: vi.fn().mockResolvedValue({ data: "success" })
+            post: vi.fn().mockResolvedValue({ data: "success" }),
           },
-          mobileMode: false 
+          mobileMode: false,
         },
         stubs: {
           Sidebar: { template: "<div />" },
@@ -272,22 +272,22 @@ describe("WorkspaceView Error Handling", () => {
   });
 
   it("should handle fileStore object mutations", async () => {
-    const fileStore = { 
-      value: { 
+    const fileStore = {
+      value: {
         files: [{ id: 42, content: "original" }],
-        isLoading: false 
-      } 
+        isLoading: false,
+      },
     };
 
     const wrapper = mount(WorkspaceView, {
       global: {
-        provide: { 
-          fileStore, 
-          api: { 
+        provide: {
+          fileStore,
+          api: {
             get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-            post: vi.fn().mockResolvedValue({ data: "success" })
+            post: vi.fn().mockResolvedValue({ data: "success" }),
           },
-          mobileMode: false 
+          mobileMode: false,
         },
         stubs: {
           Sidebar: { template: "<div />" },
@@ -311,25 +311,25 @@ describe("WorkspaceView Error Handling", () => {
     let routeParams = { file_id: "42" };
     mockRoute.mockImplementation(() => ({ params: routeParams }));
 
-    const fileStore = { 
-      value: { 
+    const fileStore = {
+      value: {
         files: [
           { id: 42, content: "file 42" },
-          { id: 43, content: "file 43" }
+          { id: 43, content: "file 43" },
         ],
-        isLoading: false 
-      } 
+        isLoading: false,
+      },
     };
 
     const wrapper = mount(WorkspaceView, {
       global: {
-        provide: { 
-          fileStore, 
-          api: { 
+        provide: {
+          fileStore,
+          api: {
             get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-            post: vi.fn().mockResolvedValue({ data: "success" })
+            post: vi.fn().mockResolvedValue({ data: "success" }),
           },
-          mobileMode: false 
+          mobileMode: false,
         },
         stubs: {
           Sidebar: { template: "<div />" },
@@ -356,25 +356,27 @@ describe("WorkspaceView Error Handling", () => {
 
   it("should handle concurrent file operations", async () => {
     let resolveSettings;
-    const settingsPromise = new Promise(resolve => { resolveSettings = resolve; });
+    const settingsPromise = new Promise((resolve) => {
+      resolveSettings = resolve;
+    });
     getSettingsSpy.mockReturnValue(settingsPromise);
 
-    const fileStore = { 
-      value: { 
+    const fileStore = {
+      value: {
         files: [{ id: 42, content: "test" }],
-        isLoading: false 
-      } 
+        isLoading: false,
+      },
     };
 
     const wrapper = mount(WorkspaceView, {
       global: {
-        provide: { 
-          fileStore, 
-          api: { 
+        provide: {
+          fileStore,
+          api: {
             get: vi.fn().mockResolvedValue({ data: "<h1>Mock Content</h1>" }),
-            post: vi.fn().mockResolvedValue({ data: "success" })
+            post: vi.fn().mockResolvedValue({ data: "success" }),
           },
-          mobileMode: false 
+          mobileMode: false,
         },
         stubs: {
           Sidebar: { template: "<div />" },

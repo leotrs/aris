@@ -35,11 +35,11 @@ describe("Workspace State Management", () => {
   let mockApi;
 
   beforeEach(() => {
-    fileStore = { 
-      value: { 
+    fileStore = {
+      value: {
         files: [{ id: 42, content: "test file", source: "# Test" }],
-        isLoading: false 
-      } 
+        isLoading: false,
+      },
     };
 
     mockApi = {
@@ -64,31 +64,28 @@ describe("Workspace State Management", () => {
 
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
+          provide: {
+            fileStore,
             api: mockApi,
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { template: '<div />' },
-            Canvas: { 
-              template: '<div />',
-              props: ['modelValue', 'showEditor', 'showSearch'],
+            Sidebar: { template: "<div />" },
+            Canvas: {
+              template: "<div />",
+              props: ["modelValue", "showEditor", "showSearch"],
             },
-            Icon: { template: '<div />' },
+            Icon: { template: "<div />" },
           },
         },
       });
 
       await nextTick();
-      
-      // Wait for onMounted to complete
-      await new Promise(resolve => setTimeout(resolve, 0));
 
-      expect(File.getSettings).toHaveBeenCalledWith(
-        expect.objectContaining({ id: 42 }),
-        mockApi
-      );
+      // Wait for onMounted to complete
+      await new Promise((resolve) => setTimeout(resolve, 0));
+
+      expect(File.getSettings).toHaveBeenCalledWith(expect.objectContaining({ id: 42 }), mockApi);
 
       // Settings should be available in provided context
       const fileSettings = wrapper.vm.$.provides.fileSettings;
@@ -101,25 +98,25 @@ describe("Workspace State Management", () => {
 
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
+          provide: {
+            fileStore,
             api: mockApi,
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { template: '<div />' },
-            Canvas: { template: '<div />' },
-            Icon: { template: '<div />' },
+            Sidebar: { template: "<div />" },
+            Canvas: { template: "<div />" },
+            Icon: { template: "<div />" },
           },
         },
       });
 
       await nextTick();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Component should still render despite settings error
       expect(wrapper.exists()).toBe(true);
-      
+
       // Settings should be empty object
       const fileSettings = wrapper.vm.$.provides.fileSettings;
       expect(fileSettings.value).toEqual({});
@@ -127,58 +124,55 @@ describe("Workspace State Management", () => {
 
     it("should update file settings when file changes", async () => {
       // Create a fileStore with multiple files
-      const testFileStore = { 
-        value: { 
+      const testFileStore = {
+        value: {
           files: [
             { id: 42, content: "test file", source: "# Test" },
-            { id: 43, content: "new file", source: "# New" }
+            { id: 43, content: "new file", source: "# New" },
           ],
-          isLoading: false 
-        } 
+          isLoading: false,
+        },
       };
 
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore: testFileStore, 
+          provide: {
+            fileStore: testFileStore,
             api: mockApi,
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { template: '<div />' },
-            Canvas: { template: '<div />' },
-            Icon: { template: '<div />' },
+            Sidebar: { template: "<div />" },
+            Canvas: { template: "<div />" },
+            Icon: { template: "<div />" },
           },
         },
       });
 
       await nextTick();
-      await new Promise(resolve => setTimeout(resolve, 0));
+      await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Should call getSettings for initial file 42
       expect(File.getSettings).toHaveBeenCalledTimes(1);
 
       // Simulate updating the file content (this should trigger settings reload)
-      const currentFile = testFileStore.value.files.find(f => f.id === 42);
+      const currentFile = testFileStore.value.files.find((f) => f.id === 42);
       if (currentFile) {
         currentFile.source = "# Updated content";
         await nextTick();
-        await new Promise(resolve => setTimeout(resolve, 10));
+        await new Promise((resolve) => setTimeout(resolve, 10));
       }
 
       // The test expects 2 calls but the component behavior might vary
       // Let's adjust expectation to match actual behavior
-      expect(File.getSettings).toHaveBeenCalledWith(
-        expect.objectContaining({ id: 42 }),
-        mockApi
-      );
+      expect(File.getSettings).toHaveBeenCalledWith(expect.objectContaining({ id: 42 }), mockApi);
     });
   });
 
   describe("Focus Mode State", () => {
     it("should manage focus mode state correctly", async () => {
       const focusMode = ref(false);
-      
+
       const wrapper = mount(Canvas, {
         props: {
           modelValue: { id: 42, source: "test" },
@@ -196,11 +190,11 @@ describe("Workspace State Management", () => {
             api: mockApi,
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
-            DockableSearch: { template: '<div />' },
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
+            DockableSearch: { template: "<div />" },
           },
         },
       });
@@ -224,7 +218,7 @@ describe("Workspace State Management", () => {
     it("should persist focus mode state across component updates", async () => {
       const focusMode = ref(true);
       const mockFile = ref({ id: 42, source: "test content" });
-      
+
       const wrapper = mount(Canvas, {
         props: {
           modelValue: { id: 42, source: "test" },
@@ -243,11 +237,11 @@ describe("Workspace State Management", () => {
             file: mockFile,
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
-            DockableSearch: { template: '<div />' },
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
+            DockableSearch: { template: "<div />" },
           },
         },
       });
@@ -266,7 +260,7 @@ describe("Workspace State Management", () => {
   describe("Drawer State Management", () => {
     it("should manage drawer open/closed state", async () => {
       const drawerOpen = ref(false);
-      
+
       const wrapper = mount(Sidebar, {
         global: {
           provide: {
@@ -276,11 +270,11 @@ describe("Workspace State Management", () => {
             xsMode: false,
           },
           stubs: {
-            SidebarMenu: { 
-              template: '<div />',
-              emits: ['on', 'off'],
+            SidebarMenu: {
+              template: "<div />",
+              emits: ["on", "off"],
             },
-            UserMenu: { template: '<div />' },
+            UserMenu: { template: "<div />" },
           },
         },
       });
@@ -312,7 +306,7 @@ describe("Workspace State Management", () => {
         },
         {
           name: "DrawerActivity",
-          icon: "ProgressBolt", 
+          icon: "ProgressBolt",
           label: "activity",
           key: "a",
           state: false,
@@ -329,12 +323,12 @@ describe("Workspace State Management", () => {
             xsMode: false,
           },
           stubs: {
-            SidebarMenu: { 
-              template: '<div />',
-              props: ['items'],
-              emits: ['on', 'off'],
+            SidebarMenu: {
+              template: "<div />",
+              props: ["items"],
+              emits: ["on", "off"],
             },
-            UserMenu: { template: '<div />' },
+            UserMenu: { template: "<div />" },
           },
         },
       });
@@ -362,7 +356,7 @@ describe("Workspace State Management", () => {
     it("should manage drawer content state", async () => {
       const drawerContent = ref("margins");
       const drawerOpen = ref(true);
-      
+
       const wrapper = mount(Canvas, {
         props: {
           modelValue: { id: 42, source: "test" },
@@ -381,11 +375,11 @@ describe("Workspace State Management", () => {
             api: mockApi,
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
-            DockableSearch: { template: '<div />' },
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
+            DockableSearch: { template: "<div />" },
           },
         },
       });
@@ -409,10 +403,8 @@ describe("Workspace State Management", () => {
 
   describe("Annotation State Management", () => {
     it("should manage annotation state reactively", async () => {
-      const annotations = reactive([
-        { id: 1, type: "comment", content: "Test comment" }
-      ]);
-      
+      const annotations = reactive([{ id: 1, type: "comment", content: "Test comment" }]);
+
       const wrapper = mount(Canvas, {
         props: {
           modelValue: { id: 42, source: "test" },
@@ -430,11 +422,11 @@ describe("Workspace State Management", () => {
             api: mockApi,
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
-            DockableSearch: { template: '<div />' },
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
+            DockableSearch: { template: "<div />" },
           },
         },
       });
@@ -462,9 +454,9 @@ describe("Workspace State Management", () => {
 
     it("should handle annotation updates", async () => {
       const annotations = reactive([
-        { id: 1, type: "comment", content: "Original comment", resolved: false }
+        { id: 1, type: "comment", content: "Original comment", resolved: false },
       ]);
-      
+
       const wrapper = mount(Canvas, {
         props: {
           modelValue: { id: 42, source: "test" },
@@ -482,15 +474,15 @@ describe("Workspace State Management", () => {
             api: mockApi,
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { 
-              template: '<div>{{ annotations.length }} annotations</div>',
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: {
+              template: "<div>{{ annotations.length }} annotations</div>",
               computed: {
                 annotations() {
                   return annotations;
-                }
+                },
               },
             },
           },
@@ -504,7 +496,7 @@ describe("Workspace State Management", () => {
 
       // Component should react to annotation changes
       expect(wrapper.exists()).toBe(true);
-      
+
       // Add more annotations
       annotations.push({ id: 2, type: "note", content: "Additional note" });
       await nextTick();
@@ -517,23 +509,23 @@ describe("Workspace State Management", () => {
     it("should manage editor panel state", async () => {
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
+          provide: {
+            fileStore,
             api: mockApi,
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { 
-              name: 'Sidebar',
-              template: '<div />',
-              emits: ['show-component', 'hide-component'],
+            Sidebar: {
+              name: "Sidebar",
+              template: "<div />",
+              emits: ["show-component", "hide-component"],
             },
-            Canvas: { 
-              name: 'Canvas',
-              template: '<div />',
-              props: ['modelValue', 'showEditor', 'showSearch'],
+            Canvas: {
+              name: "Canvas",
+              template: "<div />",
+              props: ["modelValue", "showEditor", "showSearch"],
             },
-            Icon: { template: '<div />' },
+            Icon: { template: "<div />" },
           },
         },
       });
@@ -541,43 +533,43 @@ describe("Workspace State Management", () => {
       await nextTick();
 
       // Initially editor should be hidden
-      const canvas = wrapper.findComponent({ name: 'Canvas' });
-      expect(canvas.props('showEditor')).toBe(false);
+      const canvas = wrapper.findComponent({ name: "Canvas" });
+      expect(canvas.props("showEditor")).toBe(false);
 
       // Show editor
-      const sidebar = wrapper.findComponent({ name: 'Sidebar' });
-      await sidebar.vm.$emit('show-component', 'DockableEditor');
+      const sidebar = wrapper.findComponent({ name: "Sidebar" });
+      await sidebar.vm.$emit("show-component", "DockableEditor");
       await nextTick();
 
-      expect(canvas.props('showEditor')).toBe(true);
+      expect(canvas.props("showEditor")).toBe(true);
 
       // Hide editor
-      await sidebar.vm.$emit('hide-component', 'DockableEditor');
+      await sidebar.vm.$emit("hide-component", "DockableEditor");
       await nextTick();
 
-      expect(canvas.props('showEditor')).toBe(false);
+      expect(canvas.props("showEditor")).toBe(false);
     });
 
     it("should manage search panel state", async () => {
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
+          provide: {
+            fileStore,
             api: mockApi,
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { 
-              name: 'Sidebar',
-              template: '<div />',
-              emits: ['show-component', 'hide-component'],
+            Sidebar: {
+              name: "Sidebar",
+              template: "<div />",
+              emits: ["show-component", "hide-component"],
             },
-            Canvas: { 
-              name: 'Canvas',
-              template: '<div />',
-              props: ['modelValue', 'showEditor', 'showSearch'],
+            Canvas: {
+              name: "Canvas",
+              template: "<div />",
+              props: ["modelValue", "showEditor", "showSearch"],
             },
-            Icon: { template: '<div />' },
+            Icon: { template: "<div />" },
           },
         },
       });
@@ -585,66 +577,66 @@ describe("Workspace State Management", () => {
       await nextTick();
 
       // Initially search should be hidden
-      const canvas = wrapper.findComponent({ name: 'Canvas' });
-      expect(canvas.props('showSearch')).toBe(false);
+      const canvas = wrapper.findComponent({ name: "Canvas" });
+      expect(canvas.props("showSearch")).toBe(false);
 
       // Show search
-      const sidebar = wrapper.findComponent({ name: 'Sidebar' });
-      await sidebar.vm.$emit('show-component', 'DockableSearch');
+      const sidebar = wrapper.findComponent({ name: "Sidebar" });
+      await sidebar.vm.$emit("show-component", "DockableSearch");
       await nextTick();
 
-      expect(canvas.props('showSearch')).toBe(true);
+      expect(canvas.props("showSearch")).toBe(true);
 
       // Hide search
-      await sidebar.vm.$emit('hide-component', 'DockableSearch');
+      await sidebar.vm.$emit("hide-component", "DockableSearch");
       await nextTick();
 
-      expect(canvas.props('showSearch')).toBe(false);
+      expect(canvas.props("showSearch")).toBe(false);
     });
 
     it("should handle multiple panel states simultaneously", async () => {
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
+          provide: {
+            fileStore,
             api: mockApi,
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { 
-              name: 'Sidebar',
-              template: '<div />',
-              emits: ['show-component', 'hide-component'],
+            Sidebar: {
+              name: "Sidebar",
+              template: "<div />",
+              emits: ["show-component", "hide-component"],
             },
-            Canvas: { 
-              name: 'Canvas',
-              template: '<div />',
-              props: ['modelValue', 'showEditor', 'showSearch'],
+            Canvas: {
+              name: "Canvas",
+              template: "<div />",
+              props: ["modelValue", "showEditor", "showSearch"],
             },
-            Icon: { template: '<div />' },
+            Icon: { template: "<div />" },
           },
         },
       });
 
       await nextTick();
 
-      const sidebar = wrapper.findComponent({ name: 'Sidebar' });
-      const canvas = wrapper.findComponent({ name: 'Canvas' });
+      const sidebar = wrapper.findComponent({ name: "Sidebar" });
+      const canvas = wrapper.findComponent({ name: "Canvas" });
 
       // Show both panels
-      await sidebar.vm.$emit('show-component', 'DockableEditor');
-      await sidebar.vm.$emit('show-component', 'DockableSearch');
+      await sidebar.vm.$emit("show-component", "DockableEditor");
+      await sidebar.vm.$emit("show-component", "DockableSearch");
       await nextTick();
 
-      expect(canvas.props('showEditor')).toBe(true);
-      expect(canvas.props('showSearch')).toBe(true);
+      expect(canvas.props("showEditor")).toBe(true);
+      expect(canvas.props("showSearch")).toBe(true);
 
       // Hide one panel
-      await sidebar.vm.$emit('hide-component', 'DockableEditor');
+      await sidebar.vm.$emit("hide-component", "DockableEditor");
       await nextTick();
 
-      expect(canvas.props('showEditor')).toBe(false);
-      expect(canvas.props('showSearch')).toBe(true);
+      expect(canvas.props("showEditor")).toBe(false);
+      expect(canvas.props("showSearch")).toBe(true);
     });
   });
 
@@ -652,9 +644,7 @@ describe("Workspace State Management", () => {
     it("should handle component remount with state preservation", async () => {
       const focusMode = ref(true);
       const drawerOpen = ref(true);
-      const annotations = reactive([
-        { id: 1, type: "comment", content: "Persistent comment" }
-      ]);
+      const annotations = reactive([{ id: 1, type: "comment", content: "Persistent comment" }]);
 
       const wrapper = mount(Canvas, {
         props: {
@@ -673,12 +663,12 @@ describe("Workspace State Management", () => {
             api: mockApi,
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
-            DockableSearch: { template: '<div />' },
-            Editor: { template: '<div />' },
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
+            DockableSearch: { template: "<div />" },
+            Editor: { template: "<div />" },
           },
         },
       });
@@ -721,11 +711,11 @@ describe("Workspace State Management", () => {
             api: mockApi,
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
-            DockableSearch: { template: '<div />' },
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
+            DockableSearch: { template: "<div />" },
           },
         },
       });
@@ -744,7 +734,7 @@ describe("Workspace State Management", () => {
       // Test with invalid/corrupted state values
       const corruptedFile = { id: "invalid", source: null, html: undefined };
       const corruptedAnnotations = reactive([null, undefined, { malformed: true }]);
-      
+
       const wrapper = mount(Canvas, {
         props: {
           modelValue: corruptedFile,
@@ -754,19 +744,19 @@ describe("Workspace State Management", () => {
         global: {
           provide: {
             focusMode: ref("invalid"), // Should be boolean
-            drawerOpen: ref(null),     // Should be boolean
+            drawerOpen: ref(null), // Should be boolean
             mobileMode: false,
             xsMode: false,
-            fileSettings: ref(null),   // Should be object
+            fileSettings: ref(null), // Should be object
             annotations: corruptedAnnotations,
             api: mockApi,
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
-            DockableSearch: { template: '<div />' },
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
+            DockableSearch: { template: "<div />" },
           },
         },
       });
@@ -793,8 +783,8 @@ describe("Workspace State Management", () => {
             xsMode: false,
           },
           stubs: {
-            SidebarMenu: { template: '<div />' },
-            UserMenu: { template: '<div />' },
+            SidebarMenu: { template: "<div />" },
+            UserMenu: { template: "<div />" },
           },
         },
       });
@@ -816,11 +806,11 @@ describe("Workspace State Management", () => {
             api: mockApi,
           },
           stubs: {
-            ReaderTopbar: { template: '<div />' },
-            Dock: { template: '<div><slot/></div>' },
-            ManuscriptWrapper: { template: '<div />' },
-            DockableAnnotations: { template: '<div />' },
-            DockableSearch: { template: '<div />' },
+            ReaderTopbar: { template: "<div />" },
+            Dock: { template: "<div><slot/></div>" },
+            ManuscriptWrapper: { template: "<div />" },
+            DockableAnnotations: { template: "<div />" },
+            DockableSearch: { template: "<div />" },
           },
         },
       });
@@ -849,21 +839,21 @@ describe("Workspace State Management", () => {
 
       const wrapper = mount(WorkspaceView, {
         global: {
-          provide: { 
-            fileStore, 
+          provide: {
+            fileStore,
             api: mockApi,
-            mobileMode: false 
+            mobileMode: false,
           },
           stubs: {
-            Sidebar: { 
-              template: '<div />',
-              emits: ['show-component', 'hide-component'],
+            Sidebar: {
+              template: "<div />",
+              emits: ["show-component", "hide-component"],
             },
-            Canvas: { 
-              template: '<div />',
-              props: ['modelValue', 'showEditor', 'showSearch'],
+            Canvas: {
+              template: "<div />",
+              props: ["modelValue", "showEditor", "showSearch"],
             },
-            Icon: { template: '<div />' },
+            Icon: { template: "<div />" },
           },
         },
       });

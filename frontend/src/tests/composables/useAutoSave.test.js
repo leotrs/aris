@@ -288,7 +288,7 @@ describe("useAutoSave", () => {
     // Create fresh mocks for this test
     const testSaveFunction = vi.fn().mockResolvedValue();
     const testCompileFunction = vi.fn();
-    
+
     const { onInput } = useAutoSave({
       file: mockFile,
       saveFunction: testSaveFunction,
@@ -299,19 +299,25 @@ describe("useAutoSave", () => {
     const mockEvent = { target: { value: "test content" } };
 
     onInput(mockEvent);
-    
+
     // Wait for debounce to complete
     vi.advanceTimersByTime(100);
-    
+
     // Wait for save promise to resolve
-    await vi.waitFor(() => {
-      expect(testSaveFunction).toHaveBeenCalled();
-    }, { timeout: 1000 });
-    
+    await vi.waitFor(
+      () => {
+        expect(testSaveFunction).toHaveBeenCalled();
+      },
+      { timeout: 1000 }
+    );
+
     // Wait a bit more for compile function
-    await vi.waitFor(() => {
-      expect(testCompileFunction).toHaveBeenCalled();
-    }, { timeout: 1000 });
+    await vi.waitFor(
+      () => {
+        expect(testCompileFunction).toHaveBeenCalled();
+      },
+      { timeout: 1000 }
+    );
   });
 
   it("should not start multiple auto-save intervals", async () => {
@@ -352,8 +358,11 @@ describe("useAutoSave", () => {
 
   it("should handle rapid status changes during save operations", async () => {
     let resolvePromise;
-    const slowSaveFunction = vi.fn(() => 
-      new Promise(resolve => { resolvePromise = resolve; })
+    const slowSaveFunction = vi.fn(
+      () =>
+        new Promise((resolve) => {
+          resolvePromise = resolve;
+        })
     );
 
     const { saveStatus, manualSave } = useAutoSave({
@@ -364,7 +373,7 @@ describe("useAutoSave", () => {
     // Start save
     const savePromise = manualSave();
     await nextTick();
-    
+
     expect(saveStatus.value).toBe("saving");
 
     // Resolve the save

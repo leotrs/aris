@@ -34,7 +34,7 @@ global.File = class File {
   constructor(bits, name, options = {}) {
     this.name = name;
     this.size = bits.reduce((acc, bit) => acc + bit.length, 0);
-    this.type = options.type || '';
+    this.type = options.type || "";
     this.lastModified = Date.now();
   }
 };
@@ -78,44 +78,44 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            Editor: { 
-              name: 'Editor',
-              template: '<div class="editor-stub" />', 
-              props: ['modelValue'] 
+            Editor: {
+              name: "Editor",
+              template: '<div class="editor-stub" />',
+              props: ["modelValue"],
             },
           },
         },
       });
 
-      const editor = wrapper.findComponent({ name: 'Editor' });
+      const editor = wrapper.findComponent({ name: "Editor" });
       expect(editor.exists()).toBe(true);
-      expect(editor.props('modelValue')).toEqual(mockFile.value);
+      expect(editor.props("modelValue")).toEqual(mockFile.value);
     });
 
     it("propagates file changes through v-model", async () => {
       const wrapper = mount(DockableEditor, {
         props: {
           modelValue: mockFile.value,
-          'onUpdate:modelValue': (newFile) => {
+          "onUpdate:modelValue": (newFile) => {
             mockFile.value = newFile;
           },
         },
         global: {
           provide: { api: mockApi },
           stubs: {
-            Editor: { 
-              template: '<div class="editor-stub" />', 
-              props: ['modelValue'],
-              emits: ['update:modelValue'],
+            Editor: {
+              template: '<div class="editor-stub" />',
+              props: ["modelValue"],
+              emits: ["update:modelValue"],
             },
           },
         },
       });
 
-      const editor = wrapper.findComponent({ name: 'Editor' });
+      const editor = wrapper.findComponent({ name: "Editor" });
       const newFile = { ...mockFile.value, source: "Updated content" };
-      
-      await editor.vm.$emit('update:modelValue', newFile);
+
+      await editor.vm.$emit("update:modelValue", newFile);
       await nextTick();
 
       expect(mockFile.value.source).toBe("Updated content");
@@ -131,15 +131,15 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { template: '<div />', emits: ['compile', 'upload'] },
-            EditorSource: { template: '<div />', props: ['modelValue', 'saveStatus'] },
-            EditorFiles: { template: '<div />', props: ['modelValue'] },
+            EditorTopbar: { template: "<div />", emits: ["compile", "upload"] },
+            EditorSource: { template: "<div />", props: ["modelValue", "saveStatus"] },
+            EditorFiles: { template: "<div />", props: ["modelValue"] },
           },
         },
       });
 
       expect(wrapper.exists()).toBe(true);
-      expect(wrapper.find('.editor').exists()).toBe(true);
+      expect(wrapper.find(".editor").exists()).toBe(true);
     });
 
     it("sets up auto-save with correct configuration", () => {
@@ -150,9 +150,9 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { template: '<div />' },
-            EditorSource: { template: '<div />' },
-            EditorFiles: { template: '<div />' },
+            EditorTopbar: { template: "<div />" },
+            EditorSource: { template: "<div />" },
+            EditorFiles: { template: "<div />" },
           },
         },
       });
@@ -175,27 +175,27 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { 
-              name: 'EditorTopbar',
-              template: '<div />', 
-              emits: ['compile', 'upload'] 
+            EditorTopbar: {
+              name: "EditorTopbar",
+              template: "<div />",
+              emits: ["compile", "upload"],
             },
-            EditorSource: { 
-              name: 'EditorSource',
-              template: '<div />', 
-              props: ['modelValue', 'saveStatus'],
-              emits: ['update:modelValue', 'input']
+            EditorSource: {
+              name: "EditorSource",
+              template: "<div />",
+              props: ["modelValue", "saveStatus"],
+              emits: ["update:modelValue", "input"],
             },
-            EditorFiles: { 
-              name: 'EditorFiles',
-              template: '<div />' 
+            EditorFiles: {
+              name: "EditorFiles",
+              template: "<div />",
             },
           },
         },
       });
 
-      const topbar = wrapper.findComponent({ name: 'EditorTopbar' });
-      await topbar.vm.$emit('compile');
+      const topbar = wrapper.findComponent({ name: "EditorTopbar" });
+      await topbar.vm.$emit("compile");
       await nextTick();
 
       expect(mockApi.post).toHaveBeenCalledWith("render", {
@@ -207,7 +207,7 @@ describe("Editor Integration Tests", () => {
     it("handles compilation errors gracefully", async () => {
       const compilationError = new Error("Compilation failed");
       mockApi.post.mockRejectedValue(compilationError);
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const wrapper = mount(Editor, {
         props: {
@@ -216,29 +216,29 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { 
-              name: 'EditorTopbar',
-              template: '<div />', 
-              emits: ['compile', 'upload'] 
+            EditorTopbar: {
+              name: "EditorTopbar",
+              template: "<div />",
+              emits: ["compile", "upload"],
             },
-            EditorSource: { 
-              name: 'EditorSource',
-              template: '<div />', 
-              props: ['modelValue', 'saveStatus'],
-              emits: ['update:modelValue', 'input']
+            EditorSource: {
+              name: "EditorSource",
+              template: "<div />",
+              props: ["modelValue", "saveStatus"],
+              emits: ["update:modelValue", "input"],
             },
-            EditorFiles: { 
-              name: 'EditorFiles',
-              template: '<div />' 
+            EditorFiles: {
+              name: "EditorFiles",
+              template: "<div />",
             },
           },
         },
       });
 
-      const topbar = wrapper.findComponent({ name: 'EditorTopbar' });
-      
+      const topbar = wrapper.findComponent({ name: "EditorTopbar" });
+
       // Should handle error without crashing
-      await topbar.vm.$emit('compile');
+      await topbar.vm.$emit("compile");
       await nextTick();
 
       expect(mockApi.post).toHaveBeenCalled();
@@ -249,7 +249,6 @@ describe("Editor Integration Tests", () => {
     });
 
     it("handles file saving through auto-save", async () => {
-
       const wrapper = mount(Editor, {
         props: {
           modelValue: mockFile.value,
@@ -257,9 +256,9 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { template: '<div />' },
-            EditorSource: { template: '<div />' },
-            EditorFiles: { template: '<div />' },
+            EditorTopbar: { template: "<div />" },
+            EditorSource: { template: "<div />" },
+            EditorFiles: { template: "<div />" },
           },
         },
       });
@@ -276,18 +275,18 @@ describe("Editor Integration Tests", () => {
     });
 
     it("handles file upload successfully", async () => {
-      const mockAsset = new File(['test content'], 'test.txt', { type: 'text/plain' });
-      const mockResponse = { data: { id: 123, url: '/assets/test.txt' } };
+      const mockAsset = new File(["test content"], "test.txt", { type: "text/plain" });
+      const mockResponse = { data: { id: 123, url: "/assets/test.txt" } };
       mockApi.post.mockResolvedValue(mockResponse);
 
       // Mock FileReader
       const mockFileReader = {
         readAsDataURL: vi.fn(),
-        result: 'data:text/plain;base64,dGVzdCBjb250ZW50',
+        result: "data:text/plain;base64,dGVzdCBjb250ZW50",
         onload: null,
         onerror: null,
       };
-      
+
       global.FileReader = vi.fn(() => mockFileReader);
 
       const wrapper = mount(Editor, {
@@ -297,46 +296,46 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { 
-              name: 'EditorTopbar',
-              template: '<div />', 
-              emits: ['compile', 'upload'] 
+            EditorTopbar: {
+              name: "EditorTopbar",
+              template: "<div />",
+              emits: ["compile", "upload"],
             },
-            EditorSource: { 
-              name: 'EditorSource',
-              template: '<div />', 
-              props: ['modelValue', 'saveStatus'],
-              emits: ['update:modelValue', 'input']
+            EditorSource: {
+              name: "EditorSource",
+              template: "<div />",
+              props: ["modelValue", "saveStatus"],
+              emits: ["update:modelValue", "input"],
             },
-            EditorFiles: { 
-              name: 'EditorFiles',
-              template: '<div />' 
+            EditorFiles: {
+              name: "EditorFiles",
+              template: "<div />",
             },
           },
         },
       });
 
-      const topbar = wrapper.findComponent({ name: 'EditorTopbar' });
-      
+      const topbar = wrapper.findComponent({ name: "EditorTopbar" });
+
       // Trigger upload
-      topbar.vm.$emit('upload', mockAsset);
-      
+      topbar.vm.$emit("upload", mockAsset);
+
       // Simulate FileReader success
       mockFileReader.onload();
       await nextTick();
 
-      expect(mockApi.post).toHaveBeenCalledWith('/assets', {
-        filename: 'test.txt',
-        mime_type: 'text/plain',
-        content: 'dGVzdCBjb250ZW50',
+      expect(mockApi.post).toHaveBeenCalledWith("/assets", {
+        filename: "test.txt",
+        mime_type: "text/plain",
+        content: "dGVzdCBjb250ZW50",
         file_id: mockFile.value.id,
       });
     });
 
     it("handles file upload errors", async () => {
-      const mockAsset = new File(['test'], 'test.txt', { type: 'text/plain' });
+      const mockAsset = new File(["test"], "test.txt", { type: "text/plain" });
       const uploadError = new Error("Upload failed");
-      
+
       // Mock FileReader that fails
       const mockFileReader = {
         readAsDataURL: vi.fn(),
@@ -344,9 +343,9 @@ describe("Editor Integration Tests", () => {
         onload: null,
         onerror: null,
       };
-      
+
       global.FileReader = vi.fn(() => mockFileReader);
-      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
       const wrapper = mount(Editor, {
         props: {
@@ -355,28 +354,28 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { 
-              name: 'EditorTopbar',
-              template: '<div />', 
-              emits: ['compile', 'upload'] 
+            EditorTopbar: {
+              name: "EditorTopbar",
+              template: "<div />",
+              emits: ["compile", "upload"],
             },
-            EditorSource: { 
-              name: 'EditorSource',
-              template: '<div />', 
-              props: ['modelValue', 'saveStatus'],
-              emits: ['update:modelValue', 'input']
+            EditorSource: {
+              name: "EditorSource",
+              template: "<div />",
+              props: ["modelValue", "saveStatus"],
+              emits: ["update:modelValue", "input"],
             },
-            EditorFiles: { 
-              name: 'EditorFiles',
-              template: '<div />' 
+            EditorFiles: {
+              name: "EditorFiles",
+              template: "<div />",
             },
           },
         },
       });
 
-      const topbar = wrapper.findComponent({ name: 'EditorTopbar' });
-      topbar.vm.$emit('upload', mockAsset);
-      
+      const topbar = wrapper.findComponent({ name: "EditorTopbar" });
+      topbar.vm.$emit("upload", mockAsset);
+
       // Simulate FileReader error
       mockFileReader.onerror(uploadError);
       await nextTick();
@@ -395,10 +394,10 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { 
-              template: '<div />',
-              props: ['modelValue'],
-              emits: ['update:modelValue'],
+            EditorTopbar: {
+              template: "<div />",
+              props: ["modelValue"],
+              emits: ["update:modelValue"],
             },
             EditorSource: { template: '<div class="editor-source" />' },
             EditorFiles: { template: '<div class="editor-files" />' },
@@ -407,16 +406,16 @@ describe("Editor Integration Tests", () => {
       });
 
       // Initially should show EditorSource (tab 0)
-      expect(wrapper.find('.editor-source').exists()).toBe(true);
-      expect(wrapper.find('.editor-files').exists()).toBe(false);
+      expect(wrapper.find(".editor-source").exists()).toBe(true);
+      expect(wrapper.find(".editor-files").exists()).toBe(false);
 
       // Switch to EditorFiles (tab 1)
-      const topbar = wrapper.findComponent({ name: 'EditorTopbar' });
-      await topbar.vm.$emit('update:modelValue', 1);
+      const topbar = wrapper.findComponent({ name: "EditorTopbar" });
+      await topbar.vm.$emit("update:modelValue", 1);
       await nextTick();
 
-      expect(wrapper.find('.editor-source').exists()).toBe(false);
-      expect(wrapper.find('.editor-files').exists()).toBe(true);
+      expect(wrapper.find(".editor-source").exists()).toBe(false);
+      expect(wrapper.find(".editor-files").exists()).toBe(true);
     });
 
     it("sets up keyboard shortcuts correctly", () => {
@@ -427,9 +426,9 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { template: '<div />' },
-            EditorSource: { template: '<div />' },
-            EditorFiles: { template: '<div />' },
+            EditorTopbar: { template: "<div />" },
+            EditorSource: { template: "<div />" },
+            EditorFiles: { template: "<div />" },
           },
         },
       });
@@ -447,7 +446,7 @@ describe("Editor Integration Tests", () => {
       };
 
       // Mock document.activeElement
-      Object.defineProperty(document, 'activeElement', {
+      Object.defineProperty(document, "activeElement", {
         value: mockEditorElement,
         writable: true,
       });
@@ -459,14 +458,14 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { template: '<div />' },
-            EditorSource: { 
-              template: '<div />',
+            EditorTopbar: { template: "<div />" },
+            EditorSource: {
+              template: "<div />",
               setup() {
                 return {};
               },
             },
-            EditorFiles: { template: '<div />' },
+            EditorFiles: { template: "<div />" },
           },
         },
       });
@@ -489,9 +488,9 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { template: '<div />' },
-            EditorSource: { template: '<div />' },
-            EditorFiles: { template: '<div />' },
+            EditorTopbar: { template: "<div />" },
+            EditorSource: { template: "<div />" },
+            EditorFiles: { template: "<div />" },
           },
         },
       });
@@ -516,18 +515,18 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { template: '<div />' },
-            EditorSource: { 
-              template: '<div />', 
-              props: ['modelValue', 'saveStatus'],
+            EditorTopbar: { template: "<div />" },
+            EditorSource: {
+              template: "<div />",
+              props: ["modelValue", "saveStatus"],
             },
-            EditorFiles: { template: '<div />' },
+            EditorFiles: { template: "<div />" },
           },
         },
       });
 
-      const editorSource = wrapper.findComponent({ name: 'EditorSource' });
-      expect(editorSource.props('saveStatus')).toBe("saving");
+      const editorSource = wrapper.findComponent({ name: "EditorSource" });
+      expect(editorSource.props("saveStatus")).toBe("saving");
     });
 
     it("handles input events from EditorSource", async () => {
@@ -538,21 +537,21 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { template: '<div />' },
-            EditorSource: { 
-              template: '<div />', 
-              props: ['modelValue', 'saveStatus'],
-              emits: ['input'],
+            EditorTopbar: { template: "<div />" },
+            EditorSource: {
+              template: "<div />",
+              props: ["modelValue", "saveStatus"],
+              emits: ["input"],
             },
-            EditorFiles: { template: '<div />' },
+            EditorFiles: { template: "<div />" },
           },
         },
       });
 
-      const editorSource = wrapper.findComponent({ name: 'EditorSource' });
+      const editorSource = wrapper.findComponent({ name: "EditorSource" });
       const inputEvent = { target: { value: "new content" } };
-      
-      await editorSource.vm.$emit('input', inputEvent);
+
+      await editorSource.vm.$emit("input", inputEvent);
       await nextTick();
 
       expect(mockAutoSave.onInput).toHaveBeenCalledWith(inputEvent);
@@ -570,32 +569,32 @@ describe("Editor Integration Tests", () => {
         global: {
           provide: { api: mockApi },
           stubs: {
-            EditorTopbar: { 
-              name: 'EditorTopbar',
-              template: '<div />', 
-              emits: ['compile', 'upload'] 
+            EditorTopbar: {
+              name: "EditorTopbar",
+              template: "<div />",
+              emits: ["compile", "upload"],
             },
-            EditorSource: { 
-              name: 'EditorSource',
-              template: '<div />', 
-              props: ['modelValue', 'saveStatus'],
-              emits: ['update:modelValue', 'input']
+            EditorSource: {
+              name: "EditorSource",
+              template: "<div />",
+              props: ["modelValue", "saveStatus"],
+              emits: ["update:modelValue", "input"],
             },
-            EditorFiles: { 
-              name: 'EditorFiles',
-              template: '<div />' 
+            EditorFiles: {
+              name: "EditorFiles",
+              template: "<div />",
             },
           },
         },
       });
 
-      const topbar = wrapper.findComponent({ name: 'EditorTopbar' });
-      
+      const topbar = wrapper.findComponent({ name: "EditorTopbar" });
+
       // Trigger both compile and upload simultaneously
-      const mockAsset = new File(['test'], 'test.txt');
-      topbar.vm.$emit('compile');
-      topbar.vm.$emit('upload', mockAsset);
-      
+      const mockAsset = new File(["test"], "test.txt");
+      topbar.vm.$emit("compile");
+      topbar.vm.$emit("upload", mockAsset);
+
       await nextTick();
 
       // Both operations should be handled without conflicts
