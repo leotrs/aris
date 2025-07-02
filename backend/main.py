@@ -128,10 +128,10 @@ async def health_check(db: AsyncSession = Depends(get_db)):
 
 
 origins = [
-    "http://localhost:5173",  # local Vue app (Vite dev server)
-    "http://localhost:5174",  # local Vue app (Vite dev server - alternate port)
-    "http://localhost:5175",  # local Vue app (Vite dev server - third instance)
-    "http://localhost:3000",  # local Nuxt app
+    f"http://localhost:{os.getenv('FRONTEND_PORT')}",  # local Vue app (Vite dev server)
+    f"http://localhost:{int(os.getenv('FRONTEND_PORT', '5173')) + 1}",  # alternate port
+    f"http://localhost:{int(os.getenv('FRONTEND_PORT', '5173')) + 2}",  # third instance
+    f"http://localhost:{os.getenv('SITE_PORT')}",  # local Nuxt app
     "https://aris-frontend.netlify.app",  # Netlify frontend
 ]
 
