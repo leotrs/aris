@@ -36,22 +36,22 @@ test.describe("Settings Navigation @auth", () => {
     // Click on File sub-item
     await page.click('.sub-items-container >> text="File"');
     await expect(page).toHaveURL("/settings/document");
-    await expect(page.locator("h1")).toContainText("Document Display");
+    await expect(page.locator("h1").first()).toContainText("Document Display");
 
     // Click on Behavior sub-item
     await page.click('.sub-items-container >> text="Behavior"');
     await expect(page).toHaveURL("/settings/behavior");
-    await expect(page.locator("h1")).toContainText("Behavior");
+    await expect(page.locator("h1").first()).toContainText("Behavior");
 
     // Click on Privacy sub-item
     await page.click('.sub-items-container >> text="Privacy"');
     await expect(page).toHaveURL("/settings/privacy");
-    await expect(page.locator("h1")).toContainText("Privacy & Communication");
+    await expect(page.locator("h1").first()).toContainText("Privacy & Communication");
 
     // Click on Security sub-item
     await page.click('.sub-items-container >> text="Security"');
     await expect(page).toHaveURL("/settings/security");
-    await expect(page.locator("h1")).toContainText("Account Security");
+    await expect(page.locator("h1").first()).toContainText("Account Security");
   });
 
   test("should show active state for current settings sub-section", async ({ page }) => {
@@ -124,7 +124,7 @@ test.describe("Settings Navigation @auth", () => {
     await expect(settingsItem).toHaveClass(/active/);
 
     // Should show correct page content
-    await expect(page.locator("h1")).toContainText("Privacy & Communication");
+    await expect(page.locator("h1").first()).toContainText("Privacy & Communication");
   });
 
   test("should handle keyboard navigation in sub-items", async ({ page }) => {
@@ -229,18 +229,28 @@ test.describe("Settings Error Handling @auth", () => {
     await expect(page).toHaveURL(/\/settings|\/404/);
   });
 
-  test("should maintain navigation state during network issues", async ({ page }) => {
+  test("should maintain navigation state during network issues", async ({ page, browserName }) => {
     await page.click('text="Settings"');
     await expect(page).toHaveURL("/settings/document");
     await page.click('.sub-items-container >> text="Behavior"');
 
-    // Simulate network issues
-    await page.setOffline(true);
+    // Simulate network issues - WebKit doesn't support setOffline()
+    if (browserName === "webkit") {
+      // Use route blocking for WebKit
+      await page.route("**/*", (route) => route.abort());
+    } else {
+      await page.setOffline(true);
+    }
 
     // UI should remain responsive for navigation
     await page.click('.sub-items-container >> text="File"');
     await expect(page).toHaveURL("/settings/document");
 
-    await page.setOffline(false);
+    // Restore network
+    if (browserName === "webkit") {
+      await page.unroute("**/*");
+    } else {
+      await page.setOffline(false);
+    }
   });
 });
