@@ -13,8 +13,8 @@ dotenv.config({ path: path.resolve("../../../.env") });
 const BACKEND_PORT = process.env.BACKEND_PORT;
 
 if (!BACKEND_PORT) {
-  console.error('❌ FATAL: BACKEND_PORT environment variable not set');
-  console.error('   Ensure .env file exists at project root with all required variables');
+  console.error("❌ FATAL: BACKEND_PORT environment variable not set");
+  console.error("   Ensure .env file exists at project root with all required variables");
   process.exit(1);
 }
 

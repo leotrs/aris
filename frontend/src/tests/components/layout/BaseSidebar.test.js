@@ -76,7 +76,9 @@ describe("BaseSidebar", () => {
         provide: mockProvideValues,
         components: {
           Logo: { template: '<div data-testid="logo" />' },
-          ContextMenu: { template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>' },
+          ContextMenu: {
+            template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>',
+          },
           ContextMenuItem: { template: '<div data-testid="context-menu-item" />' },
           Button: { template: '<button data-testid="button" />' },
           Separator: { template: '<div data-testid="separator" />' },
@@ -108,7 +110,9 @@ describe("BaseSidebar", () => {
           },
           components: {
             Logo: { template: '<div data-testid="logo" />' },
-            ContextMenu: { template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>' },
+            ContextMenu: {
+              template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>',
+            },
             ContextMenuItem: { template: '<div data-testid="context-menu-item" />' },
             Button: { template: '<button data-testid="button" />' },
             BaseSidebarItem: { template: '<div data-testid="base-sidebar-item" />' },
@@ -265,7 +269,9 @@ describe("BaseSidebar", () => {
           },
           components: {
             Logo: { template: '<div data-testid="logo" />' },
-            ContextMenu: { template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>' },
+            ContextMenu: {
+              template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>',
+            },
             ContextMenuItem: { template: '<div data-testid="context-menu-item" />' },
             Button: { template: '<button data-testid="button" />' },
             BaseSidebarItem: { template: '<div data-testid="base-sidebar-item" />' },
@@ -287,7 +293,9 @@ describe("BaseSidebar", () => {
           },
           components: {
             Logo: { template: '<div data-testid="logo" />' },
-            ContextMenu: { template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>' },
+            ContextMenu: {
+              template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>',
+            },
             ContextMenuItem: { template: '<div data-testid="context-menu-item" />' },
             Button: { template: '<button data-testid="button" />' },
             BaseSidebarItem: { template: '<div data-testid="base-sidebar-item" />' },

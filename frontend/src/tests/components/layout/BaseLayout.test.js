@@ -199,11 +199,11 @@ describe("BaseLayout", () => {
     it("does not insert sub-items when no active main item", async () => {
       // Create wrapper with route that doesn't match any main item
       const nonMatchingRoute = { path: "/some-other-page", fullPath: "/some-other-page" };
-      
+
       // Save original route values
       const originalPath = mockRoute.path;
       const originalFullPath = mockRoute.fullPath;
-      
+
       // Temporarily override the mock route
       Object.assign(mockRoute, nonMatchingRoute);
 
@@ -228,7 +228,7 @@ describe("BaseLayout", () => {
 
       const subItemsContainer = sidebarItems.find((item) => item.isSubItemsContainer);
       expect(subItemsContainer).toBeUndefined();
-      
+
       // Restore original route
       mockRoute.path = originalPath;
       mockRoute.fullPath = originalFullPath;

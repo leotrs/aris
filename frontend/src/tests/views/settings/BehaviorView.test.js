@@ -23,7 +23,7 @@ describe("BehaviorView", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Reset mock implementations to default behavior
     mockApi.get.mockResolvedValue({
       data: {
@@ -48,7 +48,8 @@ describe("BehaviorView", () => {
         components: {
           Pane: {
             name: "Pane",
-            template: '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
+            template:
+              '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
           },
           Section: {
             name: "Section",
@@ -281,7 +282,9 @@ describe("BehaviorView", () => {
     });
 
     it("has descriptive text for settings", () => {
-      expect(wrapper.text()).toContain("Automatically hide navigation and toolbars when entering focus mode");
+      expect(wrapper.text()).toContain(
+        "Automatically hide navigation and toolbars when entering focus mode"
+      );
       expect(wrapper.text()).toContain("Play audio feedback for actions and notifications");
       expect(wrapper.text()).toContain("Set the default open/closed state for workspace drawers");
     });
