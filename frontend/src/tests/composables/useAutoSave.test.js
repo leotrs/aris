@@ -283,4 +283,95 @@ describe("useAutoSave", () => {
     // Should remain 'saving', not change to 'pending'
     expect(saveStatus.value).toBe("saving");
   });
+
+  it("should call compile function after successful save", async () => {
+    // Create fresh mocks for this test
+    const testSaveFunction = vi.fn().mockResolvedValue();
+    const testCompileFunction = vi.fn();
+    
+    const { onInput } = useAutoSave({
+      file: mockFile,
+      saveFunction: testSaveFunction,
+      compileFunction: testCompileFunction,
+      debounceTime: 100, // Shorter debounce for faster test
+    });
+
+    const mockEvent = { target: { value: "test content" } };
+
+    onInput(mockEvent);
+    
+    // Wait for debounce to complete
+    vi.advanceTimersByTime(100);
+    
+    // Wait for save promise to resolve
+    await vi.waitFor(() => {
+      expect(testSaveFunction).toHaveBeenCalled();
+    }, { timeout: 1000 });
+    
+    // Wait a bit more for compile function
+    await vi.waitFor(() => {
+      expect(testCompileFunction).toHaveBeenCalled();
+    }, { timeout: 1000 });
+  });
+
+  it("should not start multiple auto-save intervals", async () => {
+    const { startAutoSave } = useAutoSave({
+      file: mockFile,
+      saveFunction: mockSaveFunction,
+      autoSaveInterval: 5000,
+    });
+
+    startAutoSave();
+    startAutoSave(); // Should not create second interval
+
+    // Verify only one interval is active by checking save calls
+    mockFile.value.source = "test content";
+    vi.advanceTimersByTime(5000);
+    await nextTick();
+
+    // Should only save once per interval, not twice
+    expect(mockSaveFunction).toHaveBeenCalledTimes(1);
+  });
+
+  it("should stop auto-save interval properly", async () => {
+    const { startAutoSave, stopAutoSave } = useAutoSave({
+      file: mockFile,
+      saveFunction: mockSaveFunction,
+      autoSaveInterval: 5000,
+    });
+
+    startAutoSave();
+    stopAutoSave();
+
+    mockFile.value.source = "test content";
+    vi.advanceTimersByTime(10000);
+    await nextTick();
+
+    expect(mockSaveFunction).not.toHaveBeenCalled();
+  });
+
+  it("should handle rapid status changes during save operations", async () => {
+    let resolvePromise;
+    const slowSaveFunction = vi.fn(() => 
+      new Promise(resolve => { resolvePromise = resolve; })
+    );
+
+    const { saveStatus, manualSave } = useAutoSave({
+      file: mockFile,
+      saveFunction: slowSaveFunction,
+    });
+
+    // Start save
+    const savePromise = manualSave();
+    await nextTick();
+    
+    expect(saveStatus.value).toBe("saving");
+
+    // Resolve the save
+    resolvePromise();
+    await savePromise;
+    await nextTick();
+
+    expect(saveStatus.value).toBe("saved");
+  });
 });
