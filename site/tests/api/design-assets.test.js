@@ -2,7 +2,7 @@ import { describe, it, expect, beforeAll } from "vitest";
 import axios from "axios";
 
 // Backend URL for testing
-const BACKEND_URL = "http://localhost:8001";
+const BACKEND_URL = process.env.NUXT_BACKEND_URL || "http://localhost:8000";
 
 describe("Design Assets API Integration", () => {
   let backendAvailable = false;
