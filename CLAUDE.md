@@ -22,6 +22,13 @@ uv run ruff check                     # Lint
 uv run mypy aris/                     # Type check
 ```
 
+## AI Copilot Setup
+```bash
+cp backend/.env.example backend/.env  # Configure API keys
+# Add your ANTHROPIC_API_KEY to backend/.env
+# See backend/AI_SETUP.md for detailed instructions
+```
+
 ## Testing Infrastructure
 
 ### Backend Testing

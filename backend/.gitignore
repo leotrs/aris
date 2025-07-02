@@ -1,4 +1,7 @@
 # Environment files with secrets
+.env
+.env.local
+.env.production
 simulate-ci
 
 # Test databases
