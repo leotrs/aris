@@ -50,16 +50,24 @@ Insightful remark goes here, with a reference to the earlier :ref:sec::.
   const fileSettingsRef = useTemplateRef("file-settings-ref");
 
   onMounted(async () => {
-    const fromDb = await File.getSettings(file.value, api);
-    Object.assign(defaultSettings, fromDb);
-    fileSettingsRef.value.startReceivingUserInput();
+    try {
+      const fromDb = await File.getSettings(file.value, api);
+      Object.assign(defaultSettings, fromDb);
+      fileSettingsRef.value.startReceivingUserInput();
+    } catch (error) {
+      console.error("Failed to load settings:", error);
+    }
   });
 
   provide("file", file);
 
   onMounted(async () => {
-    const response = await api.post("render", { source: file.value.source });
-    file.value.html = response.data;
+    try {
+      const response = await api.post("render", { source: file.value.source });
+      file.value.html = response.data;
+    } catch (error) {
+      console.error("Failed to render content:", error);
+    }
   });
 
   const onSave = async (settingsObj) => {
