@@ -2,25 +2,48 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import DocumentView from "@/views/settings/DocumentView.vue";
 
-// Mock File model
-const mockFile = {
-  getSettings: vi.fn().mockResolvedValue({
+// Mock File model with static methods
+const { mockGetSettings, mockUpdateDefaultSettings } = vi.hoisted(() => {
+  const mockGetSettings = vi.fn().mockResolvedValue({
     fontSize: 16,
     lineHeight: 1.5,
     theme: "light",
-  }),
-  updateDefaultSettings: vi.fn().mockResolvedValue({}),
-};
+  });
+  const mockUpdateDefaultSettings = vi.fn().mockResolvedValue({});
+  
+  return { mockGetSettings, mockUpdateDefaultSettings };
+});
 
-vi.mock("@/models/File.js", () => ({
-  File: mockFile,
-}));
+vi.mock("@/models/File.js", () => {
+  const MockFile = vi.fn().mockImplementation((fileData) => ({
+    id: null,
+    title: "Sample Title",
+    last_edited_at: new Date().toISOString(),
+    tags: [],
+    minimap: null,
+    ownerId: "user-123", // Fixed: include ownerId
+    selected: false,
+    filtered: false,
+    isMountedAt: null,
+    ...fileData,
+    source: fileData.source || "# File Settings Preview\n\nThis is a sample document to preview your settings.\n\n",
+    html: "<div>Rendered HTML</div>",
+  }));
+
+  // Add static methods to the constructor
+  MockFile.getSettings = mockGetSettings;
+  MockFile.updateDefaultSettings = mockUpdateDefaultSettings;
+
+  return {
+    File: MockFile,
+  };
+});
 
 describe("DocumentView", () => {
   let wrapper;
   const mockUser = {
+    id: "user-123",
     value: {
-      id: "user-123",
       name: "Test User",
       email: "test@example.com",
     },
@@ -44,20 +67,23 @@ describe("DocumentView", () => {
         components: {
           Pane: {
             name: "Pane",
-            template: '<div data-testid="pane"><slot name="header" /><slot /></div>',
+            template: '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
           },
           Section: {
             name: "Section",
             template:
-              '<div data-testid="section"><slot name="title" /><slot name="content" /></div>',
+              '<div data-testid="section"><div data-testid="section-title"><slot name="title" /></div><div data-testid="section-content"><slot name="content" /></div></div>',
           },
           FileSettings: {
             name: "FileSettings",
             props: ["modelValue", "header"],
             template: '<div data-testid="file-settings" />',
             emits: ["save"],
-            methods: {
-              startReceivingUserInput: vi.fn(),
+            setup() {
+              const startReceivingUserInput = vi.fn();
+              return {
+                startReceivingUserInput,
+              };
             },
           },
           ManuscriptWrapper: {
@@ -67,11 +93,11 @@ describe("DocumentView", () => {
           },
           IconFileText: {
             name: "IconFileText",
-            template: '<div data-testid="icon-file-text" />',
+            template: '<svg data-testid="icon-file-text" />',
           },
           IconInfoCircle: {
             name: "IconInfoCircle",
-            template: '<div data-testid="icon-info-circle" />',
+            template: '<svg data-testid="icon-info-circle" />',
           },
         },
       },
@@ -121,6 +147,8 @@ describe("DocumentView", () => {
     });
 
     it("renders the file content on mount", async () => {
+      // Wait for both onMounted hooks to complete
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
 
       expect(mockApi.post).toHaveBeenCalledWith("render", {
@@ -131,6 +159,8 @@ describe("DocumentView", () => {
     });
 
     it("passes rendered HTML to ManuscriptWrapper", async () => {
+      // Wait for both onMounted hooks to complete
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
 
       const manuscriptWrapper = wrapper.findComponent({ name: "ManuscriptWrapper" });
@@ -140,9 +170,11 @@ describe("DocumentView", () => {
 
   describe("Settings Management", () => {
     it("loads default settings on mount", async () => {
+      // Wait for both onMounted hooks to complete
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
 
-      expect(mockFile.getSettings).toHaveBeenCalledWith(wrapper.vm.file, mockApi);
+      expect(mockGetSettings).toHaveBeenCalledWith(wrapper.vm.file, mockApi);
 
       expect(wrapper.vm.defaultSettings).toEqual({
         fontSize: 16,
@@ -155,12 +187,16 @@ describe("DocumentView", () => {
       const fileSettings = wrapper.findComponent({ name: "FileSettings" });
       const startReceivingUserInputSpy = vi.spyOn(fileSettings.vm, "startReceivingUserInput");
 
+      // Wait for onMounted hooks to complete
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
 
       expect(startReceivingUserInputSpy).toHaveBeenCalled();
     });
 
     it("passes settings to ManuscriptWrapper", async () => {
+      // Wait for onMounted hooks to complete and settings to load
+      await wrapper.vm.$nextTick();
       await wrapper.vm.$nextTick();
 
       const manuscriptWrapper = wrapper.findComponent({ name: "ManuscriptWrapper" });
@@ -181,12 +217,12 @@ describe("DocumentView", () => {
       const fileSettings = wrapper.findComponent({ name: "FileSettings" });
       await fileSettings.vm.$emit("save", newSettings);
 
-      expect(mockFile.updateDefaultSettings).toHaveBeenCalledWith(newSettings, mockApi);
+      expect(mockUpdateDefaultSettings).toHaveBeenCalledWith(newSettings, mockApi);
     });
 
     it("handles save errors gracefully", async () => {
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      mockFile.updateDefaultSettings.mockRejectedValue(new Error("Save failed"));
+      mockUpdateDefaultSettings.mockRejectedValue(new Error("Save failed"));
 
       const fileSettings = wrapper.findComponent({ name: "FileSettings" });
       await fileSettings.vm.$emit("save", { fontSize: 18 });
@@ -217,7 +253,10 @@ describe("DocumentView", () => {
         global: {
           provide: { user: mockUser, api: mockApi },
           components: {
-            Pane: { template: "<div><slot /></div>" },
+            Pane: {
+              name: "Pane",
+              template: '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
+            },
             Section: { template: '<div><slot name="content" /></div>' },
             FileSettings: {
               template: "<div />",
@@ -239,13 +278,16 @@ describe("DocumentView", () => {
 
     it("handles settings load errors", async () => {
       const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      mockFile.getSettings.mockRejectedValue(new Error("Settings load failed"));
+      mockGetSettings.mockRejectedValue(new Error("Settings load failed"));
 
       const errorWrapper = mount(DocumentView, {
         global: {
           provide: { user: mockUser, api: mockApi },
           components: {
-            Pane: { template: "<div><slot /></div>" },
+            Pane: {
+              name: "Pane",
+              template: '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
+            },
             Section: { template: '<div><slot name="content" /></div>' },
             FileSettings: {
               template: "<div />",
