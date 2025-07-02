@@ -92,6 +92,7 @@
     }
   };
 
+  const enableAdvancedSearch = ref(false);
   const advanced = ref(false);
   const selectScope = ref("both views");
   const selectMode = ref("exact match");
@@ -125,6 +126,7 @@
       >
         <template #buttons>
           <Button
+            v-if="enableAdvancedSearch"
             kind="tertiary"
             icon="Adjustments"
             text=""
