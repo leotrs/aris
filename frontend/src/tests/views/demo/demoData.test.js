@@ -182,7 +182,7 @@ describe("Demo Data Service", () => {
       });
 
       it("getUri returns correct backend URL", () => {
-        expect(api.getUri()).toBe("http://localhost:8000");
+        expect(api.getUri()).toBe(import.meta.env.VITE_API_BASE_URL);
       });
     });
 

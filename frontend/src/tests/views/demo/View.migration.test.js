@@ -37,7 +37,7 @@ vi.mock("@/views/demo/demoData.js", () => ({
   createDemoApi: () => ({
     post: mockPost,
     get: mockGet,
-    getUri: () => "http://localhost:8000",
+    getUri: () => import.meta.env.VITE_API_BASE_URL,
   }),
 }));
 

@@ -4,7 +4,7 @@ import Logo from "@/components/base/Logo.vue";
 
 const mockApi = {
   defaults: {
-    baseURL: "http://localhost:8000",
+    baseURL: import.meta.env.VITE_API_BASE_URL,
   },
 };
 
@@ -25,7 +25,7 @@ describe("Logo.vue", () => {
     const img = wrapper.find("img");
 
     expect(img.exists()).toBe(true);
-    expect(img.attributes("src")).toBe("http://localhost:8000/design-assets/logos/logo-32px.svg");
+    expect(img.attributes("src")).toBe(`${mockApi.defaults.baseURL}/design-assets/logos/logo-32px.svg`);
     expect(img.attributes("alt")).toBe("Aris logo");
     expect(img.classes()).toContain("logo");
     expect(img.classes()).toContain("logo--small");
@@ -35,7 +35,7 @@ describe("Logo.vue", () => {
     const wrapper = createWrapper({ type: "full" });
     const img = wrapper.find("img");
 
-    expect(img.attributes("src")).toBe("http://localhost:8000/design-assets/logos/logotype.svg");
+    expect(img.attributes("src")).toBe(`${mockApi.defaults.baseURL}/design-assets/logos/logotype.svg`);
     expect(img.classes()).toContain("logo--full");
   });
 
@@ -44,7 +44,7 @@ describe("Logo.vue", () => {
     const img = wrapper.find("img");
 
     expect(img.attributes("src")).toBe(
-      "http://localhost:8000/design-assets/logos/logo-32px-gray.svg"
+      `${mockApi.defaults.baseURL}/design-assets/logos/logo-32px-gray.svg`
     );
     expect(img.classes()).toContain("logo--gray");
   });

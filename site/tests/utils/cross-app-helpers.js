@@ -6,8 +6,8 @@
 export class CrossAppHelpers {
   constructor(page) {
     this.page = page;
-    this.marketingSiteUrl = "http://localhost:3000";
-    this.frontendUrl = "http://localhost:5173";
+    this.marketingSiteUrl = `http://localhost:${process.env.SITE_PORT}`;
+    this.frontendUrl = `http://localhost:${process.env.FRONTEND_PORT}`;
   }
 
   /**

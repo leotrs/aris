@@ -30,7 +30,7 @@ async function replicateBug() {
 
     // Navigate to the app (adjust URL if needed)
     console.log("Navigating to app...");
-    await page.goto("http://localhost:5173", {
+    await page.goto(`http://localhost:${process.env.VITE_PORT || process.env.FRONTEND_PORT}`, {
       waitUntil: "networkidle2",
       timeout: 10000,
     });
@@ -110,7 +110,7 @@ async function loginAsTestUser(page, email = "test@example.com", password = "tes
 }
 
 async function navigateToWorkspace(page, fileId) {
-  await page.goto(`http://localhost:5173/file/${fileId}`, {
+  await page.goto(`http://localhost:${process.env.VITE_PORT || process.env.FRONTEND_PORT}/file/${fileId}`, {
     waitUntil: "networkidle2",
   });
 }

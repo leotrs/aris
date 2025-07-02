@@ -19,7 +19,7 @@
     "test:e2e:debug": "node ../docker/env-check.js && playwright test --debug",
     "test:visual": "node ../docker/env-check.js && playwright test --grep @visual",
     "test:all": "npm run test:run && npm run test:e2e",
-    "storybook": "node ../docker/env-check.js && storybook dev -p 6006",
+    "storybook": "node ../docker/env-check.js && storybook dev -p ${STORYBOOK_PORT}",
     "build-storybook": "node ../docker/env-check.js && storybook build"
   },
   "dependencies": {
