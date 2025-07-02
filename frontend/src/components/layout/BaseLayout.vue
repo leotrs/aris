@@ -1,46 +1,96 @@
 <script setup>
   /**
-   * HomeLayout - The main layout component for the application's home view.
+   * BaseLayout - The main layout component for application views.
    *
-   * This component provides the overall structure for the home screen, including a sidebar,
+   * This component provides the overall structure including a configurable sidebar,
    * top-right menus (notifications, user menu), and a main content area via its default slot.
    * It manages the display of file upload modals and integrates with keyboard shortcuts
    * for navigation and user menu access.
    *
-   * @displayName HomeLayout
+   * @displayName BaseLayout
    * @example
-   * // Basic usage with default content
-   * <HomeLayout>
-   *   <div>Your main home content goes here.</div>
-   * </HomeLayout>
+   * // Basic usage with sidebar items
+   * <BaseLayout :sidebar-items="navItems">
+   *   <Pane>Your main content goes here.</Pane>
+   * </BaseLayout>
    *
    * @example
-   * // With a specific active sidebar item and floating action button disabled
-   * <HomeLayout active="Account" :fab="false">
-   *   <div>User account details.</div>
-   * </HomeLayout>
-   *
-   * @example
-   * // Mobile view simulation
-   * <HomeLayout :mobile-mode="true">
-   *   <div>Mobile-optimized content.</div>
-   * </HomeLayout>
+   * // With floating action button disabled
+   * <BaseLayout :sidebar-items="navItems" :fab="false">
+   *   <Pane>Content without FAB.</Pane>
+   * </BaseLayout>
    */
-  import { ref, inject, computed, useTemplateRef } from "vue";
+  import { ref, computed, inject, useTemplateRef, provide } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import UploadFile from "@/views/home/ModalUploadFile.vue";
 
   const props = defineProps({
-    active: { type: String, default: "" },
     fab: { type: Boolean, default: true },
+    contextSubItems: { type: Array, default: () => [] },
   });
+
+  const emit = defineEmits(["newEmptyFile", "showFileUploadModal"]);
+
   const mobileMode = inject("mobileMode");
   const fileStore = inject("fileStore");
   const user = inject("user");
+  const route = useRoute();
+  const router = useRouter();
+
+  // Create unified main sidebar items
+  const mainSidebarItems = computed(() => [
+    {
+      icon: "Home",
+      text: "Home",
+      active: route.path === "/" || route.name === "home",
+      route: "/",
+    },
+    {
+      icon: "User",
+      text: "Account",
+      active: route.path === "/account",
+      route: "/account",
+    },
+    {
+      icon: "Settings",
+      text: "Settings",
+      active: route.path.startsWith("/settings"),
+      route: "/settings",
+    },
+    { separator: true },
+    {
+      icon: "LayoutSidebarLeftCollapse",
+      iconCollapsed: "LayoutSidebarLeftExpand",
+      text: "Collapse",
+      tooltip: "Expand",
+      action: "collapse",
+    },
+  ]);
+
+  // Combine main items with context sub-items
+  const allSidebarItems = computed(() => {
+    const items = [];
+
+    mainSidebarItems.value.forEach((item) => {
+      items.push(item);
+
+      // Insert sub-items container after the active main item
+      if (item.active && !item.separator && !item.action && props.contextSubItems.length > 0) {
+        items.push({
+          isSubItemsContainer: true,
+          subItems: props.contextSubItems.map((subItem) => ({
+            ...subItem,
+            isSubItem: true,
+          })),
+        });
+      }
+    });
+
+    return items;
+  });
 
   // New empty file
-  const router = useRouter();
   const newEmptyFile = async () => {
     try {
       const newFile = await fileStore.value.createFile({
@@ -55,7 +105,6 @@
   };
 
   const showModal = ref(false);
-  const route = useRoute();
   const isHome = computed(() => route.fullPath === "/");
 
   const userMenuRef = useTemplateRef("user-menu");
@@ -63,18 +112,34 @@
     if (!userMenuRef.value) return;
     userMenuRef.value.toggle();
   };
+
   useKeyboardShortcuts(
     { u: { fn: () => toggleUserMenu(), description: "Toggle user menu" } },
     true,
     "Menus"
   );
+
+  // Handle sidebar item actions
+  const handleSidebarAction = (action) => {
+    switch (action) {
+      case "newEmptyFile":
+        newEmptyFile();
+        break;
+      case "showFileUploadModal":
+        showModal.value = true;
+        break;
+      default:
+        console.warn(`Unknown sidebar action: ${action}`);
+    }
+  };
 </script>
 
 <template>
   <div class="view" :class="{ mobile: mobileMode }">
-    <HomeSidebar
+    <BaseSidebar
+      :sidebar-items="allSidebarItems"
       :fab="fab"
-      :active="active"
+      @action="handleSidebarAction"
       @new-empty-file="newEmptyFile"
       @show-file-upload-modal="showModal = true"
     />

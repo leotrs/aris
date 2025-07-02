@@ -19,6 +19,7 @@ from aris.routes import (
     signup_router,
     tag_router,
     user_router,
+    user_settings_router,
 )
 
 
@@ -92,6 +93,10 @@ app = FastAPI(
             "name": "file-settings",
             "description": "User preferences for document display and formatting",
         },
+        {
+            "name": "user-settings",
+            "description": "User behavioral preferences and privacy settings",
+        },
         {"name": "render", "description": "Convert RSM markup to rendered HTML output"},
         {"name": "signup", "description": "Early access signup and waitlist management"},
         {"name": "health", "description": "System health and status monitoring"},
@@ -147,6 +152,7 @@ app.include_router(file_router, tags=["files"])
 app.include_router(tag_router, tags=["tags"])
 app.include_router(file_assets_router, tags=["file-assets"])
 app.include_router(file_settings_router, tags=["file-settings"])
+app.include_router(user_settings_router, tags=["user-settings"])
 app.include_router(render_router, tags=["render"])
 app.include_router(signup_router, tags=["signup"])
 logger.info("All routers registered successfully")

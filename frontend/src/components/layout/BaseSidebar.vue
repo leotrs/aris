@@ -3,24 +3,34 @@
   import { useRouter } from "vue-router";
   import { File } from "@/models/File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
-  import SidebarItem from "./HomeSidebarItem.vue";
+  import BaseSidebarItem from "./BaseSidebarItem.vue";
 
   defineOptions({
-    name: "HomeSidebar",
+    name: "BaseSidebar",
   });
 
   const props = defineProps({
-    active: { type: String, default: "" },
+    sidebarItems: {
+      type: Array,
+      default: () => [],
+      validator: (items) => {
+        return items.every(
+          (item) =>
+            item.separator || item.isSubItemsContainer || (item.text && (item.icon || item.action))
+        );
+      },
+    },
     fab: { type: Boolean, default: true },
   });
-  const emit = defineEmits(["newEmptyFile", "showFileUploadModal"]);
+  const emit = defineEmits(["action", "newEmptyFile", "showFileUploadModal"]);
+  const menuItems = computed(() => {
+    return props.sidebarItems;
+  });
 
-  // Collapsing
-  const forceCollapsed = ref(false);
+  // Collapsing - use only the global state
   const collapsed = inject("sidebarIsCollapsed");
   const toggleCollapsed = () => {
     collapsed.value = !collapsed.value;
-    forceCollapsed.value = !forceCollapsed.value;
   };
   provide("collapsed", collapsed);
 
@@ -46,6 +56,31 @@
     const file = recentFiles.value[idx];
     if (!file) return;
     goTo(`file/${file.id}`);
+  };
+
+  // Handle sidebar item click
+  const handleItemClick = (item) => {
+    if (!item.clickable && item.clickable !== undefined) return;
+
+    if (item.route) {
+      router.push(item.route);
+    } else if (item.action) {
+      switch (item.action) {
+        case "collapse":
+          toggleCollapsed();
+          break;
+        case "newEmptyFile":
+          emit("newEmptyFile");
+          break;
+        case "showFileUploadModal":
+          emit("showFileUploadModal");
+          break;
+        default:
+          emit("action", item.action);
+      }
+    } else if (item.onClick) {
+      item.onClick();
+    }
   };
 
   // Keys
@@ -99,47 +134,38 @@
 
     <template v-if="!mobileMode">
       <div class="sb-menu">
-        <SidebarItem icon="Home" text="Home" :active="active === 'Home'" @click="() => goTo('')" />
-        <!-- <SidebarItem text="Feedback" /> -->
-        <!-- <SidebarItem text="References" /> -->
-        <!-- <Separator /> -->
-        <!-- <SidebarItem text="Read" /> -->
-        <!-- <SidebarItem text="Write" /> -->
-        <!-- <SidebarItem text="Review" /> -->
-        <Separator />
-        <SidebarItem icon="Clock" text="Recent Files" :clickable="false" />
-        <template v-for="idx in 3" :key="recentFiles[idx - 1]">
-          <SidebarItem
-            v-if="recentFiles[idx - 1]"
-            class="recent-file"
-            icon="File"
-            :text="recentFiles[idx - 1].title || 'Untitled'"
-            :tooltip="`Open &quot;${recentFiles[idx - 1].title}&quot;`"
-            :tooltip-always="true"
-            @click="File.openFile(recentFiles[idx - 1], router)"
+        <template v-for="(item, index) in menuItems" :key="`item-${index}`">
+          <Separator v-if="item.separator" />
+          <div v-else-if="item.isSubItemsContainer" class="sub-items-container">
+            <BaseSidebarItem
+              v-for="(subItem, subIndex) in item.subItems"
+              :key="`sub-item-${subIndex}`"
+              :icon="subItem.icon"
+              :icon-collapsed="subItem.iconCollapsed"
+              :text="subItem.text"
+              :tooltip="subItem.tooltip"
+              :tooltip-always="subItem.tooltipAlways"
+              :active="subItem.active"
+              :clickable="subItem.clickable"
+              :is-sub-item="subItem.isSubItem"
+              :class="subItem.class"
+              @click="handleItemClick(subItem)"
+            />
+          </div>
+          <BaseSidebarItem
+            v-else
+            :icon="item.icon"
+            :icon-collapsed="item.iconCollapsed"
+            :text="item.text"
+            :tooltip="item.tooltip"
+            :tooltip-always="item.tooltipAlways"
+            :active="item.active"
+            :clickable="item.clickable"
+            :is-sub-item="item.isSubItem"
+            :class="item.class"
+            @click="handleItemClick(item)"
           />
         </template>
-        <Separator />
-        <SidebarItem
-          icon="User"
-          text="Account"
-          :active="active === 'Account'"
-          @click="() => goTo('account')"
-        />
-        <SidebarItem
-          icon="Settings"
-          text="Settings"
-          :active="active === 'Settings'"
-          @click="() => goTo('settings')"
-        />
-        <Separator />
-        <SidebarItem
-          icon="LayoutSidebarLeftCollapse"
-          icon-collapsed="LayoutSidebarLeftExpand"
-          text="Collapse"
-          tooltip="Expand"
-          @click="toggleCollapsed"
-        />
       </div>
     </template>
   </div>
@@ -227,8 +253,8 @@
   }
 
   .sb-wrapper.mobile {
-    width: auto;
-    height: auto;
+    width: 0;
+    height: 0;
     position: fixed;
     z-index: 999;
   }
@@ -277,60 +303,12 @@
     margin-block: 12px;
   }
 
-  .sb-menu > .recent-file {
-    margin-block: 4px;
-  }
-
-  .sb-menu > .recent-file > :deep(.tabler-icon) {
-    color: var(--gray-800);
-    transition:
-      opacity 0.3s ease,
-      color 0.3s ease;
-  }
-
-  .sb-menu > .recent-file.collapsed > :deep(.tabler-icon) {
-    opacity: 1;
-  }
-
-  .sb-menu > .recent-file:not(.collapsed) > :deep(.tabler-icon) {
-    opacity: 0;
-  }
-
-  .sb-menu > .recent-file:not(.collapsed):hover {
-    & > :deep(.tabler-icon) {
-      opacity: 1;
-      color: var(--extra-dark);
-    }
-
-    & > :deep(.sb-text) {
-      color: var(--almost-black);
-    }
-  }
-
-  .sb-menu > .recent-file.collapsed:hover {
-    & > :deep(.tabler-icon) {
-      color: var(--almost-black);
-    }
-  }
-
-  .sb-menu > .recent-file > :deep(.sb-text) {
-    max-width: calc(var(--expanded-width) - 32px - 4px - 16px - 4px) !important;
-    overflow-x: clip;
-    text-overflow: ellipsis;
-  }
-
-  .sb-menu > .recent-file > :deep(*) {
-    font-family: "Source Sans 3", sans-serif;
-    text-transform: none;
-    font-weight: 350;
-    color: var(--gray-800);
-    font-style: italic;
-    font-size: 14px;
-  }
-
-  .sb-menu > .recent-file.collapsed > :deep(*) {
-    stroke-width: 1.5px;
-    color: var(--gray-700);
+  /* Sub-items container */
+  .sub-items-container {
+    background-color: var(--gray-200);
+    border-radius: 8px;
+    margin-inline: 8px;
+    padding-block: 6px;
   }
 
   .sb-menu > *:first-child {

@@ -1,5 +1,6 @@
 <script setup>
   import { ref, computed, inject, onMounted, onUnmounted, watch } from "vue";
+  import { useRoute } from "vue-router";
   import { IconUserCircle } from "@tabler/icons-vue";
   import { toast } from "@/utils/toast.js";
   import PasswordStrength from "@/components/ui/PasswordStrength.vue";
@@ -8,6 +9,7 @@
   const mobileMode = inject("mobileMode");
   const user = inject("user");
   const api = inject("api");
+  const route = useRoute();
 
   // Profile section form submission
   const newName = ref(null);
@@ -233,10 +235,28 @@
     if (serverAvatarUrl.value) URL.revokeObjectURL(serverAvatarUrl.value);
     window.removeEventListener("beforeunload", handleBeforeUnload);
   });
+
+  // Account could have sub-sections in the future (Profile, Security, Preferences, etc.)
+  // For now, no sub-items
+  const contextSubItems = computed(() => [
+    // Future account sub-sections could go here:
+    // {
+    //   icon: "User",
+    //   text: "Profile",
+    //   active: route.path === "/account/profile",
+    //   route: "/account/profile",
+    // },
+    // {
+    //   icon: "Shield",
+    //   text: "Security",
+    //   active: route.path === "/account/security",
+    //   route: "/account/security",
+    // },
+  ]);
 </script>
 
 <template>
-  <HomeLayout :fab="false" active="Account">
+  <BaseLayout :context-sub-items="contextSubItems" :fab="false">
     <Pane>
       <template #header>
         <Icon name="User" />
@@ -415,7 +435,7 @@
         </div>
       </div>
     </Pane>
-  </HomeLayout>
+  </BaseLayout>
 </template>
 
 <style scoped>
