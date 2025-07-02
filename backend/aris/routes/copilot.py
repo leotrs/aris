@@ -30,10 +30,16 @@ async def get_copilot_service() -> CopilotService:
     
     if _copilot_service is None:
         try:
-            # Try to create an available provider
-            provider = await ProviderFactory.create_available_provider()
-            _copilot_service = CopilotService(provider)
-            logger.info(f"Initialized copilot service with provider: {provider.name}")
+            # Use specific provider from environment variable
+            provider = ProviderFactory.create_provider()
+            
+            # Check if provider is available and log details
+            if await provider.is_available():
+                _copilot_service = CopilotService(provider)
+                logger.info(f"Initialized copilot service with provider: {provider.name}")
+            else:
+                raise ProviderUnavailableError(f"Provider {provider.name} is not available", provider.name)
+                
         except ProviderUnavailableError as e:
             logger.error(f"Failed to initialize copilot service: {e}")
             # Fall back to mock provider for development
