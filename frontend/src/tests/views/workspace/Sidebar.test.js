@@ -44,13 +44,15 @@ describe("Workspace Sidebar", () => {
             template: "<div class='drawer-stub' />",
             props: ["component"],
           },
-          SidebarItem: {
-            name: "SidebarItem",
-            template: "<button />",
-            props: ["icon", "label", "modelValue", "type"],
-            emits: ["on", "off", "click", "update:modelValue"],
+          // Remove SidebarItem stub - test with real component
+          // Stub child components that SidebarItem needs
+          ButtonToggle: {
+            name: "ButtonToggle",
+            template: '<button :aria-pressed="modelValue" @click="$emit(\'update:modelValue\', !modelValue)"><slot /></button>',
+            props: ["modelValue", "icon", "buttonSize", "activeColor", "type"],
+            emits: ["update:modelValue"],
           },
-          Tooltip: true,
+          // Remove Tooltip stub - let real component render
         },
       },
     });
