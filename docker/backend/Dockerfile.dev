@@ -11,6 +11,10 @@ WORKDIR /app
 # Copy dependency files first for better caching
 COPY backend/pyproject.toml backend/uv.lock ./
 
+# Copy env-check script and .env file
+COPY docker/env-check.js ../docker/env-check.js
+COPY .env ../.env
+
 # Install dependencies
 RUN uv sync --all-groups --frozen --no-cache
 

@@ -1,8 +1,10 @@
-# Load environment variables from root .env file
-env_file: ../.env
+# Common configuration for all services
+x-common-env: &common-env
+  env_file: ../.env
 
 services:
   backend:
+    <<: *common-env
     build:
       context: ..
       dockerfile: docker/backend/Dockerfile.dev
@@ -24,6 +26,7 @@ services:
     restart: unless-stopped
     
   frontend:
+    <<: *common-env
     build:
       context: ..
       dockerfile: docker/frontend/Dockerfile.dev
@@ -37,6 +40,7 @@ services:
     command: npm run dev -- --host 0.0.0.0
     
   storybook:
+    <<: *common-env
     build:
       context: ..
       dockerfile: docker/frontend/Dockerfile.dev
@@ -48,6 +52,7 @@ services:
     command: npm run storybook -- --host 0.0.0.0
     
   site:
+    <<: *common-env
     build:
       context: ..
       dockerfile: docker/site/Dockerfile.dev
@@ -62,6 +67,7 @@ services:
     command: npm run dev
     
   postgres:
+    <<: *common-env
     image: postgres:16
     ports:
       - "${DB_PORT}:5432"

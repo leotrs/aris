@@ -5,6 +5,10 @@ WORKDIR /app
 # Copy package files
 COPY site/package*.json ./
 
+# Copy env-check script and .env file
+COPY docker/env-check.js ../docker/env-check.js
+COPY .env ../.env
+
 # Install dependencies
 RUN npm install
 
