@@ -60,6 +60,8 @@ The E2E test suite is organized into **7 mutually exclusive jobs** for optimal p
 ## Development Setup
 
 ### Environment Configuration (REQUIRED)
+
+#### Development Environment
 ```bash
 # Copy environment template and configure ports
 cp .env.example .env
@@ -67,6 +69,12 @@ cp .env.example .env
 ```
 
 **CRITICAL**: All environment variables in `.env` are REQUIRED. The system will crash immediately if any are missing - there are NO fallbacks.
+
+#### CI/STAGING/PROD Environments
+For CI, STAGING, and PROD environments, set these environment variables directly in your deployment configuration:
+- `BACKEND_PORT`, `FRONTEND_PORT`, `SITE_PORT`, `STORYBOOK_PORT`
+- `DB_PORT`, `DB_NAME`, `TEST_DB_NAME`
+- Set `ENV=CI`, `ENV=STAGING`, or `ENV=PROD` to enable system environment variable mode
 
 ### Standard Development
 ```bash
@@ -122,7 +130,8 @@ npx playwright test --reporter=html       # Generate HTML report
 ## Critical Rules
 
 ### Environment Configuration
-- **REQUIRED**: Copy `.env.example` to `.env` and configure ALL variables before starting any service
+- **Development**: Copy `.env.example` to `.env` and configure ALL variables before starting any service
+- **CI/STAGING/PROD**: Set environment variables directly in deployment configuration (`ENV=CI/STAGING/PROD`)
 - **NO FALLBACKS**: Missing environment variables will crash the system immediately
 - **FAIL-FAST**: All scripts validate environment before execution using `docker/env-check.js`
 
