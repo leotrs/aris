@@ -107,7 +107,7 @@ test.describe("Sidebar Scrolling Regression @core @desktop-only", () => {
     }
 
     // Test various short viewport heights to ensure robustness
-    const testHeights = [350, 450, 700, 800];
+    const testHeights = [300, 400, 500, 600];
 
     for (const height of testHeights) {
       await page.setViewportSize({ width: 1400, height });
