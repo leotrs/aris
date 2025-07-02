@@ -6,6 +6,16 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  # Common environment variables for all jobs
+  BACKEND_PORT: 8000
+  FRONTEND_PORT: 5173
+  SITE_PORT: 3000
+  STORYBOOK_PORT: 6006
+  DB_PORT: 5432
+  DB_NAME: aris
+  TEST_DB_NAME: aris_test
+
 jobs:
   # Unit Tests and Linting (Parallel)
   backend-test:
