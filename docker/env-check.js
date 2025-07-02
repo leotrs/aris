@@ -24,6 +24,11 @@ const REQUIRED_ENV_VARS = [
   'TEST_DB_NAME'
 ];
 
+function detectEnvironment() {
+  const env = process.env.ENV || process.env.NODE_ENV || 'development';
+  return ['CI', 'STAGING', 'PROD'].includes(env.toUpperCase());
+}
+
 function loadEnvFile() {
   const envPath = path.resolve(__dirname, '../.env');
   
@@ -54,6 +59,19 @@ function loadEnvFile() {
   }
 }
 
+function loadEnvironment() {
+  const isProductionLike = detectEnvironment();
+  const envName = process.env.ENV || process.env.NODE_ENV || 'development';
+  
+  if (isProductionLike) {
+    console.log(`🔄 ${envName.toUpperCase()} environment detected - using system environment variables`);
+    // Use existing process.env, no .env file loading
+  } else {
+    console.log('🔄 Development environment detected - loading .env file');
+    loadEnvFile();
+  }
+}
+
 function validateEnvironment() {
   console.log('🔍 Validating environment variables...');
   
@@ -70,13 +88,22 @@ function validateEnvironment() {
   }
   
   if (missing.length > 0) {
+    const isProductionLike = detectEnvironment();
+    const envName = process.env.ENV || process.env.NODE_ENV || 'development';
+    
     console.error('❌ FATAL: Missing required environment variables:');
     missing.forEach(envVar => {
       console.error(`   ${envVar}`);
     });
     console.error('');
-    console.error('   Set these variables in your .env file at the project root');
-    console.error('   Use .env.example as a template');
+    
+    if (isProductionLike) {
+      console.error(`   Set these environment variables in your ${envName.toUpperCase()} deployment configuration`);
+      console.error('   (GitHub Actions, Docker, Kubernetes, etc.)');
+    } else {
+      console.error('   Set these variables in your .env file at the project root');
+      console.error('   Use .env.example as a template');
+    }
     process.exit(1);
   }
   
@@ -93,7 +120,7 @@ function validateEnvironment() {
 
 function main() {
   try {
-    loadEnvFile();
+    loadEnvironment();
     validateEnvironment();
     console.log('🚀 Environment validation passed - proceeding with startup');
   } catch (error) {
@@ -107,4 +134,4 @@ if (require.main === module) {
   main();
 }
 
-module.exports = { loadEnvFile, validateEnvironment };
+module.exports = { detectEnvironment, loadEnvFile, loadEnvironment, validateEnvironment };
