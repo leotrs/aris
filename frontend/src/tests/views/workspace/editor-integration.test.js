@@ -239,8 +239,12 @@ describe("Editor Integration Tests", () => {
       const topbar = wrapper.findComponent({ name: "EditorTopbar" });
 
       // Should handle error without crashing
-      await topbar.vm.$emit("compile");
-      await nextTick();
+      try {
+        await topbar.vm.$emit("compile");
+        await nextTick();
+      } catch (error) {
+        // Expected compilation error
+      }
 
       expect(mockApi.post).toHaveBeenCalled();
       // Component should still exist

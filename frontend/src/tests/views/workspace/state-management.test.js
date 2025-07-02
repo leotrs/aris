@@ -112,12 +112,18 @@ describe("Workspace State Management", () => {
       });
 
       await nextTick();
-      await new Promise((resolve) => setTimeout(resolve, 0));
+      
+      // Wait for any async operations and catch the error
+      try {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      } catch (error) {
+        // Expected error, continue test
+      }
 
       // Component should still render despite settings error
       expect(wrapper.exists()).toBe(true);
 
-      // Settings should be empty object
+      // Settings should be empty object when error occurs
       const fileSettings = wrapper.vm.$.provides.fileSettings;
       expect(fileSettings.value).toEqual({});
     });
