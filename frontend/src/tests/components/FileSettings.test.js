@@ -34,17 +34,20 @@ describe("FileSettings.vue", () => {
           // Keep layout components simple but functional
           Pane: {
             name: "Pane",
-            template: '<div class="pane"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
+            template:
+              '<div class="pane"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
             inject: { mobileMode: { default: false } },
           },
           Section: {
-            name: "Section", 
-            template: '<div class="section"><div v-if="$slots.title" class="title"><slot name="title" /></div><div class="content"><slot name="content" /></div></div>',
+            name: "Section",
+            template:
+              '<div class="section"><div v-if="$slots.title" class="title"><slot name="title" /></div><div class="content"><slot name="content" /></div></div>',
             props: ["variant", "theme"],
           },
           Button: {
             name: "Button",
-            template: '<button @click="$emit(\'click\')" :class="kind"><slot>{{ text }}</slot></button>',
+            template:
+              '<button @click="$emit(\'click\')" :class="kind"><slot>{{ text }}</slot></button>',
             props: ["kind", "text"],
             emits: ["click"],
           },
@@ -61,12 +64,13 @@ describe("FileSettings.vue", () => {
     const settings = {};
     const wrapperHide = shallowMount(FileSettings, {
       props: { modelValue: settings, header: false },
-      global: { 
+      global: {
         provide: { mobileMode: false },
         stubs: {
           Pane: {
             name: "Pane",
-            template: '<div class="pane"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
+            template:
+              '<div class="pane"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
           },
         },
       },
@@ -75,12 +79,13 @@ describe("FileSettings.vue", () => {
 
     const wrapperShow = shallowMount(FileSettings, {
       props: { modelValue: settings, header: true },
-      global: { 
+      global: {
         provide: { mobileMode: false },
         stubs: {
           Pane: {
             name: "Pane",
-            template: '<div class="pane"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
+            template:
+              '<div class="pane"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
           },
         },
       },

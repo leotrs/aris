@@ -10,12 +10,12 @@ const FRONTEND_PORT = process.env.FRONTEND_PORT;
 const BACKEND_PORT = process.env.BACKEND_PORT;
 
 if (!FRONTEND_PORT || !BACKEND_PORT) {
-  console.error('❌ FATAL: Required environment variables not set');
-  console.error('   Missing:', [
-    !FRONTEND_PORT && 'FRONTEND_PORT',
-    !BACKEND_PORT && 'BACKEND_PORT'
-  ].filter(Boolean).join(', '));
-  console.error('   Ensure .env file exists at project root with all required variables');
+  console.error("❌ FATAL: Required environment variables not set");
+  console.error(
+    "   Missing:",
+    [!FRONTEND_PORT && "FRONTEND_PORT", !BACKEND_PORT && "BACKEND_PORT"].filter(Boolean).join(", ")
+  );
+  console.error("   Ensure .env file exists at project root with all required variables");
   process.exit(1);
 }
 

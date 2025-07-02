@@ -44,7 +44,8 @@ describe("FilesPane.vue", () => {
         stubs: {
           // Keep Pane simple but more realistic - preserve layout structure
           Pane: {
-            template: '<div class="pane" :class="{ mobile: mobileMode }"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
+            template:
+              '<div class="pane" :class="{ mobile: mobileMode }"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
             props: ["customHeader"],
             inject: ["mobileMode"],
           },

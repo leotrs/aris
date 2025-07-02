@@ -48,7 +48,8 @@ describe("Workspace Sidebar", () => {
           // Stub child components that SidebarItem needs
           ButtonToggle: {
             name: "ButtonToggle",
-            template: '<button :aria-pressed="modelValue" @click="$emit(\'update:modelValue\', !modelValue)"><slot /></button>',
+            template:
+              '<button :aria-pressed="modelValue" @click="$emit(\'update:modelValue\', !modelValue)"><slot /></button>',
             props: ["modelValue", "icon", "buttonSize", "activeColor", "type"],
             emits: ["update:modelValue"],
           },

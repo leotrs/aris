@@ -10,14 +10,16 @@ const { mockGetSettings, mockUpdateDefaultSettings } = vi.hoisted(() => {
     theme: "light",
   });
   const mockUpdateDefaultSettings = vi.fn().mockResolvedValue({});
-  
+
   return { mockGetSettings, mockUpdateDefaultSettings };
 });
 
 vi.mock("@/models/File.js", () => {
   const MockFile = vi.fn().mockImplementation((fileData) => {
     // Process template literals in source if user is available
-    let processedSource = fileData.source || `:rsm:
+    const processedSource =
+      fileData.source ||
+      `:rsm:
 # File Settings Preview
 
 :author:
@@ -83,7 +85,7 @@ describe("DocumentView", () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Reset mock implementations to default behavior
     mockApi.post.mockResolvedValue({
       data: "<div>Rendered HTML</div>",
@@ -104,7 +106,8 @@ describe("DocumentView", () => {
         components: {
           Pane: {
             name: "Pane",
-            template: '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
+            template:
+              '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
           },
           Section: {
             name: "Section",
@@ -304,7 +307,8 @@ describe("DocumentView", () => {
           components: {
             Pane: {
               name: "Pane",
-              template: '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
+              template:
+                '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
             },
             Section: { template: '<div><slot name="content" /></div>' },
             FileSettings: {
@@ -335,7 +339,8 @@ describe("DocumentView", () => {
           components: {
             Pane: {
               name: "Pane",
-              template: '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
+              template:
+                '<div data-testid="pane"><header data-testid="pane-header"><slot name="header" /></header><div data-testid="pane-content"><slot /></div></div>',
             },
             Section: { template: '<div><slot name="content" /></div>' },
             FileSettings: {
