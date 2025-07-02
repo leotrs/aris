@@ -26,6 +26,7 @@ describe("FilesPane.vue", () => {
     mockProvides = {
       fileStore: mockFileStore,
       xsMode: ref(false),
+      mobileMode: ref(false),
     };
   });
 
@@ -41,25 +42,35 @@ describe("FilesPane.vue", () => {
           ...overrides.provide,
         },
         stubs: {
+          // Keep Pane simple but more realistic - preserve layout structure
           Pane: {
-            template: '<div class="pane"><slot name="header"></slot><slot></slot></div>',
+            template:
+              '<div class="pane" :class="{ mobile: mobileMode }"><div v-if="$slots.header" class="pane-header"><slot name="header" /></div><div class="content"><slot /></div></div>',
+            props: ["customHeader"],
+            inject: ["mobileMode"],
           },
           Topbar: {
             template: '<div data-testid="topbar"></div>',
             emits: ["list", "cards"],
           },
-          FilesHeader: {
-            template: '<div data-testid="files-header"></div>',
-            props: ["mode"],
-          },
+          // Remove FilesHeader stub - test with real component
           FilesItem: {
             template: '<div class="file-item" data-testid="file-item"></div>',
             props: ["modelValue", "mode"],
           },
-          // Remove Suspense stub to test actual async behavior
-          // Suspense: {
-          //   template: "<div><slot></slot></div>",
-          // },
+          // Stub child components that FilesHeader needs
+          FilesHeaderLabel: {
+            template: '<div data-testid="files-header-label"><slot /></div>',
+            props: ["name", "sortable", "filterable"],
+            emits: ["sort", "filter"],
+          },
+          LoadingSpinner: {
+            template: '<div data-testid="loading-spinner">loading files...</div>',
+          },
+          // Stub icons
+          IconArrowsSort: '<svg data-testid="icon-arrows-sort"></svg>',
+          IconArrowNarrowDown: '<svg data-testid="icon-arrow-narrow-down"></svg>',
+          IconArrowNarrowUp: '<svg data-testid="icon-arrow-narrow-up"></svg>',
           ...overrides.stubs,
         },
       },
@@ -72,7 +83,7 @@ describe("FilesPane.vue", () => {
 
       expect(wrapper.find(".pane").exists()).toBe(true);
       expect(wrapper.find('[data-testid="topbar"]').exists()).toBe(true);
-      expect(wrapper.find('[data-testid="files-header"]').exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "FilesHeader" }).exists()).toBe(true); // Real FilesHeader component
       expect(wrapper.find('[data-testid="files-container"]').exists()).toBe(true);
     });
 
@@ -183,7 +194,7 @@ describe("FilesPane.vue", () => {
     it("passes current mode to FilesHeader component", async () => {
       const wrapper = createWrapper();
 
-      const filesHeader = wrapper.findComponent('[data-testid="files-header"]');
+      const filesHeader = wrapper.findComponent({ name: "FilesHeader" });
       expect(filesHeader.props("mode")).toBe("list");
 
       // Switch to cards mode

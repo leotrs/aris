@@ -1,19 +1,22 @@
+# Load environment variables from root .env file
+env_file: ../.env
+
 services:
   backend:
     build:
       context: ..
       dockerfile: docker/backend/Dockerfile.dev
     ports:
-      - "${BACKEND_PORT:-8000}:8000"
+      - "${BACKEND_PORT}:8000"
     volumes:
       - ../backend:/app
-      - ../design-assets:/app/static/design
+      - ../design-assets:/app/design-assets
       - backend_venv:/app/.venv
     environment:
-      - DATABASE_URL=postgresql://aris:aris@postgres:5432/${DB_NAME:-aris}
-      - TEST_DB_URL=postgresql://aris:aris@postgres:5432/${TEST_DB_NAME:-aris_test}
-      - ALEMBIC_DB_URL_LOCAL=postgresql://aris:aris@postgres:5432/${DB_NAME:-aris}
-      - DB_URL_LOCAL=postgresql+asyncpg://aris:aris@postgres:5432/${DB_NAME:-aris}
+      - DATABASE_URL=postgresql://aris:aris@postgres:5432/${DB_NAME}
+      - TEST_DB_URL=postgresql://aris:aris@postgres:5432/${TEST_DB_NAME}
+      - ALEMBIC_DB_URL_LOCAL=postgresql://aris:aris@postgres:5432/${DB_NAME}
+      - DB_URL_LOCAL=postgresql+asyncpg://aris:aris@postgres:5432/${DB_NAME}
       - ENV=LOCAL
     depends_on:
       postgres:
@@ -25,12 +28,12 @@ services:
       context: ..
       dockerfile: docker/frontend/Dockerfile.dev
     ports:
-      - "${FRONTEND_PORT:-5173}:5173"
+      - "${FRONTEND_PORT}:5173"
     volumes:
       - ../frontend:/app
       - frontend_node_modules:/app/node_modules
     environment:
-      - VITE_API_BASE_URL=http://localhost:${BACKEND_PORT:-8000}
+      - VITE_API_BASE_URL=http://localhost:${BACKEND_PORT}
     command: npm run dev -- --host 0.0.0.0
     
   storybook:
@@ -38,7 +41,7 @@ services:
       context: ..
       dockerfile: docker/frontend/Dockerfile.dev
     ports:
-      - "${STORYBOOK_PORT:-6006}:6006"
+      - "${STORYBOOK_PORT}:6006"
     volumes:
       - ../frontend:/app
       - frontend_node_modules:/app/node_modules
@@ -49,22 +52,22 @@ services:
       context: ..
       dockerfile: docker/site/Dockerfile.dev
     ports:
-      - "${SITE_PORT:-3000}:3000"
+      - "${SITE_PORT}:3000"
     volumes:
       - ../site:/app
       - site_node_modules:/app/node_modules
     environment:
-      - FRONTEND_URL=http://localhost:${FRONTEND_PORT:-5173}
+      - FRONTEND_URL=http://localhost:${FRONTEND_PORT}
     command: npm run dev
     
   postgres:
     image: postgres:16
     ports:
-      - "${DB_PORT:-5432}:5432"
+      - "${DB_PORT}:5432"
     environment:
       - POSTGRES_USER=aris
       - POSTGRES_PASSWORD=aris
-      - POSTGRES_DB=${DB_NAME:-aris}
+      - POSTGRES_DB=${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backend/init_test_db.sql:/docker-entrypoint-initdb.d/init_test_db.sql

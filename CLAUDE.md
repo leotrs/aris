@@ -59,6 +59,23 @@ The E2E test suite is organized into **7 mutually exclusive jobs** for optimal p
 
 ## Development Setup
 
+### Environment Configuration (REQUIRED)
+
+#### Development Environment
+```bash
+# Copy environment template and configure ports
+cp .env.example .env
+# Edit .env with your desired port configuration
+```
+
+**CRITICAL**: All environment variables in `.env` are REQUIRED. The system will crash immediately if any are missing - there are NO fallbacks.
+
+#### CI/STAGING/PROD Environments
+For CI, STAGING, and PROD environments, set these environment variables directly in your deployment configuration:
+- `BACKEND_PORT`, `FRONTEND_PORT`, `SITE_PORT`, `STORYBOOK_PORT`
+- `DB_PORT`, `DB_NAME`, `TEST_DB_NAME`
+- Set `ENV=CI`, `ENV=STAGING`, or `ENV=PROD` to enable system environment variable mode
+
 ### Standard Development
 ```bash
 cd backend && uv sync --all-groups   # Install backend dependencies
@@ -68,18 +85,19 @@ cd frontend && npm install           # Install frontend dependencies
 ### Containerized Development (Multi-Clone Setup)
 ```bash
 # Quick setup for first clone
-cp docker/.env.example docker/.env
+cp .env.example .env
+# Edit .env with desired ports (see .env.example for examples)
 cd docker
 docker compose -f docker-compose.dev.yml up --build
 
 # For additional clones, use the setup script
 ./docker/scripts/setup-clone.sh
 
-# Access services:
-# Frontend: http://localhost:5173 (or your FRONTEND_PORT)
-# Storybook: http://localhost:6006 (or your STORYBOOK_PORT)
-# Backend API: http://localhost:8000/docs (or your BACKEND_PORT)
-# Database: localhost:5432 (or your DB_PORT)
+# Access services (using your configured ports):
+# Frontend: http://localhost:{FRONTEND_PORT}
+# Storybook: http://localhost:{STORYBOOK_PORT}
+# Backend API: http://localhost:{BACKEND_PORT}/docs
+# Database: localhost:{DB_PORT}
 ```
 
 See [docker/README.md](docker/README.md) for detailed multi-clone setup instructions.
@@ -110,6 +128,14 @@ npx playwright test --reporter=html       # Generate HTML report
 ```
 
 ## Critical Rules
+
+### Environment Configuration
+- **Development**: Copy `.env.example` to `.env` and configure ALL variables before starting any service
+- **CI/STAGING/PROD**: Set environment variables directly in deployment configuration (`ENV=CI/STAGING/PROD`)
+- **NO FALLBACKS**: Missing environment variables will crash the system immediately
+- **FAIL-FAST**: All scripts validate environment before execution using `docker/env-check.js`
+
+### Development Practices
 - **ALWAYS use `osascript` for macOS notifications** (allowed in any directory)
 - **ALWAYS use `git mv` to move files** (preserve history)
 - **ALWAYS add blank line at end of files**

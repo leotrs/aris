@@ -6,12 +6,22 @@ on:
   pull_request:
     branches: [ main ]
 
+env:
+  # Common environment variables for all jobs
+  ENV: CI
+  BACKEND_PORT: 8000
+  FRONTEND_PORT: 5173
+  SITE_PORT: 3000
+  STORYBOOK_PORT: 6006
+  DB_PORT: 5432
+  DB_NAME: aris
+  TEST_DB_NAME: aris_test
+
 jobs:
   # Unit Tests and Linting (Parallel)
   backend-test:
     runs-on: ubuntu-latest
     env:
-      ENV: CI
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
 
     services:
@@ -72,7 +82,6 @@ jobs:
         JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
         TEST_USER_EMAIL: testuser@aris.pub
         TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-        ENV: CI
       run: uv run pytest -n4 --cov=aris --cov-report=xml --tb=short
 
     - name: Upload coverage to Codecov
@@ -156,7 +165,6 @@ jobs:
         auth-mode: [disabled, enabled]
     runs-on: ubuntu-latest
     env:
-      ENV: CI
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
@@ -297,7 +305,6 @@ jobs:
         auth-mode: [disabled, enabled]
     runs-on: macos-latest
     env:
-      ENV: CI
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       DB_URL_LOCAL: postgresql+asyncpg://localhost:5432/test_aris
@@ -435,7 +442,6 @@ jobs:
         auth-mode: [disabled, enabled]
     runs-on: ubuntu-latest
     env:
-      ENV: CI
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
@@ -576,7 +582,6 @@ jobs:
         auth-mode: [disabled, enabled]
     runs-on: macos-latest
     env:
-      ENV: CI
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       DB_URL_LOCAL: postgresql+asyncpg://localhost:5432/test_aris

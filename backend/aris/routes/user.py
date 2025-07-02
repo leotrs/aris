@@ -1,5 +1,7 @@
 import base64
+import json
 from datetime import UTC, datetime
+from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
 from pydantic import BaseModel
@@ -430,3 +432,161 @@ async def delete_profile_picture(
     except ValueError:
         await db.rollback()
         raise HTTPException(status_code=500, detail="Failed to delete profile picture")
+
+
+@router.get("/export-data")
+async def export_user_data(
+    db: AsyncSession = Depends(get_db), 
+    current_user: User = Depends(current_user)
+):
+    """Export all user data in JSON format.
+
+    Returns
+    -------
+    Response
+        JSON file download containing all user data including files, settings, tags, etc.
+
+    Notes
+    -----
+    Exports complete user data for backup or migration purposes.
+    Includes manuscripts, settings, tags, file assets, and account information.
+    """
+    try:
+        # Get user with all related data
+        query = (
+            select(User)
+            .options(
+                selectinload(User.files),
+                selectinload(User.tags),
+                selectinload(User.file_settings),
+                selectinload(User.user_settings),
+                selectinload(User.file_assets),
+                selectinload(User.profile_picture)
+            )
+            .where(User.id == current_user.id, User.deleted_at.is_(None))
+        )
+        result = await db.execute(query)
+        user = result.scalar_one_or_none()
+        
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        # Build export data structure
+        export_data: Dict[str, Any] = {
+            "export_info": {
+                "exported_at": datetime.now(UTC).isoformat(),
+                "user_id": user.id,
+                "format_version": "1.0"
+            },
+            "user_profile": {
+                "name": user.name,
+                "email": user.email,
+                "initials": user.initials,
+                "created_at": user.created_at.isoformat() if user.created_at else None,
+                "last_login": user.last_login.isoformat() if user.last_login else None,
+                "avatar_color": user.avatar_color.value if user.avatar_color else None
+            },
+            "files": [],
+            "tags": [],
+            "user_settings": None,
+            "file_settings": [],
+            "file_assets": []
+        }
+
+        # Add files
+        files_list: List[Dict[str, Any]] = export_data["files"]
+        for file in user.files:
+            if not file.deleted_at:
+                files_list.append({
+                    "id": file.id,
+                    "title": file.title,
+                    "source": file.source,
+                    "abstract": file.abstract,
+                    "keywords": file.keywords,
+                    "status": file.status.value if file.status else None,
+                    "doi": file.doi,
+                    "created_at": file.created_at.isoformat() if file.created_at else None,
+                    "last_edited_at": file.last_edited_at.isoformat() if file.last_edited_at else None
+                })
+
+        # Add tags
+        tags_list: List[Dict[str, Any]] = export_data["tags"]
+        for tag in user.tags:
+            if not tag.deleted_at:
+                tags_list.append({
+                    "id": tag.id,
+                    "name": tag.name,
+                    "color": tag.color,
+                    "created_at": tag.created_at.isoformat() if tag.created_at else None
+                })
+
+        # Add user settings
+        if user.user_settings and not user.user_settings.deleted_at:
+            settings = user.user_settings
+            export_data["user_settings"] = {
+                "auto_save_interval": settings.auto_save_interval,
+                "focus_mode_auto_hide": settings.focus_mode_auto_hide,
+                "sidebar_auto_collapse": settings.sidebar_auto_collapse,
+                "drawer_default_annotations": settings.drawer_default_annotations,
+                "drawer_default_margins": settings.drawer_default_margins,
+                "drawer_default_settings": settings.drawer_default_settings,
+                "sound_notifications": settings.sound_notifications,
+                "auto_compile_delay": settings.auto_compile_delay,
+                "mobile_menu_behavior": settings.mobile_menu_behavior,
+                "allow_anonymous_feedback": settings.allow_anonymous_feedback,
+                "email_digest_frequency": settings.email_digest_frequency,
+                "notification_preference": settings.notification_preference,
+                "notification_mentions": settings.notification_mentions,
+                "notification_comments": settings.notification_comments,
+                "notification_shares": settings.notification_shares,
+                "notification_system": settings.notification_system,
+                "created_at": settings.created_at.isoformat() if settings.created_at else None,
+                "updated_at": settings.updated_at.isoformat() if settings.updated_at else None
+            }
+
+        # Add file settings
+        file_settings_list: List[Dict[str, Any]] = export_data["file_settings"]
+        for file_setting in user.file_settings:
+            if not file_setting.deleted_at:
+                file_settings_list.append({
+                    "file_id": file_setting.file_id,
+                    "background": file_setting.background,
+                    "font_size": file_setting.font_size,
+                    "line_height": file_setting.line_height,
+                    "font_family": file_setting.font_family,
+                    "margin_width": file_setting.margin_width,
+                    "columns": file_setting.columns,
+                    "created_at": file_setting.created_at.isoformat() if file_setting.created_at else None,
+                    "updated_at": file_setting.updated_at.isoformat() if file_setting.updated_at else None
+                })
+
+        # Add file assets (without binary content for size reasons)
+        file_assets_list: List[Dict[str, Any]] = export_data["file_assets"]
+        for asset in user.file_assets:
+            if not asset.deleted_at:
+                file_assets_list.append({
+                    "id": asset.id,
+                    "file_id": asset.file_id,
+                    "filename": asset.filename,
+                    "mime_type": asset.mime_type,
+                    "uploaded_at": asset.uploaded_at.isoformat() if asset.uploaded_at else None,
+                    "note": "Binary content excluded from export for file size reasons"
+                })
+
+        # Create JSON response
+        json_data = json.dumps(export_data, indent=2, ensure_ascii=False)
+        
+        timestamp = datetime.now(UTC).strftime("%Y-%m-%d")
+        filename = f"aris-data-export-{timestamp}.json"
+        
+        return Response(
+            content=json_data,
+            media_type="application/json",
+            headers={
+                "Content-Disposition": f"attachment; filename={filename}",
+                "Content-Type": "application/json; charset=utf-8"
+            }
+        )
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to export data: {str(e)}")
