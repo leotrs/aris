@@ -73,13 +73,13 @@ describe("BaseSidebar", () => {
       },
       global: {
         provide: mockProvideValues,
-        stubs: {
-          Logo: true,
-          ContextMenu: true,
-          ContextMenuItem: true,
-          Button: true,
-          Separator: true,
-          BaseSidebarItem: true,
+        components: {
+          Logo: { template: '<div data-testid="logo" />' },
+          ContextMenu: { template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>' },
+          ContextMenuItem: { template: '<div data-testid="context-menu-item" />' },
+          Button: { template: '<button data-testid="button" />' },
+          Separator: { template: '<div data-testid="separator" />' },
+          BaseSidebarItem: { template: '<div data-testid="base-sidebar-item" />' },
         },
       },
     });
@@ -105,12 +105,13 @@ describe("BaseSidebar", () => {
             ...mockProvideValues,
             mobileMode: { value: true },
           },
-          stubs: {
-            Logo: true,
-            ContextMenu: true,
-            ContextMenuItem: true,
-            Button: true,
-            BaseSidebarItem: true,
+          components: {
+            Logo: { template: '<div data-testid="logo" />' },
+            ContextMenu: { template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>' },
+            ContextMenuItem: { template: '<div data-testid="context-menu-item" />' },
+            Button: { template: '<button data-testid="button" />' },
+            BaseSidebarItem: { template: '<div data-testid="base-sidebar-item" />' },
+            Separator: { template: '<div data-testid="separator" />' },
           },
         },
       });
@@ -260,13 +261,13 @@ describe("BaseSidebar", () => {
             ...mockProvideValues,
             mobileMode: { value: false },
           },
-          stubs: {
-            Logo: true,
-            ContextMenu: true,
-            ContextMenuItem: true,
-            Button: true,
-            BaseSidebarItem: true,
-            Separator: true,
+          components: {
+            Logo: { template: '<div data-testid="logo" />' },
+            ContextMenu: { template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>' },
+            ContextMenuItem: { template: '<div data-testid="context-menu-item" />' },
+            Button: { template: '<button data-testid="button" />' },
+            BaseSidebarItem: { template: '<div data-testid="base-sidebar-item" />' },
+            Separator: { template: '<div data-testid="separator" />' },
           },
         },
       });
@@ -282,12 +283,12 @@ describe("BaseSidebar", () => {
             ...mockProvideValues,
             mobileMode: { value: true },
           },
-          stubs: {
-            Logo: true,
-            ContextMenu: true,
-            ContextMenuItem: true,
-            Button: true,
-            BaseSidebarItem: true,
+          components: {
+            Logo: { template: '<div data-testid="logo" />' },
+            ContextMenu: { template: '<div data-testid="context-menu"><slot name="trigger" /><slot /></div>' },
+            ContextMenuItem: { template: '<div data-testid="context-menu-item" />' },
+            Button: { template: '<button data-testid="button" />' },
+            BaseSidebarItem: { template: '<div data-testid="base-sidebar-item" />' },
           },
         },
       });

@@ -16,7 +16,14 @@ vi.mock("vue-router", () => ({
 
 // Mock composables
 vi.mock("@/composables/useKeyboardShortcuts.js", () => ({
-  useKeyboardShortcuts: vi.fn(),
+  useKeyboardShortcuts: vi.fn(() => ({
+    activate: vi.fn(),
+    deactivate: vi.fn(),
+    isRegistered: vi.fn(() => false),
+    addShortcuts: vi.fn(),
+    removeShortcuts: vi.fn(),
+    getShortcuts: vi.fn(() => ({})),
+  })),
 }));
 
 describe("BaseLayout", () => {
@@ -84,9 +91,9 @@ describe("BaseLayout", () => {
             name: "UserMenu",
             template: '<div data-testid="user-menu" />',
           },
-          UploadFile: {
-            name: "UploadFile",
-            template: '<div data-testid="upload-file" />',
+          ModalUploadFile: {
+            name: "ModalUploadFile",
+            template: '<div data-testid="modal-upload-file" />',
             emits: ["close"],
           },
         },
@@ -192,7 +199,10 @@ describe("BaseLayout", () => {
     it("does not insert sub-items when no active main item", async () => {
       // Create wrapper with route that doesn't match any main item
       const nonMatchingRoute = { path: "/some-other-page", fullPath: "/some-other-page" };
-      vi.mocked(require("vue-router").useRoute).mockReturnValue(nonMatchingRoute);
+      
+      // Temporarily override the mock route
+      const originalRoute = mockRoute;
+      Object.assign(mockRoute, nonMatchingRoute);
 
       const newWrapper = mount(BaseLayout, {
         props: { contextSubItems: mockContextSubItems },
@@ -215,6 +225,9 @@ describe("BaseLayout", () => {
 
       const subItemsContainer = sidebarItems.find((item) => item.isSubItemsContainer);
       expect(subItemsContainer).toBeUndefined();
+      
+      // Restore original route
+      Object.assign(mockRoute, originalRoute);
     });
 
     it("does not insert sub-items for separator or action items", () => {
@@ -278,7 +291,7 @@ describe("BaseLayout", () => {
       await baseSidebar.vm.$emit("showFileUploadModal");
 
       expect(wrapper.find(".modal").exists()).toBe(true);
-      expect(wrapper.findComponent({ name: "UploadFile" }).exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "ModalUploadFile" }).exists()).toBe(true);
     });
 
     it("handles unknown sidebar action", async () => {
@@ -310,8 +323,10 @@ describe("BaseLayout", () => {
       expect(wrapper.find(".modal").exists()).toBe(true);
 
       // Close modal
-      const uploadFile = wrapper.findComponent({ name: "UploadFile" });
-      await uploadFile.vm.$emit("close");
+      const uploadFile = wrapper.findComponent({ name: "ModalUploadFile" });
+      if (uploadFile.exists()) {
+        await uploadFile.vm.$emit("close");
+      }
 
       expect(wrapper.find(".modal").exists()).toBe(false);
     });
