@@ -26,6 +26,7 @@ describe("FilesItem.vue - Bug: FileMenu Visibility Issue", () => {
         deleteFile: vi.fn(),
       }),
       xsMode: ref(false),
+      mobileMode: ref(false),
       user: ref({ id: "user-1" }),
       shouldShowColumn: vi.fn(() => true),
     };

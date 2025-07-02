@@ -67,6 +67,7 @@ describe("FilesItem.vue - Enhanced Functionality", () => {
       },
       fileStore: mockFileStoreRef,
       xsMode: ref(false),
+      mobileMode: ref(false),
       user: ref({ id: "user-1" }),
       shouldShowColumn: vi.fn(() => true),
     };
