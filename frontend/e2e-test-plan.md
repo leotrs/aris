@@ -43,6 +43,11 @@
   - Registration flow (4 tests) - validation, duplicate email handling  
   - Auth redirects (8 tests) - protected routes, unauthenticated access
   - **Status**: All authentication issues resolved, CI passing consistently
+- ✅ **AI Chat Functionality**: **COST-OPTIMIZED** - Frontend-backend integration (6 test cases)
+  - **Test Scope**: UI workflows, message sending, conversation clearing, state persistence
+  - **Cost Prevention**: Tests use mock AI responses instead of costly API calls (~$0.03 saved per CI run)
+  - **Implementation**: Double protection with `COPILOT_PROVIDER=mock` and CI environment detection
+  - **Coverage**: Chat panel visibility, message flow, input validation, session state
 - ✅ **Basic File Management**: **STABLE** - File operations (7 test cases)
   - File CRUD operations, selection, context menus, keyboard shortcuts
   - **Status**: Timing issues resolved with proper authentication

@@ -177,6 +177,7 @@ jobs:
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
       VITE_API_BASE_URL: http://localhost:8000
+      COPILOT_PROVIDER: mock
 
     services:
       postgres:
@@ -317,6 +318,7 @@ jobs:
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
       VITE_API_BASE_URL: http://localhost:8000
+      COPILOT_PROVIDER: mock
 
     steps:
     - uses: actions/checkout@v4
@@ -454,6 +456,7 @@ jobs:
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
       VITE_API_BASE_URL: http://localhost:8000
+      COPILOT_PROVIDER: mock
 
     services:
       postgres:
@@ -594,6 +597,7 @@ jobs:
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
       VITE_API_BASE_URL: http://localhost:8000
+      COPILOT_PROVIDER: mock
 
     steps:
     - uses: actions/checkout@v4

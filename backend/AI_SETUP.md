@@ -96,6 +96,20 @@ Available: True
 - **Set billing alerts** in your Anthropic account
 - **Consider rate limiting** for production (see usage tracking docs)
 
+### CI/CD Cost Prevention
+
+The codebase includes **double protection** against accidental API costs in CI environments:
+
+1. **Environment Variable Override**: CI workflows set `COPILOT_PROVIDER=mock` to force mock provider usage
+2. **CI Environment Detection**: `AnthropicProvider.is_available()` returns `False` when `ENV=CI` or `CI=true`
+
+This ensures E2E tests validate frontend-backend communication using mock responses instead of costly API calls.
+
+**Local CI Simulation**:
+```bash
+ENV=CI uvicorn main:app --reload  # Will use mock provider even with API key
+```
+
 ## Troubleshooting
 
 ### "Provider not available" error
