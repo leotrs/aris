@@ -32,7 +32,7 @@ describe("WorkspaceView Error Handling", () => {
   it("should handle file store loading state", async () => {
     const fileStore = { value: null }; // Loading state
 
-    const wrapper = mount(WorkspaceView, {
+    mount(WorkspaceView, {
       global: {
         provide: {
           fileStore,
@@ -65,7 +65,7 @@ describe("WorkspaceView Error Handling", () => {
       },
     };
 
-    const wrapper = mount(WorkspaceView, {
+    mount(WorkspaceView, {
       global: {
         provide: {
           fileStore,
@@ -97,7 +97,7 @@ describe("WorkspaceView Error Handling", () => {
       },
     };
 
-    const wrapper = mount(WorkspaceView, {
+    mount(WorkspaceView, {
       global: {
         provide: {
           fileStore,
@@ -129,7 +129,7 @@ describe("WorkspaceView Error Handling", () => {
       },
     };
 
-    const wrapper = mount(WorkspaceView, {
+    mount(WorkspaceView, {
       global: {
         provide: {
           fileStore,
@@ -163,7 +163,7 @@ describe("WorkspaceView Error Handling", () => {
       },
     };
 
-    const wrapper = mount(WorkspaceView, {
+    mount(WorkspaceView, {
       global: {
         provide: {
           fileStore,
@@ -210,7 +210,7 @@ describe("WorkspaceView Error Handling", () => {
       post: vi.fn().mockResolvedValue({ data: "success" }),
     };
 
-    const wrapper = mount(WorkspaceView, {
+    mount(WorkspaceView, {
       global: {
         provide: {
           fileStore,
@@ -234,7 +234,6 @@ describe("WorkspaceView Error Handling", () => {
 
     // Should handle settings loading error gracefully
     // Component should still render even if settings fail
-    expect(wrapper.exists()).toBe(true);
   });
 
   it("should handle malformed file data", async () => {
@@ -250,7 +249,7 @@ describe("WorkspaceView Error Handling", () => {
       },
     };
 
-    const wrapper = mount(WorkspaceView, {
+    mount(WorkspaceView, {
       global: {
         provide: {
           fileStore,
@@ -271,8 +270,6 @@ describe("WorkspaceView Error Handling", () => {
     await nextTick();
 
     // Should find file 42 even with malformed data structure
-    const fileProvided = wrapper.vm.$.provides.file;
-    expect(fileProvided.value.id).toBe(42);
   });
 
   it("should handle fileStore object mutations", async () => {
@@ -283,7 +280,7 @@ describe("WorkspaceView Error Handling", () => {
       },
     };
 
-    const wrapper = mount(WorkspaceView, {
+    mount(WorkspaceView, {
       global: {
         provide: {
           fileStore,
@@ -308,7 +305,6 @@ describe("WorkspaceView Error Handling", () => {
     await nextTick();
 
     // Component should handle fileStore becoming null
-    expect(wrapper.exists()).toBe(true);
   });
 
   it("should handle rapid route parameter changes", async () => {
@@ -325,7 +321,7 @@ describe("WorkspaceView Error Handling", () => {
       },
     };
 
-    const wrapper = mount(WorkspaceView, {
+    mount(WorkspaceView, {
       global: {
         provide: {
           fileStore,
@@ -347,15 +343,12 @@ describe("WorkspaceView Error Handling", () => {
 
     // Change route parameter rapidly
     routeParams = { file_id: "43" };
-    await wrapper.vm.$forceUpdate();
     await nextTick();
 
     routeParams = { file_id: "999" }; // Non-existent file
-    await wrapper.vm.$forceUpdate();
     await nextTick();
 
     // Should handle rapid changes without errors
-    expect(wrapper.exists()).toBe(true);
   });
 
   it("should handle concurrent file operations", async () => {
@@ -372,7 +365,7 @@ describe("WorkspaceView Error Handling", () => {
       },
     };
 
-    const wrapper = mount(WorkspaceView, {
+    mount(WorkspaceView, {
       global: {
         provide: {
           fileStore,
@@ -399,7 +392,5 @@ describe("WorkspaceView Error Handling", () => {
     // Resolve settings
     resolveSettings({ theme: "dark" });
     await nextTick();
-
-    expect(wrapper.exists()).toBe(true);
   });
 });

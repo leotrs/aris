@@ -148,6 +148,15 @@ class User(Base):
         "FileAsset", back_populates="owner", cascade="all, delete-orphan"
     )
     profile_picture = relationship("ProfilePicture", back_populates="user")
+
+    def __init__(self, **kwargs):
+        """Initialize User with default values."""
+        # Set defaults for fields that have defaults but aren't applied before DB insertion
+        if 'email_verified' not in kwargs:
+            kwargs['email_verified'] = False
+        if 'avatar_color' not in kwargs:
+            kwargs['avatar_color'] = AvatarColor.BLUE
+        super().__init__(**kwargs)
     annotation_messages = relationship(
         "AnnotationMessage", back_populates="owner", cascade="all, delete-orphan"
     )

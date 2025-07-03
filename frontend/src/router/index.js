@@ -24,23 +24,23 @@ const routes = [
   { path: "/", component: HomeView },
   { path: "/file/:file_id", component: WorkspaceView },
   { path: "/demo", component: DemoView },
-  { 
-    path: "/verify-email/:token", 
+  {
+    path: "/verify-email/:token",
     name: "EmailVerification",
     beforeEnter: async (to, from, next) => {
       const token = to.params.token;
-      
+
       try {
         // Import axios here to avoid issues during testing
         const axios = (await import("axios")).default;
-        
+
         // Create API instance with base URL
         const api = axios.create({
           baseURL: `http://localhost:${import.meta.env.VITE_BACKEND_PORT || 8000}`,
         });
-        
+
         await api.post(`/users/verify-email/${token}`);
-        
+
         // Update user in localStorage if exists
         const userStr = localStorage.getItem("user");
         if (userStr) {
@@ -48,29 +48,29 @@ const routes = [
           user.email_verified = true;
           localStorage.setItem("user", JSON.stringify(user));
         }
-        
+
         toast.success("Email verified successfully!", {
-          description: "Your email address has been verified."
+          description: "Your email address has been verified.",
         });
-        
+
         next("/account/security");
       } catch (error) {
         console.error("Email verification failed", error);
-        
+
         let errorMessage = "Verification failed. Please try again.";
         if (error.response?.status === 400) {
           errorMessage = "Email is already verified";
         } else if (error.response?.status === 404) {
           errorMessage = "Invalid or expired verification link";
         }
-        
+
         toast.error("Email verification failed", {
-          description: errorMessage
+          description: errorMessage,
         });
-        
+
         next("/account/security");
       }
-    }
+    },
   },
   {
     path: "/account",
