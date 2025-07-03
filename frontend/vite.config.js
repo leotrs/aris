@@ -9,20 +9,20 @@ import vueDevTools from "vite-plugin-vue-devtools";
 // Load .env file manually for test environment (development only)
 function loadEnvFile() {
   try {
-    const envPath = resolve(__dirname, '../.env');
-    const envContent = readFileSync(envPath, 'utf8');
+    const envPath = resolve(__dirname, "../.env");
+    const envContent = readFileSync(envPath, "utf8");
     const envVars = {};
-    
-    envContent.split('\n').forEach(line => {
+
+    envContent.split("\n").forEach((line) => {
       const trimmed = line.trim();
-      if (trimmed && !trimmed.startsWith('#')) {
-        const [key, ...valueParts] = trimmed.split('=');
+      if (trimmed && !trimmed.startsWith("#")) {
+        const [key, ...valueParts] = trimmed.split("=");
         if (key && valueParts.length > 0) {
-          envVars[key.trim()] = valueParts.join('=').trim();
+          envVars[key.trim()] = valueParts.join("=").trim();
         }
       }
     });
-    
+
     return envVars;
   } catch {
     return {};

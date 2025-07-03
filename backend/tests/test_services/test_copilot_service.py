@@ -1,9 +1,9 @@
 """Test copilot service."""
 
-import pytest
+from datetime import datetime
 from unittest.mock import AsyncMock, Mock
 
-from datetime import datetime
+import pytest
 
 from aris.models.copilot import ChatContext, ChatRequest
 from aris.models.models import FileStatus
