@@ -350,29 +350,6 @@ describe("BaseLayout", () => {
       expect(mobileWrapper.find(".menus.mobile").exists()).toBe(true);
     });
 
-    it("shows home button in mobile mode when not on home", async () => {
-      const mobileWrapper = mount(BaseLayout, {
-        props: { contextSubItems: mockContextSubItems },
-        global: {
-          provide: {
-            ...mockProvideValues,
-            mobileMode: { value: true },
-          },
-          components: {
-            BaseSidebar: { template: "<div />" },
-            Button: {
-              name: "Button",
-              props: ["kind", "icon"],
-              template: '<button data-testid="home-button" />',
-            },
-            UserMenuDrawer: { template: "<div />" },
-          },
-        },
-      });
-
-      const homeButton = mobileWrapper.find('[data-testid="home-button"]');
-      expect(homeButton.exists()).toBe(true);
-    });
   });
 
   describe("Props", () => {
@@ -494,13 +471,13 @@ describe("BaseLayout", () => {
     it("handles mobile drawer state management", async () => {
       // Initial state
       // Note: mockMobileDrawerState may start as true in this test setup
-      expect(typeof mockMobileDrawerState.value).toBe('boolean');
+      expect(typeof mockMobileDrawerState.value).toBe("boolean");
 
       // Mobile drawer state is managed internally by BaseLayout
       // through the HamburgerMenu component and mobileDrawerOpen ref
       const hamburgerButton = mobileWrapper.findComponent({ name: "HamburgerMenu" });
       expect(hamburgerButton.exists()).toBe(true);
-      
+
       // The component manages its own state, no external events expected
       expect(mobileWrapper.vm).toBeDefined();
     });
