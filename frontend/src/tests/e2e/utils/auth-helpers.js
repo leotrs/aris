@@ -106,7 +106,7 @@ export class AuthHelpers {
     // Verify we're on the home page (not login page)
     await expect(this.page).toHaveURL("/");
 
-    // Verify that we have logged-in user elements visible (check for user-menu specifically)
-    await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible();
+    // Verify that we have logged-in user elements visible (check for user-avatar specifically)
+    await expect(this.page.locator('[data-testid="user-avatar"]')).toBeVisible();
   }
 }
