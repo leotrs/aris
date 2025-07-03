@@ -165,8 +165,8 @@
               <Icon :name="user?.email_verified ? 'Check' : 'AlertCircle'" size="16" />
             </div>
             <div class="status-content">
-              <h3>{{ user?.email_verified ? 'Email Verified' : 'Email Not Verified' }}</h3>
-              <p>{{ user?.email || 'No email' }}</p>
+              <h3>{{ user?.email_verified ? "Email Verified" : "Email Not Verified" }}</h3>
+              <p>{{ user?.email || "No email" }}</p>
               <div v-if="!user?.email_verified" class="verification-actions">
                 <Button
                   v-if="!verificationSent"

@@ -124,17 +124,17 @@
   // Function to refresh user data from backend
   const refreshUser = async () => {
     if (!user.value) return;
-    
+
     try {
       const response = await api.get(`/users/${user.value.id}`);
       const updatedUser = response.data;
-      
+
       // Update user ref
       user.value = updatedUser;
-      
+
       // Update localStorage
       localStorage.setItem("user", JSON.stringify(updatedUser));
-      
+
       logger.info("User data refreshed successfully");
     } catch (error) {
       logger.error("Failed to refresh user data", error);

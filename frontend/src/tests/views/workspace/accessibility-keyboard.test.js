@@ -516,7 +516,6 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
 
     it("should restore focus when drawers close", async () => {
       const drawerOpen = ref(true);
-      const mockFocus = vi.fn();
 
       // Mock element with focus method
 

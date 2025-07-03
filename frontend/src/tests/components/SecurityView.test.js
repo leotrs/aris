@@ -169,7 +169,7 @@ describe("SecurityView Email Verification", () => {
 
       // Find and click the send verification button
       const sendButtons = wrapper.findAll("button");
-      const sendButton = sendButtons.find(btn => btn.text().includes("Send Verification Email"));
+      const sendButton = sendButtons.find((btn) => btn.text().includes("Send Verification Email"));
       expect(sendButton).toBeTruthy();
 
       await sendButton.trigger("click");
@@ -200,7 +200,7 @@ describe("SecurityView Email Verification", () => {
 
       // Find and click the send verification button
       const sendButtons = wrapper.findAll("button");
-      const sendButton = sendButtons.find(btn => btn.text().includes("Send Verification Email"));
+      const sendButton = sendButtons.find((btn) => btn.text().includes("Send Verification Email"));
       expect(sendButton).toBeTruthy();
 
       await sendButton.trigger("click");
@@ -228,7 +228,7 @@ describe("SecurityView Email Verification", () => {
 
       // Find and click the send verification button
       const sendButtons = wrapper.findAll("button");
-      const sendButton = sendButtons.find(btn => btn.text().includes("Send Verification Email"));
+      const sendButton = sendButtons.find((btn) => btn.text().includes("Send Verification Email"));
       expect(sendButton).toBeTruthy();
 
       await sendButton.trigger("click");
@@ -250,7 +250,7 @@ describe("SecurityView Email Verification", () => {
 
       // Find and click the send verification button
       const sendButtons = wrapper.findAll("button");
-      const sendButton = sendButtons.find(btn => btn.text().includes("Send Verification Email"));
+      const sendButton = sendButtons.find((btn) => btn.text().includes("Send Verification Email"));
       expect(sendButton).toBeTruthy();
 
       await sendButton.trigger("click");
@@ -277,14 +277,14 @@ describe("SecurityView Email Verification", () => {
 
       // Find and click the send verification button
       const sendButtons = wrapper.findAll("button");
-      const sendButton = sendButtons.find(btn => btn.text().includes("Send Verification Email"));
+      const sendButton = sendButtons.find((btn) => btn.text().includes("Send Verification Email"));
       expect(sendButton).toBeTruthy();
 
       await sendButton.trigger("click");
 
       // Button should be disabled during API call
       const buttonsAfterClick = wrapper.findAll("button");
-      const buttonAfterClick = buttonsAfterClick.find(btn => btn.text().includes("Sending..."));
+      const buttonAfterClick = buttonsAfterClick.find((btn) => btn.text().includes("Sending..."));
       expect(buttonAfterClick).toBeTruthy();
       expect(buttonAfterClick.attributes("disabled")).toBeDefined();
 
@@ -299,7 +299,7 @@ describe("SecurityView Email Verification", () => {
 
       // Find the send verification button
       const sendButtons = wrapper.findAll("button");
-      const sendButton = sendButtons.find(btn => btn.text().includes("Send Verification Email"));
+      const sendButton = sendButtons.find((btn) => btn.text().includes("Send Verification Email"));
       expect(sendButton).toBeTruthy();
 
       // Click multiple times rapidly
