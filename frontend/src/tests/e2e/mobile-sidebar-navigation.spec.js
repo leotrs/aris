@@ -177,20 +177,20 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       await mobileHelpers.expectToBeVisible(page.locator('[data-testid="create-file-button"]'));
     });
 
-    test("should navigate from home to account via mobile drawer", async ({ page }) => {
+    test("should navigate from home to account via user menu drawer", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto("/");
       await page.waitForLoadState("networkidle");
 
-      // Open drawer and navigate to Account
-      const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
-      await mobileHelpers.clickElement(hamburgerButton);
+      // Open user menu drawer and navigate to Account
+      const userAvatar = page.locator('[data-testid="user-avatar"]');
+      await mobileHelpers.clickElement(userAvatar);
 
-      const accountItem = page.locator('[data-sidebar-item="Account"]');
-      await mobileHelpers.clickElement(accountItem);
+      const accountProfileItem = page.locator('[data-testid="account-profile"]');
+      await mobileHelpers.clickElement(accountProfileItem);
 
-      await mobileHelpers.waitForURLPattern(/\/account/);
-      await expect(page).toHaveURL("/account");
+      await mobileHelpers.waitForURLPattern(/\/account\/profile/);
+      await expect(page).toHaveURL("/account/profile");
     });
 
     test("should navigate from home to settings via mobile drawer", async ({ page }) => {
@@ -221,17 +221,14 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       await mobileHelpers.clickElement(hamburgerButton);
       await mobileHelpers.waitForMobileRendering();
 
-      // Should show main navigation with Account active
+      // Should show main navigation items (no Account in main nav anymore)
       const homeItem = page.locator('[data-sidebar-item="Home"]');
-      const accountItem = page.locator('[data-sidebar-item="Account"]');
       const settingsItem = page.locator('[data-sidebar-item="Settings"]');
 
       await mobileHelpers.expectToBeVisible(homeItem);
-      await mobileHelpers.expectToBeVisible(accountItem);
       await mobileHelpers.expectToBeVisible(settingsItem);
 
-      // Account should be marked as active
-      await expect(accountItem).toHaveClass(/active/);
+      // Neither should be marked as active when on account page
       await expect(homeItem).not.toHaveClass(/active/);
       await expect(settingsItem).not.toHaveClass(/active/);
     });
@@ -266,17 +263,14 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
 
       // Should show main navigation with Settings active
       const homeItem = page.locator('[data-sidebar-item="Home"]');
-      const accountItem = page.locator('[data-sidebar-item="Account"]');
       const settingsItem = page.locator('[data-sidebar-item="Settings"]');
 
       await mobileHelpers.expectToBeVisible(homeItem);
-      await mobileHelpers.expectToBeVisible(accountItem);
       await mobileHelpers.expectToBeVisible(settingsItem);
 
       // Settings should be marked as active
       await expect(settingsItem).toHaveClass(/active/);
       await expect(homeItem).not.toHaveClass(/active/);
-      await expect(accountItem).not.toHaveClass(/active/);
 
       // Should show settings sub-navigation items
       await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="File"]'));
@@ -315,15 +309,15 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       await page.goto("/settings");
       await page.waitForLoadState("networkidle");
 
-      // Navigate to Account from Settings
+      // Navigate to Home from Settings
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const accountItem = page.locator('[data-sidebar-item="Account"]');
-      await mobileHelpers.clickElement(accountItem);
+      const homeItem = page.locator('[data-sidebar-item="Home"]');
+      await mobileHelpers.clickElement(homeItem);
 
-      await mobileHelpers.waitForURLPattern(/\/account/);
-      await expect(page).toHaveURL("/account");
+      await mobileHelpers.waitForURLPattern(/^\/$/);
+      await expect(page).toHaveURL("/");
     });
   });
 

@@ -154,9 +154,7 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
   });
 });
 
-
-
-test.describe("Settings Error Handling @auth", () => {
+test.describe("Settings Error Handling @auth @desktop-only", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
