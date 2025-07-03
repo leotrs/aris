@@ -150,7 +150,7 @@
             Password changed successfully!
           </div>
 
-          <button
+          <Button
             type="submit"
             :disabled="
               changePasswordLoading ||
@@ -158,10 +158,10 @@
               !passwordForm.newPassword ||
               !passwordForm.confirmPassword
             "
-            class="action-button primary"
+            kind="primary"
           >
             {{ changePasswordLoading ? "Changing..." : "Change Password" }}
-          </button>
+          </Button>
         </form>
       </template>
     </Section>
@@ -192,10 +192,10 @@
             Your data has been downloaded successfully!
           </div>
 
-          <button :disabled="exportLoading" class="action-button secondary" @click="exportData">
+          <Button :disabled="exportLoading" kind="secondary" @click="exportData">
             <IconDownload v-if="!exportLoading" />
             {{ exportLoading ? "Preparing download..." : "Download All My Data" }}
-          </button>
+          </Button>
         </div>
       </template>
     </Section>
@@ -261,42 +261,6 @@
     background: var(--success-50);
     border: var(--border-thin) solid var(--success-200);
     border-radius: 6px;
-  }
-
-  .action-button {
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .action-button.primary {
-    background: var(--surface-action);
-    color: white;
-  }
-
-  .action-button.primary:hover:not(:disabled) {
-    background: var(--surface-action-hover);
-  }
-
-  .action-button.secondary {
-    background: var(--surface-page);
-    color: var(--text-primary);
-    border: var(--border-thin) solid var(--border-primary);
-  }
-
-  .action-button.secondary:hover:not(:disabled) {
-    background: var(--surface-hover);
-  }
-
-  .action-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
   }
 
   .data-export {
