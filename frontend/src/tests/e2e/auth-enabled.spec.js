@@ -45,7 +45,7 @@ test.describe("Auth Enabled - Production Mode @auth-flows", () => {
     await expect(page).toHaveURL("/", { timeout: 15000 });
 
     // Test 5: Verify we're actually logged in (check for protected content)
-    await expect(page.locator('[data-testid="user-menu"]')).toBeVisible({ timeout: 10000 });
+    await expect(page.locator('[data-testid="user-avatar"]')).toBeVisible({ timeout: 10000 });
 
     // Test 6: Verify auth tokens are stored
     const tokens = await auth.getStoredTokens();
