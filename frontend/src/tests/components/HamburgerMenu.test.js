@@ -39,7 +39,7 @@ describe("HamburgerMenu", () => {
     it("does not render when not in mobile mode", async () => {
       mockMobileMode.value = false;
       await wrapper.vm.$nextTick();
-      
+
       expect(wrapper.find('[data-testid="mobile-menu-button"]').exists()).toBe(false);
     });
 
@@ -52,7 +52,7 @@ describe("HamburgerMenu", () => {
     it("shows X icon when drawer is open", async () => {
       mockMobileDrawerOpen.value = true;
       await wrapper.vm.$nextTick();
-      
+
       const button = wrapper.findComponent({ name: "Button" });
       expect(button.props("icon")).toBe("X");
     });
@@ -61,33 +61,33 @@ describe("HamburgerMenu", () => {
   describe("Drawer Control", () => {
     it("toggles drawer state when button is clicked", async () => {
       const initialState = mockMobileDrawerOpen.value;
-      
+
       const button = wrapper.find('[data-testid="mobile-menu-button"]');
       await button.trigger("click");
-      
+
       expect(mockMobileDrawerOpen.value).toBe(!initialState);
     });
 
     it("can close drawer programmatically", () => {
       mockMobileDrawerOpen.value = true;
-      
+
       wrapper.vm.close();
-      
+
       expect(mockMobileDrawerOpen.value).toBe(false);
     });
 
     it("can toggle drawer programmatically", () => {
       const initialState = mockMobileDrawerOpen.value;
-      
+
       wrapper.vm.toggle();
-      
+
       expect(mockMobileDrawerOpen.value).toBe(!initialState);
     });
 
     it("exposes isOpen state correctly", () => {
       mockMobileDrawerOpen.value = true;
       expect(wrapper.vm.isOpen).toBe(true);
-      
+
       mockMobileDrawerOpen.value = false;
       expect(wrapper.vm.isOpen).toBe(false);
     });
@@ -101,7 +101,7 @@ describe("HamburgerMenu", () => {
     it("does not render in desktop mode", async () => {
       mockMobileMode.value = false;
       await wrapper.vm.$nextTick();
-      
+
       expect(wrapper.find(".mobile-nav").exists()).toBe(false);
     });
   });

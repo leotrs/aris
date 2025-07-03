@@ -349,7 +349,6 @@ describe("BaseLayout", () => {
       expect(mobileWrapper.find(".view.mobile").exists()).toBe(true);
       expect(mobileWrapper.find(".menus.mobile").exists()).toBe(true);
     });
-
   });
 
   describe("Props", () => {

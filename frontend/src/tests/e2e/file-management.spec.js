@@ -4,11 +4,13 @@ import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 
-test.describe("File Management Tests @auth", () => {
+test.describe("File Management Tests @auth @desktop-only", () => {
   let authHelpers;
   let fileHelpers;
 
   test.beforeEach(async ({ page }) => {
+    // Set desktop viewport for desktop-only keyboard navigation tests
+    await page.setViewportSize({ width: 1024, height: 768 });
     authHelpers = new AuthHelpers(page);
     fileHelpers = new FileHelpers(page);
 

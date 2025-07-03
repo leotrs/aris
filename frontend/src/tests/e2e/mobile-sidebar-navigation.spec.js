@@ -162,9 +162,8 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       await mobileHelpers.clickElement(hamburgerButton);
       await mobileHelpers.waitForMobileRendering();
 
-      // Should show main navigation items
+      // Should show main navigation items (Account moved to UserMenuDrawer)
       await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-item="Home"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-item="Account"]'));
       await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-item="Settings"]'));
 
       // Should show recent files section if available
@@ -221,7 +220,7 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       await mobileHelpers.clickElement(hamburgerButton);
       await mobileHelpers.waitForMobileRendering();
 
-      // Should show main navigation items (no Account in main nav anymore)
+      // Should show main navigation items (Account moved to UserMenuDrawer)
       const homeItem = page.locator('[data-sidebar-item="Home"]');
       const settingsItem = page.locator('[data-sidebar-item="Settings"]');
 

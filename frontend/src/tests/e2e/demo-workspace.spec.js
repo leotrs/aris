@@ -3,10 +3,12 @@ import { test, expect } from "@playwright/test";
 // @demo
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Demo Workspace Functionality @demo-ui", () => {
+test.describe("Demo Workspace Functionality @demo-ui @desktop-only", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
+    // Set desktop viewport for desktop-only keyboard navigation tests
+    await page.setViewportSize({ width: 1024, height: 768 });
     authHelpers = new AuthHelpers(page);
     // Ensure clean auth state for demo access
     await authHelpers.clearAuthState();
