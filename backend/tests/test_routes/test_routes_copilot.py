@@ -11,7 +11,7 @@ async def test_chat_requires_authentication(client: AsyncClient):
     )
     
     assert response.status_code == 401
-    assert "Not authenticated" in response.json()["detail"]
+    assert "Invalid authentication credentials" in response.json()["detail"]
 
 
 async def test_chat_with_valid_auth(authenticated_client: AsyncClient):
