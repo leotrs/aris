@@ -383,7 +383,7 @@
     border-right: 1px solid var(--gray-200);
     padding: 16px;
     overflow-y: auto;
-    z-index: 1001;
+    z-index: 1002;
     transform: translateX(0);
     transition: transform 0.3s ease-out;
   }
@@ -395,7 +395,7 @@
     width: 100vw;
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+    z-index: 1001;
     cursor: pointer;
   }
 
