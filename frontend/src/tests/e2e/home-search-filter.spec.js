@@ -8,6 +8,8 @@ test.describe("Home View Search & Filter @auth @desktop-only", () => {
   let authHelpers, fileHelpers;
 
   test.beforeEach(async ({ page }) => {
+    // Set desktop viewport for desktop-only keyboard navigation tests
+    await page.setViewportSize({ width: 1024, height: 768 });
     authHelpers = new AuthHelpers(page);
     fileHelpers = new FileHelpers(page);
 

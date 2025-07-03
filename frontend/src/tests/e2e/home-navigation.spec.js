@@ -11,6 +11,9 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
     authHelpers = new AuthHelpers(page);
     fileHelpers = new FileHelpers(page);
 
+    // Set desktop viewport for desktop-only navigation tests
+    await page.setViewportSize({ width: 1024, height: 768 });
+
     await authHelpers.ensureLoggedIn();
 
     // Ensure we have test files for navigation

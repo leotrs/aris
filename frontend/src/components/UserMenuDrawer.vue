@@ -58,19 +58,19 @@
           <Avatar :user="user" size="md" :tooltip="false" />
         </Button>
       </template>
-      
+
       <!-- Account Section -->
       <ContextMenuItem icon="User" caption="Profile" @click="navigateTo('/account/profile')" />
       <ContextMenuItem icon="Shield" caption="Security" @click="navigateTo('/account/security')" />
       <ContextMenuItem icon="Lock" caption="Privacy" @click="navigateTo('/account/privacy')" />
       <Separator />
-      
+
       <!-- Actions Section -->
       <ContextMenuItem icon="HelpCircle" caption="Help" @click="handleHelp" />
       <ContextMenuItem icon="MessageSquare" caption="Feedback" @click="handleFeedback" />
       <ContextMenuItem icon="Keyboard" caption="Shortcuts" />
       <Separator />
-      
+
       <!-- Logout Section -->
       <ContextMenuItem icon="LogOut" caption="Logout" @click="handleLogout" />
     </ContextMenu>

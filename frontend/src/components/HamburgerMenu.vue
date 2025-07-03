@@ -25,11 +25,11 @@
 
 <template>
   <div v-if="isMobile" class="mobile-nav">
-    <Button 
-      kind="tertiary" 
-      :icon="mobileDrawerOpen ? 'X' : 'Menu'" 
-      @click="toggle" 
-      data-testid="mobile-menu-button" 
+    <Button
+      kind="tertiary"
+      :icon="mobileDrawerOpen ? 'X' : 'Menu'"
+      data-testid="mobile-menu-button"
+      @click="toggle"
     />
   </div>
 </template>
