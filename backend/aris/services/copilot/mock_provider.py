@@ -23,8 +23,8 @@ class MockLLMProvider(LLMProvider):
         ]
         self._response_index = 0
         self.call_count = 0
-        self.last_messages = None
-        self.last_context = None
+        self.last_messages: Optional[List[ChatMessage]] = None
+        self.last_context: Optional[ChatContext] = None
     
     async def chat_completion(
         self,
