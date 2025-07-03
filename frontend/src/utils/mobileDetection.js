@@ -57,14 +57,14 @@ export const getEnhancedMobileMode = (isSmallViewport) => {
     return false;
   }
 
-  // In testing environments (like E2E with Playwright), fallback to viewport-only detection
+  // In E2E testing environments (like Playwright), fallback to viewport-only detection
   // This allows E2E tests to work properly with mobile viewports
-  const isTestEnvironment = 
-    process.env.NODE_ENV === 'test' || 
-    typeof window !== 'undefined' && window.playwright !== undefined ||
-    typeof navigator !== 'undefined' && navigator.webdriver === true;
+  // Only applies to E2E/browser automation, not unit tests
+  const isE2ETestEnvironment = 
+    (typeof window !== 'undefined' && window.playwright !== undefined) ||
+    (typeof navigator !== 'undefined' && navigator.webdriver === true);
   
-  if (isTestEnvironment) {
+  if (isE2ETestEnvironment) {
     return true;
   }
 
