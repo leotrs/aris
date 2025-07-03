@@ -20,10 +20,11 @@
    *   <Pane>Content without FAB.</Pane>
    * </BaseLayout>
    */
-  import { ref, computed, inject, useTemplateRef, provide } from "vue";
+  import { ref, computed, inject, useTemplateRef, provide, watchEffect } from "vue";
   import { useRoute, useRouter } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import UploadFile from "@/views/home/ModalUploadFile.vue";
+  import HamburgerMenu from "@/components/HamburgerMenu.vue";
 
   const props = defineProps({
     fab: { type: Boolean, default: true },
@@ -38,6 +39,10 @@
   const route = useRoute();
   const router = useRouter();
 
+  // Mobile drawer state
+  const mobileDrawerOpen = ref(false);
+  provide("mobileDrawerOpen", mobileDrawerOpen);
+
   // Create unified main sidebar items
   const mainSidebarItems = computed(() => [
     {
@@ -45,12 +50,6 @@
       text: "Home",
       active: route.path === "/" || route.name === "home",
       route: "/",
-    },
-    {
-      icon: "User",
-      text: "Account",
-      active: route.path === "/account",
-      route: "/account",
     },
     {
       icon: "Settings",
@@ -107,17 +106,7 @@
   const showModal = ref(false);
   const isHome = computed(() => route.fullPath === "/");
 
-  const userMenuRef = useTemplateRef("user-menu");
-  const toggleUserMenu = () => {
-    if (!userMenuRef.value) return;
-    userMenuRef.value.toggle();
-  };
-
-  useKeyboardShortcuts(
-    { u: { fn: () => toggleUserMenu(), description: "Toggle user menu" } },
-    true,
-    "Menus"
-  );
+  // UserMenu keyboard shortcut removed - now handled by UserMenuDrawer
 
   // Handle sidebar item actions
   const handleSidebarAction = (action) => {
@@ -132,6 +121,24 @@
         console.warn(`Unknown sidebar action: ${action}`);
     }
   };
+
+  // Mobile drawer controls
+  const toggleMobileDrawer = () => {
+    mobileDrawerOpen.value = !mobileDrawerOpen.value;
+  };
+
+  const closeMobileDrawer = () => {
+    mobileDrawerOpen.value = false;
+  };
+
+  // Prevent body scroll when mobile drawer is open
+  watchEffect(() => {
+    if (mobileMode.value && mobileDrawerOpen.value) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+  });
 </script>
 
 <template>
@@ -145,9 +152,8 @@
     />
 
     <div class="menus" :class="{ mobile: mobileMode }">
-      <Button v-if="mobileMode && !isHome" kind="tertiary" icon="Home" @click="router.push('/')" />
-      <Button kind="tertiary" icon="Bell" />
-      <UserMenu ref="user-menu" />
+      <HamburgerMenu v-if="mobileMode" />
+      <UserMenuDrawer />
     </div>
 
     <slot />
