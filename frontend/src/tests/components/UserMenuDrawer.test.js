@@ -226,7 +226,7 @@ describe("UserMenuDrawer", () => {
   describe("Desktop vs Mobile Behavior", () => {
     it("renders as drawer in mobile mode", () => {
       mockMobileMode.value = true;
-      expect(wrapper.find(".user-menu-mobile").exists()).toBe(true);
+      expect(wrapper.find(".user-menu-wrapper.mobile").exists()).toBe(true);
     });
 
     it("renders as context menu in desktop mode", async () => {

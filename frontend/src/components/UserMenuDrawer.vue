@@ -53,8 +53,8 @@
   <div class="user-menu-wrapper" :class="{ mobile: isMobile, desktop: !isMobile }">
     <!-- Desktop: Context Menu -->
     <ContextMenu v-if="!isMobile" ref="menu-ref" variant="slot">
-      <template #trigger="{ toggle }">
-        <Button kind="tertiary" data-testid="user-avatar" @click="toggle">
+      <template #trigger="{ toggle: toggleMenu }">
+        <Button kind="tertiary" data-testid="user-avatar" @click="toggleMenu">
           <Avatar :user="user" size="md" :tooltip="false" />
         </Button>
       </template>
