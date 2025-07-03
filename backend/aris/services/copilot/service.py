@@ -109,16 +109,17 @@ class CopilotService:
                     file_data = await self.file_service.get_file(context.file_id)
                     logger.info(f"File data retrieved: {file_data is not None}")
                     
-                    if file_data:
-                        logger.info(f"File source length: {len(file_data.source) if hasattr(file_data, 'source') else 'no source attr'}")
+                    if file_data and hasattr(file_data, 'source'):
+                        source_content = getattr(file_data, 'source', '')
+                        logger.info(f"File source length: {len(source_content) if source_content else 'no source content'}")
                         # Create new context with fetched manuscript content
                         context = ChatContext(
-                            manuscript_content=file_data.source,
+                            manuscript_content=source_content,
                             file_id=context.file_id,
                             selection=context.selection,
                             metadata=context.metadata,
                         )
-                        logger.info(f"Context updated with manuscript content length: {len(context.manuscript_content)}")
+                        logger.info(f"Context updated with manuscript content length: {len(context.manuscript_content) if context.manuscript_content else 0}")
                 except Exception as e:
                     import logging
                     logger = logging.getLogger(__name__)

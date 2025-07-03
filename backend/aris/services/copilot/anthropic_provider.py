@@ -1,7 +1,7 @@
 """Anthropic LLM provider implementation."""
 
 import os
-from typing import List, Optional
+from typing import Any, List, Optional
 
 from .interface import (
     ChatContext,
@@ -25,7 +25,7 @@ class AnthropicProvider(LLMProvider):
         """
         self.api_key = api_key or os.getenv("ANTHROPIC_API_KEY")
         self.model = model
-        self._client = None
+        self._client: Optional[Any] = None
     
     async def _get_client(self):
         """Get Anthropic client, initializing if needed."""
@@ -79,7 +79,7 @@ class AnthropicProvider(LLMProvider):
                 messages=conversation_messages
             )
             
-            return response.content[0].text
+            return response.content[0].text if response.content else ""
             
         except Exception as e:
             error_msg = str(e)

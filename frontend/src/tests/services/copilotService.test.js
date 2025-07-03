@@ -35,7 +35,7 @@ describe("copilotService", () => {
 
       const result = await copilotService.sendMessage("Help me with this", 123);
 
-      expect(fetch).toHaveBeenCalledWith("http://localhost:8001/copilot/chat", {
+      expect(fetch).toHaveBeenCalledWith(`${import.meta.env.VITE_API_BASE_URL}/copilot/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -66,7 +66,7 @@ describe("copilotService", () => {
 
       await copilotService.sendMessage("General help");
 
-      expect(fetch).toHaveBeenCalledWith("http://localhost:8001/copilot/chat", {
+      expect(fetch).toHaveBeenCalledWith(`${import.meta.env.VITE_API_BASE_URL}/copilot/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

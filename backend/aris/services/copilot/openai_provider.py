@@ -67,7 +67,7 @@ class OpenAIProvider(LLMProvider):
                 temperature=temperature
             )
             
-            return response.choices[0].message.content
+            return response.choices[0].message.content or ""
             
         except Exception as e:
             error_msg = str(e)
