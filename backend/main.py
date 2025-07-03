@@ -20,6 +20,7 @@ from aris.routes import (
     render_router,
     signup_router,
     tag_router,
+    user_public_router,
     user_router,
     user_settings_router,
 )
@@ -231,6 +232,7 @@ app.add_middleware(
 logger.info("Registering API routers")
 app.include_router(auth_router, tags=["authentication"])
 app.include_router(user_router, tags=["users"])
+app.include_router(user_public_router, tags=["users"])
 app.include_router(file_router, tags=["files"])
 app.include_router(tag_router, tags=["tags"])
 app.include_router(file_assets_router, tags=["file-assets"])

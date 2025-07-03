@@ -85,6 +85,240 @@ class TestUserEndpoints:
         assert data["initials"] == TestConstants.UPDATED_INITIALS
         assert data["email"] == TestConstants.UPDATED_EMAIL
 
+    async def test_update_user_with_affiliation(self, client: AsyncClient, authenticated_user, auth_headers):
+        """Test updating user with affiliation."""
+        update_data = {
+            "name": TestConstants.UPDATED_NAME,
+            "initials": TestConstants.UPDATED_INITIALS,
+            "email": TestConstants.UPDATED_EMAIL,
+            "affiliation": "MIT"
+        }
+        response = await client.put(
+            f"/users/{authenticated_user['user_id']}", headers=auth_headers, json=update_data
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["name"] == TestConstants.UPDATED_NAME
+        assert data["initials"] == TestConstants.UPDATED_INITIALS
+        assert data["email"] == TestConstants.UPDATED_EMAIL
+        assert data["affiliation"] == "MIT"
+
+    async def test_update_user_clear_affiliation(self, client: AsyncClient, authenticated_user, auth_headers):
+        """Test clearing user affiliation."""
+        # First set affiliation
+        update_data = {
+            "name": TestConstants.UPDATED_NAME,
+            "initials": TestConstants.UPDATED_INITIALS,
+            "email": TestConstants.UPDATED_EMAIL,
+            "affiliation": "Stanford"
+        }
+        await client.put(
+            f"/users/{authenticated_user['user_id']}", headers=auth_headers, json=update_data
+        )
+        
+        # Then clear it
+        update_data["affiliation"] = None
+        response = await client.put(
+            f"/users/{authenticated_user['user_id']}", headers=auth_headers, json=update_data
+        )
+        assert response.status_code == 200
+        data = response.json()
+        assert data["affiliation"] is None
+
+    async def test_get_user_includes_email_verification_status(self, client: AsyncClient, authenticated_user, auth_headers):
+        """Test that get user includes email verification status."""
+        response = await client.get(f"/users/{authenticated_user['user_id']}", headers=auth_headers)
+        assert response.status_code == 200
+        data = response.json()
+        assert "email_verified" in data
+        assert isinstance(data["email_verified"], bool)
+        # New users should start unverified
+        assert data["email_verified"] is False
+
+
+class TestPasswordChange:
+    """Test class for password change functionality."""
+
+    async def test_change_password_success(self, client: AsyncClient, authenticated_user, auth_headers):
+        """Test successful password change."""
+        password_data = {
+            "current_password": TestConstants.TEST_PASSWORD,
+            "new_password": "newpassword456"
+        }
+        response = await client.post(
+            f"/users/{authenticated_user['user_id']}/change-password", 
+            headers=auth_headers, 
+            json=password_data
+        )
+        assert response.status_code == 200
+        assert response.json()["message"] == "Password changed successfully"
+
+    async def test_change_password_wrong_current(self, client: AsyncClient, authenticated_user, auth_headers):
+        """Test password change with wrong current password."""
+        password_data = {
+            "current_password": "wrongpassword",
+            "new_password": "newpassword456"
+        }
+        response = await client.post(
+            f"/users/{authenticated_user['user_id']}/change-password", 
+            headers=auth_headers, 
+            json=password_data
+        )
+        assert response.status_code == 401
+        assert "incorrect" in response.json()["detail"].lower()
+
+    async def test_change_password_weak_password(self, client: AsyncClient, authenticated_user, auth_headers):
+        """Test password change with weak password."""
+        password_data = {
+            "current_password": TestConstants.TEST_PASSWORD,
+            "new_password": "123"
+        }
+        response = await client.post(
+            f"/users/{authenticated_user['user_id']}/change-password", 
+            headers=auth_headers, 
+            json=password_data
+        )
+        assert response.status_code == 422
+
+    async def test_change_password_missing_fields(self, client: AsyncClient, authenticated_user, auth_headers):
+        """Test password change with missing fields."""
+        password_data = {
+            "current_password": TestConstants.TEST_PASSWORD
+            # Missing new_password
+        }
+        response = await client.post(
+            f"/users/{authenticated_user['user_id']}/change-password", 
+            headers=auth_headers, 
+            json=password_data
+        )
+        assert response.status_code == 422
+
+    async def test_change_password_user_not_found(self, client: AsyncClient, auth_headers):
+        """Test password change for non-existent user."""
+        password_data = {
+            "current_password": TestConstants.TEST_PASSWORD,
+            "new_password": "newpassword456"
+        }
+        response = await client.post(
+            f"/users/{TestConstants.NONEXISTENT_ID}/change-password", 
+            headers=auth_headers, 
+            json=password_data
+        )
+        assert response.status_code == 404
+
+    async def test_change_password_unauthorized(self, client: AsyncClient, authenticated_user):
+        """Test password change without authentication."""
+        password_data = {
+            "current_password": TestConstants.TEST_PASSWORD,
+            "new_password": "newpassword456"
+        }
+        response = await client.post(
+            f"/users/{authenticated_user['user_id']}/change-password", 
+            json=password_data
+        )
+        assert response.status_code == 401
+
+
+class TestEmailVerification:
+    """Test class for email verification functionality."""
+
+    async def test_send_verification_email_success(self, client: AsyncClient, authenticated_user, auth_headers):
+        """Test successful verification email sending."""
+        response = await client.post(
+            f"/users/{authenticated_user['user_id']}/send-verification",
+            headers=auth_headers
+        )
+        assert response.status_code == 200
+        assert "verification email sent" in response.json()["message"].lower()
+
+    async def test_send_verification_email_user_not_found(self, client: AsyncClient, auth_headers):
+        """Test sending verification email for non-existent user."""
+        response = await client.post(
+            f"/users/{TestConstants.NONEXISTENT_ID}/send-verification",
+            headers=auth_headers
+        )
+        assert response.status_code == 404
+
+    async def test_send_verification_email_already_verified(self, client: AsyncClient, authenticated_user, auth_headers, db_session):
+        """Test sending verification email when already verified."""
+        # First manually verify the user
+        from aris.crud.user import get_user
+        user = await get_user(authenticated_user['user_id'], db_session)
+        user.email_verified = True
+        await db_session.commit()
+        
+        response = await client.post(
+            f"/users/{authenticated_user['user_id']}/send-verification",
+            headers=auth_headers
+        )
+        assert response.status_code == 400
+        assert "already verified" in response.json()["detail"].lower()
+
+    async def test_send_verification_email_unauthorized(self, client: AsyncClient, authenticated_user):
+        """Test sending verification email without authentication."""
+        response = await client.post(
+            f"/users/{authenticated_user['user_id']}/send-verification"
+        )
+        assert response.status_code == 401
+
+    async def test_verify_email_valid_token(self, client: AsyncClient, authenticated_user, auth_headers, db_session):
+        """Test email verification with valid token."""
+        # First generate a token
+        from aris.crud.user import get_user
+        user = await get_user(authenticated_user['user_id'], db_session)
+        token = user.generate_verification_token()
+        await db_session.commit()
+        
+        response = await client.post(f"/users/verify-email/{token}")
+        assert response.status_code == 200
+        assert "verified successfully" in response.json()["message"].lower()
+        
+        # Check that user is now verified
+        await db_session.refresh(user)
+        assert user.email_verified is True
+
+    async def test_verify_email_invalid_token(self, client: AsyncClient):
+        """Test email verification with invalid token."""
+        response = await client.post("/users/verify-email/invalid-token-12345")
+        assert response.status_code == 404
+        assert "invalid" in response.json()["detail"].lower()
+
+    async def test_verify_email_token_already_used(self, client: AsyncClient, authenticated_user, auth_headers, db_session):
+        """Test using token after email is already verified."""
+        # Generate token and verify
+        from aris.crud.user import get_user
+        user = await get_user(authenticated_user['user_id'], db_session)
+        token = user.generate_verification_token()
+        user.email_verified = True
+        await db_session.commit()
+        
+        response = await client.post(f"/users/verify-email/{token}")
+        assert response.status_code == 400
+        assert "already verified" in response.json()["detail"].lower()
+
+    async def test_verify_email_empty_token(self, client: AsyncClient):
+        """Test email verification with empty token."""
+        response = await client.post("/users/verify-email")
+        assert response.status_code == 405  # Method not allowed - route needs token parameter
+
+    async def test_verification_token_generation_unique(self, db_session):
+        """Test that verification tokens are unique."""
+        from aris.models.models import User
+        
+        user1 = User(name="User 1", email="user1@test.com", password_hash="hash1")
+        user2 = User(name="User 2", email="user2@test.com", password_hash="hash2")
+        
+        token1 = user1.generate_verification_token()
+        token2 = user2.generate_verification_token()
+        
+        assert token1 != token2
+        assert len(token1) == 32
+        assert len(token2) == 32
+
+
+class TestUserEndpoints2:
+    """Additional test class for user endpoints."""
+
     async def test_update_user_not_found(self, client: AsyncClient, auth_headers):
         """Test updating non-existent user."""
         update_data = {
