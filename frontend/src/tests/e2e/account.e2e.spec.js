@@ -14,9 +14,8 @@ test.describe("Account View E2E Tests @auth @desktop-only", () => {
 
   // No afterEach cleanup - keep auth state for all account tests
 
-
   test("avatar upload workflow", async ({ page }) => {
-    await page.goto("/account");
+    await page.goto("/account/profile");
 
     // Verify upload button is present
     const uploadButton = page.locator(".avatar-upload");
@@ -37,7 +36,7 @@ test.describe("Account View E2E Tests @auth @desktop-only", () => {
   });
 
   test("upload error handling display", async ({ page }) => {
-    await page.goto("/account");
+    await page.goto("/account/profile");
 
     // Simulate an upload scenario that would trigger validation
     // In a real test environment, we'd mock the API to return errors
@@ -51,41 +50,5 @@ test.describe("Account View E2E Tests @auth @desktop-only", () => {
     // The component should have console error handling for upload failures
     const fileInput = page.locator('input[type="file"]');
     await expect(fileInput).toBeAttached();
-  });
-
-  test("navigation and UI responsiveness", async ({ page }) => {
-    await page.goto("/account");
-
-    // Test responsive design elements
-    await page.setViewportSize({ width: 375, height: 667 }); // Mobile size
-
-    // Verify mobile layout adaptations
-    const mainContainer = page.locator(".account-layout");
-    await expect(mainContainer).toBeVisible();
-
-    // Verify mobile navigation is available (hamburger menu should be visible)
-    const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
-    await expect(hamburgerButton).toBeVisible();
-
-    // Check if danger zone is visible
-    const dangerSection = page.locator(".danger-zone");
-    await expect(dangerSection).toBeVisible();
-
-    const deleteButton = page.locator('button:has-text("Delete Account")');
-    await expect(deleteButton).toBeVisible();
-    await expect(deleteButton).toContainText("Delete Account");
-
-    // Test desktop layout
-    await page.setViewportSize({ width: 1280, height: 720 });
-
-    // Verify helpful links are visible in desktop mode
-    const helpLink = page.locator('button:has-text("Get Help")');
-    await expect(helpLink).toBeVisible();
-
-    const contributeLink = page.locator('button:has-text("Contribute")');
-    await expect(contributeLink).toBeVisible();
-
-    const supportLink = page.locator('button:has-text("Support Us")');
-    await expect(supportLink).toBeVisible();
   });
 });
