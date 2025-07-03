@@ -22,7 +22,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await expect(page).toHaveURL(`/file/${fileId}`);
 
     // Wait for workspace to load
-    await page.waitForSelector(".workspace-container", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
 
     // Look for chat panel or toggle
     const chatPanel = page.locator(".chat-panel");
@@ -39,7 +39,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await expect(page).toHaveURL(`/file/${fileId}`);
 
     // Wait for workspace to load
-    await page.waitForSelector(".workspace-container", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
 
     // Find and open chat if needed
     const chatPanel = page.locator(".chat-panel");
@@ -92,7 +92,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await expect(page).toHaveURL(`/file/${fileId}`);
 
     // Wait for workspace to load
-    await page.waitForSelector(".workspace-container", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
 
     // Find chat panel
     const chatPanel = page.locator(".chat-panel");
@@ -117,7 +117,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await expect(page).toHaveURL(`/file/${fileId}`);
 
     // Wait for workspace to load
-    await page.waitForSelector(".workspace-container", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
 
     // Find and ensure chat panel is visible
     const chatPanel = page.locator(".chat-panel");
@@ -162,7 +162,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await expect(page).toHaveURL(`/file/${fileId}`);
 
     // Wait for workspace to load
-    await page.waitForSelector(".workspace-container", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
 
     // Find chat panel
     const chatPanel = page.locator(".chat-panel");
@@ -197,7 +197,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await expect(page).toHaveURL(`/file/${fileId}`);
 
     // Wait for workspace to load
-    await page.waitForSelector(".workspace-container", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
 
     // Find and ensure chat panel is visible
     const chatPanel = page.locator(".chat-panel");

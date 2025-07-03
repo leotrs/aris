@@ -166,12 +166,31 @@ test.describe("Demo Content Rendering @demo-content", () => {
       // Get initial scroll position
       const initialScrollTop = await manuscriptContainer.evaluate((el) => el.scrollTop);
 
-      // Scroll down
-      await manuscriptContainer.evaluate((el) => (el.scrollTop = 200));
-      await page.waitForTimeout(100);
+      // Use mobile-friendly scrolling method
+      // First try mouse wheel which works better on mobile browsers
+      await manuscriptContainer.hover();
+      await page.mouse.wheel(0, 200);
+      await page.waitForTimeout(200);
+
+      // If that doesn't work, try touch-based scrolling
+      let newScrollTop = await manuscriptContainer.evaluate((el) => el.scrollTop);
+      if (newScrollTop === initialScrollTop) {
+        // Fallback to scrollIntoView which is more reliable on mobile
+        await manuscriptContainer.evaluate((el) => {
+          // Scroll to a point 200px down from the top
+          const targetElement = document.elementFromPoint(el.offsetLeft + 10, el.offsetTop + 200);
+          if (targetElement) {
+            targetElement.scrollIntoView({ behavior: "smooth", block: "start" });
+          } else {
+            // Final fallback - use scrollBy which is more mobile-compatible
+            el.scrollBy(0, 200);
+          }
+        });
+        await page.waitForTimeout(300);
+        newScrollTop = await manuscriptContainer.evaluate((el) => el.scrollTop);
+      }
 
       // Verify scroll position changed
-      const newScrollTop = await manuscriptContainer.evaluate((el) => el.scrollTop);
       expect(newScrollTop).toBeGreaterThan(initialScrollTop);
     });
 
