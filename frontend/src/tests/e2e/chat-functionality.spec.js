@@ -16,41 +16,35 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await authHelpers.ensureLoggedIn();
   });
 
-  test("chat panel appears in workspace", async ({ page }) => {
-    // Create a new file to work with
+  // Helper function to enable chat and create file
+  const enableChatInWorkspace = async (page, fileHelpers) => {
     const fileId = await fileHelpers.createNewFile();
     await expect(page).toHaveURL(`/file/${fileId}`);
-
+    
     // Wait for workspace to load
     await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
-
-    // Look for chat panel or toggle
+    
+    // Enable AI Copilot via sidebar
+    const aiCopilotButton = page.locator('[data-testid="workspace-sidebar"] button[title*="Ari"]');
+    await expect(aiCopilotButton).toBeVisible({ timeout: 5000 });
+    await aiCopilotButton.click();
+    
+    // Wait for chat panel to appear
     const chatPanel = page.locator(".chat-panel");
-    const chatToggle = page.locator(".chat-toggle");
+    await expect(chatPanel).toBeVisible({ timeout: 5000 });
+    
+    return { fileId, chatPanel };
+  };
 
-    // Either the panel should be visible or there should be a toggle
-    const chatExists = (await chatPanel.isVisible()) || (await chatToggle.isVisible());
-    expect(chatExists).toBe(true);
+  test("chat panel appears in workspace", async ({ page }) => {
+    const { chatPanel } = await enableChatInWorkspace(page, fileHelpers);
+    
+    // Chat panel should be visible
+    await expect(chatPanel).toBeVisible();
   });
 
   test("can send message and receive response", async ({ page }) => {
-    // Create a new file
-    const fileId = await fileHelpers.createNewFile();
-    await expect(page).toHaveURL(`/file/${fileId}`);
-
-    // Wait for workspace to load
-    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
-
-    // Find and open chat if needed
-    const chatPanel = page.locator(".chat-panel");
-
-    if (!(await chatPanel.isVisible())) {
-      const chatToggle = page.locator(".chat-toggle");
-      if (await chatToggle.isVisible()) {
-        await chatToggle.click();
-        await page.waitForSelector(".chat-panel", { timeout: 5000 });
-      }
-    }
+    await enableChatInWorkspace(page, fileHelpers);
 
     // Verify chat components are present
     await expect(page.locator(".chat-header")).toBeVisible();
@@ -87,23 +81,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
   });
 
   test("displays welcome message when no chat history", async ({ page }) => {
-    // Create a new file
-    const fileId = await fileHelpers.createNewFile();
-    await expect(page).toHaveURL(`/file/${fileId}`);
-
-    // Wait for workspace to load
-    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
-
-    // Find chat panel
-    const chatPanel = page.locator(".chat-panel");
-
-    if (!(await chatPanel.isVisible())) {
-      const chatToggle = page.locator(".chat-toggle");
-      if (await chatToggle.isVisible()) {
-        await chatToggle.click();
-        await page.waitForSelector(".chat-panel", { timeout: 5000 });
-      }
-    }
+    await enableChatInWorkspace(page, fileHelpers);
 
     // Verify welcome message is shown
     const welcomeMessage = page.locator(".welcome-message");
@@ -112,23 +90,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
   });
 
   test("can clear chat conversation", async ({ page }) => {
-    // Create a new file
-    const fileId = await fileHelpers.createNewFile();
-    await expect(page).toHaveURL(`/file/${fileId}`);
-
-    // Wait for workspace to load
-    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
-
-    // Find and ensure chat panel is visible
-    const chatPanel = page.locator(".chat-panel");
-
-    if (!(await chatPanel.isVisible())) {
-      const chatToggle = page.locator(".chat-toggle");
-      if (await chatToggle.isVisible()) {
-        await chatToggle.click();
-        await page.waitForSelector(".chat-panel", { timeout: 5000 });
-      }
-    }
+    await enableChatInWorkspace(page, fileHelpers);
 
     // Send a message first
     const messageInput = page.locator(".message-input");
@@ -157,23 +119,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
   });
 
   test("handles empty messages gracefully", async ({ page }) => {
-    // Create a new file
-    const fileId = await fileHelpers.createNewFile();
-    await expect(page).toHaveURL(`/file/${fileId}`);
-
-    // Wait for workspace to load
-    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
-
-    // Find chat panel
-    const chatPanel = page.locator(".chat-panel");
-
-    if (!(await chatPanel.isVisible())) {
-      const chatToggle = page.locator(".chat-toggle");
-      if (await chatToggle.isVisible()) {
-        await chatToggle.click();
-        await page.waitForSelector(".chat-panel", { timeout: 5000 });
-      }
-    }
+    await enableChatInWorkspace(page, fileHelpers);
 
     // Try to send empty message
     const messageInput = page.locator(".message-input");
@@ -192,23 +138,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
   });
 
   test("maintains chat state during workspace session", async ({ page }) => {
-    // Create a new file
-    const fileId = await fileHelpers.createNewFile();
-    await expect(page).toHaveURL(`/file/${fileId}`);
-
-    // Wait for workspace to load
-    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
-
-    // Find and ensure chat panel is visible
-    const chatPanel = page.locator(".chat-panel");
-
-    if (!(await chatPanel.isVisible())) {
-      const chatToggle = page.locator(".chat-toggle");
-      if (await chatToggle.isVisible()) {
-        await chatToggle.click();
-        await page.waitForSelector(".chat-panel", { timeout: 5000 });
-      }
-    }
+    await enableChatInWorkspace(page, fileHelpers);
 
     // Send a message
     const messageInput = page.locator(".message-input");
