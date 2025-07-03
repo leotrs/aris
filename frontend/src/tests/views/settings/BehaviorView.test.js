@@ -200,7 +200,7 @@ describe("BehaviorView", () => {
     it("saves settings when save button clicked", async () => {
       await wrapper.vm.$nextTick();
 
-      const saveButton = wrapper.find(".save-button");
+      const saveButton = wrapper.find("[data-testid='save-settings-button']");
       expect(saveButton.exists()).toBe(true);
 
       await saveButton.trigger("click");
@@ -214,7 +214,7 @@ describe("BehaviorView", () => {
       // Mock delayed save
       mockApi.post.mockImplementation(() => new Promise((resolve) => setTimeout(resolve, 100)));
 
-      const saveButton = wrapper.find(".save-button");
+      const saveButton = wrapper.find("[data-testid='save-settings-button']");
       await saveButton.trigger("click");
 
       expect(wrapper.vm.loading).toBe(true);
@@ -225,7 +225,7 @@ describe("BehaviorView", () => {
     it("shows saved state after successful save", async () => {
       await wrapper.vm.$nextTick();
 
-      const saveButton = wrapper.find(".save-button");
+      const saveButton = wrapper.find("[data-testid='save-settings-button']");
       await saveButton.trigger("click");
       await wrapper.vm.$nextTick();
 
@@ -245,7 +245,7 @@ describe("BehaviorView", () => {
 
       await wrapper.vm.$nextTick();
 
-      const saveButton = wrapper.find(".save-button");
+      const saveButton = wrapper.find("[data-testid='save-settings-button']");
       await saveButton.trigger("click");
 
       expect(wrapper.vm.loading).toBe(false);
