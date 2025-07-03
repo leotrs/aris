@@ -1,0 +1,464 @@
+<script setup>
+  import { ref, computed, inject, onUnmounted, watch } from "vue";
+  import { toast } from "@/utils/toast.js";
+  import PasswordStrength from "@/components/ui/PasswordStrength.vue";
+
+  const user = inject("user");
+  const api = inject("api");
+  const refreshUser = inject("refreshUser");
+
+  // Email verification functionality
+  const isSendingVerification = ref(false);
+  const verificationSent = ref(false);
+
+  // Password change functionality
+  const currentPassword = ref("");
+  const newPassword = ref("");
+  const confirmPassword = ref("");
+  const isChangingPassword = ref(false);
+
+  // Dirty state tracking
+  const hasUnsavedPasswordChanges = computed(() => {
+    return !!(currentPassword.value || newPassword.value || confirmPassword.value);
+  });
+
+  const onChangePassword = async () => {
+    if (isChangingPassword.value) return;
+
+    // Check if user exists
+    if (!user.value) {
+      toast.error("User not found");
+      return;
+    }
+
+    // Basic validation
+    if (!currentPassword.value || !newPassword.value || !confirmPassword.value) {
+      toast.error("Please fill in all password fields");
+      return;
+    }
+
+    if (newPassword.value !== confirmPassword.value) {
+      toast.error("New passwords do not match");
+      return;
+    }
+
+    if (newPassword.value.length < 8) {
+      toast.error("New password must be at least 8 characters long");
+      return;
+    }
+
+    isChangingPassword.value = true;
+
+    try {
+      await api.post(`/users/${user.value.id}/change-password`, {
+        current_password: currentPassword.value,
+        new_password: newPassword.value,
+      });
+
+      // Clear password fields
+      currentPassword.value = "";
+      newPassword.value = "";
+      confirmPassword.value = "";
+
+      toast.success("Password changed successfully");
+    } catch (error) {
+      console.error("Failed to change password", error);
+      if (error.response?.status === 401) {
+        toast.error("Current password is incorrect");
+      } else {
+        toast.error("Failed to change password", {
+          description: "Please check your connection and try again.",
+        });
+      }
+    } finally {
+      isChangingPassword.value = false;
+    }
+  };
+
+  const onDiscard = () => {
+    if (!hasUnsavedPasswordChanges.value) return;
+
+    if (confirm("Are you sure you want to discard your password changes?")) {
+      // Reset password fields
+      currentPassword.value = "";
+      newPassword.value = "";
+      confirmPassword.value = "";
+
+      toast.info("Changes discarded");
+    }
+  };
+
+  // Warn before leaving with unsaved changes
+  const handleBeforeUnload = (e) => {
+    if (hasUnsavedPasswordChanges.value) {
+      e.preventDefault();
+      e.returnValue = "";
+      return "";
+    }
+  };
+
+  // Watch for unsaved changes and add/remove beforeunload listener
+  watch(hasUnsavedPasswordChanges, (hasChanges) => {
+    if (hasChanges) {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    } else {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    }
+  });
+
+  const onSendVerificationEmail = async () => {
+    if (isSendingVerification.value) return;
+
+    // Check if user exists
+    if (!user.value) {
+      toast.error("User not found");
+      return;
+    }
+
+    isSendingVerification.value = true;
+    verificationSent.value = false;
+
+    try {
+      await api.post(`/users/${user.value.id}/send-verification`);
+      verificationSent.value = true;
+      toast.success("Verification email sent successfully", {
+        description: "Please check your email and click the verification link.",
+      });
+    } catch (error) {
+      console.error("Failed to send verification email", error);
+      if (error.response?.status === 400) {
+        toast.error("Email is already verified");
+      } else {
+        toast.error("Failed to send verification email", {
+          description: "Please check your connection and try again.",
+        });
+      }
+    } finally {
+      isSendingVerification.value = false;
+    }
+  };
+
+  // Lifecycle
+  onUnmounted(() => {
+    window.removeEventListener("beforeunload", handleBeforeUnload);
+  });
+</script>
+
+<template>
+  <Pane>
+    <template #header>
+      <Icon name="Shield" />
+      <span class="title">Security</span>
+    </template>
+
+    <div class="security-layout">
+      <!-- Account Status -->
+      <div class="content-section">
+        <div class="section-header">
+          <h2>Account Status</h2>
+          <p>Your account security status and verification</p>
+        </div>
+
+        <div class="status-grid">
+          <div class="status-item">
+            <div :class="['status-indicator', user?.email_verified ? 'verified' : 'warning']">
+              <Icon :name="user?.email_verified ? 'Check' : 'AlertCircle'" size="16" />
+            </div>
+            <div class="status-content">
+              <h3>{{ user?.email_verified ? 'Email Verified' : 'Email Not Verified' }}</h3>
+              <p>{{ user?.email || 'No email' }}</p>
+              <div v-if="!user?.email_verified" class="verification-actions">
+                <Button
+                  v-if="!verificationSent"
+                  kind="secondary"
+                  size="sm"
+                  :disabled="isSendingVerification"
+                  :icon="isSendingVerification ? 'Loader2' : 'Mail'"
+                  @click="onSendVerificationEmail"
+                >
+                  {{ isSendingVerification ? "Sending..." : "Send Verification Email" }}
+                </Button>
+                <div v-else class="verification-sent">
+                  <Icon name="CheckCircle" size="16" />
+                  <span>Verification email sent</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Password Management -->
+      <div class="content-section">
+        <div class="section-header">
+          <h2>Password</h2>
+          <p>Change your account password</p>
+        </div>
+
+        <div class="form-group">
+          <InputText
+            v-model="currentPassword"
+            label="Current Password"
+            type="password"
+            :disabled="isChangingPassword"
+            direction="column"
+          />
+          <div class="password-field">
+            <InputText
+              v-model="newPassword"
+              label="New Password"
+              type="password"
+              :disabled="isChangingPassword"
+              direction="column"
+            />
+            <PasswordStrength :password="newPassword" />
+          </div>
+          <InputText
+            v-model="confirmPassword"
+            label="Confirm New Password"
+            type="password"
+            :disabled="isChangingPassword"
+            direction="column"
+          />
+        </div>
+
+        <div class="form-actions">
+          <Button
+            kind="tertiary"
+            :disabled="isChangingPassword || !hasUnsavedPasswordChanges"
+            @click="onDiscard"
+          >
+            Cancel
+          </Button>
+          <Button
+            kind="secondary"
+            :disabled="isChangingPassword || !hasUnsavedPasswordChanges"
+            :icon="isChangingPassword ? 'Loader2' : undefined"
+            @click="onChangePassword"
+          >
+            {{ isChangingPassword ? "Updating..." : "Update Password" }}
+          </Button>
+        </div>
+
+        <div v-if="hasUnsavedPasswordChanges" class="status-message warning">
+          <Icon name="AlertCircle" size="16" />
+          <span>You have unsaved password changes</span>
+        </div>
+      </div>
+    </div>
+  </Pane>
+</template>
+
+<style scoped>
+  /* Header Title */
+  .title {
+    margin-left: 8px;
+    font-weight: var(--weight-medium);
+  }
+
+  /* Security Layout Container */
+  .security-layout {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* Content Section */
+  .content-section {
+    background: var(--surface-primary);
+    border-radius: 16px;
+    border: var(--border-thin) solid var(--gray-200);
+    box-shadow: none;
+    padding: 24px;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .content-section:hover {
+    box-shadow: var(--shadow-soft);
+  }
+
+  .section-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: var(--border-thin) solid var(--gray-200);
+  }
+
+  .section-header h2 {
+    font-size: 20px;
+    font-weight: var(--weight-semi);
+    color: var(--gray-900);
+    margin: 0 0 4px 0;
+  }
+
+  .section-header p {
+    font-size: 14px;
+    color: var(--gray-600);
+    margin: 0;
+  }
+
+  /* Status Grid */
+  .status-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .status-item {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 16px;
+    border: var(--border-thin) solid var(--gray-200);
+    border-radius: 12px;
+    background: var(--gray-50);
+  }
+
+  .status-indicator {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .status-indicator.verified {
+    background-color: var(--success-100);
+    color: var(--success-600);
+  }
+
+  .status-indicator.warning {
+    background-color: var(--warning-100);
+    color: var(--warning-600);
+  }
+
+  .status-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .status-content h3 {
+    font-size: 14px;
+    font-weight: var(--weight-medium);
+    color: var(--gray-900);
+    margin: 0 0 2px 0;
+  }
+
+  .status-content p {
+    font-size: 13px;
+    color: var(--gray-600);
+    margin: 0;
+  }
+
+  .verification-actions {
+    margin-top: 12px;
+  }
+
+  .verification-sent {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--success-600);
+    font-size: 13px;
+    font-weight: var(--weight-medium);
+  }
+
+  .link {
+    color: var(--primary-600);
+    text-decoration: none;
+  }
+
+  .link:hover {
+    text-decoration: underline;
+  }
+
+  /* Form Styling */
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .password-field {
+    position: relative;
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: var(--border-thin) solid var(--gray-200);
+  }
+
+  /* Status Messages */
+  .status-message {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 16px;
+  }
+
+  .status-message.warning {
+    background-color: var(--surface-warning);
+    border: var(--border-thin) solid var(--border-warning);
+    color: var(--warning-700);
+  }
+
+  .status-message :deep(.tabler-icon) {
+    flex-shrink: 0;
+  }
+
+  .status-message.warning :deep(.tabler-icon) {
+    color: var(--warning-600);
+  }
+
+  /* Loading states */
+  :deep(.tabler-icon-loader-2) {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* Mobile Responsive */
+  @media (max-width: 768px) {
+    .content-section {
+      padding: 20px;
+    }
+
+    .form-actions {
+      flex-direction: column-reverse;
+      gap: 12px;
+    }
+
+    .status-item {
+      padding: 12px;
+    }
+
+    .session-item {
+      padding: 12px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .content-section {
+      padding: 16px;
+    }
+  }
+</style>
