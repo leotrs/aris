@@ -106,7 +106,6 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     });
 
     it("should have keyboard-accessible drawer toggles", () => {
-
       const wrapper = mount(Sidebar, {
         global: {
           provide: {
@@ -278,7 +277,6 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     });
 
     it("should handle sequential keyboard shortcuts correctly", async () => {
-
       const wrapper = mount(Sidebar, {
         global: {
           provide: {
@@ -315,7 +313,6 @@ describe("Workspace Accessibility and Keyboard Navigation", () => {
     });
 
     it("should prevent keyboard shortcut conflicts", () => {
-
       // Mock multiple components registering shortcuts
       useKSSpy.mockImplementationOnce((shortcuts) => {
         Object.assign(keyboardShortcuts || {}, shortcuts);
