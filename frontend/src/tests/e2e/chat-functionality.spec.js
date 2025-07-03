@@ -25,7 +25,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
     
     // Enable AI Copilot via sidebar
-    const aiCopilotButton = page.locator('[data-testid="workspace-sidebar"] button[title*="Ari"]');
+    const aiCopilotButton = page.locator('[data-testid="workspace-sidebar"] button[aria-label="Ari"]');
     await expect(aiCopilotButton).toBeVisible({ timeout: 5000 });
     await aiCopilotButton.click();
     
