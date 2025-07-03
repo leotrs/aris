@@ -150,7 +150,13 @@
     </Section>
 
     <div class="settings-actions">
-      <Button :disabled="loading" kind="primary" :class="{ saved: saved }" @click="saveSettings" data-testid="save-settings-button">
+      <Button
+        :disabled="loading"
+        kind="primary"
+        :class="{ saved: saved }"
+        data-testid="save-settings-button"
+        @click="saveSettings"
+      >
         {{ loading ? "Saving..." : saved ? "Saved!" : "Save Settings" }}
       </Button>
     </div>
