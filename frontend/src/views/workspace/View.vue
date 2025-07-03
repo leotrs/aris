@@ -127,7 +127,7 @@
   const goHome = () => router.push("/");
   useKeyboardShortcuts({
     "g,h": goHome,
-    z: () => (focusMode.value = !focusMode.value),
+    c: () => (focusMode.value = !focusMode.value),
   });
 </script>
 

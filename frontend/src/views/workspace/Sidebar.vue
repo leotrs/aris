@@ -21,7 +21,7 @@
     {
       name: "AICopilot",
       icon: "Sparkles",
-      label: "AI chat",
+      label: "Ari",
       key: "c",
       state: false,
       type: "toggle",
