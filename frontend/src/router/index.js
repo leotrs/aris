@@ -1,22 +1,23 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { toast } from "@/utils/toast.js";
-// Conditionally stub view components during testing to avoid .vue imports
-const isTest = import.meta.env.TEST;
-const LoginView = isTest ? {} : () => import("@/views/login/View.vue");
-const RegisterView = isTest ? {} : () => import("@/views/register/View.vue");
-const HomeView = isTest ? {} : () => import("@/views/home/View.vue");
-const WorkspaceView = isTest ? {} : () => import("@/views/workspace/View.vue");
+// Conditionally stub view components during unit testing to avoid .vue imports
+// E2E tests need real components, so only stub for unit tests (vitest)
+const isUnitTest = import.meta.env.TEST && import.meta.env.VITEST;
+const LoginView = isUnitTest ? {} : () => import("@/views/login/View.vue");
+const RegisterView = isUnitTest ? {} : () => import("@/views/register/View.vue");
+const HomeView = isUnitTest ? {} : () => import("@/views/home/View.vue");
+const WorkspaceView = isUnitTest ? {} : () => import("@/views/workspace/View.vue");
 const DemoView = () => import("@/views/demo/View.vue");
-const AccountView = isTest ? {} : () => import("@/views/account/View.vue");
-const AccountProfileView = isTest ? {} : () => import("@/views/account/ProfileView.vue");
-const AccountSecurityView = isTest ? {} : () => import("@/views/account/SecurityView.vue");
-const AccountPrivacyView = isTest ? {} : () => import("@/views/account/PrivacyView.vue");
-const SettingsView = isTest ? {} : () => import("@/views/settings/View.vue");
-const SettingsDocumentView = isTest ? {} : () => import("@/views/settings/DocumentView.vue");
-const SettingsBehaviorView = isTest ? {} : () => import("@/views/settings/BehaviorView.vue");
-const SettingsPrivacyView = isTest ? {} : () => import("@/views/settings/PrivacyView.vue");
-const SettingsSecurityView = isTest ? {} : () => import("@/views/settings/SecurityView.vue");
-const NotFoundView = isTest ? {} : () => import("@/views/notfound/View.vue");
+const AccountView = isUnitTest ? {} : () => import("@/views/account/View.vue");
+const AccountProfileView = isUnitTest ? {} : () => import("@/views/account/ProfileView.vue");
+const AccountSecurityView = isUnitTest ? {} : () => import("@/views/account/SecurityView.vue");
+const AccountPrivacyView = isUnitTest ? {} : () => import("@/views/account/PrivacyView.vue");
+const SettingsView = isUnitTest ? {} : () => import("@/views/settings/View.vue");
+const SettingsDocumentView = isUnitTest ? {} : () => import("@/views/settings/DocumentView.vue");
+const SettingsBehaviorView = isUnitTest ? {} : () => import("@/views/settings/BehaviorView.vue");
+const SettingsPrivacyView = isUnitTest ? {} : () => import("@/views/settings/PrivacyView.vue");
+const SettingsSecurityView = isUnitTest ? {} : () => import("@/views/settings/SecurityView.vue");
+const NotFoundView = isUnitTest ? {} : () => import("@/views/notfound/View.vue");
 
 const routes = [
   { path: "/login", component: LoginView },
