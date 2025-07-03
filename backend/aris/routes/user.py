@@ -4,7 +4,7 @@ from datetime import UTC, datetime
 from typing import Any, Dict, List
 
 from fastapi import APIRouter, Depends, File, HTTPException, Response, UploadFile
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
@@ -12,6 +12,7 @@ from sqlalchemy.orm import selectinload
 from .. import crud, current_user, get_db
 from ..exceptions import bad_request_exception, not_found_exception
 from ..models import ProfilePicture, User
+from ..security import hash_password, verify_password
 
 
 router = APIRouter(prefix="/users", tags=["users"], dependencies=[Depends(current_user)])
@@ -57,6 +58,19 @@ class UserUpdate(BaseModel):
     name: str
     initials: str
     email: str
+    affiliation: str | None = None
+
+
+class PasswordChange(BaseModel):
+    current_password: str
+    new_password: str
+    
+    @field_validator('new_password')
+    @classmethod
+    def validate_password_strength(cls, v):
+        if len(v) < 8:
+            raise ValueError('New password must be at least 8 characters long')
+        return v
 
 
 @router.put("/{user_id}")
@@ -72,7 +86,7 @@ async def update_user(
     user_id : int
         The unique identifier of the user to update.
     update : UserUpdate
-        Updated user data including name, initials, and email.
+        Updated user data including name, initials, email, and affiliation.
     db : AsyncSession
         SQLAlchemy async database session dependency.
 
@@ -90,10 +104,165 @@ async def update_user(
     -----
     Requires authentication. Updates only the provided fields.
     """
-    user = await crud.update_user(user_id, update.name, update.initials, update.email, db)
+    user = await crud.update_user(user_id, update.name, update.initials, update.email, db, update.affiliation)
     if not user:
         raise not_found_exception("User", user_id)
     return user
+
+
+@router.post("/{user_id}/change-password")
+async def change_password(
+    user_id: int,
+    password_data: PasswordChange,
+    db: AsyncSession = Depends(get_db),
+):
+    """Change user password.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user to update password for.
+    password_data : PasswordChange
+        Current and new password data.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+
+    Returns
+    -------
+    dict
+        Success message.
+
+    Raises
+    ------
+    HTTPException
+        401 error if current password is incorrect.
+        404 error if user is not found.
+        422 error if password validation fails.
+
+    Notes
+    -----
+    Requires authentication. Validates current password before updating.
+    New password must be at least 8 characters long.
+    """
+    user = await crud.get_user(user_id, db)
+    if not user:
+        raise not_found_exception("User", user_id)
+    
+    # Verify current password
+    if not verify_password(password_data.current_password, user.password_hash):
+        raise HTTPException(status_code=401, detail="Current password is incorrect")
+    
+    # Hash new password and update
+    user.password_hash = hash_password(password_data.new_password)
+    await db.commit()
+    await db.refresh(user)
+    
+    return {"message": "Password changed successfully"}
+
+
+@router.post("/{user_id}/send-verification")
+async def send_verification_email(
+    user_id: int,
+    db: AsyncSession = Depends(get_db),
+):
+    """Send email verification link to user.
+
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user to send verification email to.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+
+    Returns
+    -------
+    dict
+        Success message.
+
+    Raises
+    ------
+    HTTPException
+        404 error if user is not found.
+        400 error if email is already verified.
+
+    Notes
+    -----
+    Requires authentication. Generates verification token and stores it.
+    In production, this would send an actual email with the verification link.
+    """
+    user = await crud.get_user(user_id, db)
+    if not user:
+        raise not_found_exception("User", user_id)
+    
+    if user.email_verified:
+        raise HTTPException(status_code=400, detail="Email is already verified")
+    
+    # Generate verification token
+    user.generate_verification_token()
+    user.email_verification_sent_at = datetime.now(UTC)
+    await db.commit()
+    
+    # TODO: In production, send actual email with verification link
+    # For now, just return success message
+    return {"message": "Verification email sent successfully"}
+
+
+# Create a separate router for public endpoints (no auth required)
+public_router = APIRouter(prefix="/users", tags=["users"])
+
+
+@public_router.post("/verify-email/{token}")
+async def verify_email(
+    token: str,
+    db: AsyncSession = Depends(get_db),
+):
+    """Verify user email using verification token.
+
+    Parameters
+    ----------
+    token : str
+        The verification token sent to the user's email.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+
+    Returns
+    -------
+    dict
+        Success message.
+
+    Raises
+    ------
+    HTTPException
+        404 error if token is invalid or user not found.
+        400 error if email is already verified.
+
+    Notes
+    -----
+    Public endpoint - no authentication required.
+    Verifies the token and marks the email as verified.
+    """
+    # Find user by verification token
+    result = await db.execute(
+        select(User).where(
+            User.email_verification_token == token,
+            User.deleted_at.is_(None)
+        )
+    )
+    user = result.scalars().first()
+    
+    if not user:
+        raise HTTPException(status_code=404, detail="Invalid verification token")
+    
+    if user.email_verified:
+        raise HTTPException(status_code=400, detail="Email is already verified")
+    
+    # Mark email as verified and clear token
+    user.email_verified = True  # type: ignore
+    user.email_verification_token = None  # type: ignore
+    user.email_verification_sent_at = None  # type: ignore
+    await db.commit()
+    
+    return {"message": "Email verified successfully"}
 
 
 @router.delete("/{user_id}")

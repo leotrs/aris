@@ -7,6 +7,7 @@ from .file_settings import router as file_settings_router
 from .render import router as render_router
 from .signup import router as signup_router
 from .tag import router as tag_router
+from .user import public_router as user_public_router
 from .user import router as user_router
 from .user_settings import router as user_settings_router
 
@@ -22,5 +23,6 @@ __all__ = [
     "signup_router",
     "tag_router",
     "user_router",
+    "user_public_router",
     "user_settings_router",
 ]

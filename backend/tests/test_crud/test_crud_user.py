@@ -186,3 +186,30 @@ async def test_create_user_duplicate_email_raises(db_session, test_user):
     with pytest.raises(IntegrityError):
         # Assuming email unique constraint in DB
         await create_user("Another Name", "AN", test_user.email, "hash", db_session)
+
+
+async def test_update_user_with_affiliation(db_session, test_user):
+    """Test updating user with affiliation field."""
+    updated = await update_user(test_user.id, "New Name", "NN", "new@example.com", db_session, affiliation="MIT")
+    assert updated.name == "New Name"
+    assert updated.initials == "NN"
+    assert updated.email == "new@example.com"
+    assert updated.affiliation == "MIT"
+
+
+async def test_update_user_clear_affiliation(db_session, test_user):
+    """Test clearing user affiliation."""
+    # First set affiliation
+    await update_user(test_user.id, test_user.name, test_user.initials, test_user.email, db_session, affiliation="Stanford")
+    
+    # Then clear it
+    updated = await update_user(test_user.id, test_user.name, test_user.initials, test_user.email, db_session, affiliation=None)
+    assert updated.affiliation is None
+
+
+async def test_create_user_sets_email_verification_defaults(db_session):
+    """Test that new users have correct email verification defaults."""
+    user = await create_user("Test User", "TU", "test@example.com", "hashed", db_session)
+    assert user.email_verified is False
+    assert user.email_verification_token is None
+    assert user.email_verification_sent_at is None
