@@ -391,8 +391,8 @@
   .mobile-backdrop {
     position: fixed;
     top: 0;
-    left: 0;
-    width: 100vw;
+    left: 280px; /* Start backdrop after sidebar width */
+    width: calc(100vw - 280px); /* Cover remaining width */
     height: 100vh;
     background: rgba(0, 0, 0, 0.5);
     z-index: 1001;
