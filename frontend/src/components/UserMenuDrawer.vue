@@ -1,13 +1,14 @@
 <script setup>
-  import { ref, inject, computed } from "vue";
+  import { ref, inject, computed, useTemplateRef } from "vue";
   import { useRoute, useRouter } from "vue-router";
 
   const mobileMode = inject("mobileMode");
-  const isMobile = computed(() => mobileMode?.value ?? true);
+  const isMobile = computed(() => mobileMode?.value ?? false);
   const user = inject("user");
   const route = useRoute();
   const router = useRouter();
   const isOpen = ref(false);
+  const menuRef = useTemplateRef("menu-ref");
 
   const emit = defineEmits(["showFeedback", "logout"]);
 
@@ -49,12 +50,38 @@
 </script>
 
 <template>
-  <div v-if="isMobile" class="user-menu-mobile">
-    <div class="avatar-trigger" data-testid="user-avatar" @click="toggle">
+  <div class="user-menu-wrapper" :class="{ mobile: isMobile, desktop: !isMobile }">
+    <!-- Desktop: Context Menu -->
+    <ContextMenu v-if="!isMobile" ref="menu-ref" variant="slot">
+      <template #trigger="{ toggle }">
+        <Button kind="tertiary" data-testid="user-avatar" @click="toggle">
+          <Avatar :user="user" size="md" :tooltip="false" />
+        </Button>
+      </template>
+      
+      <!-- Account Section -->
+      <ContextMenuItem icon="User" caption="Profile" @click="navigateTo('/account/profile')" />
+      <ContextMenuItem icon="Shield" caption="Security" @click="navigateTo('/account/security')" />
+      <ContextMenuItem icon="Lock" caption="Privacy" @click="navigateTo('/account/privacy')" />
+      <Separator />
+      
+      <!-- Actions Section -->
+      <ContextMenuItem icon="HelpCircle" caption="Help" @click="handleHelp" />
+      <ContextMenuItem icon="MessageSquare" caption="Feedback" @click="handleFeedback" />
+      <ContextMenuItem icon="Keyboard" caption="Shortcuts" />
+      <Separator />
+      
+      <!-- Logout Section -->
+      <ContextMenuItem icon="LogOut" caption="Logout" @click="handleLogout" />
+    </ContextMenu>
+
+    <!-- Mobile: Avatar Trigger -->
+    <div v-else class="avatar-trigger" data-testid="user-avatar" @click="toggle">
       <Avatar :user="user" size="md" :tooltip="false" />
     </div>
 
-    <div v-if="isOpen" class="user-overlay" @click="close">
+    <!-- Mobile: Drawer Overlay -->
+    <div v-if="isMobile && isOpen" class="user-overlay" @click="close">
       <div class="user-drawer" :class="{ open: isOpen }" @click.stop>
         <div class="user-header">
           <Logo type="small" />
