@@ -136,7 +136,23 @@
         console.log("[App] 401 error but no refresh possible:", {
           hasRefreshToken: !!localStorage.getItem("refreshToken"),
           isRetry: !!originalRequest._retry,
+          url: originalRequest?.url,
         });
+
+        // Check if this is a password validation error that should not trigger logout
+        const isPasswordValidationError = originalRequest?.url?.includes("/change-password");
+
+        if (isPasswordValidationError) {
+          console.log("[App] 401 from password validation - allowing error to pass through");
+          // Let the error pass through to component error handling
+          // Do NOT redirect to login for password validation failures
+        } else {
+          console.log("[App] 401 error requires authentication - cleaning storage and redirecting");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
+          window.location.href = "/login";
+        }
       }
 
       logger.apiError(error.config?.url || "unknown", error);
