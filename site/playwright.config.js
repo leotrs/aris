@@ -57,7 +57,10 @@ export default defineConfig({
         },
         {
           name: "Mobile Firefox",
-          use: { ...devices["Pixel 5"], channel: "firefox" },
+          use: {
+            ...devices["Pixel 5"],
+            userAgent: 'Mozilla/5.0 (Mobile; rv:109.0) Gecko/109.0 Firefox/109.0'
+          },
         },
         {
           name: "Mobile Safari",
