@@ -95,6 +95,9 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     ).toBeVisible({ timeout: 5000 });
     console.log("[Test] Success message found");
 
+    // Wait a moment for form reset to complete
+    await page.waitForTimeout(100);
+
     // Form should be reset
     await expect(currentPasswordInput).toHaveValue("");
     await expect(newPasswordInput).toHaveValue("");
@@ -254,7 +257,7 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     await cancelButton.click();
 
     // Wait a moment for the form to reset
-    await page.waitForTimeout(500);
+    await page.waitForTimeout(100);
 
     // Check values after cancel
     const currentValueAfter = await currentPasswordInput.inputValue();

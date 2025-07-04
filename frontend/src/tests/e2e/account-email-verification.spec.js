@@ -43,8 +43,11 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
     const isUnverified = await emailSection.locator(".status-indicator.warning").isVisible();
 
     if (isUnverified) {
-      // Should have a "Send Verification Email" button
-      const sendButton = page.locator('button:has-text("Send Verification Email")');
+      // Should have a "Send Verification Email" button (check for both possible states)
+      const sendButton = page
+        .locator("button")
+        .filter({ hasText: /Send Verification Email|Sending/ })
+        .first();
       await expect(sendButton).toBeVisible();
       await expect(sendButton).toBeEnabled();
 
@@ -59,7 +62,9 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
 
       // Should show success message
       await expect(
-        page.locator(".toast, .status-message").filter({ hasText: "verification email sent" })
+        page
+          .locator(".toast, .status-message")
+          .filter({ hasText: /verification email sent|Verification email sent/i })
       ).toBeVisible({ timeout: 5000 });
 
       // Button should be disabled after sending
@@ -129,12 +134,17 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
     if (hasWarningClass) {
       // User is unverified
       await expect(emailSection.locator("h3")).toContainText("Email Not Verified");
-      const sendButton = page.locator('button:has-text("Send Verification Email")');
+      const sendButton = page
+        .locator("button")
+        .filter({ hasText: /Send Verification Email|Sending/ })
+        .first();
       await expect(sendButton).toBeVisible();
     } else {
       // User is verified
       await expect(emailSection.locator("h3")).toContainText("Email Verified");
-      const sendButton = page.locator('button:has-text("Send Verification Email")');
+      const sendButton = page
+        .locator("button")
+        .filter({ hasText: /Send Verification Email|Sending/ });
       await expect(sendButton).not.toBeVisible();
     }
   });
