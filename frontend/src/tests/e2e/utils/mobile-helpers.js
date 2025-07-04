@@ -90,7 +90,28 @@ export class MobileHelpers {
       await locator.scrollIntoViewIfNeeded();
       await this.page.waitForTimeout(100);
     }
-    await locator.click();
+
+    try {
+      await locator.click();
+    } catch (error) {
+      // If click is intercepted, try force click
+      if (error.message.includes("intercepts pointer events")) {
+        await locator.click({ force: true });
+      } else {
+        throw error;
+      }
+    }
+  }
+
+  /**
+   * Force click element when normal click is blocked by overlays
+   */
+  async forceClickElement(locator) {
+    await locator.scrollIntoViewIfNeeded();
+    if (this.isMobileViewport()) {
+      await this.page.waitForTimeout(100);
+    }
+    await locator.click({ force: true });
   }
 
   /**

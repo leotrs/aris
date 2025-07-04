@@ -120,10 +120,14 @@ test.describe("Registration Flow Tests @auth-flows", () => {
       // Registration succeeded - logout and try duplicate registration
       await authHelpers.logout();
       await page.goto("/login");
+      await page.waitForLoadState("networkidle");
+      await page.locator('[data-testid="register-link"]').waitFor({ state: "visible" });
       await page.click('[data-testid="register-link"]');
     } catch {
       // Registration may have failed due to server issues, proceed with duplicate test
       await page.goto("/login");
+      await page.waitForLoadState("networkidle");
+      await page.locator('[data-testid="register-link"]').waitFor({ state: "visible" });
       await page.click('[data-testid="register-link"]');
     }
 
