@@ -77,9 +77,9 @@ test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
     // Input should be cleared after sending
     await expect(messageInput).toHaveValue("");
 
-    // Input should be re-enabled after response
-    await expect(messageInput).not.toBeDisabled();
-    await expect(sendButton).not.toBeDisabled();
+    // Wait for loading state to complete (wait for input to be re-enabled)
+    await expect(messageInput).not.toBeDisabled({ timeout: 15000 });
+    await expect(sendButton).not.toBeDisabled({ timeout: 15000 });
   });
 
   test("displays welcome message when no chat history", async ({ page }) => {
