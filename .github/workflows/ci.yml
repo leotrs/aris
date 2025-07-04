@@ -26,7 +26,7 @@ env:
 
 jobs:
   # Unit Tests and Linting (Parallel)
-  backend-test:
+  unit-backend:
     runs-on: ubuntu-latest
     env:
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
@@ -93,7 +93,7 @@ jobs:
         flags: backend
         token: ${{ secrets.CODECOV_TOKEN }}
 
-  frontend-test:
+  unit-frontend:
     runs-on: ubuntu-latest
 
     defaults:
@@ -129,7 +129,7 @@ jobs:
         flags: frontend
         token: ${{ secrets.CODECOV_TOKEN }}
 
-  site-test:
+  unit-site:
     runs-on: ubuntu-latest
 
     defaults:
@@ -160,7 +160,7 @@ jobs:
 
   # Desktop E2E Tests (Chrome)
   e2e-desktop-chrome:
-    needs: [backend-test, frontend-test, site-test]
+    needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
       matrix:
@@ -335,7 +335,7 @@ jobs:
 
   # Desktop E2E Tests (Firefox)
   e2e-desktop-firefox:
-    needs: [backend-test, frontend-test, site-test]
+    needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
       matrix:
@@ -475,7 +475,7 @@ jobs:
 
   # Desktop E2E Tests (Safari)
   e2e-desktop-safari:
-    needs: [backend-test, frontend-test, site-test]
+    needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
       matrix:
@@ -934,7 +934,7 @@ jobs:
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
         echo "Backend started with PID: $BACKEND_PID"
-        
+
         # Wait for backend
         sleep 8
         for i in {1..5}; do
@@ -951,16 +951,16 @@ jobs:
             sleep 2
           fi
         done
-        
+
         # Start frontend
         cd ../frontend
         npm run dev &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
-        
+
         # Wait for frontend
         sleep 15
-        
+
         # Run mobile Firefox tests
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
           echo "Running non-auth Mobile Firefox E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only)"
@@ -970,7 +970,7 @@ jobs:
           npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Firefox" --reporter=github
         fi
         TEST_EXIT_CODE=$?
-        
+
         # Cleanup
         echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
