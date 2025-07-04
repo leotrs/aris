@@ -50,6 +50,7 @@ export default defineConfig({
         minThreads: 1,
       },
     },
+    fileParallelism: false,
     env: {
       VITE_API_BASE_URL: process.env.VITE_API_BASE_URL || envVars.VITE_API_BASE_URL,
     },
