@@ -99,7 +99,8 @@ test.describe("File Management Tests @auth", () => {
     await expect(page.locator('text="Duplicate"')).toBeVisible();
 
     // Close menu by clicking elsewhere
-    const isMobile = await page.evaluate(() => "ontouchstart" in window);
+    const viewport = page.viewportSize();
+    const isMobile = viewport && viewport.width < 640;
     if (isMobile) {
       // Tap the same context menu trigger (three dots) to close the menu
       const fileItem = await page.locator(`[data-testid="file-item-${fileId}"]`);
