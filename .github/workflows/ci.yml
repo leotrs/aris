@@ -96,7 +96,7 @@ jobs:
       env:
         TEST_USER_EMAIL: testuser@aris.pub
         TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-      run: uv run pytest -n4 --tb=short
+      run: uv run pytest -n4 --dist=loadscope --tb=short
 
   unit-frontend:
     runs-on: ubuntu-latest
