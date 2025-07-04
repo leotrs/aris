@@ -164,17 +164,17 @@ test.describe("Demo Content Rendering @demo-content", () => {
       const scrollTargets = [
         '[data-testid="manuscript-container"]',
         '[data-testid="manuscript-viewer"]',
-        '.manuscript',
-        '.manuscriptwrapper',
-        'body'
+        ".manuscript",
+        ".manuscriptwrapper",
+        "body",
       ];
 
       let scrollWorked = false;
-      
+
       for (const targetSelector of scrollTargets) {
         const scrollContainer = page.locator(targetSelector);
-        
-        if (await scrollContainer.count() === 0) {
+
+        if ((await scrollContainer.count()) === 0) {
           continue;
         }
 
@@ -184,7 +184,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
             scrollHeight: el.scrollHeight,
             clientHeight: el.clientHeight,
             scrollTop: el.scrollTop,
-            hasScroll: el.scrollHeight > el.clientHeight
+            hasScroll: el.scrollHeight > el.clientHeight,
           };
         });
 
@@ -194,7 +194,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
         // Try to scroll this element
         const initialScrollTop = scrollInfo.scrollTop;
-        
+
         // Method 1: Use scrollBy directly
         await scrollContainer.evaluate((el) => {
           el.scrollBy(0, 200);
@@ -202,7 +202,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
         await page.waitForTimeout(100);
 
         let newScrollTop = await scrollContainer.evaluate((el) => el.scrollTop);
-        
+
         if (newScrollTop > initialScrollTop) {
           scrollWorked = true;
           break;
@@ -212,9 +212,9 @@ test.describe("Demo Content Rendering @demo-content", () => {
         await scrollContainer.hover();
         await page.mouse.wheel(0, 200);
         await page.waitForTimeout(100);
-        
+
         newScrollTop = await scrollContainer.evaluate((el) => el.scrollTop);
-        
+
         if (newScrollTop > initialScrollTop) {
           scrollWorked = true;
           break;

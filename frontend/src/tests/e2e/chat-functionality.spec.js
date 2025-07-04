@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 
-test.describe("AI Copilot Chat Functionality @auth", () => {
+test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
   let authHelpers;
   let fileHelpers;
 
@@ -20,25 +20,27 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
   const enableChatInWorkspace = async (page, fileHelpers) => {
     const fileId = await fileHelpers.createNewFile();
     await expect(page).toHaveURL(`/file/${fileId}`);
-    
+
     // Wait for workspace to load
     await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
-    
+
     // Enable AI Copilot via sidebar
-    const aiCopilotButton = page.locator('[data-testid="workspace-sidebar"] button[aria-label="Ari"]');
+    const aiCopilotButton = page.locator(
+      '[data-testid="workspace-sidebar"] button[aria-label="Ari"]'
+    );
     await expect(aiCopilotButton).toBeVisible({ timeout: 5000 });
     await aiCopilotButton.click();
-    
+
     // Wait for chat panel to appear
     const chatPanel = page.locator(".chat-panel");
     await expect(chatPanel).toBeVisible({ timeout: 5000 });
-    
+
     return { fileId, chatPanel };
   };
 
   test("chat panel appears in workspace", async ({ page }) => {
     const { chatPanel } = await enableChatInWorkspace(page, fileHelpers);
-    
+
     // Chat panel should be visible
     await expect(chatPanel).toBeVisible();
   });

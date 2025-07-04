@@ -27,7 +27,7 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
 
     // Check if mobile viewport
     const viewport = page.viewportSize();
-    const isMobile = viewport.width < 768;
+    const isMobile = viewport.width < 640;
 
     // Wait for demo canvas to be loaded (optimized for CI performance)
     const demoCanvas = page.locator('[data-testid="demo-canvas"]');
@@ -67,7 +67,7 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
         expect(panelBox.x + panelBox.width).toBeLessThanOrEqual(viewport.width + 50);
 
         // Adjust width expectations for mobile
-        const isMobile = viewport.width < 768;
+        const isMobile = viewport.width < 640;
         const minWidth = isMobile ? 100 : 200;
         expect(panelBox.width).toBeGreaterThan(minWidth);
       }
@@ -108,7 +108,7 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
     const viewport = page.viewportSize();
 
     // Adjust tolerance for mobile browsers
-    const isMobile = viewport.width < 768;
+    const isMobile = viewport.width < 640;
     const tolerance = isMobile ? 20 : 5; // More tolerance for mobile
 
     // Body should not be wider than viewport
@@ -222,7 +222,7 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
     const viewport = page.viewportSize();
 
     // Only run this test on mobile viewports
-    if (viewport.width >= 768) {
+    if (viewport.width >= 640) {
       test.skip();
     }
 
