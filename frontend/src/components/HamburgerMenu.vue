@@ -24,11 +24,22 @@
 </script>
 
 <template>
+  <!-- Primary mobile nav - controlled by Vue logic -->
   <div v-if="isMobile" class="mobile-nav">
     <Button
       kind="tertiary"
       :icon="mobileDrawerOpen ? 'X' : 'Menu'"
       data-testid="mobile-menu-button"
+      @click="toggle"
+    />
+  </div>
+  
+  <!-- CSS-only fallback for when mobile detection fails -->
+  <div v-if="!isMobile" class="mobile-nav-fallback">
+    <Button
+      kind="tertiary"
+      :icon="mobileDrawerOpen ? 'X' : 'Menu'"
+      data-testid="mobile-menu-fallback"
       @click="toggle"
     />
   </div>
@@ -40,9 +51,14 @@
     align-items: center;
   }
 
-  /* Show mobile nav on small screens when mobile mode detection fails */
+  .mobile-nav-fallback {
+    display: none;
+    align-items: center;
+  }
+
+  /* CSS-only fallback: show fallback nav on small screens when mobile detection fails */
   @media (max-width: 640px) {
-    .mobile-nav {
+    .mobile-nav-fallback {
       display: flex !important;
       visibility: visible !important;
       opacity: 1 !important;
