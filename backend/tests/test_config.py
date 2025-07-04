@@ -28,7 +28,7 @@ def test_settings_defaults_and_env_override(monkeypatch):
     assert s.JWT_SECRET_KEY == env["JWT_SECRET_KEY"]
     assert s.ENV == "LOCAL"
     assert s.JWT_ALGORITHM == "HS256"
-    assert s.JWT_ACCESS_TOKEN_EXPIRE_MINUTES == 30
+    assert s.JWT_ACCESS_TOKEN_EXPIRE_MINUTES == 120
 
 
 def test_missing_required_env_vars(monkeypatch):
