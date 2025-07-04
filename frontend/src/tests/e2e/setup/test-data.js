@@ -25,14 +25,14 @@ export const TEST_CREDENTIALS = {
 };
 
 // Log test credentials being used (but mask password)
-console.log('[TestData] Test credentials configuration:', {
+console.log("[TestData] Test credentials configuration:", {
   email: TEST_CREDENTIALS.valid.email,
-  password: '***',
+  password: "***",
   passwordLength: TEST_CREDENTIALS.valid.password.length,
   fromEnv: {
     email: !!process.env.TEST_USER_EMAIL,
-    password: !!process.env.TEST_USER_PASSWORD
-  }
+    password: !!process.env.TEST_USER_PASSWORD,
+  },
 });
 
 // File fixtures for testing

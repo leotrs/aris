@@ -60,33 +60,35 @@ export class AuthHelpers {
     const finalUser = await this.page.evaluate(() => localStorage.getItem("user"));
     const finalRefreshToken = await this.page.evaluate(() => localStorage.getItem("refreshToken"));
 
-    console.log('[AuthHelpers] Final authentication verification:', {
+    console.log("[AuthHelpers] Final authentication verification:", {
       hasAccessToken: !!finalAccessToken,
       hasRefreshToken: !!finalRefreshToken,
       hasUser: !!finalUser,
       accessTokenLength: finalAccessToken?.length,
       refreshTokenLength: finalRefreshToken?.length,
-      currentUrl: this.page.url()
+      currentUrl: this.page.url(),
     });
 
     if (!finalAccessToken || !finalUser) {
-      console.error('[AuthHelpers] Authentication verification failed:', {
+      console.error("[AuthHelpers] Authentication verification failed:", {
         accessToken: !!finalAccessToken,
         user: !!finalUser,
-        currentUrl: this.page.url()
+        currentUrl: this.page.url(),
       });
-      throw new Error(`Authentication verification failed - accessToken: ${!!finalAccessToken}, user: ${!!finalUser}`);
+      throw new Error(
+        `Authentication verification failed - accessToken: ${!!finalAccessToken}, user: ${!!finalUser}`
+      );
     }
 
     // Verify we're logged in by checking for home page elements
-    console.log('[AuthHelpers] Verifying home page elements');
+    console.log("[AuthHelpers] Verifying home page elements");
     await expect(this.page).toHaveURL("/", { timeout: 10000 });
     await this.page.waitForSelector(
       '[data-testid="files-container"], [data-testid="create-file-button"], [data-testid="user-menu"]',
       { timeout: 10000 }
     );
-    
-    console.log('[AuthHelpers] ensureLoggedIn completed successfully');
+
+    console.log("[AuthHelpers] ensureLoggedIn completed successfully");
   }
 
   async logout() {
