@@ -51,12 +51,12 @@ test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
     // Verify chat components are present
     await expect(page.locator(".chat-header")).toBeVisible();
     await expect(page.locator(".chat-messages")).toBeVisible();
-    await expect(page.locator(".message-input")).toBeVisible();
-    await expect(page.locator(".send-button")).toBeVisible();
+    await expect(page.locator(".textarea")).toBeVisible();
+    await expect(page.locator(".submit-button")).toBeVisible();
 
     // Send a test message
-    const messageInput = page.locator(".message-input");
-    const sendButton = page.locator(".send-button");
+    const messageInput = page.locator(".textarea");
+    const sendButton = page.locator(".submit-button");
 
     await messageInput.fill("Help me improve this manuscript");
     await sendButton.click();
@@ -95,8 +95,8 @@ test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
     await enableChatInWorkspace(page, fileHelpers);
 
     // Send a message first
-    const messageInput = page.locator(".message-input");
-    const sendButton = page.locator(".send-button");
+    const messageInput = page.locator(".textarea");
+    const sendButton = page.locator(".submit-button");
 
     await messageInput.fill("Test message");
     await sendButton.click();
@@ -124,8 +124,8 @@ test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
     await enableChatInWorkspace(page, fileHelpers);
 
     // Try to send empty message
-    const messageInput = page.locator(".message-input");
-    const sendButton = page.locator(".send-button");
+    const messageInput = page.locator(".textarea");
+    const sendButton = page.locator(".submit-button");
 
     // Send button should be disabled for empty input
     await expect(sendButton).toBeDisabled();
@@ -143,8 +143,8 @@ test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
     await enableChatInWorkspace(page, fileHelpers);
 
     // Send a message
-    const messageInput = page.locator(".message-input");
-    const sendButton = page.locator(".send-button");
+    const messageInput = page.locator(".textarea");
+    const sendButton = page.locator(".submit-button");
 
     await messageInput.fill("First message");
     await sendButton.click();
