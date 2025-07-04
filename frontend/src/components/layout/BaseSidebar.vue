@@ -110,32 +110,21 @@
     "Main"
   );
 
-  // Create dedicated keyboard controller for mobile drawer escape functionality
-  const mobileDrawerKeyController = useKeyboardShortcuts(
-    {
-      escape: { fn: () => emit("closeMobileDrawer"), description: "close mobile drawer" },
-    },
-    false, // Don't auto-activate
-    "MobileDrawer"
-  );
-
-  // Setup useClosable for mobile drawer (without conflicting keyboard shortcuts)
+  // Setup useClosable for mobile drawer (no keyboard shortcuts for mobile)
   const { activate: activateClosable, deactivate: deactivateClosable } = useClosable({
     onClose: () => emit("closeMobileDrawer"),
-    closeOnEsc: false, // Handle escape separately with dedicated controller
+    closeOnEsc: false, // Mobile devices don't have keyboards
     closeOnOutsideClick: true,
     closeOnCloseButton: false,
     autoActivate: false,
   });
 
-  // Watch mobile drawer state to activate/deactivate both closable and escape key
+  // Watch mobile drawer state to activate/deactivate useClosable
   watchEffect(() => {
     if (mobileMode.value && mobileDrawerOpen.value) {
       activateClosable();
-      mobileDrawerKeyController.activate();
     } else {
       deactivateClosable();
-      mobileDrawerKeyController.deactivate();
     }
   });
 
