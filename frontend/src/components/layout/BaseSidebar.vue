@@ -3,6 +3,7 @@
   import { useRouter } from "vue-router";
   import { File } from "@/models/File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import useClosable from "@/composables/useClosable.js";
   import BaseSidebarItem from "./BaseSidebarItem.vue";
 
   defineOptions({
@@ -90,20 +91,11 @@
     }
   };
 
-  // Handle escape key to close mobile drawer
-  const handleEscapeKey = () => {
-    if (mobileMode.value && mobileDrawerOpen.value) {
-      emit("closeMobileDrawer");
-    }
-  };
-
-  // Handle backdrop click to close mobile drawer
-  const handleBackdropClick = () => {
-    emit("closeMobileDrawer");
-  };
+  // Mobile drawer content ref for useClosable
+  const sidebarContentRef = useTemplateRef("sidebar-content-ref");
 
   // Keys
-  useKeyboardShortcuts(
+  const keyboardController = useKeyboardShortcuts(
     {
       "g,h": { fn: () => goTo(""), description: "go home" },
       "g,a": { fn: () => goTo("account"), description: "go to user account" },
@@ -113,11 +105,29 @@
       "g,3": { fn: () => openRecentFile(2), description: "open third most recent file" },
       n: { fn: onCTAClick, description: "open new file menu" },
       c: { fn: toggleCollapsed, description: "collapse sidebar" },
-      Escape: { fn: handleEscapeKey, description: "close mobile drawer" },
     },
     true,
     "Main"
   );
+
+  // Setup useClosable for mobile drawer
+  const { activate: activateClosable, deactivate: deactivateClosable } = useClosable({
+    onClose: () => emit("closeMobileDrawer"),
+    closeOnEsc: true,
+    closeOnOutsideClick: true,
+    closeOnCloseButton: false,
+    autoActivate: false,
+    keyboardController,
+  });
+
+  // Watch mobile drawer state to activate/deactivate useClosable
+  watchEffect(() => {
+    if (mobileMode.value && mobileDrawerOpen.value) {
+      activateClosable();
+    } else {
+      deactivateClosable();
+    }
+  });
 
   const ctaAttrs = computed(() => {
     return {
@@ -139,11 +149,7 @@
     }"
   >
     <!-- Mobile backdrop -->
-    <div
-      v-if="mobileMode && mobileDrawerOpen"
-      class="mobile-backdrop"
-      @click="handleBackdropClick"
-    ></div>
+    <div v-if="mobileMode && mobileDrawerOpen" class="mobile-backdrop"></div>
 
     <!-- Desktop mode: direct children for CSS compatibility -->
     <template v-if="!mobileMode">
@@ -203,7 +209,7 @@
     </template>
 
     <!-- Mobile mode: drawer content when open -->
-    <div v-if="mobileMode && mobileDrawerOpen" class="sidebar-content">
+    <div v-if="mobileMode && mobileDrawerOpen" ref="sidebar-content-ref" class="sidebar-content">
       <div id="logo">
         <Logo :type="collapsed ? 'small' : 'full'" alt="Aris logo" />
       </div>

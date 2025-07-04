@@ -149,6 +149,7 @@
       @action="handleSidebarAction"
       @new-empty-file="newEmptyFile"
       @show-file-upload-modal="showModal = true"
+      @close-mobile-drawer="closeMobileDrawer"
     />
 
     <div class="menus" :class="{ mobile: mobileMode }">
