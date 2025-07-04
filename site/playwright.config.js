@@ -38,34 +38,30 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: process.env.CI
     ? [
-        // CI: Run all browsers for comprehensive testing
+        // CI: All browsers for comprehensive testing
         {
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
         },
-
+        {
+          name: "firefox",
+          use: { ...devices["Desktop Firefox"] },
+        },
+        {
+          name: "webkit",
+          use: { ...devices["Desktop Safari"] },
+        },
         {
           name: "Mobile Chrome",
           use: { ...devices["Pixel 5"] },
         },
-
-        // Additional browsers for cross-browser compatibility tests only
         {
-          name: "firefox",
-          use: { ...devices["Desktop Firefox"] },
-          testMatch: "**/browser-compatibility/**/*.spec.js",
+          name: "Mobile Firefox",
+          use: { ...devices["Pixel 5"], channel: "firefox" },
         },
-
-        {
-          name: "webkit",
-          use: { ...devices["Desktop Safari"] },
-          testMatch: "**/browser-compatibility/**/*.spec.js",
-        },
-
         {
           name: "Mobile Safari",
           use: { ...devices["iPhone 12"] },
-          testMatch: "**/browser-compatibility/**/*.spec.js",
         },
       ]
     : [
