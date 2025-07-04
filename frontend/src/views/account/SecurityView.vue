@@ -125,35 +125,20 @@
       return;
     }
 
-    // In test environments, skip confirmation for better test reliability
-    const isTestEnvironment = import.meta.env.MODE === "test" || import.meta.env.VITEST;
-    let shouldDiscard = true;
+    console.log("[SecurityView] Discarding changes, resetting fields");
+    // Reset password fields
+    currentPassword.value = "";
+    newPassword.value = "";
+    confirmPassword.value = "";
 
-    if (!isTestEnvironment) {
-      console.log("[SecurityView] Showing confirmation dialog");
-      shouldDiscard = confirm("Are you sure you want to discard your password changes?");
-    } else {
-      console.log("[SecurityView] Test environment detected, skipping confirmation");
-    }
+    console.log("[SecurityView] Fields reset, values now:", {
+      currentPassword: currentPassword.value,
+      newPassword: newPassword.value,
+      confirmPassword: confirmPassword.value,
+      hasUnsavedPasswordChanges: hasUnsavedPasswordChanges.value,
+    });
 
-    if (shouldDiscard) {
-      console.log("[SecurityView] Discarding changes, resetting fields");
-      // Reset password fields
-      currentPassword.value = "";
-      newPassword.value = "";
-      confirmPassword.value = "";
-
-      console.log("[SecurityView] Fields reset, values now:", {
-        currentPassword: currentPassword.value,
-        newPassword: newPassword.value,
-        confirmPassword: confirmPassword.value,
-        hasUnsavedPasswordChanges: hasUnsavedPasswordChanges.value,
-      });
-
-      toast.info("Changes discarded");
-    } else {
-      console.log("[SecurityView] User cancelled discard");
-    }
+    toast.info("Changes discarded");
   };
 
   // Warn before leaving with unsaved changes
