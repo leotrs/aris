@@ -149,46 +149,27 @@ describe("UserMenu", () => {
       await wrapper.vm.$nextTick();
     });
 
-    it("renders Account section with sub-items", () => {
+    it("renders Account section with account item", () => {
       const accountSection = wrapper.find('[data-testid="account-section"]');
       expect(accountSection.exists()).toBe(true);
 
       expect(wrapper.text()).toContain("Account");
-      expect(wrapper.text()).toContain("Profile");
-      expect(wrapper.text()).toContain("Security");
-      expect(wrapper.text()).toContain("Privacy");
     });
 
-    it("navigates to Profile and closes drawer", async () => {
-      const profileItem = wrapper.find('[data-testid="account-profile"]');
-      await profileItem.trigger("click");
+    it("navigates to Account and closes drawer", async () => {
+      const accountItem = wrapper.find('[data-testid="account-profile"]');
+      await accountItem.trigger("click");
 
-      expect(mockRouter.push).toHaveBeenCalledWith("/account/profile");
+      expect(mockRouter.push).toHaveBeenCalledWith("/account");
       expect(wrapper.vm.isOpen).toBe(false);
     });
 
-    it("navigates to Security and closes drawer", async () => {
-      const securityItem = wrapper.find('[data-testid="account-security"]');
-      await securityItem.trigger("click");
-
-      expect(mockRouter.push).toHaveBeenCalledWith("/account/security");
-      expect(wrapper.vm.isOpen).toBe(false);
-    });
-
-    it("navigates to Privacy and closes drawer", async () => {
-      const privacyItem = wrapper.find('[data-testid="account-privacy"]');
-      await privacyItem.trigger("click");
-
-      expect(mockRouter.push).toHaveBeenCalledWith("/account/privacy");
-      expect(wrapper.vm.isOpen).toBe(false);
-    });
-
-    it("marks correct Account sub-item as active", async () => {
-      mockRoute.path = "/account/security";
+    it("marks Account item as active when on account page", async () => {
+      mockRoute.path = "/account";
       await wrapper.vm.$forceUpdate();
 
-      const securityItem = wrapper.find('[data-testid="account-security"]');
-      expect(securityItem.classes()).toContain("active");
+      const accountItem = wrapper.find('[data-testid="account-profile"]');
+      expect(accountItem.classes()).toContain("active");
     });
   });
 

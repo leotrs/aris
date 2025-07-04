@@ -100,9 +100,7 @@
       </template>
 
       <!-- Account Section -->
-      <ContextMenuItem icon="User" caption="Profile" @click="navigateTo('/account/profile')" />
-      <ContextMenuItem icon="Shield" caption="Security" @click="navigateTo('/account/security')" />
-      <ContextMenuItem icon="Lock" caption="Privacy" @click="navigateTo('/account/privacy')" />
+      <ContextMenuItem icon="User" caption="Account" @click="navigateTo('/account')" />
       <Separator />
 
       <!-- Actions Section -->
@@ -134,30 +132,12 @@
             <div class="section-title">Account</div>
             <div
               class="user-item"
-              :class="{ active: route.path === '/account/profile' }"
+              :class="{ active: route.path === '/account' }"
               data-testid="account-profile"
-              @click="navigateTo('/account/profile')"
+              @click="navigateTo('/account')"
             >
               <Icon name="User" />
-              <span>Profile</span>
-            </div>
-            <div
-              class="user-item"
-              :class="{ active: route.path === '/account/security' }"
-              data-testid="account-security"
-              @click="navigateTo('/account/security')"
-            >
-              <Icon name="Shield" />
-              <span>Security</span>
-            </div>
-            <div
-              class="user-item"
-              :class="{ active: route.path === '/account/privacy' }"
-              data-testid="account-privacy"
-              @click="navigateTo('/account/privacy')"
-            >
-              <Icon name="Lock" />
-              <span>Privacy</span>
+              <span>Account</span>
             </div>
           </div>
 
