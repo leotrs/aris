@@ -84,14 +84,7 @@ jobs:
       env:
         TEST_USER_EMAIL: testuser@aris.pub
         TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-      run: uv run pytest -n4 --cov=aris --cov-report=xml --tb=short
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        files: ./backend/coverage.xml
-        flags: backend
-        token: ${{ secrets.CODECOV_TOKEN }}
+      run: uv run pytest -n4 --tb=short
 
   unit-frontend:
     runs-on: ubuntu-latest
@@ -113,6 +106,12 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Cache vitest
+      uses: actions/cache@v4
+      with:
+        path: frontend/node_modules/.vitest
+        key: vitest-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
     - name: Check for missing packages
       run: npm ls --depth=0
 
@@ -120,14 +119,7 @@ jobs:
       run: npm run lint
 
     - name: Run tests
-      run: npm run test:coverage
-
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        files: ./frontend/coverage/lcov.info
-        flags: frontend
-        token: ${{ secrets.CODECOV_TOKEN }}
+      run: npm run test:run
 
   unit-site:
     runs-on: ubuntu-latest
@@ -148,6 +140,12 @@ jobs:
 
     - name: Install dependencies
       run: npm ci
+
+    - name: Cache vitest
+      uses: actions/cache@v4
+      with:
+        path: site/node_modules/.vitest
+        key: vitest-site-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}
 
     - name: Check for missing packages
       run: npm ls --depth=0
