@@ -284,8 +284,8 @@ jobs:
         
         # Run tests based on auth mode (desktop browsers only)
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)" --project=chromium --project=firefox --reporter=github
+          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui|@desktop-only (excluding @mobile-only)"
+          npx playwright test --grep "(@core|@demo-content|@demo-ui|@desktop-only)(?!.*@mobile-only)" --project=chromium --project=firefox --reporter=github
         else
           echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only)"
           npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=chromium --project=firefox --reporter=github
@@ -421,8 +421,8 @@ jobs:
         
         # Run tests based on auth mode (desktop webkit only)
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)" --project=webkit --reporter=github
+          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui|@desktop-only (excluding @mobile-only)"
+          npx playwright test --grep "(@core|@demo-content|@demo-ui|@desktop-only)(?!.*@mobile-only)" --project=webkit --reporter=github
         else
           echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only)"
           npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=webkit --reporter=github
