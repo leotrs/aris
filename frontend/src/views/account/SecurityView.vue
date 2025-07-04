@@ -126,9 +126,9 @@
     }
 
     // In test environments, skip confirmation for better test reliability
-    const isTestEnvironment = import.meta.env.MODE === 'test' || import.meta.env.VITEST;
+    const isTestEnvironment = import.meta.env.MODE === "test" || import.meta.env.VITEST;
     let shouldDiscard = true;
-    
+
     if (!isTestEnvironment) {
       console.log("[SecurityView] Showing confirmation dialog");
       shouldDiscard = confirm("Are you sure you want to discard your password changes?");
