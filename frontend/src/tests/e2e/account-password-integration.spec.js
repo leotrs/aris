@@ -18,17 +18,17 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
 
     // Fill in password change form
     const currentPasswordInput = page
-      .locator('input[type="password"]')
-      .filter({ hasText: "Current Password" })
-      .or(page.locator(".input-text").filter({ hasText: "Current Password" }).locator("input"));
+      .locator(".input-text")
+      .filter({ hasText: /^Current Password$/ })
+      .locator("input");
     const newPasswordInput = page
-      .locator('input[type="password"]')
-      .filter({ hasText: "New Password" })
-      .or(page.locator(".input-text").filter({ hasText: "New Password" }).locator("input"));
+      .locator(".input-text")
+      .filter({ hasText: /^New Password$/ })
+      .locator("input");
     const confirmPasswordInput = page
-      .locator('input[type="password"]')
-      .filter({ hasText: "Confirm" })
-      .or(page.locator(".input-text").filter({ hasText: "Confirm" }).locator("input"));
+      .locator(".input-text")
+      .filter({ hasText: /^Confirm New Password$/ })
+      .locator("input");
 
     await expect(currentPasswordInput).toBeVisible();
     await expect(newPasswordInput).toBeVisible();
@@ -72,15 +72,15 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     // Fill in password change form with wrong current password
     const currentPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "Current Password" })
+      .filter({ hasText: /^Current Password$/ })
       .locator("input");
     const newPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "New Password" })
+      .filter({ hasText: /^New Password$/ })
       .locator("input");
     const confirmPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "Confirm" })
+      .filter({ hasText: /^Confirm New Password$/ })
       .locator("input");
 
     await currentPasswordInput.fill("wrongpassword");
@@ -107,15 +107,15 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     // Fill in password change form with weak password
     const currentPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "Current Password" })
+      .filter({ hasText: /^Current Password$/ })
       .locator("input");
     const newPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "New Password" })
+      .filter({ hasText: /^New Password$/ })
       .locator("input");
     const confirmPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "Confirm" })
+      .filter({ hasText: /^Confirm New Password$/ })
       .locator("input");
 
     await currentPasswordInput.fill("testpass123");
@@ -137,15 +137,15 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     // Fill in password change form with mismatched passwords
     const currentPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "Current Password" })
+      .filter({ hasText: /^Current Password$/ })
       .locator("input");
     const newPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "New Password" })
+      .filter({ hasText: /^New Password$/ })
       .locator("input");
     const confirmPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "Confirm" })
+      .filter({ hasText: /^Confirm New Password$/ })
       .locator("input");
 
     await currentPasswordInput.fill("testpass123");
@@ -166,15 +166,15 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
 
     const currentPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "Current Password" })
+      .filter({ hasText: /^Current Password$/ })
       .locator("input");
     const newPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "New Password" })
+      .filter({ hasText: /^New Password$/ })
       .locator("input");
     const confirmPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "Confirm" })
+      .filter({ hasText: /^Confirm New Password$/ })
       .locator("input");
     const updateButton = page.locator('button:has-text("Update Password")');
     const cancelButton = page.locator('button:has-text("Cancel")');
@@ -217,15 +217,15 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
 
     const currentPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "Current Password" })
+      .filter({ hasText: /^Current Password$/ })
       .locator("input");
     const newPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "New Password" })
+      .filter({ hasText: /^New Password$/ })
       .locator("input");
     const confirmPasswordInput = page
       .locator(".input-text")
-      .filter({ hasText: "Confirm" })
+      .filter({ hasText: /^Confirm New Password$/ })
       .locator("input");
 
     await currentPasswordInput.fill("testpass123");
