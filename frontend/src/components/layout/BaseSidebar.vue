@@ -149,7 +149,11 @@
     }"
   >
     <!-- Mobile backdrop -->
-    <div v-if="mobileMode && mobileDrawerOpen" class="mobile-backdrop"></div>
+    <div 
+      v-if="mobileMode && mobileDrawerOpen" 
+      class="mobile-backdrop"
+      @click="emit('closeMobileDrawer')"
+    ></div>
 
     <!-- Desktop mode: direct children for CSS compatibility -->
     <template v-if="!mobileMode">
