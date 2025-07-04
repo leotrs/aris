@@ -63,6 +63,18 @@ jobs:
     - name: Set up Python
       run: uv python install 3.13
 
+    - name: Cache uv
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/uv
+        key: uv-${{ runner.os }}-${{ hashFiles('backend/pyproject.toml') }}
+
+    - name: Cache pytest
+      uses: actions/cache@v4
+      with:
+        path: backend/.pytest_cache
+        key: pytest-${{ runner.os }}-${{ hashFiles('backend/pyproject.toml') }}
+
     - name: Create virtual environment and sync dependencies
       run: |
         uv venv
