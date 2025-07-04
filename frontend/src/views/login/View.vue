@@ -142,9 +142,18 @@
     flex-direction: column;
     align-items: center;
     gap: 32px;
+    padding: 16px;
 
     & > * {
       width: 100%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .right .wrapper {
+      width: 90%;
+      padding: 20px;
+      gap: 24px;
     }
   }
 
@@ -162,9 +171,29 @@
 
   .right .bottom button {
     width: 100%;
+    min-height: 44px;
 
     & :deep(.btn-text) {
       margin: 0 auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .right .bottom button {
+      min-height: 48px;
+      font-size: 16px;
+    }
+    
+    .right .bottom {
+      gap: 20px;
+    }
+    
+    /* Ensure register link is always visible */
+    .right .bottom [data-testid="register-link"] {
+      display: block !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      position: relative !important;
     }
   }
 
