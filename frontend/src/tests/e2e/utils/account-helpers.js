@@ -65,15 +65,15 @@ export class AccountHelpers {
 
     const currentPasswordInput = this.page
       .locator(".input-text")
-      .filter({ hasText: "Current Password" })
+      .filter({ hasText: /^Current Password$/ })
       .locator("input");
     const newPasswordInput = this.page
       .locator(".input-text")
-      .filter({ hasText: "New Password" })
+      .filter({ hasText: /^New Password$/ })
       .locator("input");
     const confirmPasswordInput = this.page
       .locator(".input-text")
-      .filter({ hasText: "Confirm" })
+      .filter({ hasText: /^Confirm New Password$/ })
       .locator("input");
 
     await currentPasswordInput.fill(currentPassword);
