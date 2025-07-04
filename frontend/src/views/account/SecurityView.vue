@@ -23,30 +23,30 @@
   });
 
   const onChangePassword = async () => {
-    console.log('[SecurityView] onChangePassword called', {
+    console.log("[SecurityView] onChangePassword called", {
       isChangingPassword: isChangingPassword.value,
       user: user.value,
-      currentPassword: currentPassword.value ? '***' : 'empty',
-      newPassword: newPassword.value ? '***' : 'empty',
-      confirmPassword: confirmPassword.value ? '***' : 'empty'
+      currentPassword: currentPassword.value ? "***" : "empty",
+      newPassword: newPassword.value ? "***" : "empty",
+      confirmPassword: confirmPassword.value ? "***" : "empty",
     });
-    
+
     if (isChangingPassword.value) {
-      console.log('[SecurityView] Already changing password, returning');
+      console.log("[SecurityView] Already changing password, returning");
       return;
     }
 
     // Check if user exists
     if (!user.value) {
-      console.error('[SecurityView] User not found:', user.value);
+      console.error("[SecurityView] User not found:", user.value);
       toast.error("User not found");
       return;
     }
-    
-    console.log('[SecurityView] User found:', {
+
+    console.log("[SecurityView] User found:", {
       id: user.value.id,
       email: user.value.email,
-      email_verified: user.value.email_verified
+      email_verified: user.value.email_verified,
     });
 
     // Basic validation
@@ -66,17 +66,17 @@
     }
 
     isChangingPassword.value = true;
-    console.log('[SecurityView] Starting password change API call');
+    console.log("[SecurityView] Starting password change API call");
 
     try {
       const apiCall = api.post(`/users/${user.value.id}/change-password`, {
         current_password: currentPassword.value,
         new_password: newPassword.value,
       });
-      
-      console.log('[SecurityView] API call initiated for user:', user.value.id);
+
+      console.log("[SecurityView] API call initiated for user:", user.value.id);
       const response = await apiCall;
-      console.log('[SecurityView] Password change successful:', response.status);
+      console.log("[SecurityView] Password change successful:", response.status);
 
       // Clear password fields
       currentPassword.value = "";
@@ -85,7 +85,7 @@
 
       toast.success("Password changed successfully");
     } catch (error) {
-      console.error('[SecurityView] Password change failed:', {
+      console.error("[SecurityView] Password change failed:", {
         status: error.response?.status,
         statusText: error.response?.statusText,
         data: error.response?.data,
@@ -93,56 +93,56 @@
         config: {
           url: error.config?.url,
           method: error.config?.method,
-          headers: error.config?.headers
-        }
+          headers: error.config?.headers,
+        },
       });
-      
+
       if (error.response?.status === 401) {
-        console.log('[SecurityView] 401 error - incorrect password or auth failure');
+        console.log("[SecurityView] 401 error - incorrect password or auth failure");
         toast.error("Current password is incorrect");
       } else {
-        console.log('[SecurityView] Non-401 error:', error.response?.status);
+        console.log("[SecurityView] Non-401 error:", error.response?.status);
         toast.error("Failed to change password", {
           description: "Please check your connection and try again.",
         });
       }
     } finally {
-      console.log('[SecurityView] Password change completed, resetting isChangingPassword');
+      console.log("[SecurityView] Password change completed, resetting isChangingPassword");
       isChangingPassword.value = false;
     }
   };
 
   const onDiscard = () => {
-    console.log('[SecurityView] onDiscard called', {
+    console.log("[SecurityView] onDiscard called", {
       hasUnsavedPasswordChanges: hasUnsavedPasswordChanges.value,
-      currentPassword: currentPassword.value ? '***' : 'empty',
-      newPassword: newPassword.value ? '***' : 'empty',
-      confirmPassword: confirmPassword.value ? '***' : 'empty'
+      currentPassword: currentPassword.value ? "***" : "empty",
+      newPassword: newPassword.value ? "***" : "empty",
+      confirmPassword: confirmPassword.value ? "***" : "empty",
     });
-    
+
     if (!hasUnsavedPasswordChanges.value) {
-      console.log('[SecurityView] No unsaved changes, returning');
+      console.log("[SecurityView] No unsaved changes, returning");
       return;
     }
 
-    console.log('[SecurityView] Showing confirmation dialog');
+    console.log("[SecurityView] Showing confirmation dialog");
     if (confirm("Are you sure you want to discard your password changes?")) {
-      console.log('[SecurityView] User confirmed discard, resetting fields');
+      console.log("[SecurityView] User confirmed discard, resetting fields");
       // Reset password fields
       currentPassword.value = "";
       newPassword.value = "";
       confirmPassword.value = "";
-      
-      console.log('[SecurityView] Fields reset, values now:', {
+
+      console.log("[SecurityView] Fields reset, values now:", {
         currentPassword: currentPassword.value,
         newPassword: newPassword.value,
         confirmPassword: confirmPassword.value,
-        hasUnsavedPasswordChanges: hasUnsavedPasswordChanges.value
+        hasUnsavedPasswordChanges: hasUnsavedPasswordChanges.value,
       });
 
       toast.info("Changes discarded");
     } else {
-      console.log('[SecurityView] User cancelled discard');
+      console.log("[SecurityView] User cancelled discard");
     }
   };
 
@@ -165,56 +165,56 @@
   });
 
   const onSendVerificationEmail = async () => {
-    console.log('[SecurityView] onSendVerificationEmail called', {
+    console.log("[SecurityView] onSendVerificationEmail called", {
       isSendingVerification: isSendingVerification.value,
       user: user.value,
-      email_verified: user.value?.email_verified
+      email_verified: user.value?.email_verified,
     });
-    
+
     if (isSendingVerification.value) {
-      console.log('[SecurityView] Already sending verification, returning');
+      console.log("[SecurityView] Already sending verification, returning");
       return;
     }
 
     // Check if user exists
     if (!user.value) {
-      console.error('[SecurityView] User not found for email verification:', user.value);
+      console.error("[SecurityView] User not found for email verification:", user.value);
       toast.error("User not found");
       return;
     }
-    
-    console.log('[SecurityView] Sending verification email for user:', user.value.id);
+
+    console.log("[SecurityView] Sending verification email for user:", user.value.id);
 
     isSendingVerification.value = true;
     verificationSent.value = false;
 
     try {
-      console.log('[SecurityView] Calling send-verification API');
+      console.log("[SecurityView] Calling send-verification API");
       const response = await api.post(`/users/${user.value.id}/send-verification`);
-      console.log('[SecurityView] Verification email sent successfully:', response.status);
+      console.log("[SecurityView] Verification email sent successfully:", response.status);
       verificationSent.value = true;
       toast.success("Verification email sent successfully", {
         description: "Please check your email and click the verification link.",
       });
     } catch (error) {
-      console.error('[SecurityView] Failed to send verification email:', {
+      console.error("[SecurityView] Failed to send verification email:", {
         status: error.response?.status,
         statusText: error.response?.statusText,
         data: error.response?.data,
-        message: error.message
+        message: error.message,
       });
-      
+
       if (error.response?.status === 400) {
-        console.log('[SecurityView] Email already verified');
+        console.log("[SecurityView] Email already verified");
         toast.error("Email is already verified");
       } else {
-        console.log('[SecurityView] Verification email error:', error.response?.status);
+        console.log("[SecurityView] Verification email error:", error.response?.status);
         toast.error("Failed to send verification email", {
           description: "Please check your connection and try again.",
         });
       }
     } finally {
-      console.log('[SecurityView] Verification email process completed');
+      console.log("[SecurityView] Verification email process completed");
       isSendingVerification.value = false;
     }
   };
