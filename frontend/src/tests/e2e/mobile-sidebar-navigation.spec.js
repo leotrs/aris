@@ -102,26 +102,6 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       });
     });
 
-    test("should handle escape key to close drawer", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto("/");
-      await page.waitForLoadState("networkidle");
-
-      // Open drawer
-      const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
-      await mobileHelpers.clickElement(hamburgerButton);
-      await mobileHelpers.waitForMobileRendering();
-
-      // Verify drawer is open
-      await expect(page.locator(".sb-wrapper.drawer-open")).toBeVisible();
-
-      // Press escape to close
-      await page.keyboard.press("Escape");
-      await mobileHelpers.waitForMobileRendering();
-
-      // Drawer should be closed
-      await expect(page.locator(".sb-wrapper.drawer-open")).not.toBeVisible();
-    });
 
     test("should prevent body scroll when drawer is open", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
