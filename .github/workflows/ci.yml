@@ -509,7 +509,7 @@ jobs:
 
   # Mobile E2E Tests (Optional - can fail without breaking CI)
   e2e-mobile-chrome:
-    needs: [backend-test, frontend-test, site-test]
+    needs: [e2e-desktop-other]
     continue-on-error: true  # Allow this job to fail
     strategy:
       fail-fast: false
@@ -698,7 +698,7 @@ jobs:
         exit $TEST_EXIT_CODE
 
   e2e-mobile-safari:
-    needs: [backend-test, frontend-test, site-test]
+    needs: [e2e-desktop-safari]
     continue-on-error: true  # Allow this job to fail
     strategy:
       fail-fast: false
