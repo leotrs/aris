@@ -105,7 +105,8 @@ test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
     await page.waitForSelector(".chat-message", { timeout: 10000 });
 
     // Verify messages exist
-    await expect(page.locator(".chat-message")).toHaveCount.greaterThan(0);
+    const messageCount = await page.locator(".chat-message").count();
+    expect(messageCount).toBeGreaterThan(0);
 
     // Find and click clear button
     const clearButton = page.locator(".clear-chat");
