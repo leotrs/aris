@@ -158,6 +158,110 @@ jobs:
     - name: Run unit tests
       run: npm run test:run
 
+  # Site E2E Tests (All Browsers)
+  e2e-site:
+    needs: [unit-backend, unit-frontend, unit-site]
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+        device: [desktop, mobile]
+    runs-on: ${{ matrix.browser == 'webkit' && 'macos-latest' || 'ubuntu-latest' }}
+    env:
+      ENV: CI
+      BACKEND_PORT: 8000
+      FRONTEND_PORT: 5173
+      SITE_PORT: 3000
+      STORYBOOK_PORT: 6006
+      DB_PORT: 5432
+      DB_NAME: aris
+      TEST_DB_NAME: aris_test
+      VITE_API_BASE_URL: http://localhost:8000
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: site/package-lock.json
+
+    - name: Install dependencies
+      working-directory: site
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ${{ matrix.browser == 'webkit' && '~/Library/Caches/ms-playwright' || '~/.cache/ms-playwright' }}
+        key: playwright-browsers-${{ runner.os }}-site-${{ matrix.browser }}-${{ matrix.device }}
+
+    - name: Install Playwright browsers
+      working-directory: site
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: |
+        if [ "${{ matrix.browser }}" = "webkit" ]; then
+          npx playwright install webkit
+        elif [ "${{ matrix.browser }}" = "firefox" ]; then
+          npx playwright install firefox --with-deps
+        else
+          npx playwright install chromium --with-deps
+        fi
+
+    - name: Start site and run E2E tests
+      working-directory: site
+      run: |
+        # Start site in background
+        echo "Starting site for ${{ matrix.browser }} ${{ matrix.device }} E2E tests..."
+        npm run dev &
+        SITE_PID=$!
+        echo "Site started with PID: $SITE_PID"
+        
+        # Wait for site to be ready
+        sleep 10
+        for i in {1..5}; do
+          if curl -f http://localhost:3000; then
+            echo "Site ready for E2E tests"
+            break
+          else
+            echo "Waiting for site... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Site failed to start"
+              kill $SITE_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 3
+          fi
+        done
+        
+        # Run E2E tests for specific browser and device
+        if [ "${{ matrix.device }}" = "mobile" ]; then
+          if [ "${{ matrix.browser }}" = "webkit" ]; then
+            npx playwright test --project="Mobile Safari" --reporter=github
+          elif [ "${{ matrix.browser }}" = "firefox" ]; then
+            npx playwright test --project="Mobile Firefox" --reporter=github
+          else
+            npx playwright test --project="Mobile Chrome" --reporter=github
+          fi
+        else
+          if [ "${{ matrix.browser }}" = "webkit" ]; then
+            npx playwright test --project="webkit" --reporter=github
+          elif [ "${{ matrix.browser }}" = "firefox" ]; then
+            npx playwright test --project="firefox" --reporter=github
+          else
+            npx playwright test --project="chromium" --reporter=github
+          fi
+        fi
+        TEST_EXIT_CODE=$?
+        
+        # Cleanup
+        echo "Cleaning up processes..."
+        kill $SITE_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
+
   # Desktop E2E Tests (Chrome)
   e2e-desktop-chrome:
     needs: [unit-backend, unit-frontend, unit-site]
