@@ -64,8 +64,8 @@ export class AuthHelpers {
   }
 
   async logout() {
-    await this.page.click('[data-testid="user-menu"]');
-    await this.page.click("text=Logout");
+    await this.page.click('[data-testid="user-avatar"]');
+    await this.page.click('[data-testid="user-logout"]');
   }
 
   async clearAuthState() {

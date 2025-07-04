@@ -183,11 +183,11 @@
       min-height: 48px;
       font-size: 16px;
     }
-    
+
     .right .bottom {
       gap: 20px;
     }
-    
+
     /* Ensure register link is always visible on mobile */
     .right .bottom [data-testid="register-link"] {
       display: flex !important;

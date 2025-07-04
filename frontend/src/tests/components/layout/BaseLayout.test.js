@@ -87,9 +87,9 @@ describe("BaseLayout", () => {
             name: "Button",
             template: '<button data-testid="button" />',
           },
-          UserMenuDrawer: {
-            name: "UserMenuDrawer",
-            template: '<div data-testid="user-menu-drawer" />',
+          UserMenu: {
+            name: "UserMenu",
+            template: '<div data-testid="user-menu" />',
           },
           ModalUploadFile: {
             name: "ModalUploadFile",
@@ -115,7 +115,7 @@ describe("BaseLayout", () => {
 
     it("renders top menus", () => {
       expect(wrapper.find(".menus").exists()).toBe(true);
-      expect(wrapper.findComponent({ name: "UserMenuDrawer" }).exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "UserMenu" }).exists()).toBe(true);
     });
 
     it("renders slot content", () => {

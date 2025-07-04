@@ -153,11 +153,12 @@
         </template>
       </Section>
       <div class="buttons">
-        <Button kind="tertiary" text="Reset" @click="onReset" />
+        <Button kind="tertiary" text="Reset" data-testid="reset-button" @click="onReset" />
         <Button
           class="cta"
           kind="primary"
           text="Save Settings"
+          data-testid="save-button"
           @click="emit('save', settingsObj)"
         />
       </div>

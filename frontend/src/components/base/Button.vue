@@ -117,6 +117,7 @@
       shadow ? 'with-shadow' : '',
       disabled ? 'disabled' : '',
     ]"
+    v-bind="$attrs"
   >
     <template v-if="icon">
       <Icon :name="icon" class="btn-icon" />
