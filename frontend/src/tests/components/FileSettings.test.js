@@ -140,7 +140,7 @@ describe("FileSettings.vue", () => {
     wrapper.vm.startReceivingUserInput();
     // mutate settings
     settings.fontSize = "18px";
-    await wrapper.findAllComponents({ name: "Button" })[0].trigger("click");
+    await wrapper.find('[data-testid="reset-button"]').trigger("click");
     expect(settings).toEqual(initial);
   });
 
@@ -154,9 +154,7 @@ describe("FileSettings.vue", () => {
     };
     const wrapper = mountFileSettings(settings);
     wrapper.vm.startReceivingUserInput();
-    const saveBtn = wrapper
-      .findAllComponents({ name: "Button" })
-      .find((btn) => btn.props("kind") === "primary");
+    const saveBtn = wrapper.find('[data-testid="save-button"]');
     await saveBtn.trigger("click");
     expect(wrapper.emitted("save")).toBeTruthy();
     expect(wrapper.emitted("save")[0][0]).toEqual(settings);

@@ -25,6 +25,7 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import UploadFile from "@/views/home/ModalUploadFile.vue";
   import HamburgerMenu from "@/components/HamburgerMenu.vue";
+  import UserMenu from "@/components/navigation/UserMenu.vue";
 
   const props = defineProps({
     fab: { type: Boolean, default: true },
@@ -154,7 +155,7 @@
 
     <div class="menus" :class="{ mobile: mobileMode }">
       <HamburgerMenu v-if="mobileMode" />
-      <UserMenuDrawer />
+      <UserMenu />
     </div>
 
     <slot />

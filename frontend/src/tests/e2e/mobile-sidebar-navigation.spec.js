@@ -102,7 +102,6 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       });
     });
 
-
     test("should prevent body scroll when drawer is open", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto("/");
@@ -142,7 +141,7 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       await mobileHelpers.clickElement(hamburgerButton);
       await mobileHelpers.waitForMobileRendering();
 
-      // Should show main navigation items (Account moved to UserMenuDrawer)
+      // Should show main navigation items (Account moved to UserMenu)
       await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-item="Home"]'));
       await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-item="Settings"]'));
 
@@ -200,7 +199,7 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       await mobileHelpers.clickElement(hamburgerButton);
       await mobileHelpers.waitForMobileRendering();
 
-      // Should show main navigation items (Account moved to UserMenuDrawer)
+      // Should show main navigation items (Account moved to UserMenu)
       const homeItem = page.locator('[data-sidebar-item="Home"]');
       const settingsItem = page.locator('[data-sidebar-item="Settings"]');
 

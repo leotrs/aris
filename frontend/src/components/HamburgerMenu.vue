@@ -33,7 +33,7 @@
       @click="toggle"
     />
   </div>
-  
+
   <!-- CSS-only fallback for when mobile detection fails -->
   <div v-if="!isMobile" class="mobile-nav-fallback">
     <Button

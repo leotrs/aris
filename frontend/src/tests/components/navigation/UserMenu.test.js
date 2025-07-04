@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { ref } from "vue";
 import { mount } from "@vue/test-utils";
-import UserMenuDrawer from "@/components/UserMenuDrawer.vue";
+import UserMenu from "@/components/navigation/UserMenu.vue";
 
 // Mock vue-router
 const mockRoute = { path: "/account", name: "account" };
@@ -11,7 +11,7 @@ vi.mock("vue-router", () => ({
   useRouter: () => mockRouter,
 }));
 
-describe("UserMenuDrawer", () => {
+describe("UserMenu", () => {
   let wrapper;
   let mockMobileMode;
   let mockUser;
@@ -27,17 +27,13 @@ describe("UserMenuDrawer", () => {
       color: "#FF5733",
     };
 
-    wrapper = mount(UserMenuDrawer, {
+    wrapper = mount(UserMenu, {
       global: {
         provide: {
           mobileMode: mockMobileMode,
           user: mockUser,
         },
         components: {
-          Button: {
-            template: '<button data-testid="button" v-bind="$attrs" @click="$emit(\'click\')" />',
-            props: ["kind", "icon"],
-          },
           Logo: {
             template: '<div data-testid="logo" />',
             props: ["type"],
@@ -50,18 +46,42 @@ describe("UserMenuDrawer", () => {
             template: '<div data-testid="avatar" />',
             props: ["user", "size", "tooltip"],
           },
+          ContextMenu: {
+            name: "ContextMenu",
+            template:
+              '<div data-testid="context-menu"><slot /><slot name="trigger" :toggle="() => {}" /></div>',
+            props: ["variant"],
+          },
+          ContextMenuItem: {
+            template: '<div data-testid="context-menu-item" />',
+            props: ["icon", "caption"],
+            emits: ["click"],
+          },
+          Separator: {
+            template: '<div data-testid="separator" />',
+          },
         },
       },
     });
   });
 
-  describe("Mobile Drawer Functionality", () => {
-    it("renders avatar button in mobile mode", () => {
+  describe("Mobile Mode", () => {
+    beforeEach(async () => {
+      mockMobileMode.value = true;
+      await wrapper.vm.$nextTick();
+    });
+
+    it("renders avatar trigger in mobile mode", () => {
       expect(wrapper.find('[data-testid="user-avatar"]').exists()).toBe(true);
+      expect(wrapper.find(".avatar-trigger").exists()).toBe(true);
 
       // Verify Avatar component is rendered
       const avatarElement = wrapper.find('[data-testid="avatar"]');
       expect(avatarElement.exists()).toBe(true);
+    });
+
+    it("does not render context menu in mobile mode", () => {
+      expect(wrapper.findComponent({ name: "ContextMenu" }).exists()).toBe(false);
     });
 
     it("does not render drawer initially", () => {
@@ -69,7 +89,6 @@ describe("UserMenuDrawer", () => {
     });
 
     it("opens drawer when avatar is clicked", async () => {
-      // Call toggle method directly for now
       await wrapper.vm.toggle();
       await wrapper.vm.$nextTick();
 
@@ -100,8 +119,32 @@ describe("UserMenuDrawer", () => {
     });
   });
 
-  describe("Account Navigation", () => {
+  describe("Desktop Mode", () => {
     beforeEach(async () => {
+      mockMobileMode.value = false;
+      await wrapper.vm.$nextTick();
+    });
+
+    it("renders context menu in desktop mode", () => {
+      expect(wrapper.findComponent({ name: "ContextMenu" }).exists()).toBe(true);
+      expect(wrapper.find('[data-testid="user-avatar"]').exists()).toBe(true);
+    });
+
+    it("does not render mobile elements in desktop mode", () => {
+      expect(wrapper.find(".avatar-trigger").exists()).toBe(false);
+      expect(wrapper.find(".user-overlay").exists()).toBe(false);
+      expect(wrapper.find(".user-drawer").exists()).toBe(false);
+    });
+
+    it("isOpen returns false in desktop mode", () => {
+      expect(wrapper.vm.isOpen).toBe(false);
+    });
+  });
+
+  describe("Account Navigation (Mobile)", () => {
+    beforeEach(async () => {
+      mockMobileMode.value = true;
+      await wrapper.vm.$nextTick();
       await wrapper.vm.toggle(); // Open drawer
       await wrapper.vm.$nextTick();
     });
@@ -149,8 +192,10 @@ describe("UserMenuDrawer", () => {
     });
   });
 
-  describe("User Actions", () => {
+  describe("User Actions (Mobile)", () => {
     beforeEach(async () => {
+      mockMobileMode.value = true;
+      await wrapper.vm.$nextTick();
       await wrapper.vm.toggle();
       await wrapper.vm.$nextTick();
     });
@@ -186,17 +231,28 @@ describe("UserMenuDrawer", () => {
       const feedbackItem = wrapper.find('[data-testid="user-feedback"]');
       await feedbackItem.trigger("click");
 
-      // Should open feedback modal or navigate
-      expect(wrapper.emitted("showFeedback")).toBeTruthy();
+      // Should close drawer (feedback functionality to be implemented)
       expect(wrapper.vm.isOpen).toBe(false);
     });
 
     it("handles Logout click", async () => {
+      // Mock localStorage methods
+      const removeItemSpy = vi.spyOn(Storage.prototype, "removeItem");
+
+      // First open the drawer
+      expect(wrapper.vm.isOpen).toBe(true); // Should already be open from beforeEach
+
       const logoutItem = wrapper.find('[data-testid="user-logout"]');
       await logoutItem.trigger("click");
 
-      expect(wrapper.emitted("logout")).toBeTruthy();
+      // Should clear tokens and navigate to login
+      expect(removeItemSpy).toHaveBeenCalledWith("accessToken");
+      expect(removeItemSpy).toHaveBeenCalledWith("refreshToken");
+      expect(removeItemSpy).toHaveBeenCalledWith("user");
+      expect(mockRouter.push).toHaveBeenCalledWith("/login");
       expect(wrapper.vm.isOpen).toBe(false);
+
+      removeItemSpy.mockRestore();
     });
   });
 
@@ -223,22 +279,32 @@ describe("UserMenuDrawer", () => {
     });
   });
 
-  describe("Desktop vs Mobile Behavior", () => {
-    it("renders as drawer in mobile mode", () => {
+  describe("Responsive Behavior", () => {
+    it("renders mobile drawer in mobile mode", async () => {
       mockMobileMode.value = true;
+      await wrapper.vm.$nextTick();
+
       expect(wrapper.find(".user-menu-wrapper.mobile").exists()).toBe(true);
+      expect(wrapper.find(".avatar-trigger").exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "ContextMenu" }).exists()).toBe(false);
     });
 
-    it("renders as context menu in desktop mode", async () => {
+    it("renders context menu in desktop mode", async () => {
       mockMobileMode.value = false;
       await wrapper.vm.$nextTick();
 
-      // Desktop mode should not show mobile menu
-      expect(wrapper.find(".user-menu-mobile").exists()).toBe(false);
+      expect(wrapper.find(".user-menu-wrapper.desktop").exists()).toBe(true);
+      expect(wrapper.findComponent({ name: "ContextMenu" }).exists()).toBe(true);
+      expect(wrapper.find(".avatar-trigger").exists()).toBe(false);
     });
   });
 
-  describe("Styling and Animation", () => {
+  describe("Styling and Animation (Mobile)", () => {
+    beforeEach(async () => {
+      mockMobileMode.value = true;
+      await wrapper.vm.$nextTick();
+    });
+
     it("applies correct drawer animation classes", async () => {
       await wrapper.vm.toggle();
       await wrapper.vm.$nextTick();

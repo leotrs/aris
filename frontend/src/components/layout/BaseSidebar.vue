@@ -148,8 +148,8 @@
     }"
   >
     <!-- Mobile backdrop -->
-    <div 
-      v-if="mobileMode && mobileDrawerOpen" 
+    <div
+      v-if="mobileMode && mobileDrawerOpen"
       class="mobile-backdrop"
       @click="emit('closeMobileDrawer')"
     ></div>
