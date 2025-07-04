@@ -603,22 +603,42 @@ async def delete_profile_picture(
         raise HTTPException(status_code=500, detail="Failed to delete profile picture")
 
 
-@router.get("/export-data")
+@router.get("/{user_id}/export")
 async def export_user_data(
-    db: AsyncSession = Depends(get_db), current_user: User = Depends(current_user)
+    user_id: int, db: AsyncSession = Depends(get_db), current_user: User = Depends(current_user)
 ):
     """Export all user data in JSON format.
+    
+    Parameters
+    ----------
+    user_id : int
+        The unique identifier of the user whose data to export.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+    current_user : User
+        Current authenticated user dependency.
 
     Returns
     -------
     Response
         JSON file download containing all user data including files, settings, tags, etc.
+        
+    Raises
+    ------
+    HTTPException
+        403 error if user is not authorized to export this data.
+        404 error if user is not found.
 
     Notes
     -----
     Exports complete user data for backup or migration purposes.
     Includes manuscripts, settings, tags, file assets, and account information.
+    Only allows users to export their own data.
     """
+    # Ensure user can only export their own data
+    if current_user.id != user_id:
+        raise HTTPException(status_code=403, detail="Not authorized to export this user's data")
+    
     try:
         # Get user with all related data
         query = (
@@ -631,7 +651,7 @@ async def export_user_data(
                 selectinload(User.file_assets),
                 selectinload(User.profile_picture),
             )
-            .where(User.id == current_user.id, User.deleted_at.is_(None))
+            .where(User.id == user_id, User.deleted_at.is_(None))
         )
         result = await db.execute(query)
         user = result.scalar_one_or_none()
@@ -758,8 +778,9 @@ async def export_user_data(
         # Create JSON response
         json_data = json.dumps(export_data, indent=2, ensure_ascii=False)
 
-        timestamp = datetime.now(UTC).strftime("%Y-%m-%d")
-        filename = f"aris-data-export-{timestamp}.json"
+        # Use user name for filename to match Account view expectations
+        safe_name = user.name.replace(" ", "-").replace("/", "-")
+        filename = f"{safe_name}-data-export.json"
 
         return Response(
             content=json_data,
