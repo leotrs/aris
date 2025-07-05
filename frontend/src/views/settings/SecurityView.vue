@@ -32,13 +32,10 @@
               Go to Account Privacy
             </router-link>
           </div>
-          <<<<<<< HEAD
-
           <Button :disabled="exportLoading" kind="secondary" @click="exportData">
             <IconDownload v-if="!exportLoading" />
             {{ exportLoading ? "Preparing download..." : "Download All My Data" }}
           </Button>
-          ======= >>>>>>> 051d170 (Consolidate security functionality to Account views only)
         </div>
       </template>
     </Section>
