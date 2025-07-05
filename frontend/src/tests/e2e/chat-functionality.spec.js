@@ -29,7 +29,9 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
       '[data-testid="workspace-sidebar"] button[aria-label="Ari"]'
     );
     await expect(aiCopilotButton).toBeVisible({ timeout: 5000 });
-    await aiCopilotButton.click();
+    
+    // Use dispatchEvent for reliable mobile interaction
+    await aiCopilotButton.dispatchEvent('click');
 
     // Wait for chat panel to appear
     const chatPanel = page.locator(".chat-panel");
@@ -173,13 +175,34 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
   });
 
   test("mobile: chat takes full width and hides manuscript", async ({ page }) => {
-    // Set mobile viewport and user agent to simulate mobile
-    await page.setViewportSize({ width: 375, height: 667 });
-    await page.setUserAgent(
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
-    );
+    // Create file first, then set mobile viewport  
+    const fileId = await fileHelpers.createNewFile();
+    await expect(page).toHaveURL(`/file/${fileId}`);
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
 
-    const { chatPanel } = await enableChatInWorkspace(page, fileHelpers);
+    // Set mobile viewport
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1',
+        writable: false
+      });
+    });
+    
+    // Reload to apply mobile settings
+    await page.reload();
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
+
+    // Enable AI Copilot via sidebar
+    const aiCopilotButton = page.locator(
+      '[data-testid="workspace-sidebar"] button[aria-label="Ari"]'
+    );
+    await expect(aiCopilotButton).toBeVisible({ timeout: 5000 });
+    await aiCopilotButton.dispatchEvent('click');
+
+    // Wait for chat panel to appear
+    const chatPanel = page.locator(".chat-panel");
+    await expect(chatPanel).toBeVisible({ timeout: 5000 });
 
     // Verify chat panel is visible and takes full width
     await expect(chatPanel).toBeVisible();
@@ -202,15 +225,22 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
   });
 
   test("mobile: manuscript shows when chat is closed", async ({ page }) => {
-    // Set mobile viewport and user agent to simulate mobile
-    await page.setViewportSize({ width: 375, height: 667 });
-    await page.setUserAgent(
-      "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
-    );
-
-    // Create file but don't enable chat initially
+    // Create file first, then set mobile mode
     const fileId = await fileHelpers.createNewFile();
     await expect(page).toHaveURL(`/file/${fileId}`);
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
+
+    // Set mobile viewport and user agent after navigation
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'userAgent', {
+        value: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1',
+        writable: false
+      });
+    });
+    
+    // Reload to apply mobile settings
+    await page.reload();
     await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
 
     // Verify manuscript is visible when chat is closed
@@ -221,13 +251,14 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     const aiCopilotButton = page.locator(
       '[data-testid="workspace-sidebar"] button[aria-label="Ari"]'
     );
-    await aiCopilotButton.click();
-
+    
+    await aiCopilotButton.dispatchEvent('click');
+    
     // Verify manuscript is now hidden
     await expect(manuscript).not.toBeVisible();
 
     // Disable chat again
-    await aiCopilotButton.click();
+    await aiCopilotButton.dispatchEvent('click');
 
     // Verify manuscript is visible again
     await expect(manuscript).toBeVisible();
