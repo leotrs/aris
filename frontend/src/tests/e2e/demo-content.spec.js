@@ -154,7 +154,6 @@ test.describe("Demo Content Rendering @demo-content", () => {
       expect(menuCount).toBeGreaterThan(0);
     });
 
-
     test("content loads within reasonable time", async ({ page }) => {
       const startTime = Date.now();
 

@@ -179,6 +179,4 @@ test.describe("Settings Error Handling @auth @desktop-only", () => {
     // Adjust expectation based on app's error handling strategy
     await expect(page).toHaveURL(/\/settings|\/404/);
   });
-
-
 });
