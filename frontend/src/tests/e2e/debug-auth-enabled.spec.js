@@ -317,9 +317,9 @@ test.describe("Debug Auth-Enabled Desktop Failures @auth", () => {
     console.log(`✅ Backend accessible: ${healthResponse.ok()}`);
     console.log(`✅ Login successful: ${authState.accessToken && authState.user}`);
     console.log(`✅ Vue app mounted: ${vueState.hasApp}`);
-    console.log(`❌ FileStore initialized: ${vueState.hasFileStore}`);
+    console.log(`✅ FileStore initialized: ${vueState.hasFileStore}`);
     console.log(
-      `❌ UI elements present: ${uiElements.userAvatar > 0 && uiElements.filesContainer > 0}`
+      `✅ UI elements present: ${uiElements.userAvatar > 0 && uiElements.filesContainer > 0}`
     );
     console.log(`Console errors: ${jsErrors.length}`);
     console.log(
