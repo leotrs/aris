@@ -36,10 +36,10 @@ export class MobileHelpers {
   getTimeouts() {
     const isMobile = this.isMobileViewport();
     return {
-      short: isMobile ? 3000 : 2000,
-      medium: isMobile ? 8000 : 5000,
-      long: isMobile ? 15000 : 10000,
-      navigation: isMobile ? 15000 : 10000,
+      short: isMobile ? 2000 : 1500,
+      medium: isMobile ? 3000 : 2500,
+      long: isMobile ? 5000 : 4000,
+      navigation: isMobile ? 5000 : 4000,
     };
   }
 
@@ -72,6 +72,8 @@ export class MobileHelpers {
     const timeouts = this.getTimeouts();
     const timeout = customTimeout || timeouts.medium;
 
+    console.log(`[Element Visibility] Waiting for element to be visible (timeout: ${timeout}ms)`);
+
     // Scroll element into view for all browsers if needed
     try {
       await locator.scrollIntoViewIfNeeded({ timeout: 2000 });
@@ -79,13 +81,72 @@ export class MobileHelpers {
       // Continue if scroll fails
     }
 
-    await expect(locator).toBeVisible({ timeout });
+    try {
+      await expect(locator).toBeVisible({ timeout });
+      console.log(`[Element Visibility] Element is now visible`);
+    } catch (error) {
+      console.error(`[Element Visibility] Element not visible after ${timeout}ms`);
+
+      // Debug element state
+      const elementInfo = await this.debugElementState(locator);
+      console.error(`[Element Visibility] Element debug info:`, elementInfo);
+
+      // Take screenshot for debugging
+      try {
+        await this.page.screenshot({ path: `debug-element-visibility-${Date.now()}.png` });
+      } catch (screenshotError) {
+        console.error(`[Element Visibility] Failed to take screenshot: ${screenshotError.message}`);
+      }
+
+      throw error;
+    }
+  }
+
+  /**
+   * Debug element state for troubleshooting
+   */
+  async debugElementState(locator) {
+    try {
+      const count = await locator.count();
+      if (count === 0) {
+        return { exists: false, count: 0 };
+      }
+
+      const element = locator.first();
+      const boundingBox = await element.boundingBox();
+      const isVisible = await element.isVisible();
+      const isEnabled = await element.isEnabled();
+
+      const styles = await element.evaluate((el) => {
+        const computed = getComputedStyle(el);
+        return {
+          display: computed.display,
+          visibility: computed.visibility,
+          opacity: computed.opacity,
+          zIndex: computed.zIndex,
+          position: computed.position,
+        };
+      });
+
+      return {
+        exists: true,
+        count,
+        boundingBox,
+        isVisible,
+        isEnabled,
+        styles,
+      };
+    } catch (error) {
+      return { error: error.message };
+    }
   }
 
   /**
    * Enhanced element click for mobile browsers
    */
   async clickElement(locator) {
+    console.log(`[Mobile Click] Attempting to click element: ${locator}`);
+
     if (this.isMobileViewport()) {
       await locator.scrollIntoViewIfNeeded();
       await this.page.waitForTimeout(100);
@@ -93,9 +154,12 @@ export class MobileHelpers {
 
     try {
       await locator.click();
+      console.log(`[Mobile Click] Successfully clicked element`);
     } catch (error) {
+      console.error(`[Mobile Click] Click failed: ${error.message}`);
       // If click is intercepted, try force click
       if (error.message.includes("intercepts pointer events")) {
+        console.log(`[Mobile Click] Retrying with force click`);
         await locator.click({ force: true });
       } else {
         throw error;
@@ -115,12 +179,31 @@ export class MobileHelpers {
   }
 
   /**
-   * Wait for navigation with mobile-optimized timeout
+   * Wait for navigation with mobile-optimized timeout and debugging
    */
   async waitForURLPattern(pattern, customTimeout = null) {
     const timeouts = this.getTimeouts();
     const timeout = customTimeout || timeouts.navigation;
-    await this.page.waitForURL(pattern, { timeout });
+
+    console.log(`[Mobile Navigation] Waiting for URL pattern: ${pattern} (timeout: ${timeout}ms)`);
+
+    try {
+      await this.page.waitForURL(pattern, { timeout });
+      console.log(`[Mobile Navigation] Successfully navigated to: ${this.page.url()}`);
+    } catch (error) {
+      console.error(`[Mobile Navigation] Failed to navigate to pattern: ${pattern}`);
+      console.error(`[Mobile Navigation] Current URL: ${this.page.url()}`);
+      console.error(`[Mobile Navigation] Error: ${error.message}`);
+
+      // Take screenshot for debugging
+      try {
+        await this.page.screenshot({ path: `debug-navigation-timeout-${Date.now()}.png` });
+      } catch (screenshotError) {
+        console.error(`[Mobile Navigation] Failed to take screenshot: ${screenshotError.message}`);
+      }
+
+      throw error;
+    }
   }
 
   /**
@@ -167,7 +250,10 @@ export class MobileHelpers {
   async waitForContentLoaded(selector) {
     const timeouts = this.getTimeouts();
 
-    await this.page.waitForLoadState("networkidle");
+    console.log(`[Content Loading] Waiting for content to load: ${selector}`);
+
+    // Wait for network to settle but avoid networkidle as it's discouraged
+    await this.page.waitForLoadState("load");
     await this.waitForMobileRendering();
 
     // Wait for element to be visible
@@ -186,5 +272,70 @@ export class MobileHelpers {
         { timeout: timeouts.medium }
       );
     }
+
+    console.log(`[Content Loading] Successfully loaded content: ${selector}`);
+  }
+
+  /**
+   * Debug load state and log intermediate checkpoints
+   */
+  async debugLoadState() {
+    const url = this.page.url();
+    console.log(`[Load Debug] Current URL: ${url}`);
+
+    // Check document ready state
+    const readyState = await this.page.evaluate(() => document.readyState);
+    console.log(`[Load Debug] Document ready state: ${readyState}`);
+
+    // Check for pending requests
+    const pendingRequests = await this.page.evaluate(() => {
+      // Check for common loading indicators
+      const loadingElements = document.querySelectorAll("[data-loading], .loading, .spinner");
+      const vueLoadingComponents = document.querySelectorAll("[data-v-loading]");
+
+      return {
+        loadingElements: loadingElements.length,
+        vueComponents: vueLoadingComponents.length,
+        documentReadyState: document.readyState,
+        visibilityState: document.visibilityState,
+      };
+    });
+
+    console.log(`[Load Debug] Page state:`, pendingRequests);
+
+    // Check for Vue.js app mount state
+    const vueAppState = await this.page.evaluate(() => {
+      const app = document.querySelector("#app");
+      return {
+        appExists: !!app,
+        hasVueInstance: !!(app && app.__vue__),
+        classList: app ? Array.from(app.classList) : [],
+        childrenCount: app ? app.children.length : 0,
+      };
+    });
+
+    console.log(`[Load Debug] Vue app state:`, vueAppState);
+  }
+
+  /**
+   * Wait for Vue.js component to be fully mounted
+   */
+  async waitForVueComponentMount() {
+    console.log(`[Vue Mount] Waiting for Vue component to mount`);
+
+    await this.page.waitForFunction(
+      () => {
+        const app = document.querySelector("#app");
+        return app && app.children.length > 0;
+      },
+      { timeout: this.getTimeouts().medium }
+    );
+
+    // Additional wait for mobile rendering
+    if (this.isMobileViewport()) {
+      await this.waitForMobileRendering();
+    }
+
+    console.log(`[Vue Mount] Vue component successfully mounted`);
   }
 }
