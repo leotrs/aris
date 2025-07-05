@@ -106,6 +106,7 @@ async def current_user(
                 self.initials = "".join(word[0].upper() for word in name.split()[:2])
                 self.created_at = datetime.now()
                 self.avatar_color = "#0E9AE9"
+                self.email_verified = False
         
         return MockUser(1, "testuser@aris.pub", "Test User")  # type: ignore
     
