@@ -15,6 +15,7 @@ export class MobileHelpers {
 
   /**
    * Check if we're running on webkit (Safari/Mobile Safari)
+   * @deprecated Use isMobileViewport() instead for consistent mobile detection
    */
   isWebkit() {
     const browserName = this.page.context().browser()?.browserType()?.name();
@@ -23,10 +24,10 @@ export class MobileHelpers {
 
   /**
    * Check if we're running on Mobile Chrome (chromium with mobile viewport)
+   * @deprecated Use isMobileViewport() instead for consistent mobile detection
    */
   isMobileChrome() {
-    const browserName = this.page.context().browser()?.browserType()?.name();
-    return browserName === "chromium" && this.isMobileViewport();
+    return this.isMobileViewport();
   }
 
   /**

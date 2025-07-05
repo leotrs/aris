@@ -1,3 +1,10 @@
+import dotenv from "dotenv";
+import path from "path";
+
+// Load environment variables from frontend .env and root .env
+dotenv.config({ path: path.resolve("../.env") });
+dotenv.config({ path: path.resolve(".env") });
+
 // Test user credentials for e2e tests
 export const TEST_USERS = {
   VALID_USER: {

@@ -86,12 +86,6 @@ export default defineConfig({
         },
       ],
 
-  /* Run your local dev server before starting the tests */
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: "npm run dev",
-        url: `http://localhost:${FRONTEND_PORT}`,
-        reuseExistingServer: !process.env.CI,
-      },
+  /* Use containerized dev server - no local webServer needed */
+  webServer: undefined,
 });

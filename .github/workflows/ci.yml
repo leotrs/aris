@@ -17,6 +17,12 @@ env:
   DB_NAME: aris
   TEST_DB_NAME: aris_test
   VITE_API_BASE_URL: http://localhost:8000
+  # Database URLs - shared by all jobs
+  DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+  DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+  ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+  ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+  JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
 
 jobs:
   # Unit Tests and Linting (Parallel)
@@ -76,11 +82,6 @@ jobs:
 
     - name: Run tests
       env:
-        DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
-        DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
-        ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
-        ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
-        JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
         TEST_USER_EMAIL: testuser@aris.pub
         TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       run: uv run pytest -n4 --cov=aris --cov-report=xml --tb=short
@@ -168,15 +169,10 @@ jobs:
     env:
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
-      DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
-      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
-      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
-      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
-      VITE_API_BASE_URL: http://localhost:8000
+      COPILOT_PROVIDER: mock
 
     services:
       postgres:
@@ -217,11 +213,51 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
+        echo "🔍 [MOBILE-CHROME-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
+        echo "🔍 [MOBILE-CHROME-DEBUG] Environment variables:"
+        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
+        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
+        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
+        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
+        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
+        echo "  - PostgreSQL connection test:"
+        
+        # Test database connectivity
+        if pg_isready -h localhost -p 5432 -U postgres; then
+          echo "✅ PostgreSQL connection successful"
+        else
+          echo "❌ PostgreSQL connection failed"
+          exit 1
+        fi
+        
+        # Run migrations
+        echo "🔄 Running database migrations..."
         uv run alembic upgrade head
-        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+        MIGRATION_EXIT_CODE=$?
+        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Setup test user for enabled auth mode
+        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
+          echo "🔑 Auth mode is ENABLED - creating test user..."
+          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
+          uv run python scripts/reset_test_user.py
+          RESET_USER_EXIT_CODE=$?
+          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
+          
+          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
+            echo "✅ Test user creation/reset completed successfully"
+          else
+            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
+            exit $RESET_USER_EXIT_CODE
+          fi
+        else
+          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+        fi
+        
+        echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -283,8 +319,8 @@ jobs:
         
         # Run tests based on auth mode (desktop browsers only)
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)" --project=chromium --project=firefox --reporter=github
+          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only and @auth)"
+          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)(?!.*@auth)" --project=chromium --project=firefox --reporter=github
         else
           echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only)"
           npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=chromium --project=firefox --reporter=github
@@ -308,15 +344,10 @@ jobs:
     env:
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      DB_URL_LOCAL: postgresql+asyncpg://localhost:5432/test_aris
-      DB_URL_PROD: postgresql+asyncpg://localhost:5432/test_aris
-      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://localhost:5432/test_aris
-      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://localhost:5432/test_aris
-      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
-      VITE_API_BASE_URL: http://localhost:8000
+      COPILOT_PROVIDER: mock
 
     steps:
     - uses: actions/checkout@v4
@@ -345,6 +376,9 @@ jobs:
           fi
           sleep 2
         done
+        # Create postgres user with password to match global DB URLs
+        createuser -s postgres
+        psql -d postgres -c "ALTER USER postgres PASSWORD 'postgres';"
         createdb test_aris
 
     - name: Create virtual environment and sync dependencies
@@ -353,11 +387,51 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
+        echo "🔍 [MOBILE-CHROME-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
+        echo "🔍 [MOBILE-CHROME-DEBUG] Environment variables:"
+        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
+        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
+        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
+        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
+        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
+        echo "  - PostgreSQL connection test:"
+        
+        # Test database connectivity
+        if pg_isready -h localhost -p 5432 -U postgres; then
+          echo "✅ PostgreSQL connection successful"
+        else
+          echo "❌ PostgreSQL connection failed"
+          exit 1
+        fi
+        
+        # Run migrations
+        echo "🔄 Running database migrations..."
         uv run alembic upgrade head
-        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+        MIGRATION_EXIT_CODE=$?
+        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Setup test user for enabled auth mode
+        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
+          echo "🔑 Auth mode is ENABLED - creating test user..."
+          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
+          uv run python scripts/reset_test_user.py
+          RESET_USER_EXIT_CODE=$?
+          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
+          
+          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
+            echo "✅ Test user creation/reset completed successfully"
+          else
+            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
+            exit $RESET_USER_EXIT_CODE
+          fi
+        else
+          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+        fi
+        
+        echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -419,8 +493,8 @@ jobs:
         
         # Run tests based on auth mode (desktop webkit only)
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)" --project=webkit --reporter=github
+          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only and @auth)"
+          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)(?!.*@auth)" --project=webkit --reporter=github
         else
           echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only)"
           npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=webkit --reporter=github
@@ -445,15 +519,10 @@ jobs:
     env:
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
-      DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
-      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
-      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
-      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
-      VITE_API_BASE_URL: http://localhost:8000
+      COPILOT_PROVIDER: mock
 
     services:
       postgres:
@@ -494,11 +563,51 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
+        echo "🔍 [MOBILE-CHROME-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
+        echo "🔍 [MOBILE-CHROME-DEBUG] Environment variables:"
+        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
+        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
+        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
+        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
+        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
+        echo "  - PostgreSQL connection test:"
+        
+        # Test database connectivity
+        if pg_isready -h localhost -p 5432 -U postgres; then
+          echo "✅ PostgreSQL connection successful"
+        else
+          echo "❌ PostgreSQL connection failed"
+          exit 1
+        fi
+        
+        # Run migrations
+        echo "🔄 Running database migrations..."
         uv run alembic upgrade head
-        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+        MIGRATION_EXIT_CODE=$?
+        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Setup test user for enabled auth mode
+        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
+          echo "🔑 Auth mode is ENABLED - creating test user..."
+          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
+          uv run python scripts/reset_test_user.py
+          RESET_USER_EXIT_CODE=$?
+          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
+          
+          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
+            echo "✅ Test user creation/reset completed successfully"
+          else
+            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
+            exit $RESET_USER_EXIT_CODE
+          fi
+        else
+          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+        fi
+        
+        echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -522,6 +631,20 @@ jobs:
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install chromium --with-deps
+
+    - name: Platform-specific environment debugging
+      run: |
+        echo "🔍 [MOBILE-CHROME-PLATFORM] Platform debugging for Ubuntu:"
+        echo "  - Runner OS: $RUNNER_OS"
+        echo "  - OS Name: $(uname -s)"
+        echo "  - OS Version: $(uname -r)"
+        echo "  - Architecture: $(uname -m)"
+        echo "  - PostgreSQL version: $(postgres --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Python version: $(python --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Python3 version: $(python3 --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - UV version: $(uv --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Available environment variables:"
+        env | grep -E "(TEST_|DB_|DISABLE_|VITE_)" | sort || echo "No matching env vars"
 
     - name: Start backend and frontend, run Mobile Chrome E2E tests
       run: |
@@ -560,8 +683,8 @@ jobs:
         
         # Run mobile Chrome tests
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth Mobile Chrome E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)" --project="Mobile Chrome" --reporter=github
+          echo "Running non-auth Mobile Chrome E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only and @auth)"
+          npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@auth)" --project="Mobile Chrome" --reporter=github
         else
           echo "Running auth Mobile Chrome E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only)"
           npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Chrome" --reporter=github
@@ -585,15 +708,10 @@ jobs:
     env:
       DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      DB_URL_LOCAL: postgresql+asyncpg://localhost:5432/test_aris
-      DB_URL_PROD: postgresql+asyncpg://localhost:5432/test_aris
-      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://localhost:5432/test_aris
-      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://localhost:5432/test_aris
-      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
-      VITE_API_BASE_URL: http://localhost:8000
+      COPILOT_PROVIDER: mock
 
     steps:
     - uses: actions/checkout@v4
@@ -622,6 +740,9 @@ jobs:
           fi
           sleep 2
         done
+        # Create postgres user with password to match global DB URLs
+        createuser -s postgres
+        psql -d postgres -c "ALTER USER postgres PASSWORD 'postgres';"
         createdb test_aris
 
     - name: Create virtual environment and sync dependencies
@@ -630,11 +751,51 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
+        echo "🔍 [MOBILE-SAFARI-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
+        echo "🔍 [MOBILE-SAFARI-DEBUG] Environment variables:"
+        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
+        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
+        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
+        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
+        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
+        echo "  - PostgreSQL connection test:"
+        
+        # Test database connectivity
+        if pg_isready -q; then
+          echo "✅ PostgreSQL connection successful"
+        else
+          echo "❌ PostgreSQL connection failed"
+          exit 1
+        fi
+        
+        # Run migrations
+        echo "🔄 Running database migrations..."
         uv run alembic upgrade head
-        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+        MIGRATION_EXIT_CODE=$?
+        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Setup test user for enabled auth mode
+        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
+          echo "🔑 Auth mode is ENABLED - creating test user..."
+          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
+          uv run python scripts/reset_test_user.py
+          RESET_USER_EXIT_CODE=$?
+          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
+          
+          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
+            echo "✅ Test user creation/reset completed successfully"
+          else
+            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
+            exit $RESET_USER_EXIT_CODE
+          fi
+        else
+          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+        fi
+        
+        echo "✅ [MOBILE-SAFARI-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -658,6 +819,21 @@ jobs:
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install webkit
+
+    - name: Platform-specific environment debugging
+      run: |
+        echo "🔍 [MOBILE-SAFARI-PLATFORM] Platform debugging for macOS:"
+        echo "  - Runner OS: $RUNNER_OS"
+        echo "  - OS Name: $(uname -s)"
+        echo "  - OS Version: $(uname -r)"
+        echo "  - Architecture: $(uname -m)"
+        echo "  - PostgreSQL version: $(postgres --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Python version: $(python --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Python3 version: $(python3 --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - UV version: $(uv --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Brew info: $(brew --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Available environment variables:"
+        env | grep -E "(TEST_|DB_|DISABLE_|VITE_)" | sort || echo "No matching env vars"
 
     - name: Start backend and frontend, run Mobile Safari E2E tests
       run: |
@@ -696,8 +872,8 @@ jobs:
         
         # Run mobile Safari tests
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth Mobile Safari E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)" --project="Mobile Safari" --reporter=github
+          echo "Running non-auth Mobile Safari E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only and @auth)"
+          npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@auth)" --project="Mobile Safari" --reporter=github
         else
           echo "Running auth Mobile Safari E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only)"
           npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Safari" --reporter=github

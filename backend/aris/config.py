@@ -65,6 +65,12 @@ class Settings(BaseSettings):
     FROM_EMAIL: str = Field("noreply@aris.pub", json_schema_extra={"env": "FROM_EMAIL"})
     """Default from email address."""
 
+    ANTHROPIC_API_KEY: str = Field("", json_schema_extra={"env": "ANTHROPIC_API_KEY"})
+    """Anthropic API key for AI copilot functionality."""
+
+    COPILOT_PROVIDER: str = Field("anthropic", json_schema_extra={"env": "COPILOT_PROVIDER"})
+    """AI provider for copilot functionality (anthropic, openai, etc.)."""
+
     model_config = SettingsConfigDict(extra="forbid", env_file=".env")
 
     def get_test_database_url(self) -> str:
