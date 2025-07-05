@@ -8,6 +8,8 @@ test.describe("Home View Accessibility @auth @desktop-only", () => {
   let authHelpers, fileHelpers;
 
   test.beforeEach(async ({ page }) => {
+    // Set desktop viewport for desktop-only accessibility tests
+    await page.setViewportSize({ width: 1024, height: 768 });
     authHelpers = new AuthHelpers(page);
     fileHelpers = new FileHelpers(page);
 

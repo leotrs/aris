@@ -29,7 +29,7 @@
   import { useTemplateRef } from "vue";
 
   defineOptions({
-    name: "BaseButton",
+    name: "Button",
   });
 
   const props = defineProps({
@@ -117,6 +117,7 @@
       shadow ? 'with-shadow' : '',
       disabled ? 'disabled' : '',
     ]"
+    v-bind="$attrs"
   >
     <template v-if="icon">
       <Icon :name="icon" class="btn-icon" />

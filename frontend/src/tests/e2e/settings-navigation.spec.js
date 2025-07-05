@@ -6,6 +6,8 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
+    // Set desktop viewport for desktop-only tests
+    await page.setViewportSize({ width: 1024, height: 768 });
     authHelpers = new AuthHelpers(page);
     await page.goto("/");
     await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
@@ -154,12 +156,12 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
   });
 });
 
-
-
-test.describe("Settings Error Handling @auth", () => {
+test.describe("Settings Error Handling @auth @desktop-only", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
+    // Set desktop viewport for desktop-only tests
+    await page.setViewportSize({ width: 1024, height: 768 });
     authHelpers = new AuthHelpers(page);
     await page.goto("/");
     await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);

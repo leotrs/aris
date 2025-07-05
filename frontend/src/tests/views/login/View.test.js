@@ -45,8 +45,7 @@ describe("LoginView", () => {
   });
 
   it("navigates to register page on register button click", async () => {
-    const buttons = wrapper.findAllComponents(Button);
-    const registerBtn = buttons.find((btn) => btn.text() === "Register");
+    const registerBtn = wrapper.find('[data-testid="register-link"]');
     await registerBtn.trigger("click");
     expect(pushMock).toHaveBeenCalledWith("/register");
   });

@@ -49,6 +49,8 @@
     ref="self-ref"
     class="sb-item"
     :data-testid="`sidebar-item-${text.toLowerCase().replace(/\s+/g, '-')}`"
+    :data-sidebar-item="!isSubItem ? text : undefined"
+    :data-sidebar-subitem="isSubItem ? text : undefined"
     :class="{
       collapsed: collapsed,
       active: active,

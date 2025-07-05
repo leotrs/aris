@@ -12,14 +12,47 @@ aris/
 └── CLAUDE.md
 ```
 
-## Backend Commands
+## Just Commands (Task Runner)
+
+### Development
 ```bash
+just init                             # Initial setup - copies .env files, installs dependencies
+just dev                              # Start development containers (uses current directory name)
+just stop                             # Stop development containers
+just logs                             # View container logs
+just status                           # Check container status
+```
+
+### Testing & Quality
+```bash
+just test-all                         # Run all tests (backend + frontend + site)
+just lint-all                         # Run all linters (backend + frontend + site)
+just check-all                        # Complete check: lint + typecheck + test
+```
+
+### Individual Service Commands (run inside containers)
+```bash
+# Backend (inside container)
 uv sync --all-groups                  # Install dependencies
 uvicorn main:app --reload             # Run dev server
 alembic upgrade head                  # Run migrations
 uv run pytest -n8                     # Run tests (SQLite locally, PostgreSQL in CI)
 uv run ruff check                     # Lint
 uv run mypy aris/                     # Type check
+
+# Frontend (inside container)
+npm install                           # Install dependencies
+npm run dev                           # Run dev server
+npm test                              # Run unit tests
+npm run test:e2e                      # Run E2E tests
+npm run lint                          # Lint code
+npm run storybook                     # Run Storybook
+
+# Site (inside container)
+npm install                           # Install dependencies
+npm run dev                           # Run dev server
+npm test                              # Run tests
+npm run lint                          # Lint code
 ```
 
 ## AI Copilot Setup
@@ -87,17 +120,15 @@ For CI, STAGING, and PROD environments, set these environment variables directly
 
 ### Standard Development
 ```bash
-cd backend && uv sync --all-groups   # Install backend dependencies
-cd frontend && npm install           # Install frontend dependencies
+just init                             # Sets up all .env files and installs all dependencies
+just dev                              # Start development containers
 ```
 
 ### Containerized Development (Multi-Clone Setup)
 ```bash
-# Quick setup for first clone
-cp .env.example .env
-# Edit .env with desired ports (see .env.example for examples)
-cd docker
-docker compose -f docker-compose.dev.yml up --build
+# Quick setup for any clone
+just init                             # Sets up all .env files and installs dependencies
+just dev                              # Start containers (uses directory name as project name)
 
 # For additional clones, use the setup script
 ./docker/scripts/setup-clone.sh
