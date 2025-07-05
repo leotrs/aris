@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
 
-test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
+test.describe("AI Copilot Chat Functionality @auth", () => {
   let authHelpers;
   let fileHelpers;
 
@@ -170,5 +170,86 @@ test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
 
     // Verify chat message is still there
     await expect(page.locator(".chat-message.user")).toContainText("First message");
+  });
+
+  test("mobile: chat takes full width and hides manuscript", async ({ page }) => {
+    // Set mobile viewport and user agent to simulate mobile
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setUserAgent(
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
+    );
+
+    const { chatPanel } = await enableChatInWorkspace(page, fileHelpers);
+
+    // Verify chat panel is visible and takes full width
+    await expect(chatPanel).toBeVisible();
+
+    // Check that chat container has mobile styles applied
+    const chatContainer = page.locator(".dockable-chat");
+    await expect(chatContainer).toBeVisible();
+
+    // Verify manuscript is hidden when chat is active on mobile
+    const manuscript = page.locator("[data-testid='manuscript-viewer']");
+    await expect(manuscript).not.toBeVisible();
+
+    // Verify left column takes full width on mobile
+    const leftColumn = page.locator(".left-column");
+    const leftColumnBox = await leftColumn.boundingBox();
+    const viewportWidth = 375;
+
+    // Left column should take most of the width (accounting for padding)
+    expect(leftColumnBox.width).toBeGreaterThan(viewportWidth * 0.8);
+  });
+
+  test("mobile: manuscript shows when chat is closed", async ({ page }) => {
+    // Set mobile viewport and user agent to simulate mobile
+    await page.setViewportSize({ width: 375, height: 667 });
+    await page.setUserAgent(
+      "Mozilla/5.0 (iPhone; CPU iPhone OS 14_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Mobile/15E148 Safari/604.1"
+    );
+
+    // Create file but don't enable chat initially
+    const fileId = await fileHelpers.createNewFile();
+    await expect(page).toHaveURL(`/file/${fileId}`);
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
+
+    // Verify manuscript is visible when chat is closed
+    const manuscript = page.locator("[data-testid='manuscript-viewer']");
+    await expect(manuscript).toBeVisible();
+
+    // Enable chat
+    const aiCopilotButton = page.locator(
+      '[data-testid="workspace-sidebar"] button[aria-label="Ari"]'
+    );
+    await aiCopilotButton.click();
+
+    // Verify manuscript is now hidden
+    await expect(manuscript).not.toBeVisible();
+
+    // Disable chat again
+    await aiCopilotButton.click();
+
+    // Verify manuscript is visible again
+    await expect(manuscript).toBeVisible();
+  });
+
+  test("desktop: chat and manuscript show simultaneously", async ({ page }) => {
+    // Set desktop viewport
+    await page.setViewportSize({ width: 1200, height: 800 });
+
+    const { chatPanel } = await enableChatInWorkspace(page, fileHelpers);
+
+    // Verify both chat and manuscript are visible on desktop
+    await expect(chatPanel).toBeVisible();
+    const manuscript = page.locator("[data-testid='manuscript-viewer']");
+    await expect(manuscript).toBeVisible();
+
+    // Verify chat has fixed width on desktop (not full width)
+    const leftColumn = page.locator(".left-column");
+    const leftColumnBox = await leftColumn.boundingBox();
+
+    // On desktop, chat should have constrained width (around 350px)
+    expect(leftColumnBox.width).toBeLessThan(500);
+    expect(leftColumnBox.width).toBeGreaterThan(250);
   });
 });

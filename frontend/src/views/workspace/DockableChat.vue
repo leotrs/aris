@@ -34,4 +34,9 @@
     overflow: hidden;
     box-sizing: border-box;
   }
+
+  /* Mobile chat removes border-radius like editor */
+  :global(.outer.mobile) .dockable-chat {
+    border-radius: 0;
+  }
 </style>
