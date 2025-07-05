@@ -65,8 +65,9 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
           .filter({ hasText: /verification email sent|Verification email sent/i })
       ).toBeVisible({ timeout: 5000 });
 
-      // Button should be disabled after sending
+      // Button should be disabled and show success state
       await expect(sendButton).toBeDisabled();
+      await expect(sendButton).toContainText("Verification email sent");
     } else {
       // User is already verified, should show verified status
       const verifiedIndicator = emailSection.locator(".status-indicator.verified");
@@ -164,8 +165,8 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
       // Should show loading state (button disabled, icon might change)
       await expect(sendButton).toBeDisabled();
 
-      // Wait for response (button should be re-enabled)
-      await expect(sendButton).toBeEnabled({ timeout: 3000 });
+      // Wait for response (button should remain disabled and show success state)
+      await expect(sendButton).toContainText("Verification email sent", { timeout: 3000 });
     }
   });
 });
