@@ -78,6 +78,9 @@
 
   // File and file settings
   const api = inject("api");
+
+  // Track component mount state to prevent race conditions
+  const isMounted = ref(true);
   watchEffect((onCleanup) => {
     if (!file.value || file.value.html || !file.value.id) return;
 
@@ -85,11 +88,12 @@
     const fetchContent = async () => {
       try {
         const response = await api.get(`/files/${file.value.id}/content`);
-        if (!cancelled && file.value) {
+        // Only update reactive state if component is still mounted and not cancelled
+        if (!cancelled && file.value && isMounted.value) {
           file.value.html = response.data;
         }
       } catch (error) {
-        if (!cancelled) {
+        if (!cancelled && isMounted.value) {
           console.error("Error fetching HTML:", error);
         }
       }
@@ -123,7 +127,10 @@
     },
     { immedate: true }
   );
-  onUnmounted(() => tearDown());
+  onUnmounted(() => {
+    isMounted.value = false;
+    tearDown();
+  });
 
   // Keyboard shortcuts
   registerAsFallback(manuscriptRef);
@@ -179,7 +186,11 @@
               <DockableChat v-if="showChat" :file-id="file.id" />
             </Dock>
           </div>
-          <div v-if="!mobileMode || !showChat" ref="middle-column-ref" class="middle-column">
+          <div
+            ref="middle-column-ref"
+            class="middle-column"
+            :class="{ 'mobile-hidden': mobileMode && showChat }"
+          >
             <Dock class="dock middle top">
               <ReaderTopbar :show-title="!isMainTitleVisible" />
             </Dock>
@@ -427,6 +438,11 @@
     flex: 1;
     min-width: unset;
     max-width: unset;
+  }
+
+  /* Hide middle column on mobile when chat is active (but keep in DOM for test stability) */
+  .middle-column.mobile-hidden {
+    display: none;
   }
 
   .rsm-manuscript {
