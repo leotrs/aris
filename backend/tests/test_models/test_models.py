@@ -114,3 +114,55 @@ async def test_annotation_message_creation(db_session):
     assert msg.content == "Sample note"
     assert msg.annotation_id == annotation.id
     assert msg.owner_id == user.id
+
+
+def test_user_model_has_affiliation_field():
+    """Test that User model has affiliation field."""
+    user = User(name="Test User", email="test@example.com", password_hash="test_hash", affiliation="MIT")
+    assert user.affiliation == "MIT"
+
+
+def test_user_affiliation_can_be_null():
+    """Test that affiliation field can be null."""
+    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    assert user.affiliation is None
+
+
+def test_user_has_email_verification_fields():
+    """Test that User model has email verification fields."""
+    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    assert hasattr(user, 'email_verified')
+    assert hasattr(user, 'email_verification_token')
+    assert hasattr(user, 'email_verification_sent_at')
+    assert user.email_verified is False
+
+
+def test_user_generate_verification_token():
+    """Test email verification token generation."""
+    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    token = user.generate_verification_token()
+    assert len(token) == 32
+    assert user.email_verification_token == token
+    assert isinstance(token, str)
+
+
+def test_user_verify_token_method():
+    """Test token verification method."""
+    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    token = user.generate_verification_token()
+    
+    # Valid token should return True
+    assert user.verify_token(token) is True
+    
+    # Invalid token should return False
+    assert user.verify_token("invalid_token") is False
+    
+    # None token should return False
+    assert user.verify_token(None) is False
+
+
+def test_new_user_email_unverified():
+    """Test that new users start with unverified email."""
+    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    assert user.email_verified is False
+    assert user.email_verification_token is None

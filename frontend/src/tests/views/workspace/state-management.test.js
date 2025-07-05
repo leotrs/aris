@@ -145,7 +145,7 @@ describe("Workspace State Management", () => {
         },
       };
 
-      const wrapper = mount(WorkspaceView, {
+      mount(WorkspaceView, {
         global: {
           provide: {
             fileStore: testFileStore,
@@ -272,7 +272,7 @@ describe("Workspace State Management", () => {
     it("should manage drawer open/closed state", async () => {
       const drawerOpen = ref(false);
 
-      const wrapper = mount(Sidebar, {
+      mount(Sidebar, {
         global: {
           provide: {
             drawerOpen,
@@ -325,7 +325,7 @@ describe("Workspace State Management", () => {
         },
       ]);
 
-      const wrapper = mount(Sidebar, {
+      mount(Sidebar, {
         global: {
           provide: {
             drawerOpen: ref(false),
@@ -785,7 +785,7 @@ describe("Workspace State Management", () => {
       const sharedDrawerOpen = ref(false);
 
       // Mount sidebar and canvas with shared state
-      const sidebarWrapper = mount(Sidebar, {
+      mount(Sidebar, {
         global: {
           provide: {
             drawerOpen: sharedDrawerOpen,

@@ -16,15 +16,15 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: "html",
   /* Global test timeout - max time for individual test */
-  timeout: 60000,
+  timeout: 15000, // Reduced from 60s to match frontend performance expectations
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: `http://localhost:${process.env.SITE_PORT}`,
     /* Timeout for individual actions like click, fill, etc. */
-    actionTimeout: 10000,
+    actionTimeout: 5000, // Reduced from 10s to match frontend
     /* Timeout for navigation actions like goto, waitForLoadState */
-    navigationTimeout: 30000,
+    navigationTimeout: 8000, // Reduced from 30s to match frontend
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: "on-first-retry",
     /* Take screenshot on failure */
@@ -38,34 +38,36 @@ export default defineConfig({
   /* Configure projects for major browsers */
   projects: process.env.CI
     ? [
-        // CI: Run all browsers for comprehensive testing
+        // CI: All browsers for comprehensive testing
         {
           name: "chromium",
           use: { ...devices["Desktop Chrome"] },
         },
-
+        {
+          name: "firefox",
+          use: { ...devices["Desktop Firefox"] },
+        },
+        {
+          name: "webkit",
+          use: { ...devices["Desktop Safari"] },
+        },
         {
           name: "Mobile Chrome",
           use: { ...devices["Pixel 5"] },
         },
-
-        // Additional browsers for cross-browser compatibility tests only
         {
-          name: "firefox",
-          use: { ...devices["Desktop Firefox"] },
-          testMatch: "**/browser-compatibility/**/*.spec.js",
+          name: "Mobile Firefox",
+          use: {
+            browserName: "firefox",
+            viewport: { width: 393, height: 851 },
+            deviceScaleFactor: 2.75,
+            hasTouch: true,
+            userAgent: 'Mozilla/5.0 (Mobile; rv:109.0) Gecko/109.0 Firefox/109.0'
+          },
         },
-
-        {
-          name: "webkit",
-          use: { ...devices["Desktop Safari"] },
-          testMatch: "**/browser-compatibility/**/*.spec.js",
-        },
-
         {
           name: "Mobile Safari",
           use: { ...devices["iPhone 12"] },
-          testMatch: "**/browser-compatibility/**/*.spec.js",
         },
       ]
     : [

@@ -17,6 +17,7 @@ env:
   DB_NAME: aris
   TEST_DB_NAME: aris_test
   VITE_API_BASE_URL: http://localhost:8000
+  NUXT_BACKEND_URL: http://localhost:8000
   # Database URLs - shared by all jobs
   DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
   DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
@@ -26,7 +27,7 @@ env:
 
 jobs:
   # Unit Tests and Linting (Parallel)
-  backend-test:
+  unit-backend:
     runs-on: ubuntu-latest
     env:
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
@@ -63,6 +64,18 @@ jobs:
     - name: Set up Python
       run: uv python install 3.13
 
+    - name: Cache uv
+      uses: actions/cache@v4
+      with:
+        path: ~/.cache/uv
+        key: uv-${{ runner.os }}-${{ hashFiles('backend/pyproject.toml') }}
+
+    - name: Cache pytest
+      uses: actions/cache@v4
+      with:
+        path: backend/.pytest_cache
+        key: pytest-${{ runner.os }}-${{ hashFiles('backend/pyproject.toml') }}
+
     - name: Create virtual environment and sync dependencies
       run: |
         uv venv
@@ -84,16 +97,9 @@ jobs:
       env:
         TEST_USER_EMAIL: testuser@aris.pub
         TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-      run: uv run pytest -n4 --cov=aris --cov-report=xml --tb=short
+      run: uv run pytest -n4 --dist=loadscope --tb=short
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        files: ./backend/coverage.xml
-        flags: backend
-        token: ${{ secrets.CODECOV_TOKEN }}
-
-  frontend-test:
+  unit-frontend:
     runs-on: ubuntu-latest
 
     defaults:
@@ -113,6 +119,12 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Cache vitest
+      uses: actions/cache@v4
+      with:
+        path: frontend/node_modules/.vitest
+        key: vitest-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
     - name: Check for missing packages
       run: npm ls --depth=0
 
@@ -120,16 +132,9 @@ jobs:
       run: npm run lint
 
     - name: Run tests
-      run: npm run test:coverage
+      run: npm run test:run
 
-    - name: Upload coverage to Codecov
-      uses: codecov/codecov-action@v5
-      with:
-        files: ./frontend/coverage/lcov.info
-        flags: frontend
-        token: ${{ secrets.CODECOV_TOKEN }}
-
-  site-test:
+  unit-site:
     runs-on: ubuntu-latest
 
     defaults:
@@ -149,6 +154,12 @@ jobs:
     - name: Install dependencies
       run: npm ci
 
+    - name: Cache vitest
+      uses: actions/cache@v4
+      with:
+        path: site/node_modules/.vitest
+        key: vitest-site-${{ runner.os }}-${{ hashFiles('site/package-lock.json') }}
+
     - name: Check for missing packages
       run: npm ls --depth=0
 
@@ -158,9 +169,113 @@ jobs:
     - name: Run unit tests
       run: npm run test:run
 
-  # Desktop E2E Tests (Chrome/Firefox)
-  e2e-desktop-other:
-    needs: [backend-test, frontend-test, site-test]
+  # Site E2E Tests (All Browsers)
+  e2e-site:
+    needs: [unit-backend, unit-frontend, unit-site]
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [chromium, firefox, webkit]
+        device: [desktop, mobile]
+    runs-on: ${{ matrix.browser == 'webkit' && 'macos-latest' || 'ubuntu-latest' }}
+    env:
+      ENV: CI
+      BACKEND_PORT: 8000
+      FRONTEND_PORT: 5173
+      SITE_PORT: 3000
+      STORYBOOK_PORT: 6006
+      DB_PORT: 5432
+      DB_NAME: aris
+      TEST_DB_NAME: aris_test
+      VITE_API_BASE_URL: http://localhost:8000
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: site/package-lock.json
+
+    - name: Install dependencies
+      working-directory: site
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ${{ matrix.browser == 'webkit' && '~/Library/Caches/ms-playwright' || '~/.cache/ms-playwright' }}
+        key: playwright-browsers-${{ runner.os }}-site-${{ matrix.browser }}-${{ matrix.device }}
+
+    - name: Install Playwright browsers
+      working-directory: site
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: |
+        if [ "${{ matrix.browser }}" = "webkit" ]; then
+          npx playwright install webkit
+        elif [ "${{ matrix.browser }}" = "firefox" ]; then
+          npx playwright install firefox --with-deps
+        else
+          npx playwright install chromium --with-deps
+        fi
+
+    - name: Start site and run E2E tests
+      working-directory: site
+      run: |
+        # Start site in background
+        echo "Starting site for ${{ matrix.browser }} ${{ matrix.device }} E2E tests..."
+        npm run dev &
+        SITE_PID=$!
+        echo "Site started with PID: $SITE_PID"
+        
+        # Wait for site to be ready
+        sleep 10
+        for i in {1..5}; do
+          if curl -f http://localhost:3000; then
+            echo "Site ready for E2E tests"
+            break
+          else
+            echo "Waiting for site... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Site failed to start"
+              kill $SITE_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 3
+          fi
+        done
+        
+        # Run E2E tests for specific browser and device
+        if [ "${{ matrix.device }}" = "mobile" ]; then
+          if [ "${{ matrix.browser }}" = "webkit" ]; then
+            npx playwright test --project="Mobile Safari" --reporter=github
+          elif [ "${{ matrix.browser }}" = "firefox" ]; then
+            npx playwright test --project="Mobile Firefox" --reporter=github
+          else
+            npx playwright test --project="Mobile Chrome" --reporter=github
+          fi
+        else
+          if [ "${{ matrix.browser }}" = "webkit" ]; then
+            npx playwright test --project="webkit" --reporter=github
+          elif [ "${{ matrix.browser }}" = "firefox" ]; then
+            npx playwright test --project="firefox" --reporter=github
+          else
+            npx playwright test --project="chromium" --reporter=github
+          fi
+        fi
+        TEST_EXIT_CODE=$?
+        
+        # Cleanup
+        echo "Cleaning up processes..."
+        kill $SITE_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
+
+  # Desktop E2E Tests (Chrome)
+  e2e-desktop-chrome:
+    needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
       matrix:
@@ -224,7 +339,7 @@ jobs:
         echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
         echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
         echo "  - PostgreSQL connection test:"
-        
+
         # Test database connectivity
         if pg_isready -h localhost -p 5432 -U postgres; then
           echo "✅ PostgreSQL connection successful"
@@ -232,13 +347,13 @@ jobs:
           echo "❌ PostgreSQL connection failed"
           exit 1
         fi
-        
+
         # Run migrations
         echo "🔄 Running database migrations..."
         uv run alembic upgrade head
         MIGRATION_EXIT_CODE=$?
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
-        
+
         # Setup test user for enabled auth mode
         if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
           echo "🔑 Auth mode is ENABLED - creating test user..."
@@ -246,7 +361,7 @@ jobs:
           uv run python scripts/reset_test_user.py
           RESET_USER_EXIT_CODE=$?
           echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
-          
+
           if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
             echo "✅ Test user creation/reset completed successfully"
           else
@@ -256,7 +371,7 @@ jobs:
         else
           echo "🔓 Auth mode is DISABLED - skipping test user creation"
         fi
-        
+
         echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
@@ -275,22 +390,22 @@ jobs:
       id: playwright-cache
       with:
         path: ~/.cache/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-chromium-firefox
+        key: playwright-browsers-${{ runner.os }}-chromium
 
     - name: Install Playwright browsers
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install chromium firefox --with-deps
+      run: npx playwright install chromium --with-deps
 
     - name: Start backend and frontend, run E2E tests
       run: |
         # Start backend
-        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on Ubuntu (Chrome/Firefox)..."
+        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on Ubuntu (Chrome)..."
         cd backend
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
         echo "Backend started with PID: $BACKEND_PID"
-        
+
         # Wait for backend
         sleep 8
         for i in {1..5}; do
@@ -307,26 +422,166 @@ jobs:
             sleep 2
           fi
         done
-        
+
         # Start frontend
         cd ../frontend
         npm run dev &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
-        
+
         # Wait for frontend
         sleep 15
-        
-        # Run tests based on auth mode (desktop browsers only)
+
+        # Run tests based on auth mode (Chrome only)
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only and @auth)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)(?!.*@auth)" --project=chromium --project=firefox --reporter=github
+          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only)"
+          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)" --project=chromium --reporter=github
         else
           echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only)"
-          npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=chromium --project=firefox --reporter=github
+          npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=chromium --reporter=github
         fi
         TEST_EXIT_CODE=$?
-        
+
+        # Cleanup
+        echo "Cleaning up processes..."
+        kill $FRONTEND_PID 2>/dev/null || true
+        kill $BACKEND_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
+
+  # Desktop E2E Tests (Firefox)
+  e2e-desktop-firefox:
+    needs: [unit-backend, unit-frontend, unit-site]
+    strategy:
+      fail-fast: false
+      matrix:
+        auth-mode: [disabled, enabled]
+    runs-on: ubuntu-latest
+    env:
+      DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
+      VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
+      DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      VITE_LOG_LEVEL: WARN
+      VITE_API_BASE_URL: http://localhost:8000
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 3
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+
+    - name: Create virtual environment and sync dependencies
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --group test --group dev
+
+    - name: Run database migrations
+      working-directory: backend
+      run: |
+        uv run alembic upgrade head
+        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-browsers-${{ runner.os }}-firefox
+
+    - name: Install Playwright browsers
+      working-directory: frontend
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install firefox --with-deps
+
+    - name: Start backend and frontend, run E2E tests
+      run: |
+        # Start backend
+        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on Ubuntu (Firefox)..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+
+        # Wait for backend
+        sleep 8
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
+
+        # Start frontend
+        cd ../frontend
+        npm run dev &
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+
+        # Wait for frontend
+        sleep 15
+
+        # Run tests based on auth mode (Firefox only)
+        if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
+          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only)"
+          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)" --project=firefox --reporter=github
+        else
+          echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only)"
+          npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=firefox --reporter=github
+        fi
+        TEST_EXIT_CODE=$?
+
         # Cleanup
         echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
@@ -335,7 +590,7 @@ jobs:
 
   # Desktop E2E Tests (Safari)
   e2e-desktop-safari:
-    needs: [backend-test, frontend-test, site-test]
+    needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
       matrix:
@@ -398,7 +653,7 @@ jobs:
         echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
         echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
         echo "  - PostgreSQL connection test:"
-        
+
         # Test database connectivity
         if pg_isready -h localhost -p 5432 -U postgres; then
           echo "✅ PostgreSQL connection successful"
@@ -406,13 +661,13 @@ jobs:
           echo "❌ PostgreSQL connection failed"
           exit 1
         fi
-        
+
         # Run migrations
         echo "🔄 Running database migrations..."
         uv run alembic upgrade head
         MIGRATION_EXIT_CODE=$?
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
-        
+
         # Setup test user for enabled auth mode
         if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
           echo "🔑 Auth mode is ENABLED - creating test user..."
@@ -420,7 +675,7 @@ jobs:
           uv run python scripts/reset_test_user.py
           RESET_USER_EXIT_CODE=$?
           echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
-          
+
           if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
             echo "✅ Test user creation/reset completed successfully"
           else
@@ -430,7 +685,7 @@ jobs:
         else
           echo "🔓 Auth mode is DISABLED - skipping test user creation"
         fi
-        
+
         echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
@@ -464,7 +719,7 @@ jobs:
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
         echo "Backend started with PID: $BACKEND_PID"
-        
+
         # Wait for backend
         sleep 8
         for i in {1..5}; do
@@ -481,16 +736,16 @@ jobs:
             sleep 2
           fi
         done
-        
+
         # Start frontend
         cd ../frontend
         npm run dev &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
-        
+
         # Wait for frontend
         sleep 15
-        
+
         # Run tests based on auth mode (desktop webkit only)
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
           echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only and @auth)"
@@ -500,7 +755,7 @@ jobs:
           npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=webkit --reporter=github
         fi
         TEST_EXIT_CODE=$?
-        
+
         # Cleanup
         echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
@@ -509,7 +764,7 @@ jobs:
 
   # Mobile E2E Tests (Optional - can fail without breaking CI)
   e2e-mobile-chrome:
-    needs: [backend-test, frontend-test, site-test]
+    needs: [e2e-desktop-chrome]
     continue-on-error: true  # Allow this job to fail
     strategy:
       fail-fast: false
@@ -574,7 +829,7 @@ jobs:
         echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
         echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
         echo "  - PostgreSQL connection test:"
-        
+
         # Test database connectivity
         if pg_isready -h localhost -p 5432 -U postgres; then
           echo "✅ PostgreSQL connection successful"
@@ -582,13 +837,13 @@ jobs:
           echo "❌ PostgreSQL connection failed"
           exit 1
         fi
-        
+
         # Run migrations
         echo "🔄 Running database migrations..."
         uv run alembic upgrade head
         MIGRATION_EXIT_CODE=$?
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
-        
+
         # Setup test user for enabled auth mode
         if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
           echo "🔑 Auth mode is ENABLED - creating test user..."
@@ -596,7 +851,7 @@ jobs:
           uv run python scripts/reset_test_user.py
           RESET_USER_EXIT_CODE=$?
           echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
-          
+
           if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
             echo "✅ Test user creation/reset completed successfully"
           else
@@ -606,7 +861,7 @@ jobs:
         else
           echo "🔓 Auth mode is DISABLED - skipping test user creation"
         fi
-        
+
         echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
@@ -654,7 +909,7 @@ jobs:
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
         echo "Backend started with PID: $BACKEND_PID"
-        
+
         # Wait for backend
         sleep 8
         for i in {1..5}; do
@@ -671,16 +926,16 @@ jobs:
             sleep 2
           fi
         done
-        
+
         # Start frontend
         cd ../frontend
         npm run dev &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
-        
+
         # Wait for frontend
         sleep 15
-        
+
         # Run mobile Chrome tests
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
           echo "Running non-auth Mobile Chrome E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only and @auth)"
@@ -690,7 +945,147 @@ jobs:
           npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Chrome" --reporter=github
         fi
         TEST_EXIT_CODE=$?
-        
+
+        # Cleanup
+        echo "Cleaning up processes..."
+        kill $FRONTEND_PID 2>/dev/null || true
+        kill $BACKEND_PID 2>/dev/null || true
+        exit $TEST_EXIT_CODE
+
+  e2e-mobile-firefox:
+    needs: [e2e-desktop-firefox]
+    continue-on-error: true  # Allow this job to fail
+    strategy:
+      fail-fast: false
+      matrix:
+        auth-mode: [disabled, enabled]
+    runs-on: ubuntu-latest
+    env:
+      DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
+      VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
+      DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
+      VITE_LOG_LEVEL: WARN
+      VITE_API_BASE_URL: http://localhost:8000
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 3
+        ports:
+          - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+
+    - name: Create virtual environment and sync dependencies
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --group test --group dev
+
+    - name: Run database migrations
+      working-directory: backend
+      run: |
+        uv run alembic upgrade head
+        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '23'
+        cache: 'npm'
+        cache-dependency-path: frontend/package-lock.json
+
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-browsers-${{ runner.os }}-mobile-firefox
+
+    - name: Install Playwright browsers
+      working-directory: frontend
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install firefox --with-deps
+
+    - name: Start backend and frontend, run Mobile Firefox E2E tests
+      run: |
+        # Start backend
+        echo "Starting backend for ${{ matrix.auth-mode }} Mobile Firefox E2E tests..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+
+        # Wait for backend
+        sleep 8
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
+
+        # Start frontend
+        cd ../frontend
+        npm run dev &
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+
+        # Wait for frontend
+        sleep 15
+
+        # Run mobile Firefox tests
+        if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
+          echo "Running non-auth Mobile Firefox E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only)"
+          npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)" --project="Mobile Firefox" --reporter=github
+        else
+          echo "Running auth Mobile Firefox E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only)"
+          npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Firefox" --reporter=github
+        fi
+        TEST_EXIT_CODE=$?
+
         # Cleanup
         echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
@@ -698,7 +1093,7 @@ jobs:
         exit $TEST_EXIT_CODE
 
   e2e-mobile-safari:
-    needs: [backend-test, frontend-test, site-test]
+    needs: [e2e-desktop-safari]
     continue-on-error: true  # Allow this job to fail
     strategy:
       fail-fast: false
@@ -762,7 +1157,7 @@ jobs:
         echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
         echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
         echo "  - PostgreSQL connection test:"
-        
+
         # Test database connectivity
         if pg_isready -q; then
           echo "✅ PostgreSQL connection successful"
@@ -770,13 +1165,13 @@ jobs:
           echo "❌ PostgreSQL connection failed"
           exit 1
         fi
-        
+
         # Run migrations
         echo "🔄 Running database migrations..."
         uv run alembic upgrade head
         MIGRATION_EXIT_CODE=$?
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
-        
+
         # Setup test user for enabled auth mode
         if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
           echo "🔑 Auth mode is ENABLED - creating test user..."
@@ -784,7 +1179,7 @@ jobs:
           uv run python scripts/reset_test_user.py
           RESET_USER_EXIT_CODE=$?
           echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
-          
+
           if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
             echo "✅ Test user creation/reset completed successfully"
           else
@@ -794,7 +1189,7 @@ jobs:
         else
           echo "🔓 Auth mode is DISABLED - skipping test user creation"
         fi
-        
+
         echo "✅ [MOBILE-SAFARI-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
@@ -843,7 +1238,7 @@ jobs:
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
         echo "Backend started with PID: $BACKEND_PID"
-        
+
         # Wait for backend
         sleep 8
         for i in {1..5}; do
@@ -860,16 +1255,16 @@ jobs:
             sleep 2
           fi
         done
-        
+
         # Start frontend
         cd ../frontend
         npm run dev &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
-        
+
         # Wait for frontend
         sleep 15
-        
+
         # Run mobile Safari tests
         if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
           echo "Running non-auth Mobile Safari E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only and @auth)"
@@ -879,7 +1274,7 @@ jobs:
           npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Safari" --reporter=github
         fi
         TEST_EXIT_CODE=$?
-        
+
         # Cleanup
         echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true

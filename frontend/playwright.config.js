@@ -74,6 +74,16 @@ export default defineConfig({
           use: { ...devices["Pixel 5"] },
         },
         {
+          name: "Mobile Firefox",
+          use: {
+            browserName: "firefox",
+            viewport: { width: 393, height: 851 },
+            deviceScaleFactor: 3,
+            hasTouch: true,
+            userAgent: "Mozilla/5.0 (Mobile; rv:109.0) Gecko/109.0 Firefox/109.0",
+          },
+        },
+        {
           name: "Mobile Safari",
           use: { ...devices["iPhone 12"] },
         },

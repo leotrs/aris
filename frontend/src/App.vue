@@ -21,9 +21,23 @@
   // Add access token to every request
   api.interceptors.request.use((config) => {
     const token = localStorage.getItem("accessToken");
+    const refreshToken = localStorage.getItem("refreshToken");
+    const userStr = localStorage.getItem("user");
+
+    console.log("[App] API Request interceptor:", {
+      url: config.url,
+      method: config.method,
+      hasToken: !!token,
+      hasRefreshToken: !!refreshToken,
+      hasUser: !!userStr,
+      tokenLength: token ? token.length : 0,
+    });
+
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
       logger.debug("Added auth token to request", { url: config.url });
+    } else {
+      console.warn("[App] No access token found for request:", config.url);
     }
     return config;
   });
@@ -37,48 +51,107 @@
   };
 
   api.interceptors.response.use(
-    (response) => response,
+    (response) => {
+      console.log("[App] API Response success:", {
+        url: response.config?.url,
+        status: response.status,
+        method: response.config?.method,
+      });
+      return response;
+    },
     async (error) => {
       const originalRequest = error.config;
+
+      console.error("[App] API Response error:", {
+        url: originalRequest?.url,
+        method: originalRequest?.method,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        hasRefreshToken: !!localStorage.getItem("refreshToken"),
+        isRetry: !!originalRequest._retry,
+      });
 
       if (
         error.response?.status === 401 &&
         !originalRequest._retry &&
         localStorage.getItem("refreshToken")
       ) {
+        console.log("[App] 401 error, attempting token refresh");
         originalRequest._retry = true;
 
         if (!isRefreshing) {
           isRefreshing = true;
+          console.log("[App] Starting token refresh process");
           try {
             const refreshToken = localStorage.getItem("refreshToken");
+            console.log("[App] Attempting refresh with token length:", refreshToken?.length);
+
             const response = await api.post("/refresh", {
               refresh_token: refreshToken,
             });
 
             const newAccessToken = response.data.access_token;
+            console.log(
+              "[App] Token refresh successful, new token length:",
+              newAccessToken?.length
+            );
+
             localStorage.setItem("accessToken", newAccessToken);
             api.defaults.headers.common["Authorization"] = `Bearer ${newAccessToken}`;
             isRefreshing = false;
             processQueue(null, newAccessToken);
 
             originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+            console.log("[App] Retrying original request with new token");
             return api(originalRequest);
           } catch (refreshError) {
+            console.error("[App] Token refresh failed:", {
+              status: refreshError.response?.status,
+              statusText: refreshError.response?.statusText,
+              data: refreshError.response?.data,
+            });
+
             isRefreshing = false;
             processQueue(refreshError, null);
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
+            localStorage.removeItem("user");
+
+            console.log("[App] Redirecting to login due to refresh failure");
             window.location.href = "/login";
             return Promise.reject(refreshError);
           }
         } else {
+          console.log("[App] Token refresh already in progress, queuing request");
           return new Promise((resolve, reject) => {
             failedQueue.push(() => {
               originalRequest.headers.Authorization = `Bearer ${localStorage.getItem("accessToken")}`;
+              console.log("[App] Retrying queued request after refresh");
               resolve(api(originalRequest));
             });
           });
+        }
+      } else if (error.response?.status === 401) {
+        console.log("[App] 401 error but no refresh possible:", {
+          hasRefreshToken: !!localStorage.getItem("refreshToken"),
+          isRetry: !!originalRequest._retry,
+          url: originalRequest?.url,
+        });
+
+        // Check if this is a password validation error that should not trigger logout
+        const isPasswordValidationError = originalRequest?.url?.includes("/change-password");
+
+        if (isPasswordValidationError) {
+          console.log("[App] 401 from password validation - allowing error to pass through");
+          // Let the error pass through to component error handling
+          // Do NOT redirect to login for password validation failures
+        } else {
+          console.log("[App] 401 error requires authentication - cleaning storage and redirecting");
+          localStorage.removeItem("accessToken");
+          localStorage.removeItem("refreshToken");
+          localStorage.removeItem("user");
+          window.location.href = "/login";
         }
       }
 
@@ -120,6 +193,26 @@
   const user = ref(null);
   const fileStore = ref(null);
   const router = useRouter();
+
+  // Function to refresh user data from backend
+  const refreshUser = async () => {
+    if (!user.value) return;
+
+    try {
+      const response = await api.get(`/users/${user.value.id}`);
+      const updatedUser = response.data;
+
+      // Update user ref
+      user.value = updatedUser;
+
+      // Update localStorage
+      localStorage.setItem("user", JSON.stringify(updatedUser));
+
+      logger.info("User data refreshed successfully");
+    } catch (error) {
+      logger.error("Failed to refresh user data", error);
+    }
+  };
 
   // App-wide loading state
   const isAppLoading = ref(true);
@@ -233,6 +326,7 @@
     }
   });
   provide("user", user);
+  provide("refreshUser", refreshUser);
   provide("fileStore", fileStore);
 
   const isDev = import.meta.env.VITE_ENV === "DEV";

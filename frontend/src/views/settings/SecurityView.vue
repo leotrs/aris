@@ -1,197 +1,37 @@
 <script setup>
-  import { ref, inject } from "vue";
-  import { IconDownload, IconLock } from "@tabler/icons-vue";
-
-  const api = inject("api");
-  const user = inject("user");
-
-  const passwordForm = ref({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-
-  const changePasswordLoading = ref(false);
-  const changePasswordSuccess = ref(false);
-  const changePasswordError = ref("");
-
-  const exportLoading = ref(false);
-  const exportSuccess = ref(false);
-
-  const changePassword = async () => {
-    if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
-      changePasswordError.value = "New passwords do not match";
-      return;
-    }
-
-    if (passwordForm.value.newPassword.length < 8) {
-      changePasswordError.value = "New password must be at least 8 characters long";
-      return;
-    }
-
-    changePasswordLoading.value = true;
-    changePasswordError.value = "";
-    changePasswordSuccess.value = false;
-
-    try {
-      await api.post("/auth/change-password", {
-        currentPassword: passwordForm.value.currentPassword,
-        newPassword: passwordForm.value.newPassword,
-      });
-
-      changePasswordSuccess.value = true;
-      passwordForm.value = {
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-      };
-
-      setTimeout(() => {
-        changePasswordSuccess.value = false;
-      }, 3000);
-    } catch (error) {
-      if (error.response?.status === 401) {
-        changePasswordError.value = "Current password is incorrect";
-      } else {
-        changePasswordError.value = "Failed to change password. Please try again.";
-      }
-    } finally {
-      changePasswordLoading.value = false;
-    }
-  };
-
-  const exportData = async () => {
-    exportLoading.value = true;
-    exportSuccess.value = false;
-
-    try {
-      const response = await api.get("/users/export-data", {
-        responseType: "blob",
-      });
-
-      // Create download link
-      const blob = new Blob([response.data], { type: "application/json" });
-      const url = window.URL.createObjectURL(blob);
-      const link = document.createElement("a");
-      link.href = url;
-
-      const timestamp = new Date().toISOString().split("T")[0];
-      link.download = `aris-data-export-${timestamp}.json`;
-
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      window.URL.revokeObjectURL(url);
-
-      exportSuccess.value = true;
-      setTimeout(() => {
-        exportSuccess.value = false;
-      }, 3000);
-    } catch (error) {
-      console.error("Failed to export data:", error);
-    } finally {
-      exportLoading.value = false;
-    }
-  };
+  import { IconLock } from "@tabler/icons-vue";
 </script>
 
 <template>
   <Pane>
     <template #header>
       <IconLock />
-      <h1>Account Security</h1>
+      <h1>Security Settings</h1>
     </template>
     <Section>
-      <template #title>Change Password</template>
-      <template #content>
-        <p class="section-description">Update your password to keep your account secure</p>
-
-        <form class="password-form" @submit.prevent="changePassword">
-          <div class="form-group">
-            <label for="current-password">Current Password</label>
-            <input
-              id="current-password"
-              v-model="passwordForm.currentPassword"
-              type="password"
-              autocomplete="current-password"
-              required
-            />
-          </div>
-
-          <div class="form-group">
-            <label for="new-password">New Password</label>
-            <input
-              id="new-password"
-              v-model="passwordForm.newPassword"
-              type="password"
-              autocomplete="new-password"
-              required
-              minlength="8"
-            />
-            <p class="field-description">Must be at least 8 characters long</p>
-          </div>
-
-          <div class="form-group">
-            <label for="confirm-password">Confirm New Password</label>
-            <input
-              id="confirm-password"
-              v-model="passwordForm.confirmPassword"
-              type="password"
-              autocomplete="new-password"
-              required
-            />
-          </div>
-
-          <div v-if="changePasswordError" class="error-message">
-            {{ changePasswordError }}
-          </div>
-
-          <div v-if="changePasswordSuccess" class="success-message">
-            Password changed successfully!
-          </div>
-
-          <Button
-            type="submit"
-            :disabled="
-              changePasswordLoading ||
-              !passwordForm.currentPassword ||
-              !passwordForm.newPassword ||
-              !passwordForm.confirmPassword
-            "
-            kind="primary"
-          >
-            {{ changePasswordLoading ? "Changing..." : "Change Password" }}
-          </Button>
-        </form>
-      </template>
-    </Section>
-
-    <Section>
-      <template #title>Download Your Data</template>
+      <template #title>Security & Privacy</template>
       <template #content>
         <p class="section-description">
-          Download a copy of all your account data including manuscripts, settings, and metadata
+          For password changes and data management, please visit your Account settings.
         </p>
 
-        <div class="data-export">
-          <div class="export-info">
-            <p><strong>What's included:</strong></p>
-            <ul>
-              <li>All your manuscripts and their content</li>
-              <li>File settings and preferences</li>
-              <li>Tags and organizational data</li>
-              <li>Account information and settings</li>
-              <li>Upload history and file assets</li>
-            </ul>
-            <p class="export-note">
-              The export will be provided as a JSON file that you can download immediately.
-            </p>
-          </div>
+        <div class="redirect-info">
+          <p><strong>Available in Account Settings:</strong></p>
+          <ul>
+            <li>Change password</li>
+            <li>Email verification</li>
+            <li>Export account data</li>
+            <li>Delete account</li>
+          </ul>
 
-          <div v-if="exportSuccess" class="success-message">
-            Your data has been downloaded successfully!
+          <div class="redirect-actions">
+            <router-link to="/account/security" class="action-button primary">
+              Go to Account Security
+            </router-link>
+            <router-link to="/account/privacy" class="action-button secondary">
+              Go to Account Privacy
+            </router-link>
           </div>
-
           <Button :disabled="exportLoading" kind="secondary" @click="exportData">
             <IconDownload v-if="!exportLoading" />
             {{ exportLoading ? "Preparing download..." : "Download All My Data" }}
@@ -203,86 +43,87 @@
 </template>
 
 <style scoped>
-  :deep(.section) {
-    width: 100%;
-  }
+    :deep(.section) {
+      width: 100%;
+    }
 
-  .password-form {
-    max-width: 400px;
-  }
+    .section-description {
+      color: var(--text-secondary);
+      margin-bottom: 24px;
+    }
 
-  .form-group {
-    margin-bottom: 20px;
-  }
+    .redirect-info {
+      max-width: 500px;
+    }
 
-  .form-group label {
-    display: block;
-    font-weight: 500;
-    color: var(--text-primary);
-    margin-bottom: 6px;
-  }
+    .redirect-info ul {
+      margin: 16px 0 24px 16px;
+      color: var(--text-secondary);
+    }
 
-  .form-group input {
-    width: 100%;
-    padding: 10px 12px;
-    border: var(--border-thin) solid var(--border-primary);
-    border-radius: 6px;
-    background: var(--surface-page);
-    color: var(--text-primary);
-    font-size: 14px;
-  }
+    .redirect-info li {
+      margin-bottom: 8px;
+    }
 
-  .form-group input:focus {
-    outline: none;
-    border-color: var(--border-action);
-  }
+    .redirect-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
 
-  .field-description {
-    color: var(--text-secondary);
-    font-size: 12px;
-    margin: 4px 0 0 0;
-  }
+  <<<<<<< HEAD
+    .data-export {
+      max-width: 500px;
+    }
 
-  .error-message {
-    color: var(--error-700);
-    font-size: 14px;
-    margin-bottom: 16px;
-    padding: 8px 12px;
-    background: var(--error-50);
-    border: var(--border-thin) solid var(--error-200);
-    border-radius: 6px;
-  }
+    .export-info {
+      margin-bottom: 24px;
+    }
 
-  .success-message {
-    color: var(--success-600);
-    font-size: 14px;
-    margin-bottom: 16px;
-    padding: 8px 12px;
-    background: var(--success-50);
-    border: var(--border-thin) solid var(--success-200);
-    border-radius: 6px;
-  }
+    .export-info ul {
+      margin: 8px 0 16px 16px;
+      color: var(--text-secondary);
+    }
 
-  .data-export {
-    max-width: 500px;
-  }
+    .export-info li {
+      margin-bottom: 4px;
+    }
 
-  .export-info {
-    margin-bottom: 24px;
-  }
+    .export-note {
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-style: italic;
+  =======
+    .action-button {
+      text-decoration: none;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-  .export-info ul {
-    margin: 8px 0 16px 16px;
-    color: var(--text-secondary);
-  }
+    .action-button.primary {
+      background: var(--surface-action);
+      color: white;
+    }
 
-  .export-info li {
-    margin-bottom: 4px;
-  }
+    .action-button.primary:hover {
+      background: var(--surface-action-hover);
+    }
 
-  .export-note {
-    color: var(--text-secondary);
-    font-size: 13px;
-    font-style: italic;
-  }
+    .action-button.secondary {
+      background: var(--surface-page);
+      color: var(--text-primary);
+      border: var(--border-thin) solid var(--border-primary);
+    }
+
+    .action-button.secondary:hover {
+      background: var(--surface-hover);
+  >>>>>>> 051d170 (Consolidate security functionality to Account views only)
+    }
 </style>

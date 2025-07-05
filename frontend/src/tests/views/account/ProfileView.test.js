@@ -1,7 +1,7 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import { ref, nextTick } from "vue";
 import { mount } from "@vue/test-utils";
-import AccountView from "@/views/account/View.vue";
+import AccountView from "@/views/account/ProfileView.vue";
 
 // Mock the toast module
 vi.mock("@/utils/toast.js", () => ({
@@ -34,7 +34,6 @@ describe("AccountView", () => {
     IconUserCircle: true,
     InputText: { template: '<input v-bind="$attrs" />' },
     Button: { template: '<button v-bind="$attrs" @click="$emit(\'click\')"><slot/></button>' },
-    PasswordStrength: { template: '<div class="password-strength-mock"></div>' },
     Icon: { template: '<span class="icon-mock"></span>' },
   };
 
@@ -305,117 +304,6 @@ describe("AccountView", () => {
     });
   });
 
-  describe("Password Change", () => {
-    beforeEach(() => {
-      // Add mock for password change API
-      api.post = vi.fn().mockResolvedValue({ data: "success" });
-    });
-
-    it("successfully changes password with valid inputs", async () => {
-      wrapper.vm.currentPassword = "oldpassword123";
-      wrapper.vm.newPassword = "newpassword123";
-      wrapper.vm.confirmPassword = "newpassword123";
-
-      await wrapper.vm.onChangePassword();
-
-      expect(api.post).toHaveBeenCalledWith("/users/1/change-password", {
-        current_password: "oldpassword123",
-        new_password: "newpassword123",
-      });
-      expect(toast.success).toHaveBeenCalledWith("Password changed successfully");
-
-      // Fields should be cleared after success
-      expect(wrapper.vm.currentPassword).toBe("");
-      expect(wrapper.vm.newPassword).toBe("");
-      expect(wrapper.vm.confirmPassword).toBe("");
-    });
-
-    it("validates that all password fields are filled", async () => {
-      wrapper.vm.currentPassword = "";
-      wrapper.vm.newPassword = "newpassword123";
-      wrapper.vm.confirmPassword = "newpassword123";
-
-      await wrapper.vm.onChangePassword();
-
-      expect(toast.error).toHaveBeenCalledWith("Please fill in all password fields");
-      expect(api.post).not.toHaveBeenCalled();
-    });
-
-    it("validates that new passwords match", async () => {
-      wrapper.vm.currentPassword = "oldpassword123";
-      wrapper.vm.newPassword = "newpassword123";
-      wrapper.vm.confirmPassword = "differentpassword";
-
-      await wrapper.vm.onChangePassword();
-
-      expect(toast.error).toHaveBeenCalledWith("New passwords do not match");
-      expect(api.post).not.toHaveBeenCalled();
-    });
-
-    it("validates minimum password length", async () => {
-      wrapper.vm.currentPassword = "oldpassword123";
-      wrapper.vm.newPassword = "short";
-      wrapper.vm.confirmPassword = "short";
-
-      await wrapper.vm.onChangePassword();
-
-      expect(toast.error).toHaveBeenCalledWith("New password must be at least 8 characters long");
-      expect(api.post).not.toHaveBeenCalled();
-    });
-
-    it("handles incorrect current password error", async () => {
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      const error = new Error("Unauthorized");
-      error.response = { status: 401 };
-      api.post.mockRejectedValue(error);
-
-      wrapper.vm.currentPassword = "wrongpassword";
-      wrapper.vm.newPassword = "newpassword123";
-      wrapper.vm.confirmPassword = "newpassword123";
-
-      await wrapper.vm.onChangePassword();
-
-      expect(toast.error).toHaveBeenCalledWith("Current password is incorrect");
-      expect(consoleErrorSpy).toHaveBeenCalledWith("Failed to change password", error);
-
-      consoleErrorSpy.mockRestore();
-    });
-
-    it("handles general password change errors", async () => {
-      const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-      api.post.mockRejectedValue(new Error("Server error"));
-
-      wrapper.vm.currentPassword = "oldpassword123";
-      wrapper.vm.newPassword = "newpassword123";
-      wrapper.vm.confirmPassword = "newpassword123";
-
-      await wrapper.vm.onChangePassword();
-
-      expect(toast.error).toHaveBeenCalledWith("Failed to change password", {
-        description: "Please check your connection and try again.",
-      });
-
-      consoleErrorSpy.mockRestore();
-    });
-
-    it("prevents multiple simultaneous password change attempts", async () => {
-      wrapper.vm.currentPassword = "oldpassword123";
-      wrapper.vm.newPassword = "newpassword123";
-      wrapper.vm.confirmPassword = "newpassword123";
-
-      // Start first change
-      const firstChange = wrapper.vm.onChangePassword();
-
-      // Try to start second change immediately
-      await wrapper.vm.onChangePassword();
-
-      // Second call should be ignored
-      expect(api.post).toHaveBeenCalledTimes(1);
-
-      await firstChange;
-    });
-  });
-
   describe("Dirty State Tracking", () => {
     it("tracks profile changes correctly", async () => {
       expect(wrapper.vm.hasUnsavedProfileChanges).toBe(false);
@@ -431,32 +319,14 @@ describe("AccountView", () => {
       expect(wrapper.vm.hasUnsavedProfileChanges).toBe(false);
     });
 
-    it("tracks password changes correctly", async () => {
-      expect(wrapper.vm.hasUnsavedPasswordChanges).toBe(false);
-
-      wrapper.vm.currentPassword = "something";
-      expect(wrapper.vm.hasUnsavedPasswordChanges).toBe(true);
-
-      wrapper.vm.currentPassword = "";
-      wrapper.vm.newPassword = "newpass";
-      expect(wrapper.vm.hasUnsavedPasswordChanges).toBe(true);
-
-      wrapper.vm.newPassword = "";
-      expect(wrapper.vm.hasUnsavedPasswordChanges).toBe(false);
-    });
-
     it("tracks overall unsaved changes", async () => {
-      expect(wrapper.vm.hasUnsavedChanges).toBe(false);
+      expect(wrapper.vm.hasUnsavedProfileChanges).toBe(false);
 
       wrapper.vm.newName = "Changed";
-      expect(wrapper.vm.hasUnsavedChanges).toBe(true);
+      expect(wrapper.vm.hasUnsavedProfileChanges).toBe(true);
 
       wrapper.vm.newName = null;
-      wrapper.vm.currentPassword = "password";
-      expect(wrapper.vm.hasUnsavedChanges).toBe(true);
-
-      wrapper.vm.currentPassword = "";
-      expect(wrapper.vm.hasUnsavedChanges).toBe(false);
+      expect(wrapper.vm.hasUnsavedProfileChanges).toBe(false);
     });
 
     it("shows unsaved changes warning in UI", async () => {
@@ -477,13 +347,11 @@ describe("AccountView", () => {
 
       wrapper.vm.newName = "Changed Name";
       wrapper.vm.newEmail = "changed@example.com";
-      wrapper.vm.currentPassword = "password";
 
       await wrapper.vm.onDiscard();
 
       expect(wrapper.vm.newName).toBeNull();
       expect(wrapper.vm.newEmail).toBeNull();
-      expect(wrapper.vm.currentPassword).toBe("");
       expect(toast.info).toHaveBeenCalledWith("Changes discarded");
 
       confirmSpy.mockRestore();
