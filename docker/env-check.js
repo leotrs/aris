@@ -21,7 +21,9 @@ const REQUIRED_ENV_VARS = [
   'STORYBOOK_PORT',
   'DB_PORT',
   'DB_NAME',
-  'TEST_DB_NAME'
+  'TEST_DB_NAME',
+  'VITE_API_BASE_URL',
+  'NUXT_BACKEND_URL'
 ];
 
 function detectEnvironment() {
