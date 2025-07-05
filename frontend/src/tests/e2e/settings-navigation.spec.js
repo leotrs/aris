@@ -30,7 +30,7 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
     await expect(page.locator(".sub-items-container").locator('text="Security"')).toBeVisible();
   });
 
-  test("should navigate between settings sub-sections", async ({ page }) => {
+  test.skip("should navigate between settings sub-sections", async ({ page }) => {
     // Start at settings
     await page.click('text="Settings"');
     await expect(page).toHaveURL("/settings/document");

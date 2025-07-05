@@ -20,7 +20,6 @@ const MockIcon = {
   template: `<span class="mock-icon" :data-icon="name">{{ name }}</span>`,
 };
 
-
 const MockPane = {
   name: "Pane",
   template: `<div class="mock-pane"><slot></slot></div>`,
