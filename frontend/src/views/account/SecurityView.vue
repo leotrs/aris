@@ -251,16 +251,15 @@
                   :icon="
                     verificationSent ? 'CheckCircle' : isSendingVerification ? 'Loader2' : 'Mail'
                   "
-                  @click="onSendVerificationEmail"
-                >
-                  {{
+                  :text="
                     verificationSent
-                      ? "Verification email sent"
+                      ? 'Verification email sent'
                       : isSendingVerification
-                        ? "Sending..."
-                        : "Send Verification Email"
-                  }}
-                </Button>
+                        ? 'Sending...'
+                        : 'Send Verification Email'
+                  "
+                  @click="onSendVerificationEmail"
+                />
               </div>
             </div>
           </div>
@@ -305,18 +304,16 @@
           <Button
             kind="tertiary"
             :disabled="isChangingPassword || !hasUnsavedPasswordChanges"
+            text="Cancel"
             @click="onDiscard"
-          >
-            Cancel
-          </Button>
+          />
           <Button
             kind="secondary"
             :disabled="isChangingPassword || !hasUnsavedPasswordChanges"
             :icon="isChangingPassword ? 'Loader2' : undefined"
+            :text="isChangingPassword ? 'Updating...' : 'Update Password'"
             @click="onChangePassword"
-          >
-            {{ isChangingPassword ? "Updating..." : "Update Password" }}
-          </Button>
+          />
         </div>
 
         <div v-if="hasUnsavedPasswordChanges" class="status-message warning">

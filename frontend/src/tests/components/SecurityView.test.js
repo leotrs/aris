@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { ref } from "vue";
 import SecurityView from "@/views/account/SecurityView.vue";
+import Button from "@/components/base/Button.vue";
 import { toast } from "@/utils/toast.js";
 
 // Mock toast utility
@@ -19,14 +20,6 @@ const MockIcon = {
   template: `<span class="mock-icon" :data-icon="name">{{ name }}</span>`,
 };
 
-const MockButton = {
-  name: "Button",
-  props: ["kind", "size", "disabled", "icon"],
-  template: `<button :disabled="disabled" :data-kind="kind">
-    <span v-if="icon" class="mock-icon" :data-icon="icon">{{ icon }}</span>
-    <slot></slot>
-  </button>`,
-};
 
 const MockPane = {
   name: "Pane",
@@ -87,7 +80,7 @@ describe("SecurityView Email Verification", () => {
           },
           components: {
             Icon: MockIcon,
-            Button: MockButton,
+            Button: Button,
             Pane: MockPane,
             InputText: MockInputText,
             PasswordStrength: MockPasswordStrength,
@@ -120,7 +113,7 @@ describe("SecurityView Email Verification", () => {
           },
           components: {
             Icon: MockIcon,
-            Button: MockButton,
+            Button: Button,
             Pane: MockPane,
             InputText: MockInputText,
             PasswordStrength: MockPasswordStrength,
@@ -155,7 +148,7 @@ describe("SecurityView Email Verification", () => {
           },
           components: {
             Icon: MockIcon,
-            Button: MockButton,
+            Button: Button,
             Pane: MockPane,
             InputText: MockInputText,
             PasswordStrength: MockPasswordStrength,
@@ -329,7 +322,7 @@ describe("SecurityView Email Verification", () => {
           },
           components: {
             Icon: MockIcon,
-            Button: MockButton,
+            Button: Button,
             Pane: MockPane,
             InputText: MockInputText,
             PasswordStrength: MockPasswordStrength,
@@ -378,7 +371,7 @@ describe("SecurityView Email Verification", () => {
           },
           components: {
             Icon: MockIcon,
-            Button: MockButton,
+            Button: Button,
             Pane: MockPane,
             InputText: MockInputText,
             PasswordStrength: MockPasswordStrength,
@@ -400,7 +393,7 @@ describe("SecurityView Email Verification", () => {
           },
           components: {
             Icon: MockIcon,
-            Button: MockButton,
+            Button: Button,
             Pane: MockPane,
             InputText: MockInputText,
             PasswordStrength: MockPasswordStrength,
