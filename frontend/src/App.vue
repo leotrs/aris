@@ -137,14 +137,44 @@
       const isAuthDisabled = import.meta.env.VITE_DISABLE_AUTH === "true";
 
       if (token && storedUser) {
-        logger.info("Found existing auth credentials", { userId: storedUser.id });
+        logger.info("Found existing auth credentials", {
+          userId: storedUser.id,
+          email: storedUser.email,
+        });
         user.value = storedUser;
-        fileStore.value = createFileStore(api, user.value);
 
-        logger.debug("Loading user files and tags");
-        await fileStore.value.loadFiles();
-        await fileStore.value.loadTags();
-        logger.info("App initialization completed successfully");
+        try {
+          logger.debug("Creating FileStore instance", { userId: storedUser.id });
+          fileStore.value = createFileStore(api, user.value);
+          logger.debug("FileStore created successfully", {
+            hasFileStore: !!fileStore.value,
+            storeType: typeof fileStore.value,
+          });
+
+          logger.debug("Loading user files and tags");
+          await fileStore.value.loadFiles();
+          logger.debug("Files loaded", { filesCount: fileStore.value.files?.length || 0 });
+
+          await fileStore.value.loadTags();
+          logger.debug("Tags loaded", { tagsCount: fileStore.value.tags?.length || 0 });
+
+          logger.info("App initialization completed successfully", {
+            userId: storedUser.id,
+            filesCount: fileStore.value.files?.length || 0,
+            tagsCount: fileStore.value.tags?.length || 0,
+          });
+        } catch (storeError) {
+          logger.error("FileStore initialization or data loading failed", {
+            error: storeError.message,
+            stack: storeError.stack,
+            userId: storedUser.id,
+            hasToken: !!token,
+            hasUser: !!user.value,
+            hasFileStore: !!fileStore.value,
+          });
+          // Keep the user logged in but without store
+          logger.warn("Continuing without FileStore due to initialization failure");
+        }
       } else if (isAuthDisabled) {
         logger.info("Auth disabled, fetching test user");
         try {
@@ -157,7 +187,12 @@
           await fileStore.value.loadTags();
           logger.info("App initialization completed with test user");
         } catch (error) {
-          logger.error("Failed to fetch test user", error);
+          logger.error("Failed to fetch test user", {
+            error: error.message,
+            stack: error.stack,
+            endpoint: "/me",
+            isAuthDisabled: true,
+          });
         }
       } else {
         logger.info("No auth credentials found, cleaning storage");
@@ -166,7 +201,13 @@
         localStorage.removeItem("user");
       }
     } catch (error) {
-      logger.error("App initialization failed", error);
+      logger.error("App initialization failed", {
+        error: error.message,
+        stack: error.stack,
+        hasToken: !!localStorage.getItem("accessToken"),
+        hasUser: !!localStorage.getItem("user"),
+        isAuthDisabled: import.meta.env.VITE_DISABLE_AUTH === "true",
+      });
     } finally {
       const duration = performance.now() - startTime;
       logger.performance("App initialization", duration);
