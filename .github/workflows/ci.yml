@@ -218,11 +218,51 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
+        echo "🔍 [MOBILE-CHROME-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
+        echo "🔍 [MOBILE-CHROME-DEBUG] Environment variables:"
+        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
+        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
+        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
+        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
+        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
+        echo "  - PostgreSQL connection test:"
+        
+        # Test database connectivity
+        if pg_isready -h localhost -p 5432 -U postgres; then
+          echo "✅ PostgreSQL connection successful"
+        else
+          echo "❌ PostgreSQL connection failed"
+          exit 1
+        fi
+        
+        # Run migrations
+        echo "🔄 Running database migrations..."
         uv run alembic upgrade head
-        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+        MIGRATION_EXIT_CODE=$?
+        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Setup test user for enabled auth mode
+        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
+          echo "🔑 Auth mode is ENABLED - creating test user..."
+          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
+          uv run python scripts/reset_test_user.py
+          RESET_USER_EXIT_CODE=$?
+          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
+          
+          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
+            echo "✅ Test user creation/reset completed successfully"
+          else
+            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
+            exit $RESET_USER_EXIT_CODE
+          fi
+        else
+          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+        fi
+        
+        echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -355,11 +395,51 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
+        echo "🔍 [MOBILE-CHROME-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
+        echo "🔍 [MOBILE-CHROME-DEBUG] Environment variables:"
+        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
+        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
+        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
+        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
+        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
+        echo "  - PostgreSQL connection test:"
+        
+        # Test database connectivity
+        if pg_isready -h localhost -p 5432 -U postgres; then
+          echo "✅ PostgreSQL connection successful"
+        else
+          echo "❌ PostgreSQL connection failed"
+          exit 1
+        fi
+        
+        # Run migrations
+        echo "🔄 Running database migrations..."
         uv run alembic upgrade head
-        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+        MIGRATION_EXIT_CODE=$?
+        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Setup test user for enabled auth mode
+        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
+          echo "🔑 Auth mode is ENABLED - creating test user..."
+          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
+          uv run python scripts/reset_test_user.py
+          RESET_USER_EXIT_CODE=$?
+          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
+          
+          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
+            echo "✅ Test user creation/reset completed successfully"
+          else
+            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
+            exit $RESET_USER_EXIT_CODE
+          fi
+        else
+          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+        fi
+        
+        echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -497,11 +577,51 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
+        echo "🔍 [MOBILE-CHROME-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
+        echo "🔍 [MOBILE-CHROME-DEBUG] Environment variables:"
+        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
+        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
+        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
+        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
+        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
+        echo "  - PostgreSQL connection test:"
+        
+        # Test database connectivity
+        if pg_isready -h localhost -p 5432 -U postgres; then
+          echo "✅ PostgreSQL connection successful"
+        else
+          echo "❌ PostgreSQL connection failed"
+          exit 1
+        fi
+        
+        # Run migrations
+        echo "🔄 Running database migrations..."
         uv run alembic upgrade head
-        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+        MIGRATION_EXIT_CODE=$?
+        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Setup test user for enabled auth mode
+        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
+          echo "🔑 Auth mode is ENABLED - creating test user..."
+          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
+          uv run python scripts/reset_test_user.py
+          RESET_USER_EXIT_CODE=$?
+          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
+          
+          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
+            echo "✅ Test user creation/reset completed successfully"
+          else
+            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
+            exit $RESET_USER_EXIT_CODE
+          fi
+        else
+          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+        fi
+        
+        echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -525,6 +645,20 @@ jobs:
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install chromium --with-deps
+
+    - name: Platform-specific environment debugging
+      run: |
+        echo "🔍 [MOBILE-CHROME-PLATFORM] Platform debugging for Ubuntu:"
+        echo "  - Runner OS: $RUNNER_OS"
+        echo "  - OS Name: $(uname -s)"
+        echo "  - OS Version: $(uname -r)"
+        echo "  - Architecture: $(uname -m)"
+        echo "  - PostgreSQL version: $(postgres --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Python version: $(python --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Python3 version: $(python3 --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - UV version: $(uv --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Available environment variables:"
+        env | grep -E "(TEST_|DB_|DISABLE_|VITE_)" | sort || echo "No matching env vars"
 
     - name: Start backend and frontend, run Mobile Chrome E2E tests
       run: |
@@ -634,11 +768,51 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
+        echo "🔍 [MOBILE-SAFARI-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
+        echo "🔍 [MOBILE-SAFARI-DEBUG] Environment variables:"
+        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
+        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
+        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
+        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
+        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
+        echo "  - PostgreSQL connection test:"
+        
+        # Test database connectivity
+        if pg_isready -q; then
+          echo "✅ PostgreSQL connection successful"
+        else
+          echo "❌ PostgreSQL connection failed"
+          exit 1
+        fi
+        
+        # Run migrations
+        echo "🔄 Running database migrations..."
         uv run alembic upgrade head
-        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+        MIGRATION_EXIT_CODE=$?
+        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Setup test user for enabled auth mode
+        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
+          echo "🔑 Auth mode is ENABLED - creating test user..."
+          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
+          uv run python scripts/reset_test_user.py
+          RESET_USER_EXIT_CODE=$?
+          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
+          
+          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
+            echo "✅ Test user creation/reset completed successfully"
+          else
+            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
+            exit $RESET_USER_EXIT_CODE
+          fi
+        else
+          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+        fi
+        
+        echo "✅ [MOBILE-SAFARI-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -662,6 +836,21 @@ jobs:
       working-directory: frontend
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install webkit
+
+    - name: Platform-specific environment debugging
+      run: |
+        echo "🔍 [MOBILE-SAFARI-PLATFORM] Platform debugging for macOS:"
+        echo "  - Runner OS: $RUNNER_OS"
+        echo "  - OS Name: $(uname -s)"
+        echo "  - OS Version: $(uname -r)"
+        echo "  - Architecture: $(uname -m)"
+        echo "  - PostgreSQL version: $(postgres --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Python version: $(python --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Python3 version: $(python3 --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - UV version: $(uv --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Brew info: $(brew --version 2>/dev/null || echo 'not in PATH')"
+        echo "  - Available environment variables:"
+        env | grep -E "(TEST_|DB_|DISABLE_|VITE_)" | sort || echo "No matching env vars"
 
     - name: Start backend and frontend, run Mobile Safari E2E tests
       run: |
