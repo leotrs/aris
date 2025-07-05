@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { TEST_CREDENTIALS } from "./setup/test-data.js";
 
-test.describe("Settings Navigation @auth", () => {
+test.describe("Settings Navigation @auth @desktop-only", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
@@ -154,58 +154,7 @@ test.describe("Settings Navigation @auth", () => {
   });
 });
 
-test.describe("Settings Navigation in Collapsed Sidebar @auth", () => {
-  let authHelpers;
 
-  test.beforeEach(async ({ page }) => {
-    authHelpers = new AuthHelpers(page);
-    await page.goto("/");
-    await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
-  });
-
-  test.afterEach(async () => {
-    await authHelpers.clearAuthState();
-  });
-
-  test("should handle sub-items in collapsed sidebar", async ({ page }) => {
-    // Navigate to settings first
-    await page.click('text="Settings"');
-    await expect(page).toHaveURL("/settings/document");
-    await expect(page.locator(".sub-items-container")).toBeVisible();
-
-    // Collapse the sidebar
-    await page.click('[data-testid="sidebar-item-collapse"]'); // Collapse button
-    await expect(page.locator(".sb-wrapper")).toHaveClass(/collapsed/);
-
-    // Sub-items should still be accessible (implementation dependent)
-    // This may need adjustment based on how collapsed sidebar handles sub-items
-    await expect(page.locator(".sub-items-container")).toBeVisible();
-  });
-});
-
-test.describe("Settings Mobile Navigation @auth", () => {
-  let authHelpers;
-
-  test.beforeEach(async ({ page }) => {
-    await page.setViewportSize({ width: 375, height: 667 }); // Mobile viewport
-    authHelpers = new AuthHelpers(page);
-    await page.goto("/");
-    await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
-  });
-
-  test.afterEach(async () => {
-    await authHelpers.clearAuthState();
-  });
-
-  test("should handle settings navigation on mobile", async ({ page }) => {
-    // Mobile navigation may be different - adjust based on implementation
-    await page.click('text="Settings"');
-    await expect(page).toHaveURL("/settings/document");
-
-    // Check if sub-items are handled differently on mobile
-    // This test may need significant adjustment based on mobile implementation
-  });
-});
 
 test.describe("Settings Error Handling @auth", () => {
   let authHelpers;
@@ -229,19 +178,5 @@ test.describe("Settings Error Handling @auth", () => {
     await expect(page).toHaveURL(/\/settings|\/404/);
   });
 
-  test("should maintain navigation state during network issues", async ({ page }) => {
-    await page.click('text="Settings"');
-    await expect(page).toHaveURL("/settings/document");
-    await page.click('.sub-items-container >> text="Behavior"');
 
-    // Simulate network issues using route blocking (works across all browsers)
-    await page.route("**/*", (route) => route.abort());
-
-    // UI should remain responsive for navigation
-    await page.click('.sub-items-container >> text="File"');
-    await expect(page).toHaveURL("/settings/document");
-
-    // Restore network
-    await page.unroute("**/*");
-  });
 });

@@ -19,6 +19,14 @@
       type: "toggle",
     },
     {
+      name: "AICopilot",
+      icon: "Sparkles",
+      label: "Ari",
+      key: "c",
+      state: false,
+      type: "toggle",
+    },
+    {
       name: "DockableSearch",
       icon: "Search",
       label: "search",

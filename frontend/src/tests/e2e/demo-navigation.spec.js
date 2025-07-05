@@ -245,6 +245,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
 
       // Check for workspace or main content area (flexible selector)
       const workspaceSelectors = [
+        '[data-testid="workspace-container"]',
         ".workspace-container",
         ".workspace",
         ".main-content",

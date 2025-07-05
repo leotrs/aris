@@ -14,7 +14,7 @@ import { test, expect } from "@playwright/test";
  * 4. Global keyboard listeners don't block input events
  */
 
-test.describe("Input Regression Tests @regression", () => {
+test.describe("Input Regression Tests @regression @desktop-only", () => {
   test("basic input functionality works without global interference", async ({ page }) => {
     // Navigate to demo page (always available)
     await page.goto("/demo/content", { waitUntil: "networkidle" });

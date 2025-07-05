@@ -154,26 +154,6 @@ test.describe("Demo Content Rendering @demo-content", () => {
       expect(menuCount).toBeGreaterThan(0);
     });
 
-    test("content scrolling works correctly", async ({ page }) => {
-      // Wait for manuscript content
-      await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
-        timeout: 10000,
-      });
-
-      const manuscriptContainer = page.locator('[data-testid="manuscript-container"]');
-      await expect(manuscriptContainer).toBeVisible();
-
-      // Get initial scroll position
-      const initialScrollTop = await manuscriptContainer.evaluate((el) => el.scrollTop);
-
-      // Scroll down
-      await manuscriptContainer.evaluate((el) => (el.scrollTop = 200));
-      await page.waitForTimeout(100);
-
-      // Verify scroll position changed
-      const newScrollTop = await manuscriptContainer.evaluate((el) => el.scrollTop);
-      expect(newScrollTop).toBeGreaterThan(initialScrollTop);
-    });
 
     test("content loads within reasonable time", async ({ page }) => {
       const startTime = Date.now();

@@ -108,6 +108,7 @@
 <template>
   <button
     ref="btn-ref"
+    :disabled="disabled"
     :class="[
       kind,
       `btn-${size}`,

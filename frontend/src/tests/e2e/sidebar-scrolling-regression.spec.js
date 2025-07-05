@@ -23,15 +23,9 @@ test.describe("Sidebar Scrolling Regression @core @desktop-only", () => {
     // Wait for sidebar to load
     await expect(page.locator('[data-testid="workspace-sidebar"]')).toBeVisible();
 
-    // Check if we're running in Mobile Safari/Chrome where enhanced mobile detection
-    // will add .mobile class even with large viewports due to mobile user agent
-    const browserName = page.context().browser()?.browserType()?.name();
-    const isMobileBrowserType =
-      browserName === "webkit" ||
-      (browserName === "chromium" && process.env.PLAYWRIGHT_PROJECT_NAME?.includes("Mobile"));
-
-    // Skip this test for actual mobile browsers since it tests desktop sidebar behavior
-    if (isMobileBrowserType && process.env.PLAYWRIGHT_PROJECT_NAME?.includes("Mobile")) {
+    // Skip this test for mobile viewports since it tests desktop sidebar behavior
+    const viewport = page.viewportSize();
+    if (viewport && viewport.width < 640) {
       test.skip();
       return;
     }
@@ -93,15 +87,9 @@ test.describe("Sidebar Scrolling Regression @core @desktop-only", () => {
   test("sidebar maintains scrollability across different short viewport heights", async ({
     page,
   }) => {
-    // Check if we're running in Mobile Safari/Chrome where enhanced mobile detection
-    // will add .mobile class even with large viewports due to mobile user agent
-    const browserName = page.context().browser()?.browserType()?.name();
-    const isMobileBrowserType =
-      browserName === "webkit" ||
-      (browserName === "chromium" && process.env.PLAYWRIGHT_PROJECT_NAME?.includes("Mobile"));
-
-    // Skip this test for actual mobile browsers since it tests desktop sidebar behavior
-    if (isMobileBrowserType && process.env.PLAYWRIGHT_PROJECT_NAME?.includes("Mobile")) {
+    // Skip this test for mobile viewports since it tests desktop sidebar behavior
+    const viewport = page.viewportSize();
+    if (viewport && viewport.width < 640) {
       test.skip();
       return;
     }

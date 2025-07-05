@@ -277,6 +277,13 @@ def auth_headers(authenticated_user):
 
 
 @pytest_asyncio.fixture
+async def authenticated_client(client: AsyncClient, authenticated_user):
+    """Return a client with authentication headers pre-configured."""
+    client.headers.update({"Authorization": f"Bearer {authenticated_user['token']}"})
+    return client
+
+
+@pytest_asyncio.fixture
 def second_auth_headers(second_authenticated_user):
     """Return authorization headers for the second user."""
     return {"Authorization": f"Bearer {second_authenticated_user['token']}"}
