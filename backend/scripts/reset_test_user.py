@@ -35,14 +35,14 @@ if not TEST_USER_PASSWORD:
     print("⚠️  TEST_USER_PASSWORD not found in environment variables, using default")
     TEST_USER_PASSWORD = "testpassword123"
 
-print(f"🔍 [RESET-USER-DEBUG] Starting test user reset script")
+print("🔍 [RESET-USER-DEBUG] Starting test user reset script")
 print(f"🔍 [RESET-USER-DEBUG] Python path: {sys.path[:3]}...")
 print(f"🔍 [RESET-USER-DEBUG] Backend directory: {backend_dir}")
 print(f"🔍 [RESET-USER-DEBUG] Environment file: {env_file} (exists: {env_file.exists()})")
 print(f"📧 Using test user email: {TEST_USER_EMAIL}")
 print(f"🔑 Test password length: {len(TEST_USER_PASSWORD)} characters")
 print(f"🔑 Test password starts with: {TEST_USER_PASSWORD[:4]}...")
-print(f"🔍 [RESET-USER-DEBUG] Environment variables check:")
+print("🔍 [RESET-USER-DEBUG] Environment variables check:")
 print(f"   - ENV: {os.getenv('ENV', 'UNSET')}")
 print(f"   - DB_URL_LOCAL: {os.getenv('DB_URL_LOCAL', 'UNSET')}")
 print(f"   - DB_URL_PROD: {os.getenv('DB_URL_PROD', 'UNSET')}")
@@ -52,11 +52,11 @@ print(f"   - ALEMBIC_DB_URL_PROD: {os.getenv('ALEMBIC_DB_URL_PROD', 'UNSET')}")
 
 async def reset_test_user():
     """Reset test user and their data to known stable state."""
-    print(f"🔍 [RESET-USER-DEBUG] Initializing database session...")
+    print("🔍 [RESET-USER-DEBUG] Initializing database session...")
     
     try:
         session = ArisSession()
-        print(f"✅ [RESET-USER-DEBUG] Database session created successfully")
+        print("✅ [RESET-USER-DEBUG] Database session created successfully")
     except Exception as e:
         print(f"❌ [RESET-USER-DEBUG] Failed to create database session: {e}")
         raise
@@ -74,45 +74,45 @@ async def reset_test_user():
         if user_row:
             user_id = user_row.id
             print(f"🔍 [RESET-USER-DEBUG] Found existing user with ID: {user_id}")
-            print(f"🔍 [RESET-USER-DEBUG] Cleaning up existing user data...")
+            print("🔍 [RESET-USER-DEBUG] Cleaning up existing user data...")
             
             # Delete all existing data for test user
-            print(f"🔍 [RESET-USER-DEBUG] Deleting file_tags...")
+            print("🔍 [RESET-USER-DEBUG] Deleting file_tags...")
             await session.execute(
                 text("DELETE FROM file_tags WHERE file_id IN (SELECT id FROM files WHERE owner_id = :user_id)"),
                 {"user_id": user_id},
             )
-            print(f"🔍 [RESET-USER-DEBUG] Deleting files...")
+            print("🔍 [RESET-USER-DEBUG] Deleting files...")
             await session.execute(
                 text("DELETE FROM files WHERE owner_id = :user_id"), {"user_id": user_id}
             )
-            print(f"🔍 [RESET-USER-DEBUG] Deleting tags...")
+            print("🔍 [RESET-USER-DEBUG] Deleting tags...")
             await session.execute(text("DELETE FROM tags WHERE user_id = :user_id"), {"user_id": user_id})
-            print(f"🔍 [RESET-USER-DEBUG] Deleting file_settings...")
+            print("🔍 [RESET-USER-DEBUG] Deleting file_settings...")
             await session.execute(
                 text("DELETE FROM file_settings WHERE user_id = :user_id"), {"user_id": user_id}
             )
 
             # Update user with fresh password hash
-            print(f"🔍 [RESET-USER-DEBUG] Hashing password...")
+            print("🔍 [RESET-USER-DEBUG] Hashing password...")
             password_hash = hash_password(TEST_USER_PASSWORD)
             print(f"🔍 [RESET-USER-DEBUG] Password hash created (length: {len(password_hash)})")
-            print(f"🔍 [RESET-USER-DEBUG] Updating user with new password...")
+            print("🔍 [RESET-USER-DEBUG] Updating user with new password...")
             await session.execute(
                 text("UPDATE users SET password_hash = :password_hash, name = :name, email = :email WHERE id = :user_id"),
                 {"password_hash": password_hash, "name": "Test User", "email": TEST_USER_EMAIL, "user_id": user_id},
             )
-            print(f"🔍 [RESET-USER-DEBUG] Committing user update...")
+            print("🔍 [RESET-USER-DEBUG] Committing user update...")
             await session.commit()
-            print(f"✅ [RESET-USER-DEBUG] Existing user updated successfully")
+            print("✅ [RESET-USER-DEBUG] Existing user updated successfully")
         else:
-            print(f"🔍 [RESET-USER-DEBUG] No existing user found, creating new user...")
+            print("🔍 [RESET-USER-DEBUG] No existing user found, creating new user...")
             # Create new test user
             password_hash = hash_password(TEST_USER_PASSWORD)
             print(f"🔍 [RESET-USER-DEBUG] Password hash created (length: {len(password_hash)})")
             user = User(name="Test User", email=TEST_USER_EMAIL, password_hash=password_hash)
             session.add(user)
-            print(f"🔍 [RESET-USER-DEBUG] User added to session, committing...")
+            print("🔍 [RESET-USER-DEBUG] User added to session, committing...")
             await session.commit()
             user_id = user.id
             print(f"✅ [RESET-USER-DEBUG] New user created with ID: {user_id}")
@@ -156,19 +156,19 @@ This is another stable test file for visual tests.
         ]
 
         session.add_all(test_files)
-        print(f"🔍 [RESET-USER-DEBUG] Committing test files...")
+        print("🔍 [RESET-USER-DEBUG] Committing test files...")
         await session.commit()
         print(f"✅ [RESET-USER-DEBUG] Created {len(test_files)} test files")
 
         # Create stable test tags
-        print(f"🔍 [RESET-USER-DEBUG] Creating test tags...")
+        print("🔍 [RESET-USER-DEBUG] Creating test tags...")
         test_tags = [
             Tag(name="Visual Testing", user_id=user_id, color="BLUE"),
             Tag(name="Regression", user_id=user_id, color="GREEN"),
         ]
 
         session.add_all(test_tags)
-        print(f"🔍 [RESET-USER-DEBUG] Committing test tags...")
+        print("🔍 [RESET-USER-DEBUG] Committing test tags...")
         await session.commit()
         print(f"✅ [RESET-USER-DEBUG] Created {len(test_tags)} test tags")
 
@@ -178,7 +178,7 @@ This is another stable test file for visual tests.
         print(f"   - Tags created: {len(test_tags)}")
         
         # Final verification
-        print(f"🔍 [RESET-USER-DEBUG] Final verification - querying user again...")
+        print("🔍 [RESET-USER-DEBUG] Final verification - querying user again...")
         verification_user = await session.execute(
             text("SELECT id, email, name FROM users WHERE email = :email"), {"email": TEST_USER_EMAIL}
         )
@@ -186,19 +186,19 @@ This is another stable test file for visual tests.
         if verify_row:
             print(f"✅ [RESET-USER-DEBUG] Verification successful - user exists: ID={verify_row.id}, email={verify_row.email}, name={verify_row.name}")
         else:
-            print(f"❌ [RESET-USER-DEBUG] Verification FAILED - user not found after creation!")
+            print("❌ [RESET-USER-DEBUG] Verification FAILED - user not found after creation!")
 
     except Exception as e:
         print(f"❌ [RESET-USER-DEBUG] Exception occurred: {e}")
         print(f"❌ [RESET-USER-DEBUG] Exception type: {type(e).__name__}")
-        print(f"❌ [RESET-USER-DEBUG] Rolling back transaction...")
+        print("❌ [RESET-USER-DEBUG] Rolling back transaction...")
         await session.rollback()
         print(f"❌ Error resetting test user: {e}")
         raise
     finally:
-        print(f"🔍 [RESET-USER-DEBUG] Closing database session...")
+        print("🔍 [RESET-USER-DEBUG] Closing database session...")
         await session.close()
-        print(f"🔍 [RESET-USER-DEBUG] Session closed")
+        print("🔍 [RESET-USER-DEBUG] Session closed")
 
 
 if __name__ == "__main__":
