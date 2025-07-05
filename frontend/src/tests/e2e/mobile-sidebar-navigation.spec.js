@@ -1,11 +1,10 @@
 import { test, expect } from "@playwright/test";
 
 // @auth @auth-flows @core @demo-content @demo-ui
-import { AuthHelpers } from "./utils/auth-helpers.js";
 import { MobileHelpers } from "./utils/mobile-helpers.js";
 
 test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () => {
-  let authHelpers, mobileHelpers;
+  let mobileHelpers;
 
   const mobileViewports = [
     { name: "iPhone SE", width: 375, height: 667 },
@@ -14,7 +13,6 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
   ];
 
   test.beforeEach(async ({ page }) => {
-    authHelpers = new AuthHelpers(page);
     mobileHelpers = new MobileHelpers(page);
   });
 
@@ -158,7 +156,11 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
     test("should navigate from home to account via user menu drawer", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto("/");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
+      await mobileHelpers.waitForVueComponentMount();
+
+      // Debug initial state
+      await mobileHelpers.debugLoadState();
 
       // Open user menu drawer and navigate to Account
       const userAvatar = page.locator('[data-testid="user-avatar"]');
@@ -167,6 +169,10 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       const accountProfileItem = page.locator('[data-testid="account-profile"]');
       await mobileHelpers.clickElement(accountProfileItem);
 
+      // Debug before navigation wait
+      console.log("[Test] About to wait for navigation to account/profile");
+      await mobileHelpers.debugLoadState();
+
       await mobileHelpers.waitForURLPattern(/\/account\/profile/);
       await expect(page).toHaveURL("/account/profile");
     });
@@ -174,7 +180,8 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
     test("should navigate from home to settings via mobile drawer", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto("/");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
+      await mobileHelpers.waitForVueComponentMount();
 
       // Open drawer and navigate to Settings
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -182,6 +189,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
 
       const settingsItem = page.locator('[data-sidebar-item="Settings"]');
       await mobileHelpers.clickElement(settingsItem);
+
+      console.log("[Test] About to wait for navigation to settings");
+      await mobileHelpers.debugLoadState();
 
       await mobileHelpers.waitForURLPattern(/\/settings/);
       await expect(page).toHaveURL(/\/settings/);
@@ -214,7 +224,8 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
     test("should navigate from account to home via mobile drawer", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto("/account");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
+      await mobileHelpers.waitForVueComponentMount();
 
       // Open drawer and navigate to Home
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -222,6 +233,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
 
       const homeItem = page.locator('[data-sidebar-item="Home"]');
       await mobileHelpers.clickElement(homeItem);
+
+      console.log("[Test] About to wait for navigation to home");
+      await mobileHelpers.debugLoadState();
 
       await mobileHelpers.waitForURLPattern(/^\/$/);
       await expect(page).toHaveURL("/");
