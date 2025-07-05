@@ -37,7 +37,7 @@ const routes = [
 
         // Create API instance with base URL
         const api = axios.create({
-          baseURL: `http://localhost:${import.meta.env.VITE_BACKEND_PORT || 8000}`,
+          baseURL: import.meta.env.VITE_API_BASE_URL,
         });
 
         await api.post(`/users/verify-email/${token}`);
