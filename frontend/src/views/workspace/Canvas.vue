@@ -179,7 +179,7 @@
               <DockableChat v-if="showChat" :file-id="file.id" />
             </Dock>
           </div>
-          <div ref="middle-column-ref" class="middle-column">
+          <div v-if="!mobileMode || !showChat" ref="middle-column-ref" class="middle-column">
             <Dock class="dock middle top">
               <ReaderTopbar :show-title="!isMainTitleVisible" />
             </Dock>
@@ -417,6 +417,16 @@
     border-color: transparent;
     padding-inline: 0;
     padding-block: 16px;
+  }
+
+  /* Mobile chat takes full width like editor */
+  .outer.mobile .inner.right.has-chat .left-column {
+    width: 100%;
+    padding: 8px;
+    margin-inline: 0;
+    flex: 1;
+    min-width: unset;
+    max-width: unset;
   }
 
   .rsm-manuscript {
