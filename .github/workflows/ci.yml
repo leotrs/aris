@@ -378,7 +378,7 @@ jobs:
         done
         # Create postgres user with password to match global DB URLs
         createuser -s postgres
-        psql -c "ALTER USER postgres PASSWORD 'postgres';"
+        psql -d postgres -c "ALTER USER postgres PASSWORD 'postgres';"
         createdb test_aris
 
     - name: Create virtual environment and sync dependencies
@@ -742,7 +742,7 @@ jobs:
         done
         # Create postgres user with password to match global DB URLs
         createuser -s postgres
-        psql -c "ALTER USER postgres PASSWORD 'postgres';"
+        psql -d postgres -c "ALTER USER postgres PASSWORD 'postgres';"
         createdb test_aris
 
     - name: Create virtual environment and sync dependencies
