@@ -33,7 +33,7 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
 
   test("send verification email workflow for unverified users", async ({ page }) => {
     console.log("🧪 [EMAIL_VERIFICATION_TEST] Starting test");
-    
+
     // Navigate to security page
     await page.goto("/account/security");
     console.log("🧪 [EMAIL_VERIFICATION_TEST] Navigated to /account/security");
@@ -43,7 +43,7 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
       accessToken: localStorage.getItem("accessToken"),
       refreshToken: localStorage.getItem("refreshToken"),
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
-      url: window.location.href
+      url: window.location.href,
     }));
     console.log("🧪 [EMAIL_VERIFICATION_TEST] Auth state:", JSON.stringify(authState, null, 2));
 
@@ -53,15 +53,18 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
       const app = window.__VUE_APP__;
       return {
         hasVueApp: !!app,
-        userFromComponent: window.user || "not accessible"
+        userFromComponent: window.user || "not accessible",
       };
     });
-    console.log("🧪 [EMAIL_VERIFICATION_TEST] Component state:", JSON.stringify(componentState, null, 2));
+    console.log(
+      "🧪 [EMAIL_VERIFICATION_TEST] Component state:",
+      JSON.stringify(componentState, null, 2)
+    );
 
     // EXTENSIVE LOGGING: JavaScript console errors
     const jsErrors = [];
-    page.on('console', msg => {
-      if (msg.type() === 'error') {
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
         jsErrors.push(msg.text());
         console.log("🧪 [EMAIL_VERIFICATION_TEST] JS Error:", msg.text());
       }
@@ -90,10 +93,16 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
       const isEnabled = await button.isEnabled();
       buttonInfo.push({ text, isVisible, isEnabled });
     }
-    console.log("🧪 [EMAIL_VERIFICATION_TEST] All buttons on page:", JSON.stringify(buttonInfo, null, 2));
+    console.log(
+      "🧪 [EMAIL_VERIFICATION_TEST] All buttons on page:",
+      JSON.stringify(buttonInfo, null, 2)
+    );
 
     // EXTENSIVE LOGGING: Specific verification buttons
-    const verificationButtons = await page.locator("button").filter({ hasText: /Send Verification Email|Sending|verification|email/i }).all();
+    const verificationButtons = await page
+      .locator("button")
+      .filter({ hasText: /Send Verification Email|Sending|verification|email/i })
+      .all();
     const verificationButtonInfo = [];
     for (const button of verificationButtons) {
       const text = await button.textContent();
@@ -102,41 +111,58 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
       const classes = await button.getAttribute("class");
       verificationButtonInfo.push({ text, isVisible, isEnabled, classes });
     }
-    console.log("🧪 [EMAIL_VERIFICATION_TEST] Verification-related buttons:", JSON.stringify(verificationButtonInfo, null, 2));
+    console.log(
+      "🧪 [EMAIL_VERIFICATION_TEST] Verification-related buttons:",
+      JSON.stringify(verificationButtonInfo, null, 2)
+    );
 
     // EXTENSIVE LOGGING: Check for verification actions div
     const verificationActionsExists = await page.locator(".verification-actions").isVisible();
-    console.log("🧪 [EMAIL_VERIFICATION_TEST] .verification-actions div visible:", verificationActionsExists);
+    console.log(
+      "🧪 [EMAIL_VERIFICATION_TEST] .verification-actions div visible:",
+      verificationActionsExists
+    );
 
     if (verificationActionsExists) {
       const verificationActionsHTML = await page.locator(".verification-actions").innerHTML();
-      console.log("🧪 [EMAIL_VERIFICATION_TEST] .verification-actions content:", verificationActionsHTML);
+      console.log(
+        "🧪 [EMAIL_VERIFICATION_TEST] .verification-actions content:",
+        verificationActionsHTML
+      );
     }
 
     // Take screenshot for visual debugging
-    await page.screenshot({ path: 'test-results/email-verification-debug.png', fullPage: true });
-    console.log("🧪 [EMAIL_VERIFICATION_TEST] Screenshot saved to test-results/email-verification-debug.png");
+    await page.screenshot({ path: "test-results/email-verification-debug.png", fullPage: true });
+    console.log(
+      "🧪 [EMAIL_VERIFICATION_TEST] Screenshot saved to test-results/email-verification-debug.png"
+    );
 
     if (isUnverified) {
-      console.log("🧪 [EMAIL_VERIFICATION_TEST] User appears unverified, looking for Send Verification Email button");
-      
+      console.log(
+        "🧪 [EMAIL_VERIFICATION_TEST] User appears unverified, looking for Send Verification Email button"
+      );
+
       // Should have a "Send Verification Email" button (check for both possible states)
       const sendButton = page
         .locator("button")
         .filter({ hasText: /Send Verification Email|Sending/ })
         .first();
-      
+
       // EXTENSIVE LOGGING: Button search results
       const sendButtonExists = await sendButton.count();
       console.log("🧪 [EMAIL_VERIFICATION_TEST] Send button count:", sendButtonExists);
-      
+
       if (sendButtonExists > 0) {
         const buttonText = await sendButton.textContent();
         const buttonVisible = await sendButton.isVisible();
         const buttonEnabled = await sendButton.isEnabled();
-        console.log("🧪 [EMAIL_VERIFICATION_TEST] Send button details:", { buttonText, buttonVisible, buttonEnabled });
+        console.log("🧪 [EMAIL_VERIFICATION_TEST] Send button details:", {
+          buttonText,
+          buttonVisible,
+          buttonEnabled,
+        });
       }
-      
+
       await expect(sendButton).toBeVisible();
       await expect(sendButton).toBeEnabled();
 
@@ -201,7 +227,7 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
 
   test("email verification status updates correctly", async ({ page }) => {
     console.log("🧪 [EMAIL_STATUS_TEST] Starting test");
-    
+
     // Navigate to security page
     await page.goto("/account/security");
     console.log("🧪 [EMAIL_STATUS_TEST] Navigated to /account/security");
@@ -211,7 +237,7 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
       accessToken: localStorage.getItem("accessToken"),
       refreshToken: localStorage.getItem("refreshToken"),
       user: localStorage.getItem("user") ? JSON.parse(localStorage.getItem("user")) : null,
-      url: window.location.href
+      url: window.location.href,
     }));
     console.log("🧪 [EMAIL_STATUS_TEST] Auth state:", JSON.stringify(authState, null, 2));
 
@@ -219,15 +245,15 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
     const componentState = await page.evaluate(() => {
       return {
         hasVueApp: !!window.__VUE_APP__,
-        userFromComponent: window.user || "not accessible"
+        userFromComponent: window.user || "not accessible",
       };
     });
     console.log("🧪 [EMAIL_STATUS_TEST] Component state:", JSON.stringify(componentState, null, 2));
 
     // EXTENSIVE LOGGING: JavaScript console errors
     const jsErrors = [];
-    page.on('console', msg => {
-      if (msg.type() === 'error') {
+    page.on("console", (msg) => {
+      if (msg.type() === "error") {
         jsErrors.push(msg.text());
         console.log("🧪 [EMAIL_STATUS_TEST] JS Error:", msg.text());
       }
@@ -268,7 +294,10 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
     console.log("🧪 [EMAIL_STATUS_TEST] All buttons on page:", JSON.stringify(buttonInfo, null, 2));
 
     // EXTENSIVE LOGGING: Specific verification buttons
-    const verificationButtons = await page.locator("button").filter({ hasText: /Send Verification Email|Sending|verification|email/i }).all();
+    const verificationButtons = await page
+      .locator("button")
+      .filter({ hasText: /Send Verification Email|Sending|verification|email/i })
+      .all();
     const verificationButtonInfo = [];
     for (const button of verificationButtons) {
       const text = await button.textContent();
@@ -277,50 +306,57 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
       const classes = await button.getAttribute("class");
       verificationButtonInfo.push({ text, isVisible, isEnabled, classes });
     }
-    console.log("🧪 [EMAIL_STATUS_TEST] Verification-related buttons:", JSON.stringify(verificationButtonInfo, null, 2));
+    console.log(
+      "🧪 [EMAIL_STATUS_TEST] Verification-related buttons:",
+      JSON.stringify(verificationButtonInfo, null, 2)
+    );
 
     // Take screenshot for visual debugging
-    await page.screenshot({ path: 'test-results/email-status-debug.png', fullPage: true });
+    await page.screenshot({ path: "test-results/email-status-debug.png", fullPage: true });
     console.log("🧪 [EMAIL_STATUS_TEST] Screenshot saved to test-results/email-status-debug.png");
 
     if (hasWarningClass) {
       console.log("🧪 [EMAIL_STATUS_TEST] User appears unverified, checking elements");
-      
+
       // User is unverified
       await expect(emailSection.locator("h3")).toContainText("Email Not Verified");
       const sendButton = page
         .locator("button")
         .filter({ hasText: /Send Verification Email|Sending/ })
         .first();
-      
+
       // EXTENSIVE LOGGING: Button search results
       const sendButtonExists = await sendButton.count();
       console.log("🧪 [EMAIL_STATUS_TEST] Send button count:", sendButtonExists);
-      
+
       if (sendButtonExists > 0) {
         const buttonText = await sendButton.textContent();
         const buttonVisible = await sendButton.isVisible();
         const buttonEnabled = await sendButton.isEnabled();
-        console.log("🧪 [EMAIL_STATUS_TEST] Send button details:", { buttonText, buttonVisible, buttonEnabled });
+        console.log("🧪 [EMAIL_STATUS_TEST] Send button details:", {
+          buttonText,
+          buttonVisible,
+          buttonEnabled,
+        });
       }
-      
+
       await expect(sendButton).toBeVisible();
     } else {
       console.log("🧪 [EMAIL_STATUS_TEST] User appears verified, checking elements");
-      
+
       // User is verified
       await expect(emailSection.locator("h3")).toContainText("Email Verified");
       const sendButton = page
         .locator("button")
         .filter({ hasText: /Send Verification Email|Sending/ });
-      
+
       // EXTENSIVE LOGGING: Button should not exist
       const sendButtonCount = await sendButton.count();
       console.log("🧪 [EMAIL_STATUS_TEST] Send button count (should be 0):", sendButtonCount);
-      
+
       await expect(sendButton).not.toBeVisible();
     }
-    
+
     console.log("🧪 [EMAIL_STATUS_TEST] Test completed");
   });
 
