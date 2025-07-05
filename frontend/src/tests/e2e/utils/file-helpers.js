@@ -12,35 +12,65 @@ export class FileHelpers {
    */
   async waitForFilesLoaded() {
     const timeouts = this.mobileHelpers.getTimeouts();
+    console.log("🔍 [FileHelpers] waitForFilesLoaded: Starting...");
 
     try {
       // Check browser state before proceeding
+      console.log("🔍 [FileHelpers] waitForFilesLoaded: Checking initial browser state...");
       if (this.page.isClosed()) {
         throw new Error("Browser already closed at start of waitForFilesLoaded");
       }
+      console.log("🔍 [FileHelpers] waitForFilesLoaded: Browser is open, proceeding...");
 
       // Wait for DOM content to be loaded (more reliable than networkidle)
+      console.log("🔍 [FileHelpers] waitForFilesLoaded: Waiting for domcontentloaded...");
       await this.page.waitForLoadState("domcontentloaded");
+      console.log(
+        "🔍 [FileHelpers] waitForFilesLoaded: DOM content loaded, waiting for mobile rendering..."
+      );
+
       await this.mobileHelpers.waitForMobileRendering();
+      console.log(
+        "🔍 [FileHelpers] waitForFilesLoaded: Mobile rendering complete, checking browser state..."
+      );
 
       // Check browser state after load
       if (this.page.isClosed()) {
         throw new Error("Browser closed after DOM load - cannot continue");
       }
+      console.log(
+        "🔍 [FileHelpers] waitForFilesLoaded: Browser still open, looking for files container..."
+      );
 
       // Wait for files container to be visible (handles Suspense loading states)
-      await this.mobileHelpers.expectToBeVisible(
-        this.page.locator('[data-testid="files-container"]'),
-        timeouts.medium
+      console.log(
+        "🔍 [FileHelpers] waitForFilesLoaded: Calling expectToBeVisible for files-container..."
+      );
+      const filesContainer = this.page.locator('[data-testid="files-container"]');
+      await this.mobileHelpers.expectToBeVisible(filesContainer, timeouts.medium);
+
+      // Ensure we scroll to top to see newly created files
+      console.log("🔍 [FileHelpers] waitForFilesLoaded: Scrolling to top of files container...");
+      await filesContainer.evaluate((el) => (el.scrollTop = 0));
+      console.log(
+        "🔍 [FileHelpers] waitForFilesLoaded: Files container is visible and scrolled to top!"
       );
     } catch (error) {
       // Comprehensive crash debugging
+      console.log("🚨 [FileHelpers] waitForFilesLoaded: ERROR occurred:", error.message);
       let debugInfo = "Unknown error";
 
       try {
+        console.log(
+          "🚨 [FileHelpers] waitForFilesLoaded: Checking browser state in error handler..."
+        );
         if (this.page.isClosed()) {
+          console.log("🚨 [FileHelpers] waitForFilesLoaded: Browser is CLOSED!");
           debugInfo = "Browser closed during test - cannot recover files list";
         } else {
+          console.log(
+            "🚨 [FileHelpers] waitForFilesLoaded: Browser still open, gathering debug info..."
+          );
           const url = this.page.url();
           const title = await this.page.title();
           const readyState = await this.page.evaluate(() => document.readyState);
@@ -92,7 +122,6 @@ export class FileHelpers {
 
     // Wait for home page to fully load with sidebar
     await this.page.waitForLoadState("domcontentloaded");
-    await this.page.waitForTimeout(500);
 
     // Get the create file button using the correct selector
     const createButton = this.page.locator('[data-testid="create-file-button"]');
@@ -127,26 +156,38 @@ export class FileHelpers {
    * Navigate back to home to see file list
    */
   async navigateToHome() {
+    console.log("🏠 [FileHelpers] navigateToHome: Starting navigation to home...");
     // Use standard navigation for all browsers
     try {
+      console.log("🏠 [FileHelpers] navigateToHome: Calling page.goto('/')...");
       await this.page.goto("/");
+      console.log("🏠 [FileHelpers] navigateToHome: Navigation completed successfully");
     } catch (error) {
-      console.log("Navigation error:", error.message);
+      console.log("🚨 [FileHelpers] navigateToHome: Navigation error:", error.message);
       if (this.page.isClosed()) {
+        console.log("🚨 [FileHelpers] navigateToHome: Browser is CLOSED!");
         throw new Error("Browser closed during navigation - cannot recover");
       }
       throw error;
     }
 
+    console.log("🏠 [FileHelpers] navigateToHome: Waiting for domcontentloaded...");
     await this.page.waitForLoadState("domcontentloaded");
+    console.log("🏠 [FileHelpers] navigateToHome: DOM content loaded");
 
     // Wait for either files or the create button to be present (empty state)
+    console.log(
+      "🏠 [FileHelpers] navigateToHome: Waiting for files-container or create-file-button..."
+    );
     await this.page.waitForSelector(
       '[data-testid="files-container"], [data-testid="create-file-button"]',
       { timeout: 10000 }
     );
+    console.log("🏠 [FileHelpers] navigateToHome: Found files-container or create-file-button");
 
+    console.log("🏠 [FileHelpers] navigateToHome: Calling waitForFilesLoaded...");
     await this.waitForFilesLoaded();
+    console.log("🏠 [FileHelpers] navigateToHome: waitForFilesLoaded completed successfully");
   }
 
   /**
