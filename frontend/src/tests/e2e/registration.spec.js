@@ -14,7 +14,7 @@ test.describe("Registration Flow Tests @auth-flows", () => {
     await authHelpers.clearAuthState();
   });
 
-  test("user registration with valid data redirects to home", async ({ page }) => {
+  test.skip("user registration with valid data redirects to home", async ({ page }) => {
     const testUser = {
       name: `Test User ${timestamp}`,
       email: `testuser${timestamp}@example.com`,

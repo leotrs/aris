@@ -83,7 +83,7 @@ async def me(user: User = Depends(current_user)):
     Returns
     -------
     dict
-        User information including email, id, name, initials, created_at, and avatar color.
+        User information including email, id, name, initials, created_at, avatar color, and email_verified status.
 
     Notes
     -----
@@ -98,6 +98,7 @@ async def me(user: User = Depends(current_user)):
         "initials": user.initials,
         "created_at": user.created_at,
         "avatar_color": user.avatar_color,
+        "email_verified": user.email_verified,
     }
 
 
@@ -216,5 +217,6 @@ async def register(user_data: UserCreate, db: AsyncSession = Depends(get_db)):
             "name": new_user.name,
             "initials": new_user.initials,
             "created_at": new_user.created_at,
+            "email_verified": new_user.email_verified,
         },
     }

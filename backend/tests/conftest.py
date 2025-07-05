@@ -209,6 +209,7 @@ class TestConstants:
     DEFAULT_USER_NAME = "Test User"
     DEFAULT_USER_INITIALS = "TU"
     DEFAULT_PASSWORD = "testpass123"
+    TEST_PASSWORD = DEFAULT_PASSWORD  # Alias for clarity in tests
 
     SECOND_USER_EMAIL = "testuser2@example.com"
     SECOND_USER_NAME = "Test User 2"

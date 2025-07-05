@@ -131,7 +131,7 @@ describe("BaseLayout", () => {
 
       // Find main items (excluding sub-items container)
       const mainItems = sidebarItems.filter((item) => !item.isSubItemsContainer);
-      expect(mainItems.length).toBe(4); // Home, Settings, Separator, Collapse
+      expect(mainItems.length).toBe(5); // Home, Account, Settings, Separator, Collapse
 
       // Check main items structure
       expect(mainItems[0]).toMatchObject({
@@ -141,10 +141,16 @@ describe("BaseLayout", () => {
       });
 
       expect(mainItems[1]).toMatchObject({
+        icon: "User",
+        text: "Account",
+        route: "/account",
+      });
+
+      expect(mainItems[2]).toMatchObject({
         icon: "Settings",
         text: "Settings",
         route: "/settings",
-        active: true, // Should be active for /settings/document path
+        active: true,
       });
     });
 

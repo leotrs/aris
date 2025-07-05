@@ -46,9 +46,9 @@ class Settings(BaseSettings):
     """Algorithm used for JWT encoding (default: HS256)."""
 
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = Field(
-        30, json_schema_extra={"env": "JWT_ACCESS_TOKEN_EXPIRE_MINUTES"}
+        120, json_schema_extra={"env": "JWT_ACCESS_TOKEN_EXPIRE_MINUTES"}
     )
-    """Expiration time in minutes for JWT access tokens (default: 30)."""
+    """Expiration time in minutes for JWT access tokens (default: 120)."""
 
     TEST_USER_EMAIL: str = Field(..., json_schema_extra={"env": "TEST_USER_EMAIL"})
     """Test user email for visual tests."""

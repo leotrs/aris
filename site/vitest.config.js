@@ -21,6 +21,7 @@ export default defineConfig({
         minThreads: 1,
       },
     },
+    fileParallelism: false,
     exclude: [
       "**/node_modules/**",
       "**/dist/**",

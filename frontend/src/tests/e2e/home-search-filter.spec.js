@@ -46,5 +46,4 @@ test.describe("Home View Search & Filter @auth @desktop-only", () => {
       await page.keyboard.press("Escape");
     }
   });
-
 });

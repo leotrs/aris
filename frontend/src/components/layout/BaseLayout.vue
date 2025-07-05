@@ -53,6 +53,12 @@
       route: "/",
     },
     {
+      icon: "User",
+      text: "Account",
+      active: route.path.startsWith("/account"),
+      route: "/account",
+    },
+    {
       icon: "Settings",
       text: "Settings",
       active: route.path.startsWith("/settings"),

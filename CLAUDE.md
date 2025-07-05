@@ -162,7 +162,7 @@ npx playwright test --grep "@demo-content" # Demo content tests (37 tests)
 npx playwright test --grep "@demo-ui"      # Demo UI tests (33 tests)
 
 # Debug and development
-npx playwright test --headed              # Run with browser visible
+npx playwright test --headless            # Run with browser visible
 npx playwright test --debug               # Run in debug mode
 npx playwright test --reporter=html       # Generate HTML report
 ```
@@ -187,7 +187,6 @@ npx playwright test --reporter=html       # Generate HTML report
 - **For user interaction bugs: ALWAYS use `debug/debug-bug-template.js` to replicate**
 - **Whenever using puppeteer or playwright, use headless mode**
 - **Always run e2e tests with --reporter=line**
-- **When using playwright or puppeteer, always run in headless mode**
 - Before starting any service, check if it is already running
 - **Send notifications when tasks complete or need user input**: `osascript -e "display notification \"message\" with title \"Claude Code\""`
 ```
