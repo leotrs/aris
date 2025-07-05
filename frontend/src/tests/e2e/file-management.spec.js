@@ -95,7 +95,7 @@ test.describe("File Management Tests @auth @desktop-only", () => {
     await fileHelpers.openFileMenu(fileId);
 
     // Verify menu is visible with expected options
-    const contextMenu = page.locator('[data-testid="context-menu"]');
+    const contextMenu = page.locator('[data-testid="context-menu"]').first();
     await expect(contextMenu).toBeVisible();
     await expect(page.locator('text="Delete"')).toBeVisible();
     await expect(page.locator('text="Duplicate"')).toBeVisible();
@@ -130,7 +130,7 @@ test.describe("File Management Tests @auth @desktop-only", () => {
 
       // Test keyboard shortcut to open file menu (.) - if implemented
       await page.keyboard.press(".");
-      const contextMenu = page.locator('[data-testid="context-menu"]');
+      const contextMenu = page.locator('[data-testid="context-menu"]').first();
 
       // Context menu may or may not appear depending on keyboard shortcut implementation
       if ((await contextMenu.count()) > 0) {
