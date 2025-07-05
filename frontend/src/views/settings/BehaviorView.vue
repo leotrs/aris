@@ -149,20 +149,17 @@
       </template>
     </Section>
 
-    <Section>
-      <template #content>
-        <div class="settings-actions">
-          <button
-            :disabled="loading"
-            class="save-button"
-            :class="{ saved: saved }"
-            @click="saveSettings"
-          >
-            {{ loading ? "Saving..." : saved ? "Saved!" : "Save Settings" }}
-          </button>
-        </div>
-      </template>
-    </Section>
+    <div class="settings-actions">
+      <Button
+        :disabled="loading"
+        kind="primary"
+        :class="{ saved: saved }"
+        data-testid="save-settings-button"
+        @click="saveSettings"
+      >
+        {{ loading ? "Saving..." : saved ? "Saved!" : "Save Settings" }}
+      </Button>
+    </div>
   </Pane>
 </template>
 
@@ -222,27 +219,8 @@
     margin-top: 16px;
   }
 
-  .save-button {
-    background: var(--accent-500);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-  }
-
-  .save-button:hover:not(:disabled) {
-    background: var(--accent-600);
-  }
-
-  .save-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-
-  .save-button.saved {
-    background: var(--success-500);
+  .saved {
+    background: var(--green-600, #16a34a) !important;
+    border-color: var(--green-600, #16a34a) !important;
   }
 </style>

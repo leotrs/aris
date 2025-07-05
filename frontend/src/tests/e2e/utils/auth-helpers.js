@@ -64,8 +64,8 @@ export class AuthHelpers {
   }
 
   async logout() {
-    await this.page.click('[data-testid="user-menu"]');
-    await this.page.click("text=Logout");
+    await this.page.click('[data-testid="user-avatar"]');
+    await this.page.click('[data-testid="user-logout"]');
   }
 
   async clearAuthState() {
@@ -106,7 +106,7 @@ export class AuthHelpers {
     // Verify we're on the home page (not login page)
     await expect(this.page).toHaveURL("/");
 
-    // Verify that we have logged-in user elements visible (check for user-menu specifically)
-    await expect(this.page.locator('[data-testid="user-menu"]')).toBeVisible();
+    // Verify that we have logged-in user elements visible (check for user-avatar specifically)
+    await expect(this.page.locator('[data-testid="user-avatar"]')).toBeVisible();
   }
 }

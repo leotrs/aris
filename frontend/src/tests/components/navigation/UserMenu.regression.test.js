@@ -71,7 +71,7 @@ describe("UserMenu.vue - Regression Tests", () => {
     const contextMenu = wrapper.find('[data-testid="context-menu"]');
     expect(contextMenu.exists()).toBe(true);
 
-    const button = wrapper.find('[data-testid="user-menu"]');
+    const button = wrapper.find('[data-testid="user-avatar"]');
     expect(button.exists()).toBe(true);
 
     const avatar = wrapper.find('[data-testid="avatar"]');

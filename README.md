@@ -33,30 +33,27 @@ readable on any device, bringing scientific publications to the web. See more at
    cd aris
    ```
 
-2. **Environment Configuration (REQUIRED)**
+2. **Install Just (task runner)**
 
    ```bash
-   # Copy environment template and configure ports
-   cp .env.example .env
-   # Edit .env with your desired port configuration
+   # macOS
+   brew install just
+   
+   # Or download from: https://github.com/casey/just/releases
+   ```
+
+3. **Initialize development environment**
+
+   ```bash
+   just init     # Sets up all .env files and installs dependencies
    ```
    
    **CRITICAL**: All environment variables are REQUIRED. The system will crash immediately if any are missing.
 
-3. **Frontend Setup**
+4. **Start development containers**
 
    ```bash
-   cd frontend
-   npm install
-   npm run dev
-   ```
-
-4. **Backend Setup**
-
-   ```bash
-   cd backend
-   uv sync
-   uvicorn main:app --reload
+   just dev      # Starts all services in Docker containers
    ```
 
 ### Project Structure
@@ -280,18 +277,12 @@ We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) f
 Please ensure all tests pass and code is linted before submitting PRs:
 
 ```bash
-# Backend checks
-cd backend
-uv run pytest -n8                       # All 352 tests pass (SQLite locally)
-./simulate-ci -- uv run pytest -n8     # Verify CI compatibility (PostgreSQL locally) 
-uv run ruff check                       # No linting errors
-uv run mypy aris/                       # No type errors
+# Run all checks (lint + typecheck + tests)
+just check-all
 
-# Frontend checks  
-cd frontend
-npm test                                # All unit tests pass
-npm run lint                            # No linting errors
-npm run test:e2e                        # All E2E tests pass (requires backend)
+# Or run individual commands:
+just lint-all                           # Check code quality
+just test-all                           # Run all tests
 ```
 
 **Testing Infrastructure Notes**

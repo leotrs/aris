@@ -47,7 +47,7 @@ test.describe("Sidebar Scrolling Regression @core @desktop-only", () => {
     expect(scrollability.initialScrollTop).toBe(0);
 
     // Check that user menu is initially not visible (cut off)
-    const userMenu = page.locator(".um-wrapper");
+    const userMenu = page.locator(".user-menu-wrapper.desktop, .um-wrapper");
     await expect(userMenu).toBeVisible();
 
     const initialVisibility = await userMenu.evaluate((menu) => {

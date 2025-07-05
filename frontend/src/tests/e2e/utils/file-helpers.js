@@ -106,7 +106,7 @@ export class FileHelpers {
     await this.mobileHelpers.clickElement(createButton);
 
     // Wait for context menu to appear with mobile-optimized timeout
-    const contextMenu = this.page.locator('[data-testid="context-menu"]');
+    const contextMenu = this.page.locator('[data-testid="context-menu"]').first();
     await this.mobileHelpers.expectToBeVisible(contextMenu, timeouts.medium);
 
     // Click "Empty file" option with robust selector for mobile browsers

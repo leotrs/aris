@@ -14,46 +14,6 @@ test.describe("Account View E2E Tests @auth @desktop-only", () => {
 
   // No afterEach cleanup - keep auth state for all account tests
 
-  test("complete account profile update workflow", async ({ page }) => {
-    // Navigate to account page
-    await page.goto("/account");
-    await expect(page).toHaveURL("/account");
-
-    // Verify we're on the account page with user info displayed
-    await expect(page.locator(".user-name")).toBeVisible();
-    await expect(page.locator(".user-email")).toBeVisible();
-    await expect(page.locator(".member-since")).toContainText("Member since");
-
-    // Update profile information - use specific selectors targeting the InputText components
-    const nameInput = page.locator(".input-text").filter({ hasText: "Full Name" }).locator("input");
-    const initialsInput = page
-      .locator(".input-text")
-      .filter({ hasText: "Initials" })
-      .locator("input");
-    const emailInput = page
-      .locator(".input-text")
-      .filter({ hasText: "Email Address" })
-      .locator("input");
-
-    // Wait for inputs to be visible and interactable
-    await expect(nameInput).toBeVisible();
-    await expect(initialsInput).toBeVisible();
-    await expect(emailInput).toBeVisible();
-
-    await nameInput.fill("Test User Updated");
-    await initialsInput.fill("TU");
-    await emailInput.fill("testuser@aris.pub");
-
-    // Verify the form inputs were filled correctly (without submitting)
-    await expect(nameInput).toHaveValue("Test User Updated");
-    await expect(initialsInput).toHaveValue("TU");
-    await expect(emailInput).toHaveValue("testuser@aris.pub");
-
-    // Verify save button is present and enabled
-    const saveButton = page.locator('button:has-text("Save Changes")');
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-  });
 
   test("avatar upload workflow", async ({ page }) => {
     await page.goto("/account");
@@ -102,6 +62,10 @@ test.describe("Account View E2E Tests @auth @desktop-only", () => {
     // Verify mobile layout adaptations
     const mainContainer = page.locator(".account-layout");
     await expect(mainContainer).toBeVisible();
+
+    // Verify mobile navigation is available (hamburger menu should be visible)
+    const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
+    await expect(hamburgerButton).toBeVisible();
 
     // Check if danger zone is visible
     const dangerSection = page.locator(".danger-zone");

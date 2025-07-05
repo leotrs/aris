@@ -3,6 +3,7 @@
   import { useRouter } from "vue-router";
   import { File } from "@/models/File.js";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
+  import useClosable from "@/composables/useClosable.js";
   import BaseSidebarItem from "./BaseSidebarItem.vue";
 
   defineOptions({
@@ -22,7 +23,7 @@
     },
     fab: { type: Boolean, default: true },
   });
-  const emit = defineEmits(["action", "newEmptyFile", "showFileUploadModal"]);
+  const emit = defineEmits(["action", "newEmptyFile", "showFileUploadModal", "closeMobileDrawer"]);
   const menuItems = computed(() => {
     return props.sidebarItems;
   });
@@ -36,6 +37,9 @@
 
   // Breakpoints
   const mobileMode = inject("mobileMode");
+
+  // Mobile drawer state
+  const mobileDrawerOpen = inject("mobileDrawerOpen", ref(false));
 
   // CTA
   const menuRef = useTemplateRef("menu-ref");
@@ -64,6 +68,10 @@
 
     if (item.route) {
       router.push(item.route);
+      // Close mobile drawer after navigation
+      if (mobileMode.value && mobileDrawerOpen.value) {
+        emit("closeMobileDrawer");
+      }
     } else if (item.action) {
       switch (item.action) {
         case "collapse":
@@ -83,8 +91,11 @@
     }
   };
 
+  // Mobile drawer content ref for useClosable
+  const sidebarContentRef = useTemplateRef("sidebar-content-ref");
+
   // Keys
-  useKeyboardShortcuts(
+  const keyboardController = useKeyboardShortcuts(
     {
       "g,h": { fn: () => goTo(""), description: "go home" },
       "g,a": { fn: () => goTo("account"), description: "go to user account" },
@@ -99,6 +110,24 @@
     "Main"
   );
 
+  // Setup useClosable for mobile drawer (no keyboard shortcuts for mobile)
+  const { activate: activateClosable, deactivate: deactivateClosable } = useClosable({
+    onClose: () => emit("closeMobileDrawer"),
+    closeOnEsc: false, // Mobile devices don't have keyboards
+    closeOnOutsideClick: true,
+    closeOnCloseButton: false,
+    autoActivate: false,
+  });
+
+  // Watch mobile drawer state to activate/deactivate useClosable
+  watchEffect(() => {
+    if (mobileMode.value && mobileDrawerOpen.value) {
+      activateClosable();
+    } else {
+      deactivateClosable();
+    }
+  });
+
   const ctaAttrs = computed(() => {
     return {
       text: mobileMode.value || collapsed.value ? "" : "New File",
@@ -110,29 +139,42 @@
 </script>
 
 <template>
-  <div class="sb-wrapper" :class="{ mobile: mobileMode, collapsed: collapsed }">
+  <div
+    class="sb-wrapper"
+    :class="{
+      mobile: mobileMode,
+      collapsed: collapsed,
+      'drawer-open': mobileMode && mobileDrawerOpen,
+    }"
+  >
+    <!-- Mobile backdrop -->
+    <div
+      v-if="mobileMode && mobileDrawerOpen"
+      class="mobile-backdrop"
+      @click="emit('closeMobileDrawer')"
+    ></div>
+
+    <!-- Desktop mode: direct children for CSS compatibility -->
     <template v-if="!mobileMode">
       <div id="logo">
         <Logo :type="collapsed ? 'small' : 'full'" alt="Aris logo" />
       </div>
-    </template>
 
-    <div v-if="!mobileMode || (mobileMode && fab)" class="cta" :class="{ fab: mobileMode }">
-      <ContextMenu
-        ref="menu-ref"
-        data-testid="create-file-button"
-        variant="slot"
-        :placement="ctaAttrs.placement"
-      >
-        <template #trigger="{ toggle }">
-          <Button :icon="'CirclePlus'" v-bind="ctaAttrs" @click="toggle" />
-        </template>
-        <ContextMenuItem icon="File" caption="Empty file" @click="emit('newEmptyFile')" />
-        <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />
-      </ContextMenu>
-    </div>
+      <div class="cta">
+        <ContextMenu
+          ref="menu-ref"
+          data-testid="create-file-button"
+          variant="slot"
+          :placement="ctaAttrs.placement"
+        >
+          <template #trigger="{ toggle }">
+            <Button :icon="'CirclePlus'" v-bind="ctaAttrs" @click="toggle" />
+          </template>
+          <ContextMenuItem icon="File" caption="Empty file" @click="emit('newEmptyFile')" />
+          <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />
+        </ContextMenu>
+      </div>
 
-    <template v-if="!mobileMode">
       <div class="sb-menu">
         <template v-for="(item, index) in menuItems" :key="`item-${index}`">
           <Separator v-if="item.separator" />
@@ -168,6 +210,79 @@
         </template>
       </div>
     </template>
+
+    <!-- Mobile mode: drawer content when open -->
+    <div v-if="mobileMode && mobileDrawerOpen" ref="sidebar-content-ref" class="sidebar-content">
+      <div id="logo">
+        <Logo :type="collapsed ? 'small' : 'full'" alt="Aris logo" />
+      </div>
+
+      <div class="cta">
+        <ContextMenu
+          ref="menu-ref"
+          data-testid="create-file-button"
+          variant="slot"
+          :placement="ctaAttrs.placement"
+        >
+          <template #trigger="{ toggle }">
+            <Button :icon="'CirclePlus'" v-bind="ctaAttrs" @click="toggle" />
+          </template>
+          <ContextMenuItem icon="File" caption="Empty file" @click="emit('newEmptyFile')" />
+          <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />
+        </ContextMenu>
+      </div>
+
+      <div class="sb-menu">
+        <template v-for="(item, index) in menuItems" :key="`item-${index}`">
+          <Separator v-if="item.separator" />
+          <div v-else-if="item.isSubItemsContainer" class="sub-items-container">
+            <BaseSidebarItem
+              v-for="(subItem, subIndex) in item.subItems"
+              :key="`sub-item-${subIndex}`"
+              :icon="subItem.icon"
+              :icon-collapsed="subItem.iconCollapsed"
+              :text="subItem.text"
+              :tooltip="subItem.tooltip"
+              :tooltip-always="subItem.tooltipAlways"
+              :active="subItem.active"
+              :clickable="subItem.clickable"
+              :is-sub-item="subItem.isSubItem"
+              :class="subItem.class"
+              @click="handleItemClick(subItem)"
+            />
+          </div>
+          <BaseSidebarItem
+            v-else
+            :icon="item.icon"
+            :icon-collapsed="item.iconCollapsed"
+            :text="item.text"
+            :tooltip="item.tooltip"
+            :tooltip-always="item.tooltipAlways"
+            :active="item.active"
+            :clickable="item.clickable"
+            :is-sub-item="item.isSubItem"
+            :class="item.class"
+            @click="handleItemClick(item)"
+          />
+        </template>
+      </div>
+    </div>
+
+    <!-- Mobile FAB when drawer is closed -->
+    <div v-if="mobileMode && !mobileDrawerOpen && fab" class="cta fab">
+      <ContextMenu
+        ref="menu-ref"
+        data-testid="create-file-button"
+        variant="slot"
+        :placement="ctaAttrs.placement"
+      >
+        <template #trigger="{ toggle }">
+          <Button :icon="'CirclePlus'" v-bind="ctaAttrs" @click="toggle" />
+        </template>
+        <ContextMenuItem icon="File" caption="Empty file" @click="emit('newEmptyFile')" />
+        <ContextMenuItem icon="Upload" caption="Upload" @click="emit('showFileUploadModal')" />
+      </ContextMenu>
+    </div>
   </div>
 </template>
 
@@ -257,6 +372,66 @@
     height: 0;
     position: fixed;
     z-index: 999;
+  }
+
+  .sb-wrapper.mobile.drawer-open {
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+  }
+
+  .sb-wrapper.mobile.drawer-open .sidebar-content {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 280px;
+    height: 100vh;
+    background: var(--gray-50);
+    border-right: 1px solid var(--gray-200);
+    padding: 16px;
+    overflow-y: auto;
+    z-index: 1002;
+    transform: translateX(0);
+    transition: transform 0.3s ease-out;
+  }
+
+  .mobile-backdrop {
+    position: fixed;
+    top: 0;
+    left: 280px; /* Start backdrop after sidebar width */
+    width: calc(100vw - 280px); /* Cover remaining width */
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+    cursor: pointer;
+  }
+
+  /* Mobile drawer sidebar content styling */
+  .sb-wrapper.mobile.drawer-open .sidebar-content #logo {
+    margin-bottom: 24px;
+    padding-inline: 0;
+  }
+
+  .sb-wrapper.mobile.drawer-open .sidebar-content #logo > img {
+    height: 48px;
+    margin: 0;
+  }
+
+  .sb-wrapper.mobile.drawer-open .sidebar-content .cta {
+    padding-block: 12px;
+    padding-inline: 0;
+  }
+
+  .sb-wrapper.mobile.drawer-open .sidebar-content .sb-menu {
+    padding-top: 8px;
+    height: auto;
+  }
+
+  /* Hide FAB when drawer is open */
+  .sb-wrapper.mobile.drawer-open .cta.fab {
+    display: none;
   }
 
   #logo {

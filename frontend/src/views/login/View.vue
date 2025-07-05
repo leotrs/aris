@@ -142,9 +142,18 @@
     flex-direction: column;
     align-items: center;
     gap: 32px;
+    padding: 16px;
 
     & > * {
       width: 100%;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .right .wrapper {
+      width: 90%;
+      padding: 20px;
+      gap: 24px;
     }
   }
 
@@ -162,9 +171,51 @@
 
   .right .bottom button {
     width: 100%;
+    min-height: 44px;
 
     & :deep(.btn-text) {
       margin: 0 auto;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .right .bottom button {
+      min-height: 48px;
+      font-size: 16px;
+    }
+
+    .right .bottom {
+      gap: 20px;
+    }
+
+    /* Ensure register link is always visible on mobile */
+    .right .bottom [data-testid="register-link"] {
+      display: flex !important;
+      visibility: visible !important;
+      opacity: 1 !important;
+      position: relative !important;
+      z-index: 1000 !important;
+      width: 100% !important;
+      height: auto !important;
+      min-height: 48px !important;
+    }
+  }
+
+  /* Additional defensive CSS for mobile register link */
+  [data-testid="register-link"] {
+    /* Ensure button is never hidden by transforms or clipping */
+    transform: none !important;
+    clip: none !important;
+    overflow: visible !important;
+  }
+
+  @media (max-width: 640px) {
+    /* Force register link to be visible and clickable on mobile viewports */
+    [data-testid="register-link"] {
+      display: flex !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
     }
   }
 

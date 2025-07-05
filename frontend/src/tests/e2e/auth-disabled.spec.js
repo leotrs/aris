@@ -50,7 +50,7 @@ test.describe("Auth Disabled - Development Mode @core", () => {
     if (await createButton.isVisible()) {
       await createButton.click();
       // If context menu opens, that's a good sign auth is disabled
-      await expect(page.locator('[data-testid="context-menu"]')).toBeVisible();
+      await expect(page.locator('[data-testid="context-menu"]').first()).toBeVisible();
     }
 
     // Test 7: Verify backend API calls work without auth headers

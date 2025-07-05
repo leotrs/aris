@@ -5,6 +5,7 @@ import os
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from aris.deps import get_db
@@ -127,6 +128,86 @@ async def health_check(db: AsyncSession = Depends(get_db)):
         raise HTTPException(status_code=503, detail=health_result.model_dump())
 
     return health_result
+
+
+@app.get("/debug/user-state", tags=["health"], summary="Debug User State")
+async def debug_user_state(db: AsyncSession = Depends(get_db)):
+    """Debug endpoint to check test user state for auth-enabled E2E diagnostic.
+    
+    Returns detailed information about the test user setup including:
+    - User existence and credentials
+    - File count and basic file information
+    - Tag count and basic tag information
+    - Database connectivity status
+    
+    This endpoint is for debugging auth-enabled E2E test failures.
+    """
+    try:
+        # Check if test user exists
+        test_user_email = os.getenv("TEST_USER_EMAIL", "testuser@aris.pub")
+        
+        user_result = await db.execute(
+            text("SELECT id, email, name, created_at FROM users WHERE email = :email"),
+            {"email": test_user_email}
+        )
+        user_row = user_result.first()
+        
+        if not user_row:
+            return {
+                "status": "error",
+                "message": f"Test user {test_user_email} not found in database",
+                "user": None,
+                "files": [],
+                "tags": []
+            }
+        
+        user_id = user_row.id
+        
+        # Get user files
+        files_result = await db.execute(
+            text("SELECT id, title, status, created_at FROM files WHERE owner_id = :user_id ORDER BY created_at DESC"),
+            {"user_id": user_id}
+        )
+        files = [{"id": row.id, "title": row.title, "status": row.status, "created_at": str(row.created_at)} 
+                for row in files_result.fetchall()]
+        
+        # Get user tags
+        tags_result = await db.execute(
+            text("SELECT id, name, color, created_at FROM tags WHERE user_id = :user_id ORDER BY created_at DESC"),
+            {"user_id": user_id}
+        )
+        tags = [{"id": row.id, "name": row.name, "color": row.color, "created_at": str(row.created_at)} 
+               for row in tags_result.fetchall()]
+        
+        return {
+            "status": "success",
+            "user": {
+                "id": user_id,
+                "email": user_row.email,
+                "name": user_row.name,
+                "created_at": str(user_row.created_at)
+            },
+            "files": files,
+            "files_count": len(files),
+            "tags": tags,
+            "tags_count": len(tags),
+            "expected_test_data": {
+                "files_expected": 2,
+                "tags_expected": 2,
+                "files_match": len(files) == 2,
+                "tags_match": len(tags) == 2
+            }
+        }
+        
+    except Exception as e:
+        logger.error(f"Debug user state failed: {e}")
+        return {
+            "status": "error",
+            "message": f"Database error: {str(e)}",
+            "user": None,
+            "files": [],
+            "tags": []
+        }
 
 
 origins = [

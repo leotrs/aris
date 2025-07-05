@@ -3,10 +3,12 @@ import { test, expect } from "@playwright/test";
 // @demo
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Focus Mode and Drawer Interaction @demo-ui", () => {
+test.describe("Focus Mode and Drawer Interaction @demo-ui @desktop-only", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
+    // Set desktop viewport for desktop-only keyboard navigation tests
+    await page.setViewportSize({ width: 1024, height: 768 });
     authHelpers = new AuthHelpers(page);
     await authHelpers.clearAuthState();
 
