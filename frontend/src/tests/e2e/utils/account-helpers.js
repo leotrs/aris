@@ -45,29 +45,20 @@ export class AccountHelpers {
     await expect(emailSection).toBeVisible();
     console.log("[AccountHelpers] Email section is visible");
 
-    const sendButton = this.page.locator('button:has-text("Send Verification Email")');
+    const sendButton = this.page.locator(".verification-actions button");
 
     // Log if button is found
     const buttonCount = await sendButton.count();
-    console.log("[AccountHelpers] Send Verification Email button count:", buttonCount);
+    console.log("[AccountHelpers] Send verification button count:", buttonCount);
 
     if (buttonCount === 0) {
-      // Log what buttons we can see
-      const allButtons = await this.page.locator("button").all();
-      const buttonTexts = [];
-      for (const button of allButtons) {
-        const text = await button.textContent();
-        buttonTexts.push(text?.trim());
-      }
-      console.log("[AccountHelpers] All visible buttons:", buttonTexts);
-
       // Check email verification status
       const statusIndicator = emailSection.locator(".status-indicator");
       const isVerified = await statusIndicator.evaluate((el) => el.classList.contains("verified"));
       const isUnverified = await statusIndicator.evaluate((el) => el.classList.contains("warning"));
       console.log("[AccountHelpers] Email verification status:", { isVerified, isUnverified });
 
-      throw new Error("Send Verification Email button not found");
+      throw new Error("Send verification button not found in .verification-actions");
     }
 
     await expect(sendButton).toBeVisible();
