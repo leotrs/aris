@@ -245,19 +245,22 @@
               <p>{{ user?.email || "No email" }}</p>
               <div v-if="!user?.email_verified" class="verification-actions">
                 <Button
-                  v-if="!verificationSent"
                   kind="secondary"
                   size="sm"
-                  :disabled="isSendingVerification"
-                  :icon="isSendingVerification ? 'Loader2' : 'Mail'"
+                  :disabled="isSendingVerification || verificationSent"
+                  :icon="
+                    verificationSent ? 'CheckCircle' : isSendingVerification ? 'Loader2' : 'Mail'
+                  "
                   @click="onSendVerificationEmail"
                 >
-                  {{ isSendingVerification ? "Sending..." : "Send Verification Email" }}
+                  {{
+                    verificationSent
+                      ? "Verification email sent"
+                      : isSendingVerification
+                        ? "Sending..."
+                        : "Send Verification Email"
+                  }}
                 </Button>
-                <div v-else class="verification-sent">
-                  <Icon name="CheckCircle" size="16" />
-                  <span>Verification email sent</span>
-                </div>
               </div>
             </div>
           </div>
