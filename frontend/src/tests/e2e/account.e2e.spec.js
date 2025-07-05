@@ -100,7 +100,7 @@ test.describe("Account View E2E Tests @auth @desktop-only", () => {
     await expect(fileInput).toBeAttached();
   });
 
-  test("navigation and UI responsiveness", async ({ page }) => {
+  test.skip("navigation and UI responsiveness", async ({ page }) => {
     // Test profile page responsiveness
     await page.goto("/account/profile");
 

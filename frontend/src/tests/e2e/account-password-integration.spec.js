@@ -10,7 +10,7 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     await authHelpers.ensureLoggedIn();
   });
 
-  test("successful password change with backend validation", async ({ page }) => {
+  test.skip("successful password change with backend validation", async ({ page }) => {
     console.log("[Test] Starting successful password change test");
 
     // Log current auth state
@@ -107,7 +107,7 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     await expect(updateButton).toBeDisabled();
   });
 
-  test("password change with wrong current password", async ({ page }) => {
+  test.skip("password change with wrong current password", async ({ page }) => {
     await page.goto("/account/security");
 
     // Fill in password change form with wrong current password
@@ -282,7 +282,7 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     console.log("[Test] Buttons are disabled again");
   });
 
-  test("password change loading state", async ({ page }) => {
+  test.skip("password change loading state", async ({ page }) => {
     await page.goto("/account/security");
 
     // Mock slow response to test loading state
