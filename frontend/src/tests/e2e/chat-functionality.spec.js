@@ -22,7 +22,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await expect(page).toHaveURL(`/file/${fileId}`);
 
     // Wait for workspace to load
-    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 3000 });
 
     // Enable AI Copilot via sidebar
     const aiCopilotButton = page.locator(
@@ -70,7 +70,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     );
 
     // Wait for AI response (either loading state or actual response)
-    await page.waitForSelector(".chat-message.assistant", { timeout: 10000 });
+    await page.waitForSelector(".chat-message.assistant", { timeout: 3000 });
 
     // Verify assistant message appears (might be loading or actual response)
     const assistantMessage = page.locator(".chat-message.assistant");
@@ -106,7 +106,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await sendButton.click();
 
     // Wait for messages to appear
-    await page.waitForSelector(".chat-message", { timeout: 10000 });
+    await page.waitForSelector(".chat-message", { timeout: 3000 });
 
     // Verify messages exist
     const messageCount = await page.locator(".chat-message").count();
@@ -159,7 +159,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     await sendButton.click();
 
     // Wait for messages to appear
-    await page.waitForSelector(".chat-message", { timeout: 10000 });
+    await page.waitForSelector(".chat-message", { timeout: 3000 });
 
     // Verify message exists
     await expect(page.locator(".chat-message.user")).toContainText("First message");
@@ -178,7 +178,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     // Create file first, then set mobile viewport
     const fileId = await fileHelpers.createNewFile();
     await expect(page).toHaveURL(`/file/${fileId}`);
-    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 3000 });
 
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
@@ -192,7 +192,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
 
     // Reload to apply mobile settings
     await page.reload();
-    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 3000 });
 
     // Enable AI Copilot via sidebar
     const aiCopilotButton = page.locator(
@@ -229,7 +229,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
     // Create file first, then set mobile mode
     const fileId = await fileHelpers.createNewFile();
     await expect(page).toHaveURL(`/file/${fileId}`);
-    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 3000 });
 
     // Set mobile viewport and user agent after navigation
     await page.setViewportSize({ width: 375, height: 667 });
@@ -243,7 +243,7 @@ test.describe("AI Copilot Chat Functionality @auth", () => {
 
     // Reload to apply mobile settings
     await page.reload();
-    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 10000 });
+    await page.waitForSelector("[data-testid='workspace-container']", { timeout: 3000 });
 
     // Verify manuscript is visible when chat is closed
     const manuscript = page.locator("[data-testid='manuscript-viewer']");

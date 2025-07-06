@@ -200,3 +200,10 @@ npx playwright test --reporter=html       # Generate HTML report
 
 ## Performance and Technical Guidelines
 - `waitUntil: "networkidle"` is NEVER recommended for a VueJS SPA
+
+## Timeout Best Practices
+- When implementing timeouts in tests, never use longer than 3s
+```
+
+## Testing Troubleshooting
+- Whenever there are "browser has been closed" errors in the test suite, determine if this is caused by the test timing out -- the per-test timeout is set in the playwright config

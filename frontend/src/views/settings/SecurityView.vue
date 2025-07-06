@@ -43,63 +43,63 @@
 </template>
 
 <style scoped>
-    :deep(.section) {
-      width: 100%;
-    }
+  :deep(.section) {
+    width: 100%;
+  }
 
-    .section-description {
-      color: var(--text-secondary);
-      margin-bottom: 24px;
-    }
+  .section-description {
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+  }
 
-    .redirect-info {
-      max-width: 500px;
-    }
+  .redirect-info {
+    max-width: 500px;
+  }
 
-    .redirect-info ul {
-      margin: 16px 0 24px 16px;
-      color: var(--text-secondary);
-    }
+  .redirect-info ul {
+    margin: 16px 0 24px 16px;
+    color: var(--text-secondary);
+  }
 
-    .redirect-info li {
-      margin-bottom: 8px;
-    }
+  .redirect-info li {
+    margin-bottom: 8px;
+  }
 
-    .redirect-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
+  .redirect-actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
 
-    .action-button {
-      text-decoration: none;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 6px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-    }
+  .action-button {
+    text-decoration: none;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
 
-    .action-button.primary {
-      background: var(--surface-action);
-      color: white;
-    }
+  .action-button.primary {
+    background: var(--surface-action);
+    color: white;
+  }
 
-    .action-button.primary:hover {
-      background: var(--surface-action-hover);
-    }
+  .action-button.primary:hover {
+    background: var(--surface-action-hover);
+  }
 
-    .action-button.secondary {
-      background: var(--surface-page);
-      color: var(--text-primary);
-      border: var(--border-thin) solid var(--border-primary);
-    }
+  .action-button.secondary {
+    background: var(--surface-page);
+    color: var(--text-primary);
+    border: var(--border-thin) solid var(--border-primary);
+  }
 
-    .action-button.secondary:hover {
-      background: var(--surface-hover);
-    }
+  .action-button.secondary:hover {
+    background: var(--surface-hover);
+  }
 </style>
