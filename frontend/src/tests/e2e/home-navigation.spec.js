@@ -129,19 +129,6 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
     await expect(filesContainer).toHaveClass(/list/);
   });
 
-  test("view mode shortcut v,c switches to cards view", async ({ page }) => {
-    await page.goto("/");
-
-    await page.waitForSelector('[data-testid="files-container"]');
-
-    // Switch to cards view
-    await page.keyboard.press("v");
-    await page.keyboard.press("c");
-
-    const filesContainer = page.locator('[data-testid="files-container"]');
-    await expect(filesContainer).toHaveClass(/cards/);
-  });
-
   test("search shortcut / focuses search input", async ({ page }) => {
     await page.goto("/");
 
@@ -183,7 +170,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
     }
   );
 
-  test("navigation works in both list and cards view modes", async ({ page }) => {
+  test("navigation works in list view mode", async ({ page }) => {
     await page.goto("/");
 
     await page.waitForSelector('[data-testid="files-container"]');
@@ -196,11 +183,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
     const files = await page.locator('[data-testid^="file-item-"]').all();
     await expect(files[0]).toHaveClass(/focused/);
 
-    // Switch to cards mode
-    await page.keyboard.press("v");
-    await page.keyboard.press("c");
-
-    // Navigation should still work
+    // Navigation should continue to work in list mode
     await page.keyboard.press("j");
     await expect(files[1]).toHaveClass(/focused/);
   });

@@ -15,6 +15,9 @@ export function createFileStore(api, user) {
   const syncQueue = reactive(new Set());
   const syncInProgress = ref(false);
 
+  // Track if store is still active to prevent race conditions
+  const isActive = ref(true);
+
   // Forward declare store for circular reference
   // eslint-disable-next-line prefer-const
   let store;
@@ -74,6 +77,12 @@ export function createFileStore(api, user) {
         params: { with_tags: true },
       });
 
+      // Only update reactive state if store is still active
+      if (!isActive.value) {
+        console.log("FileStore: Skipping files update - store is no longer active");
+        return;
+      }
+
       // Preserve selected and filtered states when reloading
       files.value = response.data.map((newFile) => {
         const existingFile = files.value.find((f) => f.id === newFile.id);
@@ -92,7 +101,9 @@ export function createFileStore(api, user) {
         );
       });
     } catch (error) {
-      console.error("Error loading files:", error);
+      if (isActive.value) {
+        console.error("Error loading files:", error);
+      }
     }
   };
 
@@ -295,6 +306,13 @@ export function createFileStore(api, user) {
    */
   const getTags = () => tags.value;
 
+  /**
+   * Cleanup store to prevent race conditions during component unmounting
+   */
+  const cleanup = () => {
+    isActive.value = false;
+  };
+
   // Computed properties
   const selectedFile = computed(() => files.value.find((f) => f.selected) || {});
   const filteredFiles = computed(() => files.value.filter((f) => !f.filtered));
@@ -330,6 +348,9 @@ export function createFileStore(api, user) {
     addTagToFile,
     removeTagFromFile,
     toggleFileTag,
+
+    // Cleanup method
+    cleanup,
   };
 
   return store;

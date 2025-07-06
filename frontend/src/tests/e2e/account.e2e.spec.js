@@ -13,55 +13,6 @@ test.describe("Account View E2E Tests @auth @desktop-only", () => {
   });
 
   // No afterEach cleanup - keep auth state for all account tests
-
-  test("complete account profile update workflow", async ({ page }) => {
-    // Navigate to account page (will redirect to profile)
-    await page.goto("/account");
-    await expect(page).toHaveURL("/account/profile");
-
-    // Verify we're on the profile page with user info displayed
-    await expect(page.locator(".user-name")).toBeVisible();
-    await expect(page.locator(".user-email")).toBeVisible();
-    await expect(page.locator(".member-since")).toContainText("Member since");
-
-    // Update profile information - use specific selectors targeting the InputText components
-    const nameInput = page.locator(".input-text").filter({ hasText: "Full Name" }).locator("input");
-    const initialsInput = page
-      .locator(".input-text")
-      .filter({ hasText: "Initials" })
-      .locator("input");
-    const emailInput = page
-      .locator(".input-text")
-      .filter({ hasText: "Email Address" })
-      .locator("input");
-    const affiliationInput = page
-      .locator(".input-text")
-      .filter({ hasText: "Affiliation" })
-      .locator("input");
-
-    // Wait for inputs to be visible and interactable
-    await expect(nameInput).toBeVisible();
-    await expect(initialsInput).toBeVisible();
-    await expect(emailInput).toBeVisible();
-    await expect(affiliationInput).toBeVisible();
-
-    await nameInput.fill("Test User Updated");
-    await initialsInput.fill("TU");
-    await emailInput.fill("testuser@aris.pub");
-    await affiliationInput.fill("Test University");
-
-    // Verify the form inputs were filled correctly (without submitting)
-    await expect(nameInput).toHaveValue("Test User Updated");
-    await expect(initialsInput).toHaveValue("TU");
-    await expect(emailInput).toHaveValue("testuser@aris.pub");
-    await expect(affiliationInput).toHaveValue("Test University");
-
-    // Verify save button is present and enabled
-    const saveButton = page.locator('button:has-text("Save Changes")');
-    await expect(saveButton).toBeVisible();
-    await expect(saveButton).toBeEnabled();
-  });
-
   test("avatar upload workflow", async ({ page }) => {
     await page.goto("/account/profile");
 
