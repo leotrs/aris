@@ -71,29 +71,6 @@
       flex-wrap: wrap;
     }
 
-  <<<<<<< HEAD
-    .data-export {
-      max-width: 500px;
-    }
-
-    .export-info {
-      margin-bottom: 24px;
-    }
-
-    .export-info ul {
-      margin: 8px 0 16px 16px;
-      color: var(--text-secondary);
-    }
-
-    .export-info li {
-      margin-bottom: 4px;
-    }
-
-    .export-note {
-      color: var(--text-secondary);
-      font-size: 13px;
-      font-style: italic;
-  =======
     .action-button {
       text-decoration: none;
       border: none;
@@ -124,6 +101,5 @@
 
     .action-button.secondary:hover {
       background: var(--surface-hover);
-  >>>>>>> 051d170 (Consolidate security functionality to Account views only)
     }
 </style>
