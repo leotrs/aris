@@ -60,7 +60,7 @@ test.describe("File Management Tests @auth @desktop-only", () => {
         return fileItems.length > expectedCount;
       },
       initialCount,
-      { timeout: 10000 }
+      { timeout: 3000 }
     );
 
     const newCount = await page.locator('[data-testid^="file-item-"]').count();

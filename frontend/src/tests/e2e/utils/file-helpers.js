@@ -127,7 +127,7 @@ export class FileHelpers {
     const createButton = this.page.locator('[data-testid="create-file-button"]');
 
     // Wait for the button to be attached to the DOM
-    await createButton.waitFor({ state: "attached", timeout: 10000 });
+    await createButton.waitFor({ state: "attached", timeout: 3000 });
 
     // Use standard visibility check for all browsers
     await this.mobileHelpers.expectToBeVisible(createButton);
@@ -181,7 +181,7 @@ export class FileHelpers {
     );
     await this.page.waitForSelector(
       '[data-testid="files-container"], [data-testid="create-file-button"]',
-      { timeout: 10000 }
+      { timeout: 3000 }
     );
     console.log("🏠 [FileHelpers] navigateToHome: Found files-container or create-file-button");
 

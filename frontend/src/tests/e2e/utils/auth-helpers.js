@@ -15,7 +15,7 @@ export class AuthHelpers {
     await Promise.all([
       this.page.waitForResponse(
         (response) => response.url().includes("/login") && response.request().method() === "POST",
-        { timeout: 10000 }
+        { timeout: 3000 }
       ),
       this.page.click('[data-testid="login-button"]'),
     ]);
@@ -42,7 +42,7 @@ export class AuthHelpers {
       await this.login(email, password);
 
       // Check if login was successful
-      await this.page.waitForTimeout(1000);
+      await this.page.waitForLoadState("domcontentloaded");
       const postLoginUrl = this.page.url();
       if (postLoginUrl.includes("/login")) {
         // Login failed
@@ -82,7 +82,7 @@ export class AuthHelpers {
 
     // Verify we're logged in by checking for home page elements
     console.log("[AuthHelpers] Verifying home page elements");
-    await expect(this.page).toHaveURL("/", { timeout: 10000 });
+    await expect(this.page).toHaveURL("/", { timeout: 3000 });
     await this.page.waitForSelector(
       '[data-testid="files-container"], [data-testid="create-file-button"], [data-testid="user-menu"]',
       { timeout: 10000 }
