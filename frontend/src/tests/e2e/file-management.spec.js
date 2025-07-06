@@ -42,13 +42,16 @@ test.describe("File Management Tests @auth @desktop-only", () => {
     await expect(page).toHaveURL(`/file/${fileId}`);
     console.log("📝 [Test] Step 4: URL verified, in workspace");
 
-    // Navigate back to home with minimal DOM interaction
+    // Navigate back to home using proven reliable pattern
     console.log("📝 [Test] Step 5: Navigating back to home...");
     await page.goto("/");
     await page.waitForLoadState("domcontentloaded");
 
-    // Wait for files container to appear without heavy DOM operations
-    await page.waitForSelector('[data-testid="files-container"]', { timeout: 5000 });
+    // Wait for either files container or create button (handles empty state)
+    await page.waitForSelector(
+      '[data-testid="files-container"], [data-testid="create-file-button"]',
+      { timeout: 5000 }
+    );
 
     // Wait for file count to increase using simple polling
     await page.waitForFunction(

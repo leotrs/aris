@@ -194,3 +194,9 @@ npx playwright test --reporter=html       # Generate HTML report
 ## Language Guidelines
 - Stop using the word 'absolutely'
 - **Playwright MUST always be used in headless mode**
+
+## Test Best Practices
+- Never try to fix broken tests by simply adding or lengthening timeouts
+
+## Performance and Technical Guidelines
+- `waitUntil: "networkidle"` is NEVER recommended for a VueJS SPA
