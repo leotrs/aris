@@ -478,12 +478,18 @@
     margin-block: 12px;
   }
 
-  /* Sub-items container */
   .sub-items-container {
     background-color: var(--gray-200);
     border-radius: 8px;
     margin-inline: 8px;
     padding-block: 6px;
+  }
+
+  .sub-items-container > .sb-item.sub-item > :deep(.sb-text) {
+    width: calc(100% - 24px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   .sb-menu > *:first-child {
