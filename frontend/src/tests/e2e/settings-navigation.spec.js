@@ -24,10 +24,9 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
 
     // Should show settings sub-items in sidebar
     await expect(page.locator(".sub-items-container")).toBeVisible();
-    await expect(page.locator(".sub-items-container").locator('text="File"')).toBeVisible();
+    await expect(page.locator(".sub-items-container").locator('text="File Display"')).toBeVisible();
     await expect(page.locator(".sub-items-container").locator('text="Behavior"')).toBeVisible();
-    await expect(page.locator(".sub-items-container").locator('text="Privacy"')).toBeVisible();
-    await expect(page.locator(".sub-items-container").locator('text="Security"')).toBeVisible();
+    await expect(page.locator(".sub-items-container").locator('text="Notifications"')).toBeVisible();
   });
 
   test.skip("should navigate between settings sub-sections", async ({ page }) => {
@@ -35,8 +34,8 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
     await page.click('text="Settings"');
     await expect(page).toHaveURL("/settings/document");
 
-    // Click on File sub-item
-    await page.click('.sub-items-container >> text="File"');
+    // Click on File Display sub-item
+    await page.click('.sub-items-container >> text="File Display"');
     await expect(page).toHaveURL("/settings/document");
     await expect(page.locator("h1").first()).toContainText("Document Display");
 
@@ -49,23 +48,18 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
     await page.click('.sub-items-container >> text="Notifications"');
     await expect(page).toHaveURL("/settings/notifications");
     await expect(page.locator("h1").first()).toContainText("Notifications");
-
-    // Click on Security sub-item
-    await page.click('.sub-items-container >> text="Security"');
-    await expect(page).toHaveURL("/settings/security");
-    await expect(page.locator("h1").first()).toContainText("Account Security");
   });
 
   test("should show active state for current settings sub-section", async ({ page }) => {
     // Navigate to settings
     await page.click('text="Settings"');
 
-    // Navigate to File settings
-    await page.click('.sub-items-container >> text="File"');
+    // Navigate to File Display settings
+    await page.click('.sub-items-container >> text="File Display"');
     await expect(page).toHaveURL("/settings/document");
 
-    // File sub-item should be active
-    const fileSubItem = page.locator('.sub-items-container >> text="File"').locator("..");
+    // File Display sub-item should be active
+    const fileSubItem = page.locator('.sub-items-container >> text="File Display"').locator("..");
     await expect(fileSubItem).toHaveClass(/active/);
 
     // Other sub-items should not be active
@@ -99,10 +93,9 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
     await expect(page).toHaveURL("/");
 
     // Settings sub-items should not be visible (Home may have its own sub-items)
-    await expect(page.locator('.sub-items-container >> text="File"')).not.toBeVisible();
+    await expect(page.locator('.sub-items-container >> text="File Display"')).not.toBeVisible();
     await expect(page.locator('.sub-items-container >> text="Behavior"')).not.toBeVisible();
-    await expect(page.locator('.sub-items-container >> text="Privacy"')).not.toBeVisible();
-    await expect(page.locator('.sub-items-container >> text="Security"')).not.toBeVisible();
+    await expect(page.locator('.sub-items-container >> text="Notifications"')).not.toBeVisible();
 
     // Settings main item should not be active
     const settingsItem = page.locator('text="Settings"').locator("..");
@@ -117,16 +110,16 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
     // Should show settings sub-items
     await expect(page.locator(".sub-items-container")).toBeVisible();
 
-    // Privacy sub-item should be active
-    const privacySubItem = page.locator('.sub-items-container >> text="Privacy"').locator("..");
-    await expect(privacySubItem).toHaveClass(/active/);
+    // Notifications sub-item should be active
+    const notificationsSubItem = page.locator('.sub-items-container >> text="Notifications"').locator("..");
+    await expect(notificationsSubItem).toHaveClass(/active/);
 
     // Main Settings item should be active
     const settingsItem = page.locator('text="Settings"').locator("..");
     await expect(settingsItem).toHaveClass(/active/);
 
     // Should show correct page content
-    await expect(page.locator("h1").first()).toContainText("Privacy & Communication");
+    await expect(page.locator("h3").first()).toContainText("Notifications");
   });
 
   test("should handle keyboard navigation in sub-items", async ({ page }) => {
@@ -148,7 +141,7 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
 
     // Sub-items should have different styling than main items
     const mainSettingsItem = page.locator('text="Settings"').locator("..");
-    const fileSubItem = page.locator('.sub-items-container >> text="File"').locator("..");
+    const fileSubItem = page.locator('.sub-items-container >> text="File Display"').locator("..");
 
     // Check that sub-items have sub-item class for CSS styling
     await expect(fileSubItem).toHaveClass(/sub-item/);
