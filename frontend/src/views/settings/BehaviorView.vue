@@ -149,6 +149,20 @@
       </template>
     </Section>
 
+    <Section>
+      <template #title>Content Privacy</template>
+      <template #content>
+        <div class="setting-item">
+          <Checkbox id="anonymous-feedback" v-model="settings.allowAnonymousFeedback">
+            Allow anonymous feedback and comments
+          </Checkbox>
+          <p class="setting-description">
+            Allow viewers to leave feedback on your public content without requiring them to sign in
+          </p>
+        </div>
+      </template>
+    </Section>
+
     <div class="settings-actions">
       <Button
         :disabled="loading"

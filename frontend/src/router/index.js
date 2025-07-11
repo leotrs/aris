@@ -80,7 +80,7 @@ const routes = [
     children: [
       { path: "profile", component: AccountProfileView },
       { path: "security", component: AccountSecurityView },
-      { path: "privacy", component: AccountPrivacyView },
+      { path: "notifications", component: AccountNotificationsView },
     ],
   },
   {
@@ -90,8 +90,7 @@ const routes = [
     children: [
       { path: "document", component: SettingsDocumentView },
       { path: "behavior", component: SettingsBehaviorView },
-      { path: "privacy", component: SettingsPrivacyView },
-      { path: "security", component: SettingsSecurityView },
+      { path: "notifications", component: SettingsNotificationsView },
     ],
   },
   // dedicated 404 route

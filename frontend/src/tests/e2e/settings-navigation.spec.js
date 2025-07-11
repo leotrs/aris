@@ -45,10 +45,10 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
     await expect(page).toHaveURL("/settings/behavior");
     await expect(page.locator("h1").first()).toContainText("Behavior");
 
-    // Click on Privacy sub-item
-    await page.click('.sub-items-container >> text="Privacy"');
-    await expect(page).toHaveURL("/settings/privacy");
-    await expect(page.locator("h1").first()).toContainText("Privacy & Communication");
+    // Click on Notifications sub-item
+    await page.click('.sub-items-container >> text="Notifications"');
+    await expect(page).toHaveURL("/settings/notifications");
+    await expect(page.locator("h1").first()).toContainText("Notifications");
 
     // Click on Security sub-item
     await page.click('.sub-items-container >> text="Security"');
@@ -111,8 +111,8 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
 
   test("should work with direct URL navigation", async ({ page }) => {
     // Navigate directly to a settings sub-page
-    await page.goto("/settings/privacy");
-    await expect(page).toHaveURL("/settings/privacy");
+    await page.goto("/settings/notifications");
+    await expect(page).toHaveURL("/settings/notifications");
 
     // Should show settings sub-items
     await expect(page.locator(".sub-items-container")).toBeVisible();
