@@ -271,10 +271,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       await expect(homeItem).not.toHaveClass(/active/);
 
       // Should show settings sub-navigation items
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="File"]'));
+      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="File Display"]'));
       await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Behavior"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Privacy"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Security"]'));
+      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Notifications"]'));
     });
 
     test("should navigate between settings sub-sections via mobile drawer", async ({ page }) => {
