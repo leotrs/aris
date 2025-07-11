@@ -9,7 +9,7 @@
   const contextSubItems = computed(() => [
     {
       icon: "FileText",
-      text: "File",
+      text: "File Display",
       active: route?.path === "/settings/document",
       route: "/settings/document",
     },
