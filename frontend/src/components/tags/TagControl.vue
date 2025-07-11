@@ -119,8 +119,4 @@
   .tag:hover {
     background-color: var(--surface-hover);
   }
-
-  .cp-wrapper {
-    padding-inline: 16px;
-  }
 </style>

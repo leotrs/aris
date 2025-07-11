@@ -26,7 +26,9 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
     await expect(page.locator(".sub-items-container")).toBeVisible();
     await expect(page.locator(".sub-items-container").locator('text="File Display"')).toBeVisible();
     await expect(page.locator(".sub-items-container").locator('text="Behavior"')).toBeVisible();
-    await expect(page.locator(".sub-items-container").locator('text="Notifications"')).toBeVisible();
+    await expect(
+      page.locator(".sub-items-container").locator('text="Notifications"')
+    ).toBeVisible();
   });
 
   test.skip("should navigate between settings sub-sections", async ({ page }) => {
@@ -111,7 +113,9 @@ test.describe("Settings Navigation @auth @desktop-only", () => {
     await expect(page.locator(".sub-items-container")).toBeVisible();
 
     // Notifications sub-item should be active
-    const notificationsSubItem = page.locator('.sub-items-container >> text="Notifications"').locator("..");
+    const notificationsSubItem = page
+      .locator('.sub-items-container >> text="Notifications"')
+      .locator("..");
     await expect(notificationsSubItem).toHaveClass(/active/);
 
     // Main Settings item should be active

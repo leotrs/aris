@@ -50,6 +50,26 @@
    * </ContextMenu>
    *
    * @example
+   * // Custom menu styling
+   * <ContextMenu menuClass="wide-menu">
+   *   <ContextMenuItem icon="edit" caption="Edit" />
+   *   <ContextMenuItem icon="delete" caption="Delete" />
+   * </ContextMenu>
+   *
+   * @example
+   * // Multiple custom classes
+   * <ContextMenu :menuClass="['custom-menu', 'dark-theme']">
+   *   <ContextMenuItem icon="share" caption="Share" />
+   *   <ContextMenuItem icon="download" caption="Download" />
+   * </ContextMenu>
+   *
+   * @example
+   * // Conditional classes
+   * <ContextMenu :menuClass="{ 'active': isActive, 'disabled': isDisabled }">
+   *   <ContextMenuItem icon="settings" caption="Settings" />
+   * </ContextMenu>
+   *
+   * @example
    * // Nested sub-menu (automatic context inheritance)
    * <ContextMenu>
    *   <ContextMenuItem icon="edit" caption="Edit" />
@@ -90,6 +110,15 @@
     placement: {
       type: String,
       default: "bottom-start",
+    },
+
+    /**
+     * Custom CSS classes to apply to the menu container
+     * @type {String|Array|Object}
+     */
+    menuClass: {
+      type: [String, Array, Object],
+      default: null,
     },
   });
   defineOptions({ inheritAttrs: false });
@@ -134,10 +163,15 @@
     return floatingStyles.value;
   });
 
-  const menuClasses = computed(() => [
-    "context-menu",
-    { "context-menu--mobile": props.mobileMode },
-  ]);
+  const menuClasses = computed(() => {
+    const classes = ["context-menu", { "context-menu--mobile": mobileMode?.value }];
+
+    if (props.menuClass) {
+      classes.push(props.menuClass);
+    }
+
+    return classes;
+  });
 
   // Toggle function
   const toggle = () => {
