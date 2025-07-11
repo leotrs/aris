@@ -124,6 +124,5 @@
 
     .action-button.secondary:hover {
       background: var(--surface-hover);
-  >>>>>>> 051d170 (Consolidate security functionality to Account views only)
     }
 </style>

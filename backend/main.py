@@ -212,12 +212,19 @@ async def debug_user_state(db: AsyncSession = Depends(get_db)):
 
 
 origins = [
-    f"http://localhost:{os.getenv('FRONTEND_PORT')}",  # local Vue app (Vite dev server)
-    f"http://localhost:{int(os.getenv('FRONTEND_PORT', '5173')) + 1}",  # alternate port
-    f"http://localhost:{int(os.getenv('FRONTEND_PORT', '5173')) + 2}",  # third instance
-    f"http://localhost:{os.getenv('SITE_PORT')}",  # local Nuxt app
     "https://aris-frontend.netlify.app",  # Netlify frontend
 ]
+
+# Add local development origins only if environment variables are set
+if os.getenv('FRONTEND_PORT'):
+    origins.extend([
+        f"http://localhost:{os.getenv('FRONTEND_PORT')}",  # local Vue app (Vite dev server)
+        f"http://localhost:{int(os.getenv('FRONTEND_PORT', '5173')) + 1}",  # alternate port
+        f"http://localhost:{int(os.getenv('FRONTEND_PORT', '5173')) + 2}",  # third instance
+    ])
+
+if os.getenv('SITE_PORT'):
+    origins.append(f"http://localhost:{os.getenv('SITE_PORT')}")  # local Nuxt app
 
 
 app.add_middleware(

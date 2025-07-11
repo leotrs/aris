@@ -119,8 +119,44 @@ The script automatically:
 
 ## Deployment
 
-The FastAPI app is deployed on fly.io via the command `fly deploy`, which uses the
-`Dockerfile` in this directory. Use `fly logs` to stream the live logs.
+### Fly.io Deployment
+
+The FastAPI app is deployed on fly.io using a **monorepo-aware build configuration**:
+
+```bash
+# Deploy from the PROJECT ROOT directory (not backend/)
+cd /path/to/aris  # Navigate to monorepo root
+fly deploy --config backend/fly.toml --ignorefile backend/.dockerignore
+```
+
+**Why deploy from root?**
+- The build needs access to both `backend/` and `design-assets/` directories
+- This mirrors the development container setup in `docker-compose.dev.yml`
+- The Dockerfile copies: `COPY backend/ .` and `COPY design-assets/ ./design-assets`
+- The `.dockerignore` file excludes large frontend/site directories (~1GB) for faster uploads
+
+### Build Context Architecture
+
+```
+aris/                           # ← Deploy from here
+├── backend/
+│   ├── fly.toml               # ← Configuration file
+│   ├── Dockerfile             # ← Build instructions  
+│   └── main.py                # ← FastAPI app
+├── design-assets/             # ← Static assets served at /design-assets
+│   ├── css/
+│   └── logos/
+└── frontend/
+```
+
+The deployment uses:
+- **Build context**: Root directory (for access to design-assets)
+- **Dockerfile**: `backend/Dockerfile` (relative to root)  
+- **Working directory**: `/app` (contains backend code + design-assets)
+
+### Monitoring
+
+Use `fly logs` to stream live logs and `fly status` to check deployment status.
 
 The database is hosted on Supabase, and `alembic` is used to control its schema.
 
