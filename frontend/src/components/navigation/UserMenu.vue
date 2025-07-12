@@ -110,7 +110,7 @@
       <Separator />
 
       <!-- Logout Section -->
-      <ContextMenuItem icon="LogOut" caption="Logout" @click="onLogout" />
+      <ContextMenuItem icon="Logout" caption="Logout" @click="onLogout" />
     </ContextMenu>
 
     <!-- Mobile: Avatar Trigger -->
@@ -148,7 +148,7 @@
               <span>Help</span>
             </div>
             <div class="user-item" data-testid="user-feedback" @click="handleFeedback">
-              <Icon name="MessageSquare" />
+              <Icon name="MessageChatbot" />
               <span>Feedback</span>
             </div>
             <div v-if="!isMobile" class="user-item" data-testid="user-shortcuts">

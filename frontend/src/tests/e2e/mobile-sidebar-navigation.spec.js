@@ -271,10 +271,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       await expect(homeItem).not.toHaveClass(/active/);
 
       // Should show settings sub-navigation items
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="File"]'));
+      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="File Display"]'));
       await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Behavior"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Privacy"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Security"]'));
+      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Notifications"]'));
     });
 
     test("should navigate between settings sub-sections via mobile drawer", async ({ page }) => {
@@ -292,14 +291,14 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
       await mobileHelpers.waitForURLPattern(/\/settings\/behavior/);
       await expect(page).toHaveURL("/settings/behavior");
 
-      // Open drawer and navigate to Privacy settings
+      // Open drawer and navigate to Notifications settings
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const privacyItem = page.locator('[data-sidebar-subitem="Privacy"]');
-      await mobileHelpers.clickElement(privacyItem);
+      const notificationsItem = page.locator('[data-sidebar-subitem="Notifications"]');
+      await mobileHelpers.clickElement(notificationsItem);
 
-      await mobileHelpers.waitForURLPattern(/\/settings\/privacy/);
-      await expect(page).toHaveURL("/settings/privacy");
+      await mobileHelpers.waitForURLPattern(/\/settings\/notifications/);
+      await expect(page).toHaveURL("/settings/notifications");
     });
 
     // TEMPORARILY DISABLED: Failing due to navigation load event timeout

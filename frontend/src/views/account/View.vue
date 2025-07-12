@@ -19,10 +19,10 @@
       route: "/account/security",
     },
     {
-      icon: "Eye",
-      text: "Privacy",
-      active: route?.path === "/account/privacy",
-      route: "/account/privacy",
+      icon: "Notification",
+      text: "Notifications",
+      active: route?.path === "/account/notifications",
+      route: "/account/notifications",
     },
   ]);
 </script>

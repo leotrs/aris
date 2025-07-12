@@ -50,7 +50,7 @@
   <Pane>
     <template #header>
       <IconSettings2 />
-      <h1>Behavior</h1>
+      <h3>Behavior</h3>
     </template>
     <Section>
       <template #title>Auto-save & Performance</template>
@@ -145,6 +145,20 @@
             <option value="compact">Compact</option>
             <option value="minimal">Minimal</option>
           </select>
+        </div>
+      </template>
+    </Section>
+
+    <Section>
+      <template #title>Content Privacy</template>
+      <template #content>
+        <div class="setting-item">
+          <Checkbox id="anonymous-feedback" v-model="settings.allowAnonymousFeedback">
+            Allow anonymous feedback and comments
+          </Checkbox>
+          <p class="setting-description">
+            Allow viewers to leave feedback on your public content without requiring them to sign in
+          </p>
         </div>
       </template>
     </Section>

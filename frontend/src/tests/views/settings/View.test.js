@@ -44,10 +44,10 @@ describe("SettingsView", () => {
     const baseLayout = wrapper.findComponent({ name: "BaseLayout" });
     const contextSubItems = baseLayout.props("contextSubItems");
 
-    expect(contextSubItems).toHaveLength(4);
+    expect(contextSubItems).toHaveLength(3);
     expect(contextSubItems[0]).toMatchObject({
       icon: "FileText",
-      text: "File",
+      text: "File Display",
       route: "/settings/document",
     });
     expect(contextSubItems[1]).toMatchObject({
@@ -56,14 +56,9 @@ describe("SettingsView", () => {
       route: "/settings/behavior",
     });
     expect(contextSubItems[2]).toMatchObject({
-      icon: "Shield",
-      text: "Privacy",
-      route: "/settings/privacy",
-    });
-    expect(contextSubItems[3]).toMatchObject({
-      icon: "Lock",
-      text: "Security",
-      route: "/settings/security",
+      icon: "Notification",
+      text: "Notifications",
+      route: "/settings/notifications",
     });
   });
 
@@ -74,8 +69,7 @@ describe("SettingsView", () => {
     // Since mockRoute.path is "/settings/document", File should be active
     expect(contextSubItems[0].active).toBe(true); // File
     expect(contextSubItems[1].active).toBe(false); // Behavior
-    expect(contextSubItems[2].active).toBe(false); // Privacy
-    expect(contextSubItems[3].active).toBe(false); // Security
+    expect(contextSubItems[2].active).toBe(false); // Notifications
   });
 
   it("disables FAB in BaseLayout", () => {

@@ -42,10 +42,10 @@ describe("BaseLayout", () => {
       route: "/settings/behavior",
     },
     {
-      icon: "Shield",
-      text: "Privacy",
+      icon: "Notification",
+      text: "Notifications",
       active: false,
-      route: "/settings/privacy",
+      route: "/settings/notifications",
     },
   ];
 

@@ -118,8 +118,8 @@ test.describe("Account View E2E Tests @auth @desktop-only", () => {
     await expect(page.locator(".user-name")).toBeVisible();
     await expect(page.locator(".user-email")).toBeVisible();
 
-    // Test privacy page navigation and danger zone
-    await page.goto("/account/privacy");
+    // Test notifications page navigation and danger zone
+    await page.goto("/account/notifications");
 
     const dangerSection = page.locator(".danger-zone");
     await expect(dangerSection).toBeVisible();

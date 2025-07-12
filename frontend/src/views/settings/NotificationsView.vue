@@ -48,38 +48,8 @@
   <Pane>
     <template #header>
       <IconShield />
-      <h1>Privacy & Communication</h1>
+      <h3>Notifications</h3>
     </template>
-    <Section>
-      <template #title>Content Privacy</template>
-      <template #content>
-        <div class="setting-item">
-          <Checkbox id="anonymous-feedback" v-model="settings.allowAnonymousFeedback">
-            Allow anonymous feedback and comments
-          </Checkbox>
-          <p class="setting-description">
-            Allow viewers to leave feedback on your public content without requiring them to sign in
-          </p>
-        </div>
-      </template>
-    </Section>
-
-    <Section>
-      <template #title>Email Preferences</template>
-      <template #content>
-        <div class="setting-item">
-          <label for="email-digest">Email digest frequency</label>
-          <select id="email-digest" v-model="settings.emailDigestFrequency">
-            <option value="none">Never</option>
-            <option value="daily">Daily</option>
-            <option value="weekly">Weekly</option>
-          </select>
-          <p class="setting-description">
-            How often you'd like to receive summary emails about your account activity
-          </p>
-        </div>
-      </template>
-    </Section>
 
     <Section>
       <template #title>Notification Delivery</template>
@@ -136,6 +106,23 @@
           </Checkbox>
           <p class="setting-description">
             Important updates about new features, maintenance, and security notices
+          </p>
+        </div>
+      </template>
+    </Section>
+
+    <Section>
+      <template #title>Email Preferences</template>
+      <template #content>
+        <div class="setting-item">
+          <label for="email-digest">Email digest frequency</label>
+          <select id="email-digest" v-model="settings.emailDigestFrequency">
+            <option value="none">Never</option>
+            <option value="daily">Daily</option>
+            <option value="weekly">Weekly</option>
+          </select>
+          <p class="setting-description">
+            How often you'd like to receive summary emails about your account activity
           </p>
         </div>
       </template>

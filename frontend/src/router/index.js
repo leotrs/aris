@@ -11,12 +11,15 @@ const DemoView = () => import("@/views/demo/View.vue");
 const AccountView = isUnitTest ? {} : () => import("@/views/account/View.vue");
 const AccountProfileView = isUnitTest ? {} : () => import("@/views/account/ProfileView.vue");
 const AccountSecurityView = isUnitTest ? {} : () => import("@/views/account/SecurityView.vue");
-const AccountPrivacyView = isUnitTest ? {} : () => import("@/views/account/PrivacyView.vue");
+const AccountNotificationsView = isUnitTest
+  ? {}
+  : () => import("@/views/account/NotificationsView.vue");
 const SettingsView = isUnitTest ? {} : () => import("@/views/settings/View.vue");
 const SettingsDocumentView = isUnitTest ? {} : () => import("@/views/settings/DocumentView.vue");
 const SettingsBehaviorView = isUnitTest ? {} : () => import("@/views/settings/BehaviorView.vue");
-const SettingsPrivacyView = isUnitTest ? {} : () => import("@/views/settings/PrivacyView.vue");
-const SettingsSecurityView = isUnitTest ? {} : () => import("@/views/settings/SecurityView.vue");
+const SettingsNotificationsView = isUnitTest
+  ? {}
+  : () => import("@/views/settings/NotificationsView.vue");
 const NotFoundView = isUnitTest ? {} : () => import("@/views/notfound/View.vue");
 
 const routes = [
@@ -80,7 +83,7 @@ const routes = [
     children: [
       { path: "profile", component: AccountProfileView },
       { path: "security", component: AccountSecurityView },
-      { path: "privacy", component: AccountPrivacyView },
+      { path: "notifications", component: AccountNotificationsView },
     ],
   },
   {
@@ -90,8 +93,7 @@ const routes = [
     children: [
       { path: "document", component: SettingsDocumentView },
       { path: "behavior", component: SettingsBehaviorView },
-      { path: "privacy", component: SettingsPrivacyView },
-      { path: "security", component: SettingsSecurityView },
+      { path: "notifications", component: SettingsNotificationsView },
     ],
   },
   // dedicated 404 route
