@@ -51,7 +51,10 @@ test.describe("Accessibility E2E", () => {
 
       // Should include CTA buttons
       const hasCTA = focusedElements.some(
-        (el) => el.text?.includes("Explore the Platform") || el.text?.includes("Get Started") || el.text?.includes("sign up")
+        (el) =>
+          el.text?.includes("Explore the Platform") ||
+          el.text?.includes("Get Started") ||
+          el.text?.includes("sign up")
       );
       expect(hasCTA).toBe(true);
     });
@@ -282,10 +285,15 @@ test.describe("Accessibility E2E", () => {
       await page.waitForTimeout(300); // Wait for Vue reactivity and focus movement
 
       // Dropdown should be visible
-      await expect(page.locator('[data-testid="resources-dropdown-menu"]')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('[data-testid="resources-dropdown-menu"]')).toBeVisible({
+        timeout: 10000,
+      });
 
       // Focus should move to first dropdown item (check if focusable)
-      const firstDropdownItem = page.locator('[data-testid="resources-dropdown-menu"]').locator('.dropdown-link').first();
+      const firstDropdownItem = page
+        .locator('[data-testid="resources-dropdown-menu"]')
+        .locator(".dropdown-link")
+        .first();
       await expect(firstDropdownItem).toBeVisible({ timeout: 10000 });
     });
   });

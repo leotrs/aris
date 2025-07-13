@@ -39,10 +39,14 @@ test.describe("Mobile Responsiveness E2E", () => {
       await expect(page.locator('.mobile-nav-link[href="/getting-started"]')).toBeVisible();
       await expect(page.locator('.mobile-nav-link[href="/pricing"]')).toBeVisible();
       await expect(page.locator('.mobile-nav-link[href="/contact"]')).toBeVisible();
-      
+
       // Test utility links
-      await expect(page.locator('.mobile-nav-link-utility').filter({ hasText: 'Sign Up' })).toBeVisible();
-      await expect(page.locator('.mobile-nav-link-cta').filter({ hasText: 'Try the Demo' })).toBeVisible();
+      await expect(
+        page.locator(".mobile-nav-link-utility").filter({ hasText: "Sign Up" })
+      ).toBeVisible();
+      await expect(
+        page.locator(".mobile-nav-link-cta").filter({ hasText: "Try the Demo" })
+      ).toBeVisible();
     });
 
     test("should hide mobile menu on larger screens", async ({ page }) => {

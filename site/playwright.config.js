@@ -1,5 +1,5 @@
 import { defineConfig, devices } from "@playwright/test";
-import { config } from 'dotenv';
+import { config } from "dotenv";
 
 // Load environment variables
 config();

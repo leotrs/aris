@@ -5,7 +5,9 @@ test.describe("Navigation Flow E2E", () => {
     // Start at home page
     await page.goto("/");
     await expect(page).toHaveTitle(/Aris/);
-    await expect(page.locator("h1")).toContainText("The Collaborative Preprint Server for Modern Research");
+    await expect(page.locator("h1")).toContainText(
+      "The Collaborative Preprint Server for Modern Research"
+    );
 
     // Check if viewport is mobile-sized (less than 640px wide)
     const viewportSize = page.viewportSize();
@@ -38,7 +40,9 @@ test.describe("Navigation Flow E2E", () => {
       await page.click('a[href="/"]');
       await page.waitForLoadState("networkidle");
       await expect(page).toHaveURL("/");
-      await expect(page.locator("h1")).toContainText("The Collaborative Preprint Server for Modern Research");
+      await expect(page.locator("h1")).toContainText(
+        "The Collaborative Preprint Server for Modern Research"
+      );
     } else {
       // Desktop navigation: use visible nav links from navbar-utility-links
       await page.click('.navbar-utility-links a[href="/signup"]');
@@ -62,7 +66,9 @@ test.describe("Navigation Flow E2E", () => {
       await page.click('a[href="/"]');
       await page.waitForLoadState("networkidle");
       await expect(page).toHaveURL("/");
-      await expect(page.locator("h1")).toContainText("The Collaborative Preprint Server for Modern Research");
+      await expect(page.locator("h1")).toContainText(
+        "The Collaborative Preprint Server for Modern Research"
+      );
     }
   });
 
@@ -88,26 +94,28 @@ test.describe("Navigation Flow E2E", () => {
       await expect(gettingStartedLink).toBeVisible();
       await expect(pricingLink).toBeVisible();
       await expect(contactLink).toBeVisible();
-      
+
       // Test Platform dropdown contains about/ai-copilot
       await page.locator('[data-testid="mobile-platform-toggle"]').click();
       await page.waitForTimeout(300);
       const aboutLink = page.locator('[data-testid="mobile-platform-dropdown"] a[href="/about"]');
-      const aiCopilotLink = page.locator('[data-testid="mobile-platform-dropdown"] a[href="/ai-copilot"]');
+      const aiCopilotLink = page.locator(
+        '[data-testid="mobile-platform-dropdown"] a[href="/ai-copilot"]'
+      );
       await expect(aboutLink).toBeVisible();
       await expect(aiCopilotLink).toBeVisible();
     } else {
       // Desktop: Test navbar links - pricing is directly visible, others are in dropdowns
       const pricingLink = page.locator('nav a[href="/pricing"]').first();
       await expect(pricingLink).toBeVisible();
-      
+
       // Test Platform dropdown
       await page.hover('[data-testid="platform-dropdown"]');
       await page.waitForTimeout(300);
-      
+
       const aboutLink = page.locator('nav a[href="/about"]').first();
       const aiCopilotLink = page.locator('nav a[href="/ai-copilot"]').first();
-      
+
       await expect(aboutLink).toBeVisible();
       await expect(aiCopilotLink).toBeVisible();
     }
@@ -121,15 +129,20 @@ test.describe("Navigation Flow E2E", () => {
       await page.waitForTimeout(300);
       await expect(page.locator('[data-testid="mobile-resources-dropdown"]')).toBeVisible();
 
-      const docLink = page.locator('[data-testid="mobile-resources-dropdown"] a[href="/documentation"]');
+      const docLink = page.locator(
+        '[data-testid="mobile-resources-dropdown"] a[href="/documentation"]'
+      );
       const blogLink = page.locator('[data-testid="mobile-resources-dropdown"] a[href="/blog"]');
       await expect(docLink).toBeVisible();
       await expect(blogLink).toBeVisible();
 
       // Test mobile utility links
-      const loginLink = page.locator('.mobile-nav-link-utility').filter({ hasText: 'Login' }).first();
+      const loginLink = page
+        .locator(".mobile-nav-link-utility")
+        .filter({ hasText: "Login" })
+        .first();
       const signupLink = page.locator('.mobile-nav-link[href="/signup"]');
-      demoLink = page.locator('.mobile-nav-link-cta').filter({ hasText: 'Try the Demo' }).first();
+      demoLink = page.locator(".mobile-nav-link-cta").filter({ hasText: "Try the Demo" }).first();
 
       await expect(loginLink).toBeVisible();
       await expect(signupLink).toBeVisible();
@@ -146,9 +159,15 @@ test.describe("Navigation Flow E2E", () => {
       await expect(blogLink).toBeVisible();
 
       // Test utility links that should work
-      const loginLink = page.locator('.navbar-utility-links a').filter({ hasText: 'Login' }).first();
+      const loginLink = page
+        .locator(".navbar-utility-links a")
+        .filter({ hasText: "Login" })
+        .first();
       const signupLink = page.locator('.navbar-utility-links a[href="/signup"]');
-      demoLink = page.locator('.navbar-utility-links a').filter({ hasText: 'Try the Demo' }).first();
+      demoLink = page
+        .locator(".navbar-utility-links a")
+        .filter({ hasText: "Try the Demo" })
+        .first();
 
       await expect(loginLink).toBeVisible();
       await expect(signupLink).toBeVisible();
@@ -159,7 +178,9 @@ test.describe("Navigation Flow E2E", () => {
     if ((await demoLink.count()) > 0) {
       try {
         // Check if frontend is available before testing demo
-        const frontendCheck = await page.request.get(`http://localhost:${process.env.FRONTEND_PORT}`).catch(() => null);
+        const frontendCheck = await page.request
+          .get(`http://localhost:${process.env.FRONTEND_PORT}`)
+          .catch(() => null);
 
         if (frontendCheck && frontendCheck.ok()) {
           await Promise.all([
@@ -199,7 +220,7 @@ test.describe("Navigation Flow E2E", () => {
     // Verify mobile navigation links (about/ai-copilot are in Platform dropdown, pricing is direct)
     await expect(page.locator('.mobile-nav-link[href="/getting-started"]')).toBeVisible();
     await expect(page.locator('.mobile-nav-link[href="/pricing"]')).toBeVisible();
-    await expect(page.locator('[data-testid=\"mobile-platform-toggle\"]')).toBeVisible();
+    await expect(page.locator('[data-testid="mobile-platform-toggle"]')).toBeVisible();
 
     // Test mobile resources dropdown
     await page.locator('[data-testid="mobile-resources-toggle"]').click();

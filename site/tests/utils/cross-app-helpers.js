@@ -232,7 +232,9 @@ export class CrossAppHelpers {
       );
 
       // Step 4: Return to marketing site
-      const backLink = this.page.locator('[data-testid="demo-back-link"]').filter({ hasText: /back.*homepage/i });
+      const backLink = this.page
+        .locator('[data-testid="demo-back-link"]')
+        .filter({ hasText: /back.*homepage/i });
       await Promise.all([
         this.page.waitForNavigation({ waitUntil: "networkidle" }),
         backLink.click(),

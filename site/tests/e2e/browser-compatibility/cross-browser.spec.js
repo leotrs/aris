@@ -213,7 +213,9 @@ test.describe("Cross-Browser Compatibility", () => {
         // Desktop: Test dropdown interaction (hover first dropdown)
         await page.hover('[data-testid="platform-dropdown"]');
         await page.waitForTimeout(500); // Wait for hover animation and state change
-        await expect(page.locator('[data-testid="platform-dropdown-menu"]')).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('[data-testid="platform-dropdown-menu"]')).toBeVisible({
+          timeout: 10000,
+        });
 
         // Test mobile menu on desktop (should work when viewport is small)
         await page.setViewportSize({ width: 375, height: 667 });

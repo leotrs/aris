@@ -166,7 +166,11 @@
               @click.prevent="toggleMobileDropdown('platform')"
               >Platform</a
             >
-            <ul v-if="isMobilePlatformDropdownOpen" class="mobile-dropdown-menu" data-testid="mobile-platform-dropdown">
+            <ul
+              v-if="isMobilePlatformDropdownOpen"
+              class="mobile-dropdown-menu"
+              data-testid="mobile-platform-dropdown"
+            >
               <li>
                 <a href="/about" class="mobile-dropdown-link" @click="closeMobileMenu">About</a>
               </li>
@@ -197,7 +201,11 @@
               @click.prevent="toggleMobileDropdown('resources')"
               >Resources</a
             >
-            <ul v-if="isMobileResourcesDropdownOpen" class="mobile-dropdown-menu" data-testid="mobile-resources-dropdown">
+            <ul
+              v-if="isMobileResourcesDropdownOpen"
+              class="mobile-dropdown-menu"
+              data-testid="mobile-resources-dropdown"
+            >
               <li>
                 <a href="/documentation" class="mobile-dropdown-link" @click="closeMobileMenu"
                   >Documentation</a

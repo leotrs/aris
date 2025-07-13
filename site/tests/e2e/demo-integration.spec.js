@@ -212,7 +212,9 @@ test.describe("Demo Integration E2E", () => {
       // Verify demo banner
       await expect(page.locator('[data-testid="demo-banner"]')).toBeVisible({ timeout: 10000 });
       await expect(page.locator('[data-testid="demo-banner"]')).toContainText("Demo Mode");
-      await expect(page.locator('[data-testid="demo-banner"]')).toContainText("Experience Aris workspace");
+      await expect(page.locator('[data-testid="demo-banner"]')).toContainText(
+        "Experience Aris workspace"
+      );
 
       // Verify demo workspace
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
@@ -228,7 +230,9 @@ test.describe("Demo Integration E2E", () => {
       expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
 
       // Find and click back to homepage link
-      const backLink = page.locator('[data-testid="demo-back-link"]').filter({ hasText: /back.*homepage/i });
+      const backLink = page
+        .locator('[data-testid="demo-back-link"]')
+        .filter({ hasText: /back.*homepage/i });
       await expect(backLink).toBeVisible();
 
       // Check where the link points

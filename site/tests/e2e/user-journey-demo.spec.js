@@ -8,7 +8,9 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await page.waitForLoadState("networkidle");
 
       // Verify homepage loads correctly
-      await expect(page.locator("h1")).toContainText("The Collaborative Preprint Server for Modern Research");
+      await expect(page.locator("h1")).toContainText(
+        "The Collaborative Preprint Server for Modern Research"
+      );
       await expect(page.locator(".hero-section")).toBeVisible();
 
       // Step 2: User sees and clicks hero CTA
@@ -76,9 +78,14 @@ test.describe("User Journey: Marketing Site to Demo", () => {
         await expect(heroButton).toContainText("Explore the Platform");
 
         // Click hero CTA and go to demo
-        await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), heroButton.click()]);
+        await Promise.all([
+          page.waitForNavigation({ waitUntil: "networkidle" }),
+          heroButton.click(),
+        ]);
         expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
-        await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
+        await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({
+          timeout: 10000,
+        });
 
         // Return to marketing site for CTA section test
         await page.goto(`http://localhost:${process.env.SITE_PORT}`);
@@ -93,7 +100,10 @@ test.describe("User Journey: Marketing Site to Demo", () => {
         await expect(ctaButton).toContainText("Get Started");
 
         // Click CTA section button and go to getting-started
-        await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), ctaButton.click()]);
+        await Promise.all([
+          page.waitForNavigation({ waitUntil: "networkidle" }),
+          ctaButton.click(),
+        ]);
         expect(page.url()).toContain(`/getting-started`);
       }
     });
@@ -135,7 +145,9 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await page.waitForLoadState("networkidle");
 
       // User reads hero content
-      await expect(page.locator(".hero-headline")).toContainText("The Collaborative Preprint Server for Modern Research");
+      await expect(page.locator(".hero-headline")).toContainText(
+        "The Collaborative Preprint Server for Modern Research"
+      );
       await expect(page.locator(".hero-subheadline")).toBeVisible();
 
       // User scrolls to learn more
@@ -153,7 +165,9 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
       // Verify user sees demo instructions
-      await expect(page.locator('[data-testid="demo-banner"]')).toContainText("Experience Aris workspace");
+      await expect(page.locator('[data-testid="demo-banner"]')).toContainText(
+        "Experience Aris workspace"
+      );
 
       // User explores manuscript content
       await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible({ timeout: 15000 });
