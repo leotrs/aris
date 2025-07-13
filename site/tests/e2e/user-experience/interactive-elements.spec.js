@@ -70,8 +70,8 @@ test.describe("Interactive Elements E2E", () => {
       await page.goto("/");
       await page.waitForLoadState("networkidle");
 
-      const menuToggle = page.locator(".menu-toggle");
-      const mobileMenu = page.locator(".mobile-menu-overlay");
+      const menuToggle = page.locator('[data-testid="menu-toggle"]');
+      const mobileMenu = page.locator('[data-testid="mobile-menu-overlay"]');
 
       // Open mobile menu
       await menuToggle.click();
@@ -79,11 +79,11 @@ test.describe("Interactive Elements E2E", () => {
       await expect(mobileMenu).toBeVisible();
 
       // Test mobile dropdown (click Resources dropdown)
-      const mobileResourcesToggle = page.locator(".mobile-dropdown-toggle").nth(1);
+      const mobileResourcesToggle = page.locator('[data-testid="mobile-resources-toggle"]');
       await mobileResourcesToggle.click();
       await page.waitForTimeout(300); // Wait for dropdown animation
 
-      const mobileDropdownMenu = page.locator(".mobile-dropdown-menu");
+      const mobileDropdownMenu = page.locator('[data-testid="mobile-resources-dropdown"]');
       await expect(mobileDropdownMenu).toBeVisible();
 
       // Close menu by clicking a link

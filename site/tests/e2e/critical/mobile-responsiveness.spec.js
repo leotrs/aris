@@ -24,15 +24,15 @@ test.describe("Mobile Responsiveness E2E", () => {
       await expect(page.locator(".navbar-utility-links")).not.toBeVisible();
 
       // Mobile menu toggle should be visible
-      await expect(page.locator(".menu-toggle")).toBeVisible();
+      await expect(page.locator('[data-testid="menu-toggle"]')).toBeVisible();
 
       // Mobile menu should be hidden initially
-      await expect(page.locator(".mobile-menu-overlay")).not.toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).not.toBeVisible();
 
       // Click to open mobile menu
-      await page.click(".menu-toggle");
+      await page.click('[data-testid="menu-toggle"]');
       await page.waitForTimeout(300); // Wait for mobile menu animation
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
       // Verify mobile navigation elements
       // About is in the Platform dropdown, so let's test direct mobile nav links
@@ -55,7 +55,7 @@ test.describe("Mobile Responsiveness E2E", () => {
       await expect(page.locator(".navbar-utility-links")).toBeVisible();
 
       // Mobile menu toggle should be hidden
-      await expect(page.locator(".menu-toggle")).not.toBeVisible();
+      await expect(page.locator('[data-testid="menu-toggle"]')).not.toBeVisible();
     });
   });
 
@@ -168,9 +168,9 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.waitForLoadState("networkidle");
 
       // Test touch on mobile menu with wait
-      await page.click(".menu-toggle");
+      await page.click('[data-testid="menu-toggle"]');
       await page.waitForTimeout(300); // Wait for animation
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
       // Test touch on mobile links
       await page.click('.mobile-nav-link[href="/signup"]');

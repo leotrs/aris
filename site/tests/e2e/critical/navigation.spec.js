@@ -13,9 +13,9 @@ test.describe("Navigation Flow E2E", () => {
 
     if (isMobile) {
       // Mobile navigation: use mobile menu
-      await page.click(".menu-toggle");
+      await page.click('[data-testid="menu-toggle"]');
       await page.waitForTimeout(300);
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
       // Navigate to signup via mobile menu
       await page.click('.mobile-nav-link[href="/signup"]');
@@ -75,9 +75,9 @@ test.describe("Navigation Flow E2E", () => {
 
     if (isMobile) {
       // Mobile: Open mobile menu first
-      await page.click(".menu-toggle");
+      await page.click('[data-testid="menu-toggle"]');
       await page.waitForTimeout(300);
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
       // Test mobile navbar links (direct links only)
       const gettingStartedLink = page.locator('.mobile-nav-link[href="/getting-started"]');
@@ -90,10 +90,10 @@ test.describe("Navigation Flow E2E", () => {
       await expect(contactLink).toBeVisible();
       
       // Test Platform dropdown contains about/ai-copilot
-      await page.locator(".mobile-dropdown-toggle").filter({ hasText: 'Platform' }).click();
+      await page.locator('[data-testid="mobile-platform-toggle"]').click();
       await page.waitForTimeout(300);
-      const aboutLink = page.locator('.mobile-dropdown-link[href="/about"]');
-      const aiCopilotLink = page.locator('.mobile-dropdown-link[href="/ai-copilot"]');
+      const aboutLink = page.locator('[data-testid="mobile-platform-dropdown"] a[href="/about"]');
+      const aiCopilotLink = page.locator('[data-testid="mobile-platform-dropdown"] a[href="/ai-copilot"]');
       await expect(aboutLink).toBeVisible();
       await expect(aiCopilotLink).toBeVisible();
     } else {
@@ -102,7 +102,7 @@ test.describe("Navigation Flow E2E", () => {
       await expect(pricingLink).toBeVisible();
       
       // Test Platform dropdown
-      await page.hover('.has-dropdown');
+      await page.hover('[data-testid="platform-dropdown"]');
       await page.waitForTimeout(300);
       
       const aboutLink = page.locator('nav a[href="/about"]').first();
@@ -117,12 +117,12 @@ test.describe("Navigation Flow E2E", () => {
 
     if (isMobile) {
       // Mobile: Test mobile dropdown (click Resources dropdown)
-      await page.locator(".mobile-dropdown-toggle").filter({ hasText: 'Resources' }).click();
+      await page.locator('[data-testid="mobile-resources-toggle"]').click();
       await page.waitForTimeout(300);
-      await expect(page.locator(".mobile-dropdown-menu")).toBeVisible();
+      await expect(page.locator('[data-testid="mobile-resources-dropdown"]')).toBeVisible();
 
-      const docLink = page.locator('.mobile-dropdown-link[href="/documentation"]');
-      const blogLink = page.locator('.mobile-dropdown-link[href="/blog"]');
+      const docLink = page.locator('[data-testid="mobile-resources-dropdown"] a[href="/documentation"]');
+      const blogLink = page.locator('[data-testid="mobile-resources-dropdown"] a[href="/blog"]');
       await expect(docLink).toBeVisible();
       await expect(blogLink).toBeVisible();
 
@@ -136,9 +136,9 @@ test.describe("Navigation Flow E2E", () => {
       await expect(demoLink).toBeVisible();
     } else {
       // Desktop: Test Resources dropdown (hover second dropdown)
-      await page.hover(".has-dropdown:nth-child(4)"); // Resources is the 4th nav item
+      await page.hover('[data-testid="resources-dropdown"]'); // Resources dropdown
       await page.waitForTimeout(300); // Wait for hover animation
-      await expect(page.locator(".dropdown-menu").nth(1)).toBeVisible(); // Resources dropdown is second
+      await expect(page.locator('[data-testid="resources-dropdown-menu"]')).toBeVisible(); // Resources dropdown menu
 
       const docLink = page.locator('nav a[href="/documentation"]').first();
       const blogLink = page.locator('nav a[href="/blog"]').first();
@@ -189,22 +189,22 @@ test.describe("Navigation Flow E2E", () => {
     await page.waitForLoadState("networkidle");
 
     // Mobile menu should be hidden initially
-    await expect(page.locator(".mobile-menu-overlay")).not.toBeVisible();
+    await expect(page.locator('[data-testid="mobile-menu-overlay"]')).not.toBeVisible();
 
     // Click hamburger menu
-    await page.click(".menu-toggle");
+    await page.click('[data-testid="menu-toggle"]');
     await page.waitForTimeout(300); // Wait for mobile menu animation
-    await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+    await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
     // Verify mobile navigation links (about/ai-copilot are in Platform dropdown, pricing is direct)
     await expect(page.locator('.mobile-nav-link[href="/getting-started"]')).toBeVisible();
     await expect(page.locator('.mobile-nav-link[href="/pricing"]')).toBeVisible();
-    await expect(page.locator('.mobile-dropdown-toggle').filter({ hasText: 'Platform' })).toBeVisible();
+    await expect(page.locator('[data-testid=\"mobile-platform-toggle\"]')).toBeVisible();
 
     // Test mobile resources dropdown
-    await page.locator(".mobile-dropdown-toggle").filter({ hasText: 'Resources' }).click();
+    await page.locator('[data-testid="mobile-resources-toggle"]').click();
     await page.waitForTimeout(300); // Wait for dropdown animation
-    await expect(page.locator(".mobile-dropdown-menu")).toBeVisible();
+    await expect(page.locator('[data-testid="mobile-resources-dropdown"]')).toBeVisible();
 
     // Test navigation to signup from mobile menu
     await page.click('.mobile-nav-link[href="/signup"]');
@@ -212,7 +212,7 @@ test.describe("Navigation Flow E2E", () => {
     await expect(page).toHaveURL("/signup");
 
     // Mobile menu should close after navigation
-    await expect(page.locator(".mobile-menu-overlay")).not.toBeVisible();
+    await expect(page.locator('[data-testid="mobile-menu-overlay"]')).not.toBeVisible();
   });
 
   test("should handle footer navigation", async ({ page }) => {
@@ -279,7 +279,7 @@ test.describe("Navigation Flow E2E", () => {
 
     if (isMobile) {
       // Mobile navigation: use mobile menu
-      await page.click(".menu-toggle");
+      await page.click('[data-testid="menu-toggle"]');
       await page.waitForTimeout(300);
       await page.click('.mobile-nav-link[href="/signup"]');
     } else {
@@ -343,7 +343,7 @@ test.describe("Navigation Flow E2E", () => {
 
     if (isMobile) {
       // Mobile navigation: use mobile menu
-      await page.click(".menu-toggle");
+      await page.click('[data-testid="menu-toggle"]');
       await page.waitForTimeout(300);
       await page.click('.mobile-nav-link[href="/signup"]');
     } else {
