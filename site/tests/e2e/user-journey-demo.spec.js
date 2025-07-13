@@ -25,7 +25,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       console.log(`Demo load time: ${loadTime}ms`);
 
       // Step 3: User arrives at demo
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
       // Step 4: Demo content loads
@@ -55,11 +55,11 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await expect(page.locator(".demo-banner")).toBeVisible();
 
       // Step 6: User goes back to marketing site (manually navigate)
-      await page.goto("http://localhost:3000");
+      await page.goto(`http://localhost:${process.env.SITE_PORT}`);
       await page.waitForLoadState("networkidle");
 
       // Step 7: User is back on marketing site
-      expect(page.url()).toContain("localhost:3000");
+      expect(page.url()).toContain(`localhost:${process.env.SITE_PORT}`);
       expect(page.url()).not.toContain("/demo");
       await expect(page.locator(".hero-section")).toBeVisible();
     });
@@ -82,16 +82,16 @@ test.describe("User Journey: Marketing Site to Demo", () => {
           // Click CTA and go to demo
           await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), button.click()]);
 
-          expect(page.url()).toContain("localhost:5173/demo");
+          expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
           await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({
             timeout: 10000,
           });
 
           // Return to marketing site for next CTA test
           if (i < ctaSelectors.length - 1) {
-            await page.goto("http://localhost:3000");
+            await page.goto(`http://localhost:${process.env.SITE_PORT}`);
             await page.waitForLoadState("networkidle");
-            expect(page.url()).toContain("localhost:3000");
+            expect(page.url()).toContain(`localhost:${process.env.SITE_PORT}`);
           }
         }
       }
@@ -106,15 +106,15 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       const heroButton = page.locator(".hero-section .btn-primary").first();
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), heroButton.click()]);
 
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
       // Manual navigation back to marketing site (more realistic user behavior)
-      await page.goto("http://localhost:3000");
+      await page.goto(`http://localhost:${process.env.SITE_PORT}`);
       await page.waitForLoadState("networkidle");
 
       // Should be back on marketing site
-      expect(page.url()).toContain("localhost:3000");
+      expect(page.url()).toContain(`localhost:${process.env.SITE_PORT}`);
       expect(page.url()).not.toContain("/demo");
       await expect(page.locator(".hero-section")).toBeVisible();
 
@@ -122,7 +122,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       // Should be back on demo
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
     });
   });
@@ -148,7 +148,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), demoButton.click()]);
 
       // User experiences demo
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
       // Verify user sees demo instructions
@@ -168,7 +168,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       // Should redirect immediately to demo
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
       // Demo should load quickly for returning users
@@ -182,7 +182,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       const demoUrl = page.url();
-      expect(demoUrl).toContain("localhost:5173/demo");
+      expect(demoUrl).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
 
       // Simulate sharing URL (new browser context)
       const context = await browser.newContext();
@@ -193,7 +193,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await sharedPage.waitForLoadState("networkidle");
 
       // Should load demo directly
-      expect(sharedPage.url()).toContain("localhost:5173/demo");
+      expect(sharedPage.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(sharedPage.locator('[data-testid="demo-container"]')).toBeVisible({
         timeout: 10000,
       });
@@ -221,7 +221,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       ]);
 
       // Demo should work on mobile
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
       // Check mobile responsive behavior
@@ -240,7 +240,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await page.waitForLoadState("networkidle");
 
       // Simulate slow network
-      await page.route("**localhost:5173/**", async (route) => {
+      await page.route(`**localhost:${process.env.FRONTEND_PORT}/**`, async (route) => {
         await new Promise((resolve) => setTimeout(resolve, 2000)); // 2s delay
         route.continue();
       });
@@ -257,7 +257,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       console.log(`Slow demo load time: ${loadTime}ms`);
 
       // Should still reach demo eventually
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 15000 });
     });
 
@@ -277,13 +277,13 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), ...clickPromises]);
 
       // Should still work correctly
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
     });
 
     test("demo unavailable fallback behavior", async ({ page }) => {
       // Block all requests to frontend
-      await page.route("**localhost:5173/**", (route) => {
+      await page.route(`**localhost:${process.env.FRONTEND_PORT}/**`, (route) => {
         route.abort("failed");
       });
 

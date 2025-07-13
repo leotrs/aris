@@ -147,7 +147,7 @@ test.describe("Navigation Flow E2E", () => {
     if ((await demoLink.count()) > 0) {
       try {
         // Check if frontend is available before testing demo
-        const frontendCheck = await page.request.get("http://localhost:5173").catch(() => null);
+        const frontendCheck = await page.request.get(`http://localhost:${process.env.FRONTEND_PORT}`).catch(() => null);
 
         if (frontendCheck && frontendCheck.ok()) {
           await Promise.all([
@@ -156,7 +156,7 @@ test.describe("Navigation Flow E2E", () => {
           ]);
 
           // Should redirect to frontend demo
-          expect(page.url()).toContain("localhost:5173/demo");
+          expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
 
           // Navigate back for other tests
           await page.goBack();
@@ -299,7 +299,7 @@ test.describe("Navigation Flow E2E", () => {
     await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
     // Should redirect to frontend demo
-    expect(page.url()).toContain("localhost:5173/demo");
+    expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
 
     // Verify demo loads
     await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });

@@ -18,7 +18,7 @@ test.describe("Demo Integration E2E", () => {
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), heroButton.click()]);
 
       // Verify redirect happened
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
 
       // Verify demo page loads with content
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
@@ -40,7 +40,7 @@ test.describe("Demo Integration E2E", () => {
         sectionButton.click(),
       ]);
 
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
     });
 
@@ -60,7 +60,7 @@ test.describe("Demo Integration E2E", () => {
           exploreLink.click(),
         ]);
 
-        expect(page.url()).toContain("localhost:5173/demo");
+        expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
         await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({
           timeout: 10000,
         });
@@ -80,7 +80,7 @@ test.describe("Demo Integration E2E", () => {
           bannerButton.click(),
         ]);
 
-        expect(page.url()).toContain("localhost:5173/demo");
+        expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
         await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({
           timeout: 10000,
         });
@@ -94,7 +94,7 @@ test.describe("Demo Integration E2E", () => {
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       // Should redirect to frontend demo
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
     });
 
@@ -104,7 +104,7 @@ test.describe("Demo Integration E2E", () => {
         page.goto("/demo/"),
       ]);
 
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
     });
 
@@ -114,7 +114,7 @@ test.describe("Demo Integration E2E", () => {
         page.goto("/demo?test=1"),
       ]);
 
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
     });
   });
@@ -137,12 +137,12 @@ test.describe("Demo Integration E2E", () => {
       // Find the 302 redirect response
       const redirectResponse = responses.find((r) => r.status === 302);
       expect(redirectResponse).toBeDefined();
-      expect(redirectResponse.url).toContain("localhost:3000/demo");
+      expect(redirectResponse.url).toContain(`localhost:${process.env.SITE_PORT}/demo`);
     });
 
     test("handles frontend unavailable gracefully", async ({ page }) => {
       // Block requests to frontend to simulate downtime
-      await page.route("**localhost:5173/**", (route) => {
+      await page.route(`**localhost:${process.env.FRONTEND_PORT}/**`, (route) => {
         route.abort("failed");
       });
 
@@ -159,7 +159,7 @@ test.describe("Demo Integration E2E", () => {
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       // URL should be the frontend demo URL
-      expect(page.url()).toMatch(/localhost:5173\/demo$/);
+      expect(page.url()).toMatch(new RegExp(`localhost:${process.env.FRONTEND_PORT}\\/demo$`));
     });
   });
 
@@ -179,7 +179,7 @@ test.describe("Demo Integration E2E", () => {
         mobileButton.click(),
       ]);
 
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
     });
 
@@ -188,7 +188,7 @@ test.describe("Demo Integration E2E", () => {
 
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
 
       // Demo should be mobile responsive
       const demoContainer = page.locator('[data-testid="demo-container"]');
@@ -226,7 +226,7 @@ test.describe("Demo Integration E2E", () => {
       // Go to demo first
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
 
       // Find and click back to homepage link
       const backLink = page.locator(".demo-link").filter({ hasText: /back.*homepage/i });
@@ -236,7 +236,7 @@ test.describe("Demo Integration E2E", () => {
       const href = await backLink.getAttribute("href");
 
       // The demo back link might point to frontend root, which is expected
-      if (href === "/" || href?.includes("localhost:3000")) {
+      if (href === "/" || href?.includes(`localhost:${process.env.SITE_PORT}`)) {
         await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), backLink.click()]);
 
         // Could go to either marketing site or frontend home
@@ -277,7 +277,7 @@ test.describe("Demo Integration E2E", () => {
 
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), heroButton.click()]);
 
-      expect(page.url()).toContain("localhost:5173/demo");
+      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
       await context.close();

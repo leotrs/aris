@@ -188,6 +188,7 @@ jobs:
       DB_NAME: aris
       TEST_DB_NAME: aris_test
       VITE_API_BASE_URL: http://localhost:8000
+      FRONTEND_URL: http://localhost:5173
 
     steps:
     - uses: actions/checkout@v4
@@ -201,6 +202,10 @@ jobs:
 
     - name: Install dependencies
       working-directory: site
+      run: npm ci
+
+    - name: Install frontend dependencies
+      working-directory: frontend
       run: npm ci
 
     - name: Cache Playwright browsers
@@ -222,11 +227,35 @@ jobs:
           npx playwright install chromium --with-deps
         fi
 
-    - name: Start site and run E2E tests
-      working-directory: site
+    - name: Start frontend, site, and run E2E tests
       run: |
+        # Start frontend in background
+        echo "Starting frontend for site E2E tests..."
+        cd frontend
+        npm run dev &
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait for frontend to be ready
+        sleep 15
+        for i in {1..5}; do
+          if curl -f http://localhost:5173; then
+            echo "Frontend ready for E2E tests"
+            break
+          else
+            echo "Waiting for frontend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Frontend failed to start"
+              kill $FRONTEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 3
+          fi
+        done
+        
         # Start site in background
         echo "Starting site for ${{ matrix.browser }} ${{ matrix.device }} E2E tests..."
+        cd ../site
         npm run dev &
         SITE_PID=$!
         echo "Site started with PID: $SITE_PID"
@@ -242,6 +271,7 @@ jobs:
             if [ $i -eq 5 ]; then
               echo "Site failed to start"
               kill $SITE_PID 2>/dev/null || true
+              kill $FRONTEND_PID 2>/dev/null || true
               exit 1
             fi
             sleep 3
@@ -271,6 +301,7 @@ jobs:
         # Cleanup
         echo "Cleaning up processes..."
         kill $SITE_PID 2>/dev/null || true
+        kill $FRONTEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
 
   # Desktop E2E Tests (Chrome)
