@@ -151,7 +151,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await expect(page.locator(".hero-subheadline")).toBeVisible();
 
       // User scrolls to learn more
-      await page.locator(".section-two").scrollIntoViewIfNeeded();
+      await page.locator(".platform-overview-section").scrollIntoViewIfNeeded();
       await page.waitForTimeout(1000);
 
       // User decides to try demo
