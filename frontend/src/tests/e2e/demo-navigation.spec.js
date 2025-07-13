@@ -21,7 +21,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
 
       // Wait for the page to load
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Verify we're on the demo page (not redirected to login)
       expect(page.url()).toContain("/demo");
@@ -40,7 +40,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
       expect(tokens.refreshToken).toBeNull();
 
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Should load successfully without redirects to login
       expect(page.url()).toContain("/demo");
@@ -49,7 +49,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
 
     test("demo banner displays with correct messaging", async ({ page }) => {
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       const banner = page.locator(".demo-banner");
       await expect(banner).toBeVisible();
@@ -70,7 +70,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
       await authHelpers.clearAuthState();
 
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       const backLink = page.locator(".demo-link");
       await expect(backLink).toBeVisible();
@@ -80,7 +80,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
       await backLink.click();
 
       // Should navigate away from demo (may go to login since user is not authenticated)
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Check if navigation occurred (could stay on demo if link doesn't work)
       const currentUrl = page.url();
@@ -96,7 +96,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
 
     test("demo page loads with correct title", async ({ page }) => {
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Check page title
       const title = await page.title();
@@ -114,7 +114,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
       expect(tokens.accessToken).toBeNull();
 
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Verify demo loads successfully
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
@@ -133,7 +133,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
       const page = await context.newPage();
 
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Should load successfully in incognito mode
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
@@ -147,11 +147,11 @@ test.describe("Demo Navigation & Access @demo-content", () => {
       await authHelpers.clearAuthState();
 
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Wait for Vue to mount the demo container
       // Fast check for demo container
-      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 3000 });
+      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
 
       // Verify demo loads with clean state
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
@@ -163,11 +163,11 @@ test.describe("Demo Navigation & Access @demo-content", () => {
     test("can navigate to demo from other pages", async ({ page }) => {
       // Start from homepage
       await page.goto("/");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
 
       // Navigate to demo (assuming there might be a demo link somewhere)
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
     });
@@ -175,16 +175,16 @@ test.describe("Demo Navigation & Access @demo-content", () => {
     test("can navigate away from demo and back", async ({ page }) => {
       // Go to demo
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
 
       // Navigate away
       await page.goto("/");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
 
       // Go back to demo
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
     });
 
@@ -194,7 +194,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
 
       // Navigate to demo directly (as if shared link)
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
 
       // Use the back to homepage link instead of browser back
@@ -202,7 +202,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
       const backLink = page.locator(".demo-link");
       await expect(backLink).toBeVisible();
       await backLink.click();
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Should navigate away from demo (may go to login since user is not authenticated)
       const currentUrl = page.url();
@@ -222,11 +222,11 @@ test.describe("Demo Navigation & Access @demo-content", () => {
 
       // Simulate direct navigation to demo URL (as if someone shared the link)
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Wait for Vue to mount the demo container
       // Fast check for demo container
-      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 3000 });
+      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
 
       // Should load demo directly without redirect to login
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
@@ -237,7 +237,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
   test.describe("Page Structure", () => {
     test("demo page has correct basic structure", async ({ page }) => {
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Check main containers exist
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
@@ -270,7 +270,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
 
     test("demo page has correct viewport meta tag", async ({ page }) => {
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Check viewport meta tag for mobile support
       const viewport = await page.locator('meta[name="viewport"]').getAttribute("content");
@@ -279,7 +279,7 @@ test.describe("Demo Navigation & Access @demo-content", () => {
 
     test("demo page loads required CSS and JS", async ({ page }) => {
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Check that demo-specific styles are applied
       const demoContainer = page.locator('[data-testid="demo-container"]');
@@ -293,11 +293,11 @@ test.describe("Demo Navigation & Access @demo-content", () => {
       await authHelpers.clearAuthState();
 
       await page.goto("/demo?test=1&other=value", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Wait for Vue to mount the demo container
       // Fast check for demo container
-      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 3000 });
+      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
 
       // Should still load demo correctly
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
@@ -309,11 +309,11 @@ test.describe("Demo Navigation & Access @demo-content", () => {
       await authHelpers.clearAuthState();
 
       await page.goto("/demo#section", { waitUntil: "domcontentloaded" });
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Wait for Vue to mount the demo container
       // Fast check for demo container
-      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 3000 });
+      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
 
       // Should still load demo correctly
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();

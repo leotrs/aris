@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { AuthHelpers } from "./utils/auth-helpers.js";
+import { TIMEOUTS } from "./utils/timeout-constants.js";
 
 // @auth
 test.describe("Account Password Change Integration E2E Tests @auth", () => {
@@ -96,7 +97,7 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     console.log("[Test] Success message found");
 
     // Wait a moment for form reset to complete
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(TIMEOUTS.ANIMATION);
 
     // Form should be reset
     await expect(currentPasswordInput).toHaveValue("");
@@ -257,7 +258,7 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     await cancelButton.click();
 
     // Wait a moment for the form to reset
-    await page.waitForTimeout(100);
+    await page.waitForTimeout(TIMEOUTS.ANIMATION);
 
     // Check values after cancel
     const currentValueAfter = await currentPasswordInput.inputValue();
@@ -287,7 +288,8 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
 
     // Mock slow response to test loading state
     await page.route("**/change-password", async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Use timeout constant for mock delay
+      await new Promise((resolve) => setTimeout(resolve, TIMEOUTS.CONTENT_LOAD));
       route.fulfill({
         status: 200,
         contentType: "application/json",
@@ -324,6 +326,6 @@ test.describe("Account Password Change Integration E2E Tests @auth", () => {
     await expect(confirmPasswordInput).toBeDisabled();
 
     // Wait for completion
-    await expect(updateButton).toContainText("Update Password", { timeout: 3000 });
+    await expect(updateButton).toContainText("Update Password");
   });
 });

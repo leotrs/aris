@@ -58,7 +58,7 @@ test.describe("Debug Auth-Enabled Desktop Failures @auth", () => {
     // Step 2: Go to home page (should redirect to login)
     console.log("🏠 Navigating to home page...");
     await page.goto("/");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     // Verify redirect to login
     await expect(page).toHaveURL(/\/login/, { timeout: 10000 });

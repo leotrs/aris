@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { TEST_CREDENTIALS } from "../setup/test-data.js";
+import { getTimeouts } from "./timeout-constants.js";
 
 export class AuthHelpers {
   constructor(page) {
@@ -39,40 +40,30 @@ export class AuthHelpers {
       this.page.click('[data-testid="login-button"]'),
     ]);
 
-    console.log("[DEBUG-CI] Login response received, waiting for network idle");
-    // Wait for the login response to complete
-    await this.page.waitForLoadState("networkidle");
-    console.log("[DEBUG-CI] Login completed, final URL:", this.page.url());
+    // Wait for successful login redirect (deterministic wait)
+    await this.page.waitForLoadState("load");
+    await this.page.waitForURL(/^(?!.*\/login)/, { timeout: getTimeouts().contentLoad });
   }
 
   async ensureLoggedIn() {
     // Go to home page
     await this.page.goto("/");
-    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForLoadState("domcontentloaded");
 
-    // Wait a moment for any potential redirects to happen
-    await this.page.waitForTimeout(1500);
+    // Wait for potential auth redirect to complete (deterministic)
+    try {
+      await this.page.waitForURL(/^(?!.*\/login)/, { timeout: getTimeouts().contentLoad });
+    } catch {
+      // If we're still on login page or got redirected there, need to login
+      const currentUrl = this.page.url();
+      if (currentUrl.includes("/login")) {
+        const email = TEST_CREDENTIALS.valid.email;
+        const password = TEST_CREDENTIALS.valid.password;
 
-    // Check if we were redirected to login
-    const currentUrl = this.page.url();
-    if (currentUrl.includes("/login")) {
-      // Need to login
-      const email = TEST_CREDENTIALS.valid.email;
-      const password = TEST_CREDENTIALS.valid.password;
+        await this.login(email, password);
 
-      await this.login(email, password);
-
-      // Check if login was successful
-      await this.page.waitForTimeout(1000);
-      const postLoginUrl = this.page.url();
-      if (postLoginUrl.includes("/login")) {
-        // Login failed
-        const errorElement = await this.page
-          .locator('[data-testid="login-error"]')
-          .textContent()
-          .catch(() => "Login failed");
-
-        throw new Error(`Login failed: ${errorElement}`);
+        // Verify login was successful by checking URL
+        await this.page.waitForURL("/", { timeout: getTimeouts().contentLoad });
       }
     }
 
@@ -103,10 +94,9 @@ export class AuthHelpers {
 
     // Verify we're logged in by checking for home page elements
     console.log("[AuthHelpers] Verifying home page elements");
-    await expect(this.page).toHaveURL("/", { timeout: 10000 });
+    await expect(this.page).toHaveURL("/");
     await this.page.waitForSelector(
-      '[data-testid="files-container"], [data-testid="create-file-button"], [data-testid="user-menu"]',
-      { timeout: 10000 }
+      '[data-testid="files-container"], [data-testid="create-file-button"], [data-testid="user-menu"]'
     );
 
     console.log("[AuthHelpers] ensureLoggedIn completed successfully");
@@ -123,7 +113,7 @@ export class AuthHelpers {
         localStorage.clear();
         sessionStorage.clear();
       });
-      await this.page.goto("/login", { waitUntil: "load" });
+      await this.page.goto("/login", { waitUntil: "domcontentloaded" });
     } catch {
       // Ignore localStorage access errors in tests
     }

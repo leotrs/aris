@@ -10,7 +10,11 @@ export class AccountHelpers {
    */
   async navigateToAccountPage(subPage = "profile") {
     await this.page.goto(`/account/${subPage}`);
-    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForLoadState("domcontentloaded");
+    // Wait for the account page content to be ready
+    await this.page.waitForSelector(".account-container, .status-item, .input-text", {
+      timeout: 10000,
+    });
   }
 
   /**

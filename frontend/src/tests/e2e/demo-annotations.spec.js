@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { MobileHelpers } from "./utils/mobile-helpers.js";
+import { getTimeouts } from "./utils/timeout-constants.js";
 
 // @demo
 
@@ -8,6 +9,8 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
 
   test.beforeEach(async ({ page }) => {
     mobileHelpers = new MobileHelpers(page);
+    const timeouts = getTimeouts(mobileHelpers.isMobileViewport());
+
     // Mock any backend requests that might fail in CI
     await page.route("**/api/**", async (route) => {
       const url = route.request().url();
@@ -23,30 +26,26 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
     });
 
     await page.goto("/demo", { waitUntil: "domcontentloaded" });
-    await page.waitForLoadState("networkidle");
-
-    // Check if mobile viewport
-    const viewport = page.viewportSize();
-    const isMobile = viewport.width < 640;
+    await page.waitForLoadState("load");
 
     // Wait for demo canvas to be loaded (optimized for CI performance)
     const demoCanvas = page.locator('[data-testid="demo-canvas"]');
-    await expect(demoCanvas).toBeVisible({ timeout: 5000 });
+    await expect(demoCanvas).toBeVisible({ timeout: timeouts.contentLoad });
 
     // For mobile browsers, wait for layout to stabilize
-    if (isMobile) {
-      await page.waitForTimeout(300);
+    if (mobileHelpers.isMobileViewport()) {
+      await mobileHelpers.waitForMobileRendering();
       // Trigger a layout reflow to ensure content is visible
       await page.evaluate(() => {
         window.dispatchEvent(new Event("resize"));
       });
-      await page.waitForTimeout(500);
+      await mobileHelpers.waitForMobileRendering();
     }
   });
 
   test("annotations panel should be visible within viewport", async ({ page }) => {
     // Wait for layout to stabilize, especially on mobile
-    await page.waitForTimeout(300);
+    await mobileHelpers.waitForMobileRendering();
 
     // Multiple selectors for annotations panel
     const annotationsPanel = page.locator(
@@ -76,7 +75,7 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
 
   test("individual annotations should be visible", async ({ page }) => {
     // Wait for annotations to render
-    await page.waitForTimeout(500);
+    await mobileHelpers.waitForMobileRendering();
 
     // Look for annotation content with broader selectors
     const annotations = page.locator(
@@ -100,7 +99,7 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
 
   test("no horizontal scrollbar should be present", async ({ page }) => {
     // Wait for layout to stabilize
-    await page.waitForTimeout(300);
+    await mobileHelpers.waitForMobileRendering();
 
     // Check document body doesn't have horizontal overflow
     const bodyScrollWidth = await page.evaluate(() => document.body.scrollWidth);
@@ -117,7 +116,7 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
 
   test("annotations content should be readable", async ({ page }) => {
     // Wait for content to load and render
-    await page.waitForTimeout(500);
+    await mobileHelpers.waitForMobileRendering();
 
     // Look for demo annotation content with more flexible selectors
     const commentText = page.locator(
@@ -150,7 +149,7 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
 
   test("canvas layout should use proper column structure", async ({ page }) => {
     // Wait for layout to stabilize
-    await page.waitForTimeout(300);
+    await mobileHelpers.waitForMobileRendering();
 
     // Check for layout structure with multiple selector strategies
     const leftColumn = page.locator(
@@ -248,7 +247,7 @@ test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
 
           // Enhanced visibility check for all mobile browsers
           await firstElement.scrollIntoViewIfNeeded();
-          await page.waitForTimeout(500);
+          await mobileHelpers.waitForMobileRendering();
 
           // Try standard Playwright visibility check first for all browsers
           try {

@@ -13,12 +13,10 @@ test.describe("Focus Mode and Drawer Interaction @demo-ui @desktop-only", () => 
     await authHelpers.clearAuthState();
 
     await page.goto("/demo", { waitUntil: "domcontentloaded" });
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
 
     // Wait for demo content to load (optimized for CI performance)
-    await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible({
-      timeout: 5000,
-    });
+    await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible();
   });
 
   test.describe("Focus Mode Button Visibility with Drawer", () => {

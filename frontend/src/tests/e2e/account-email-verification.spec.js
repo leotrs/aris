@@ -166,7 +166,7 @@ test.describe("Account Email Verification E2E Tests @auth", () => {
       await expect(sendButton).toBeDisabled();
 
       // Wait for response (button should remain disabled and show success state)
-      await expect(sendButton).toContainText("Verification email sent", { timeout: 3000 });
+      await expect(sendButton).toContainText("Verification email sent");
     }
   });
 });

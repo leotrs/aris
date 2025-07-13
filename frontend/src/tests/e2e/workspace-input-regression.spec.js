@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { TIMEOUTS } from "./utils/timeout-constants.js";
 
 /**
  * Workspace Input Regression Tests
@@ -17,8 +18,8 @@ import { test, expect } from "@playwright/test";
 test.describe("Input Regression Tests @regression @desktop-only", () => {
   test("basic input functionality works without global interference", async ({ page }) => {
     // Navigate to demo page (always available)
-    await page.goto("/demo/content", { waitUntil: "networkidle" });
-    await page.waitForLoadState("networkidle");
+    await page.goto("/demo/content", { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("load");
 
     // Create a test input to verify keyboard events work globally
     await page.evaluate(() => {
@@ -230,7 +231,7 @@ test.describe("Component Interference Detection @regression", () => {
     await page.goto("/demo/content", { waitUntil: "networkidle" });
 
     // Wait for any components to load that might interfere
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(TIMEOUTS.CONTENT_LOAD);
 
     // Create test input after components are loaded
     await page.evaluate(() => {
@@ -258,7 +259,7 @@ test.describe("Component Interference Detection @regression", () => {
     await page.goto("/demo/workspace", { waitUntil: "networkidle" });
 
     // Wait for AnnotationMenu component to potentially load
-    await page.waitForTimeout(1000);
+    await page.waitForTimeout(TIMEOUTS.CONTENT_LOAD);
 
     // Create test input to verify keyboard interference
     await page.evaluate(() => {

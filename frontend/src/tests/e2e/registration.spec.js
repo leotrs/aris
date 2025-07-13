@@ -119,17 +119,17 @@ test.describe("Registration Flow Tests @auth-flows", () => {
 
     // Wait for either success redirect or error message
     try {
-      await page.waitForURL("/", { timeout: 5000 });
+      await page.waitForURL("/");
       // Registration succeeded - logout and try duplicate registration
       await authHelpers.logout();
       await page.goto("/login");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
       await page.locator('[data-testid="register-link"]').waitFor({ state: "visible" });
       await page.click('[data-testid="register-link"]');
     } catch {
       // Registration may have failed due to server issues, proceed with duplicate test
       await page.goto("/login");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
       await page.locator('[data-testid="register-link"]').waitFor({ state: "visible" });
       await page.click('[data-testid="register-link"]');
     }
@@ -173,13 +173,13 @@ test.describe("Registration Flow Tests @auth-flows", () => {
     await authHelpers.login("testuser@aris.pub", process.env.TEST_USER_PASSWORD);
 
     try {
-      await page.waitForURL("/", { timeout: 5000 });
+      await page.waitForURL("/");
 
       // Now try to navigate to register page - should redirect back to home
       await page.goto("/register");
 
       // Wait for redirect to complete
-      await page.waitForURL("/", { timeout: 5000 });
+      await page.waitForURL("/");
 
       // Should be redirected to home and still logged in
       await authHelpers.expectToBeLoggedIn();

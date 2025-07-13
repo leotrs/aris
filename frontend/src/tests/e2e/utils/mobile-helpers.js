@@ -1,4 +1,5 @@
 import { expect } from "@playwright/test";
+import { getTimeouts } from "./timeout-constants.js";
 
 export class MobileHelpers {
   constructor(page) {
@@ -34,13 +35,7 @@ export class MobileHelpers {
    * Get mobile-optimized timeout values
    */
   getTimeouts() {
-    const isMobile = this.isMobileViewport();
-    return {
-      short: isMobile ? 2000 : 1500,
-      medium: isMobile ? 3000 : 2500,
-      long: isMobile ? 5000 : 4000,
-      navigation: isMobile ? 5000 : 4000,
-    };
+    return getTimeouts(this.isMobileViewport());
   }
 
   /**
@@ -48,7 +43,8 @@ export class MobileHelpers {
    */
   async waitForMobileRendering() {
     if (this.isMobileViewport()) {
-      await this.page.waitForTimeout(300);
+      const timeouts = this.getTimeouts();
+      await this.page.waitForTimeout(timeouts.animation);
     }
   }
 
@@ -58,7 +54,7 @@ export class MobileHelpers {
   async interactWithElement(locator) {
     if (this.isMobileViewport()) {
       await locator.scrollIntoViewIfNeeded();
-      await this.page.waitForTimeout(100);
+      await this.page.waitForTimeout(100); // Brief delay for scroll completion
       await locator.tap();
     } else {
       await locator.hover();
@@ -70,7 +66,7 @@ export class MobileHelpers {
    */
   async expectToBeVisible(locator, customTimeout = null) {
     const timeouts = this.getTimeouts();
-    const timeout = customTimeout || timeouts.medium;
+    const timeout = customTimeout || timeouts.elementRender;
 
     console.log(`[Element Visibility] Waiting for element to be visible (timeout: ${timeout}ms)`);
 
@@ -149,7 +145,7 @@ export class MobileHelpers {
 
     if (this.isMobileViewport()) {
       await locator.scrollIntoViewIfNeeded();
-      await this.page.waitForTimeout(100);
+      await this.page.waitForTimeout(100); // Brief delay for scroll completion
     }
 
     try {
@@ -173,7 +169,7 @@ export class MobileHelpers {
   async forceClickElement(locator) {
     await locator.scrollIntoViewIfNeeded();
     if (this.isMobileViewport()) {
-      await this.page.waitForTimeout(100);
+      await this.page.waitForTimeout(100); // Brief delay for scroll completion
     }
     await locator.click({ force: true });
   }
@@ -269,7 +265,7 @@ export class MobileHelpers {
           );
         },
         selector,
-        { timeout: timeouts.medium }
+        { timeout: timeouts.contentLoad }
       );
     }
 
@@ -328,7 +324,7 @@ export class MobileHelpers {
         const app = document.querySelector("#app");
         return app && app.children.length > 0;
       },
-      { timeout: this.getTimeouts().medium }
+      { timeout: this.getTimeouts().contentLoad }
     );
 
     // Additional wait for mobile rendering

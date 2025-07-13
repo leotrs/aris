@@ -113,7 +113,7 @@ test.describe("Login Flow Tests @auth-flows", () => {
     await page.goto("/login");
 
     // Wait for redirect to complete
-    await page.waitForURL("/", { timeout: 5000 });
+    await page.waitForURL("/");
 
     // Should be redirected to home
     await authHelpers.expectToBeLoggedIn();
