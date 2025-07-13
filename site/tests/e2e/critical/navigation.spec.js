@@ -5,7 +5,7 @@ test.describe("Navigation Flow E2E", () => {
     // Start at home page
     await page.goto("/");
     await expect(page).toHaveTitle(/Aris/);
-    await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
+    await expect(page.locator("h1")).toContainText("The Collaborative Preprint Server for Modern Research");
 
     // Check if viewport is mobile-sized (less than 640px wide)
     const viewportSize = page.viewportSize();
@@ -38,7 +38,7 @@ test.describe("Navigation Flow E2E", () => {
       await page.click('a[href="/"]');
       await page.waitForLoadState("networkidle");
       await expect(page).toHaveURL("/");
-      await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
+      await expect(page.locator("h1")).toContainText("The Collaborative Preprint Server for Modern Research");
     } else {
       // Desktop navigation: use visible nav links from navbar-utility-links
       await page.click('.navbar-utility-links a[href="/signup"]');
@@ -62,7 +62,7 @@ test.describe("Navigation Flow E2E", () => {
       await page.click('a[href="/"]');
       await page.waitForLoadState("networkidle");
       await expect(page).toHaveURL("/");
-      await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
+      await expect(page.locator("h1")).toContainText("The Collaborative Preprint Server for Modern Research");
     }
   });
 
@@ -89,15 +89,19 @@ test.describe("Navigation Flow E2E", () => {
       await expect(aiCopilotLink).toBeVisible();
       await expect(pricingLink).toBeVisible();
     } else {
-      // Desktop: Test navbar links (these may be external or placeholder) - only check they exist
+      // Desktop: Test navbar links - pricing is directly visible, others are in dropdowns
+      const pricingLink = page.locator('nav a[href="/pricing"]').first();
+      await expect(pricingLink).toBeVisible();
+      
+      // Test Platform dropdown
+      await page.hover('.has-dropdown');
+      await page.waitForTimeout(300);
+      
       const aboutLink = page.locator('nav a[href="/about"]').first();
       const aiCopilotLink = page.locator('nav a[href="/ai-copilot"]').first();
-      const pricingLink = page.locator('nav a[href="/pricing"]').first();
-
-      // Verify links exist in DOM
+      
       await expect(aboutLink).toBeVisible();
       await expect(aiCopilotLink).toBeVisible();
-      await expect(pricingLink).toBeVisible();
     }
 
     // Define demo link variable based on mobile/desktop

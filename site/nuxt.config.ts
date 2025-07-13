@@ -66,7 +66,8 @@ export default defineNuxtConfig({
   // Runtime config for frontend URL
   runtimeConfig: {
     public: {
-      frontendUrl: process.env.FRONTEND_URL
+      frontendUrl: process.env.FRONTEND_URL,
+      backendUrl: process.env.NUXT_BACKEND_URL
     }
   },
 
