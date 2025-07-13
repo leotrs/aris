@@ -42,10 +42,10 @@ lint-all:
 check-all:
     cd backend && uv run ruff check
     cd backend && uv run mypy aris/
-    cd frontend && npm run lint
-    cd site && npm run lint
     cd backend && uv run pytest -n8
-    cd frontend && npm run test:all
+    cd frontend && npm run lint
+    cd frontend && npm run test:run && npx playwright test --grep "@auth\b"
+    cd site && npm run lint
     cd site && npm run test:all
 
 # Development Setup
