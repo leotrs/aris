@@ -88,9 +88,14 @@ export class AuthHelpers {
         }
       );
 
-      // Refresh the page to activate the auth state
-      await this.page.reload();
+      // Navigate to home page to activate the auth state
+      await this.page.goto("/");
       await this.page.waitForLoadState("domcontentloaded");
+
+      // Wait for authenticated UI elements to be ready (deterministic wait)
+      await this.page.waitForSelector('[data-testid="user-avatar"], [data-testid="user-menu"]', { 
+        timeout: getTimeouts().contentLoad 
+      });
 
       console.log('[AuthHelpers] Fast auth completed successfully');
       return true;
