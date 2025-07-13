@@ -5,7 +5,7 @@ import { getTimeouts } from "./timeout-constants.js";
 export class AuthHelpers {
   constructor(page) {
     this.page = page;
-    this.baseURL = process.env.CI ? 'http://localhost:8000' : 'http://localhost:8000';
+    this.baseURL = process.env.CI ? "http://localhost:8000" : "http://localhost:8000";
   }
 
   async login(email, password) {
@@ -50,12 +50,12 @@ export class AuthHelpers {
    * API-based token injection - bypasses UI login for speed
    */
   async fastAuth(email = TEST_CREDENTIALS.valid.email, password = TEST_CREDENTIALS.valid.password) {
-    console.log('[AuthHelpers] Using fast API-based authentication');
-    
+    console.log("[AuthHelpers] Using fast API-based authentication");
+
     try {
       // Ensure we're on a page that allows localStorage access
       const currentUrl = this.page.url();
-      if (!currentUrl.includes('localhost')) {
+      if (!currentUrl.includes("localhost")) {
         await this.page.goto("/");
         await this.page.waitForLoadState("domcontentloaded");
       }
@@ -64,8 +64,8 @@ export class AuthHelpers {
       const response = await this.page.request.post(`${this.baseURL}/login`, {
         data: {
           email: email,
-          password: password
-        }
+          password: password,
+        },
       });
 
       if (!response.ok()) {
@@ -73,18 +73,31 @@ export class AuthHelpers {
       }
 
       const authData = await response.json();
-      
-      // Inject tokens directly into localStorage
+
+      // Fetch user data using the access token
+      const userResponse = await this.page.request.get(`${this.baseURL}/me`, {
+        headers: {
+          Authorization: `Bearer ${authData.access_token}`,
+        },
+      });
+
+      if (!userResponse.ok()) {
+        throw new Error(`Failed to fetch user data: ${userResponse.status()}`);
+      }
+
+      const userData = await userResponse.json();
+
+      // Inject tokens and user data directly into localStorage
       await this.page.evaluate(
         ({ accessToken, refreshToken, user }) => {
-          localStorage.setItem('accessToken', accessToken);
-          localStorage.setItem('refreshToken', refreshToken);
-          localStorage.setItem('user', JSON.stringify(user));
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("user", JSON.stringify(user));
         },
         {
           accessToken: authData.access_token,
           refreshToken: authData.refresh_token,
-          user: authData.user
+          user: userData,
         }
       );
 
@@ -92,15 +105,19 @@ export class AuthHelpers {
       await this.page.goto("/");
       await this.page.waitForLoadState("domcontentloaded");
 
+      // Force Vue app to re-initialize by reloading after localStorage is set
+      await this.page.reload();
+      await this.page.waitForLoadState("domcontentloaded");
+
       // Wait for authenticated UI elements to be ready (deterministic wait)
-      await this.page.waitForSelector('[data-testid="user-avatar"], [data-testid="user-menu"]', { 
-        timeout: getTimeouts().contentLoad 
+      await this.page.waitForSelector('[data-testid="user-avatar"], [data-testid="user-menu"]', {
+        timeout: getTimeouts().contentLoad,
       });
 
-      console.log('[AuthHelpers] Fast auth completed successfully');
+      console.log("[AuthHelpers] Fast auth completed successfully");
       return true;
     } catch (error) {
-      console.warn('[AuthHelpers] Fast auth failed, falling back to UI login:', error.message);
+      console.warn("[AuthHelpers] Fast auth failed, falling back to UI login:", error.message);
       return false;
     }
   }
@@ -111,20 +128,20 @@ export class AuthHelpers {
   async verifyLoggedIn() {
     try {
       const tokens = await this.page.evaluate(() => ({
-        accessToken: localStorage.getItem('accessToken'),
-        user: localStorage.getItem('user')
+        accessToken: localStorage.getItem("accessToken"),
+        user: localStorage.getItem("user"),
       }));
 
       if (!tokens.accessToken || !tokens.user) {
-        console.log('[AuthHelpers] No valid tokens found, need to authenticate');
+        console.log("[AuthHelpers] No valid tokens found, need to authenticate");
         return false;
       }
 
-      console.log('[AuthHelpers] Valid tokens found, user is authenticated');
+      console.log("[AuthHelpers] Valid tokens found, user is authenticated");
       return true;
     } catch (error) {
       // localStorage access may fail if no page is loaded
-      console.log('[AuthHelpers] Cannot access localStorage, need to navigate to page first');
+      console.log("[AuthHelpers] Cannot access localStorage, need to navigate to page first");
       return false;
     }
   }
@@ -152,7 +169,7 @@ export class AuthHelpers {
 
     // Check if already authenticated (lightweight)
     if (await this.verifyLoggedIn()) {
-      console.log('[AuthHelpers] Already authenticated, skipping login');
+      console.log("[AuthHelpers] Already authenticated, skipping login");
       return;
     }
 
@@ -169,11 +186,11 @@ export class AuthHelpers {
         return;
       }
     } else {
-      console.log('[AuthHelpers] Test user not configured, skipping API auth');
+      console.log("[AuthHelpers] Test user not configured, skipping API auth");
     }
 
     // Fallback to original UI-based authentication
-    console.log('[AuthHelpers] Falling back to UI-based authentication');
+    console.log("[AuthHelpers] Falling back to UI-based authentication");
     await this.page.goto("/");
     await this.page.waitForLoadState("domcontentloaded");
 

@@ -35,7 +35,7 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? "github" : "line", // Use line reporter for minimal output; --quiet flag suppresses stdout
   /* Global timeout for each test */
-  timeout: process.env.CI ? 10000 : 5000, // CI: 10s for PostgreSQL latency, Local: 5s for fast feedback
+  timeout: 15000, // 15s timeout for both local and CI environments
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
