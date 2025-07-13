@@ -72,7 +72,6 @@ export const WithDescription = {
   },
 };
 
-
 export const LongMessage = {
   args: {
     message:

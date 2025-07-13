@@ -3,17 +3,17 @@
     <div v-if="visible" class="toast-container" :class="type">
       <div class="toast" :class="{ 'toast-entering': entering, 'toast-leaving': leaving }">
         <div class="toast-icon">
-          <Icon v-if="type === 'success'" name="Check" />
-          <Icon v-else-if="type === 'error'" name="X" />
-          <Icon v-else-if="type === 'warning'" name="AlertTriangle" />
-          <Icon v-else name="InfoCircle" />
+          <Icon v-if="type === 'success'" name="CircleCheckFilled" size="16" />
+          <Icon v-else-if="type === 'error'" name="CircleXFilled" size="16" />
+          <Icon v-else-if="type === 'warning'" name="AlertTriangleFilled" size="16" />
+          <Icon v-else name="InfoCircleFilled" size="16" />
         </div>
         <div class="toast-content">
           <div class="toast-message">{{ message }}</div>
           <div v-if="description" class="toast-description">{{ description }}</div>
         </div>
         <button v-if="dismissible" class="toast-close" @click="dismiss">
-          <Icon name="X" size="16" />
+          <Icon name="X" size="14" />
         </button>
       </div>
     </div>

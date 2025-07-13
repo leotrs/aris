@@ -38,7 +38,7 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['./assets/rsm.css', './assets/main.css', './assets/components.css'],
+  css: ['./assets/main.css', './assets/components.css'],
   router: {
     options: {
       scrollBehaviorType: 'smooth'
