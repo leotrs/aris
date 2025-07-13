@@ -72,15 +72,6 @@ export const WithDescription = {
   },
 };
 
-export const NotDismissible = {
-  args: {
-    message: "System maintenance",
-    description: "System will be unavailable for 5 minutes.",
-    type: "warning",
-    dismissible: false,
-    duration: 0, // Don't auto-dismiss in Storybook
-  },
-};
 
 export const LongMessage = {
   args: {
