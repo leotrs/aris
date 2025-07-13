@@ -85,7 +85,7 @@ The E2E test suite is organized into **7 mutually exclusive jobs** for optimal p
 2. **`e2e-auth-flows`** (22 tests): Login, registration, auth redirects
 
 #### **Authentication-Disabled Tests** (public/demo content):
-3. **`e2e-core`** (4 tests): Smoke tests, auth-disabled mode, critical functionality
+3. **`e2e-core`** (3 tests): Smoke tests, critical functionality
 4. **`e2e-demo-content`** (37 tests): Demo content rendering, navigation, backend integration
 5. **`e2e-demo-ui`** (33 tests): Demo workspace, annotations, focus mode interactions
 
@@ -95,8 +95,7 @@ The E2E test suite is organized into **7 mutually exclusive jobs** for optimal p
 - **Mutually exclusive**: Each test runs exactly once across all jobs
 
 #### **Authentication Control**:
-- **`DISABLE_AUTH=true`**: Bypasses authentication for demo/public content testing
-- **Mock user injection**: Returns test user without database lookup when auth disabled
+- **Demo routes**: Public routes (`/demo`) provide authentication-free testing
 - **Environment-aware**: Automatically detects CI vs local environments
 
 ## Development Setup

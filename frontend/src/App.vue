@@ -228,9 +228,6 @@
       const token = localStorage.getItem("accessToken");
       const storedUser = JSON.parse(localStorage.getItem("user"));
 
-      // Check if authentication is disabled
-      const isAuthDisabled = import.meta.env.VITE_DISABLE_AUTH === "true";
-
       if (token && storedUser) {
         logger.info("Found existing auth credentials", {
           userId: storedUser.id,
@@ -270,25 +267,6 @@
           // Keep the user logged in but without store
           logger.warn("Continuing without FileStore due to initialization failure");
         }
-      } else if (isAuthDisabled) {
-        logger.info("Auth disabled, fetching test user");
-        try {
-          const response = await api.get("/me");
-          user.value = response.data;
-          fileStore.value = createFileStore(api, user.value);
-
-          logger.debug("Loading test user files and tags");
-          await fileStore.value.loadFiles();
-          await fileStore.value.loadTags();
-          logger.info("App initialization completed with test user");
-        } catch (error) {
-          logger.error("Failed to fetch test user", {
-            error: error.message,
-            stack: error.stack,
-            endpoint: "/me",
-            isAuthDisabled: true,
-          });
-        }
       } else {
         logger.info("No auth credentials found, cleaning storage");
         localStorage.removeItem("accessToken");
@@ -301,7 +279,6 @@
         stack: error.stack,
         hasToken: !!localStorage.getItem("accessToken"),
         hasUser: !!localStorage.getItem("user"),
-        isAuthDisabled: import.meta.env.VITE_DISABLE_AUTH === "true",
       });
     } finally {
       const duration = performance.now() - startTime;
@@ -315,10 +292,6 @@
     const token = localStorage.getItem("accessToken");
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const publicPages = ["/login", "/register", "/demo"];
-
-    // Check if authentication is disabled via environment variable
-    const isAuthDisabled = import.meta.env.VITE_DISABLE_AUTH === "true";
-    if (isAuthDisabled) return next();
 
     // If user is not authenticated and trying to access a protected page
     if (!token && !storedUser && !publicPages.includes(to.path)) {
