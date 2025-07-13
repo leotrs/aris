@@ -22,7 +22,6 @@
     "test:ui": "vitest --ui"
   },
   "dependencies": {
-    "@nuxt/eslint": "^1.4.1",
     "@nuxt/image": "^1.10.0",
     "@nuxt/scripts": "^0.11.8",
     "@nuxt/test-utils": "^3.19.1",
@@ -45,6 +44,7 @@
     "eslint": "^9.29.0",
     "eslint-config-prettier": "^10.1.5",
     "eslint-plugin-prettier": "^5.5.0",
+    "eslint-plugin-storybook": "^9.0.16",
     "eslint-plugin-vue": "^10.2.0",
     "globals": "^16.2.0",
     "happy-dom": "^17.6.3",
