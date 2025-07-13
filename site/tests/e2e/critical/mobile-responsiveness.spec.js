@@ -41,8 +41,8 @@ test.describe("Mobile Responsiveness E2E", () => {
       await expect(page.locator('.mobile-nav-link[href="/contact"]')).toBeVisible();
       
       // Test utility links
-      await expect(page.locator('.mobile-nav-link-utility[href="/signup"]')).toBeVisible();
-      await expect(page.locator('.mobile-nav-link-cta')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link-utility').filter({ hasText: 'Sign Up' })).toBeVisible();
+      await expect(page.locator('.mobile-nav-link-cta').filter({ hasText: 'Try the Demo' })).toBeVisible();
     });
 
     test("should hide mobile menu on larger screens", async ({ page }) => {

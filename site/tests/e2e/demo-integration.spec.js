@@ -26,7 +26,7 @@ test.describe("Demo Integration E2E", () => {
       await expect(page.locator(".demo-banner")).toContainText("Demo Mode");
     });
 
-    test("Section CTA button redirects to frontend demo", async ({ page }) => {
+    test("Section CTA button redirects to getting started", async ({ page }) => {
       // Scroll to find the section CTA
       await page.locator(".cta-section").scrollIntoViewIfNeeded();
 
@@ -40,8 +40,7 @@ test.describe("Demo Integration E2E", () => {
         sectionButton.click(),
       ]);
 
-      expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
-      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
+      expect(page.url()).toContain(`/getting-started`);
     });
 
     test("CTASection explore demo link redirects correctly", async ({ page }) => {

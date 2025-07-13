@@ -68,32 +68,33 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await page.goto("/");
       await page.waitForLoadState("networkidle");
 
-      // Test multiple CTA buttons in sequence
-      const ctaSelectors = [".hero-section .btn-primary", ".cta-section .btn-primary"];
+      // Test hero CTA button (goes to demo)
+      const heroButton = page.locator(".hero-section .btn-primary").first();
+      if ((await heroButton.count()) > 0) {
+        await heroButton.scrollIntoViewIfNeeded();
+        await expect(heroButton).toBeVisible();
+        await expect(heroButton).toContainText("Explore the Platform");
 
-      for (let i = 0; i < ctaSelectors.length; i++) {
-        const selector = ctaSelectors[i];
-        const button = page.locator(selector).first();
+        // Click hero CTA and go to demo
+        await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), heroButton.click()]);
+        expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
+        await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
-        if ((await button.count()) > 0) {
-          await button.scrollIntoViewIfNeeded();
-          await expect(button).toBeVisible();
+        // Return to marketing site for CTA section test
+        await page.goto(`http://localhost:${process.env.SITE_PORT}`);
+        await page.waitForLoadState("networkidle");
+      }
 
-          // Click CTA and go to demo
-          await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), button.click()]);
+      // Test CTA section button (goes to getting-started)
+      const ctaButton = page.locator(".cta-section .btn-primary").first();
+      if ((await ctaButton.count()) > 0) {
+        await ctaButton.scrollIntoViewIfNeeded();
+        await expect(ctaButton).toBeVisible();
+        await expect(ctaButton).toContainText("Get Started");
 
-          expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
-          await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({
-            timeout: 10000,
-          });
-
-          // Return to marketing site for next CTA test
-          if (i < ctaSelectors.length - 1) {
-            await page.goto(`http://localhost:${process.env.SITE_PORT}`);
-            await page.waitForLoadState("networkidle");
-            expect(page.url()).toContain(`localhost:${process.env.SITE_PORT}`);
-          }
-        }
+        // Click CTA section button and go to getting-started
+        await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), ctaButton.click()]);
+        expect(page.url()).toContain(`/getting-started`);
       }
     });
 
