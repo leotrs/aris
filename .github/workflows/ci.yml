@@ -279,11 +279,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        auth-mode: [disabled, enabled]
+        test-type: [demo, auth]
     runs-on: ubuntu-latest
     env:
-      DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
@@ -331,12 +329,10 @@ jobs:
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
-        echo "🔍 [MOBILE-CHROME-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
-        echo "🔍 [MOBILE-CHROME-DEBUG] Environment variables:"
+        echo "🔍 [DEBUG] Starting database setup for test-type: ${{ matrix.test-type }}"
+        echo "🔍 [DEBUG] Environment variables:"
         echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
         echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
-        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
-        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
         echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
         echo "  - PostgreSQL connection test:"
 
@@ -355,8 +351,8 @@ jobs:
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
 
         # Setup test user for enabled auth mode
-        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
-          echo "🔑 Auth mode is ENABLED - creating test user..."
+        if [ "${{ matrix.test-type }}" = "auth" ]; then
+          echo "🔑 Auth tests - creating test user..."
           echo "📧 Creating test user: ${TEST_USER_EMAIL}"
           uv run python scripts/reset_test_user.py
           RESET_USER_EXIT_CODE=$?
@@ -369,10 +365,10 @@ jobs:
             exit $RESET_USER_EXIT_CODE
           fi
         else
-          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+          echo "🔓 Demo tests - skipping test user creation"
         fi
 
-        echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
+        echo "✅ [DEBUG] Database setup completed for ${{ matrix.test-type }} tests"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -400,7 +396,7 @@ jobs:
     - name: Start backend and frontend, run E2E tests
       run: |
         # Start backend
-        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on Ubuntu (Chrome)..."
+        echo "Starting backend for ${{ matrix.test-type }} E2E tests on Ubuntu (Chrome)..."
         cd backend
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
@@ -432,13 +428,13 @@ jobs:
         # Wait for frontend
         sleep 15
 
-        # Run tests based on auth mode (Chrome only)
-        if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)" --project=chromium --reporter=github
+        # Run tests based on test type (Chrome only)
+        if [ "${{ matrix.test-type }}" = "demo" ]; then
+          echo "Running demo E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only)"
+          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)" --project=chromium --reporter=github
         else
           echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only)"
-          npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=chromium --reporter=github
+          CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=chromium --reporter=github
         fi
         TEST_EXIT_CODE=$?
 
@@ -454,11 +450,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        auth-mode: [disabled, enabled]
+        test-type: [demo, auth]
     runs-on: ubuntu-latest
     env:
-      DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
       DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
       ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
@@ -512,7 +506,7 @@ jobs:
       working-directory: backend
       run: |
         uv run alembic upgrade head
-        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+        ${{ matrix.test-type == 'auth' && 'uv run python scripts/reset_test_user.py' || '' }}
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -540,7 +534,7 @@ jobs:
     - name: Start backend and frontend, run E2E tests
       run: |
         # Start backend
-        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on Ubuntu (Firefox)..."
+        echo "Starting backend for ${{ matrix.test-type }} E2E tests on Ubuntu (Firefox)..."
         cd backend
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
@@ -573,12 +567,12 @@ jobs:
         sleep 15
 
         # Run tests based on auth mode (Firefox only)
-        if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)" --project=firefox --reporter=github
+        if [ "${{ matrix.test-type }}" = "demo" ]; then
+          echo "Running demo E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only)"
+          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)" --project=firefox --reporter=github
         else
           echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only)"
-          npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=firefox --reporter=github
+          CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=firefox --reporter=github
         fi
         TEST_EXIT_CODE=$?
 
@@ -594,11 +588,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        auth-mode: [disabled, enabled]
+        test-type: [demo, auth]
     runs-on: macos-latest
     env:
-      DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
@@ -645,12 +637,10 @@ jobs:
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
-        echo "🔍 [MOBILE-CHROME-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
-        echo "🔍 [MOBILE-CHROME-DEBUG] Environment variables:"
+        echo "🔍 [DEBUG] Starting database setup for test-type: ${{ matrix.test-type }}"
+        echo "🔍 [DEBUG] Environment variables:"
         echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
         echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
-        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
-        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
         echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
         echo "  - PostgreSQL connection test:"
 
@@ -669,8 +659,8 @@ jobs:
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
 
         # Setup test user for enabled auth mode
-        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
-          echo "🔑 Auth mode is ENABLED - creating test user..."
+        if [ "${{ matrix.test-type }}" = "auth" ]; then
+          echo "🔑 Auth tests - creating test user..."
           echo "📧 Creating test user: ${TEST_USER_EMAIL}"
           uv run python scripts/reset_test_user.py
           RESET_USER_EXIT_CODE=$?
@@ -683,10 +673,10 @@ jobs:
             exit $RESET_USER_EXIT_CODE
           fi
         else
-          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+          echo "🔓 Demo tests - skipping test user creation"
         fi
 
-        echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
+        echo "✅ [DEBUG] Database setup completed for ${{ matrix.test-type }} tests"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -714,7 +704,7 @@ jobs:
     - name: Start backend and frontend, run E2E tests
       run: |
         # Start backend
-        echo "Starting backend for ${{ matrix.auth-mode }} E2E tests on macOS (Safari)..."
+        echo "Starting backend for ${{ matrix.test-type }} E2E tests on macOS (Safari)..."
         cd backend
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
@@ -747,12 +737,12 @@ jobs:
         sleep 15
 
         # Run tests based on auth mode (desktop webkit only)
-        if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only and @auth)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)(?!.*@auth)" --project=webkit --reporter=github
+        if [ "${{ matrix.test-type }}" = "demo" ]; then
+          echo "Running demo E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only and @auth)"
+          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)(?!.*@auth)" --project=webkit --reporter=github
         else
           echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only)"
-          npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=webkit --reporter=github
+          CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)" --project=webkit --reporter=github
         fi
         TEST_EXIT_CODE=$?
 
@@ -769,11 +759,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        auth-mode: [disabled, enabled]
+        test-type: [demo, auth]
     runs-on: ubuntu-latest
     env:
-      DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
@@ -821,12 +809,10 @@ jobs:
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
-        echo "🔍 [MOBILE-CHROME-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
-        echo "🔍 [MOBILE-CHROME-DEBUG] Environment variables:"
+        echo "🔍 [DEBUG] Starting database setup for test-type: ${{ matrix.test-type }}"
+        echo "🔍 [DEBUG] Environment variables:"
         echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
         echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
-        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
-        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
         echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
         echo "  - PostgreSQL connection test:"
 
@@ -845,8 +831,8 @@ jobs:
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
 
         # Setup test user for enabled auth mode
-        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
-          echo "🔑 Auth mode is ENABLED - creating test user..."
+        if [ "${{ matrix.test-type }}" = "auth" ]; then
+          echo "🔑 Auth tests - creating test user..."
           echo "📧 Creating test user: ${TEST_USER_EMAIL}"
           uv run python scripts/reset_test_user.py
           RESET_USER_EXIT_CODE=$?
@@ -859,10 +845,10 @@ jobs:
             exit $RESET_USER_EXIT_CODE
           fi
         else
-          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+          echo "🔓 Demo tests - skipping test user creation"
         fi
 
-        echo "✅ [MOBILE-CHROME-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
+        echo "✅ [DEBUG] Database setup completed for ${{ matrix.test-type }} tests"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -889,7 +875,7 @@ jobs:
 
     - name: Platform-specific environment debugging
       run: |
-        echo "🔍 [MOBILE-CHROME-PLATFORM] Platform debugging for Ubuntu:"
+        echo "🔍 [PLATFORM-DEBUG] Platform debugging for Ubuntu:"
         echo "  - Runner OS: $RUNNER_OS"
         echo "  - OS Name: $(uname -s)"
         echo "  - OS Version: $(uname -r)"
@@ -904,7 +890,7 @@ jobs:
     - name: Start backend and frontend, run Mobile Chrome E2E tests
       run: |
         # Start backend
-        echo "Starting backend for ${{ matrix.auth-mode }} Mobile Chrome E2E tests..."
+        echo "Starting backend for ${{ matrix.test-type }} Mobile Chrome E2E tests..."
         cd backend
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
@@ -937,12 +923,12 @@ jobs:
         sleep 15
 
         # Run mobile Chrome tests
-        if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth Mobile Chrome E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only and @auth)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@auth)" --project="Mobile Chrome" --reporter=github
+        if [ "${{ matrix.test-type }}" = "demo" ]; then
+          echo "Running demo Mobile Chrome E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only and @auth)"
+          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@auth)" --project="Mobile Chrome" --reporter=github
         else
           echo "Running auth Mobile Chrome E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only)"
-          npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Chrome" --reporter=github
+          CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Chrome" --reporter=github
         fi
         TEST_EXIT_CODE=$?
 
@@ -958,11 +944,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        auth-mode: [disabled, enabled]
+        test-type: [demo, auth]
     runs-on: ubuntu-latest
     env:
-      DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
       DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
       ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
@@ -1016,7 +1000,7 @@ jobs:
       working-directory: backend
       run: |
         uv run alembic upgrade head
-        ${{ matrix.auth-mode == 'enabled' && 'uv run python scripts/reset_test_user.py' || '' }}
+        ${{ matrix.test-type == 'auth' && 'uv run python scripts/reset_test_user.py' || '' }}
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -1044,7 +1028,7 @@ jobs:
     - name: Start backend and frontend, run Mobile Firefox E2E tests
       run: |
         # Start backend
-        echo "Starting backend for ${{ matrix.auth-mode }} Mobile Firefox E2E tests..."
+        echo "Starting backend for ${{ matrix.test-type }} Mobile Firefox E2E tests..."
         cd backend
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
@@ -1077,12 +1061,12 @@ jobs:
         sleep 15
 
         # Run mobile Firefox tests
-        if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth Mobile Firefox E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)" --project="Mobile Firefox" --reporter=github
+        if [ "${{ matrix.test-type }}" = "demo" ]; then
+          echo "Running demo Mobile Firefox E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only)"
+          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)" --project="Mobile Firefox" --reporter=github
         else
           echo "Running auth Mobile Firefox E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only)"
-          npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Firefox" --reporter=github
+          CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Firefox" --reporter=github
         fi
         TEST_EXIT_CODE=$?
 
@@ -1098,11 +1082,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        auth-mode: [disabled, enabled]
+        test-type: [demo, auth]
     runs-on: macos-latest
     env:
-      DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
-      VITE_DISABLE_AUTH: ${{ matrix.auth-mode == 'disabled' }}
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       VITE_LOG_LEVEL: WARN
@@ -1149,12 +1131,10 @@ jobs:
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
       run: |
-        echo "🔍 [MOBILE-SAFARI-DEBUG] Starting database setup for auth-mode: ${{ matrix.auth-mode }}"
-        echo "🔍 [MOBILE-SAFARI-DEBUG] Environment variables:"
+        echo "🔍 [DEBUG] Starting database setup for test-type: ${{ matrix.test-type }}"
+        echo "🔍 [DEBUG] Environment variables:"
         echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
         echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
-        echo "  - DISABLE_AUTH: ${DISABLE_AUTH:-UNSET}"
-        echo "  - VITE_DISABLE_AUTH: ${VITE_DISABLE_AUTH:-UNSET}"
         echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
         echo "  - PostgreSQL connection test:"
 
@@ -1173,8 +1153,8 @@ jobs:
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
 
         # Setup test user for enabled auth mode
-        if [ "${{ matrix.auth-mode }}" = "enabled" ]; then
-          echo "🔑 Auth mode is ENABLED - creating test user..."
+        if [ "${{ matrix.test-type }}" = "auth" ]; then
+          echo "🔑 Auth tests - creating test user..."
           echo "📧 Creating test user: ${TEST_USER_EMAIL}"
           uv run python scripts/reset_test_user.py
           RESET_USER_EXIT_CODE=$?
@@ -1187,10 +1167,10 @@ jobs:
             exit $RESET_USER_EXIT_CODE
           fi
         else
-          echo "🔓 Auth mode is DISABLED - skipping test user creation"
+          echo "🔓 Demo tests - skipping test user creation"
         fi
 
-        echo "✅ [MOBILE-SAFARI-DEBUG] Database setup completed for ${{ matrix.auth-mode }} mode"
+        echo "✅ [DEBUG] Database setup completed for ${{ matrix.test-type }} tests"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -1217,7 +1197,7 @@ jobs:
 
     - name: Platform-specific environment debugging
       run: |
-        echo "🔍 [MOBILE-SAFARI-PLATFORM] Platform debugging for macOS:"
+        echo "🔍 [PLATFORM-DEBUG] Platform debugging for macOS:"
         echo "  - Runner OS: $RUNNER_OS"
         echo "  - OS Name: $(uname -s)"
         echo "  - OS Version: $(uname -r)"
@@ -1233,7 +1213,7 @@ jobs:
     - name: Start backend and frontend, run Mobile Safari E2E tests
       run: |
         # Start backend
-        echo "Starting backend for ${{ matrix.auth-mode }} Mobile Safari E2E tests..."
+        echo "Starting backend for ${{ matrix.test-type }} Mobile Safari E2E tests..."
         cd backend
         uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
         BACKEND_PID=$!
@@ -1266,12 +1246,12 @@ jobs:
         sleep 15
 
         # Run mobile Safari tests
-        if [ "${{ matrix.auth-mode }}" = "disabled" ]; then
-          echo "Running non-auth Mobile Safari E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only and @auth)"
-          npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@auth)" --project="Mobile Safari" --reporter=github
+        if [ "${{ matrix.test-type }}" = "demo" ]; then
+          echo "Running demo Mobile Safari E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only and @auth)"
+          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@auth)" --project="Mobile Safari" --reporter=github
         else
           echo "Running auth Mobile Safari E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only)"
-          npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Safari" --reporter=github
+          CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Safari" --reporter=github
         fi
         TEST_EXIT_CODE=$?
 

@@ -229,8 +229,8 @@ For E2E tests to run in CI, the following repository secret must be configured:
 - **E2E Tests**: 7 mutually exclusive job categories for comprehensive coverage
 
 **E2E Test Architecture**
-- **Total Coverage**: 123 tests across 7 specialized job categories
-- **Authentication Control**: Uses `DISABLE_AUTH=true` for auth-free testing
+- **Total Coverage**: 122 tests across 7 specialized job categories
+- **Authentication Control**: Uses public demo routes for auth-free testing
 - **Tag-Based Selection**: Precise test categorization with `@tag` patterns
 - **Mutually Exclusive**: Each test runs exactly once, no overlap
 - **Parallel Execution**: All 7 jobs run simultaneously for maximum speed
@@ -240,7 +240,7 @@ For E2E tests to run in CI, the following repository secret must be configured:
 2. **e2e-auth-flows** (22 tests): `@auth-flows` - Login, registration, redirects
 3. **e2e-demo-content** (37 tests): `@demo-content` - Content rendering, navigation
 4. **e2e-demo-ui** (33 tests): `@demo-ui` - Workspace, annotations, interactions
-5. **e2e-core** (4 tests): `@core` - Critical smoke tests, auth-disabled verification
+5. **e2e-core** (3 tests): `@core` - Critical smoke tests
 
 ### Running Individual Test Suites
 
@@ -288,7 +288,7 @@ just test-all                           # Run all tests
 **Testing Infrastructure Notes**
 - **Backend**: Local development uses SQLite for fast iteration; CI uses PostgreSQL with per-worker database isolation
 - **E2E**: Uses tag-based test selection for precise categorization and mutually exclusive execution
-- **Authentication**: E2E tests use `DISABLE_AUTH=true` to bypass authentication for faster, more reliable testing
+- **Authentication**: E2E tests use public demo routes for authentication-free testing
 - **Performance**: Backend tests run with 8 parallel workers; E2E tests run in 7 parallel job categories
 - **Debug**: Use `./simulate-ci` to debug CI-specific issues locally with 100% fidelity
 

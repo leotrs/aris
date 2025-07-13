@@ -11,11 +11,9 @@ Environment variables:
 - DB_URL_LOCAL: Local database connection URL.
 - DB_URL_PROD: Production database connection URL.
 - ENV: Environment indicator, "PROD" selects production DB URL.
-- DISABLE_AUTH: When set to "true", disables authentication for E2E testing.
 
 """
 
-import os
 from typing import AsyncGenerator, Optional
 from uuid import UUID
 
@@ -94,26 +92,7 @@ async def current_user(
         UserRead: The authenticated user's data.
 
     """
-    # Check if authentication is disabled for testing
-    disable_auth = os.getenv("DISABLE_AUTH", "")
-    if disable_auth.lower() == "true":
-        # Return a mock test user without database dependency
-        from datetime import datetime
-
-        # Create a mock user object without database lookup
-        class MockUser:
-            def __init__(self, user_id, email, name):
-                self.id = user_id
-                self.email = email
-                self.name = name
-                self.initials = "".join(word[0].upper() for word in name.split()[:2])
-                self.created_at = datetime.now()
-                self.avatar_color = "#0E9AE9"
-                self.email_verified = False
-        
-        return MockUser(1, "testuser@aris.pub", "Test User")  # type: ignore
-    
-    # If no token provided and auth is required, raise error
+    # If no token provided, raise error
     if not token:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
