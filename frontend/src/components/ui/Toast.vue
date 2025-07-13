@@ -1,5 +1,6 @@
 <script setup>
   import { ref, onMounted, onUnmounted } from "vue";
+  import ButtonClose from "@/components/base/ButtonClose.vue";
 
   const props = defineProps({
     message: { type: String, required: true },
@@ -72,9 +73,7 @@
           <div class="toast-message">{{ message }}</div>
           <div v-if="description" class="toast-description">{{ description }}</div>
         </div>
-        <button v-if="dismissible" class="toast-close" @click="dismiss">
-          <Icon name="X" size="14" />
-        </button>
+        <ButtonClose v-if="dismissible" @close="dismiss" />
       </div>
     </div>
   </Teleport>
@@ -187,24 +186,6 @@
     overflow-wrap: break-word;
   }
 
-  .toast-close {
-    flex-shrink: 0;
-    background: none;
-    border: none;
-    color: var(--text-tertiary);
-    cursor: pointer;
-    padding: 0;
-    border-radius: 2px;
-    transition: color 0.2s ease;
-    margin-left: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .toast-close:hover {
-    color: var(--text-secondary);
-  }
 
   /* Mobile responsiveness */
   @media (max-width: 480px) {
