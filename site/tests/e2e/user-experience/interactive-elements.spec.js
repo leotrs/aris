@@ -13,7 +13,7 @@ test.describe("Interactive Elements E2E", () => {
       // Test secondary CTA link
       const secondaryCTA = page.locator(".hero-ctas .text-link");
       await expect(secondaryCTA).toBeVisible();
-      await expect(secondaryCTA).toContainText("sign up for the beta waitlist");
+      await expect(secondaryCTA).toContainText("Join Your Institution");
 
       // Test navigation to signup page
       await secondaryCTA.click();
@@ -31,13 +31,13 @@ test.describe("Interactive Elements E2E", () => {
       await expect(finalCTA).toBeVisible();
       await expect(finalCTA).toContainText("Get Started");
 
-      const finalSignupLink = page.locator(".cta-section .text-link");
-      await expect(finalSignupLink).toBeVisible();
+      const finalContactLink = page.locator(".cta-section .text-link");
+      await expect(finalContactLink).toBeVisible();
 
-      // Test final signup link
-      await finalSignupLink.click();
+      // Test final contact link
+      await finalContactLink.click();
       await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL("/signup");
+      await expect(page).toHaveURL("/contact");
     });
 
     test("should show hover states for interactive elements", async ({ page }) => {
