@@ -20,7 +20,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
     mobileViewports.forEach((viewport) => {
       test(`should show hamburger menu and drawer on ${viewport.name}`, async ({ page }) => {
         await page.setViewportSize(viewport);
-        await page.goto("/");
+        // For demo tests, use demo route; for auth tests, use home route
+        const route = process.env.CI_TEST_TYPE === 'demo' ? '/demo' : '/';
+        await page.goto(route);
         await page.waitForLoadState("networkidle");
         await mobileHelpers.waitForMobileRendering();
 
@@ -50,7 +52,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
 
       test(`should close drawer when backdrop is tapped on ${viewport.name}`, async ({ page }) => {
         await page.setViewportSize(viewport);
-        await page.goto("/");
+        // For demo tests, use demo route; for auth tests, use home route
+        const route = process.env.CI_TEST_TYPE === 'demo' ? '/demo' : '/';
+        await page.goto(route);
         await page.waitForLoadState("networkidle");
 
         // Open drawer
@@ -75,7 +79,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
         page,
       }) => {
         await page.setViewportSize(viewport);
-        await page.goto("/");
+        // For demo tests, use demo route; for auth tests, use home route
+        const route = process.env.CI_TEST_TYPE === 'demo' ? '/demo' : '/';
+        await page.goto(route);
         await page.waitForLoadState("networkidle");
 
         // Open drawer
@@ -102,7 +108,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
 
     test("should prevent body scroll when drawer is open", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto("/");
+      // For demo tests, use demo route; for auth tests, use home route
+      const route = process.env.CI_TEST_TYPE === 'demo' ? '/demo' : '/';
+      await page.goto(route);
       await page.waitForLoadState("networkidle");
 
       // Check initial body overflow
@@ -131,7 +139,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
   test.describe("Mobile Navigation UX - Home View", () => {
     test("should provide mobile navigation on home page", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto("/");
+      // For demo tests, use demo route; for auth tests, use home route
+      const route = process.env.CI_TEST_TYPE === 'demo' ? '/demo' : '/';
+      await page.goto(route);
       await page.waitForLoadState("networkidle");
 
       // Open mobile drawer
@@ -158,7 +168,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
     // TODO: Re-enable once mobile navigation load state issues are resolved
     test.skip("should navigate from home to account via user menu drawer", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto("/");
+      // For demo tests, use demo route; for auth tests, use home route
+      const route = process.env.CI_TEST_TYPE === 'demo' ? '/demo' : '/';
+      await page.goto(route);
       await page.waitForLoadState("load");
       await mobileHelpers.waitForVueComponentMount();
 
@@ -182,7 +194,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
 
     test("should navigate from home to settings via mobile drawer", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto("/");
+      // For demo tests, use demo route; for auth tests, use home route
+      const route = process.env.CI_TEST_TYPE === 'demo' ? '/demo' : '/';
+      await page.goto(route);
       await page.waitForLoadState("load");
       await mobileHelpers.waitForVueComponentMount();
 
@@ -326,7 +340,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
   test.describe("Mobile Animation and UX Polish", () => {
     test("should animate drawer open/close transitions", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto("/");
+      // For demo tests, use demo route; for auth tests, use home route
+      const route = process.env.CI_TEST_TYPE === 'demo' ? '/demo' : '/';
+      await page.goto(route);
       await page.waitForLoadState("networkidle");
 
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -351,7 +367,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
     // TODO: Re-enable once mobile hamburger menu button is properly implemented
     test.skip("should show visual feedback on hamburger button state", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      await page.goto("/");
+      // For demo tests, use demo route; for auth tests, use home route
+      const route = process.env.CI_TEST_TYPE === 'demo' ? '/demo' : '/';
+      await page.goto(route);
       await page.waitForLoadState("networkidle");
 
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -381,7 +399,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui", () =>
   test.describe("Desktop Mode Verification", () => {
     test("should not show mobile elements on desktop", async ({ page }) => {
       await page.setViewportSize({ width: 1024, height: 768 });
-      await page.goto("/");
+      // For demo tests, use demo route; for auth tests, use home route
+      const route = process.env.CI_TEST_TYPE === 'demo' ? '/demo' : '/';
+      await page.goto(route);
       await page.waitForLoadState("networkidle");
 
       // Mobile hamburger button should not be visible
