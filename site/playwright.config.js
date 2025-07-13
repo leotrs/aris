@@ -14,7 +14,7 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : 2,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: "html",
+  reporter: process.env.CI ? "github" : "line", // Use line reporter for minimal output; --quiet flag suppresses stdout
   /* Global test timeout - max time for individual test */
   timeout: 15000, // Reduced from 60s to match frontend performance expectations
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */

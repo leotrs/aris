@@ -44,9 +44,9 @@ check-all:
     cd backend && uv run mypy aris/
     cd backend && uv run pytest -n8
     cd frontend && npm run lint
-    cd frontend && npm run test:run && npx playwright test --grep "@auth\b"
+    cd frontend && npm run test:run && npx playwright test --grep "@auth\b" --quiet
     cd site && npm run lint
-    cd site && npm run test:all
+    cd site && npm run test:run && npx playwright test --quiet
 
 # Development Setup
 # =================
