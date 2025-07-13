@@ -155,7 +155,9 @@
         }
       }
 
-      logger.apiError(error.config?.url || "unknown", error);
+      if (!(error.response?.status === 404 && error.config?.url?.includes("/avatar"))) {
+        logger.apiError(error.config?.url || "unknown", error);
+      }
       return Promise.reject(error);
     }
   );
