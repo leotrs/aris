@@ -226,6 +226,9 @@ if os.getenv('FRONTEND_PORT'):
 if os.getenv('SITE_PORT'):
     origins.append(f"http://localhost:{os.getenv('SITE_PORT')}")  # local Nuxt app
 
+if os.getenv('STORYBOOK_PORT'):
+    origins.append(f"http://localhost:{os.getenv('STORYBOOK_PORT')}")  # local Storybook
+
 
 app.add_middleware(
     CORSMiddleware,

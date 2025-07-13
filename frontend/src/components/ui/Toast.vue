@@ -6,7 +6,7 @@
           <Icon v-if="type === 'success'" name="Check" />
           <Icon v-else-if="type === 'error'" name="X" />
           <Icon v-else-if="type === 'warning'" name="AlertTriangle" />
-          <Icon v-else name="Info" />
+          <Icon v-else name="InfoCircle" />
         </div>
         <div class="toast-content">
           <div class="toast-message">{{ message }}</div>

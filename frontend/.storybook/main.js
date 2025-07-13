@@ -22,7 +22,7 @@ const config = {
     // customize the Vite config here
     config.resolve.alias = {
       ...config.resolve.alias,
-      "@": path.resolve(fileURLToPath(import.meta.url), "../src"),
+      "@": path.resolve(fileURLToPath(import.meta.url), "../../src"),
     };
 
     // return the customized config
