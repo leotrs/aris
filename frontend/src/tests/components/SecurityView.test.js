@@ -13,6 +13,11 @@ vi.mock("@/utils/toast.js", () => ({
   },
 }));
 
+// Mock console to suppress test output
+beforeEach(() => {
+  console.error = vi.fn();
+});
+
 // Mock components to avoid dependencies while keeping structure
 const MockIcon = {
   name: "Icon",
