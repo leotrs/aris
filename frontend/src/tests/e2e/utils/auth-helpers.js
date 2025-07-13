@@ -53,6 +53,13 @@ export class AuthHelpers {
     console.log('[AuthHelpers] Using fast API-based authentication');
     
     try {
+      // Ensure we're on a page that allows localStorage access
+      const currentUrl = this.page.url();
+      if (!currentUrl.includes('localhost')) {
+        await this.page.goto("/");
+        await this.page.waitForLoadState("domcontentloaded");
+      }
+
       // Direct API login request
       const response = await this.page.request.post(`${this.baseURL}/login`, {
         data: {
@@ -80,6 +87,10 @@ export class AuthHelpers {
           user: authData.user
         }
       );
+
+      // Refresh the page to activate the auth state
+      await this.page.reload();
+      await this.page.waitForLoadState("domcontentloaded");
 
       console.log('[AuthHelpers] Fast auth completed successfully');
       return true;
@@ -130,28 +141,30 @@ export class AuthHelpers {
    * Fast authentication with multiple fallback strategies
    */
   async ensureLoggedIn(skipDOMVerification = false) {
+    // Navigate to home page first to enable localStorage access
+    await this.page.goto("/");
+    await this.page.waitForLoadState("domcontentloaded");
+
     // Check if already authenticated (lightweight)
     if (await this.verifyLoggedIn()) {
-      if (!skipDOMVerification) {
-        // Only verify DOM if we're not on the home page already
-        const currentUrl = this.page.url();
-        if (!currentUrl.includes('localhost') || currentUrl.includes('/login')) {
-          await this.page.goto("/");
-          await this.page.waitForLoadState("domcontentloaded");
-        }
-      }
       console.log('[AuthHelpers] Already authenticated, skipping login');
       return;
     }
 
-    // Try fast API auth first
-    const fastAuthSuccess = await this.fastAuth();
-    if (fastAuthSuccess) {
-      if (!skipDOMVerification) {
-        await this.page.goto("/");
-        await this.page.waitForLoadState("domcontentloaded");
+    // Skip API auth in local development if test user isn't configured
+    const hasTestUser = process.env.TEST_USER_EMAIL && process.env.TEST_USER_PASSWORD;
+    if (hasTestUser) {
+      // Try fast API auth first
+      const fastAuthSuccess = await this.fastAuth();
+      if (fastAuthSuccess) {
+        if (!skipDOMVerification) {
+          await this.page.goto("/");
+          await this.page.waitForLoadState("domcontentloaded");
+        }
+        return;
       }
-      return;
+    } else {
+      console.log('[AuthHelpers] Test user not configured, skipping API auth');
     }
 
     // Fallback to original UI-based authentication
@@ -177,9 +190,15 @@ export class AuthHelpers {
     }
 
     // Verify we have authentication tokens
-    const finalAccessToken = await this.page.evaluate(() => localStorage.getItem("accessToken"));
-    const finalUser = await this.page.evaluate(() => localStorage.getItem("user"));
-    const finalRefreshToken = await this.page.evaluate(() => localStorage.getItem("refreshToken"));
+    let finalAccessToken, finalUser, finalRefreshToken;
+    try {
+      finalAccessToken = await this.page.evaluate(() => localStorage.getItem("accessToken"));
+      finalUser = await this.page.evaluate(() => localStorage.getItem("user"));
+      finalRefreshToken = await this.page.evaluate(() => localStorage.getItem("refreshToken"));
+    } catch (error) {
+      console.error("[AuthHelpers] Failed to verify tokens:", error.message);
+      throw new Error("Failed to access localStorage for token verification");
+    }
 
     console.log("[AuthHelpers] Final authentication verification:", {
       hasAccessToken: !!finalAccessToken,
