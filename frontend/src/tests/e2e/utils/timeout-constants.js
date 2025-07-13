@@ -17,8 +17,9 @@ export const TIMEOUTS = {
   API_RESPONSE: 3000, // Backend API calls and data loading
   ANIMATION: 500, // CSS animations and transitions
 
-  // Mobile-specific multipliers
+  // Environment-specific multipliers
   MOBILE_MULTIPLIER: 1.5, // Apply to base timeouts for mobile browsers
+  CI_MULTIPLIER: 2.0, // Apply to base timeouts for CI environments (PostgreSQL + container latency)
 
   // Legacy timeouts (to be phased out)
   LEGACY_SHORT: 3000,
@@ -27,12 +28,23 @@ export const TIMEOUTS = {
 };
 
 /**
- * Get timeout values optimized for the current browser/device
+ * Get timeout values optimized for the current browser/device and environment
  * @param {boolean} isMobile - Whether running on mobile browser
+ * @param {boolean} isCI - Whether running in CI environment (auto-detected if not specified)
  * @returns {Object} Timeout configuration object
  */
-export function getTimeouts(isMobile = false) {
-  const multiplier = isMobile ? TIMEOUTS.MOBILE_MULTIPLIER : 1;
+export function getTimeouts(isMobile = false, isCI = process.env.CI) {
+  let multiplier = 1;
+
+  // Apply mobile multiplier
+  if (isMobile) {
+    multiplier *= TIMEOUTS.MOBILE_MULTIPLIER;
+  }
+
+  // Apply CI multiplier for PostgreSQL + container environment
+  if (isCI) {
+    multiplier *= TIMEOUTS.CI_MULTIPLIER;
+  }
 
   return {
     quickAction: Math.round(TIMEOUTS.QUICK_ACTION * multiplier),
@@ -49,10 +61,11 @@ export function getTimeouts(isMobile = false) {
  * Get timeout for specific operations
  * @param {string} operation - Operation type
  * @param {boolean} isMobile - Whether running on mobile browser
+ * @param {boolean} isCI - Whether running in CI environment (auto-detected if not specified)
  * @returns {number} Timeout in milliseconds
  */
-export function getTimeoutFor(operation, isMobile = false) {
-  const timeouts = getTimeouts(isMobile);
+export function getTimeoutFor(operation, isMobile = false, isCI = process.env.CI) {
+  const timeouts = getTimeouts(isMobile, isCI);
 
   const operationMap = {
     click: timeouts.quickAction,
