@@ -1,25 +1,3 @@
-<template>
-  <Teleport to="body">
-    <div v-if="visible" class="toast-container" :class="type">
-      <div class="toast" :class="{ 'toast-entering': entering, 'toast-leaving': leaving }">
-        <div class="toast-icon">
-          <Icon v-if="type === 'success'" name="CircleCheckFilled" size="16" />
-          <Icon v-else-if="type === 'error'" name="CircleXFilled" size="16" />
-          <Icon v-else-if="type === 'warning'" name="AlertTriangleFilled" size="16" />
-          <Icon v-else name="InfoCircleFilled" size="16" />
-        </div>
-        <div class="toast-content">
-          <div class="toast-message">{{ message }}</div>
-          <div v-if="description" class="toast-description">{{ description }}</div>
-        </div>
-        <button v-if="dismissible" class="toast-close" @click="dismiss">
-          <Icon name="X" size="14" />
-        </button>
-      </div>
-    </div>
-  </Teleport>
-</template>
-
 <script setup>
   import { ref, onMounted, onUnmounted } from "vue";
 
@@ -79,6 +57,28 @@
 
   defineExpose({ dismiss });
 </script>
+
+<template>
+  <Teleport to="body">
+    <div v-if="visible" class="toast-container" :class="type">
+      <div class="toast" :class="{ 'toast-entering': entering, 'toast-leaving': leaving }">
+        <div class="toast-icon">
+          <Icon v-if="type === 'success'" name="CircleCheckFilled" size="16" />
+          <Icon v-else-if="type === 'error'" name="CircleXFilled" size="16" />
+          <Icon v-else-if="type === 'warning'" name="AlertTriangleFilled" size="16" />
+          <Icon v-else name="InfoCircleFilled" size="16" />
+        </div>
+        <div class="toast-content">
+          <div class="toast-message">{{ message }}</div>
+          <div v-if="description" class="toast-description">{{ description }}</div>
+        </div>
+        <button v-if="dismissible" class="toast-close" @click="dismiss">
+          <Icon name="X" size="14" />
+        </button>
+      </div>
+    </div>
+  </Teleport>
+</template>
 
 <style scoped>
   .toast-container {
@@ -140,27 +140,27 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 16px;
-    height: 16px;
+    width: 20px;
+    height: 20px;
   }
 
   .toast-icon :deep(svg) {
     flex-shrink: 0;
   }
 
-  .toast-container.success .toast-icon {
+  .toast-container.success .toast-icon .tabler-icon {
     color: var(--success-600);
   }
 
-  .toast-container.error .toast-icon {
+  .toast-container.error .toast-icon  .tabler-icon{
     color: var(--error-600);
   }
 
-  .toast-container.warning .toast-icon {
+  .toast-container.warning .toast-icon  .tabler-icon{
     color: var(--warning-600);
   }
 
-  .toast-container.info .toast-icon {
+  .toast-container.info .toast-icon  .tabler-icon{
     color: var(--information-600);
   }
 

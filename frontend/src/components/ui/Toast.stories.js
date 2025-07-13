@@ -86,11 +86,21 @@ export const LongMessage = {
 // Interactive story that demonstrates the toast service
 export const InteractiveDemo = {
   render: () => ({
+    components: {
+      Toast,
+    },
     setup() {
-      const toastMessage = ref("Click a button to show a toast");
-      const toastType = ref("info");
+      const activeToast = ref(null);
 
-      return { toastMessage, toastType };
+      const showToast = (config) => {
+        activeToast.value = { ...config, id: Date.now() };
+      };
+
+      const hideToast = () => {
+        activeToast.value = null;
+      };
+
+      return { activeToast, showToast, hideToast };
     },
     template: `
       <div style="display: flex; flex-direction: column; gap: 16px; padding: 20px;">
@@ -99,37 +109,50 @@ export const InteractiveDemo = {
         
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
           <button 
-            @click="$emit('show-toast', { type: 'success', message: 'Success! Everything worked perfectly.' })"
+            @click="showToast({ type: 'success', message: 'Success! Everything worked perfectly.' })"
             style="padding: 8px 16px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer;"
           >
             Show Success
           </button>
           
           <button 
-            @click="$emit('show-toast', { type: 'error', message: 'Error occurred', description: 'Something went wrong. Please try again.' })"
+            @click="showToast({ type: 'error', message: 'Error occurred', description: 'Something went wrong. Please try again.' })"
             style="padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer;"
           >
             Show Error
           </button>
           
           <button 
-            @click="$emit('show-toast', { type: 'warning', message: 'Warning message', description: 'Please review your changes before proceeding.' })"
+            @click="showToast({ type: 'warning', message: 'Warning message', description: 'Please review your changes before proceeding.' })"
             style="padding: 8px 16px; background: #f59e0b; color: white; border: none; border-radius: 6px; cursor: pointer;"
           >
             Show Warning
           </button>
           
           <button 
-            @click="$emit('show-toast', { type: 'info', message: 'Information', description: 'Here is some useful information for you.' })"
+            @click="showToast({ type: 'info', message: 'Information', description: 'Here is some useful information for you.' })"
             style="padding: 8px 16px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer;"
           >
             Show Info
           </button>
         </div>
         
+        <div style="position: relative; height: 80px; margin-top: 20px;">
+          <div v-if="activeToast" style="position: absolute; top: 0; right: 0; z-index: 9999;">
+            <Toast
+              :message="activeToast.message"
+              :description="activeToast.description"
+              :type="activeToast.type"
+              :duration="0"
+              :dismissible="true"
+              @dismiss="hideToast"
+            />
+          </div>
+        </div>
+        
         <p style="color: #666; font-size: 14px;">
-          Note: In this demo, click the buttons to see how toasts would appear. 
-          In the actual app, toasts are managed by the toast service.
+          Click the buttons above to see live toast notifications. 
+          In the actual app, toasts are managed by a global toast service.
         </p>
       </div>
     `,
