@@ -22,8 +22,8 @@ test.describe("Demo Integration E2E", () => {
 
       // Verify demo page loads with content
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
-      await expect(page.locator(".demo-banner")).toBeVisible();
-      await expect(page.locator(".demo-banner")).toContainText("Demo Mode");
+      await expect(page.locator('[data-testid="demo-banner"]')).toBeVisible();
+      await expect(page.locator('[data-testid="demo-banner"]')).toContainText("Demo Mode");
     });
 
     test("Section CTA button redirects to getting started", async ({ page }) => {
@@ -210,12 +210,12 @@ test.describe("Demo Integration E2E", () => {
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
 
       // Verify demo banner
-      await expect(page.locator(".demo-banner")).toBeVisible({ timeout: 10000 });
-      await expect(page.locator(".demo-banner")).toContainText("Demo Mode");
-      await expect(page.locator(".demo-banner")).toContainText("Experience Aris workspace");
+      await expect(page.locator('[data-testid="demo-banner"]')).toBeVisible({ timeout: 10000 });
+      await expect(page.locator('[data-testid="demo-banner"]')).toContainText("Demo Mode");
+      await expect(page.locator('[data-testid="demo-banner"]')).toContainText("Experience Aris workspace");
 
       // Verify demo workspace
-      await expect(page.locator(".workspace-container")).toBeVisible();
+      await expect(page.locator('[data-testid="demo-container"]')).toBeVisible();
 
       // Verify manuscript content loads
       await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible({ timeout: 15000 });
@@ -228,7 +228,7 @@ test.describe("Demo Integration E2E", () => {
       expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
 
       // Find and click back to homepage link
-      const backLink = page.locator(".demo-link").filter({ hasText: /back.*homepage/i });
+      const backLink = page.locator('[data-testid="demo-back-link"]').filter({ hasText: /back.*homepage/i });
       await expect(backLink).toBeVisible();
 
       // Check where the link points

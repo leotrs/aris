@@ -29,8 +29,8 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
       // Step 4: Demo content loads
-      await expect(page.locator(".demo-banner")).toBeVisible();
-      await expect(page.locator(".demo-banner")).toContainText("Demo Mode");
+      await expect(page.locator('[data-testid="demo-banner"]')).toBeVisible();
+      await expect(page.locator('[data-testid="demo-banner"]')).toContainText("Demo Mode");
 
       // Wait for manuscript content to load
       await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible({ timeout: 15000 });
@@ -46,13 +46,13 @@ test.describe("User Journey: Marketing Site to Demo", () => {
 
       if (hasFocusClass) {
         // Banner should be hidden in focus mode
-        await expect(page.locator(".demo-banner")).toBeHidden();
+        await expect(page.locator('[data-testid="demo-banner"]')).toBeHidden();
       }
 
       // Exit focus mode
       await page.keyboard.press("c");
       await page.waitForTimeout(500);
-      await expect(page.locator(".demo-banner")).toBeVisible();
+      await expect(page.locator('[data-testid="demo-banner"]')).toBeVisible();
 
       // Step 6: User goes back to marketing site (manually navigate)
       await page.goto(`http://localhost:${process.env.SITE_PORT}`);
@@ -153,7 +153,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
 
       // Verify user sees demo instructions
-      await expect(page.locator(".demo-banner")).toContainText("Experience Aris workspace");
+      await expect(page.locator('[data-testid="demo-banner"]')).toContainText("Experience Aris workspace");
 
       // User explores manuscript content
       await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible({ timeout: 15000 });

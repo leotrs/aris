@@ -315,7 +315,7 @@ test.describe("Navigation Flow E2E", () => {
 
     // Verify demo loads
     await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
-    await expect(page.locator(".demo-banner")).toBeVisible();
+    await expect(page.locator('[data-testid="demo-banner"]')).toBeVisible();
   });
 
   test("should handle invalid routes gracefully", async ({ page }) => {

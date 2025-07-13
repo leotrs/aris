@@ -159,7 +159,7 @@ export class CrossAppHelpers {
 
     try {
       // Check demo banner
-      await this.page.locator(".demo-banner").waitFor({ timeout: 5000 });
+      await this.page.locator('[data-testid="demo-banner"]').waitFor({ timeout: 5000 });
       checks.demoBanner = true;
     } catch {
       console.warn("Demo banner not found");
@@ -193,7 +193,7 @@ export class CrossAppHelpers {
 
     try {
       // Check back to homepage link
-      await this.page.locator(".demo-link").waitFor({ timeout: 5000 });
+      await this.page.locator('[data-testid="demo-back-link"]').waitFor({ timeout: 5000 });
       checks.backLink = true;
     } catch {
       console.warn("Back link not found");
@@ -232,7 +232,7 @@ export class CrossAppHelpers {
       );
 
       // Step 4: Return to marketing site
-      const backLink = this.page.locator(".demo-link").filter({ hasText: /back.*homepage/i });
+      const backLink = this.page.locator('[data-testid="demo-back-link"]').filter({ hasText: /back.*homepage/i });
       await Promise.all([
         this.page.waitForNavigation({ waitUntil: "networkidle" }),
         backLink.click(),
