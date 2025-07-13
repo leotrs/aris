@@ -1,5 +1,5 @@
-import HomeLayout from "./HomeLayout.vue";
-import HomeSidebar from "./HomeSidebar.vue";
+import BaseLayout from "./BaseLayout.vue";
+import BaseSidebar from "./BaseSidebar.vue";
 import Button from "../base/Button.vue";
 import UserMenu from "../navigation/UserMenu.vue";
 import UploadFile from "../../views/home/ModalUploadFile.vue";
@@ -33,8 +33,8 @@ const mockRoute = {
 };
 
 export default {
-  title: "Layout/HomeLayout",
-  component: HomeLayout,
+  title: "Layout/BaseLayout",
+  component: BaseLayout,
   tags: ["autodocs"],
   argTypes: {
     active: {
@@ -52,7 +52,7 @@ export default {
   },
   decorators: [
     (story) => ({
-      components: { story, HomeSidebar, Button, UserMenu, UploadFile },
+      components: { story, BaseSidebar, Button, UserMenu, UploadFile },
       provide: {
         mobileMode: { value: false },
         fileStore: mockFileStore,
@@ -76,16 +76,16 @@ export const Default = {
     fab: true,
   },
   render: (args) => ({
-    components: { HomeLayout },
+    components: { BaseLayout },
     setup() {
       return { args };
     },
     template: `
-      <HomeLayout v-bind="args">
+      <BaseLayout v-bind="args">
         <div style="padding: 20px; border: 1px dashed #ccc; height: 200px; display: flex; align-items: center; justify-content: center;">
           Main Content Area
         </div>
-      </HomeLayout>
+      </BaseLayout>
     `,
   }),
 };
@@ -97,7 +97,7 @@ export const MobileView = {
   },
   decorators: [
     (story) => ({
-      components: { story, HomeSidebar, Button, UserMenu, UploadFile },
+      components: { story, BaseSidebar, Button, UserMenu, UploadFile },
       provide: {
         mobileMode: { value: true }, // Simulate mobile mode
         fileStore: mockFileStore,
@@ -113,16 +113,16 @@ export const MobileView = {
     }),
   ],
   render: (args) => ({
-    components: { HomeLayout },
+    components: { BaseLayout },
     setup() {
       return { args };
     },
     template: `
-      <HomeLayout v-bind="args">
+      <BaseLayout v-bind="args">
         <div style="padding: 20px; border: 1px dashed #ccc; height: 200px; display: flex; align-items: center; justify-content: center;">
           Mobile Content Area
         </div>
-      </HomeLayout>
+      </BaseLayout>
     `,
   }),
 };
@@ -133,16 +133,16 @@ export const NoFab = {
     fab: false,
   },
   render: (args) => ({
-    components: { HomeLayout },
+    components: { BaseLayout },
     setup() {
       return { args };
     },
     template: `
-      <HomeLayout v-bind="args">
+      <BaseLayout v-bind="args">
         <div style="padding: 20px; border: 1px dashed #ccc; height: 200px; display: flex; align-items: center; justify-content: center;">
           FAB Button Disabled
         </div>
-      </HomeLayout>
+      </BaseLayout>
     `,
   }),
 };

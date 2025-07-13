@@ -1,10 +1,9 @@
-import HomeSidebarItem from "./HomeSidebarItem.vue";
-import Icon from "../base/Icon.vue";
-import Tooltip from "../base/Tooltip.vue";
+import BaseSidebarItem from "./BaseSidebarItem.vue";
+// Note: Icon and Tooltip components may not exist - removing imports
 
 export default {
-  title: "Layout/HomeSidebarItem",
-  component: HomeSidebarItem,
+  title: "Layout/BaseSidebarItem",
+  component: BaseSidebarItem,
   tags: ["autodocs"],
   argTypes: {
     icon: {
@@ -48,7 +47,7 @@ export default {
   },
   decorators: [
     (story) => ({
-      components: { story, Icon, Tooltip },
+      components: { story },
       provide: {
         collapsed: { value: false }, // Default to expanded state for stories
       },
@@ -68,7 +67,7 @@ export const Active = {
 export const Collapsed = {
   decorators: [
     (story) => ({
-      components: { story, Icon, Tooltip },
+      components: { story },
       provide: {
         collapsed: { value: true }, // Simulate collapsed state
       },
@@ -85,7 +84,7 @@ export const CollapsedWithCustomIcon = {
   },
   decorators: [
     (story) => ({
-      components: { story, Icon, Tooltip },
+      components: { story },
       provide: {
         collapsed: { value: true },
       },

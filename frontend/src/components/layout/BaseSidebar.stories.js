@@ -1,8 +1,8 @@
-import HomeSidebar from "./HomeSidebar.vue";
+import BaseSidebar from "./BaseSidebar.vue";
 import ContextMenu from "../navigation/ContextMenu.vue";
 import ContextMenuItem from "../navigation/ContextMenuItem.vue";
 import Button from "../base/Button.vue";
-import SidebarItem from "./HomeSidebarItem.vue";
+import SidebarItem from "./BaseSidebarItem.vue";
 import Separator from "../base/Separator.vue";
 
 // Mock dependencies
@@ -42,8 +42,8 @@ const mockKeyboardShortcuts = () => ({
 });
 
 export default {
-  title: "Layout/HomeSidebar",
-  component: HomeSidebar,
+  title: "Layout/BaseSidebar",
+  component: BaseSidebar,
   tags: ["autodocs"],
   argTypes: {
     active: {

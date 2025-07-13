@@ -1,27 +1,6 @@
-<template>
-  <Teleport to="body">
-    <div v-if="visible" class="toast-container" :class="type">
-      <div class="toast" :class="{ 'toast-entering': entering, 'toast-leaving': leaving }">
-        <div class="toast-icon">
-          <Icon v-if="type === 'success'" name="Check" />
-          <Icon v-else-if="type === 'error'" name="X" />
-          <Icon v-else-if="type === 'warning'" name="AlertTriangle" />
-          <Icon v-else name="Info" />
-        </div>
-        <div class="toast-content">
-          <div class="toast-message">{{ message }}</div>
-          <div v-if="description" class="toast-description">{{ description }}</div>
-        </div>
-        <button v-if="dismissible" class="toast-close" @click="dismiss">
-          <Icon name="X" size="16" />
-        </button>
-      </div>
-    </div>
-  </Teleport>
-</template>
-
 <script setup>
   import { ref, onMounted, onUnmounted } from "vue";
+  import ButtonClose from "@/components/base/ButtonClose.vue";
 
   const props = defineProps({
     message: { type: String, required: true },
@@ -80,6 +59,26 @@
   defineExpose({ dismiss });
 </script>
 
+<template>
+  <Teleport to="body">
+    <div v-if="visible" class="toast-container" :class="type">
+      <div class="toast" :class="{ 'toast-entering': entering, 'toast-leaving': leaving }">
+        <div class="toast-icon">
+          <Icon v-if="type === 'success'" name="CircleCheckFilled" size="16" />
+          <Icon v-else-if="type === 'error'" name="CircleXFilled" size="16" />
+          <Icon v-else-if="type === 'warning'" name="AlertTriangleFilled" size="16" />
+          <Icon v-else name="InfoCircleFilled" size="16" />
+        </div>
+        <div class="toast-content">
+          <div class="toast-message">{{ message }}</div>
+          <div v-if="description" class="toast-description">{{ description }}</div>
+        </div>
+        <ButtonClose v-if="dismissible" @close="dismiss" />
+      </div>
+    </div>
+  </Teleport>
+</template>
+
 <style scoped>
   .toast-container {
     position: fixed;
@@ -91,14 +90,14 @@
 
   .toast {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     gap: 12px;
-    min-width: 300px;
-    max-width: 400px;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: var(--shadow-soft);
-    border: var(--border-thin) solid;
+    width: fit-content;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 22px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid;
     background-color: var(--surface-primary);
     transition: all 0.2s ease;
     transform: translateX(0);
@@ -116,23 +115,23 @@
   }
 
   .toast-container.success .toast {
-    border-color: var(--border-success);
-    background-color: var(--surface-success);
+    border-color: var(--success-200);
+    background-color: var(--success-50);
   }
 
   .toast-container.error .toast {
-    border-color: var(--border-danger);
-    background-color: var(--surface-danger);
+    border-color: var(--error-200);
+    background-color: var(--error-50);
   }
 
   .toast-container.warning .toast {
-    border-color: var(--border-warning);
-    background-color: var(--surface-warning);
+    border-color: var(--warning-200);
+    background-color: var(--warning-50);
   }
 
   .toast-container.info .toast {
-    border-color: var(--border-information);
-    background-color: var(--surface-information);
+    border-color: var(--information-200);
+    background-color: var(--information-50);
   }
 
   .toast-icon {
@@ -142,35 +141,40 @@
     justify-content: center;
     width: 20px;
     height: 20px;
-    margin-top: 2px;
   }
 
-  .toast-container.success .toast-icon {
+  .toast-icon :deep(svg) {
+    flex-shrink: 0;
+  }
+
+  .toast-container.success .toast-icon .tabler-icon {
     color: var(--success-600);
   }
 
-  .toast-container.error .toast-icon {
-    color: var(--danger-600);
+  .toast-container.error .toast-icon  .tabler-icon{
+    color: var(--error-600);
   }
 
-  .toast-container.warning .toast-icon {
+  .toast-container.warning .toast-icon  .tabler-icon{
     color: var(--warning-600);
   }
 
-  .toast-container.info .toast-icon {
+  .toast-container.info .toast-icon  .tabler-icon{
     color: var(--information-600);
   }
 
   .toast-content {
     flex: 1;
     min-width: 0;
+    overflow: hidden;
   }
 
   .toast-message {
     font-weight: var(--weight-medium);
     font-size: 14px;
     color: var(--text-primary);
-    line-height: 1.4;
+    line-height: 1.2;
+    white-space: nowrap;
   }
 
   .toast-description {
@@ -178,22 +182,10 @@
     color: var(--text-secondary);
     margin-top: 4px;
     line-height: 1.4;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
 
-  .toast-close {
-    flex-shrink: 0;
-    background: none;
-    border: none;
-    color: var(--text-tertiary);
-    cursor: pointer;
-    padding: 2px;
-    border-radius: 4px;
-    transition: color 0.2s ease;
-  }
-
-  .toast-close:hover {
-    color: var(--text-secondary);
-  }
 
   /* Mobile responsiveness */
   @media (max-width: 480px) {

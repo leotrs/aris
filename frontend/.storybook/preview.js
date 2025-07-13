@@ -1,4 +1,28 @@
 import "../src/assets/main.css";
+import { setup } from "@storybook/vue3";
+import Icon from "../src/components/base/Icon.vue";
+
+// Register real Icon component globally
+setup((app) => {
+  // eslint-disable-next-line vue/multi-word-component-names
+  app.component("Icon", Icon);
+});
+
+// Load RSM CSS (contains all design system variables)
+const API_BASE_URL = "http://localhost:8002"; // Use host-accessible backend URL
+const rsmLink = document.createElement("link");
+rsmLink.rel = "stylesheet";
+rsmLink.href = `${API_BASE_URL}/static/rsm.css`;
+document.head.appendChild(rsmLink);
+
+// Load design assets CSS from backend (accessible from browser)
+const designAssets = ["variables.css", "typography.css", "layout.css", "components.css"];
+designAssets.forEach((filename) => {
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
+  link.href = `${API_BASE_URL}/design-assets/css/${filename}`;
+  document.head.appendChild(link);
+});
 
 /** @type { import('@storybook/vue3').Preview } */
 const preview = {
