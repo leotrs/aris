@@ -127,10 +127,10 @@ test.describe("Navigation Flow E2E", () => {
       await expect(signupLink).toBeVisible();
       await expect(demoLink).toBeVisible();
     } else {
-      // Desktop: Test Resources dropdown
-      await page.hover(".has-dropdown");
+      // Desktop: Test Resources dropdown (hover second dropdown)
+      await page.hover(".has-dropdown:nth-child(4)"); // Resources is the 4th nav item
       await page.waitForTimeout(300); // Wait for hover animation
-      await expect(page.locator(".dropdown-menu")).toBeVisible();
+      await expect(page.locator(".dropdown-menu").nth(1)).toBeVisible(); // Resources dropdown is second
 
       const docLink = page.locator('nav a[href="/documentation"]').first();
       const blogLink = page.locator('nav a[href="/blog"]').first();
@@ -213,9 +213,9 @@ test.describe("Navigation Flow E2E", () => {
     // Scroll to footer
     await page.locator("footer").scrollIntoViewIfNeeded();
 
-    // Test footer links
-    const footerTermsLink = page.locator('footer a[href="/terms"]');
-    const footerCookiesLink = page.locator('footer a[href="/cookies"]');
+    // Test footer links (use first one to avoid strict mode violation)
+    const footerTermsLink = page.locator('footer a[href="/terms"]').first();
+    const footerCookiesLink = page.locator('footer a[href="/cookies"]').first();
 
     await expect(footerTermsLink).toBeVisible();
     await expect(footerCookiesLink).toBeVisible();

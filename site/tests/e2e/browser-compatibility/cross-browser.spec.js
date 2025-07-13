@@ -210,10 +210,10 @@ test.describe("Cross-Browser Compatibility", () => {
         await page.waitForTimeout(300);
         await expect(page.locator(".mobile-menu-overlay")).not.toBeVisible();
       } else {
-        // Desktop: Test dropdown interaction
-        await page.hover(".has-dropdown");
+        // Desktop: Test dropdown interaction (hover first dropdown)
+        await page.hover(".has-dropdown:first-child");
         await page.waitForTimeout(500); // Wait for hover animation and state change
-        await expect(page.locator(".dropdown-menu")).toBeVisible({ timeout: 5000 });
+        await expect(page.locator(".dropdown-menu").first()).toBeVisible({ timeout: 5000 });
 
         // Test mobile menu on desktop (should work when viewport is small)
         await page.setViewportSize({ width: 375, height: 667 });

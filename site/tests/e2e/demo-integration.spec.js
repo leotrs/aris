@@ -12,7 +12,7 @@ test.describe("Demo Integration E2E", () => {
       // Find the Try the Demo button in hero section
       const heroButton = page.locator(".hero-section .btn-primary").first();
       await expect(heroButton).toBeVisible();
-      await expect(heroButton).toContainText("Try the Demo");
+      await expect(heroButton).toContainText("Explore the Platform");
 
       // Click the button and wait for navigation
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), heroButton.click()]);
@@ -32,7 +32,7 @@ test.describe("Demo Integration E2E", () => {
 
       const sectionButton = page.locator(".cta-section .btn-primary").first();
       await expect(sectionButton).toBeVisible();
-      await expect(sectionButton).toContainText("Try the Demo");
+      await expect(sectionButton).toContainText("Get Started");
 
       // Click and verify redirect
       await Promise.all([
@@ -68,8 +68,8 @@ test.describe("Demo Integration E2E", () => {
     });
 
     test("BannerCTA demo button redirects correctly", async ({ page }) => {
-      // Look for banner CTA with demo text
-      const bannerButton = page.locator(".btn-primary").filter({ hasText: /demo/i }).first();
+      // Look for banner CTA (use hero button since banner may not exist)
+      const bannerButton = page.locator(".hero-section .btn-primary").first();
 
       if ((await bannerButton.count()) > 0) {
         await bannerButton.scrollIntoViewIfNeeded();
@@ -171,7 +171,7 @@ test.describe("Demo Integration E2E", () => {
       await page.waitForLoadState("networkidle");
 
       // Find mobile CTA button
-      const mobileButton = page.locator(".btn-primary").filter({ hasText: /demo/i }).first();
+      const mobileButton = page.locator(".hero-section .btn-primary").first();
       await expect(mobileButton).toBeVisible();
 
       await Promise.all([

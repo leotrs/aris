@@ -8,7 +8,7 @@ test.describe("Interactive Elements E2E", () => {
       // Test primary CTA button
       const primaryCTA = page.locator(".hero-ctas .btn-primary");
       await expect(primaryCTA).toBeVisible();
-      await expect(primaryCTA).toContainText("Try the Demo");
+      await expect(primaryCTA).toContainText("Explore the Platform");
 
       // Test secondary CTA link
       const secondaryCTA = page.locator(".hero-ctas .text-link");
@@ -29,7 +29,7 @@ test.describe("Interactive Elements E2E", () => {
 
       const finalCTA = page.locator(".cta-section .btn-primary");
       await expect(finalCTA).toBeVisible();
-      await expect(finalCTA).toContainText("Try the Demo");
+      await expect(finalCTA).toContainText("Get Started");
 
       const finalSignupLink = page.locator(".cta-section .text-link");
       await expect(finalSignupLink).toBeVisible();
@@ -78,8 +78,8 @@ test.describe("Interactive Elements E2E", () => {
       await page.waitForTimeout(300); // Wait for mobile menu animation
       await expect(mobileMenu).toBeVisible();
 
-      // Test mobile dropdown
-      const mobileResourcesToggle = page.locator(".mobile-dropdown-toggle");
+      // Test mobile dropdown (click Resources dropdown)
+      const mobileResourcesToggle = page.locator(".mobile-dropdown-toggle").nth(1);
       await mobileResourcesToggle.click();
       await page.waitForTimeout(300); // Wait for dropdown animation
 

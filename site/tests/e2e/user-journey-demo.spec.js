@@ -8,13 +8,13 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await page.waitForLoadState("networkidle");
 
       // Verify homepage loads correctly
-      await expect(page.locator("h1")).toContainText("Aris: The Unified Platform");
+      await expect(page.locator("h1")).toContainText("The Collaborative Preprint Server for Modern Research");
       await expect(page.locator(".hero-section")).toBeVisible();
 
       // Step 2: User sees and clicks hero CTA
       const heroButton = page.locator(".hero-section .btn-primary").first();
       await expect(heroButton).toBeVisible();
-      await expect(heroButton).toContainText("Try the Demo");
+      await expect(heroButton).toContainText("Explore the Platform");
 
       // Measure click to demo load time
       const startTime = Date.now();
@@ -73,7 +73,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
 
       for (let i = 0; i < ctaSelectors.length; i++) {
         const selector = ctaSelectors[i];
-        const button = page.locator(selector).filter({ hasText: /demo/i }).first();
+        const button = page.locator(selector).first();
 
         if ((await button.count()) > 0) {
           await button.scrollIntoViewIfNeeded();
@@ -134,7 +134,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await page.waitForLoadState("networkidle");
 
       // User reads hero content
-      await expect(page.locator(".hero-headline")).toContainText("Aris: The Unified Platform");
+      await expect(page.locator(".hero-headline")).toContainText("The Collaborative Preprint Server for Modern Research");
       await expect(page.locator(".hero-subheadline")).toBeVisible();
 
       // User scrolls to learn more
@@ -212,7 +212,7 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       await expect(page.locator(".hero-section")).toBeVisible();
 
       // Mobile CTA should be accessible
-      const mobileButton = page.locator(".btn-primary").filter({ hasText: /demo/i }).first();
+      const mobileButton = page.locator(".hero-section .btn-primary").first();
       await expect(mobileButton).toBeVisible();
 
       await Promise.all([

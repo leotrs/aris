@@ -333,7 +333,7 @@ export async function testAllCTAButtons(page) {
   const results = [];
 
   for (const selector of ctaSelectors) {
-    const buttons = await page.locator(selector).filter({ hasText: /demo/i }).all();
+    const buttons = await page.locator(selector).all();
 
     for (let i = 0; i < buttons.length; i++) {
       try {

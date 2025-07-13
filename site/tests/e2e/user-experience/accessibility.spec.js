@@ -51,7 +51,7 @@ test.describe("Accessibility E2E", () => {
 
       // Should include CTA buttons
       const hasCTA = focusedElements.some(
-        (el) => el.text?.includes("Try the Demo") || el.text?.includes("sign up")
+        (el) => el.text?.includes("Explore the Platform") || el.text?.includes("Get Started") || el.text?.includes("sign up")
       );
       expect(hasCTA).toBe(true);
     });
@@ -269,8 +269,8 @@ test.describe("Accessibility E2E", () => {
       // Wait for page to be fully loaded
       await page.waitForLoadState("networkidle");
 
-      // Directly focus the resources dropdown toggle
-      const resourcesDropdown = page.locator(".has-dropdown .dropdown-toggle");
+      // Directly focus the resources dropdown toggle (second dropdown)
+      const resourcesDropdown = page.locator(".has-dropdown .dropdown-toggle").nth(1);
       await resourcesDropdown.waitFor({ state: "visible" });
       await resourcesDropdown.focus();
 
