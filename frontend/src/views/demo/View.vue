@@ -111,7 +111,7 @@
 <template>
   <div class="demo-root">
     <!-- Demo banner -->
-    <div v-if="!focusMode" class="demo-banner">
+    <div v-if="!focusMode" class="demo-banner" data-testid="demo-banner">
       <div class="demo-banner-content">
         <Icon name="InfoCircle" icon-class="demo-icon" />
         <span>Demo Mode - Experience Aris workspace with sample content</span>
