@@ -79,15 +79,23 @@ test.describe("Navigation Flow E2E", () => {
       await page.waitForTimeout(300);
       await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
-      // Test mobile navbar links
-      const aboutLink = page.locator('.mobile-nav-link[href="/about"]');
-      const aiCopilotLink = page.locator('.mobile-nav-link[href="/ai-copilot"]');
+      // Test mobile navbar links (direct links only)
+      const gettingStartedLink = page.locator('.mobile-nav-link[href="/getting-started"]');
       const pricingLink = page.locator('.mobile-nav-link[href="/pricing"]');
+      const contactLink = page.locator('.mobile-nav-link[href="/contact"]');
 
-      // Verify mobile links exist in DOM
+      // Verify mobile direct links exist in DOM
+      await expect(gettingStartedLink).toBeVisible();
+      await expect(pricingLink).toBeVisible();
+      await expect(contactLink).toBeVisible();
+      
+      // Test Platform dropdown contains about/ai-copilot
+      await page.locator(".mobile-dropdown-toggle").filter({ hasText: 'Platform' }).click();
+      await page.waitForTimeout(300);
+      const aboutLink = page.locator('.mobile-dropdown-link[href="/about"]');
+      const aiCopilotLink = page.locator('.mobile-dropdown-link[href="/ai-copilot"]');
       await expect(aboutLink).toBeVisible();
       await expect(aiCopilotLink).toBeVisible();
-      await expect(pricingLink).toBeVisible();
     } else {
       // Desktop: Test navbar links - pricing is directly visible, others are in dropdowns
       const pricingLink = page.locator('nav a[href="/pricing"]').first();
@@ -108,8 +116,8 @@ test.describe("Navigation Flow E2E", () => {
     let demoLink;
 
     if (isMobile) {
-      // Mobile: Test mobile dropdown
-      await page.click(".mobile-dropdown-toggle");
+      // Mobile: Test mobile dropdown (click Resources dropdown)
+      await page.locator(".mobile-dropdown-toggle").filter({ hasText: 'Resources' }).click();
       await page.waitForTimeout(300);
       await expect(page.locator(".mobile-dropdown-menu")).toBeVisible();
 
@@ -119,9 +127,9 @@ test.describe("Navigation Flow E2E", () => {
       await expect(blogLink).toBeVisible();
 
       // Test mobile utility links
-      const loginLink = page.locator('.mobile-nav-link[href="/login"]');
+      const loginLink = page.locator('.mobile-nav-link-utility').filter({ hasText: 'Login' }).first();
       const signupLink = page.locator('.mobile-nav-link[href="/signup"]');
-      demoLink = page.locator('.mobile-nav-link[href="/demo"]');
+      demoLink = page.locator('.mobile-nav-link-cta').filter({ hasText: 'Try the Demo' }).first();
 
       await expect(loginLink).toBeVisible();
       await expect(signupLink).toBeVisible();
@@ -138,9 +146,9 @@ test.describe("Navigation Flow E2E", () => {
       await expect(blogLink).toBeVisible();
 
       // Test utility links that should work
-      const loginLink = page.locator('nav a[href="/login"]').first();
+      const loginLink = page.locator('.navbar-utility-links a').filter({ hasText: 'Login' }).first();
       const signupLink = page.locator('.navbar-utility-links a[href="/signup"]');
-      demoLink = page.locator('nav a[href="/demo"]').first();
+      demoLink = page.locator('.navbar-utility-links a').filter({ hasText: 'Try the Demo' }).first();
 
       await expect(loginLink).toBeVisible();
       await expect(signupLink).toBeVisible();
@@ -188,13 +196,13 @@ test.describe("Navigation Flow E2E", () => {
     await page.waitForTimeout(300); // Wait for mobile menu animation
     await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
-    // Verify mobile navigation links
-    await expect(page.locator('.mobile-nav-link[href="/about"]')).toBeVisible();
-    await expect(page.locator('.mobile-nav-link[href="/ai-copilot"]')).toBeVisible();
+    // Verify mobile navigation links (about/ai-copilot are in Platform dropdown, pricing is direct)
+    await expect(page.locator('.mobile-nav-link[href="/getting-started"]')).toBeVisible();
     await expect(page.locator('.mobile-nav-link[href="/pricing"]')).toBeVisible();
+    await expect(page.locator('.mobile-dropdown-toggle').filter({ hasText: 'Platform' })).toBeVisible();
 
     // Test mobile resources dropdown
-    await page.click(".mobile-dropdown-toggle");
+    await page.locator(".mobile-dropdown-toggle").filter({ hasText: 'Resources' }).click();
     await page.waitForTimeout(300); // Wait for dropdown animation
     await expect(page.locator(".mobile-dropdown-menu")).toBeVisible();
 
