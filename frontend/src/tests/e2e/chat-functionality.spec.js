@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 // @auth
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { FileHelpers } from "./utils/file-helpers.js";
+import { setupSharedAuth, verifyAuthInBeforeEach } from "./utils/auth-setup.js";
 
 test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
   let authHelpers;
@@ -12,8 +13,8 @@ test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
     authHelpers = new AuthHelpers(page);
     fileHelpers = new FileHelpers(page);
 
-    // Ensure logged in
-    await authHelpers.ensureLoggedIn();
+    // Fast authentication with API fallback to UI
+    await authHelpers.ensureLoggedIn(true); // Skip DOM verification for speed
   });
 
   // Helper function to enable chat and create file

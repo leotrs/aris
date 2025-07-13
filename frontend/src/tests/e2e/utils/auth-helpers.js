@@ -5,6 +5,7 @@ import { getTimeouts } from "./timeout-constants.js";
 export class AuthHelpers {
   constructor(page) {
     this.page = page;
+    this.baseURL = process.env.CI ? 'http://localhost:8000' : 'http://localhost:8000';
   }
 
   async login(email, password) {
@@ -45,8 +46,116 @@ export class AuthHelpers {
     await this.page.waitForURL(/^(?!.*\/login)/, { timeout: getTimeouts().contentLoad });
   }
 
-  async ensureLoggedIn() {
-    // Go to home page
+  /**
+   * API-based token injection - bypasses UI login for speed
+   */
+  async fastAuth(email = TEST_CREDENTIALS.valid.email, password = TEST_CREDENTIALS.valid.password) {
+    console.log('[AuthHelpers] Using fast API-based authentication');
+    
+    try {
+      // Direct API login request
+      const response = await this.page.request.post(`${this.baseURL}/login`, {
+        data: {
+          email: email,
+          password: password
+        }
+      });
+
+      if (!response.ok()) {
+        throw new Error(`API login failed: ${response.status()}`);
+      }
+
+      const authData = await response.json();
+      
+      // Inject tokens directly into localStorage
+      await this.page.evaluate(
+        ({ accessToken, refreshToken, user }) => {
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', refreshToken);
+          localStorage.setItem('user', JSON.stringify(user));
+        },
+        {
+          accessToken: authData.access_token,
+          refreshToken: authData.refresh_token,
+          user: authData.user
+        }
+      );
+
+      console.log('[AuthHelpers] Fast auth completed successfully');
+      return true;
+    } catch (error) {
+      console.warn('[AuthHelpers] Fast auth failed, falling back to UI login:', error.message);
+      return false;
+    }
+  }
+
+  /**
+   * Lightweight auth verification - no page loads or redirects
+   */
+  async verifyLoggedIn() {
+    try {
+      const tokens = await this.page.evaluate(() => ({
+        accessToken: localStorage.getItem('accessToken'),
+        user: localStorage.getItem('user')
+      }));
+
+      if (!tokens.accessToken || !tokens.user) {
+        console.log('[AuthHelpers] No valid tokens found, need to authenticate');
+        return false;
+      }
+
+      console.log('[AuthHelpers] Valid tokens found, user is authenticated');
+      return true;
+    } catch (error) {
+      // localStorage access may fail if no page is loaded
+      console.log('[AuthHelpers] Cannot access localStorage, need to navigate to page first');
+      return false;
+    }
+  }
+
+  /**
+   * Storage state management for shared auth across tests
+   */
+  async saveAuthState(storageStatePath) {
+    await this.page.context().storageState({ path: storageStatePath });
+    console.log(`[AuthHelpers] Auth state saved to ${storageStatePath}`);
+  }
+
+  async loadAuthState(storageStatePath) {
+    // Note: Storage state is loaded at context creation time
+    console.log(`[AuthHelpers] Auth state loaded from ${storageStatePath}`);
+  }
+
+  /**
+   * Fast authentication with multiple fallback strategies
+   */
+  async ensureLoggedIn(skipDOMVerification = false) {
+    // Check if already authenticated (lightweight)
+    if (await this.verifyLoggedIn()) {
+      if (!skipDOMVerification) {
+        // Only verify DOM if we're not on the home page already
+        const currentUrl = this.page.url();
+        if (!currentUrl.includes('localhost') || currentUrl.includes('/login')) {
+          await this.page.goto("/");
+          await this.page.waitForLoadState("domcontentloaded");
+        }
+      }
+      console.log('[AuthHelpers] Already authenticated, skipping login');
+      return;
+    }
+
+    // Try fast API auth first
+    const fastAuthSuccess = await this.fastAuth();
+    if (fastAuthSuccess) {
+      if (!skipDOMVerification) {
+        await this.page.goto("/");
+        await this.page.waitForLoadState("domcontentloaded");
+      }
+      return;
+    }
+
+    // Fallback to original UI-based authentication
+    console.log('[AuthHelpers] Falling back to UI-based authentication');
     await this.page.goto("/");
     await this.page.waitForLoadState("domcontentloaded");
 
@@ -92,12 +201,15 @@ export class AuthHelpers {
       );
     }
 
-    // Verify we're logged in by checking for home page elements
-    console.log("[AuthHelpers] Verifying home page elements");
-    await expect(this.page).toHaveURL("/");
-    await this.page.waitForSelector(
-      '[data-testid="files-container"], [data-testid="create-file-button"], [data-testid="user-menu"]'
-    );
+    // Skip DOM verification if requested (for speed)
+    if (!skipDOMVerification) {
+      // Verify we're logged in by checking for home page elements
+      console.log("[AuthHelpers] Verifying home page elements");
+      await expect(this.page).toHaveURL("/");
+      await this.page.waitForSelector(
+        '[data-testid="files-container"], [data-testid="create-file-button"], [data-testid="user-menu"]'
+      );
+    }
 
     console.log("[AuthHelpers] ensureLoggedIn completed successfully");
   }

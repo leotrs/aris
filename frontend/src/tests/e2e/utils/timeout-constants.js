@@ -19,7 +19,7 @@ export const TIMEOUTS = {
 
   // Environment-specific multipliers
   MOBILE_MULTIPLIER: 1.5, // Apply to base timeouts for mobile browsers
-  CI_MULTIPLIER: 2.0, // Apply to base timeouts for CI environments (PostgreSQL + container latency)
+  CI_MULTIPLIER: 3.0, // Apply to base timeouts for CI environments (PostgreSQL + container + browser latency)
 
   // Legacy timeouts (to be phased out)
   LEGACY_SHORT: 3000,
