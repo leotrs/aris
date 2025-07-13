@@ -318,7 +318,7 @@ test.describe("Navigation Flow E2E", () => {
     await page.goto("/");
 
     // Scroll down to a section
-    await page.locator(".section-two").scrollIntoViewIfNeeded();
+    await page.locator(".platform-overview-section").scrollIntoViewIfNeeded();
 
     // Get current scroll position
     const scrollPosition = await page.evaluate(() => window.scrollY);

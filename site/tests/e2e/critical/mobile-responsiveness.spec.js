@@ -35,9 +35,14 @@ test.describe("Mobile Responsiveness E2E", () => {
       await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
       // Verify mobile navigation elements
-      await expect(page.locator('.mobile-nav-link[href="/about"]')).toBeVisible();
-      await expect(page.locator('.mobile-nav-link[href="/signup"]')).toBeVisible();
-      await expect(page.locator('.mobile-nav-link[href="/demo"]')).toBeVisible();
+      // About is in the Platform dropdown, so let's test direct mobile nav links
+      await expect(page.locator('.mobile-nav-link[href="/getting-started"]')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link[href="/pricing"]')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link[href="/contact"]')).toBeVisible();
+      
+      // Test utility links
+      await expect(page.locator('.mobile-nav-link-utility[href="/signup"]')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link-cta')).toBeVisible();
     });
 
     test("should hide mobile menu on larger screens", async ({ page }) => {
@@ -74,9 +79,8 @@ test.describe("Mobile Responsiveness E2E", () => {
         await expect(ctaButtons.first()).toBeVisible();
 
         // Sections should stack properly (use actual component classes)
-        await expect(page.locator(".section-two")).toBeVisible();
-        await expect(page.locator("section").nth(2)).toBeVisible(); // SectionThree
-        await expect(page.locator("section").nth(3)).toBeVisible(); // SectionFour
+        await expect(page.locator(".platform-overview-section")).toBeVisible();
+        await expect(page.locator(".cta-section")).toBeVisible(); // Third section
       });
     });
 
@@ -180,11 +184,11 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.waitForLoadState("networkidle");
 
       // Should be able to scroll through all sections
-      await page.locator(".section-two").scrollIntoViewIfNeeded();
-      await expect(page.locator(".section-two")).toBeInViewport();
+      await page.locator(".platform-overview-section").scrollIntoViewIfNeeded();
+      await expect(page.locator(".platform-overview-section")).toBeInViewport();
 
-      await page.locator("section").nth(2).scrollIntoViewIfNeeded();
-      await expect(page.locator("section").nth(2)).toBeInViewport();
+      await page.locator(".cta-section").scrollIntoViewIfNeeded();
+      await expect(page.locator(".cta-section")).toBeInViewport();
 
       await page.locator("footer").scrollIntoViewIfNeeded();
       await expect(page.locator("footer")).toBeInViewport();

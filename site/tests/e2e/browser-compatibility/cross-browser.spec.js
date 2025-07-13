@@ -8,7 +8,7 @@ test.describe("Cross-Browser Compatibility", () => {
       // Basic page elements should be present
       await expect(page.locator("h1")).toBeVisible();
       await expect(page.locator(".hero-section")).toBeVisible();
-      await expect(page.locator(".section-two")).toBeVisible();
+      await expect(page.locator(".platform-overview-section")).toBeVisible();
       await expect(page.locator("footer")).toBeVisible();
 
       // Navigation should be functional
@@ -120,19 +120,19 @@ test.describe("Cross-Browser Compatibility", () => {
       const heroBox = await heroSection.boundingBox();
       expect(heroBox?.height).toBeGreaterThan(300); // Minimum height
 
-      // Check grid layouts
-      const problemSolutionGrid = page.locator(".problem-solution-grid");
-      await problemSolutionGrid.scrollIntoViewIfNeeded();
-      await expect(problemSolutionGrid).toBeVisible();
+      // Check platform overview section layout
+      const platformOverview = page.locator(".platform-overview-section");
+      await platformOverview.scrollIntoViewIfNeeded();
+      await expect(platformOverview).toBeVisible();
 
-      const cards = page.locator(".problem-solution-card");
-      const cardCount = await cards.count();
-      expect(cardCount).toBe(4);
+      // Verify key subsections exist
+      await expect(page.locator(".workflow-comparison")).toBeVisible();
+      await expect(page.locator(".journal-compatibility-section")).toBeVisible();
 
       // Check responsive behavior at common breakpoint
       await page.setViewportSize({ width: 768, height: 1024 });
       await expect(heroSection).toBeVisible();
-      await expect(problemSolutionGrid).toBeVisible();
+      await expect(platformOverview).toBeVisible();
 
       console.log(`✓ Layout integrity maintained in ${browserName}`);
     });
@@ -148,8 +148,8 @@ test.describe("Cross-Browser Compatibility", () => {
       await expect(primaryButton).toBeVisible();
 
       // Test scroll-based animations
-      await page.locator(".section-two").scrollIntoViewIfNeeded();
-      await expect(page.locator(".section-two")).toBeVisible();
+      await page.locator(".platform-overview-section").scrollIntoViewIfNeeded();
+      await expect(page.locator(".platform-overview-section")).toBeVisible();
 
       // Test mobile menu animation
       await page.setViewportSize({ width: 375, height: 667 });
