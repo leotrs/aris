@@ -20,6 +20,21 @@ const jsConfig = [
 ];
 
 export default [
+  // Global ignores - MUST be first for performance
+  {
+    ignores: [
+      ...globalIgnores,
+      // Frontend-specific ignores
+      "dist/**",
+      "public/**",
+      "debug/**",
+      "node_modules/**",
+      ".eslintcache",
+      "test-results/**",
+      "storybook-static/**",
+    ],
+  },
+
   // Use shared JS config as base
   ...jsConfig,
 
@@ -185,16 +200,5 @@ export default [
         },
       ],
     },
-  },
-
-  // Global ignores
-  {
-    ignores: [
-      ...globalIgnores,
-      // Frontend-specific ignores
-      "dist/**",
-      "public/**",
-      "debug/**",
-    ],
   },
 ];
