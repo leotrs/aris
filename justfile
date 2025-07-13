@@ -10,9 +10,45 @@ default:
 # ====================
 
 # Start development containers (uses current directory name as project)
-dev:
+dev *args="":
     @echo "Starting development containers for $(basename $(pwd))..."
-    docker compose --env-file .env -p $(basename $(pwd)) -f docker/docker-compose.dev.yml up --build
+    @PROJECT_NAME=$(basename $(pwd)); \
+    BUILD_FLAG=""; \
+    FORCE_BUILD=false; \
+    for arg in {{args}}; do \
+        if [ "$arg" = "--build" ]; then \
+            FORCE_BUILD=true; \
+            break; \
+        fi; \
+    done; \
+    if [ "$FORCE_BUILD" = true ]; then \
+        echo "Force rebuild requested via --build flag"; \
+        BUILD_FLAG="--build"; \
+        touch ~/.docker_build_check; \
+    elif docker images | grep -q "$PROJECT_NAME-"; then \
+        DOCKERFILES_CHANGED=false; \
+        for dockerfile in docker/*/Dockerfile.dev; do \
+            if [ -f "$dockerfile" ] && [ "$dockerfile" -nt ~/.docker_build_check 2>/dev/null ]; then \
+                DOCKERFILES_CHANGED=true; \
+                break; \
+            fi; \
+        done; \
+        if [ docker/docker-compose.dev.yml -nt ~/.docker_build_check 2>/dev/null ]; then \
+            DOCKERFILES_CHANGED=true; \
+        fi; \
+        if [ "$DOCKERFILES_CHANGED" = true ]; then \
+            echo "Dockerfiles or compose file changed, rebuilding images..."; \
+            BUILD_FLAG="--build"; \
+            touch ~/.docker_build_check; \
+        else \
+            echo "Using existing images (no Dockerfile changes detected)"; \
+        fi; \
+    else \
+        echo "No existing images found, building from scratch..."; \
+        BUILD_FLAG="--build"; \
+        touch ~/.docker_build_check; \
+    fi; \
+    docker compose --env-file .env -p "$PROJECT_NAME" -f docker/docker-compose.dev.yml up $BUILD_FLAG
 
 # Stop development containers
 stop:

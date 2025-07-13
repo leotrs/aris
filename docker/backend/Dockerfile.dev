@@ -1,22 +1,35 @@
-FROM python:3.13-slim
+# Multi-stage build for backend service
+FROM python:3.13-slim AS base
 
-# Install PostgreSQL client for pg_isready
-RUN apt-get update && apt-get install -y postgresql-client && rm -rf /var/lib/apt/lists/*
+# Install system dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        postgresql-client \
+        && rm -rf /var/lib/apt/lists/* \
+        && apt-get clean
 
 # Install uv
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
 
 WORKDIR /app
 
-# Copy dependency files first for better caching
+# Copy dependency files first for optimal layer caching
 COPY backend/pyproject.toml backend/uv.lock ./
+
+# Install production dependencies with cache
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --frozen --no-dev
+
+# Development stage with all dependencies
+FROM base AS dev
 
 # Copy env-check script and .env file
 COPY docker/env-check.js ../docker/env-check.js
 COPY .env ../.env
 
-# Install dependencies
-RUN uv sync --all-groups --frozen --no-cache
+# Install all dependencies including dev dependencies with cache
+RUN --mount=type=cache,target=/root/.cache/uv \
+    uv sync --all-groups --frozen
 
 # Set up environment
 ENV PATH="/app/.venv/bin:$PATH"

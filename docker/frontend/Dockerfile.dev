@@ -1,16 +1,29 @@
-FROM node:20-slim
+# Multi-stage build for frontend services
+FROM node:20-alpine AS base
 
 WORKDIR /app
 
-# Copy package files first for better caching
+# Set npm configuration for better performance
+RUN npm config set fund false && \
+    npm config set audit false
+
+# Copy package files first for optimal layer caching
 COPY frontend/package*.json ./
+
+# Install dependencies with cache mount for faster builds
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --only=production
+
+# Development stage with dev dependencies
+FROM base AS dev
+
+# Install all dependencies including dev dependencies
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci
 
 # Copy env-check script and .env file
 COPY docker/env-check.js ../docker/env-check.js
 COPY .env ../.env
-
-# Install dependencies
-RUN npm ci
 
 # Expose ports for Vite dev server and Storybook
 EXPOSE 5173 6006
