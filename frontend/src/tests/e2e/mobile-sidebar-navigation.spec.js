@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, devices } from "@playwright/test";
 
 // @auth @auth-flows
 import { MobileHelpers } from "./utils/mobile-helpers.js";
@@ -6,10 +6,10 @@ import { MobileHelpers } from "./utils/mobile-helpers.js";
 test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
   let mobileHelpers;
 
-  const mobileViewports = [
-    { name: "iPhone SE", width: 375, height: 667 },
-    { name: "iPhone 12", width: 390, height: 844 },
-    { name: "Samsung Galaxy S21", width: 360, height: 800 },
+  const mobileDevices = [
+    { name: "iPhone SE", device: devices["iPhone SE"] },
+    { name: "iPhone 12", device: devices["iPhone 12"] },
+    { name: "Samsung Galaxy S21", device: devices["Galaxy S21"] },
   ];
 
   test.beforeEach(async ({ page }) => {
@@ -17,9 +17,12 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
   });
 
   test.describe("Mobile Drawer Functionality", () => {
-    mobileViewports.forEach((viewport) => {
-      test(`should show hamburger menu and drawer on ${viewport.name}`, async ({ page }) => {
-        await page.setViewportSize(viewport);
+    mobileDevices.forEach((mobileDevice) => {
+      test(`should show hamburger menu and drawer on ${mobileDevice.name}`, async ({ browser }) => {
+        const context = await browser.newContext(mobileDevice.device);
+        const page = await context.newPage();
+        mobileHelpers = new MobileHelpers(page);
+
         await page.goto("/");
         await page.waitForLoadState("domcontentloaded");
         await mobileHelpers.waitForMobileRendering();
@@ -46,10 +49,17 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         // Sidebar menu should be visible in drawer
         await mobileHelpers.expectToBeVisible(page.locator(".sb-wrapper.drawer-open .sb-menu"));
         await mobileHelpers.expectToBeVisible(page.locator(".sb-wrapper.drawer-open #logo"));
+
+        await context.close();
       });
 
-      test(`should close drawer when backdrop is tapped on ${viewport.name}`, async ({ page }) => {
-        await page.setViewportSize(viewport);
+      test(`should close drawer when backdrop is tapped on ${mobileDevice.name}`, async ({
+        browser,
+      }) => {
+        const context = await browser.newContext(mobileDevice.device);
+        const page = await context.newPage();
+        mobileHelpers = new MobileHelpers(page);
+
         await page.goto("/");
         await page.waitForLoadState("domcontentloaded");
 
@@ -69,12 +79,17 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         // Drawer should be closed
         await expect(page.locator(".sb-wrapper.drawer-open")).not.toBeVisible();
         await expect(page.locator(".mobile-backdrop")).not.toBeVisible();
+
+        await context.close();
       });
 
-      test(`should close drawer when navigation item is tapped on ${viewport.name}`, async ({
-        page,
+      test(`should close drawer when navigation item is tapped on ${mobileDevice.name}`, async ({
+        browser,
       }) => {
-        await page.setViewportSize(viewport);
+        const context = await browser.newContext(mobileDevice.device);
+        const page = await context.newPage();
+        mobileHelpers = new MobileHelpers(page);
+
         await page.goto("/");
         await page.waitForLoadState("domcontentloaded");
 
@@ -97,11 +112,16 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
 
         // Should be on settings page
         await expect(page).toHaveURL(/\/settings/);
+
+        await context.close();
       });
     });
 
-    test("should prevent body scroll when drawer is open", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
+    test("should prevent body scroll when drawer is open", async ({ browser }) => {
+      const context = await browser.newContext(devices["iPhone SE"]);
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+
       await page.goto("/");
       await page.waitForLoadState("domcontentloaded");
 
@@ -125,12 +145,17 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       // Body overflow should be restored
       const closedOverflow = await page.evaluate(() => document.body.style.overflow);
       expect(closedOverflow).toBe(initialOverflow);
+
+      await context.close();
     });
   });
 
   test.describe("Mobile Navigation UX - Home View", () => {
-    test("should provide mobile navigation on home page", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
+    test("should provide mobile navigation on home page", async ({ browser }) => {
+      const context = await browser.newContext(devices["iPhone SE"]);
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+
       await page.goto("/");
       await page.waitForLoadState("domcontentloaded");
 
@@ -151,6 +176,8 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
 
       // Should show new file button/menu
       await mobileHelpers.expectToBeVisible(page.locator('[data-testid="create-file-button"]'));
+
+      await context.close();
     });
 
     // TEMPORARILY DISABLED: Failing due to navigation load event timeout
@@ -180,8 +207,11 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       await expect(page).toHaveURL("/account/profile");
     });
 
-    test("should navigate from home to settings via mobile drawer", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
+    test("should navigate from home to settings via mobile drawer", async ({ browser }) => {
+      const context = await browser.newContext(devices["iPhone SE"]);
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+
       await page.goto("/");
       await page.waitForLoadState("load");
       await mobileHelpers.waitForVueComponentMount();
@@ -198,12 +228,17 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
 
       await mobileHelpers.waitForURLPattern(/\/settings/);
       await expect(page).toHaveURL(/\/settings/);
+
+      await context.close();
     });
   });
 
   test.describe("Mobile Navigation UX - Account View", () => {
-    test("should provide mobile navigation on account page", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
+    test("should provide mobile navigation on account page", async ({ browser }) => {
+      const context = await browser.newContext(devices["iPhone SE"]);
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+
       await page.goto("/account");
       await page.waitForLoadState("domcontentloaded");
 
@@ -222,6 +257,8 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       // Neither should be marked as active when on account page
       await expect(homeItem).not.toHaveClass(/active/);
       await expect(settingsItem).not.toHaveClass(/active/);
+
+      await context.close();
     });
 
     // TEMPORARILY DISABLED: Failing due to navigation load event timeout
@@ -249,8 +286,11 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
   });
 
   test.describe("Mobile Navigation UX - Settings View", () => {
-    test("should provide mobile navigation on settings page", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
+    test("should provide mobile navigation on settings page", async ({ browser }) => {
+      const context = await browser.newContext(devices["iPhone SE"]);
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+
       await page.goto("/settings");
       await page.waitForLoadState("domcontentloaded");
 
@@ -274,10 +314,15 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="File Display"]'));
       await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Behavior"]'));
       await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Notifications"]'));
+
+      await context.close();
     });
 
-    test("should navigate between settings sub-sections via mobile drawer", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
+    test("should navigate between settings sub-sections via mobile drawer", async ({ browser }) => {
+      const context = await browser.newContext(devices["iPhone SE"]);
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+
       await page.goto("/settings");
       await page.waitForLoadState("domcontentloaded");
 
@@ -299,6 +344,8 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
 
       await mobileHelpers.waitForURLPattern(/\/settings\/notifications/);
       await expect(page).toHaveURL("/settings/notifications");
+
+      await context.close();
     });
 
     // TEMPORARILY DISABLED: Failing due to navigation load event timeout
@@ -324,8 +371,11 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
   });
 
   test.describe("Mobile Animation and UX Polish", () => {
-    test("should animate drawer open/close transitions", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
+    test("should animate drawer open/close transitions", async ({ browser }) => {
+      const context = await browser.newContext(devices["iPhone SE"]);
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+
       await page.goto("/");
       await page.waitForLoadState("domcontentloaded");
 
@@ -344,6 +394,8 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         getComputedStyle(el).getPropertyValue("transition-duration")
       );
       expect(transitionDuration).not.toBe("0s");
+
+      await context.close();
     });
 
     // TEMPORARILY DISABLED: Failing due to missing mobile-menu-button element
@@ -379,8 +431,11 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
   });
 
   test.describe("Desktop Mode Verification", () => {
-    test("should not show mobile elements on desktop", async ({ page }) => {
-      await page.setViewportSize({ width: 1024, height: 768 });
+    test("should not show mobile elements on desktop", async ({ browser }) => {
+      const context = await browser.newContext(devices["Desktop Chrome"]);
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+
       await page.goto("/");
       await page.waitForLoadState("domcontentloaded");
 
@@ -393,6 +448,8 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
 
       // Should not have mobile classes
       await expect(page.locator(".sb-wrapper.mobile")).not.toBeVisible();
+
+      await context.close();
     });
   });
 });

@@ -188,6 +188,12 @@
   const mobileMode = computed(() => breakpoints.smallerOrEqual("sm").value);
   provide("mobileMode", mobileMode);
 
+  // Expose for debugging in E2E tests
+  if (typeof window !== "undefined") {
+    window.mobileMode = mobileMode;
+    window.breakpoints = breakpoints;
+  }
+
   // Must create these here as they will be populated by the login view but need to be
   // available to other views.
   const user = ref(null);
