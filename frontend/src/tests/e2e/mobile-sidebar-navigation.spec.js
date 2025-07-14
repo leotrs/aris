@@ -2,6 +2,7 @@ import { test, expect, devices } from "@playwright/test";
 
 // @auth @auth-flows
 import { MobileHelpers } from "./utils/mobile-helpers.js";
+import { AuthHelpers } from "./utils/auth-helpers.js";
 
 test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
   let mobileHelpers;
@@ -9,7 +10,7 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
   const mobileDevices = [
     { name: "iPhone SE", device: devices["iPhone SE"] },
     { name: "iPhone 12", device: devices["iPhone 12"] },
-    { name: "Samsung Galaxy S21", device: devices["Galaxy S21"] },
+    { name: "Samsung Galaxy S24", device: devices["Galaxy S24"] },
   ];
 
   test.beforeEach(async ({ page }) => {
@@ -22,10 +23,25 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         const context = await browser.newContext(mobileDevice.device);
         const page = await context.newPage();
         mobileHelpers = new MobileHelpers(page);
+        const auth = new AuthHelpers(page);
+
+        // Authenticate first
+        await auth.fastAuth();
 
         await page.goto("/");
         await page.waitForLoadState("domcontentloaded");
         await mobileHelpers.waitForMobileRendering();
+
+        // Debug mobile detection
+        const debugInfo = await page.evaluate(() => {
+          return {
+            viewportWidth: window.innerWidth,
+            mobileMode: window.mobileMode?.value,
+            breakpoints: window.debugMobileDetection?.(),
+            bodyOverflow: document.body.style.overflow,
+          };
+        });
+        console.log(`[DEBUG ${mobileDevice.name}] Mobile detection:`, debugInfo);
 
         // Hamburger menu should be visible
         const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -59,6 +75,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         const context = await browser.newContext(mobileDevice.device);
         const page = await context.newPage();
         mobileHelpers = new MobileHelpers(page);
+        const auth = new AuthHelpers(page);
+
+        // Authenticate first
+        await auth.fastAuth();
 
         await page.goto("/");
         await page.waitForLoadState("domcontentloaded");
@@ -89,6 +109,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         const context = await browser.newContext(mobileDevice.device);
         const page = await context.newPage();
         mobileHelpers = new MobileHelpers(page);
+        const auth = new AuthHelpers(page);
+
+        // Authenticate first
+        await auth.fastAuth();
 
         await page.goto("/");
         await page.waitForLoadState("domcontentloaded");
@@ -121,6 +145,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const context = await browser.newContext(devices["iPhone SE"]);
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
 
       await page.goto("/");
       await page.waitForLoadState("domcontentloaded");
@@ -155,6 +183,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const context = await browser.newContext(devices["iPhone SE"]);
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
 
       await page.goto("/");
       await page.waitForLoadState("domcontentloaded");
@@ -211,6 +243,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const context = await browser.newContext(devices["iPhone SE"]);
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
 
       await page.goto("/");
       await page.waitForLoadState("load");
@@ -238,6 +274,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const context = await browser.newContext(devices["iPhone SE"]);
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
 
       await page.goto("/account");
       await page.waitForLoadState("domcontentloaded");
@@ -290,6 +330,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const context = await browser.newContext(devices["iPhone SE"]);
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
 
       await page.goto("/settings");
       await page.waitForLoadState("domcontentloaded");
@@ -322,6 +366,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const context = await browser.newContext(devices["iPhone SE"]);
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
 
       await page.goto("/settings");
       await page.waitForLoadState("domcontentloaded");
@@ -375,6 +423,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const context = await browser.newContext(devices["iPhone SE"]);
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
 
       await page.goto("/");
       await page.waitForLoadState("domcontentloaded");
@@ -435,6 +487,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const context = await browser.newContext(devices["Desktop Chrome"]);
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
 
       await page.goto("/");
       await page.waitForLoadState("domcontentloaded");

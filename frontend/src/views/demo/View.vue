@@ -1,5 +1,5 @@
 <script setup>
-  import { ref, reactive, computed, provide, onMounted } from "vue";
+  import { ref, reactive, computed, provide, onMounted, inject } from "vue";
   import { useRoute } from "vue-router";
   import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
@@ -20,9 +20,8 @@
   const xsMode = computed(() => breakpoints.smallerOrEqual("xs").value);
   provide("xsMode", xsMode);
 
-  // Simple viewport-based mobile detection
-  const mobileMode = computed(() => breakpoints.smallerOrEqual("sm").value);
-  provide("mobileMode", mobileMode);
+  // Use injected mobileMode from App.vue (single source of truth)
+  const mobileMode = inject("mobileMode");
 
   // Demo user and file store
   const user = ref(demoUser);
