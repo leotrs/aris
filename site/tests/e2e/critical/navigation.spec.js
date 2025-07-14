@@ -16,56 +16,47 @@ test.describe("Navigation Flow E2E", () => {
     if (isMobile) {
       // Mobile navigation: use mobile menu
       await page.click('[data-testid="menu-toggle"]');
-      await page.waitForTimeout(300);
       await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
       // Navigate to signup via mobile menu
       await page.click('.mobile-nav-link[href="/signup"]');
-      await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL("/signup");
+      await page.waitForURL("/signup");
       await expect(page.locator("h1")).toContainText("Sign Up");
 
       // Use direct navigation for other pages since they may not be in mobile menu
       await page.goto("/terms");
-      await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL("/terms");
+      await page.waitForURL("/terms");
       await expect(page.locator("h1")).toContainText("Terms");
 
       await page.goto("/cookies");
-      await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL("/cookies");
+      await page.waitForURL("/cookies");
       await expect(page.locator("h1")).toContainText("Cookie");
 
       // Navigate back to home via logo
       await page.click('a[href="/"]');
-      await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL("/");
+      await page.waitForURL("/");
       await expect(page.locator("h1")).toContainText(
         "The Collaborative Preprint Server for Modern Research"
       );
     } else {
       // Desktop navigation: use visible nav links from navbar-utility-links
       await page.click('.navbar-utility-links a[href="/signup"]');
-      await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL("/signup");
+      await page.waitForURL("/signup");
       await expect(page.locator("h1")).toContainText("Sign Up");
 
       // Navigate to terms page
       await page.click('a[href="/terms"]');
-      await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL("/terms");
+      await page.waitForURL("/terms");
       await expect(page.locator("h1")).toContainText("Terms");
 
       // Navigate to cookies page
       await page.click('a[href="/cookies"]');
-      await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL("/cookies");
+      await page.waitForURL("/cookies");
       await expect(page.locator("h1")).toContainText("Cookie");
 
       // Navigate back to home via logo
       await page.click('a[href="/"]');
-      await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL("/");
+      await page.waitForURL("/");
       await expect(page.locator("h1")).toContainText(
         "The Collaborative Preprint Server for Modern Research"
       );
@@ -82,7 +73,6 @@ test.describe("Navigation Flow E2E", () => {
     if (isMobile) {
       // Mobile: Open mobile menu first
       await page.click('[data-testid="menu-toggle"]');
-      await page.waitForTimeout(300);
       await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
       // Test mobile navbar links (direct links only)
@@ -97,7 +87,6 @@ test.describe("Navigation Flow E2E", () => {
 
       // Test Platform dropdown contains about/ai-copilot
       await page.locator('[data-testid="mobile-platform-toggle"]').click();
-      await page.waitForTimeout(300);
       const aboutLink = page.locator('[data-testid="mobile-platform-dropdown"] a[href="/about"]');
       const aiCopilotLink = page.locator(
         '[data-testid="mobile-platform-dropdown"] a[href="/ai-copilot"]'
@@ -111,7 +100,6 @@ test.describe("Navigation Flow E2E", () => {
 
       // Test Platform dropdown
       await page.hover('[data-testid="platform-dropdown"]');
-      await page.waitForTimeout(300);
 
       const aboutLink = page.locator('nav a[href="/about"]').first();
       const aiCopilotLink = page.locator('nav a[href="/ai-copilot"]').first();
@@ -126,7 +114,6 @@ test.describe("Navigation Flow E2E", () => {
     if (isMobile) {
       // Mobile: Test mobile dropdown (click Resources dropdown)
       await page.locator('[data-testid="mobile-resources-toggle"]').click();
-      await page.waitForTimeout(300);
       await expect(page.locator('[data-testid="mobile-resources-dropdown"]')).toBeVisible();
 
       const docLink = page.locator(
@@ -150,7 +137,7 @@ test.describe("Navigation Flow E2E", () => {
     } else {
       // Desktop: Test Resources dropdown (hover second dropdown)
       await page.hover('[data-testid="resources-dropdown"]'); // Resources dropdown
-      await page.waitForTimeout(300); // Wait for hover animation
+      // Wait for hover animation
       await expect(page.locator('[data-testid="resources-dropdown-menu"]')).toBeVisible(); // Resources dropdown menu
 
       const docLink = page.locator('nav a[href="/documentation"]').first();
@@ -184,14 +171,14 @@ test.describe("Navigation Flow E2E", () => {
     // Set mobile viewport
     await page.setViewportSize({ width: 375, height: 667 });
     await page.goto("/");
-    await page.waitForLoadState("networkidle");
+    await expect(page.locator("h1")).toBeVisible();
 
     // Mobile menu should be hidden initially
     await expect(page.locator('[data-testid="mobile-menu-overlay"]')).not.toBeVisible();
 
     // Click hamburger menu
     await page.click('[data-testid="menu-toggle"]');
-    await page.waitForTimeout(300); // Wait for mobile menu animation
+    // Wait for mobile menu animation
     await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
     // Verify mobile navigation links (about/ai-copilot are in Platform dropdown, pricing is direct)
@@ -201,13 +188,13 @@ test.describe("Navigation Flow E2E", () => {
 
     // Test mobile resources dropdown
     await page.locator('[data-testid="mobile-resources-toggle"]').click();
-    await page.waitForTimeout(300); // Wait for dropdown animation
+    // Wait for dropdown animation
     await expect(page.locator('[data-testid="mobile-resources-dropdown"]')).toBeVisible();
 
     // Test navigation to signup from mobile menu
     await page.click('.mobile-nav-link[href="/signup"]');
-    await page.waitForLoadState("networkidle");
-    await expect(page).toHaveURL("/signup");
+    await page.waitForURL("/signup");
+    await expect(page.locator("h1")).toContainText("Sign Up");
 
     // Mobile menu should close after navigation
     await expect(page.locator('[data-testid="mobile-menu-overlay"]')).not.toBeVisible();
@@ -295,7 +282,7 @@ test.describe("Navigation Flow E2E", () => {
     if (isMobile) {
       // Mobile navigation: use mobile menu
       await page.click('[data-testid="menu-toggle"]');
-      await page.waitForTimeout(300);
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
       await page.click('.mobile-nav-link[href="/signup"]');
     } else {
       // Desktop navigation: use regular nav links
@@ -309,16 +296,22 @@ test.describe("Navigation Flow E2E", () => {
 
     // Use browser back button
     await page.goBack();
-    await expect(page).toHaveURL("/signup");
+    await page.waitForURL("/signup");
+    await expect(page.locator("h1")).toContainText("Sign Up");
 
     // Use browser forward button
     await page.goForward();
-    await expect(page).toHaveURL("/terms");
+    await page.waitForURL("/terms");
+    await expect(page.locator("h1")).toContainText("Terms");
 
     // Go back to home
     await page.goBack();
+    await page.waitForURL("/signup");
     await page.goBack();
-    await expect(page).toHaveURL("/");
+    await page.waitForURL("/");
+    await expect(page.locator("h1")).toContainText(
+      "The Collaborative Preprint Server for Modern Research"
+    );
   });
 
   test("should handle invalid routes gracefully", async ({ page }) => {
@@ -347,7 +340,7 @@ test.describe("Navigation Flow E2E", () => {
     if (isMobile) {
       // Mobile navigation: use mobile menu
       await page.click('[data-testid="menu-toggle"]');
-      await page.waitForTimeout(300);
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
       await page.click('.mobile-nav-link[href="/signup"]');
     } else {
       // Desktop navigation: use regular nav links
@@ -357,7 +350,10 @@ test.describe("Navigation Flow E2E", () => {
     await expect(page).toHaveURL("/signup");
 
     await page.goBack();
-    await expect(page).toHaveURL("/");
+    await page.waitForURL("/");
+    await expect(page.locator("h1")).toContainText(
+      "The Collaborative Preprint Server for Modern Research"
+    );
 
     // Verify we're back on the home page (don't check scroll position as browser behavior varies)
     await expect(page.locator(".hero-section")).toBeVisible();

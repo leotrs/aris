@@ -38,7 +38,6 @@ test.describe("Signup Flow E2E", () => {
     await page.click('button[type="submit"]');
 
     // Wait for API call to complete and verify success message appears
-    await page.waitForTimeout(1000);
     await expect(
       page.locator(
         "text=Successfully signed up for early access! We'll notify you when Aris is ready."
@@ -64,7 +63,6 @@ test.describe("Signup Flow E2E", () => {
     await page.click('button[type="submit"]');
 
     // Wait for error processing and verify network error message appears
-    await page.waitForTimeout(1000);
     await expect(
       page.locator(
         "text=Unable to connect to server. Please check your internet connection and try again."
