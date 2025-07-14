@@ -339,9 +339,33 @@ test.describe("User Journey: Marketing Site to Demo", () => {
     });
 
     test("demo content renders within reasonable time", async ({ page }) => {
+      console.log('[DEBUG-CI] Starting demo content render time test');
+      console.log('[DEBUG-CI] Browser info:', await page.evaluate(() => navigator.userAgent));
+      
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
+      console.log('[DEBUG-CI] URL after navigation:', page.url());
 
       const startTime = Date.now();
+      console.log('[DEBUG-CI] Starting timer for manuscript-viewer visibility');
+
+      // Check if element exists before waiting for visibility
+      const elementsCount = await page.locator('[data-testid="manuscript-viewer"]').count();
+      console.log('[DEBUG-CI] manuscript-viewer element count:', elementsCount);
+
+      if (elementsCount === 0) {
+        console.log('[DEBUG-CI] No manuscript-viewer found, checking all data-testid elements');
+        const allTestIds = await page.evaluate(() => {
+          const elements = Array.from(document.querySelectorAll('[data-testid]'));
+          return elements.map(el => el.getAttribute('data-testid'));
+        });
+        console.log('[DEBUG-CI] All data-testid elements:', allTestIds);
+        
+        console.log('[DEBUG-CI] Checking page source for clues');
+        const pageContent = await page.content();
+        console.log('[DEBUG-CI] Page title:', await page.title());
+        console.log('[DEBUG-CI] Page content includes "manuscript":', pageContent.includes('manuscript'));
+        console.log('[DEBUG-CI] Page content includes "demo":', pageContent.includes('demo'));
+      }
 
       // Wait for manuscript content to be fully loaded
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
@@ -349,14 +373,17 @@ test.describe("User Journey: Marketing Site to Demo", () => {
       });
 
       const renderTime = Date.now() - startTime;
-      console.log(`Demo content render time: ${renderTime}ms`);
+      console.log(`[DEBUG-CI] Demo content render time: ${renderTime}ms`);
 
       // Content should render within 15 seconds
       expect(renderTime).toBeLessThan(15000);
 
       // Verify content is substantial
       const manuscriptText = await page.locator('[data-testid="manuscript-viewer"]').textContent();
+      console.log('[DEBUG-CI] Manuscript text length:', manuscriptText.length);
+      console.log('[DEBUG-CI] Manuscript text preview:', manuscriptText.substring(0, 100));
       expect(manuscriptText.length).toBeGreaterThan(500);
+      console.log('[DEBUG-CI] Demo content render test completed successfully');
     });
   });
 });

@@ -7,21 +7,35 @@ export class AuthHelpers {
   }
 
   async login(email, password) {
+    console.log('[DEBUG-CI] AuthHelpers.login() called with email:', email);
+    
     await this.page.goto("/login");
+    console.log('[DEBUG-CI] Navigated to login page, URL:', this.page.url());
+    
     await this.page.fill('[data-testid="email-input"]', email);
+    console.log('[DEBUG-CI] Filled email input');
+    
     await this.page.fill('[data-testid="password-input"]', password);
+    console.log('[DEBUG-CI] Filled password input');
 
     // Click login button and wait for response
+    console.log('[DEBUG-CI] About to click login button and wait for response');
     await Promise.all([
       this.page.waitForResponse(
-        (response) => response.url().includes("/login") && response.request().method() === "POST",
+        (response) => {
+          const isLoginResponse = response.url().includes("/login") && response.request().method() === "POST";
+          console.log('[DEBUG-CI] Response received:', response.url(), response.status(), 'is login response:', isLoginResponse);
+          return isLoginResponse;
+        },
         { timeout: 10000 }
       ),
       this.page.click('[data-testid="login-button"]'),
     ]);
 
+    console.log('[DEBUG-CI] Login response received, waiting for network idle');
     // Wait for the login response to complete
     await this.page.waitForLoadState("networkidle");
+    console.log('[DEBUG-CI] Login completed, final URL:', this.page.url());
   }
 
   async ensureLoggedIn() {
@@ -109,13 +123,35 @@ export class AuthHelpers {
   }
 
   async getStoredTokens() {
+    console.log('[DEBUG-CI] Getting stored tokens from localStorage');
     try {
-      return await this.page.evaluate(() => ({
-        accessToken: localStorage.getItem("accessToken"),
-        refreshToken: localStorage.getItem("refreshToken"),
-        user: JSON.parse(localStorage.getItem("user") || "null"),
-      }));
-    } catch {
+      const tokens = await this.page.evaluate(() => {
+        const accessToken = localStorage.getItem("accessToken");
+        const refreshToken = localStorage.getItem("refreshToken");
+        const userStr = localStorage.getItem("user");
+        
+        console.log('[DEBUG-CI] localStorage contents:');
+        console.log('[DEBUG-CI] - accessToken length:', accessToken?.length || 0);
+        console.log('[DEBUG-CI] - refreshToken length:', refreshToken?.length || 0);
+        console.log('[DEBUG-CI] - user data:', userStr);
+        
+        return {
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+          user: JSON.parse(userStr || "null"),
+        };
+      });
+      
+      console.log('[DEBUG-CI] Tokens retrieved:', {
+        hasAccessToken: !!tokens.accessToken,
+        hasRefreshToken: !!tokens.refreshToken,
+        hasUser: !!tokens.user,
+        userEmail: tokens.user?.email
+      });
+      
+      return tokens;
+    } catch (error) {
+      console.log('[DEBUG-CI] Error getting stored tokens:', error.message);
       return { accessToken: null, refreshToken: null, user: null };
     }
   }
