@@ -13,7 +13,12 @@ Gather CI data for GitHub PR and analyze failure patterns.
 
 !./scripts/get-ci-data.sh "$ARGUMENTS"
 
-Please analyze this CI run data and provide a comprehensive report. Examine ALL log content thoroughly - read every error, stack trace, and failure message. Provide detailed analysis in this format:
+Please analyze this CI run data and provide a comprehensive report. The data includes:
+
+1. **STRUCTURED JOB DATA** - Overview of all jobs with success/failure status
+2. **LOG_ANALYSIS_JSON** - Detailed analysis of failed job logs with categorized patterns
+
+Parse the JSON structure and provide this analysis:
 
 ## CI Run Analysis for PR #XX: <PR title>
 
@@ -33,7 +38,7 @@ For EACH failed job, provide:
 
 **Root Cause**: <Deep analysis of the actual underlying issue>
 
-**Error Details**: 
+**Error Details**:
 - Key error messages found in logs
 - Stack traces (if any)
 - Specific test failures
