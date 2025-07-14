@@ -16,10 +16,10 @@ services:
       - ../design-assets:/app/design-assets
       - backend_venv:/app/.venv
     environment:
-      - DATABASE_URL=postgresql://aris:aris@postgres:5432/${DB_NAME}
-      - TEST_DB_URL=postgresql://aris:aris@postgres:5432/${TEST_DB_NAME}
-      - ALEMBIC_DB_URL_LOCAL=postgresql://aris:aris@postgres:5432/${DB_NAME}
-      - DB_URL_LOCAL=postgresql+asyncpg://aris:aris@postgres:5432/${DB_NAME}
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/${DB_NAME}
+      - TEST_DB_URL=postgresql://postgres:postgres@postgres:5432/${TEST_DB_NAME}
+      - ALEMBIC_DB_URL_LOCAL=postgresql://postgres:postgres@postgres:5432/${DB_NAME}
+      - DB_URL_LOCAL=postgresql+asyncpg://postgres:postgres@postgres:5432/${DB_NAME}
       - ENV=LOCAL
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - COPILOT_PROVIDER=${COPILOT_PROVIDER}
@@ -80,14 +80,15 @@ services:
     ports:
       - "${DB_PORT}:5432"
     environment:
-      - POSTGRES_USER=aris
-      - POSTGRES_PASSWORD=aris
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=${DB_NAME}
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      - ./backend/init_test_db.sql:/docker-entrypoint-initdb.d/init_test_db.sql
+      - ./backend/create_postgres_user.sql:/docker-entrypoint-initdb.d/01_create_postgres_user.sql
+      - ./backend/init_test_db.sql:/docker-entrypoint-initdb.d/02_init_test_db.sql
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U aris"]
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
