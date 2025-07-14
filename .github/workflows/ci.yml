@@ -262,7 +262,13 @@ jobs:
     - name: Install Playwright browsers
       working-directory: site
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install ${{ matrix.browser }} --with-deps
+      run: |
+        npx playwright install ${{ matrix.browser }} --with-deps
+        # Install additional WebKit dependencies for Ubuntu
+        if [ "${{ matrix.browser }}" = "webkit" ]; then
+          sudo apt-get update
+          sudo apt-get install -y libwoff2-1.0.2 libwoff2-dev
+        fi
 
     - name: Start backend, frontend, site, and run E2E tests
       run: |

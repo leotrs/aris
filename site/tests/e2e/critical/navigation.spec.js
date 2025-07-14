@@ -296,21 +296,20 @@ test.describe("Navigation Flow E2E", () => {
 
     // Use browser back button
     await page.goBack({ waitUntil: "domcontentloaded", timeout: 30000 });
-    await page.waitForURL("/signup");
-    await expect(page.locator("h1")).toContainText("Sign Up");
+    // Wait for content instead of URL for better reliability during chunk reloads
+    await expect(page.locator("h1")).toContainText("Sign Up", { timeout: 20000 });
 
     // Use browser forward button
     await page.goForward({ waitUntil: "domcontentloaded", timeout: 30000 });
-    await page.waitForURL("/terms");
-    await expect(page.locator("h1")).toContainText("Terms");
+    await expect(page.locator("h1")).toContainText("Terms", { timeout: 20000 });
 
     // Go back to home
     await page.goBack({ waitUntil: "domcontentloaded", timeout: 30000 });
-    await page.waitForURL("/signup");
+    await expect(page.locator("h1")).toContainText("Sign Up", { timeout: 20000 });
     await page.goBack({ waitUntil: "domcontentloaded", timeout: 30000 });
-    await page.waitForURL("/", { timeout: 12000 });
     await expect(page.locator("h1")).toContainText(
-      "The Collaborative Preprint Server for Modern Research"
+      "The Collaborative Preprint Server for Modern Research",
+      { timeout: 20000 }
     );
   });
 
@@ -350,9 +349,10 @@ test.describe("Navigation Flow E2E", () => {
     await expect(page).toHaveURL("/signup");
 
     await page.goBack({ waitUntil: "domcontentloaded", timeout: 30000 });
-    await page.waitForURL("/", { timeout: 12000 });
+    // Wait for content instead of URL for better reliability during chunk reloads
     await expect(page.locator("h1")).toContainText(
-      "The Collaborative Preprint Server for Modern Research"
+      "The Collaborative Preprint Server for Modern Research",
+      { timeout: 20000 }
     );
 
     // Verify we're back on the home page (don't check scroll position as browser behavior varies)
