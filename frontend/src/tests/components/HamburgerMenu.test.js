@@ -5,19 +5,16 @@ import HamburgerMenu from "@/components/HamburgerMenu.vue";
 
 describe("HamburgerMenu", () => {
   let wrapper;
-  let mockMobileMode;
   let mockMobileDrawerOpen;
 
   beforeEach(() => {
     vi.clearAllMocks();
 
-    mockMobileMode = ref(true);
     mockMobileDrawerOpen = ref(false);
 
     wrapper = mount(HamburgerMenu, {
       global: {
         provide: {
-          mobileMode: mockMobileMode,
           mobileDrawerOpen: mockMobileDrawerOpen,
         },
         components: {
@@ -32,15 +29,8 @@ describe("HamburgerMenu", () => {
   });
 
   describe("Component Rendering", () => {
-    it("renders hamburger button in mobile mode", () => {
+    it("always renders hamburger button when component is mounted", () => {
       expect(wrapper.find('[data-testid="mobile-menu-button"]').exists()).toBe(true);
-    });
-
-    it("does not render when not in mobile mode", async () => {
-      mockMobileMode.value = false;
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.find('[data-testid="mobile-menu-button"]').exists()).toBe(false);
     });
 
     it("shows Menu icon when drawer is closed", () => {
@@ -94,15 +84,8 @@ describe("HamburgerMenu", () => {
   });
 
   describe("Responsive Design", () => {
-    it("applies correct CSS classes for mobile", () => {
+    it("applies correct CSS classes", () => {
       expect(wrapper.find(".mobile-nav").exists()).toBe(true);
-    });
-
-    it("does not render in desktop mode", async () => {
-      mockMobileMode.value = false;
-      await wrapper.vm.$nextTick();
-
-      expect(wrapper.find(".mobile-nav").exists()).toBe(false);
     });
   });
 });
