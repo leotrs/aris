@@ -177,7 +177,7 @@ jobs:
       matrix:
         browser: [chromium, firefox, webkit]
         device: [desktop, mobile]
-    runs-on: ${{ matrix.browser == 'webkit' && 'macos-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     env:
       ENV: CI
       BACKEND_PORT: 8000
@@ -212,21 +212,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - name: Install Docker (macOS only)
-      if: runner.os == 'macOS'
-      run: |
-        # Install Docker using Homebrew
-        brew install --cask docker
-        
-        # Start Docker manually
-        open -a Docker
-        
-        # Wait for Docker to be ready
-        echo "Waiting for Docker to start..."
-        while ! docker info >/dev/null 2>&1; do
-          sleep 5
-        done
-        echo "Docker is ready!"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -271,20 +256,13 @@ jobs:
       uses: actions/cache@v4
       id: playwright-cache
       with:
-        path: ${{ matrix.browser == 'webkit' && '~/Library/Caches/ms-playwright' || '~/.cache/ms-playwright' }}
-        key: playwright-browsers-${{ runner.os }}-site-${{ matrix.browser }}-${{ matrix.device }}
+        path: ~/.cache/ms-playwright
+        key: playwright-browsers-site-${{ matrix.browser }}-${{ matrix.device }}
 
     - name: Install Playwright browsers
       working-directory: site
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: |
-        if [ "${{ matrix.browser }}" = "webkit" ]; then
-          npx playwright install webkit
-        elif [ "${{ matrix.browser }}" = "firefox" ]; then
-          npx playwright install firefox --with-deps
-        else
-          npx playwright install chromium --with-deps
-        fi
+      run: npx playwright install ${{ matrix.browser }} --with-deps
 
     - name: Start backend, frontend, site, and run E2E tests
       run: |
