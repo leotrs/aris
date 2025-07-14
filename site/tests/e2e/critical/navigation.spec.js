@@ -295,19 +295,19 @@ test.describe("Navigation Flow E2E", () => {
     await expect(page).toHaveURL("/terms");
 
     // Use browser back button
-    await page.goBack();
+    await page.goBack({ waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForURL("/signup");
     await expect(page.locator("h1")).toContainText("Sign Up");
 
     // Use browser forward button
-    await page.goForward();
+    await page.goForward({ waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForURL("/terms");
     await expect(page.locator("h1")).toContainText("Terms");
 
     // Go back to home
-    await page.goBack();
+    await page.goBack({ waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForURL("/signup");
-    await page.goBack();
+    await page.goBack({ waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForURL("/");
     await expect(page.locator("h1")).toContainText(
       "The Collaborative Preprint Server for Modern Research"
@@ -349,7 +349,7 @@ test.describe("Navigation Flow E2E", () => {
 
     await expect(page).toHaveURL("/signup");
 
-    await page.goBack();
+    await page.goBack({ waitUntil: "domcontentloaded", timeout: 30000 });
     await page.waitForURL("/");
     await expect(page.locator("h1")).toContainText(
       "The Collaborative Preprint Server for Modern Research"
