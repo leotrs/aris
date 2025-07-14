@@ -13,7 +13,7 @@ Gather CI data for GitHub PR and analyze failure patterns.
 
 !./scripts/get-ci-data.sh "$ARGUMENTS"
 
-Please analyze this CI run data and provide a report in this exact format:
+Please analyze this CI run data and provide a comprehensive report. Examine ALL log content thoroughly - read every error, stack trace, and failure message. Provide detailed analysis in this format:
 
 ## CI Run Analysis for PR #XX: <PR title>
 
@@ -24,15 +24,58 @@ Please analyze this CI run data and provide a report in this exact format:
 - Failed Jobs: Y
 - Successful Jobs: Z
 
-### Failure Pattern Analysis
-<Analyze the failure logs and job names to identify patterns like:>
-- Are unit tests failing? E2E tests? Site tests?
-- Desktop vs mobile issues?
-- Browser-specific failures?
-- Common error types across failures?
-- Any dominant error pattern?
+### Detailed Failure Analysis
 
-### Recommended Actions
-<Provide 2-3 actionable next steps based on the failure analysis>
+For EACH failed job, provide:
+
+#### Job: <job_name>
+**Error Summary**: <1-2 sentence summary of what failed>
+
+**Root Cause**: <Deep analysis of the actual underlying issue>
+
+**Error Details**: 
+- Key error messages found in logs
+- Stack traces (if any)
+- Specific test failures
+- File/line numbers where relevant
+- Any environment or dependency issues
+
+**Error Patterns**: <Note if this error is related to others>
+
+### Cross-Job Pattern Analysis
+- **Test Categories Affected**: (unit tests, E2E tests, site tests, linting, etc.)
+- **Browser/Platform Issues**: (Chrome vs Firefox, desktop vs mobile, etc.)
+- **Common Error Types**: (timeout, assertion failure, network, dependency, etc.)
+- **Failure Correlation**: (Are failures related? Same root cause?)
+- **Infrastructure Issues**: (Docker, network, CI environment problems)
+
+### Comprehensive Diagnosis
+**Primary Issues** (rank by severity and impact):
+1. <Most critical issue with detailed explanation>
+2. <Second most critical issue>
+3. <Additional issues>
+
+**Secondary Issues** (less critical but should be addressed):
+- <List secondary problems>
+
+### Actionable Remediation Plan
+**Immediate Actions** (fix these first):
+1. <Specific action with exact steps or files to modify>
+2. <Next specific action>
+
+**Follow-up Actions** (after immediate fixes):
+1. <Additional improvements or preventive measures>
+2. <Long-term stability improvements>
+
+**Prevention Strategies**:
+- <How to prevent these issues in the future>
+- <Suggested improvements to CI/testing setup>
+
+### Code Investigation Required
+- **Files to examine**: <List specific files mentioned in errors>
+- **Functions/methods to review**: <Specific code locations>
+- **Dependencies to check**: <Package versions, installations>
+
+Analyze the logs with extreme thoroughness - every error message, every stack trace, every failure detail matters for accurate diagnosis.
 
 $ARGUMENTS
