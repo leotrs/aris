@@ -56,7 +56,13 @@ test.describe("Login Flow Tests @auth-flows", () => {
   });
 
   test("invalid credentials - display appropriate error message", async ({ page }) => {
-    await authHelpers.login(TEST_CREDENTIALS.valid.email, "wrongpassword");
+    await page.goto("/login");
+    await authHelpers.expectToBeOnLoginPage();
+
+    // Fill in invalid credentials
+    await page.fill('[data-testid="email-input"]', TEST_CREDENTIALS.valid.email);
+    await page.fill('[data-testid="password-input"]', "wrongpassword");
+    await page.click('[data-testid="login-button"]');
 
     // Verify error message is displayed
     await expect(page.locator('[data-testid="login-error"]')).toBeVisible();
@@ -75,17 +81,33 @@ test.describe("Login Flow Tests @auth-flows", () => {
     await page.goto("/login");
     await authHelpers.expectToBeOnLoginPage();
 
-    // Verify that clicking login with empty fields uses browser validation
-    // Browser should prevent form submission and show native validation messages
+    // Clear any auto-filled dev credentials
+    await page.fill('[data-testid="email-input"]', "");
+    await page.fill('[data-testid="password-input"]', "");
+
+    // Try to submit with empty fields
     await page.click('[data-testid="login-button"]');
 
-    // Verify we're still on login page (form submission was prevented)
+    // Wait for API call to complete
+    await page.waitForTimeout(2000);
+
+    // Should remain on login page (validation prevented successful login)
     await authHelpers.expectToBeOnLoginPage();
 
-    // Test that we can't bypass validation by filling only one field
+    // Try with only email filled
     await page.fill('[data-testid="email-input"]', "test@example.com");
+    await page.fill('[data-testid="password-input"]', "");
     await page.click('[data-testid="login-button"]');
+
+    // Wait for API call to complete
+    await page.waitForTimeout(2000);
+
+    // Should remain on login page (missing password)
     await authHelpers.expectToBeOnLoginPage();
+
+    // Verify no tokens were stored after invalid login attempts
+    const tokens = await authHelpers.getStoredTokens();
+    expect(tokens.accessToken).toBeNull();
   });
 
   test("network error handling - handle API failures gracefully", async ({ page }) => {
