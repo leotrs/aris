@@ -1156,8 +1156,8 @@ jobs:
 
         # Run mobile Firefox tests
         if [ "${{ matrix.test-type }}" = "demo" ]; then
-          echo "Running demo Mobile Firefox E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only)"
-          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)" --project="Mobile Firefox" --reporter=github
+          echo "Running demo Mobile Firefox E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only and @auth)"
+          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@auth)" --project="Mobile Firefox" --reporter=github
         else
           echo "Running auth Mobile Firefox E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only)"
           CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)" --project="Mobile Firefox" --reporter=github
