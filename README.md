@@ -268,6 +268,10 @@ cd frontend && npm test && npm run test:e2e
 
 # Debug CI issues locally
 cd backend && ./simulate-ci -- uv run pytest tests/integration/ -v
+
+# Analyze CI failures for GitHub PRs (requires Claude Code)
+/ci-report                    # Analyze CI for current branch's PR
+/ci-report 123               # Analyze CI for specific PR number
 ```
 
 ## Contributing
@@ -290,7 +294,7 @@ just test-all                           # Run all tests
 - **E2E**: Uses tag-based test selection for precise categorization and mutually exclusive execution
 - **Authentication**: E2E tests use public demo routes for authentication-free testing
 - **Performance**: Backend tests run with 8 parallel workers; E2E tests run in 7 parallel job categories
-- **Debug**: Use `./simulate-ci` to debug CI-specific issues locally with 100% fidelity
+- **Debug**: Use `./simulate-ci` to debug CI-specific issues locally with 100% fidelity; use `/ci-report` (Claude Code) to analyze GitHub PR CI failures
 
 ## License
 

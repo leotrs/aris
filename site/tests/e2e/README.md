@@ -275,6 +275,12 @@ Files saved to `test-results/` directory.
 **Flaky tests**: Add proper waits, check for race conditions
 **CI failures**: Ensure browsers are properly installed in CI environment
 
+For comprehensive CI failure analysis across all services, use the Claude Code CI reporting tool:
+```bash
+/ci-report                    # Analyze CI for current branch's PR
+/ci-report 123               # Analyze CI for specific PR number
+```
+
 ### Debug Commands
 
 ```bash
