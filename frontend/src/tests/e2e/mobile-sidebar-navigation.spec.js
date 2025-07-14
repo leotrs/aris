@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 // @auth @auth-flows
 import { MobileHelpers } from "./utils/mobile-helpers.js";
 
-test.describe("Mobile Sidebar Navigation UX @auth", () => {
+test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
   let mobileHelpers;
 
   const mobileViewports = [
