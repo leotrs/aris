@@ -43,8 +43,6 @@ Each task includes:
 - **Implementation Details**: Technical requirements, security considerations
 - **Testing Requirements**: Unit tests derived from acceptance criteria
 - **Definition of Done**: Specific deliverables and requirements
-- **Project conventions**: Exerpts or summaries of relevant sections of the project's
-  CLAUDE.md file
 
 ### 4. GitHub Project Creation
 - Create project with gh CLI
@@ -138,17 +136,18 @@ Command succeeds when:
 
 ## Instructions for Implementation
 
-1. **Read the PRD file** from the provided path
-2. **Analyze and validate** the PRD structure contains all required sections
-3. **Generate epic and task breakdown** by:
+1. **Validate arguments** - Check if `$ARGUMENTS` contains a PRD file path, fail if empty
+2. **Read the PRD file** from the path specified in `$ARGUMENTS`
+3. **Analyze and validate** the PRD structure contains all required sections
+4. **Generate epic and task breakdown** by:
    - Analyzing PRD sections to identify natural boundaries
    - Creating epics based on implementation phases and system components
    - Sizing tasks appropriately based on complexity
    - Mapping dependencies between tasks and epics
-4. **Create GitHub Project** using gh CLI commands
-5. **Generate task issues** with comprehensive context for each task (use parallelization for efficiency)
-6. **Set up automation** and custom fields for project management
-7. **Output project information** and management scripts
+5. **Create GitHub Project** using gh CLI commands
+6. **Generate task issues** with comprehensive context for each task (use parallelization for efficiency)
+7. **Set up automation** and custom fields for project management
+8. **Output project information** and management scripts
 
 The implementation should dynamically analyze any PRD structure and create appropriate
 epics and tasks, ensuring each task has sufficient context for independent
