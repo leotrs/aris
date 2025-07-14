@@ -114,6 +114,14 @@ export class AuthHelpers {
         timeout: getTimeouts().contentLoad,
       });
 
+      // Wait for files container to be ready (indicates fileStore is initialized and has data)
+      await this.page.waitForSelector(
+        '[data-testid="files-container"], [data-testid="create-file-button"]',
+        {
+          timeout: getTimeouts().contentLoad,
+        }
+      );
+
       console.log("[AuthHelpers] Fast auth completed successfully");
       return true;
     } catch (error) {
