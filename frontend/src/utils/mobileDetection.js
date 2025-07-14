@@ -74,9 +74,14 @@ export const getEnhancedMobileMode = (isSmallViewport) => {
       navigator.userAgent.includes("Version/") &&
       navigator.userAgent.includes("Safari/")) ||
     // HeadlessChrome in Playwright with mobile emulation
-    (navigator.userAgent.includes("HeadlessChrome") && navigator.userAgent.includes("Mobile")) ||
+    (typeof navigator !== "undefined" &&
+      navigator.userAgent &&
+      navigator.userAgent.includes("HeadlessChrome") &&
+      navigator.userAgent.includes("Mobile")) ||
     // General headless browser with mobile viewport indicators
-    (navigator.userAgent.includes("Headless") &&
+    (typeof navigator !== "undefined" &&
+      navigator.userAgent &&
+      navigator.userAgent.includes("Headless") &&
       (navigator.userAgent.includes("Mobile") ||
         navigator.userAgent.includes("iPhone") ||
         navigator.userAgent.includes("Android")));
