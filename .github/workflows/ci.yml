@@ -189,6 +189,23 @@ jobs:
       TEST_DB_NAME: aris_test
       VITE_API_BASE_URL: http://localhost:8000
       FRONTEND_URL: http://localhost:5173
+      NUXT_BACKEND_URL: http://localhost:8000
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 3
+        ports:
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v4
@@ -207,6 +224,30 @@ jobs:
     - name: Install frontend dependencies
       working-directory: frontend
       run: npm ci
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+
+    - name: Create virtual environment and sync dependencies
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --group test --group dev
+
+    - name: Run database migrations
+      working-directory: backend
+      run: uv run alembic upgrade head
 
     - name: Cache Playwright browsers
       uses: actions/cache@v4
@@ -227,11 +268,35 @@ jobs:
           npx playwright install chromium --with-deps
         fi
 
-    - name: Start frontend, site, and run E2E tests
+    - name: Start backend, frontend, site, and run E2E tests
       run: |
+        # Start backend in background
+        echo "Starting backend for site E2E tests..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait for backend to be ready
+        sleep 8
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
+        
         # Start frontend in background
         echo "Starting frontend for site E2E tests..."
-        cd frontend
+        cd ../frontend
         npm run dev &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
@@ -247,6 +312,7 @@ jobs:
             if [ $i -eq 5 ]; then
               echo "Frontend failed to start"
               kill $FRONTEND_PID 2>/dev/null || true
+              kill $BACKEND_PID 2>/dev/null || true
               exit 1
             fi
             sleep 3
@@ -272,6 +338,7 @@ jobs:
               echo "Site failed to start"
               kill $SITE_PID 2>/dev/null || true
               kill $FRONTEND_PID 2>/dev/null || true
+              kill $BACKEND_PID 2>/dev/null || true
               exit 1
             fi
             sleep 3
@@ -302,6 +369,7 @@ jobs:
         echo "Cleaning up processes..."
         kill $SITE_PID 2>/dev/null || true
         kill $FRONTEND_PID 2>/dev/null || true
+        kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
 
   # Desktop E2E Tests (Chrome)
