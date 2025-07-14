@@ -267,16 +267,16 @@ test.describe("Navigation Flow E2E", () => {
   });
 
   test("should handle keyboard navigation", async ({ page }) => {
-    console.log('[DEBUG-CI] Starting keyboard navigation test');
-    console.log('[DEBUG-CI] Browser info:', await page.evaluate(() => navigator.userAgent));
-    
+    console.log("[DEBUG-CI] Starting keyboard navigation test");
+    console.log("[DEBUG-CI] Browser info:", await page.evaluate(() => navigator.userAgent));
+
     await page.goto("/");
-    console.log('[DEBUG-CI] Navigated to homepage');
+    console.log("[DEBUG-CI] Navigated to homepage");
 
     // Navigate through page using Tab key
     let tabCount = 0;
     const maxTabs = 20; // Prevent infinite loop
-    console.log('[DEBUG-CI] Max tabs allowed:', maxTabs);
+    console.log("[DEBUG-CI] Max tabs allowed:", maxTabs);
 
     // Tab through focusable elements
     while (tabCount < maxTabs) {
@@ -287,19 +287,21 @@ test.describe("Navigation Flow E2E", () => {
       const focusedElement = await page.evaluate(() => document.activeElement?.tagName);
       const focusedId = await page.evaluate(() => document.activeElement?.id);
       const focusedClass = await page.evaluate(() => document.activeElement?.className);
-      
-      console.log(`[DEBUG-CI] Tab ${tabCount}: focused element=${focusedElement}, id=${focusedId}, class=${focusedClass}`);
-      
+
+      console.log(
+        `[DEBUG-CI] Tab ${tabCount}: focused element=${focusedElement}, id=${focusedId}, class=${focusedClass}`
+      );
+
       if (focusedElement === "A" || focusedElement === "BUTTON") {
         // Found a focusable navigation element
-        console.log('[DEBUG-CI] Found focusable navigation element, breaking');
+        console.log("[DEBUG-CI] Found focusable navigation element, breaking");
         break;
       }
     }
 
-    console.log('[DEBUG-CI] Final tab count:', tabCount);
-    console.log('[DEBUG-CI] Expected: tabCount <', maxTabs);
-    console.log('[DEBUG-CI] Actual result:', tabCount < maxTabs);
+    console.log("[DEBUG-CI] Final tab count:", tabCount);
+    console.log("[DEBUG-CI] Expected: tabCount <", maxTabs);
+    console.log("[DEBUG-CI] Actual result:", tabCount < maxTabs);
 
     // Verify at least some navigation elements are keyboard accessible
     expect(tabCount).toBeLessThan(maxTabs);

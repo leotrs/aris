@@ -9,66 +9,66 @@ test.describe("Demo Integration E2E", () => {
 
   test.describe("CTA Button Redirects", () => {
     test("Hero section CTA redirects to frontend demo", async ({ page }) => {
-      console.log('[DEBUG-CI] Starting hero CTA redirect test');
-      console.log('[DEBUG-CI] Browser info:', await page.evaluate(() => navigator.userAgent));
-      console.log('[DEBUG-CI] FRONTEND_PORT:', process.env.FRONTEND_PORT);
-      console.log('[DEBUG-CI] SITE_PORT:', process.env.SITE_PORT);
+      console.log("[DEBUG-CI] Starting hero CTA redirect test");
+      console.log("[DEBUG-CI] Browser info:", await page.evaluate(() => navigator.userAgent));
+      console.log("[DEBUG-CI] FRONTEND_PORT:", process.env.FRONTEND_PORT);
+      console.log("[DEBUG-CI] SITE_PORT:", process.env.SITE_PORT);
 
       // Find the Try the Demo button in hero section
       const heroButton = page.locator(".hero-section .btn-primary").first();
-      console.log('[DEBUG-CI] Looking for hero button');
+      console.log("[DEBUG-CI] Looking for hero button");
       await expect(heroButton).toBeVisible();
-      console.log('[DEBUG-CI] Hero button is visible');
-      
+      console.log("[DEBUG-CI] Hero button is visible");
+
       await expect(heroButton).toContainText("Explore the Platform");
-      console.log('[DEBUG-CI] Hero button has correct text');
+      console.log("[DEBUG-CI] Hero button has correct text");
 
       // Click the button and wait for navigation
-      console.log('[DEBUG-CI] URL before click:', page.url());
+      console.log("[DEBUG-CI] URL before click:", page.url());
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), heroButton.click()]);
-      console.log('[DEBUG-CI] URL after click:', page.url());
+      console.log("[DEBUG-CI] URL after click:", page.url());
 
       // Verify redirect happened
       const expectedUrl = `localhost:${process.env.FRONTEND_PORT}/demo`;
-      console.log('[DEBUG-CI] Expected URL to contain:', expectedUrl);
-      console.log('[DEBUG-CI] Actual URL:', page.url());
+      console.log("[DEBUG-CI] Expected URL to contain:", expectedUrl);
+      console.log("[DEBUG-CI] Actual URL:", page.url());
       expect(page.url()).toContain(`localhost:${process.env.FRONTEND_PORT}/demo`);
 
       // Verify demo page loads with content
-      console.log('[DEBUG-CI] Checking for demo-container element');
+      console.log("[DEBUG-CI] Checking for demo-container element");
       await expect(page.locator('[data-testid="demo-container"]')).toBeVisible({ timeout: 10000 });
-      console.log('[DEBUG-CI] demo-container is visible');
-      
+      console.log("[DEBUG-CI] demo-container is visible");
+
       await expect(page.locator('[data-testid="demo-banner"]')).toBeVisible();
-      console.log('[DEBUG-CI] demo-banner is visible');
-      
+      console.log("[DEBUG-CI] demo-banner is visible");
+
       await expect(page.locator('[data-testid="demo-banner"]')).toContainText("Demo Mode");
-      console.log('[DEBUG-CI] demo-banner has correct text');
+      console.log("[DEBUG-CI] demo-banner has correct text");
     });
 
     test("Section CTA button redirects to getting started", async ({ page }) => {
-      console.log('[DEBUG-CI] Starting section CTA redirect test');
-      console.log('[DEBUG-CI] URL before scrolling:', page.url());
+      console.log("[DEBUG-CI] Starting section CTA redirect test");
+      console.log("[DEBUG-CI] URL before scrolling:", page.url());
 
       // Scroll to find the section CTA
       await page.locator(".cta-section").scrollIntoViewIfNeeded();
-      console.log('[DEBUG-CI] Scrolled to cta-section');
+      console.log("[DEBUG-CI] Scrolled to cta-section");
 
       const sectionButton = page.locator(".cta-section .btn-primary").first();
       await expect(sectionButton).toBeVisible();
-      console.log('[DEBUG-CI] Section button is visible');
-      
+      console.log("[DEBUG-CI] Section button is visible");
+
       await expect(sectionButton).toContainText("Get Started");
-      console.log('[DEBUG-CI] Section button has correct text');
+      console.log("[DEBUG-CI] Section button has correct text");
 
       // Click and verify redirect
-      console.log('[DEBUG-CI] URL before click:', page.url());
+      console.log("[DEBUG-CI] URL before click:", page.url());
       await Promise.all([
         page.waitForNavigation({ waitUntil: "networkidle" }),
         sectionButton.click(),
       ]);
-      console.log('[DEBUG-CI] URL after click:', page.url());
-      console.log('[DEBUG-CI] Expected URL to contain: /getting-started');
+      console.log("[DEBUG-CI] URL after click:", page.url());
+      console.log("[DEBUG-CI] Expected URL to contain: /getting-started");
 
       expect(page.url()).toContain(`/getting-started`);
     });
@@ -282,42 +282,45 @@ test.describe("Demo Integration E2E", () => {
     });
 
     test("demo manuscript content renders correctly", async ({ page }) => {
-      console.log('[DEBUG-CI] Starting manuscript content render test');
-      console.log('[DEBUG-CI] Browser info:', await page.evaluate(() => navigator.userAgent));
-      
+      console.log("[DEBUG-CI] Starting manuscript content render test");
+      console.log("[DEBUG-CI] Browser info:", await page.evaluate(() => navigator.userAgent));
+
       await Promise.all([page.waitForNavigation({ waitUntil: "networkidle" }), page.goto("/demo")]);
-      console.log('[DEBUG-CI] URL after navigation:', page.url());
+      console.log("[DEBUG-CI] URL after navigation:", page.url());
 
       // Wait for manuscript to load
-      console.log('[DEBUG-CI] Looking for manuscript-viewer element');
+      console.log("[DEBUG-CI] Looking for manuscript-viewer element");
       const manuscriptExists = await page.locator('[data-testid="manuscript-viewer"]').count();
-      console.log('[DEBUG-CI] manuscript-viewer element count:', manuscriptExists);
-      
+      console.log("[DEBUG-CI] manuscript-viewer element count:", manuscriptExists);
+
       if (manuscriptExists === 0) {
-        console.log('[DEBUG-CI] No manuscript-viewer found, checking page content');
+        console.log("[DEBUG-CI] No manuscript-viewer found, checking page content");
         const bodyText = await page.evaluate(() => document.body.textContent);
-        console.log('[DEBUG-CI] Page body text (first 500 chars):', bodyText.substring(0, 500));
-        
+        console.log("[DEBUG-CI] Page body text (first 500 chars):", bodyText.substring(0, 500));
+
         const allElements = await page.evaluate(() => {
-          const elements = Array.from(document.querySelectorAll('[data-testid]'));
-          return elements.map(el => el.getAttribute('data-testid'));
+          const elements = Array.from(document.querySelectorAll("[data-testid]"));
+          return elements.map((el) => el.getAttribute("data-testid"));
         });
-        console.log('[DEBUG-CI] All data-testid elements found:', allElements);
+        console.log("[DEBUG-CI] All data-testid elements found:", allElements);
       }
-      
+
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 15000,
       });
-      console.log('[DEBUG-CI] manuscript-viewer is now visible');
+      console.log("[DEBUG-CI] manuscript-viewer is now visible");
 
       // Verify content is present
       const manuscriptText = await page.locator('[data-testid="manuscript-viewer"]').textContent();
-      console.log('[DEBUG-CI] Manuscript text length:', manuscriptText.length);
-      console.log('[DEBUG-CI] Manuscript text (first 200 chars):', manuscriptText.substring(0, 200));
-      
+      console.log("[DEBUG-CI] Manuscript text length:", manuscriptText.length);
+      console.log(
+        "[DEBUG-CI] Manuscript text (first 200 chars):",
+        manuscriptText.substring(0, 200)
+      );
+
       expect(manuscriptText).toContain("The Future of Web-Native Publishing");
       expect(manuscriptText.length).toBeGreaterThan(100);
-      console.log('[DEBUG-CI] Manuscript content validation passed');
+      console.log("[DEBUG-CI] Manuscript content validation passed");
     });
   });
 

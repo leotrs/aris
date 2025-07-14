@@ -233,27 +233,27 @@ test.describe("Mobile Responsiveness E2E", () => {
     });
 
     test("should not have horizontal scroll on mobile", async ({ page }) => {
-      console.log('[DEBUG-CI] Starting horizontal scroll test');
-      console.log('[DEBUG-CI] Browser info:', await page.evaluate(() => navigator.userAgent));
-      
+      console.log("[DEBUG-CI] Starting horizontal scroll test");
+      console.log("[DEBUG-CI] Browser info:", await page.evaluate(() => navigator.userAgent));
+
       await page.setViewportSize({ width: 375, height: 667 });
-      console.log('[DEBUG-CI] Set viewport to 375x667');
-      
+      console.log("[DEBUG-CI] Set viewport to 375x667");
+
       await page.goto("/");
-      console.log('[DEBUG-CI] Navigated to /');
-      console.log('[DEBUG-CI] Current URL:', page.url());
-      
+      console.log("[DEBUG-CI] Navigated to /");
+      console.log("[DEBUG-CI] Current URL:", page.url());
+
       await page.waitForLoadState("networkidle");
-      console.log('[DEBUG-CI] Network idle reached');
+      console.log("[DEBUG-CI] Network idle reached");
 
       // Check that page doesn't cause horizontal scrolling
       const scrollWidth = await page.evaluate(() => document.body.scrollWidth);
       const clientWidth = await page.evaluate(() => document.body.clientWidth);
 
-      console.log('[DEBUG-CI] scrollWidth:', scrollWidth);
-      console.log('[DEBUG-CI] clientWidth:', clientWidth);
-      console.log('[DEBUG-CI] difference:', scrollWidth - clientWidth);
-      console.log('[DEBUG-CI] Expected: scrollWidth <=', clientWidth + 5);
+      console.log("[DEBUG-CI] scrollWidth:", scrollWidth);
+      console.log("[DEBUG-CI] clientWidth:", clientWidth);
+      console.log("[DEBUG-CI] difference:", scrollWidth - clientWidth);
+      console.log("[DEBUG-CI] Expected: scrollWidth <=", clientWidth + 5);
 
       expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 5); // Allow small variance
     });
