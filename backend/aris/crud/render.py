@@ -1,7 +1,6 @@
 import time
 
 import rsm
-from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..logging_config import get_logger
 
