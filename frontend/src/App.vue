@@ -5,7 +5,6 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { createFileStore } from "@/store/FileStore.js";
   import { getLogger } from "@/utils/logger.js";
-  import { useEnhancedMobileMode } from "@/composables/useEnhancedMobileMode.js";
   import axios from "axios";
 
   const logger = getLogger("App");
@@ -185,9 +184,8 @@
   const xsMode = computed(() => breakpoints.smallerOrEqual("xs").value);
   provide("xsMode", xsMode);
 
-  // Enhanced mobile detection: small viewport + (mobile device OR touch device)
-  const isSmallViewport = computed(() => breakpoints.smallerOrEqual("sm").value);
-  const mobileMode = useEnhancedMobileMode(isSmallViewport);
+  // Simple viewport-based mobile detection
+  const mobileMode = computed(() => breakpoints.smallerOrEqual("sm").value);
   provide("mobileMode", mobileMode);
 
   // Must create these here as they will be populated by the login view but need to be
