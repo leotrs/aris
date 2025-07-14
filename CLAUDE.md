@@ -214,6 +214,61 @@ The `/ci-report` command provides comprehensive CI failure analysis:
 - **Always run e2e tests with --reporter=line**
 - Before starting any service, check if it is already running
 - **Send notifications when tasks complete or need user input**: `osascript -e "display notification \"message\" with title \"Claude Code\""`
+
+### Testing Practices
+
+#### Test Implementation Guidelines
+
+**Component Mocking Rules**:
+- **NEVER mock simple, fast-rendering components** in tests:
+  - `Button`, `Icon`, `Toast`, `Avatar`, `Logo`, `Separator`, `Checkbox`
+  - `HSeparator`, `LoadingSpinner`, `ThemeSwitch`, `Tooltip`
+  - Basic form inputs: `BaseInput`, `InputText`, `TextareaInput`
+- **DO mock slow or complex components**:
+  - `Manuscript`, `ManuscriptWrapper` (heavy RSM rendering)
+  - `Storybook` components, chart libraries, external widgets
+  - Network-dependent components, file upload handlers
+
+**Network and Timing**:
+- **NEVER use `networkidle`** - it's unreliable and causes flaky tests
+- **Use explicit waits**: `waitForSelector()`, `waitForResponse()`, `waitForFunction()`
+- **Wait for specific elements**: `await expect(locator).toBeVisible()`
+- **Wait for API responses**: `await page.waitForResponse('/api/endpoint')`
+
+**Configuration**:
+- **NEVER hard-code URLs or ports** in tests
+- **Use environment variables**: `process.env.VITE_API_BASE_URL`, `process.env.FRONTEND_PORT`
+- **Use test config files**: `playwright.config.js`, `vitest.config.js`
+- **Reference base URLs**: `baseURL` in Playwright config, `@/` aliases in Vue tests
+
+#### Test Debugging and Maintenance
+
+**Timeout Management**:
+- **NEVER fix a failing test by simply increasing timeouts**
+- **Root cause analysis required**: Find WHY the test is slow, don't mask it
+- **Acceptable timeout increases ONLY when**:
+  - Adding new functionality that legitimately takes longer
+  - Testing slow operations (file uploads, complex renders)
+  - CI environment is consistently slower than local
+
+**Flaky Test Identification**:
+- **Label tests as flaky (`@flaky` tag) when they meet 2+ criteria**:
+  - Fails intermittently (< 95% pass rate over 10 runs)
+  - Failure is non-deterministic (timing-dependent, race conditions)
+  - Same test passes locally but fails in CI (or vice versa)
+  - Failure messages vary between runs ("element not found" vs "timeout")
+
+**Flaky Test Resolution Process**:
+1. **Identify the root cause**: Race conditions, insufficient waits, external dependencies
+2. **Fix the underlying issue**: Add proper waits, stabilize test data, mock unreliable services
+3. **Remove `@flaky` tag** only after 10+ consecutive successful runs
+4. **Document the fix**: Add comments explaining the previous flakiness and solution
+
+**Test Isolation**:
+- **Each test must be independent**: No shared state between tests
+- **Clean up after tests**: Reset databases, clear localStorage, restore mocks
+- **Use fresh test data**: Generate unique IDs, avoid hardcoded test user emails
+- **Parallel-safe**: Tests must pass when run concurrently with others
 ```
 
 ## Language Guidelines
