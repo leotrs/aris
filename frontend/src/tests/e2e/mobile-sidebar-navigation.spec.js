@@ -1,9 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-// @auth @auth-flows @core @demo-content @demo-ui @mobile-only
+// @auth @auth-flows
 import { MobileHelpers } from "./utils/mobile-helpers.js";
 
-test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile-only", () => {
+test.describe("Mobile Sidebar Navigation UX @auth", () => {
   let mobileHelpers;
 
   const mobileViewports = [
@@ -158,9 +158,7 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
     // TODO: Re-enable once mobile navigation load state issues are resolved
     test.skip("should navigate from home to account via user menu drawer", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      // For demo tests, use demo route; for auth tests, use home route
-      const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-      await page.goto(route);
+      await page.goto("/");
       await page.waitForLoadState("load");
       await mobileHelpers.waitForVueComponentMount();
 
@@ -184,9 +182,7 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
 
     test("should navigate from home to settings via mobile drawer", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      // For demo tests, use demo route; for auth tests, use home route
-      const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-      await page.goto(route);
+      await page.goto("/");
       await page.waitForLoadState("load");
       await mobileHelpers.waitForVueComponentMount();
 
