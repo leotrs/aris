@@ -65,9 +65,9 @@ test.describe("Cross-Browser Compatibility", () => {
 
       if (isMobile) {
         // Mobile navigation: use mobile menu
-        await page.click('[data-testid="menu-toggle"]');
+        await page.click(".menu-toggle");
         await page.waitForTimeout(300); // Wait for mobile menu animation
-        await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
+        await expect(page.locator(".navbar-links")).toBeVisible();
 
         // Test navigation to signup via mobile menu
         await page.click('.mobile-nav-link[href="/signup"]');
@@ -75,7 +75,7 @@ test.describe("Cross-Browser Compatibility", () => {
 
         // Navigate back to test other links
         await page.goto("/");
-        await page.click('[data-testid="menu-toggle"]');
+        await page.click(".menu-toggle");
         await page.waitForTimeout(300);
 
         // Test legal page navigation via direct URL (since they may not be in mobile menu)
@@ -120,19 +120,19 @@ test.describe("Cross-Browser Compatibility", () => {
       const heroBox = await heroSection.boundingBox();
       expect(heroBox?.height).toBeGreaterThan(300); // Minimum height
 
-      // Check platform overview section layout
-      const platformOverview = page.locator(".platform-overview-section");
-      await platformOverview.scrollIntoViewIfNeeded();
-      await expect(platformOverview).toBeVisible();
+      // Check grid layouts
+      const workflowComparison = page.locator(".workflow-comparison");
+      await workflowComparison.scrollIntoViewIfNeeded();
+      await expect(workflowComparison).toBeVisible();
 
-      // Verify key subsections exist
-      await expect(page.locator(".workflow-comparison")).toBeVisible();
-      await expect(page.locator(".journal-compatibility-section")).toBeVisible();
+      const compatibilityFeatures = page.locator(".compatibility-feature");
+      const featureCount = await compatibilityFeatures.count();
+      expect(featureCount).toBeGreaterThan(0);
 
       // Check responsive behavior at common breakpoint
       await page.setViewportSize({ width: 768, height: 1024 });
       await expect(heroSection).toBeVisible();
-      await expect(platformOverview).toBeVisible();
+      await expect(workflowComparison).toBeVisible();
 
       console.log(`✓ Layout integrity maintained in ${browserName}`);
     });
@@ -154,7 +154,7 @@ test.describe("Cross-Browser Compatibility", () => {
       // Test mobile menu animation
       await page.setViewportSize({ width: 375, height: 667 });
       await page.click(".menu-toggle");
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await expect(page.locator(".navbar-links")).toBeVisible();
 
       console.log(`✓ CSS animations work correctly in ${browserName}`);
     });
@@ -196,33 +196,31 @@ test.describe("Cross-Browser Compatibility", () => {
 
       if (isMobile) {
         // Mobile: Test mobile menu functionality
-        await page.click('[data-testid="menu-toggle"]');
+        await page.click(".menu-toggle");
         await page.waitForTimeout(300); // Wait for mobile menu animation
-        await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
+        await expect(page.locator(".navbar-links")).toBeVisible();
 
         // Test mobile dropdown
-        await page.click('[data-testid="mobile-resources-toggle"]');
+        await page.click(".mobile-dropdown-toggle");
         await page.waitForTimeout(300); // Wait for dropdown animation
-        await expect(page.locator('[data-testid="mobile-resources-dropdown"]')).toBeVisible();
+        await expect(page.locator(".mobile-dropdown-menu")).toBeVisible();
 
         // Close mobile menu
-        await page.click('[data-testid="menu-toggle"]');
+        await page.click(".menu-toggle");
         await page.waitForTimeout(300);
-        await expect(page.locator('[data-testid="mobile-menu-overlay"]')).not.toBeVisible();
+        await expect(page.locator(".navbar-links")).not.toBeVisible();
       } else {
-        // Desktop: Test dropdown interaction (hover first dropdown)
-        await page.hover('[data-testid="platform-dropdown"]');
+        // Desktop: Test dropdown interaction
+        await page.hover(".has-dropdown");
         await page.waitForTimeout(500); // Wait for hover animation and state change
-        await expect(page.locator('[data-testid="platform-dropdown-menu"]')).toBeVisible({
-          timeout: 10000,
-        });
+        await expect(page.locator(".dropdown-menu").first()).toBeVisible({ timeout: 5000 });
 
         // Test mobile menu on desktop (should work when viewport is small)
         await page.setViewportSize({ width: 375, height: 667 });
         await page.waitForTimeout(300); // Wait for viewport change
-        await page.click('[data-testid="menu-toggle"]');
+        await page.click(".menu-toggle");
         await page.waitForTimeout(300); // Wait for mobile menu animation
-        await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
+        await expect(page.locator(".navbar-links")).toBeVisible();
 
         // Reset viewport for back to top test
         await page.setViewportSize({ width: 1024, height: 768 });
@@ -252,12 +250,12 @@ test.describe("Cross-Browser Compatibility", () => {
       await page.goto("/");
 
       // Mobile-specific functionality
-      await expect(page.locator('[data-testid="menu-toggle"]')).toBeVisible();
+      await expect(page.locator(".menu-toggle")).toBeVisible();
       await expect(page.locator(".navbar-links")).not.toBeVisible();
 
       // Test mobile menu
-      await page.tap('[data-testid="menu-toggle"]');
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await page.tap(".menu-toggle");
+      await expect(page.locator(".navbar-links")).toBeVisible();
 
       // Test mobile form
       await page.goto("/signup");
@@ -281,8 +279,8 @@ test.describe("Cross-Browser Compatibility", () => {
       await page.goto("/");
 
       // Test touch interactions
-      await page.tap('[data-testid="menu-toggle"]');
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await page.tap(".menu-toggle");
+      await expect(page.locator(".navbar-links")).toBeVisible();
 
       await page.tap('.mobile-nav-link[href="/signup"]');
       await expect(page).toHaveURL("/signup");
