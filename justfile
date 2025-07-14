@@ -11,44 +11,7 @@ default:
 
 # Start development containers (uses current directory name as project)
 dev *args="":
-    @echo "Starting development containers for $(basename $(pwd))..."
-    @PROJECT_NAME=$(basename $(pwd)); \
-    BUILD_FLAG=""; \
-    FORCE_BUILD=false; \
-    for arg in {{args}}; do \
-        if [ "$arg" = "--build" ]; then \
-            FORCE_BUILD=true; \
-            break; \
-        fi; \
-    done; \
-    if [ "$FORCE_BUILD" = true ]; then \
-        echo "Force rebuild requested via --build flag"; \
-        BUILD_FLAG="--build"; \
-        touch ~/.docker_build_check; \
-    elif docker images | grep -q "$PROJECT_NAME-"; then \
-        DOCKERFILES_CHANGED=false; \
-        for dockerfile in docker/*/Dockerfile.dev; do \
-            if [ -f "$dockerfile" ] && [ "$dockerfile" -nt ~/.docker_build_check 2>/dev/null ]; then \
-                DOCKERFILES_CHANGED=true; \
-                break; \
-            fi; \
-        done; \
-        if [ docker/docker-compose.dev.yml -nt ~/.docker_build_check 2>/dev/null ]; then \
-            DOCKERFILES_CHANGED=true; \
-        fi; \
-        if [ "$DOCKERFILES_CHANGED" = true ]; then \
-            echo "Dockerfiles or compose file changed, rebuilding images..."; \
-            BUILD_FLAG="--build"; \
-            touch ~/.docker_build_check; \
-        else \
-            echo "Using existing images (no Dockerfile changes detected)"; \
-        fi; \
-    else \
-        echo "No existing images found, building from scratch..."; \
-        BUILD_FLAG="--build"; \
-        touch ~/.docker_build_check; \
-    fi; \
-    docker compose --env-file .env -p "$PROJECT_NAME" -f docker/docker-compose.dev.yml up $BUILD_FLAG
+    ./scripts/start-dev.sh {{args}}
 
 # Stop development containers
 stop:
@@ -63,26 +26,21 @@ logs:
 # ================
 
 # Run all tests
-test-all:
+test:
     cd backend && uv run pytest -n8
     cd frontend && npm run test:all
     cd site && npm run test:all
 
 # Run all linters
-lint-all:
+lint:
     cd backend && uv run ruff check
     cd frontend && npm run lint
     cd site && npm run lint
 
-# Run complete check (lint + typecheck + test)
-check-all:
-    cd backend && uv run ruff check
-    cd backend && uv run mypy aris/
-    cd backend && uv run pytest -n8
-    cd frontend && npm run lint
-    cd frontend && npm run test:run && npx playwright test --grep "@auth\b" --quiet
-    cd site && npm run lint
-    cd site && npm run test:run && npx playwright test --quiet
+# Run lint then test
+check:
+    just lint
+    just test
 
 # Development Setup
 # =================
