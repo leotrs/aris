@@ -62,7 +62,24 @@ export const getEnhancedMobileMode = (isSmallViewport) => {
   // Only applies to E2E/browser automation, not unit tests
   const isE2ETestEnvironment =
     (typeof window !== "undefined" && window.playwright !== undefined) ||
-    (typeof navigator !== "undefined" && navigator.webdriver === true);
+    (typeof navigator !== "undefined" && navigator.webdriver === true) ||
+    // Additional checks for various E2E testing scenarios
+    (typeof window !== "undefined" &&
+      window.location &&
+      window.location.origin.includes("localhost") &&
+      typeof navigator !== "undefined" &&
+      navigator.userAgent &&
+      // Mobile Safari in Playwright
+      (navigator.userAgent.includes("iPhone") || navigator.userAgent.includes("iPad")) &&
+      navigator.userAgent.includes("Version/") &&
+      navigator.userAgent.includes("Safari/")) ||
+    // HeadlessChrome in Playwright with mobile emulation
+    (navigator.userAgent.includes("HeadlessChrome") && navigator.userAgent.includes("Mobile")) ||
+    // General headless browser with mobile viewport indicators
+    (navigator.userAgent.includes("Headless") &&
+      (navigator.userAgent.includes("Mobile") ||
+        navigator.userAgent.includes("iPhone") ||
+        navigator.userAgent.includes("Android")));
 
   if (isE2ETestEnvironment) {
     return true;

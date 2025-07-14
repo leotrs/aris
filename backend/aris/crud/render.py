@@ -9,7 +9,7 @@ from ..logging_config import get_logger
 logger = get_logger(__name__)
 
 
-async def render(src: str, db: AsyncSession):
+async def render(src: str):
     logger.debug(f"Starting RSM render for {len(src)} characters")
     start_time = time.time()
     
