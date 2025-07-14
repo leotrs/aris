@@ -151,15 +151,15 @@
     color: var(--success-600);
   }
 
-  .toast-container.error .toast-icon  .tabler-icon{
+  .toast-container.error .toast-icon .tabler-icon {
     color: var(--error-600);
   }
 
-  .toast-container.warning .toast-icon  .tabler-icon{
+  .toast-container.warning .toast-icon .tabler-icon {
     color: var(--warning-600);
   }
 
-  .toast-container.info .toast-icon  .tabler-icon{
+  .toast-container.info .toast-icon .tabler-icon {
     color: var(--information-600);
   }
 
@@ -185,7 +185,6 @@
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
-
 
   /* Mobile responsiveness */
   @media (max-width: 480px) {
