@@ -263,12 +263,8 @@ jobs:
       working-directory: site
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: |
-        npx playwright install ${{ matrix.browser }} --with-deps
-        # Install missing WebKit dependencies for Ubuntu 22.04
-        if [ "${{ matrix.browser }}" = "webkit" ]; then
-          sudo apt-get update
-          sudo apt-get install -y woff2 libwoff1
-        fi
+        npx playwright install ${{ matrix.browser }}
+        npx playwright install-deps ${{ matrix.browser }}
 
     - name: Start backend, frontend, site, and run E2E tests
       run: |
