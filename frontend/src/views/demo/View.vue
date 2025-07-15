@@ -1,7 +1,6 @@
 <script setup>
   import { ref, reactive, computed, provide, onMounted, inject } from "vue";
   import { useRoute } from "vue-router";
-  import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { demoFile, demoUser, demoFileStore, demoAnnotations, createDemoApi } from "./demoData.js";
   import { File } from "@/models/File.js";
@@ -13,15 +12,14 @@
   const api = createDemoApi();
   provide("api", api);
 
-  // Provide viewport info
-  const breakpoints = useBreakpoints({ xs: 425, ...breakpointsTailwind });
-  provide("breakpoints", breakpoints);
-
-  const xsMode = computed(() => breakpoints.smallerOrEqual("xs").value);
-  provide("xsMode", xsMode);
-
-  // Use injected mobileMode from App.vue (single source of truth)
+  // Use ONLY injected values from App.vue (single source of truth)
+  const breakpoints = inject("breakpoints");
+  const xsMode = inject("xsMode");
   const mobileMode = inject("mobileMode");
+
+  // Provide the injected values to child components
+  provide("breakpoints", breakpoints);
+  provide("xsMode", xsMode);
 
   // Demo user and file store
   const user = ref(demoUser);

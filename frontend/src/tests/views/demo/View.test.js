@@ -423,17 +423,20 @@ describe("Demo View", () => {
     });
 
     it("provides viewport and breakpoint info", async () => {
-      // Provide mobileMode since component now injects it from App.vue
+      // Provide all injected values since component now injects them from App.vue
       wrapper = mount(DemoView, {
         global: {
           provide: {
             mobileMode: ref(false),
+            breakpoints: { active: () => ref('sm') },
+            xsMode: ref(false),
           },
         },
       });
       await nextTick();
 
       const provided = wrapper.vm.$.provides;
+      // Component re-provides injected values to its children
       expect(provided.breakpoints).toBeDefined();
       expect(provided.xsMode).toBeDefined();
       // mobileMode is now injected from parent, not provided by this component
