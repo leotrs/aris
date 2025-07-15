@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Navigation Flow E2E", () => {
+// @site
+test.describe("Navigation Flow E2E @site", () => {
   test("should navigate between all main pages", async ({ page }) => {
     // Start at home page
     await page.goto("/");

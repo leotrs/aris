@@ -428,7 +428,7 @@ describe("Demo View", () => {
         global: {
           provide: {
             mobileMode: ref(false),
-            breakpoints: { active: () => ref('sm') },
+            breakpoints: { active: () => ref("sm") },
             xsMode: ref(false),
           },
         },

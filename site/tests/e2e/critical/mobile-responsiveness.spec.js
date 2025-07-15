@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Mobile Responsiveness E2E", () => {
+// @site
+test.describe("Mobile Responsiveness E2E @site", () => {
   const mobileViewports = [
     { name: "iPhone SE", width: 375, height: 667 },
     { name: "iPhone 12", width: 390, height: 844 },

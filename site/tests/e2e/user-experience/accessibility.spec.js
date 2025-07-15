@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Accessibility E2E", () => {
+// @site
+test.describe("Accessibility E2E @site", () => {
   test.beforeEach(async ({ page }) => {
     // Ensure clean state for each test
     await page.evaluate(() => {

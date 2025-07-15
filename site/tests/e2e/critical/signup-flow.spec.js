@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-test.describe("Signup Flow E2E", () => {
+// @site
+test.describe("Signup Flow E2E @site", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/signup");
     // Clear any existing route handlers to prevent interference
