@@ -11,6 +11,7 @@
         <li><a href="/getting-started" class="nav-link">Getting Started</a></li>
         <li
           class="has-dropdown"
+          data-testid="platform-dropdown"
           @mouseenter="openDropdown('platform')"
           @mouseleave="closeDropdown('platform')"
         >
@@ -34,6 +35,7 @@
             v-show="isPlatformDropdownOpen"
             ref="platformDropdownMenu"
             class="dropdown-menu"
+            data-testid="platform-dropdown-menu"
             role="menu"
             aria-label="Platform submenu"
             @keydown.escape="closeDropdownAndFocus('platform')"
@@ -70,6 +72,7 @@
         <li><a href="/pricing" class="nav-link">Pricing</a></li>
         <li
           class="has-dropdown"
+          data-testid="resources-dropdown"
           @mouseenter="openDropdown('resources')"
           @mouseleave="closeDropdown('resources')"
         >
@@ -95,7 +98,7 @@
             class="dropdown-menu"
             role="menu"
             aria-label="Resources submenu"
-            data-testid="dropdown-menu"
+            data-testid="resources-dropdown-menu"
             @keydown.escape="closeDropdownAndFocus('resources')"
             @keydown.arrow-up.prevent="focusPreviousMenuItem"
             @keydown.arrow-down.prevent="focusNextMenuItem"
@@ -135,6 +138,7 @@
 
       <button
         class="menu-toggle"
+        data-testid="menu-toggle"
         aria-label="Toggle navigation menu"
         @click="toggleMobileMenu"
         @keydown.enter.prevent="toggleMobileMenu"
@@ -146,7 +150,7 @@
     </div>
 
     <Transition name="mobile-menu">
-      <div v-if="isMobileMenuOpen" class="mobile-menu-overlay">
+      <div v-if="isMobileMenuOpen" class="mobile-menu-overlay" data-testid="mobile-menu-overlay">
         <ul class="mobile-navbar-links">
           <li>
             <a href="/getting-started" class="mobile-nav-link" @click="closeMobileMenu"
@@ -157,11 +161,16 @@
             <a
               href="#"
               class="mobile-nav-link mobile-dropdown-toggle"
+              data-testid="mobile-platform-toggle"
               aria-label="Platform menu"
               @click.prevent="toggleMobileDropdown('platform')"
               >Platform</a
             >
-            <ul v-if="isMobilePlatformDropdownOpen" class="mobile-dropdown-menu">
+            <ul
+              v-if="isMobilePlatformDropdownOpen"
+              class="mobile-dropdown-menu"
+              data-testid="mobile-platform-dropdown"
+            >
               <li>
                 <a href="/about" class="mobile-dropdown-link" @click="closeMobileMenu">About</a>
               </li>
@@ -187,11 +196,16 @@
             <a
               href="#"
               class="mobile-nav-link mobile-dropdown-toggle"
+              data-testid="mobile-resources-toggle"
               aria-label="Resources menu"
               @click.prevent="toggleMobileDropdown('resources')"
               >Resources</a
             >
-            <ul v-if="isMobileResourcesDropdownOpen" class="mobile-dropdown-menu">
+            <ul
+              v-if="isMobileResourcesDropdownOpen"
+              class="mobile-dropdown-menu"
+              data-testid="mobile-resources-dropdown"
+            >
               <li>
                 <a href="/documentation" class="mobile-dropdown-link" @click="closeMobileMenu"
                   >Documentation</a

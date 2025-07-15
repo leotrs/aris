@@ -54,6 +54,15 @@ export default defineNuxtConfig({
   // Performance optimizations
   experimental: {
     payloadExtraction: false, // Improve initial load time
+    
+    // Fix for "Failed to fetch dynamically imported module" errors
+    // This resolves browser back navigation failures in development and E2E tests
+    // When a dynamically imported chunk fails to load (common during dev server restarts
+    // or browser back navigation), Nuxt will automatically reload the page instead of 
+    // showing a broken state. This fixes timeouts in Firefox E2E tests where pages
+    // never load due to failed chunk imports.
+    // See: https://github.com/nuxt/nuxt/issues/26565
+    emitRouteChunkError: 'reload',
   },
 
   modules: ['@nuxt/image'],
@@ -66,7 +75,8 @@ export default defineNuxtConfig({
   // Runtime config for frontend URL
   runtimeConfig: {
     public: {
-      frontendUrl: process.env.FRONTEND_URL
+      frontendUrl: process.env.FRONTEND_URL,
+      backendUrl: process.env.NUXT_BACKEND_URL
     }
   },
 

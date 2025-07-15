@@ -8,12 +8,12 @@ test.describe("Interactive Elements E2E", () => {
       // Test primary CTA button
       const primaryCTA = page.locator(".hero-ctas .btn-primary");
       await expect(primaryCTA).toBeVisible();
-      await expect(primaryCTA).toContainText("Try the Demo");
+      await expect(primaryCTA).toContainText("Explore the Platform");
 
       // Test secondary CTA link
       const secondaryCTA = page.locator(".hero-ctas .text-link");
       await expect(secondaryCTA).toBeVisible();
-      await expect(secondaryCTA).toContainText("sign up for the beta waitlist");
+      await expect(secondaryCTA).toContainText("Join Your Institution");
 
       // Test navigation to signup page
       await secondaryCTA.click();
@@ -29,15 +29,15 @@ test.describe("Interactive Elements E2E", () => {
 
       const finalCTA = page.locator(".cta-section .btn-primary");
       await expect(finalCTA).toBeVisible();
-      await expect(finalCTA).toContainText("Try the Demo");
+      await expect(finalCTA).toContainText("Get Started");
 
-      const finalSignupLink = page.locator(".cta-section .text-link");
-      await expect(finalSignupLink).toBeVisible();
+      const finalContactLink = page.locator(".cta-section .text-link");
+      await expect(finalContactLink).toBeVisible();
 
-      // Test final signup link
-      await finalSignupLink.click();
+      // Test final contact link
+      await finalContactLink.click();
       await page.waitForLoadState("networkidle");
-      await expect(page).toHaveURL("/signup");
+      await expect(page).toHaveURL("/contact");
     });
 
     test("should show hover states for interactive elements", async ({ page }) => {
@@ -70,20 +70,20 @@ test.describe("Interactive Elements E2E", () => {
       await page.goto("/");
       await page.waitForLoadState("networkidle");
 
-      const menuToggle = page.locator(".menu-toggle");
-      const mobileMenu = page.locator(".mobile-menu-overlay");
+      const menuToggle = page.locator('[data-testid="menu-toggle"]');
+      const mobileMenu = page.locator('[data-testid="mobile-menu-overlay"]');
 
       // Open mobile menu
       await menuToggle.click();
       await page.waitForTimeout(300); // Wait for mobile menu animation
       await expect(mobileMenu).toBeVisible();
 
-      // Test mobile dropdown
-      const mobileResourcesToggle = page.locator(".mobile-dropdown-toggle");
+      // Test mobile dropdown (click Resources dropdown)
+      const mobileResourcesToggle = page.locator('[data-testid="mobile-resources-toggle"]');
       await mobileResourcesToggle.click();
       await page.waitForTimeout(300); // Wait for dropdown animation
 
-      const mobileDropdownMenu = page.locator(".mobile-dropdown-menu");
+      const mobileDropdownMenu = page.locator('[data-testid="mobile-resources-dropdown"]');
       await expect(mobileDropdownMenu).toBeVisible();
 
       // Close menu by clicking a link

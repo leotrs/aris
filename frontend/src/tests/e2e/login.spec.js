@@ -8,22 +8,44 @@ test.describe("Login Flow Tests @auth-flows", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {
+    console.log("[DEBUG-CI] Setting up login test");
+    console.log("[DEBUG-CI] Browser info:", await page.evaluate(() => navigator.userAgent));
+    console.log(
+      "[DEBUG-CI] localStorage support:",
+      await page.evaluate(() => typeof Storage !== "undefined")
+    );
+
     authHelpers = new AuthHelpers(page);
     await page.goto("/");
+    console.log("[DEBUG-CI] Navigated to:", page.url());
+
     await authHelpers.clearAuthState();
+    console.log("[DEBUG-CI] Auth state cleared");
   });
 
   test("successful login - valid credentials, redirect to home, session persistence", async ({
     page,
   }) => {
+    console.log("[DEBUG-CI] Starting successful login test");
+    console.log("[DEBUG-CI] Test credentials email:", TEST_CREDENTIALS.valid.email);
+
     // Use real valid credentials for testing
+    console.log("[DEBUG-CI] Attempting login");
     await authHelpers.login(TEST_CREDENTIALS.valid.email, TEST_CREDENTIALS.valid.password);
+    console.log("[DEBUG-CI] Login attempt completed");
 
     // Verify redirect to home and user is logged in
+    console.log("[DEBUG-CI] Checking if logged in");
     await authHelpers.expectToBeLoggedIn();
+    console.log("[DEBUG-CI] User is logged in");
 
     // Verify session persistence in localStorage
+    console.log("[DEBUG-CI] Checking stored tokens");
     const tokens = await authHelpers.getStoredTokens();
+    console.log("[DEBUG-CI] Access token exists:", !!tokens.accessToken);
+    console.log("[DEBUG-CI] Refresh token exists:", !!tokens.refreshToken);
+    console.log("[DEBUG-CI] User email in storage:", tokens.user?.email);
+
     expect(tokens.accessToken).toBeTruthy();
     expect(tokens.refreshToken).toBeTruthy();
     expect(tokens.user.email).toBe(TEST_CREDENTIALS.valid.email);

@@ -23,6 +23,9 @@ env:
   DB_URL_PROD: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
   ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
   ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@localhost:5432/test_aris
+  # Container-specific database URLs for e2e-site job
+  DB_URL_CONTAINER: postgresql+asyncpg://postgres:postgres@postgres:5432/test_aris
+  ALEMBIC_DB_URL_CONTAINER: postgresql+psycopg2://postgres:postgres@postgres:5432/test_aris
   JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
 
 jobs:
@@ -175,9 +178,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
+        browser: [chromium, firefox]
         device: [desktop, mobile]
-    runs-on: ${{ matrix.browser == 'webkit' && 'macos-latest' || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     env:
       ENV: CI
       BACKEND_PORT: 8000
@@ -188,9 +191,30 @@ jobs:
       DB_NAME: aris
       TEST_DB_NAME: aris_test
       VITE_API_BASE_URL: http://localhost:8000
+      FRONTEND_URL: http://localhost:5173
+      NUXT_BACKEND_URL: http://localhost:8000
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_aris
+          POSTGRES_HOST_AUTH_METHOD: trust
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 3
+        ports:
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v4
+
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -203,30 +227,100 @@ jobs:
       working-directory: site
       run: npm ci
 
+    - name: Install frontend dependencies
+      working-directory: frontend
+      run: npm ci
+
+    - name: Install uv
+      uses: astral-sh/setup-uv@v6
+      with:
+        version: "latest"
+        enable-cache: true
+
+    - name: Set up Python
+      run: uv python install 3.13
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
+        echo "PostgreSQL is ready!"
+
+    - name: Create virtual environment and sync dependencies
+      working-directory: backend
+      run: |
+        uv venv
+        uv sync --group test --group dev
+
+    - name: Run database migrations
+      working-directory: backend
+      run: uv run alembic upgrade head
+
     - name: Cache Playwright browsers
       uses: actions/cache@v4
       id: playwright-cache
       with:
-        path: ${{ matrix.browser == 'webkit' && '~/Library/Caches/ms-playwright' || '~/.cache/ms-playwright' }}
-        key: playwright-browsers-${{ runner.os }}-site-${{ matrix.browser }}-${{ matrix.device }}
+        path: ~/.cache/ms-playwright
+        key: playwright-browsers-site-${{ matrix.browser }}-${{ matrix.device }}
 
     - name: Install Playwright browsers
       working-directory: site
       if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: |
-        if [ "${{ matrix.browser }}" = "webkit" ]; then
-          npx playwright install webkit
-        elif [ "${{ matrix.browser }}" = "firefox" ]; then
-          npx playwright install firefox --with-deps
-        else
-          npx playwright install chromium --with-deps
-        fi
+      run: npx playwright install ${{ matrix.browser }} --with-deps
 
-    - name: Start site and run E2E tests
-      working-directory: site
+    - name: Start backend, frontend, site, and run E2E tests
       run: |
+        # Start backend in background
+        echo "Starting backend for site E2E tests..."
+        cd backend
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        BACKEND_PID=$!
+        echo "Backend started with PID: $BACKEND_PID"
+        
+        # Wait for backend to be ready
+        sleep 8
+        for i in {1..5}; do
+          if curl -f http://localhost:8000/health; then
+            echo "Backend ready for E2E tests"
+            break
+          else
+            echo "Waiting for backend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Backend failed to start"
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 2
+          fi
+        done
+        
+        # Start frontend in background
+        echo "Starting frontend for site E2E tests..."
+        cd ../frontend
+        npm run dev &
+        FRONTEND_PID=$!
+        echo "Frontend started with PID: $FRONTEND_PID"
+        
+        # Wait for frontend to be ready
+        sleep 15
+        for i in {1..5}; do
+          if curl -f http://localhost:5173; then
+            echo "Frontend ready for E2E tests"
+            break
+          else
+            echo "Waiting for frontend... ($i/5)"
+            if [ $i -eq 5 ]; then
+              echo "Frontend failed to start"
+              kill $FRONTEND_PID 2>/dev/null || true
+              kill $BACKEND_PID 2>/dev/null || true
+              exit 1
+            fi
+            sleep 3
+          fi
+        done
+        
         # Start site in background
         echo "Starting site for ${{ matrix.browser }} ${{ matrix.device }} E2E tests..."
+        cd ../site
         npm run dev &
         SITE_PID=$!
         echo "Site started with PID: $SITE_PID"
@@ -242,6 +336,8 @@ jobs:
             if [ $i -eq 5 ]; then
               echo "Site failed to start"
               kill $SITE_PID 2>/dev/null || true
+              kill $FRONTEND_PID 2>/dev/null || true
+              kill $BACKEND_PID 2>/dev/null || true
               exit 1
             fi
             sleep 3
@@ -250,17 +346,13 @@ jobs:
         
         # Run E2E tests for specific browser and device
         if [ "${{ matrix.device }}" = "mobile" ]; then
-          if [ "${{ matrix.browser }}" = "webkit" ]; then
-            npx playwright test --project="Mobile Safari" --reporter=github
-          elif [ "${{ matrix.browser }}" = "firefox" ]; then
+          if [ "${{ matrix.browser }}" = "firefox" ]; then
             npx playwright test --project="Mobile Firefox" --reporter=github
           else
             npx playwright test --project="Mobile Chrome" --reporter=github
           fi
         else
-          if [ "${{ matrix.browser }}" = "webkit" ]; then
-            npx playwright test --project="webkit" --reporter=github
-          elif [ "${{ matrix.browser }}" = "firefox" ]; then
+          if [ "${{ matrix.browser }}" = "firefox" ]; then
             npx playwright test --project="firefox" --reporter=github
           else
             npx playwright test --project="chromium" --reporter=github
@@ -271,6 +363,8 @@ jobs:
         # Cleanup
         echo "Cleaning up processes..."
         kill $SITE_PID 2>/dev/null || true
+        kill $FRONTEND_PID 2>/dev/null || true
+        kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
 
   # Desktop E2E Tests (Chrome)

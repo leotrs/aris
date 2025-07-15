@@ -54,7 +54,7 @@ export class CrossAppHelpers {
 
     // Verify we're on marketing site
     const url = this.page.url();
-    if (!url.includes("localhost:3000")) {
+    if (!url.includes(`localhost:${process.env.SITE_PORT}`)) {
       throw new Error(`Expected marketing site URL, got: ${url}`);
     }
 
@@ -93,7 +93,7 @@ export class CrossAppHelpers {
     const redirectResponse = responses.find((r) => r.status === 302);
 
     return {
-      success: finalUrl.includes("localhost:5173/demo"),
+      success: finalUrl.includes(`localhost:${process.env.FRONTEND_PORT}/demo`),
       finalUrl,
       redirectTime: endTime - startTime,
       redirectResponse,
@@ -128,7 +128,7 @@ export class CrossAppHelpers {
     const loadTime = Date.now();
 
     return {
-      success: this.page.url().includes("localhost:5173/demo"),
+      success: this.page.url().includes(`localhost:${process.env.FRONTEND_PORT}/demo`),
       finalUrl: this.page.url(),
       timing: {
         setup: clickTime - startTime,
@@ -145,7 +145,7 @@ export class CrossAppHelpers {
    */
   async verifyDemoContent() {
     // Must be on demo page
-    if (!this.page.url().includes("localhost:5173/demo")) {
+    if (!this.page.url().includes(`localhost:${process.env.FRONTEND_PORT}/demo`)) {
       throw new Error("Not on demo page");
     }
 
@@ -159,7 +159,7 @@ export class CrossAppHelpers {
 
     try {
       // Check demo banner
-      await this.page.locator(".demo-banner").waitFor({ timeout: 5000 });
+      await this.page.locator('[data-testid="demo-banner"]').waitFor({ timeout: 5000 });
       checks.demoBanner = true;
     } catch {
       console.warn("Demo banner not found");
@@ -193,7 +193,7 @@ export class CrossAppHelpers {
 
     try {
       // Check back to homepage link
-      await this.page.locator(".demo-link").waitFor({ timeout: 5000 });
+      await this.page.locator('[data-testid="demo-back-link"]').waitFor({ timeout: 5000 });
       checks.backLink = true;
     } catch {
       console.warn("Back link not found");
@@ -232,14 +232,16 @@ export class CrossAppHelpers {
       );
 
       // Step 4: Return to marketing site
-      const backLink = this.page.locator(".demo-link").filter({ hasText: /back.*homepage/i });
+      const backLink = this.page
+        .locator('[data-testid="demo-back-link"]')
+        .filter({ hasText: /back.*homepage/i });
       await Promise.all([
         this.page.waitForNavigation({ waitUntil: "networkidle" }),
         backLink.click(),
       ]);
 
       const finalUrl = this.page.url();
-      if (finalUrl.includes("localhost:3000") && !finalUrl.includes("/demo")) {
+      if (finalUrl.includes(`localhost:${process.env.SITE_PORT}`) && !finalUrl.includes("/demo")) {
         journey.steps.push("Successfully returned to marketing site");
         journey.success = true;
       } else {
@@ -333,7 +335,7 @@ export async function testAllCTAButtons(page) {
   const results = [];
 
   for (const selector of ctaSelectors) {
-    const buttons = await page.locator(selector).filter({ hasText: /demo/i }).all();
+    const buttons = await page.locator(selector).all();
 
     for (let i = 0; i < buttons.length; i++) {
       try {

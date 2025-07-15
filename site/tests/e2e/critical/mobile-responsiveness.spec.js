@@ -24,20 +24,29 @@ test.describe("Mobile Responsiveness E2E", () => {
       await expect(page.locator(".navbar-utility-links")).not.toBeVisible();
 
       // Mobile menu toggle should be visible
-      await expect(page.locator(".menu-toggle")).toBeVisible();
+      await expect(page.locator('[data-testid="menu-toggle"]')).toBeVisible();
 
       // Mobile menu should be hidden initially
-      await expect(page.locator(".mobile-menu-overlay")).not.toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).not.toBeVisible();
 
       // Click to open mobile menu
-      await page.click(".menu-toggle");
+      await page.click('[data-testid="menu-toggle"]');
       await page.waitForTimeout(300); // Wait for mobile menu animation
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
       // Verify mobile navigation elements
-      await expect(page.locator('.mobile-nav-link[href="/about"]')).toBeVisible();
-      await expect(page.locator('.mobile-nav-link[href="/signup"]')).toBeVisible();
-      await expect(page.locator('.mobile-nav-link[href="/demo"]')).toBeVisible();
+      // About is in the Platform dropdown, so let's test direct mobile nav links
+      await expect(page.locator('.mobile-nav-link[href="/getting-started"]')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link[href="/pricing"]')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link[href="/contact"]')).toBeVisible();
+
+      // Test utility links
+      await expect(
+        page.locator(".mobile-nav-link-utility").filter({ hasText: "Sign Up" })
+      ).toBeVisible();
+      await expect(
+        page.locator(".mobile-nav-link-cta").filter({ hasText: "Try the Demo" })
+      ).toBeVisible();
     });
 
     test("should hide mobile menu on larger screens", async ({ page }) => {
@@ -50,7 +59,7 @@ test.describe("Mobile Responsiveness E2E", () => {
       await expect(page.locator(".navbar-utility-links")).toBeVisible();
 
       // Mobile menu toggle should be hidden
-      await expect(page.locator(".menu-toggle")).not.toBeVisible();
+      await expect(page.locator('[data-testid="menu-toggle"]')).not.toBeVisible();
     });
   });
 
@@ -74,9 +83,8 @@ test.describe("Mobile Responsiveness E2E", () => {
         await expect(ctaButtons.first()).toBeVisible();
 
         // Sections should stack properly (use actual component classes)
-        await expect(page.locator(".section-two")).toBeVisible();
-        await expect(page.locator("section").nth(2)).toBeVisible(); // SectionThree
-        await expect(page.locator("section").nth(3)).toBeVisible(); // SectionFour
+        await expect(page.locator(".platform-overview-section")).toBeVisible();
+        await expect(page.locator(".cta-section")).toBeVisible(); // Third section
       });
     });
 
@@ -164,9 +172,9 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.waitForLoadState("networkidle");
 
       // Test touch on mobile menu with wait
-      await page.click(".menu-toggle");
+      await page.click('[data-testid="menu-toggle"]');
       await page.waitForTimeout(300); // Wait for animation
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
       // Test touch on mobile links
       await page.click('.mobile-nav-link[href="/signup"]');
@@ -180,11 +188,11 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.waitForLoadState("networkidle");
 
       // Should be able to scroll through all sections
-      await page.locator(".section-two").scrollIntoViewIfNeeded();
-      await expect(page.locator(".section-two")).toBeInViewport();
+      await page.locator(".platform-overview-section").scrollIntoViewIfNeeded();
+      await expect(page.locator(".platform-overview-section")).toBeInViewport();
 
-      await page.locator("section").nth(2).scrollIntoViewIfNeeded();
-      await expect(page.locator("section").nth(2)).toBeInViewport();
+      await page.locator(".cta-section").scrollIntoViewIfNeeded();
+      await expect(page.locator(".cta-section")).toBeInViewport();
 
       await page.locator("footer").scrollIntoViewIfNeeded();
       await expect(page.locator("footer")).toBeInViewport();
@@ -225,13 +233,27 @@ test.describe("Mobile Responsiveness E2E", () => {
     });
 
     test("should not have horizontal scroll on mobile", async ({ page }) => {
+      console.log("[DEBUG-CI] Starting horizontal scroll test");
+      console.log("[DEBUG-CI] Browser info:", await page.evaluate(() => navigator.userAgent));
+
       await page.setViewportSize({ width: 375, height: 667 });
+      console.log("[DEBUG-CI] Set viewport to 375x667");
+
       await page.goto("/");
+      console.log("[DEBUG-CI] Navigated to /");
+      console.log("[DEBUG-CI] Current URL:", page.url());
+
       await page.waitForLoadState("networkidle");
+      console.log("[DEBUG-CI] Network idle reached");
 
       // Check that page doesn't cause horizontal scrolling
       const scrollWidth = await page.evaluate(() => document.body.scrollWidth);
       const clientWidth = await page.evaluate(() => document.body.clientWidth);
+
+      console.log("[DEBUG-CI] scrollWidth:", scrollWidth);
+      console.log("[DEBUG-CI] clientWidth:", clientWidth);
+      console.log("[DEBUG-CI] difference:", scrollWidth - clientWidth);
+      console.log("[DEBUG-CI] Expected: scrollWidth <=", clientWidth + 5);
 
       expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 5); // Allow small variance
     });

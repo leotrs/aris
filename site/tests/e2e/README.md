@@ -154,7 +154,7 @@ Tests use consistent test data:
 
 ### Playwright Config (`playwright.config.js`)
 
-- **Base URL**: `http://localhost:3000`
+- **Base URL**: `http://localhost:${process.env.SITE_PORT}` (configured via environment variables)
 - **Retries**: 2 on CI, 0 locally
 - **Timeout**: Default Playwright timeouts
 - **Screenshots**: On failure only

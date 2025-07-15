@@ -5,7 +5,18 @@ export default defineEventHandler(async (event) => {
 
   // Only handle /demo requests (with or without trailing slash)
   if (url.pathname === "/demo" || url.pathname === "/demo/") {
-    const frontendUrl = process.env.FRONTEND_URL;
+    // Get frontend URL from runtime config or environment
+    const config = useRuntimeConfig();
+    const frontendUrl = config.public.frontendUrl || process.env.FRONTEND_URL;
+
+    if (!frontendUrl) {
+      console.error("Demo proxy error: FRONTEND_URL not configured");
+      throw createError({
+        statusCode: 502,
+        statusMessage: "Demo service not configured",
+      });
+    }
+
     const targetUrl = `${frontendUrl}/demo`;
 
     try {
