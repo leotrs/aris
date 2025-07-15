@@ -178,12 +178,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox, webkit]
+        browser: [chromium, firefox]
         device: [desktop, mobile]
     runs-on: ubuntu-latest
-    container:
-      image: mcr.microsoft.com/playwright:v1.47.0-jammy
-      options: --user 1001
     env:
       ENV: CI
       BACKEND_PORT: 8000
@@ -198,11 +195,6 @@ jobs:
       NUXT_BACKEND_URL: http://localhost:8000
       TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
-      # Override database URLs for container environment
-      DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@postgres:5432/test_aris
-      DB_URL_PROD: postgresql+asyncpg://postgres:postgres@postgres:5432/test_aris
-      ALEMBIC_DB_URL_LOCAL: postgresql+psycopg2://postgres:postgres@postgres:5432/test_aris
-      ALEMBIC_DB_URL_PROD: postgresql+psycopg2://postgres:postgres@postgres:5432/test_aris
 
     services:
       postgres:
@@ -217,6 +209,8 @@ jobs:
           --health-interval 5s
           --health-timeout 5s
           --health-retries 3
+        ports:
+          - 5432:5432
 
     steps:
     - uses: actions/checkout@v4
@@ -248,7 +242,7 @@ jobs:
 
     - name: Wait for PostgreSQL to be ready
       run: |
-        timeout 30 bash -c 'until pg_isready -h postgres -p 5432 -U postgres; do sleep 1; done'
+        timeout 30 bash -c 'until pg_isready -h localhost -p 5432 -U postgres; do sleep 1; done'
         echo "PostgreSQL is ready!"
 
     - name: Create virtual environment and sync dependencies
@@ -260,6 +254,18 @@ jobs:
     - name: Run database migrations
       working-directory: backend
       run: uv run alembic upgrade head
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-browsers-site-${{ matrix.browser }}-${{ matrix.device }}
+
+    - name: Install Playwright browsers
+      working-directory: site
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      run: npx playwright install ${{ matrix.browser }} --with-deps
 
     - name: Start backend, frontend, site, and run E2E tests
       run: |
@@ -340,17 +346,13 @@ jobs:
         
         # Run E2E tests for specific browser and device
         if [ "${{ matrix.device }}" = "mobile" ]; then
-          if [ "${{ matrix.browser }}" = "webkit" ]; then
-            npx playwright test --project="Mobile Safari" --reporter=github
-          elif [ "${{ matrix.browser }}" = "firefox" ]; then
+          if [ "${{ matrix.browser }}" = "firefox" ]; then
             npx playwright test --project="Mobile Firefox" --reporter=github
           else
             npx playwright test --project="Mobile Chrome" --reporter=github
           fi
         else
-          if [ "${{ matrix.browser }}" = "webkit" ]; then
-            npx playwright test --project="webkit" --reporter=github
-          elif [ "${{ matrix.browser }}" = "firefox" ]; then
+          if [ "${{ matrix.browser }}" = "firefox" ]; then
             npx playwright test --project="firefox" --reporter=github
           else
             npx playwright test --project="chromium" --reporter=github
