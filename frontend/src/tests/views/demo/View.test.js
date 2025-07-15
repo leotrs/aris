@@ -211,7 +211,14 @@ describe("Demo View", () => {
         smallerOrEqual: (size) => ref(size === "sm" ? true : false),
       });
 
-      wrapper = mount(DemoView);
+      // Provide mobileMode injection since component now injects instead of computes
+      wrapper = mount(DemoView, {
+        global: {
+          provide: {
+            mobileMode: ref(true),
+          },
+        },
+      });
       await nextTick();
 
       const container = wrapper.find('[data-testid="demo-container"]');
@@ -416,13 +423,21 @@ describe("Demo View", () => {
     });
 
     it("provides viewport and breakpoint info", async () => {
-      wrapper = mount(DemoView);
+      // Provide mobileMode since component now injects it from App.vue
+      wrapper = mount(DemoView, {
+        global: {
+          provide: {
+            mobileMode: ref(false),
+          },
+        },
+      });
       await nextTick();
 
       const provided = wrapper.vm.$.provides;
       expect(provided.breakpoints).toBeDefined();
       expect(provided.xsMode).toBeDefined();
-      expect(provided.mobileMode).toBeDefined();
+      // mobileMode is now injected from parent, not provided by this component
+      expect(wrapper.vm.$.provides.api).toBeDefined();
     });
 
     it("provides user, fileStore, and file data", async () => {

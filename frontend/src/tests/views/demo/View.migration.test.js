@@ -202,7 +202,7 @@ describe("Demo View Migration Tests", () => {
       expect(provided.api).toBeDefined();
       expect(provided.breakpoints).toBeDefined();
       expect(provided.xsMode).toBeDefined();
-      expect(provided.mobileMode).toBeDefined();
+      // mobileMode is now injected from App.vue, not provided by this component
       expect(provided.user).toBeDefined();
       expect(provided.fileStore).toBeDefined();
       expect(provided.file).toBeDefined();
@@ -244,7 +244,14 @@ describe("Demo View Migration Tests", () => {
         smallerOrEqual: (size) => ref(size === "sm" ? true : false),
       });
 
-      wrapper = mount(DemoView);
+      // Provide mobileMode injection since component now injects instead of computes
+      wrapper = mount(DemoView, {
+        global: {
+          provide: {
+            mobileMode: ref(true),
+          },
+        },
+      });
       await nextTick();
 
       const container = wrapper.find('[data-testid="demo-container"]');
