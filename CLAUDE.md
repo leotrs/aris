@@ -18,6 +18,7 @@ aris/
 ```bash
 just init                             # Initial setup - copies .env files, installs dependencies
 just dev                              # Start development containers (uses current directory name)
+just migrate                          # Run database migrations (both PROD and LOCAL)
 just stop                             # Stop development containers
 just logs                             # View container logs
 just status                           # Check container status
@@ -25,9 +26,16 @@ just status                           # Check container status
 
 ### Testing & Quality
 ```bash
-just test-all                         # Run all tests (backend + frontend + site)
-just lint-all                         # Run all linters (backend + frontend + site)
-just check-all                        # Complete check: lint + typecheck + test
+just test                             # Run all tests (backend + frontend + site)
+just lint                             # Run all linters (backend + frontend + site)
+just check                            # Complete check: lint + typecheck + test
+```
+
+### Utility Commands
+```bash
+just init                             # Initial setup - copies .env files, installs dependencies
+just env                              # Show environment configuration
+just notify "message"                 # Send macOS notification
 ```
 
 ### Individual Service Commands (run inside containers)
@@ -35,7 +43,6 @@ just check-all                        # Complete check: lint + typecheck + test
 # Backend (inside container)
 uv sync --all-groups                  # Install dependencies
 uvicorn main:app --reload             # Run dev server
-alembic upgrade head                  # Run migrations
 uv run pytest -n8                     # Run tests (SQLite locally, PostgreSQL in CI)
 uv run ruff check                     # Lint
 uv run mypy aris/                     # Type check
@@ -43,6 +50,7 @@ uv run mypy aris/                     # Type check
 # Frontend (inside container)
 npm install                           # Install dependencies
 npm run dev                           # Run dev server
+npm run test:all                      # Run all tests (unit + E2E)
 npm test                              # Run unit tests
 npm run test:e2e                      # Run E2E tests
 npm run lint                          # Lint code
@@ -51,6 +59,7 @@ npm run storybook                     # Run Storybook
 # Site (inside container)
 npm install                           # Install dependencies
 npm run dev                           # Run dev server
+npm run test:all                      # Run all tests
 npm test                              # Run tests
 npm run lint                          # Lint code
 ```
