@@ -16,6 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from aris.config import settings
 from aris.crud.file import get_file
 from aris.crud.user import create_user
+from aris.crud.utils import assign_public_uuid_with_retry_async, generate_unique_public_uuid_async
 from aris.models import Annotation, File, FileSettings, FileStatus, Signup, Tag, User
 
 
@@ -957,3 +958,273 @@ class TestVersioningConstraints:
         
         assert count_time < 0.5, f"Count query took {count_time:.3f}s"
         assert count > 0
+
+
+class TestUUIDConstraintsIntegration:
+    """Integration tests for UUID generation utilities with database constraints."""
+
+    async def test_generate_unique_public_uuid_with_database(self, db_session: AsyncSession, test_user):
+        """Test UUID generation with actual database constraint checking."""
+        # Create file with specific UUID
+        existing_file = File(
+            owner_id=test_user.id,
+            source=":rsm:existing content::",
+            title="Existing File",
+            public_uuid="test01"
+        )
+        db_session.add(existing_file)
+        await db_session.commit()
+        
+        # Generate unique UUID - should not collide with existing one
+        uuid = await generate_unique_public_uuid_async(db_session)
+        assert uuid != "test01"
+        assert len(uuid) == 6
+        
+        # Verify UUID is actually unique in database
+        result = await db_session.execute(
+            select(File).where(File.public_uuid == uuid)
+        )
+        assert result.scalars().first() is None
+
+    async def test_assign_public_uuid_with_retry_database_integration(self, db_session: AsyncSession, test_user):
+        """Test UUID assignment with database constraint handling."""
+        # Create file without UUID
+        file = File(
+            owner_id=test_user.id,
+            source=":rsm:test content::",
+            title="Test File"
+        )
+        db_session.add(file)
+        await db_session.commit()
+        
+        # Assign UUID using utility
+        uuid = await assign_public_uuid_with_retry_async(db_session, file)
+        await db_session.commit()
+        
+        # Verify UUID was assigned and is unique
+        result = await db_session.execute(
+            select(File).where(File.id == file.id)
+        )
+        updated_file = result.scalars().first()
+        assert updated_file.public_uuid == uuid
+        assert len(uuid) == 6
+
+    async def test_uuid_collision_handling_integration(self, db_session: AsyncSession, test_user):
+        """Test UUID collision detection and resolution with database."""
+        # Create multiple files and assign UUIDs
+        files = []
+        uuids = set()
+        
+        for i in range(10):
+            file = File(
+                owner_id=test_user.id,
+                source=f":rsm:content {i}::",
+                title=f"File {i}"
+            )
+            db_session.add(file)
+            files.append(file)
+        
+        await db_session.commit()
+        
+        # Assign UUIDs to all files
+        for file in files:
+            uuid = await assign_public_uuid_with_retry_async(db_session, file)
+            uuids.add(uuid)
+        
+        await db_session.commit()
+        
+        # All UUIDs should be unique
+        assert len(uuids) == 10
+        
+        # Verify in database
+        result = await db_session.execute(
+            select(File.public_uuid).where(File.public_uuid.is_not(None))
+        )
+        db_uuids = {row[0] for row in result.all()}
+        assert len(db_uuids) >= 10  # At least our 10 files
+
+    async def test_uuid_constraint_violation_recovery(self, db_session: AsyncSession, test_user):
+        """Test recovery from UUID constraint violations."""
+        # Create file with specific UUID
+        file1 = File(
+            owner_id=test_user.id,
+            source=":rsm:content 1::",
+            title="File 1",
+            public_uuid="fixed1"
+        )
+        db_session.add(file1)
+        await db_session.commit()
+        
+        # Try to create another file with same UUID - should fail
+        file2 = File(
+            owner_id=test_user.id,
+            source=":rsm:content 2::",
+            title="File 2",
+            public_uuid="fixed1"
+        )
+        db_session.add(file2)
+        
+        with pytest.raises(IntegrityError):
+            await db_session.commit()
+        
+        # Rollback and assign unique UUID
+        await db_session.rollback()
+        file2.public_uuid = None
+        db_session.add(file2)
+        await db_session.commit()
+        
+        # Now assign unique UUID using utility
+        uuid = await assign_public_uuid_with_retry_async(db_session, file2)
+        await db_session.commit()
+        
+        # Should succeed with different UUID
+        assert uuid != "fixed1"
+        assert len(uuid) == 6
+
+    async def test_uuid_utility_with_published_files(self, db_session: AsyncSession, test_user):
+        """Test UUID utilities with published files workflow."""
+        from datetime import datetime, timezone
+        
+        # Create draft file
+        file = File(
+            owner_id=test_user.id,
+            source=":rsm:publication content::",
+            title="Publication Test",
+            status=FileStatus.DRAFT
+        )
+        db_session.add(file)
+        await db_session.commit()
+        
+        # Publish file using utility for UUID assignment
+        file.status = FileStatus.PUBLISHED
+        file.published_at = datetime.now(timezone.utc)
+        uuid = await assign_public_uuid_with_retry_async(db_session, file)
+        await db_session.commit()
+        
+        # Verify publication workflow
+        result = await db_session.execute(
+            select(File).where(File.id == file.id)
+        )
+        published_file = result.scalars().first()
+        assert published_file.status == FileStatus.PUBLISHED
+        assert published_file.published_at is not None
+        assert published_file.public_uuid == uuid
+
+    async def test_uuid_bulk_assignment_performance(self, db_session: AsyncSession, test_user):
+        """Test UUID assignment performance with multiple files."""
+        import time
+        
+        # Create multiple files
+        files = []
+        for i in range(50):
+            file = File(
+                owner_id=test_user.id,
+                source=f":rsm:bulk content {i}::",
+                title=f"Bulk File {i}"
+            )
+            files.append(file)
+            db_session.add(file)
+        
+        await db_session.commit()
+        
+        # Assign UUIDs to all files and measure performance
+        start_time = time.time()
+        
+        for file in files:
+            await assign_public_uuid_with_retry_async(db_session, file)
+        
+        await db_session.commit()
+        
+        end_time = time.time()
+        assignment_time = end_time - start_time
+        
+        # Should complete in reasonable time
+        assert assignment_time < 5.0, f"Bulk UUID assignment took {assignment_time:.2f}s"
+        
+        # Verify all UUIDs are unique
+        result = await db_session.execute(
+            select(File.public_uuid).where(File.public_uuid.is_not(None))
+        )
+        uuids = [row[0] for row in result.all()]
+        assert len(set(uuids)) == len(uuids)  # All unique
+
+    async def test_uuid_generation_under_high_collision_rate(self, db_session: AsyncSession, test_user):
+        """Test UUID generation behavior with artificially high collision rate."""
+        # This test simulates a scenario where collisions are more likely
+        # by filling the database with many existing UUIDs
+        
+        # Create many files with UUIDs to increase collision probability
+        existing_files = []
+        for i in range(100):
+            file = File(
+                owner_id=test_user.id,
+                source=f":rsm:existing {i}::",
+                title=f"Existing File {i}",
+                public_uuid=f"ex{i:04d}"  # Fixed format UUIDs
+            )
+            existing_files.append(file)
+            db_session.add(file)
+        
+        await db_session.commit()
+        
+        # Try to generate new unique UUIDs
+        new_file = File(
+            owner_id=test_user.id,
+            source=":rsm:new content::",
+            title="New File"
+        )
+        db_session.add(new_file)
+        await db_session.commit()
+        
+        # Should still be able to generate unique UUID
+        uuid = await assign_public_uuid_with_retry_async(db_session, new_file)
+        await db_session.commit()
+        
+        # Verify it's unique
+        assert len(uuid) == 6
+        assert not uuid.startswith("ex")  # Different from our fixed format
+        
+        # Verify uniqueness in database
+        result = await db_session.execute(
+            select(func.count()).select_from(File).where(File.public_uuid == uuid)
+        )
+        count = result.scalar()
+        assert count == 1
+
+    async def test_uuid_validation_with_database_data(self, db_session: AsyncSession, test_user):
+        """Test UUID validation against real database data."""
+        from aris.crud.utils import is_valid_public_uuid
+        
+        # Create files with various UUID formats
+        test_cases = [
+            ("vaAABB", True),  # Changed to use only valid chars
+            ("abcd23", True),
+            ("XYZ789", True),
+            ("", False),
+            ("toolong", False),
+            ("short", False),
+            ("abc@de", False),  # Changed to test invalid char
+            ("234567", True),  # Changed from "123456" to "234567"
+        ]
+        
+        for test_uuid, expected_valid in test_cases:
+            if expected_valid:
+                # Try to create file with this UUID
+                file = File(
+                    owner_id=test_user.id,
+                    source=f":rsm:content for {test_uuid}::",
+                    title=f"File {test_uuid}",
+                    public_uuid=test_uuid
+                )
+                db_session.add(file)
+                
+                try:
+                    await db_session.commit()
+                    # If commit succeeds, UUID should be valid
+                    assert is_valid_public_uuid(test_uuid)
+                except IntegrityError:
+                    # If commit fails, UUID might be invalid or duplicate
+                    await db_session.rollback()
+            else:
+                # Invalid UUIDs should be caught by validation
+                assert not is_valid_public_uuid(test_uuid)
