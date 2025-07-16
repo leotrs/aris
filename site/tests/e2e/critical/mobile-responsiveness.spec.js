@@ -24,21 +24,29 @@ test.describe("Mobile Responsiveness E2E", () => {
       await expect(page.locator(".navbar-utility-links")).not.toBeVisible();
 
       // Mobile menu toggle should be visible
-      await expect(page.locator(".menu-toggle")).toBeVisible();
+      await expect(page.locator('[data-testid="menu-toggle"]')).toBeVisible();
 
       // Mobile menu should be hidden initially
-      await expect(page.locator(".mobile-menu-overlay")).not.toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).not.toBeVisible();
 
       // Click to open mobile menu
-      await page.click(".menu-toggle");
+      await page.click('[data-testid="menu-toggle"]');
       await page.waitForTimeout(300); // Wait for mobile menu animation
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
-      // Verify mobile navigation elements are accessible
+      // Verify mobile navigation elements
+      // About is in the Platform dropdown, so let's test direct mobile nav links
       await expect(page.locator('.mobile-nav-link[href="/getting-started"]')).toBeVisible();
       await expect(page.locator('.mobile-nav-link[href="/pricing"]')).toBeVisible();
       await expect(page.locator('.mobile-nav-link[href="/contact"]')).toBeVisible();
-      await expect(page.locator('.mobile-nav-link[href="/signup"]')).toBeVisible();
+
+      // Test utility links
+      await expect(
+        page.locator(".mobile-nav-link-utility").filter({ hasText: "Sign Up" })
+      ).toBeVisible();
+      await expect(
+        page.locator(".mobile-nav-link-cta").filter({ hasText: "Try the Demo" })
+      ).toBeVisible();
     });
 
     test("should hide mobile menu on larger screens", async ({ page }) => {
@@ -51,7 +59,7 @@ test.describe("Mobile Responsiveness E2E", () => {
       await expect(page.locator(".navbar-utility-links")).toBeVisible();
 
       // Mobile menu toggle should be hidden
-      await expect(page.locator(".menu-toggle")).not.toBeVisible();
+      await expect(page.locator('[data-testid="menu-toggle"]')).not.toBeVisible();
     });
   });
 
