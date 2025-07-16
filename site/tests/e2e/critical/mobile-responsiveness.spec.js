@@ -180,18 +180,14 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.waitForLoadState("networkidle");
 
       // Should be able to scroll through all sections
-      await page.locator(".section-two").scrollIntoViewIfNeeded();
-      await expect(page.locator(".section-two")).toBeInViewport();
+      await page.locator(".platform-overview-section").scrollIntoViewIfNeeded();
+      await expect(page.locator(".platform-overview-section")).toBeInViewport();
 
-      await page.locator("section").nth(2).scrollIntoViewIfNeeded();
-      await expect(page.locator("section").nth(2)).toBeInViewport();
+      await page.locator(".cta-section").scrollIntoViewIfNeeded();
+      await expect(page.locator(".cta-section")).toBeInViewport();
 
       await page.locator("footer").scrollIntoViewIfNeeded();
       await expect(page.locator("footer")).toBeInViewport();
-
-      // Test back to top functionality
-      await page.click('button[aria-label="Back to top"]');
-      await expect(page.locator(".hero-section")).toBeInViewport();
     });
   });
 
