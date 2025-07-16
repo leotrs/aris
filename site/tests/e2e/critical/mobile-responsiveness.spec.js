@@ -172,9 +172,9 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.waitForLoadState("networkidle");
 
       // Test touch on mobile menu with wait
-      await page.click(".menu-toggle");
+      await page.click('[data-testid="menu-toggle"]');
       await page.waitForTimeout(300); // Wait for animation
-      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
+      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
 
       // Test touch on mobile links
       await page.click('.mobile-nav-link[href="/signup"]');
