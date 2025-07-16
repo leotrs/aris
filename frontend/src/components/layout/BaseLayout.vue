@@ -131,6 +131,7 @@
 
   // Mobile drawer controls
   const toggleMobileDrawer = () => {
+    console.log("[BaseLayout] Toggling mobile drawer, mobileMode:", mobileMode.value);
     mobileDrawerOpen.value = !mobileDrawerOpen.value;
   };
 
@@ -140,6 +141,7 @@
 
   // Prevent body scroll when mobile drawer is open
   watchEffect(() => {
+    console.log("[BaseLayout] watchEffect - mobileMode:", mobileMode.value, "mobileDrawerOpen:", mobileDrawerOpen.value);
     if (mobileMode.value && mobileDrawerOpen.value) {
       document.body.style.overflow = "hidden";
     } else {
