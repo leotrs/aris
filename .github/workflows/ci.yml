@@ -46,7 +46,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
         echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
@@ -176,7 +175,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
         echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start all services
@@ -254,7 +252,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
         echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
@@ -334,7 +331,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
         echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
@@ -579,7 +575,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
         echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
@@ -659,7 +654,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
         echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
