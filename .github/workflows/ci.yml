@@ -1020,7 +1020,7 @@ jobs:
         # Run mobile Chrome tests
         if [ "${{ matrix.test-type }}" = "demo" ]; then
           echo "Running demo Mobile Chrome E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only, @auth, and @site)"
-          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@auth)(?!.*@site)" --project="Mobile Chrome" --reporter=github
+          CI_TEST_TYPE=demo npx playwright test --grep "^(?!.*@auth).*(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@site)" --project="Mobile Chrome" --reporter=github
         else
           echo "Running auth Mobile Chrome E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only and @site)"
           CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)(?!.*@site)" --project="Mobile Chrome" --reporter=github
@@ -1158,7 +1158,7 @@ jobs:
         # Run mobile Firefox tests
         if [ "${{ matrix.test-type }}" = "demo" ]; then
           echo "Running demo Mobile Firefox E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only, @auth, and @site)"
-          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@auth)(?!.*@site)" --project="Mobile Firefox" --reporter=github
+          CI_TEST_TYPE=demo npx playwright test --grep "^(?!.*@auth).*(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@site)" --project="Mobile Firefox" --reporter=github
         else
           echo "Running auth Mobile Firefox E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only and @site)"
           CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)(?!.*@site)" --project="Mobile Firefox" --reporter=github
@@ -1343,7 +1343,7 @@ jobs:
         # Run mobile Safari tests
         if [ "${{ matrix.test-type }}" = "demo" ]; then
           echo "Running demo Mobile Safari E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only, @auth, and @site)"
-          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@auth)(?!.*@site)" --project="Mobile Safari" --reporter=github
+          CI_TEST_TYPE=demo npx playwright test --grep "^(?!.*@auth).*(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@site)" --project="Mobile Safari" --reporter=github
         else
           echo "Running auth Mobile Safari E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only and @site)"
           CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)(?!.*@site)" --project="Mobile Safari" --reporter=github
