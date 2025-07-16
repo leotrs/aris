@@ -26,18 +26,18 @@ test.describe("Mobile Responsiveness E2E", () => {
       // Mobile menu toggle should be visible
       await expect(page.locator(".menu-toggle")).toBeVisible();
 
-      // Mobile menu should be hidden initially (navbar-links should be hidden on mobile)
-      await expect(page.locator(".navbar-links")).not.toBeVisible();
+      // Mobile menu should be hidden initially
+      await expect(page.locator(".mobile-menu-overlay")).not.toBeVisible();
 
       // Click to open mobile menu
       await page.click(".menu-toggle");
       await page.waitForTimeout(300); // Wait for mobile menu animation
-      await expect(page.locator(".navbar-links")).toBeVisible();
+      await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
       // Verify mobile navigation elements (from the actual HTML structure)
-      await expect(page.locator('.nav-link[href="/about"]')).toBeVisible();
-      await expect(page.locator('.nav-link[href="/signup"]')).toBeVisible();
-      await expect(page.locator('.nav-link[href="/demo"]')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link[href="/about"]')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link[href="/signup"]')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link-cta')).toBeVisible();
     });
 
     test("should hide mobile menu on larger screens", async ({ page }) => {
@@ -74,9 +74,8 @@ test.describe("Mobile Responsiveness E2E", () => {
         await expect(ctaButtons.first()).toBeVisible();
 
         // Sections should stack properly (use actual component classes)
-        await expect(page.locator(".section-two")).toBeVisible();
-        await expect(page.locator("section").nth(2)).toBeVisible(); // SectionThree
-        await expect(page.locator("section").nth(3)).toBeVisible(); // SectionFour
+        await expect(page.locator(".platform-overview-section")).toBeVisible();
+        await expect(page.locator(".cta-section")).toBeVisible();
       });
     });
 
