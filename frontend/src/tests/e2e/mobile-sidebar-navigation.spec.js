@@ -79,7 +79,17 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
             }))
           };
         });
-        console.log(`[EXTENSIVE DEBUG ${mobileDevice.name}] Complete state:`, JSON.stringify(debugInfo, null, 2));
+        // Safe logging to avoid circular reference issues with Vue reactive objects
+        console.log(`[EXTENSIVE DEBUG ${mobileDevice.name}] Complete state:`);
+        console.log(`  Viewport: ${debugInfo.viewportWidth}x${debugInfo.viewportHeight}`);
+        console.log(`  mobileMode: ${debugInfo.mobileMode}`);
+        console.log(`  hamburgerMenuExists: ${debugInfo.hamburgerMenuExists}`);
+        console.log(`  hamburgerMenuCount: ${debugInfo.hamburgerMenuCount}`);
+        console.log(`  hamburgerMenuVisible: ${debugInfo.hamburgerMenuVisible}`);
+        console.log(`  hamburgerMenuHTML: ${debugInfo.hamburgerMenuHTML}`);
+        console.log(`  baseLayoutClasses: ${debugInfo.baseLayoutClasses}`);
+        console.log(`  menusClasses: ${debugInfo.menusClasses}`);
+        console.log(`  menusHTML: ${debugInfo.menusHTML}`);
 
         // Hamburger menu should be visible
         const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
