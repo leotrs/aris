@@ -357,7 +357,7 @@ class File(Base):
 
     def can_publish(self) -> bool:
         """Check if file can be published."""
-        return bool(self.status == FileStatus.DRAFT and self.source is not None)
+        return bool(self.status == FileStatus.DRAFT and self.source is not None and self.source.strip())
 
     def publish(self) -> None:
         """Publish this file."""
