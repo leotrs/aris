@@ -84,8 +84,45 @@ for job_data in $FAILED_JOBS; do
     LOG_RETRIEVED=false
     for attempt in 1 2 3; do
       echo "📋 Retrieving logs (attempt $attempt/3)..."
-      if gh run view "$RUN_ID" --job="$job_id" --log 2>/dev/null; then
+      FULL_LOG=$(gh run view "$RUN_ID" --job="$job_id" --log 2>/dev/null)
+      if [ $? -eq 0 ] && [ -n "$FULL_LOG" ]; then
         LOG_RETRIEVED=true
+        
+        # Extract key sections with limited output
+        echo "--- LOG ANALYSIS FOR JOB: $job_name ---"
+        
+        # Get last 200 lines for context
+        echo "=== LAST 200 LINES OF LOG ==="
+        echo "$FULL_LOG" | tail -200
+        
+        # Extract error patterns
+        echo "=== ERROR PATTERNS ==="
+        ERROR_LINES=$(echo "$FULL_LOG" | grep -i -E "(error|fail|exception|timeout|abort|crash|panic)" | tail -50)
+        if [ -n "$ERROR_LINES" ]; then
+          echo "$ERROR_LINES"
+        else
+          echo "No error patterns found"
+        fi
+        
+        # Extract test failures
+        echo "=== TEST FAILURES ==="
+        TEST_FAILURES=$(echo "$FULL_LOG" | grep -i -E "(test.*fail|fail.*test|assertion|expect)" | tail -30)
+        if [ -n "$TEST_FAILURES" ]; then
+          echo "$TEST_FAILURES"
+        else
+          echo "No test failures found"
+        fi
+        
+        # Extract stack traces (lines starting with "at " or containing file paths)
+        echo "=== STACK TRACES ==="
+        STACK_TRACES=$(echo "$FULL_LOG" | grep -E "(^\s*at\s|\.js:|\.ts:|\.py:|\.go:|line\s+[0-9]+)" | tail -50)
+        if [ -n "$STACK_TRACES" ]; then
+          echo "$STACK_TRACES"
+        else
+          echo "No stack traces found"
+        fi
+        
+        echo "--- END LOG ANALYSIS ---"
         break
       else
         if [ $attempt -lt 3 ]; then
