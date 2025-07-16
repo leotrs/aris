@@ -19,7 +19,7 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.goto("/");
       await page.waitForLoadState("networkidle");
 
-      // Desktop navigation should be hidden
+      // Desktop navigation should be hidden on mobile
       await expect(page.locator(".navbar-links")).not.toBeVisible();
       await expect(page.locator(".navbar-utility-links")).not.toBeVisible();
 
@@ -34,10 +34,11 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.waitForTimeout(300); // Wait for mobile menu animation
       await expect(page.locator(".mobile-menu-overlay")).toBeVisible();
 
-      // Verify mobile navigation elements (from the actual HTML structure)
-      await expect(page.locator('.mobile-nav-link[href="/about"]')).toBeVisible();
+      // Verify mobile navigation elements are accessible
+      await expect(page.locator('.mobile-nav-link[href="/getting-started"]')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link[href="/pricing"]')).toBeVisible();
+      await expect(page.locator('.mobile-nav-link[href="/contact"]')).toBeVisible();
       await expect(page.locator('.mobile-nav-link[href="/signup"]')).toBeVisible();
-      await expect(page.locator(".mobile-nav-link-cta")).toBeVisible();
     });
 
     test("should hide mobile menu on larger screens", async ({ page }) => {
