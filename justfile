@@ -13,6 +13,10 @@ default:
 dev *args="":
     ./scripts/start-dev.sh {{args}}
 
+# Run database migrations (both PROD and LOCAL)
+migrate:
+    cd backend && export ENV=PROD && alembic upgrade head && export ENV=LOCAL && alembic upgrade head
+
 # Stop development containers
 stop:
     @echo "Stopping containers for $(basename $(pwd))..."
@@ -33,7 +37,8 @@ test:
 
 # Run all linters
 lint:
-    cd backend && uv run ruff check --fix
+    cd backend && uv run ruff check
+    cd backend && uv run mypy aris/
     cd frontend && npm run lint
     cd site && npm run lint
 
