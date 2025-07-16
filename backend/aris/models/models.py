@@ -24,7 +24,7 @@ from sqlalchemy import (
     UniqueConstraint,
     text,
 )
-from sqlalchemy.orm import DeclarativeBase, relationship
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 from sqlalchemy.sql import func
 
 
@@ -304,7 +304,7 @@ class File(Base):
     title = Column(String, nullable=True)
     abstract = Column(Text, nullable=True)
     keywords = Column(String, nullable=True)
-    status: Column[FileStatus] = Column(
+    status: Mapped[FileStatus] = mapped_column(
         Enum(FileStatus, name="filestatus"), nullable=False, default=FileStatus.DRAFT
     )
     last_edited_at = Column(
@@ -318,7 +318,7 @@ class File(Base):
 
     # Publication fields
     published_at = Column(DateTime(timezone=True), nullable=True)
-    public_uuid = Column(String(6), unique=True, nullable=True)
+    public_uuid: Mapped[str | None] = mapped_column(String(6), unique=True, nullable=True)
     permalink_slug = Column(String, unique=True, nullable=True)
     
     # Versioning fields
