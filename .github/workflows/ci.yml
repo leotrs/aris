@@ -345,18 +345,17 @@ jobs:
         done
         
         # Run site E2E tests for specific browser and device
-        echo "Running site E2E tests: @site only"
         if [ "${{ matrix.device }}" = "mobile" ]; then
           if [ "${{ matrix.browser }}" = "firefox" ]; then
-            npx playwright test --grep "@site" --project="Mobile Firefox" --reporter=github
+            npx playwright test --project="Mobile Firefox" --reporter=github
           else
-            npx playwright test --grep "@site" --project="Mobile Chrome" --reporter=github
+            npx playwright test --project="Mobile Chrome" --reporter=github
           fi
         else
           if [ "${{ matrix.browser }}" = "firefox" ]; then
-            npx playwright test --grep "@site" --project="firefox" --reporter=github
+            npx playwright test --project="firefox" --reporter=github
           else
-            npx playwright test --grep "@site" --project="chromium" --reporter=github
+            npx playwright test --project="chromium" --reporter=github
           fi
         fi
         TEST_EXIT_CODE=$?

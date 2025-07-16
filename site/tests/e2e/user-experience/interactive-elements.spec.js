@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-// @site
-test.describe("Interactive Elements E2E @site", () => {
+test.describe("Interactive Elements E2E", () => {
   test.describe("CTA Buttons", () => {
     test("should handle hero CTA buttons correctly", async ({ page }) => {
       await page.goto("/");

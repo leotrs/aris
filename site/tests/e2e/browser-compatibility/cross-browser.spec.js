@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-// @site
-test.describe("Cross-Browser Compatibility @site", () => {
+test.describe("Cross-Browser Compatibility", () => {
   test.describe("Core Functionality Across Browsers", () => {
     test("should render homepage correctly in all browsers", async ({ page, browserName }) => {
       await page.goto("/");

@@ -1,7 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-// @site
-test.describe("Design Assets Integration @site", () => {
+test.describe("Design Assets Integration", () => {
   test.beforeEach(async ({ page }) => {
     // Mock design assets API since backend may not be running in site tests
     await page.route("**/design-assets/**", async (route) => {
@@ -172,7 +171,7 @@ test.describe("Design Assets Integration @site", () => {
   });
 });
 
-test.describe("Design Assets Error Handling @site", () => {
+test.describe("Design Assets Error Handling", () => {
   test("should handle logo loading errors gracefully", async ({ page }) => {
     // Intercept image requests and simulate failures for testing
     await page.route("**/design-assets/logos/**", (route) => {
