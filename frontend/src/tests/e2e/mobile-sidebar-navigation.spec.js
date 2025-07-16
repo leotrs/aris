@@ -20,7 +20,13 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
   test.describe("Mobile Drawer Functionality", () => {
     mobileDevices.forEach((mobileDevice) => {
       test(`should show hamburger menu and drawer on ${mobileDevice.name}`, async ({ browser }) => {
-        const context = await browser.newContext(mobileDevice.device);
+        // Set device properties but exclude isMobile for Firefox compatibility
+        const contextOptions = {
+          ...mobileDevice.device,
+          isMobile: undefined // Remove isMobile to work with Firefox
+        };
+        
+        const context = await browser.newContext(contextOptions);
         const page = await context.newPage();
         mobileHelpers = new MobileHelpers(page);
         const auth = new AuthHelpers(page);
@@ -76,7 +82,13 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       test(`should close drawer when backdrop is tapped on ${mobileDevice.name}`, async ({
         browser,
       }) => {
-        const context = await browser.newContext(mobileDevice.device);
+        // Set device properties but exclude isMobile for Firefox compatibility
+        const contextOptions = {
+          ...mobileDevice.device,
+          isMobile: undefined // Remove isMobile to work with Firefox
+        };
+        
+        const context = await browser.newContext(contextOptions);
         const page = await context.newPage();
         mobileHelpers = new MobileHelpers(page);
         const auth = new AuthHelpers(page);
@@ -110,7 +122,13 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       test(`should close drawer when navigation item is tapped on ${mobileDevice.name}`, async ({
         browser,
       }) => {
-        const context = await browser.newContext(mobileDevice.device);
+        // Set device properties but exclude isMobile for Firefox compatibility
+        const contextOptions = {
+          ...mobileDevice.device,
+          isMobile: undefined // Remove isMobile to work with Firefox
+        };
+        
+        const context = await browser.newContext(contextOptions);
         const page = await context.newPage();
         mobileHelpers = new MobileHelpers(page);
         const auth = new AuthHelpers(page);
@@ -148,7 +166,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     });
 
     test("should prevent body scroll when drawer is open", async ({ browser }) => {
-      const context = await browser.newContext(devices["iPhone SE"]);
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
       const auth = new AuthHelpers(page);
@@ -186,7 +207,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
 
   test.describe("Mobile Navigation UX - Home View", () => {
     test("should provide mobile navigation on home page", async ({ browser }) => {
-      const context = await browser.newContext(devices["iPhone SE"]);
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
       const auth = new AuthHelpers(page);
@@ -254,7 +278,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     });
 
     test("should navigate from home to settings via mobile drawer", async ({ browser }) => {
-      const context = await browser.newContext(devices["iPhone SE"]);
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
       const auth = new AuthHelpers(page);
@@ -287,7 +314,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
 
   test.describe("Mobile Navigation UX - Account View", () => {
     test("should provide mobile navigation on account page", async ({ browser }) => {
-      const context = await browser.newContext(devices["iPhone SE"]);
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
       const auth = new AuthHelpers(page);
@@ -349,7 +379,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
 
   test.describe("Mobile Navigation UX - Settings View", () => {
     test("should provide mobile navigation on settings page", async ({ browser }) => {
-      const context = await browser.newContext(devices["iPhone SE"]);
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
       const auth = new AuthHelpers(page);
@@ -399,7 +432,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     });
 
     test("should navigate between settings sub-sections via mobile drawer", async ({ browser }) => {
-      const context = await browser.newContext(devices["iPhone SE"]);
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
       const auth = new AuthHelpers(page);
@@ -462,7 +498,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
 
   test.describe("Mobile Animation and UX Polish", () => {
     test("should animate drawer open/close transitions", async ({ browser }) => {
-      const context = await browser.newContext(devices["iPhone SE"]);
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
       const auth = new AuthHelpers(page);
@@ -526,7 +565,10 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
 
   test.describe("Desktop Mode Verification", () => {
     test("should not show mobile elements on desktop", async ({ browser }) => {
-      const context = await browser.newContext(devices["Desktop Chrome"]);
+      const context = await browser.newContext({
+        ...devices["Desktop Chrome"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
       const auth = new AuthHelpers(page);
