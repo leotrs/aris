@@ -160,6 +160,7 @@
     />
 
     <div class="menus" :class="{ mobile: mobileMode }">
+      {{ console.log("[BaseLayout] Rendering menus, mobileMode:", mobileMode) }}
       <HamburgerMenu v-if="mobileMode" />
       <UserMenu />
     </div>
