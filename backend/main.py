@@ -17,6 +17,7 @@ from aris.routes import (
     file_assets_router,
     file_router,
     file_settings_router,
+    public_router,
     render_router,
     signup_router,
     tag_router,
@@ -103,6 +104,7 @@ app = FastAPI(
         {"name": "render", "description": "Convert RSM markup to rendered HTML output"},
         {"name": "signup", "description": "Early access signup and waitlist management"},
         {"name": "copilot", "description": "AI-powered writing assistant for scientific manuscripts"},
+        {"name": "public", "description": "Public preprint access without authentication"},
         {"name": "health", "description": "System health and status monitoring"},
     ],
 )
@@ -251,6 +253,7 @@ app.include_router(user_settings_router, tags=["user-settings"])
 app.include_router(render_router, tags=["render"])
 app.include_router(signup_router, tags=["signup"])
 app.include_router(copilot_router, tags=["copilot"])
+app.include_router(public_router, tags=["public"])
 logger.info("All routers registered successfully")
 
 
