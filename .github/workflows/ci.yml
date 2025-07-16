@@ -33,7 +33,6 @@ jobs:
   unit-backend:
     runs-on: ubuntu-latest
     env:
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
       # CI-specific environment variables
       ENV: CI
       DB_NAME: aris_test
@@ -44,6 +43,12 @@ jobs:
       DB_URL_PROD: postgresql+asyncpg://aris:aris@postgres:5432/aris_test
       ALEMBIC_DB_URL_LOCAL: postgresql://aris:aris@postgres:5432/aris_test
       ALEMBIC_DB_URL_PROD: postgresql://aris:aris@postgres:5432/aris_test
+      # Required settings variables
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      # Required settings variables
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+      TEST_USER_EMAIL: testuser@aris.pub
+      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
 
     steps:
     - uses: actions/checkout@v4
@@ -182,6 +187,8 @@ jobs:
       DB_URL_PROD: postgresql+asyncpg://aris:aris@postgres:5432/aris_test
       ALEMBIC_DB_URL_LOCAL: postgresql://aris:aris@postgres:5432/aris_test
       ALEMBIC_DB_URL_PROD: postgresql://aris:aris@postgres:5432/aris_test
+      # Required settings variables
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
 
     steps:
     - uses: actions/checkout@v4
@@ -276,6 +283,8 @@ jobs:
       DB_URL_PROD: postgresql+asyncpg://aris:aris@postgres:5432/aris_test
       ALEMBIC_DB_URL_LOCAL: postgresql://aris:aris@postgres:5432/aris_test
       ALEMBIC_DB_URL_PROD: postgresql://aris:aris@postgres:5432/aris_test
+      # Required settings variables
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
 
     steps:
     - uses: actions/checkout@v4
@@ -620,6 +629,8 @@ jobs:
       DB_URL_PROD: postgresql+asyncpg://aris:aris@postgres:5432/aris_test
       ALEMBIC_DB_URL_LOCAL: postgresql://aris:aris@postgres:5432/aris_test
       ALEMBIC_DB_URL_PROD: postgresql://aris:aris@postgres:5432/aris_test
+      # Required settings variables
+      JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
 
     steps:
     - uses: actions/checkout@v4
