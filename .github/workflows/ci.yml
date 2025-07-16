@@ -54,7 +54,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
       run: |
@@ -194,7 +193,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start all services
       run: |
@@ -290,7 +288,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
       run: |
@@ -377,7 +374,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
       run: |
@@ -636,7 +632,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
       run: |
@@ -723,7 +718,6 @@ jobs:
     - name: Setup environment file
       run: |
         cp .env.ci .env
-        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
       run: |
