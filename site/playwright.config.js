@@ -5,6 +5,14 @@ import { config } from "dotenv";
 config();
 
 /**
+ * Playwright E2E Test Configuration
+ * 
+ * ELEMENT SELECTION STANDARDS:
+ * - ALWAYS use data-testid attributes: [data-testid="menu-toggle"]
+ * - AVOID CSS class selectors: .menu-toggle (classes can change)
+ * - Use .filter({ hasText: "..." }) for text-based selection
+ * - Add data-testid to all interactive elements in components
+ * 
  * @see https://playwright.dev/docs/test-configuration
  */
 export default defineConfig({
