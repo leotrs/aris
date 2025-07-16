@@ -1,11 +1,7 @@
 <script setup>
   import { ref, inject } from "vue";
 
-  console.log("[HamburgerMenu] Component is being instantiated");
-  
   const mobileDrawerOpen = inject("mobileDrawerOpen", ref(false));
-  
-  console.log("[HamburgerMenu] mobileDrawerOpen:", mobileDrawerOpen.value);
 
   const toggle = () => {
     mobileDrawerOpen.value = !mobileDrawerOpen.value;
