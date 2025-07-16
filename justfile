@@ -20,7 +20,7 @@ stop:
 
 # View logs for development containers
 logs:
-    docker compose -p $(basename $(pwd)) -f docker/docker-compose.dev.yml logs -f
+    docker compose -p $(basename $(pwd)) -f docker/docker-compose.dev.yml logs
 
 # Testing Commands
 # ================

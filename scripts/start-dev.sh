@@ -11,11 +11,13 @@ echo "Starting development containers for $PROJECT_NAME..."
 # Parse arguments
 BUILD_FLAG=""
 FORCE_BUILD=false
+DETACHED=true
 
 for arg in "$@"; do
     if [ "$arg" = "--build" ]; then
         FORCE_BUILD=true
-        break
+    elif [ "$arg" = "--attach" ]; then
+        DETACHED=false
     fi
 done
 
@@ -54,4 +56,8 @@ else
 fi
 
 # Start containers
-docker compose --env-file .env -p "$PROJECT_NAME" -f docker/docker-compose.dev.yml up $BUILD_FLAG
+if [ "$DETACHED" = true ]; then
+    docker compose --env-file .env -p "$PROJECT_NAME" -f docker/docker-compose.dev.yml up -d $BUILD_FLAG
+else
+    docker compose --env-file .env -p "$PROJECT_NAME" -f docker/docker-compose.dev.yml up $BUILD_FLAG
+fi
