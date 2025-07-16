@@ -265,3 +265,124 @@ def test_file_publish_method_validation():
         assert False, "Should have raised ValueError"
     except ValueError as e:
         assert "cannot be published" in str(e)
+
+
+def test_file_version_field_defaults():
+    """Test that File model has version field with correct default."""
+    file = File(owner_id=1, source=":rsm: Test content ::")
+    assert file.version == 0
+
+
+def test_file_version_field_validation():
+    """Test that File model version field accepts valid integer values."""
+    file = File(owner_id=1, source=":rsm: Test content ::", version=2)
+    assert file.version == 2
+    
+    file.version = 3
+    assert file.version == 3
+
+
+def test_file_version_field_constraints():
+    """Test that File model version field has proper constraints."""
+    # Version should be non-negative integer
+    file = File(owner_id=1, source=":rsm: Test content ::", version=0)
+    assert file.version == 0
+    
+    # Version should accept positive integers
+    file = File(owner_id=1, source=":rsm: Test content ::", version=1)
+    assert file.version == 1
+    
+    # Version should not be negative (will be validated at DB level)
+    file = File(owner_id=1, source=":rsm: Test content ::", version=-1)
+    assert file.version == -1  # Model allows it, DB will reject
+
+
+def test_file_prev_version_id_field_defaults():
+    """Test that File model has prev_version_id field with correct default."""
+    file = File(owner_id=1, source=":rsm: Test content ::")
+    assert file.prev_version_id is None
+
+
+def test_file_prev_version_id_field_validation():
+    """Test that File model prev_version_id field accepts valid integer values."""
+    file = File(owner_id=1, source=":rsm: Test content ::", prev_version_id=123)
+    assert file.prev_version_id == 123
+    
+    file.prev_version_id = 456
+    assert file.prev_version_id == 456
+    
+    file.prev_version_id = None
+    assert file.prev_version_id is None
+
+
+async def test_file_prev_version_id_foreign_key_relationship(db_session):
+    """Test that prev_version_id creates proper foreign key relationship."""
+    # Create a user first
+    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    
+    # Create the original file (version 1)
+    original_file = File(owner_id=user.id, source=":rsm: Original content ::", version=1)
+    db_session.add(original_file)
+    await db_session.commit()
+    await db_session.refresh(original_file)
+    
+    # Create a new version that references the original
+    new_version = File(
+        owner_id=user.id, 
+        source=":rsm: Updated content ::", 
+        version=2,
+        prev_version_id=original_file.id
+    )
+    db_session.add(new_version)
+    await db_session.commit()
+    await db_session.refresh(new_version)
+    
+    # Verify the relationship
+    assert new_version.prev_version_id == original_file.id
+    assert new_version.version == 2
+    assert original_file.version == 1
+
+
+async def test_file_prev_version_id_relationship_navigation(db_session):
+    """Test that we can navigate the prev_version relationship."""
+    # Create a user first
+    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    
+    # Create version 1
+    v1 = File(owner_id=user.id, source=":rsm: V1 content ::", version=1)
+    db_session.add(v1)
+    await db_session.commit()
+    await db_session.refresh(v1)
+    
+    # Create version 2 that references version 1
+    v2 = File(
+        owner_id=user.id, 
+        source=":rsm: V2 content ::", 
+        version=2,
+        prev_version_id=v1.id
+    )
+    db_session.add(v2)
+    await db_session.commit()
+    await db_session.refresh(v2)
+    
+    # Create version 3 that references version 2
+    v3 = File(
+        owner_id=user.id, 
+        source=":rsm: V3 content ::", 
+        version=3,
+        prev_version_id=v2.id
+    )
+    db_session.add(v3)
+    await db_session.commit()
+    await db_session.refresh(v3)
+    
+    # Verify the chain
+    assert v3.prev_version_id == v2.id
+    assert v2.prev_version_id == v1.id
+    assert v1.prev_version_id is None

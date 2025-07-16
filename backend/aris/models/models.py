@@ -281,6 +281,10 @@ class File(Base):
         Soft delete marker.
     owner_id : int
         Foreign key to User.
+    version : int
+        Version number for preprint versioning.
+    prev_version_id : int
+        Foreign key to previous version of this file.
     owner : User
         Owner relationship.
     tags : list of Tag
@@ -291,6 +295,10 @@ class File(Base):
     """
 
     __tablename__ = "files"
+    __table_args__ = (
+        Index("ix_files_version", "version"),
+        Index("ix_files_prev_version_id", "prev_version_id"),
+    )
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     title = Column(String, nullable=True)
@@ -312,6 +320,10 @@ class File(Base):
     published_at = Column(DateTime(timezone=True), nullable=True)
     public_uuid = Column(String(6), unique=True, nullable=True)
     permalink_slug = Column(String, unique=True, nullable=True)
+    
+    # Versioning fields
+    version = Column(Integer, nullable=False, default=0)
+    prev_version_id = Column(Integer, ForeignKey("files.id"), nullable=True)
 
     owner = relationship("User", back_populates="files")
     tags = relationship("Tag", secondary=file_tags, back_populates="files")
@@ -324,6 +336,13 @@ class File(Base):
     file_settings = relationship(
         "FileSettings", back_populates="file", cascade="all, delete-orphan"
     )
+
+    def __init__(self, **kwargs):
+        """Initialize File with default values."""
+        # Set defaults for fields that have defaults but aren't applied before DB insertion
+        if "version" not in kwargs:
+            kwargs["version"] = 0
+        super().__init__(**kwargs)
 
     @property
     def is_published(self) -> bool:

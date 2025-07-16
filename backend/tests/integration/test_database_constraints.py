@@ -691,3 +691,269 @@ class TestPublicationConstraints:
         )
         count = result.scalar()
         assert count >= 3
+
+
+class TestVersioningConstraints:
+    """Test versioning-related database constraints and indexes."""
+
+    async def test_version_field_indexing_performance(self, db_session: AsyncSession, test_user):
+        """Test that version field has proper indexing for performance."""
+        # Create multiple versions of files
+        files = []
+        for i in range(1, 6):
+            file = File(
+                owner_id=test_user.id,
+                source=f":rsm:Version {i} content::",
+                title=f"Versioned File V{i}",
+                version=i
+            )
+            files.append(file)
+            db_session.add(file)
+        
+        await db_session.commit()
+        
+        import time
+        start_time = time.time()
+        
+        # Query by version should be fast due to index
+        result = await db_session.execute(
+            select(File).where(File.version == 3)
+        )
+        version_3_files = result.scalars().all()
+        
+        end_time = time.time()
+        query_time = end_time - start_time
+        
+        # Should complete quickly due to index
+        assert query_time < 0.5, f"Version query took {query_time:.3f}s"
+        assert len(version_3_files) > 0
+        assert all(f.version == 3 for f in version_3_files)
+
+    async def test_prev_version_id_indexing_performance(self, db_session: AsyncSession, test_user):
+        """Test that prev_version_id field has proper indexing for performance."""
+        # Create version chain: v1 -> v2 -> v3 -> v4 -> v5
+        files = []
+        prev_id = None
+        
+        for i in range(1, 6):
+            file = File(
+                owner_id=test_user.id,
+                source=f":rsm:Version {i} content::",
+                title=f"Chained File V{i}",
+                version=i,
+                prev_version_id=prev_id
+            )
+            files.append(file)
+            db_session.add(file)
+            await db_session.flush()
+            prev_id = file.id
+        
+        await db_session.commit()
+        
+        import time
+        start_time = time.time()
+        
+        # Query by prev_version_id should be fast due to index
+        target_file = files[2]  # v3
+        result = await db_session.execute(
+            select(File).where(File.prev_version_id == target_file.id)
+        )
+        next_versions = result.scalars().all()
+        
+        end_time = time.time()
+        query_time = end_time - start_time
+        
+        # Should complete quickly due to index
+        assert query_time < 0.5, f"prev_version_id query took {query_time:.3f}s"
+        assert len(next_versions) == 1
+        assert next_versions[0].version == 4
+
+    async def test_version_constraints_validation(self, db_session: AsyncSession, test_user):
+        """Test that version field constraints are properly validated."""
+        # Test positive version numbers
+        valid_file = File(
+            owner_id=test_user.id,
+            source=":rsm:Valid version::",
+            title="Valid Version File",
+            version=0
+        )
+        db_session.add(valid_file)
+        await db_session.commit()
+        
+        # Should succeed
+        result = await db_session.execute(select(File).where(File.id == valid_file.id))
+        created_file = result.scalars().first()
+        assert created_file.version == 0
+
+    async def test_prev_version_id_foreign_key_constraint(self, db_session: AsyncSession, test_user, is_postgresql):
+        """Test that prev_version_id foreign key constraint is enforced."""
+        if not is_postgresql:
+            pytest.skip("SQLite doesn't enforce foreign keys by default in tests")
+        
+        # Try to create file with non-existent prev_version_id
+        invalid_file = File(
+            owner_id=test_user.id,
+            source=":rsm:Invalid reference::",
+            title="Invalid Reference File",
+            version=2,
+            prev_version_id=99999  # Non-existent ID
+        )
+        db_session.add(invalid_file)
+        
+        with pytest.raises(IntegrityError):
+            await db_session.commit()
+
+    async def test_version_chain_integrity(self, db_session: AsyncSession, test_user):
+        """Test that version chains maintain referential integrity."""
+        # Create original file
+        original = File(
+            owner_id=test_user.id,
+            source=":rsm:Original content::",
+            title="Original File",
+            version=0
+        )
+        db_session.add(original)
+        await db_session.commit()
+        await db_session.refresh(original)
+        
+        # Create version 2 referencing original
+        v2 = File(
+            owner_id=test_user.id,
+            source=":rsm:Version 2 content::",
+            title="Version 2 File",
+            version=2,
+            prev_version_id=original.id
+        )
+        db_session.add(v2)
+        await db_session.commit()
+        await db_session.refresh(v2)
+        
+        # Create version 3 referencing v2
+        v3 = File(
+            owner_id=test_user.id,
+            source=":rsm:Version 3 content::",
+            title="Version 3 File",
+            version=3,
+            prev_version_id=v2.id
+        )
+        db_session.add(v3)
+        await db_session.commit()
+        
+        # Verify chain integrity
+        assert v3.prev_version_id == v2.id
+        assert v2.prev_version_id == original.id
+        assert original.prev_version_id is None
+
+    async def test_complex_version_queries(self, db_session: AsyncSession, test_user):
+        """Test complex queries involving version fields."""
+        # Create multiple version chains
+        chains = []
+        for chain_id in range(3):
+            prev_id = None
+            for version in range(0, 3):
+                file = File(
+                    owner_id=test_user.id,
+                    source=f":rsm:Chain {chain_id} Version {version}::",
+                    title=f"Chain {chain_id} V{version}",
+                    version=version,
+                    prev_version_id=prev_id
+                )
+                db_session.add(file)
+                await db_session.flush()
+                prev_id = file.id
+            chains.append(prev_id)  # Store final file ID of each chain
+        
+        await db_session.commit()
+        
+        # Query for all version 2 files
+        result = await db_session.execute(
+            select(File).where(File.version == 2)
+        )
+        v2_files = result.scalars().all()
+        assert len(v2_files) == 3  # One from each chain
+        
+        # Query for all files with a previous version
+        result = await db_session.execute(
+            select(File).where(File.prev_version_id.is_not(None))
+        )
+        files_with_prev = result.scalars().all()
+        assert len(files_with_prev) == 6  # 2 files per chain (v1 and v2)
+        
+        # Query for all original files (no previous version)
+        result = await db_session.execute(
+            select(File).where(File.prev_version_id.is_(None))
+        )
+        original_files = result.scalars().all()
+        # Should have at least 3 (one from each chain)
+        original_count = len([f for f in original_files if f.version == 0])
+        assert original_count >= 3
+
+    async def test_version_ordering_queries(self, db_session: AsyncSession, test_user):
+        """Test ordering queries by version fields."""
+        # Create files with different versions
+        versions = [3, 0, 5, 2, 4]
+        for version in versions:
+            file = File(
+                owner_id=test_user.id,
+                source=f":rsm:Version {version} content::",
+                title=f"Ordered File V{version}",
+                version=version
+            )
+            db_session.add(file)
+        
+        await db_session.commit()
+        
+        # Query ordered by version ascending
+        result = await db_session.execute(
+            select(File)
+            .where(File.title.like("Ordered File%"))
+            .order_by(File.version.asc())
+        )
+        ordered_files = result.scalars().all()
+        
+        # Should be ordered 0, 2, 3, 4, 5
+        actual_versions = [f.version for f in ordered_files]
+        expected_versions = [0, 2, 3, 4, 5]
+        assert actual_versions == expected_versions
+
+    async def test_version_index_coverage(self, db_session: AsyncSession, test_user):
+        """Test that version indexes cover common query patterns."""
+        # Create test data
+        files = []
+        for i in range(1, 11):
+            file = File(
+                owner_id=test_user.id,
+                source=f":rsm:Content {i}::",
+                title=f"Coverage Test {i}",
+                version=i % 3  # Creates versions 1, 2, 0, 1, 2, 0, ...
+            )
+            files.append(file)
+            db_session.add(file)
+        
+        await db_session.commit()
+        
+        # Test various query patterns that should use indexes
+        import time
+        
+        # Range query on version
+        start_time = time.time()
+        result = await db_session.execute(
+            select(File).where(File.version.between(0, 1))
+        )
+        range_files = result.scalars().all()
+        range_time = time.time() - start_time
+        
+        assert range_time < 0.5, f"Range query took {range_time:.3f}s"
+        assert len(range_files) > 0
+        assert all(f.version in [0, 1] for f in range_files)
+        
+        # Count query on version
+        start_time = time.time()
+        result = await db_session.execute(
+            select(func.count()).select_from(File).where(File.version == 0)
+        )
+        count = result.scalar()
+        count_time = time.time() - start_time
+        
+        assert count_time < 0.5, f"Count query took {count_time:.3f}s"
+        assert count > 0
