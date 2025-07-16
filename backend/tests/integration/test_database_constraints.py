@@ -16,7 +16,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from aris.config import settings
 from aris.crud.file import get_file
 from aris.crud.user import create_user
-from aris.models import Annotation, File, FileSettings, Signup, Tag, User
+from aris.models import Annotation, File, FileSettings, FileStatus, Signup, Tag, User
 
 
 class TestDatabaseConstraints:
@@ -513,3 +513,181 @@ class TestDatabasePerformance:
         # Connection should still be valid
         final_result = await db_session.execute(text("SELECT 1"))
         assert final_result.scalar() == 1
+
+
+class TestPublicationConstraints:
+    """Test publication-related database constraints."""
+
+    async def test_public_uuid_uniqueness_constraint(self, db_session: AsyncSession, test_user):
+        """Test that public_uuid uniqueness is enforced."""
+        # Create first file with public_uuid
+        file1 = File(
+            owner_id=test_user.id,
+            source=":rsm:test content::",
+            title="File 1",
+            public_uuid="abc123"
+        )
+        db_session.add(file1)
+        await db_session.commit()
+        
+        # Try to create second file with same public_uuid
+        file2 = File(
+            owner_id=test_user.id,
+            source=":rsm:test content 2::",
+            title="File 2",
+            public_uuid="abc123"  # Same UUID
+        )
+        db_session.add(file2)
+        
+        with pytest.raises(IntegrityError):
+            await db_session.commit()
+
+    async def test_permalink_slug_uniqueness_constraint(self, db_session: AsyncSession, test_user):
+        """Test that permalink_slug uniqueness is enforced."""
+        # Create first file with permalink_slug
+        file1 = File(
+            owner_id=test_user.id,
+            source=":rsm:test content::",
+            title="File 1",
+            permalink_slug="my-awesome-paper"
+        )
+        db_session.add(file1)
+        await db_session.commit()
+        
+        # Try to create second file with same permalink_slug
+        file2 = File(
+            owner_id=test_user.id,
+            source=":rsm:test content 2::",
+            title="File 2",
+            permalink_slug="my-awesome-paper"  # Same slug
+        )
+        db_session.add(file2)
+        
+        with pytest.raises(IntegrityError):
+            await db_session.commit()
+
+    async def test_public_uuid_null_allowed(self, db_session: AsyncSession, test_user):
+        """Test that public_uuid can be null (unpublished files)."""
+        # Create file without public_uuid
+        file = File(
+            owner_id=test_user.id,
+            source=":rsm:test content::",
+            title="Unpublished File",
+            public_uuid=None
+        )
+        db_session.add(file)
+        await db_session.commit()
+        
+        # Should succeed
+        result = await db_session.execute(select(File).where(File.id == file.id))
+        created_file = result.scalars().first()
+        assert created_file is not None
+        assert created_file.public_uuid is None
+
+    async def test_permalink_slug_null_allowed(self, db_session: AsyncSession, test_user):
+        """Test that permalink_slug can be null (non-premium URLs)."""
+        # Create file without permalink_slug
+        file = File(
+            owner_id=test_user.id,
+            source=":rsm:test content::",
+            title="Standard URL File",
+            permalink_slug=None
+        )
+        db_session.add(file)
+        await db_session.commit()
+        
+        # Should succeed
+        result = await db_session.execute(select(File).where(File.id == file.id))
+        created_file = result.scalars().first()
+        assert created_file is not None
+        assert created_file.permalink_slug is None
+
+    async def test_published_at_null_allowed(self, db_session: AsyncSession, test_user):
+        """Test that published_at can be null (unpublished files)."""
+        # Create file without published_at
+        file = File(
+            owner_id=test_user.id,
+            source=":rsm:test content::",
+            title="Draft File",
+            published_at=None
+        )
+        db_session.add(file)
+        await db_session.commit()
+        
+        # Should succeed
+        result = await db_session.execute(select(File).where(File.id == file.id))
+        created_file = result.scalars().first()
+        assert created_file is not None
+        assert created_file.published_at is None
+
+    async def test_publication_workflow_constraints(self, db_session: AsyncSession, test_user):
+        """Test complete publication workflow with constraints."""
+        from datetime import datetime, timezone
+        
+        # Create draft file
+        file = File(
+            owner_id=test_user.id,
+            source=":rsm:test content::",
+            title="Publication Test",
+            status=FileStatus.DRAFT
+        )
+        db_session.add(file)
+        await db_session.commit()
+        
+        # Publish file with unique constraints
+        file.status = FileStatus.PUBLISHED
+        file.published_at = datetime.now(timezone.utc)
+        file.public_uuid = "pub123"
+        file.permalink_slug = "publication-test"
+        
+        await db_session.commit()
+        
+        # Verify publication fields
+        result = await db_session.execute(select(File).where(File.id == file.id))
+        published_file = result.scalars().first()
+        assert published_file.status == FileStatus.PUBLISHED
+        assert published_file.published_at is not None
+        assert published_file.public_uuid == "pub123"
+        assert published_file.permalink_slug == "publication-test"
+
+    async def test_multiple_null_public_uuids_allowed(self, db_session: AsyncSession, test_user):
+        """Test that multiple files can have null public_uuid."""
+        # Create multiple files with null public_uuid
+        for i in range(3):
+            file = File(
+                owner_id=test_user.id,
+                source=f":rsm:test content {i}::",
+                title=f"Draft File {i}",
+                public_uuid=None
+            )
+            db_session.add(file)
+        
+        await db_session.commit()
+        
+        # All should succeed
+        result = await db_session.execute(
+            select(func.count()).select_from(File).where(File.public_uuid.is_(None))
+        )
+        count = result.scalar()
+        assert count >= 3
+
+    async def test_multiple_null_permalink_slugs_allowed(self, db_session: AsyncSession, test_user):
+        """Test that multiple files can have null permalink_slug."""
+        # Create multiple files with null permalink_slug
+        for i in range(3):
+            file = File(
+                owner_id=test_user.id,
+                source=f":rsm:test content {i}::",
+                title=f"Standard URL File {i}",
+                permalink_slug=None
+            )
+            db_session.add(file)
+        
+        await db_session.commit()
+        
+        # All should succeed
+        result = await db_session.execute(
+            select(func.count()).select_from(File).where(File.permalink_slug.is_(None))
+        )
+        count = result.scalar()
+        assert count >= 3

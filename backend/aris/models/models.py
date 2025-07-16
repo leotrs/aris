@@ -127,10 +127,10 @@ class User(Base):
     profile_picture_id = Column(
         Integer, ForeignKey("profile_pictures.id"), nullable=True
     )
-    
+
     # Account fields
     affiliation = Column(String, nullable=True)
-    
+
     # Email verification fields
     email_verified = Column(Boolean, nullable=False, default=False)
     email_verification_token = Column(String, nullable=True)
@@ -142,7 +142,10 @@ class User(Base):
         "FileSettings", back_populates="user", cascade="all, delete-orphan"
     )
     user_settings = relationship(
-        "UserSettings", back_populates="user", cascade="all, delete-orphan", uselist=False
+        "UserSettings",
+        back_populates="user",
+        cascade="all, delete-orphan",
+        uselist=False,
     )
     file_assets = relationship(
         "FileAsset", back_populates="owner", cascade="all, delete-orphan"
@@ -152,36 +155,38 @@ class User(Base):
     def __init__(self, **kwargs):
         """Initialize User with default values."""
         # Set defaults for fields that have defaults but aren't applied before DB insertion
-        if 'email_verified' not in kwargs:
-            kwargs['email_verified'] = False
-        if 'avatar_color' not in kwargs:
-            kwargs['avatar_color'] = AvatarColor.BLUE
+        if "email_verified" not in kwargs:
+            kwargs["email_verified"] = False
+        if "avatar_color" not in kwargs:
+            kwargs["avatar_color"] = AvatarColor.BLUE
         super().__init__(**kwargs)
+
     annotation_messages = relationship(
         "AnnotationMessage", back_populates="owner", cascade="all, delete-orphan"
     )
 
     def generate_verification_token(self) -> str:
         """Generate a new email verification token.
-        
+
         Returns
         -------
         str
             32-character verification token.
         """
         import secrets
+
         token = secrets.token_urlsafe(24)[:32]  # Ensure exactly 32 chars
         self.email_verification_token = token
         return token
-    
+
     def verify_token(self, token: str) -> bool:
         """Verify an email verification token.
-        
+
         Parameters
         ----------
         token : str
             Token to verify.
-            
+
         Returns
         -------
         bool
@@ -303,6 +308,11 @@ class File(Base):
     deleted_at = Column(DateTime(timezone=True), nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
 
+    # Publication fields
+    published_at = Column(DateTime(timezone=True), nullable=True)
+    public_uuid = Column(String(6), unique=True, nullable=True)
+    permalink_slug = Column(String, unique=True, nullable=True)
+
     owner = relationship("User", back_populates="files")
     tags = relationship("Tag", secondary=file_tags, back_populates="files")
     annotations = relationship(
@@ -314,6 +324,33 @@ class File(Base):
     file_settings = relationship(
         "FileSettings", back_populates="file", cascade="all, delete-orphan"
     )
+
+    @property
+    def is_published(self) -> bool:
+        """Check if file is published."""
+        return bool(self.status == FileStatus.PUBLISHED)
+
+    def generate_public_uuid(self) -> str:
+        """Generate a 6-character public UUID for this file."""
+        import shortuuid
+
+        return shortuuid.uuid()[:6]
+
+    def can_publish(self) -> bool:
+        """Check if file can be published."""
+        return bool(self.status == FileStatus.DRAFT and self.source is not None)
+
+    def publish(self) -> None:
+        """Publish this file."""
+        if not self.can_publish():
+            raise ValueError("File cannot be published")
+
+        from datetime import datetime, timezone
+
+        self.status = FileStatus.PUBLISHED
+        self.published_at = datetime.now(timezone.utc)
+        if not self.public_uuid:
+            self.public_uuid = self.generate_public_uuid()
 
 
 class Tag(Base):
@@ -410,7 +447,7 @@ class FileAsset(Base):
 class UserSettings(Base):
     """User behavioral and privacy preferences.
 
-    Stores user preferences for application behavior, privacy controls, and 
+    Stores user preferences for application behavior, privacy controls, and
     communication settings that are separate from document display settings.
 
     Attributes
@@ -463,9 +500,7 @@ class UserSettings(Base):
     """
 
     __tablename__ = "user_settings"
-    __table_args__ = (
-        UniqueConstraint("user_id", name="uq_user_settings_per_user"),
-    )
+    __table_args__ = (UniqueConstraint("user_id", name="uq_user_settings_per_user"),)
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     user_id = Column(
