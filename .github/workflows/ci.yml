@@ -43,6 +43,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup environment file
+      run: |
+        cp .env.ci .env
+        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
+        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
+
     - name: Start services
       run: |
         docker compose -f docker/docker-compose.dev.yml up -d postgres backend
@@ -167,6 +173,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup environment file
+      run: |
+        cp .env.ci .env
+        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
+        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
+
     - name: Start all services
       run: |
         docker compose -f docker/docker-compose.dev.yml up -d postgres backend frontend site
@@ -238,6 +250,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Setup environment file
+      run: |
+        cp .env.ci .env
+        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
+        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
       run: |
@@ -312,6 +330,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Setup environment file
+      run: |
+        cp .env.ci .env
+        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
+        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
       run: |
@@ -552,6 +576,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Setup environment file
+      run: |
+        cp .env.ci .env
+        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
+        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
+
     - name: Start services
       run: |
         docker compose -f docker/docker-compose.dev.yml up -d postgres backend frontend
@@ -625,6 +655,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Setup environment file
+      run: |
+        cp .env.ci .env
+        echo "ANTHROPIC_API_KEY=mock_key_for_ci" >> .env
+        echo "TEST_USER_PASSWORD=${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}" >> .env
 
     - name: Start services
       run: |
