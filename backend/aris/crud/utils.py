@@ -69,8 +69,8 @@ def is_valid_public_uuid(uuid: str) -> bool:
         return False
     
     # Check if all characters are in shortuuid's alphabet
-    # shortuuid uses base57: 23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz
-    valid_chars = set("23456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnpqrstuvwxyz")
+    # Use the actual alphabet from shortuuid instead of hardcoded version
+    valid_chars = set(shortuuid.get_alphabet())
     return all(c in valid_chars for c in uuid)
 
 
