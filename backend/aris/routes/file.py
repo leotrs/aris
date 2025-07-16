@@ -5,7 +5,11 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import current_user, get_db, get_file_service
+from ..crud.utils import assign_public_uuid_with_retry_async
+from ..exceptions import bad_request_exception, forbidden_exception, not_found_exception
 from ..models import FileAsset
+from ..models.models import File as DbFile
+from ..models.models import FileStatus
 from ..services.file_service import FileCreateData, FileUpdateData, InMemoryFileService
 from .file_assets import FileAssetOut
 
@@ -65,6 +69,40 @@ class FileUpdate(BaseModel):
         if self.source:
             _validate_source(self)
         return self
+
+
+class FileStatusUpdate(BaseModel):
+    status: str
+
+    def validate_status(self):
+        valid_statuses = {"draft", "under_review", "published", "withdrawn"}
+        if self.status.lower() not in valid_statuses:
+            raise ValueError(f"Invalid status. Must be one of: {valid_statuses}")
+        return self
+
+
+class PublicationInfoResponse(BaseModel):
+    id: int
+    status: str
+    is_published: bool
+    can_publish: bool
+    published_at: str | None
+    public_uuid: str | None
+    permalink_slug: str | None
+    version: int
+    can_withdraw: bool
+
+    model_config = {"from_attributes": True}
+
+
+class PublicationResponse(BaseModel):
+    id: int
+    status: str
+    published_at: str | None
+    public_uuid: str | None
+    message: str
+
+    model_config = {"from_attributes": True}
 
 
 @router.get("")
@@ -524,3 +562,376 @@ async def get_assets_for_file(
     )
     assets = result.scalars().all()
     return assets
+
+
+@router.post("/{file_id}/publish", response_model=PublicationResponse)
+async def publish_file(
+    file_id: int,
+    user=Depends(current_user),
+    db: AsyncSession = Depends(get_db),
+    file_service: InMemoryFileService = Depends(get_file_service),
+):
+    """Publish a file as a public preprint.
+
+    Parameters
+    ----------
+    file_id : int
+        The unique identifier of the file to publish.
+    user : User
+        Current authenticated user dependency.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+    file_service : InMemoryFileService
+        File service dependency.
+
+    Returns
+    -------
+    PublicationResponse
+        Publication confirmation with status and UUID.
+
+    Raises
+    ------
+    HTTPException
+        404 error if file is not found.
+        403 error if user doesn't own the file.
+        400 error if file cannot be published.
+
+    Notes
+    -----
+    Requires authentication. Publication is permanent - once published,
+    a file cannot be unpublished, only withdrawn.
+    """
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Get file from database to ensure we have the latest version
+    result = await db.execute(
+        select(DbFile).where(
+            DbFile.id == file_id,
+            DbFile.deleted_at.is_(None)
+        )
+    )
+    file = result.scalars().first()
+    
+    if not file:
+        raise not_found_exception("File", file_id)
+    
+    # Check ownership
+    if file.owner_id != user.id:
+        raise forbidden_exception("You do not have permission to publish this file")
+    
+    # Check if file can be published
+    if not file.can_publish():
+        if file.status == FileStatus.PUBLISHED:
+            raise bad_request_exception("File is already published")
+        elif file.status == FileStatus.UNDER_REVIEW:
+            raise bad_request_exception("File is under review and cannot be published")
+        elif file.source is None or not file.source.strip():
+            raise bad_request_exception("File cannot be published without source content")
+        else:
+            raise bad_request_exception("File cannot be published in its current state")
+    
+    # Generate UUID with collision detection if needed
+    if not file.public_uuid:
+        try:
+            assigned_uuid: str = await assign_public_uuid_with_retry_async(db, file)
+            file.public_uuid = assigned_uuid
+        except RuntimeError as e:
+            raise bad_request_exception(f"Failed to generate public UUID: {str(e)}")
+    
+    # Publish the file
+    file.publish()
+    
+    # Save to database
+    await db.commit()
+    
+    # Update file service cache
+    await file_service.sync_from_database(db)
+    
+    return PublicationResponse(
+        id=file.id,
+        status=file.status.value,
+        published_at=file.published_at.isoformat() if file.published_at else None,
+        public_uuid=file.public_uuid,
+        message="File published successfully"
+    )
+
+
+@router.put("/{file_id}/status", response_model=PublicationResponse)
+async def update_file_status(
+    file_id: int,
+    status_data: FileStatusUpdate,
+    user=Depends(current_user),
+    db: AsyncSession = Depends(get_db),
+    file_service: InMemoryFileService = Depends(get_file_service),
+):
+    """Update a file's publication status.
+
+    Parameters
+    ----------
+    file_id : int
+        The unique identifier of the file to update.
+    status_data : FileStatusUpdate
+        The new status data.
+    user : User
+        Current authenticated user dependency.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+    file_service : InMemoryFileService
+        File service dependency.
+
+    Returns
+    -------
+    PublicationResponse
+        Updated publication status information.
+
+    Raises
+    ------
+    HTTPException
+        404 error if file is not found.
+        403 error if user doesn't own the file.
+        400 error if status transition is invalid.
+
+    Notes
+    -----
+    Requires authentication. Some status transitions are restricted:
+    - Published files cannot be unpublished, only withdrawn
+    - Withdrawn files cannot be changed to other statuses
+    """
+    # Validate status
+    try:
+        status_data.validate_status()
+    except ValueError as e:
+        raise bad_request_exception(str(e))
+    
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Get file from database
+    result = await db.execute(
+        select(DbFile).where(
+            DbFile.id == file_id,
+            DbFile.deleted_at.is_(None)
+        )
+    )
+    file = result.scalars().first()
+    
+    if not file:
+        raise not_found_exception("File", file_id)
+    
+    # Check ownership
+    if file.owner_id != user.id:
+        raise forbidden_exception("You do not have permission to update this file's status")
+    
+    # Map string status to enum
+    status_mapping = {
+        "draft": FileStatus.DRAFT,
+        "under_review": FileStatus.UNDER_REVIEW,
+        "published": FileStatus.PUBLISHED,
+        "withdrawn": FileStatus.PUBLISHED  # Withdrawn is handled by a separate field in the future
+    }
+    
+    new_status: FileStatus = status_mapping[status_data.status.lower()]
+    
+    # Check for invalid transitions
+    if file.status == FileStatus.PUBLISHED and new_status != FileStatus.PUBLISHED:
+        if status_data.status.lower() == "withdrawn":
+            # For now, we'll implement withdrawal as a separate endpoint
+            raise bad_request_exception("Use the withdrawal endpoint to withdraw a published file")
+        else:
+            raise bad_request_exception("Published files cannot be unpublished")
+    
+    # Handle publication
+    if new_status == FileStatus.PUBLISHED:
+        if not file.can_publish():
+            if file.source is None or not file.source.strip():
+                raise bad_request_exception("File cannot be published without source content")
+            else:
+                raise bad_request_exception("File cannot be published in its current state")
+        
+        # Generate UUID with collision detection if needed
+        if not file.public_uuid:
+            try:
+                assigned_uuid: str = await assign_public_uuid_with_retry_async(db, file)
+                file.public_uuid = assigned_uuid
+            except RuntimeError as e:
+                raise bad_request_exception(f"Failed to generate public UUID: {str(e)}")
+        
+        # Use the publish method to ensure proper timestamp setting
+        file.publish()
+    else:
+        # Update status directly for non-publication status changes
+        file.status = new_status
+    
+    # Save to database
+    await db.commit()
+    
+    # Update file service cache
+    await file_service.sync_from_database(db)
+    
+    return PublicationResponse(
+        id=file.id,
+        status=file.status.value,
+        published_at=file.published_at.isoformat() if file.published_at else None,
+        public_uuid=file.public_uuid,
+        message=f"File status updated to {file.status.value}"
+    )
+
+
+@router.get("/{file_id}/publication-info", response_model=PublicationInfoResponse)
+async def get_publication_info(
+    file_id: int,
+    user=Depends(current_user),
+    db: AsyncSession = Depends(get_db),
+    file_service: InMemoryFileService = Depends(get_file_service),
+):
+    """Get publication information for a file.
+
+    Parameters
+    ----------
+    file_id : int
+        The unique identifier of the file.
+    user : User
+        Current authenticated user dependency.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+    file_service : InMemoryFileService
+        File service dependency.
+
+    Returns
+    -------
+    PublicationInfoResponse
+        Publication information including status and capabilities.
+
+    Raises
+    ------
+    HTTPException
+        404 error if file is not found.
+        403 error if user doesn't own the file.
+
+    Notes
+    -----
+    Requires authentication. Returns comprehensive publication status
+    information including what actions are available.
+    """
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Get file from database
+    result = await db.execute(
+        select(DbFile).where(
+            DbFile.id == file_id,
+            DbFile.deleted_at.is_(None)
+        )
+    )
+    file = result.scalars().first()
+    
+    if not file:
+        raise not_found_exception("File", file_id)
+    
+    # Check ownership
+    if file.owner_id != user.id:
+        raise forbidden_exception("You do not have permission to view this file's publication info")
+    
+    # Calculate can_withdraw (published files can be withdrawn)
+    can_withdraw = file.status == FileStatus.PUBLISHED
+    
+    return PublicationInfoResponse(
+        id=file.id,
+        status=file.status.value,
+        is_published=file.is_published,
+        can_publish=file.can_publish(),
+        published_at=file.published_at.isoformat() if file.published_at else None,
+        public_uuid=file.public_uuid,
+        permalink_slug=file.permalink_slug,
+        version=file.version,
+        can_withdraw=can_withdraw
+    )
+
+
+@router.post("/{file_id}/withdraw", response_model=PublicationResponse)
+async def withdraw_file(
+    file_id: int,
+    user=Depends(current_user),
+    db: AsyncSession = Depends(get_db),
+    file_service: InMemoryFileService = Depends(get_file_service),
+):
+    """Withdraw a published file following arXiv model.
+
+    Parameters
+    ----------
+    file_id : int
+        The unique identifier of the file to withdraw.
+    user : User
+        Current authenticated user dependency.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+    file_service : InMemoryFileService
+        File service dependency.
+
+    Returns
+    -------
+    PublicationResponse
+        Withdrawal confirmation with updated status.
+
+    Raises
+    ------
+    HTTPException
+        404 error if file is not found.
+        403 error if user doesn't own the file.
+        400 error if file is not published.
+
+    Notes
+    -----
+    Requires authentication. Following arXiv model, withdrawal maintains
+    the public record but marks the content as withdrawn. The UUID and
+    published timestamp remain unchanged.
+    """
+    # Sync from database to ensure we have latest data
+    await file_service.sync_from_database(db)
+    
+    # Get file from database
+    result = await db.execute(
+        select(DbFile).where(
+            DbFile.id == file_id,
+            DbFile.deleted_at.is_(None)
+        )
+    )
+    file = result.scalars().first()
+    
+    if not file:
+        raise not_found_exception("File", file_id)
+    
+    # Check ownership
+    if file.owner_id != user.id:
+        raise forbidden_exception("You do not have permission to withdraw this file")
+    
+    # Check if file is published
+    if file.status != FileStatus.PUBLISHED:
+        raise bad_request_exception("Only published files can be withdrawn")
+    
+    # Note: In a full implementation, we might add a 'withdrawn_at' timestamp
+    # and a separate 'withdrawn' field to maintain the publication record
+    # but mark it as withdrawn. For now, we'll use a placeholder approach.
+    
+    # For this implementation, we'll keep the file published but add a note
+    # that it's withdrawn. In a future iteration, we might add a separate
+    # withdrawn status or field.
+    
+    # TODO: Implement proper withdrawal following arXiv model
+    # This could include:
+    # - Adding a withdrawn_at timestamp
+    # - Adding a withdrawal reason field
+    # - Keeping the file publicly accessible but with withdrawal notice
+    
+    # For now, return a message indicating withdrawal is not yet fully implemented
+    raise bad_request_exception("Withdrawal functionality is not yet fully implemented. Please contact support.")
+    
+    # Placeholder return (unreachable for now)
+    return PublicationResponse(
+        id=file.id,
+        status=file.status.value,
+        published_at=file.published_at.isoformat() if file.published_at else None,
+        public_uuid=file.public_uuid,
+        message="File withdrawn successfully"
+    )

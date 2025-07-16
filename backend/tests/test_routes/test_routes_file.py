@@ -416,3 +416,392 @@ async def test_create_file_missing_required_fields(client: AsyncClient, authenti
     )
 
     assert response.status_code == 422  # Validation error
+
+
+# Publication Status Tests
+
+async def test_publish_file_success(client: AsyncClient, authenticated_user):
+    """Test successfully publishing a file."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create a file first
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Publish the file
+    response = await client.post(f"/files/{file_id}/publish", headers=headers)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == file_id
+    assert data["status"] == "Published"
+    assert data["public_uuid"] is not None
+    assert len(data["public_uuid"]) == 6
+    assert data["published_at"] is not None
+    assert data["message"] == "File published successfully"
+
+
+async def test_publish_file_already_published(client: AsyncClient, authenticated_user):
+    """Test publishing a file that's already published."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create and publish a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Publish first time
+    await client.post(f"/files/{file_id}/publish", headers=headers)
+
+    # Try to publish again
+    response = await client.post(f"/files/{file_id}/publish", headers=headers)
+    
+    assert response.status_code == 400
+    assert "already published" in response.json()["detail"]
+
+
+async def test_publish_file_without_content(client: AsyncClient, authenticated_user):
+    """Test publishing a file without source content."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create a file without source content
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": "",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Try to publish
+    response = await client.post(f"/files/{file_id}/publish", headers=headers)
+    
+    assert response.status_code == 400
+    assert "without source content" in response.json()["detail"]
+
+
+async def test_publish_file_not_found(client: AsyncClient, authenticated_user):
+    """Test publishing a file that doesn't exist."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    response = await client.post("/files/99999/publish", headers=headers)
+    
+    assert response.status_code == 404
+    assert "File with id 99999 not found" in response.json()["detail"]
+
+
+async def test_publish_file_without_auth(client: AsyncClient):
+    """Test publishing a file without authentication."""
+    response = await client.post("/files/1/publish")
+    assert response.status_code == 401
+
+
+async def test_update_file_status_to_published(client: AsyncClient, authenticated_user):
+    """Test updating file status to published."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Update status to published
+    response = await client.put(
+        f"/files/{file_id}/status",
+        headers=headers,
+        json={"status": "published"}
+    )
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "Published"
+    assert data["public_uuid"] is not None
+    assert data["published_at"] is not None
+    assert "updated to Published" in data["message"]
+
+
+async def test_update_file_status_to_draft(client: AsyncClient, authenticated_user):
+    """Test updating file status to draft."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Update status to draft (should work since it's already draft)
+    response = await client.put(
+        f"/files/{file_id}/status",
+        headers=headers,
+        json={"status": "draft"}
+    )
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "Draft"
+    assert "updated to Draft" in data["message"]
+
+
+async def test_update_file_status_to_under_review(client: AsyncClient, authenticated_user):
+    """Test updating file status to under review."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Update status to under review
+    response = await client.put(
+        f"/files/{file_id}/status",
+        headers=headers,
+        json={"status": "under_review"}
+    )
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data["status"] == "Under Review"
+    assert "updated to Under Review" in data["message"]
+
+
+async def test_update_file_status_invalid_status(client: AsyncClient, authenticated_user):
+    """Test updating file status with invalid status."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Try to update with invalid status
+    response = await client.put(
+        f"/files/{file_id}/status",
+        headers=headers,
+        json={"status": "invalid_status"}
+    )
+    
+    assert response.status_code == 400
+    assert "Invalid status" in response.json()["detail"]
+
+
+async def test_update_published_file_status_forbidden(client: AsyncClient, authenticated_user):
+    """Test that published files cannot be unpublished."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create and publish a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Publish the file
+    await client.post(f"/files/{file_id}/publish", headers=headers)
+
+    # Try to change status back to draft
+    response = await client.put(
+        f"/files/{file_id}/status",
+        headers=headers,
+        json={"status": "draft"}
+    )
+    
+    assert response.status_code == 400
+    assert "cannot be unpublished" in response.json()["detail"]
+
+
+async def test_get_publication_info_draft_file(client: AsyncClient, authenticated_user):
+    """Test getting publication info for a draft file."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Get publication info
+    response = await client.get(f"/files/{file_id}/publication-info", headers=headers)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == file_id
+    assert data["status"] == "Draft"
+    assert data["is_published"] is False
+    assert data["can_publish"] is True
+    assert data["published_at"] is None
+    assert data["public_uuid"] is None
+    assert data["can_withdraw"] is False
+    assert data["version"] == 0
+
+
+async def test_get_publication_info_published_file(client: AsyncClient, authenticated_user):
+    """Test getting publication info for a published file."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create and publish a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    await client.post(f"/files/{file_id}/publish", headers=headers)
+
+    # Get publication info
+    response = await client.get(f"/files/{file_id}/publication-info", headers=headers)
+    
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == file_id
+    assert data["status"] == "Published"
+    assert data["is_published"] is True
+    assert data["can_publish"] is False
+    assert data["published_at"] is not None
+    assert data["public_uuid"] is not None
+    assert len(data["public_uuid"]) == 6
+    assert data["can_withdraw"] is True
+    assert data["version"] == 0
+
+
+async def test_get_publication_info_not_found(client: AsyncClient, authenticated_user):
+    """Test getting publication info for a file that doesn't exist."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    response = await client.get("/files/99999/publication-info", headers=headers)
+    
+    assert response.status_code == 404
+    assert "File with id 99999 not found" in response.json()["detail"]
+
+
+async def test_get_publication_info_without_auth(client: AsyncClient):
+    """Test getting publication info without authentication."""
+    response = await client.get("/files/1/publication-info")
+    assert response.status_code == 401
+
+
+async def test_withdraw_file_not_implemented(client: AsyncClient, authenticated_user):
+    """Test withdrawing a file (not fully implemented yet)."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create and publish a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    await client.post(f"/files/{file_id}/publish", headers=headers)
+
+    # Try to withdraw
+    response = await client.post(f"/files/{file_id}/withdraw", headers=headers)
+    
+    assert response.status_code == 400
+    assert "not yet fully implemented" in response.json()["detail"]
+
+
+async def test_withdraw_unpublished_file(client: AsyncClient, authenticated_user):
+    """Test withdrawing an unpublished file."""
+    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+
+    # Create a file (but don't publish it)
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:test content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Try to withdraw
+    response = await client.post(f"/files/{file_id}/withdraw", headers=headers)
+    
+    assert response.status_code == 400
+    assert "Only published files can be withdrawn" in response.json()["detail"]
+
+
+async def test_withdraw_file_without_auth(client: AsyncClient):
+    """Test withdrawing a file without authentication."""
+    response = await client.post("/files/1/withdraw")
+    assert response.status_code == 401
