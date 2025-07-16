@@ -47,9 +47,9 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
         await mobileHelpers.expectToBeVisible(hamburgerButton);
 
-        // Desktop sidebar should be hidden
-        await expect(page.locator(".sb-wrapper .sb-menu")).not.toBeVisible();
-        await expect(page.locator(".sb-wrapper #logo")).not.toBeVisible();
+        // Desktop sidebar should be hidden in mobile mode
+        await expect(page.locator(".sb-wrapper:not(.drawer-open) .sb-menu")).not.toBeVisible();
+        await expect(page.locator(".sb-wrapper:not(.drawer-open) #logo")).not.toBeVisible();
 
         // Mobile drawer should be closed initially
         await expect(page.locator(".sb-wrapper.drawer-open")).not.toBeVisible();
@@ -63,8 +63,12 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         await expect(page.locator(".mobile-backdrop")).toBeVisible();
 
         // Sidebar menu should be visible in drawer
-        await mobileHelpers.expectToBeVisible(page.locator(".sb-wrapper.drawer-open .sb-menu"));
-        await mobileHelpers.expectToBeVisible(page.locator(".sb-wrapper.drawer-open #logo"));
+        await mobileHelpers.expectToBeVisible(
+          page.locator(".sb-wrapper.drawer-open .sidebar-content .sb-menu")
+        );
+        await mobileHelpers.expectToBeVisible(
+          page.locator(".sb-wrapper.drawer-open .sidebar-content #logo")
+        );
 
         await context.close();
       });
@@ -123,7 +127,9 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         await mobileHelpers.waitForMobileRendering();
 
         // Click on Settings navigation item
-        const settingsItem = page.locator('.sb-wrapper.drawer-open [data-testid*="settings"]');
+        const settingsItem = page.locator(
+          '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Settings"]'
+        );
         await mobileHelpers.clickElement(settingsItem);
 
         // Wait for navigation
@@ -197,17 +203,25 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       await mobileHelpers.waitForMobileRendering();
 
       // Should show main navigation items (Account moved to UserMenu)
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-item="Home"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-item="Settings"]'));
+      await mobileHelpers.expectToBeVisible(
+        page.locator('.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Home"]')
+      );
+      await mobileHelpers.expectToBeVisible(
+        page.locator('.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Settings"]')
+      );
 
       // Should show recent files section if available
-      const recentFiles = page.locator(".sb-menu .recent-files");
+      const recentFiles = page.locator(
+        ".sb-wrapper.drawer-open .sidebar-content .sb-menu .recent-files"
+      );
       if ((await recentFiles.count()) > 0) {
         await mobileHelpers.expectToBeVisible(recentFiles);
       }
 
       // Should show new file button/menu
-      await mobileHelpers.expectToBeVisible(page.locator('[data-testid="create-file-button"]'));
+      await mobileHelpers.expectToBeVisible(
+        page.locator('.sb-wrapper.drawer-open .sidebar-content [data-testid="create-file-button"]')
+      );
 
       await context.close();
     });
@@ -256,7 +270,9 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const settingsItem = page.locator('[data-sidebar-item="Settings"]');
+      const settingsItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Settings"]'
+      );
       await mobileHelpers.clickElement(settingsItem);
 
       console.log("[Test] About to wait for navigation to settings");
@@ -288,8 +304,12 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       await mobileHelpers.waitForMobileRendering();
 
       // Should show main navigation items (Account moved to UserMenu)
-      const homeItem = page.locator('[data-sidebar-item="Home"]');
-      const settingsItem = page.locator('[data-sidebar-item="Settings"]');
+      const homeItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Home"]'
+      );
+      const settingsItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Settings"]'
+      );
 
       await mobileHelpers.expectToBeVisible(homeItem);
       await mobileHelpers.expectToBeVisible(settingsItem);
@@ -314,7 +334,9 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const homeItem = page.locator('[data-sidebar-item="Home"]');
+      const homeItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Home"]'
+      );
       await mobileHelpers.clickElement(homeItem);
 
       console.log("[Test] About to wait for navigation to home");
@@ -344,8 +366,12 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       await mobileHelpers.waitForMobileRendering();
 
       // Should show main navigation with Settings active
-      const homeItem = page.locator('[data-sidebar-item="Home"]');
-      const settingsItem = page.locator('[data-sidebar-item="Settings"]');
+      const homeItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Home"]'
+      );
+      const settingsItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Settings"]'
+      );
 
       await mobileHelpers.expectToBeVisible(homeItem);
       await mobileHelpers.expectToBeVisible(settingsItem);
@@ -355,9 +381,19 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       await expect(homeItem).not.toHaveClass(/active/);
 
       // Should show settings sub-navigation items
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="File Display"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Behavior"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Notifications"]'));
+      await mobileHelpers.expectToBeVisible(
+        page.locator(
+          '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-subitem="File Display"]'
+        )
+      );
+      await mobileHelpers.expectToBeVisible(
+        page.locator('.sb-wrapper.drawer-open .sidebar-content [data-sidebar-subitem="Behavior"]')
+      );
+      await mobileHelpers.expectToBeVisible(
+        page.locator(
+          '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-subitem="Notifications"]'
+        )
+      );
 
       await context.close();
     });
@@ -378,7 +414,9 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const behaviorItem = page.locator('[data-sidebar-subitem="Behavior"]');
+      const behaviorItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-subitem="Behavior"]'
+      );
       await mobileHelpers.clickElement(behaviorItem);
 
       await mobileHelpers.waitForURLPattern(/\/settings\/behavior/);
@@ -387,7 +425,9 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       // Open drawer and navigate to Notifications settings
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const notificationsItem = page.locator('[data-sidebar-subitem="Notifications"]');
+      const notificationsItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-subitem="Notifications"]'
+      );
       await mobileHelpers.clickElement(notificationsItem);
 
       await mobileHelpers.waitForURLPattern(/\/settings\/notifications/);
@@ -410,7 +450,9 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const homeItem = page.locator('[data-sidebar-item="Home"]');
+      const homeItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Home"]'
+      );
       await mobileHelpers.clickElement(homeItem);
 
       await mobileHelpers.waitForURLPattern(/^\/$/);
@@ -498,12 +540,13 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
       // Mobile hamburger button should not be visible
       await expect(page.locator('[data-testid="mobile-menu-button"]')).not.toBeVisible();
 
-      // Desktop sidebar should be visible
-      await expect(page.locator(".sb-wrapper .sb-menu")).toBeVisible();
-      await expect(page.locator(".sb-wrapper #logo")).toBeVisible();
+      // Desktop sidebar should be visible (not in mobile mode)
+      await expect(page.locator(".sb-wrapper:not(.mobile) .sb-menu")).toBeVisible();
+      await expect(page.locator(".sb-wrapper:not(.mobile) #logo")).toBeVisible();
 
       // Should not have mobile classes
       await expect(page.locator(".sb-wrapper.mobile")).not.toBeVisible();
+      await expect(page.locator(".sb-wrapper.drawer-open")).not.toBeVisible();
 
       await context.close();
     });

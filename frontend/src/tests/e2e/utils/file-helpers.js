@@ -93,10 +93,30 @@ export class FileHelpers {
 
     // Wait for home page to fully load with sidebar
     await this.page.waitForLoadState("domcontentloaded");
-    await this.page.waitForTimeout(500);
+    await this.page.waitForTimeout(200);
 
-    // Get the create file button using the correct selector
-    const createButton = this.page.locator('[data-testid="create-file-button"]');
+    // Get the correct create file button based on mobile context
+    let createButton;
+
+    if (this.mobileHelpers.isMobileViewport()) {
+      // In mobile mode, check if drawer is open or closed
+      const drawerOpen = await this.page.locator(".sb-wrapper.drawer-open").isVisible();
+
+      if (drawerOpen) {
+        // Drawer is open - use button inside drawer
+        createButton = this.page.locator(
+          '.sb-wrapper.drawer-open .sidebar-content [data-testid="create-file-button"]'
+        );
+      } else {
+        // Drawer is closed - use FAB (floating action button)
+        createButton = this.page.locator('.cta.fab [data-testid="create-file-button"]');
+      }
+    } else {
+      // Desktop mode - use standard sidebar button
+      createButton = this.page.locator(
+        '.sb-wrapper:not(.mobile) [data-testid="create-file-button"]'
+      );
+    }
 
     // Wait for the button to be attached to the DOM
     await createButton.waitFor({ state: "attached", timeout: 10000 });

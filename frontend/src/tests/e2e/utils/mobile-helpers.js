@@ -144,8 +144,13 @@ export class MobileHelpers {
     console.log(`[Mobile Click] Attempting to click element: ${locator}`);
 
     if (this.isMobileViewport()) {
-      await locator.scrollIntoViewIfNeeded();
-      await this.page.waitForTimeout(100); // Brief delay for scroll completion
+      try {
+        await locator.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(100); // Brief delay for scroll completion
+      } catch (scrollError) {
+        console.warn(`[Mobile Click] Scroll failed, proceeding with click: ${scrollError.message}`);
+        // Continue with click even if scroll fails
+      }
     }
 
     try {
@@ -167,9 +172,16 @@ export class MobileHelpers {
    * Force click element when normal click is blocked by overlays
    */
   async forceClickElement(locator) {
-    await locator.scrollIntoViewIfNeeded();
     if (this.isMobileViewport()) {
-      await this.page.waitForTimeout(100); // Brief delay for scroll completion
+      try {
+        await locator.scrollIntoViewIfNeeded();
+        await this.page.waitForTimeout(100); // Brief delay for scroll completion
+      } catch (scrollError) {
+        console.warn(
+          `[Mobile Force Click] Scroll failed, proceeding with force click: ${scrollError.message}`
+        );
+        // Continue with force click even if scroll fails
+      }
     }
     await locator.click({ force: true });
   }
