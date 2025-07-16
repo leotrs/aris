@@ -634,7 +634,8 @@ async def publish_file(
     # Generate UUID with collision detection if needed
     if not file.public_uuid:
         try:
-            file.public_uuid = await assign_public_uuid_with_retry_async(db, file)
+            assigned_uuid: str = await assign_public_uuid_with_retry_async(db, file)
+            file.public_uuid = assigned_uuid
         except RuntimeError as e:
             raise bad_request_exception(f"Failed to generate public UUID: {str(e)}")
     
@@ -730,7 +731,7 @@ async def update_file_status(
         "withdrawn": FileStatus.PUBLISHED  # Withdrawn is handled by a separate field in the future
     }
     
-    new_status = status_mapping[status_data.status.lower()]
+    new_status: FileStatus = status_mapping[status_data.status.lower()]
     
     # Check for invalid transitions
     if file.status == FileStatus.PUBLISHED and new_status != FileStatus.PUBLISHED:
@@ -751,7 +752,8 @@ async def update_file_status(
         # Generate UUID with collision detection if needed
         if not file.public_uuid:
             try:
-                file.public_uuid = await assign_public_uuid_with_retry_async(db, file)
+                assigned_uuid: str = await assign_public_uuid_with_retry_async(db, file)
+                file.public_uuid = assigned_uuid
             except RuntimeError as e:
                 raise bad_request_exception(f"Failed to generate public UUID: {str(e)}")
         
