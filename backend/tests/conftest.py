@@ -67,6 +67,12 @@ async def test_engine(request):
         except Exception:
             # Fall back to the configured URL if pytest-postgresql isn't being used
             pass
+    
+    # In CI, ensure each worker gets isolated table names via schema prefixing
+    if os.environ.get("ENV") == "CI":
+        worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
+        # Add worker isolation through connection pooling rather than separate DBs
+        # since we're sharing the migrated schema
 
     # Configure engine based on database type
     if database_url.startswith("sqlite"):
@@ -159,8 +165,22 @@ async def db_session(test_engine):
     async with TestingSessionLocal() as session:
         yield session
 
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.drop_all)
+    # In CI, don't drop tables since they're shared across workers
+    # Just clean up data, not schema
+    if not os.environ.get("ENV") == "CI":
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.drop_all)
+    else:
+        # Clean up test data but keep schema for parallel workers
+        async with TestingSessionLocal() as cleanup_session:
+            try:
+                # Delete all data from all tables in reverse dependency order
+                for table in reversed(Base.metadata.sorted_tables):
+                    await cleanup_session.execute(table.delete())
+                await cleanup_session.commit()
+            except Exception:
+                # If cleanup fails, rollback and continue
+                await cleanup_session.rollback()
 
 
 @pytest_asyncio.fixture

@@ -85,13 +85,7 @@ jobs:
         docker compose -f docker/docker-compose.dev.yml exec -T backend uv run python -c "from aris.config import settings; print('Test DB URL:', settings.get_test_database_url())"
 
     - name: Run database migrations
-      run: |
-        echo "=== Running database migrations ==="
-        docker compose -f docker/docker-compose.dev.yml exec -T backend uv run alembic upgrade head
-        echo "=== Verifying database schema ==="
-        docker compose -f docker/docker-compose.dev.yml exec -T backend psql postgresql://aris:aris@postgres:5432/aris_test -c "\dt"
-        echo "=== Checking if users table exists ==="
-        docker compose -f docker/docker-compose.dev.yml exec -T backend psql postgresql://aris:aris@postgres:5432/aris_test -c "SELECT count(*) FROM information_schema.tables WHERE table_name = 'users';"
+      run: docker compose -f docker/docker-compose.dev.yml exec -T backend uv run alembic upgrade head
 
     - name: Run tests
       env:
