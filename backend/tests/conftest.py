@@ -150,8 +150,10 @@ async def db_session(test_engine):
     database_url = str(test_engine.url)
     await create_database_if_not_exists(database_url)
     
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+    # In CI, skip metadata.create_all since migration already created schema
+    if not os.environ.get("ENV") == "CI":
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
     async with TestingSessionLocal() as session:
