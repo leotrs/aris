@@ -100,7 +100,11 @@ async def create_database_if_not_exists(database_url: str):
     
     # For CI, skip database creation - just use the existing aris_test database
     # This avoids admin permission issues in containerized environments
+    print(f"DEBUG: GITHUB_ACTIONS = {os.environ.get('GITHUB_ACTIONS')}")
+    print(f"DEBUG: CI = {os.environ.get('CI')}")
+    print(f"DEBUG: ENV = {os.environ.get('ENV')}")
     if os.environ.get("GITHUB_ACTIONS"):
+        print("DEBUG: Skipping database creation for GITHUB_ACTIONS")
         return
     
     import asyncio
