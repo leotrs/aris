@@ -91,8 +91,9 @@ class Settings(BaseSettings):
             
             # Use different credentials for GitHub Actions vs local CI simulation
             if os.environ.get("GITHUB_ACTIONS"):
-                # GitHub Actions CI environment - use PostgreSQL service credentials
-                return f"postgresql+asyncpg://postgres:postgres@postgres:5432/test_aris_{worker_id}_{unique_id}"
+                # GitHub Actions CI environment - tests run inside Docker container
+                # Use the same credentials as configured in docker-compose.dev.yml
+                return f"postgresql+asyncpg://aris:aris@postgres:5432/test_aris_{worker_id}_{unique_id}"
             else:
                 # Local CI simulation (using local PostgreSQL user with worker isolation)
                 return f"postgresql+asyncpg://leo.torres@localhost:5432/test_aris_{worker_id}_{unique_id}"
