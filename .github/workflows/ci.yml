@@ -88,7 +88,7 @@ jobs:
       env:
         TEST_USER_EMAIL: testuser@aris.pub
         TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-      run: docker compose -f docker/docker-compose.dev.yml exec -T backend uv run pytest tests/test_crud/test_crud_user.py::test_get_user_returns_correct_user tests/test_models/test_models.py::test_annotation_creation tests/test_routes/test_routes_tag.py::test_create_tag_without_auth -v --tb=short
+      run: docker compose -f docker/docker-compose.dev.yml exec -T backend uv run pytest -n8 -v --tb=short
 
     - name: Cleanup
       if: always()
