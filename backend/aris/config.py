@@ -91,8 +91,13 @@ class Settings(BaseSettings):
             
             # Use different credentials for GitHub Actions vs local CI simulation
             if os.environ.get("GITHUB_ACTIONS"):
-                # Real GitHub Actions CI environment - use per-worker databases for parallel test isolation
-                return f"postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris_{worker_id}_{unique_id}"
+                # Check if we're in a containerized environment (Docker compose)
+                if os.environ.get("CONTAINER_ENV") or os.path.exists("/.dockerenv"):
+                    # Containerized CI environment - use Docker compose database setup
+                    return f"postgresql+asyncpg://aris:aris@postgres:5432/test_aris_{worker_id}_{unique_id}"
+                else:
+                    # Real GitHub Actions CI environment - use per-worker databases for parallel test isolation
+                    return f"postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris_{worker_id}_{unique_id}"
             else:
                 # Local CI simulation (using local PostgreSQL user with worker isolation)
                 return f"postgresql+asyncpg://leo.torres@localhost:5432/test_aris_{worker_id}_{unique_id}"
