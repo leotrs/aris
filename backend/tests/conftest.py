@@ -171,36 +171,44 @@ async def db_session(test_engine):
         # Clean up test data but keep schema for parallel workers
         async with TestingSessionLocal() as cleanup_session:
             try:
-                # Delete all data from all tables in correct dependency order
-                # Start with tables that have no dependencies, then work up to parent tables
-                cleanup_order = [
-                    "file_tags",  # Many-to-many association table
-                    "file_assets",  # References both users and files
-                    "annotation_messages",  # References users and annotations
-                    "annotations",  # References files
-                    "file_settings",  # References users and files
-                    "profile_pictures",  # References users (but users reference back)
-                    "files",  # References users
-                    "tags",  # References users
-                    "user_settings",  # References users
-                    "users",  # Top-level table
-                ]
-                
-                for table_name in cleanup_order:
-                    # Find table by name in metadata
-                    table = None
-                    for t in Base.metadata.sorted_tables:
-                        if t.name == table_name:
-                            table = t
-                            break
-                    
-                    if table is not None:
-                        await cleanup_session.execute(table.delete())
-                
+                # For CI environment, use TRUNCATE CASCADE to efficiently clear all data
+                # This will handle all foreign key constraints automatically
+                await cleanup_session.execute(text("TRUNCATE TABLE users CASCADE"))
                 await cleanup_session.commit()
             except Exception:
-                # If cleanup fails, rollback and continue
-                await cleanup_session.rollback()
+                # If cascade truncate fails, try manual cleanup
+                try:
+                    await cleanup_session.rollback()
+                    # Delete all data from all tables in correct dependency order
+                    cleanup_order = [
+                        "file_tags",  # Many-to-many association table
+                        "file_assets",  # References both users and files
+                        "annotation_message",  # References users and annotations
+                        "annotation",  # References files
+                        "file_settings",  # References users and files
+                        "profile_pictures",  # References users (but users reference back)
+                        "files",  # References users
+                        "tags",  # References users
+                        "user_settings",  # References users
+                        "signups",  # References users (or standalone)
+                        "users",  # Top-level table
+                    ]
+                    
+                    for table_name in cleanup_order:
+                        # Find table by name in metadata
+                        table = None
+                        for t in Base.metadata.sorted_tables:
+                            if t.name == table_name:
+                                table = t
+                                break
+                        
+                        if table is not None:
+                            await cleanup_session.execute(table.delete())
+                    
+                    await cleanup_session.commit()
+                except Exception:
+                    # If cleanup fails, rollback and continue
+                    await cleanup_session.rollback()
 
 
 @pytest_asyncio.fixture
