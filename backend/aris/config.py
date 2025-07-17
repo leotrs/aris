@@ -90,8 +90,9 @@ class Settings(BaseSettings):
             unique_id = str(uuid.uuid4())[:8]
             
             # GitHub Actions CI environment - tests run inside Docker container
+            # Use the existing aris_test database instead of creating dynamic ones
             if os.environ.get("GITHUB_ACTIONS"):
-                return f"postgresql+asyncpg://aris:aris@postgres:5432/test_aris_{worker_id}_{unique_id}"
+                return f"postgresql+asyncpg://aris:aris@postgres:5432/aris_test"
             else:
                 # Local CI simulation (using local PostgreSQL user with worker isolation)
                 return f"postgresql+asyncpg://leo.torres@localhost:5432/test_aris_{worker_id}_{unique_id}"

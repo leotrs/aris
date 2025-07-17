@@ -98,18 +98,19 @@ async def create_database_if_not_exists(database_url: str):
     if not database_url.startswith("postgresql"):
         return
     
+    # For CI, skip database creation - just use the existing aris_test database
+    # This avoids admin permission issues in containerized environments
+    if os.environ.get("GITHUB_ACTIONS"):
+        return
+    
     import asyncio
     import os
     
     # Extract database name from URL
     db_name = database_url.split("/")[-1]
     
-    # In GitHub Actions, we can create databases by connecting to an existing database
-    # For Docker compose setup, the 'aris' user has access to 'aris' database
-    if os.environ.get("GITHUB_ACTIONS"):
-        admin_dbs = ["aris", "aris_test"]  # Try databases that aris user can access
-    else:
-        admin_dbs = ["postgres", "test_aris"]  # Try both for local development
+    # For local development
+    admin_dbs = ["postgres", "test_aris"]  # Try both for local development
     
     for admin_db in admin_dbs:
         admin_url = database_url.replace(f"/{db_name}", f"/{admin_db}")
