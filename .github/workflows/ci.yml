@@ -601,7 +601,7 @@ jobs:
 
   # Mobile E2E Tests (Optional - can fail without breaking CI)
   e2e-mobile-chrome:
-    needs: [e2e-desktop-chrome]
+    needs: [unit-backend, unit-frontend, unit-site]
     continue-on-error: true  # Allow this job to fail
     strategy:
       fail-fast: false
@@ -688,7 +688,7 @@ jobs:
       run: docker compose -f docker/docker-compose.dev.yml down
 
   e2e-mobile-firefox:
-    needs: [e2e-desktop-firefox]
+    needs: [unit-backend, unit-frontend, unit-site]
     continue-on-error: true  # Allow this job to fail
     strategy:
       fail-fast: false
@@ -774,7 +774,7 @@ jobs:
       run: docker compose -f docker/docker-compose.dev.yml down
 
   e2e-mobile-safari:
-    needs: [e2e-desktop-safari]
+    needs: [unit-backend, unit-frontend, unit-site]
     continue-on-error: true  # Allow this job to fail
     strategy:
       fail-fast: false
