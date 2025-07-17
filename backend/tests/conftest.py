@@ -165,7 +165,26 @@ async def db_session(test_engine):
     if not os.environ.get("ENV") == "CI":
         async with test_engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
-    # For CI, each worker has its own database so no cleanup needed
+    else:
+        # For CI, clean up data between tests to avoid conflicts
+        TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
+        async with TestingSessionLocal() as cleanup_session:
+            try:
+                # Clear all data from all tables
+                await cleanup_session.execute(text("DELETE FROM file_tags"))
+                await cleanup_session.execute(text("DELETE FROM file_assets"))
+                await cleanup_session.execute(text("DELETE FROM annotation_message"))
+                await cleanup_session.execute(text("DELETE FROM annotation"))
+                await cleanup_session.execute(text("DELETE FROM file_settings"))
+                await cleanup_session.execute(text("DELETE FROM files"))
+                await cleanup_session.execute(text("DELETE FROM tags"))
+                await cleanup_session.execute(text("DELETE FROM user_settings"))
+                await cleanup_session.execute(text("DELETE FROM signups"))
+                await cleanup_session.execute(text("DELETE FROM profile_pictures"))
+                await cleanup_session.execute(text("DELETE FROM users"))
+                await cleanup_session.commit()
+            except Exception:
+                await cleanup_session.rollback()
 
 
 @pytest_asyncio.fixture
