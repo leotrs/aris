@@ -75,6 +75,15 @@ jobs:
     - name: Run type checking (mypy)
       run: docker compose -f docker/docker-compose.dev.yml exec -T backend uv run mypy aris/
 
+    - name: Debug database connectivity
+      run: |
+        echo "=== Database connectivity test ==="
+        docker compose -f docker/docker-compose.dev.yml exec -T backend psql postgresql://aris:aris@postgres:5432/aris_test -c "SELECT current_database(), current_user;"
+        echo "=== Environment variables ==="
+        docker compose -f docker/docker-compose.dev.yml exec -T backend env | grep -E "(DB_|TEST_|ENV|GITHUB)"
+        echo "=== Python test database URL ==="
+        docker compose -f docker/docker-compose.dev.yml exec -T backend uv run python -c "from aris.config import settings; print('Test DB URL:', settings.get_test_database_url())"
+
     - name: Run tests
       env:
         TEST_USER_EMAIL: testuser@aris.pub
