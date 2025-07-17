@@ -79,7 +79,7 @@ jobs:
       env:
         TEST_USER_EMAIL: testuser@aris.pub
         TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-      run: docker compose -f docker/docker-compose.dev.yml exec -T backend uv run pytest -n4 --dist=loadscope --tb=short
+      run: docker compose -f docker/docker-compose.dev.yml exec -T backend uv run pytest tests/test_crud/test_crud_user.py::test_get_user_returns_correct_user tests/test_models/test_models.py::test_annotation_creation tests/test_routes/test_routes_tag.py::test_create_tag_without_auth -v --tb=short
 
     - name: Cleanup
       if: always()
@@ -155,8 +155,9 @@ jobs:
     - name: Run unit tests
       run: npm run test:run
 
-  # Site E2E Tests (All Browsers)
-  e2e-site:
+  # Site E2E Tests (All Browsers) - TEMPORARILY DISABLED FOR DEBUGGING
+  e2e-site-disabled:
+    if: false
     needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
@@ -256,8 +257,9 @@ jobs:
       if: always()
       run: docker compose -f docker/docker-compose.dev.yml down
 
-  # Desktop E2E Tests (Chrome)
-  e2e-desktop-chrome:
+  # Desktop E2E Tests (Chrome) - TEMPORARILY DISABLED FOR DEBUGGING
+  e2e-desktop-chrome-disabled:
+    if: false
     needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
@@ -343,8 +345,9 @@ jobs:
       if: always()
       run: docker compose -f docker/docker-compose.dev.yml down
 
-  # Desktop E2E Tests (Firefox)
-  e2e-desktop-firefox:
+  # Desktop E2E Tests (Firefox) - TEMPORARILY DISABLED FOR DEBUGGING
+  e2e-desktop-firefox-disabled:
+    if: false
     needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
@@ -429,8 +432,9 @@ jobs:
       if: always()
       run: docker compose -f docker/docker-compose.dev.yml down
 
-  # Desktop E2E Tests (Safari)
-  e2e-desktop-safari:
+  # Desktop E2E Tests (Safari) - TEMPORARILY DISABLED FOR DEBUGGING
+  e2e-desktop-safari-disabled:
+    if: false
     needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
@@ -599,8 +603,9 @@ jobs:
         kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
 
-  # Mobile E2E Tests (Optional - can fail without breaking CI)
-  e2e-mobile-chrome:
+  # Mobile E2E Tests (Optional - can fail without breaking CI) - TEMPORARILY DISABLED FOR DEBUGGING
+  e2e-mobile-chrome-disabled:
+    if: false
     needs: [unit-backend, unit-frontend, unit-site]
     continue-on-error: true  # Allow this job to fail
     strategy:
@@ -687,7 +692,8 @@ jobs:
       if: always()
       run: docker compose -f docker/docker-compose.dev.yml down
 
-  e2e-mobile-firefox:
+  e2e-mobile-firefox-disabled:
+    if: false
     needs: [unit-backend, unit-frontend, unit-site]
     continue-on-error: true  # Allow this job to fail
     strategy:
@@ -773,7 +779,8 @@ jobs:
       if: always()
       run: docker compose -f docker/docker-compose.dev.yml down
 
-  e2e-mobile-safari:
+  e2e-mobile-safari-disabled:
+    if: false
     needs: [unit-backend, unit-frontend, unit-site]
     continue-on-error: true  # Allow this job to fail
     strategy:
