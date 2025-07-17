@@ -68,11 +68,8 @@ async def test_engine(request):
             # Fall back to the configured URL if pytest-postgresql isn't being used
             pass
     
-    # In CI, ensure each worker gets isolated table names via schema prefixing
-    if os.environ.get("ENV") == "CI":
-        worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
-        # Add worker isolation through connection pooling rather than separate DBs
-        # since we're sharing the migrated schema
+    # In CI, we use shared migrated schema with data cleanup between tests
+    # Worker isolation is handled through test data cleanup rather than separate DBs
 
     # Configure engine based on database type
     if database_url.startswith("sqlite"):
