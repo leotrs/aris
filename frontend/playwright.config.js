@@ -35,7 +35,7 @@ export default defineConfig({
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: process.env.CI ? "github" : "line", // Use line reporter for minimal output; --quiet flag suppresses stdout
   /* Global timeout for each test */
-  timeout: 10000, // 10 seconds - fast feedback for debugging
+  timeout: 15000, // 15s timeout for both local and CI environments
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -48,9 +48,9 @@ export default defineConfig({
     screenshot: "only-on-failure",
     /* Disable video recording for faster execution */
     video: "off",
-    /* Fast timeouts - if tests fail, fix the underlying issue */
-    actionTimeout: 3000, // 3 seconds for actions
-    navigationTimeout: 5000, // 5 seconds max for navigation
+    /* Environment-aware timeouts */
+    actionTimeout: process.env.CI ? 3000 : 1500, // CI: 3s for container latency, Local: 1.5s for quick actions
+    navigationTimeout: process.env.CI ? 6000 : 3000, // CI: 6s for auth flows, Local: 3s for content load
   },
 
   /* Configure projects for major browsers */

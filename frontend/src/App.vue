@@ -5,7 +5,6 @@
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { createFileStore } from "@/store/FileStore.js";
   import { getLogger } from "@/utils/logger.js";
-  import { useEnhancedMobileMode } from "@/composables/useEnhancedMobileMode.js";
   import axios from "axios";
 
   const logger = getLogger("App");
@@ -185,10 +184,50 @@
   const xsMode = computed(() => breakpoints.smallerOrEqual("xs").value);
   provide("xsMode", xsMode);
 
-  // Enhanced mobile detection: small viewport + (mobile device OR touch device)
-  const isSmallViewport = computed(() => breakpoints.smallerOrEqual("sm").value);
-  const mobileMode = useEnhancedMobileMode(isSmallViewport);
+  // Enhanced mobile detection with E2E test reliability
+  const mobileMode = computed(() => {
+    const isMobile = breakpoints.smallerOrEqual("sm").value;
+    const viewportWidth = typeof window !== "undefined" ? window.innerWidth : 0;
+
+    // Enhanced logging for debugging in E2E tests
+    if (import.meta.env.VITE_ENV === "DEV" || import.meta.env.NODE_ENV === "test") {
+      console.log(
+        `[Mobile Detection] isMobile: ${isMobile}, viewport: ${viewportWidth}px, breakpoint sm: 640px`
+      );
+    }
+
+    return isMobile;
+  });
   provide("mobileMode", mobileMode);
+
+  // Enhanced debugging exposure for E2E tests
+  if (typeof window !== "undefined") {
+    window.mobileMode = mobileMode;
+    window.breakpoints = breakpoints;
+
+    // Force mobile detection update on resize for E2E tests
+    window.addEventListener("resize", () => {
+      // Trigger reactivity update
+      setTimeout(() => {
+        if (import.meta.env.VITE_ENV === "DEV" || import.meta.env.NODE_ENV === "test") {
+          console.log(
+            `[Mobile Detection] Resize detected: ${window.innerWidth}px, mobile: ${mobileMode.value}`
+          );
+        }
+      }, 100);
+    });
+
+    // Expose manual mobile detection for E2E test control
+    window.debugMobileDetection = () => {
+      return {
+        mobileMode: mobileMode.value,
+        viewportWidth: window.innerWidth,
+        breakpointSm: 640,
+        breakpointActive: breakpoints.active().value,
+        allBreakpoints: breakpoints,
+      };
+    };
+  }
 
   // Must create these here as they will be populated by the login view but need to be
   // available to other views.

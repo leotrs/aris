@@ -1,9 +1,11 @@
 import { expect } from "@playwright/test";
 import { TEST_CREDENTIALS } from "../setup/test-data.js";
+import { getTimeouts } from "./timeout-constants.js";
 
 export class AuthHelpers {
   constructor(page) {
     this.page = page;
+    this.baseURL = process.env.CI ? "http://localhost:8000" : "http://localhost:8000";
   }
 
   async login(email, password) {
@@ -39,47 +41,194 @@ export class AuthHelpers {
       this.page.click('[data-testid="login-button"]'),
     ]);
 
-    console.log("[DEBUG-CI] Login response received, waiting for network idle");
-    // Wait for the login response to complete
-    await this.page.waitForLoadState("networkidle");
-    console.log("[DEBUG-CI] Login completed, final URL:", this.page.url());
+    // Wait for successful login redirect (deterministic wait)
+    await this.page.waitForLoadState("load");
+    await this.page.waitForURL(/^(?!.*\/login)/, { timeout: getTimeouts().contentLoad });
   }
 
-  async ensureLoggedIn() {
-    // Go to home page
+  /**
+   * API-based token injection - bypasses UI login for speed
+   */
+  async fastAuth(email = TEST_CREDENTIALS.valid.email, password = TEST_CREDENTIALS.valid.password) {
+    console.log("[AuthHelpers] Using fast API-based authentication");
+
+    try {
+      // Ensure we're on a page that allows localStorage access
+      const currentUrl = this.page.url();
+      if (!currentUrl.includes("localhost")) {
+        await this.page.goto("/");
+        await this.page.waitForLoadState("domcontentloaded");
+      }
+
+      // Direct API login request
+      const response = await this.page.request.post(`${this.baseURL}/login`, {
+        data: {
+          email: email,
+          password: password,
+        },
+      });
+
+      if (!response.ok()) {
+        throw new Error(`API login failed: ${response.status()}`);
+      }
+
+      const authData = await response.json();
+
+      // Fetch user data using the access token
+      const userResponse = await this.page.request.get(`${this.baseURL}/me`, {
+        headers: {
+          Authorization: `Bearer ${authData.access_token}`,
+        },
+      });
+
+      if (!userResponse.ok()) {
+        throw new Error(`Failed to fetch user data: ${userResponse.status()}`);
+      }
+
+      const userData = await userResponse.json();
+
+      // Inject tokens and user data directly into localStorage
+      await this.page.evaluate(
+        ({ accessToken, refreshToken, user }) => {
+          localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("user", JSON.stringify(user));
+        },
+        {
+          accessToken: authData.access_token,
+          refreshToken: authData.refresh_token,
+          user: userData,
+        }
+      );
+
+      // Navigate to home page to activate the auth state
+      await this.page.goto("/");
+      await this.page.waitForLoadState("domcontentloaded");
+
+      // Force Vue app to re-initialize by reloading after localStorage is set
+      await this.page.reload();
+      await this.page.waitForLoadState("domcontentloaded");
+
+      // Wait for authenticated UI elements to be ready (deterministic wait)
+      await this.page.waitForSelector('[data-testid="user-avatar"], [data-testid="user-menu"]', {
+        timeout: getTimeouts().contentLoad,
+      });
+
+      // Wait for files container to be ready (indicates fileStore is initialized and has data)
+      await this.page.waitForSelector(
+        '[data-testid="files-container"], [data-testid="create-file-button"]',
+        {
+          timeout: getTimeouts().contentLoad,
+        }
+      );
+
+      console.log("[AuthHelpers] Fast auth completed successfully");
+      return true;
+    } catch (error) {
+      console.warn("[AuthHelpers] Fast auth failed, falling back to UI login:", error.message);
+      return false;
+    }
+  }
+
+  /**
+   * Lightweight auth verification - no page loads or redirects
+   */
+  async verifyLoggedIn() {
+    try {
+      const tokens = await this.page.evaluate(() => ({
+        accessToken: localStorage.getItem("accessToken"),
+        user: localStorage.getItem("user"),
+      }));
+
+      if (!tokens.accessToken || !tokens.user) {
+        console.log("[AuthHelpers] No valid tokens found, need to authenticate");
+        return false;
+      }
+
+      console.log("[AuthHelpers] Valid tokens found, user is authenticated");
+      return true;
+    } catch (error) {
+      // localStorage access may fail if no page is loaded
+      console.log("[AuthHelpers] Cannot access localStorage, need to navigate to page first");
+      return false;
+    }
+  }
+
+  /**
+   * Storage state management for shared auth across tests
+   */
+  async saveAuthState(storageStatePath) {
+    await this.page.context().storageState({ path: storageStatePath });
+    console.log(`[AuthHelpers] Auth state saved to ${storageStatePath}`);
+  }
+
+  async loadAuthState(storageStatePath) {
+    // Note: Storage state is loaded at context creation time
+    console.log(`[AuthHelpers] Auth state loaded from ${storageStatePath}`);
+  }
+
+  /**
+   * Fast authentication with multiple fallback strategies
+   */
+  async ensureLoggedIn(skipDOMVerification = false) {
+    // Navigate to home page first to enable localStorage access
     await this.page.goto("/");
-    await this.page.waitForLoadState("networkidle");
+    await this.page.waitForLoadState("domcontentloaded");
 
-    // Wait a moment for any potential redirects to happen
-    await this.page.waitForTimeout(1500);
+    // Check if already authenticated (lightweight)
+    if (await this.verifyLoggedIn()) {
+      console.log("[AuthHelpers] Already authenticated, skipping login");
+      return;
+    }
 
-    // Check if we were redirected to login
-    const currentUrl = this.page.url();
-    if (currentUrl.includes("/login")) {
-      // Need to login
-      const email = TEST_CREDENTIALS.valid.email;
-      const password = TEST_CREDENTIALS.valid.password;
+    // Skip API auth in local development if test user isn't configured
+    const hasTestUser = process.env.TEST_USER_EMAIL && process.env.TEST_USER_PASSWORD;
+    if (hasTestUser) {
+      // Try fast API auth first
+      const fastAuthSuccess = await this.fastAuth();
+      if (fastAuthSuccess) {
+        if (!skipDOMVerification) {
+          await this.page.goto("/");
+          await this.page.waitForLoadState("domcontentloaded");
+        }
+        return;
+      }
+    } else {
+      console.log("[AuthHelpers] Test user not configured, skipping API auth");
+    }
 
-      await this.login(email, password);
+    // Fallback to original UI-based authentication
+    console.log("[AuthHelpers] Falling back to UI-based authentication");
+    await this.page.goto("/");
+    await this.page.waitForLoadState("domcontentloaded");
 
-      // Check if login was successful
-      await this.page.waitForTimeout(1000);
-      const postLoginUrl = this.page.url();
-      if (postLoginUrl.includes("/login")) {
-        // Login failed
-        const errorElement = await this.page
-          .locator('[data-testid="login-error"]')
-          .textContent()
-          .catch(() => "Login failed");
+    // Wait for potential auth redirect to complete (deterministic)
+    try {
+      await this.page.waitForURL(/^(?!.*\/login)/, { timeout: getTimeouts().contentLoad });
+    } catch {
+      // If we're still on login page or got redirected there, need to login
+      const currentUrl = this.page.url();
+      if (currentUrl.includes("/login")) {
+        const email = TEST_CREDENTIALS.valid.email;
+        const password = TEST_CREDENTIALS.valid.password;
 
-        throw new Error(`Login failed: ${errorElement}`);
+        await this.login(email, password);
+
+        // Verify login was successful by checking URL
+        await this.page.waitForURL("/", { timeout: getTimeouts().contentLoad });
       }
     }
 
     // Verify we have authentication tokens
-    const finalAccessToken = await this.page.evaluate(() => localStorage.getItem("accessToken"));
-    const finalUser = await this.page.evaluate(() => localStorage.getItem("user"));
-    const finalRefreshToken = await this.page.evaluate(() => localStorage.getItem("refreshToken"));
+    let finalAccessToken, finalUser, finalRefreshToken;
+    try {
+      finalAccessToken = await this.page.evaluate(() => localStorage.getItem("accessToken"));
+      finalUser = await this.page.evaluate(() => localStorage.getItem("user"));
+      finalRefreshToken = await this.page.evaluate(() => localStorage.getItem("refreshToken"));
+    } catch (error) {
+      console.error("[AuthHelpers] Failed to verify tokens:", error.message);
+      throw new Error("Failed to access localStorage for token verification");
+    }
 
     console.log("[AuthHelpers] Final authentication verification:", {
       hasAccessToken: !!finalAccessToken,
@@ -101,13 +250,15 @@ export class AuthHelpers {
       );
     }
 
-    // Verify we're logged in by checking for home page elements
-    console.log("[AuthHelpers] Verifying home page elements");
-    await expect(this.page).toHaveURL("/", { timeout: 10000 });
-    await this.page.waitForSelector(
-      '[data-testid="files-container"], [data-testid="create-file-button"], [data-testid="user-menu"]',
-      { timeout: 10000 }
-    );
+    // Skip DOM verification if requested (for speed)
+    if (!skipDOMVerification) {
+      // Verify we're logged in by checking for home page elements
+      console.log("[AuthHelpers] Verifying home page elements");
+      await expect(this.page).toHaveURL("/");
+      await this.page.waitForSelector(
+        '[data-testid="files-container"], [data-testid="create-file-button"], [data-testid="user-menu"]'
+      );
+    }
 
     console.log("[AuthHelpers] ensureLoggedIn completed successfully");
   }
@@ -123,7 +274,7 @@ export class AuthHelpers {
         localStorage.clear();
         sessionStorage.clear();
       });
-      await this.page.goto("/login", { waitUntil: "load" });
+      await this.page.goto("/login", { waitUntil: "domcontentloaded" });
     } catch {
       // Ignore localStorage access errors in tests
     }

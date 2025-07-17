@@ -1,11 +1,9 @@
 <script setup>
-  import { ref, reactive, computed, provide, onMounted } from "vue";
+  import { ref, reactive, computed, provide, onMounted, inject } from "vue";
   import { useRoute } from "vue-router";
-  import { breakpointsTailwind, useBreakpoints } from "@vueuse/core";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import { demoFile, demoUser, demoFileStore, demoAnnotations, createDemoApi } from "./demoData.js";
   import { File } from "@/models/File.js";
-  import { useEnhancedMobileMode } from "@/composables/useEnhancedMobileMode.js";
   import Sidebar from "@/views/workspace/Sidebar.vue";
   import Canvas from "@/views/workspace/Canvas.vue";
   import Icon from "@/components/base/Icon.vue";
@@ -14,17 +12,14 @@
   const api = createDemoApi();
   provide("api", api);
 
-  // Provide viewport info
-  const breakpoints = useBreakpoints({ xs: 425, ...breakpointsTailwind });
+  // Use ONLY injected values from App.vue (single source of truth)
+  const breakpoints = inject("breakpoints");
+  const xsMode = inject("xsMode");
+  const mobileMode = inject("mobileMode");
+
+  // Provide the injected values to child components
   provide("breakpoints", breakpoints);
-
-  const xsMode = computed(() => breakpoints.smallerOrEqual("xs").value);
   provide("xsMode", xsMode);
-
-  // Enhanced mobile detection: small viewport + (mobile device OR touch device)
-  const isSmallViewport = computed(() => breakpoints.smallerOrEqual("sm").value);
-  const mobileMode = useEnhancedMobileMode(isSmallViewport);
-  provide("mobileMode", mobileMode);
 
   // Demo user and file store
   const user = ref(demoUser);

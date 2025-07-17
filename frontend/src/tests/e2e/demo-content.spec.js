@@ -3,6 +3,7 @@ import { test, expect } from "@playwright/test";
 // @demo
 import { AuthHelpers } from "./utils/auth-helpers.js";
 import { MobileHelpers } from "./utils/mobile-helpers.js";
+import { TIMEOUTS } from "./utils/timeout-constants.js";
 
 test.describe("Demo Content Rendering @demo-content", () => {
   let authHelpers;
@@ -16,7 +17,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
     await authHelpers.clearAuthState();
 
     await page.goto("/demo", { waitUntil: "domcontentloaded" });
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("load");
 
     // Mobile browsers need extra time for rendering
     await mobileHelpers.waitForMobileRendering();
@@ -73,7 +74,8 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
         // Scroll to ensure element is in viewport
         await manuscript.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(500);
+        // Wait for scroll completion and layout recalculation
+        await page.waitForTimeout(TIMEOUTS.ANIMATION);
 
         // Try standard Playwright visibility check first
         try {
@@ -85,7 +87,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
             document.body.offsetHeight;
             window.dispatchEvent(new Event("resize"));
           });
-          await page.waitForTimeout(300);
+          await page.waitForTimeout(TIMEOUTS.ANIMATION);
 
           // Use enhanced DOM check as fallback
           const finalVisibility = await mobileHelpers.isElementVisibleInDOM(manuscript);
@@ -119,7 +121,8 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
         // Scroll to ensure element is in viewport
         await handrails.first().scrollIntoViewIfNeeded();
-        await page.waitForTimeout(500);
+        // Wait for scroll completion and layout recalculation
+        await page.waitForTimeout(TIMEOUTS.ANIMATION);
 
         // Try standard Playwright visibility check first
         try {
@@ -131,7 +134,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
             document.body.offsetHeight;
             window.dispatchEvent(new Event("resize"));
           });
-          await page.waitForTimeout(300);
+          await page.waitForTimeout(TIMEOUTS.ANIMATION);
 
           const isVisible = await mobileHelpers.isElementVisibleInDOM(handrails.first());
           expect(isVisible).toBe(true);
@@ -144,7 +147,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
       const headingHandrails = page.locator(".heading.hr");
       if (isMobile) {
         await headingHandrails.first().scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(TIMEOUTS.ANIMATION);
       }
       await expect(headingHandrails.first()).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
 
@@ -188,7 +191,8 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
         // Scroll to ensure element is in viewport
         await title.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(500);
+        // Wait for scroll completion and layout recalculation
+        await page.waitForTimeout(TIMEOUTS.ANIMATION);
 
         // Try standard Playwright visibility check first
         try {
@@ -204,7 +208,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
               window.dispatchEvent(new Event("resize"));
             }
           });
-          await page.waitForTimeout(300);
+          await page.waitForTimeout(TIMEOUTS.ANIMATION);
 
           const finalVisibility = await mobileHelpers.isElementVisibleInDOM(title);
           expect(finalVisibility).toBe(true);
@@ -237,28 +241,28 @@ test.describe("Demo Content Rendering @demo-content", () => {
       const introHeading = page.locator("text=Introduction");
       if (isMobile) {
         await introHeading.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(TIMEOUTS.ANIMATION);
       }
       await expect(introHeading).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
 
       const methodologyHeading = page.getByRole("heading", { name: "2. Methodology" });
       if (isMobile) {
         await methodologyHeading.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(TIMEOUTS.ANIMATION);
       }
       await expect(methodologyHeading).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
 
       const resultsHeading = page.locator("text=Results");
       if (isMobile) {
         await resultsHeading.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(TIMEOUTS.ANIMATION);
       }
       await expect(resultsHeading).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
 
       const conclusionHeading = page.locator("text=Conclusion");
       if (isMobile) {
         await conclusionHeading.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(TIMEOUTS.ANIMATION);
       }
       await expect(conclusionHeading).toBeVisible({ timeout: isMobile ? 8000 : 5000 });
     });
@@ -285,14 +289,15 @@ test.describe("Demo Content Rendering @demo-content", () => {
       if (isMobile) {
         // Ensure heading is in viewport and visible before tapping
         await heading.scrollIntoViewIfNeeded();
-        await page.waitForTimeout(500);
+        // Wait for scroll completion and layout recalculation
+        await page.waitForTimeout(TIMEOUTS.ANIMATION);
 
         // Force layout recalculation for mobile browsers
         await page.evaluate(() => {
           document.body.offsetHeight;
           window.dispatchEvent(new Event("resize"));
         });
-        await page.waitForTimeout(300);
+        await page.waitForTimeout(TIMEOUTS.ANIMATION);
 
         // Verify heading is visible before attempting tap
         await expect(heading).toBeVisible({ timeout: 8000 });
@@ -393,7 +398,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
       // Navigate to demo (fresh load to trigger API call)
       await page.reload();
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Wait for content to load
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
@@ -415,7 +420,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
       });
 
       await page.reload();
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Wait for styles to apply
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
@@ -434,7 +439,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
       });
 
       await page.reload();
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Wait for content to load completely
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
@@ -456,7 +461,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
       });
 
       await page.reload();
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("load");
 
       // Content should still attempt to load or show fallback
       await expect(page.locator('[data-testid="demo-canvas"]')).toBeVisible();

@@ -176,7 +176,7 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
 
     async def test_unclosed_itemize_handling(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of unclosed itemize sections."""
-        result = await render(malformed_rsm_documents["unclosed_itemize"], db_session)
+        result = await render(malformed_rsm_documents["unclosed_itemize"])
         
         # Should still generate some HTML output, not crash
         assert isinstance(result, str)
@@ -186,7 +186,7 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
 
     async def test_unclosed_enumerate_handling(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of unclosed enumerate sections."""
-        result = await render(malformed_rsm_documents["unclosed_enumerate"], db_session)
+        result = await render(malformed_rsm_documents["unclosed_enumerate"])
         
         # Should handle gracefully
         assert isinstance(result, str)
@@ -194,14 +194,14 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
 
     async def test_missing_rsm_tags(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of documents missing RSM opening/closing tags."""
-        result = await render(malformed_rsm_documents["missing_rsm_tags"], db_session)
+        result = await render(malformed_rsm_documents["missing_rsm_tags"])
         
         # Should handle gracefully, might return empty string
         assert isinstance(result, str)
 
     async def test_invalid_rsm_syntax(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of invalid RSM syntax elements."""
-        result = await render(malformed_rsm_documents["invalid_rsm_syntax"], db_session)
+        result = await render(malformed_rsm_documents["invalid_rsm_syntax"])
         
         # Should handle gracefully
         assert isinstance(result, str)
@@ -212,21 +212,21 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
 
     async def test_nested_itemize_error(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of nested list errors."""
-        result = await render(malformed_rsm_documents["nested_itemize_error"], db_session)
+        result = await render(malformed_rsm_documents["nested_itemize_error"])
         
         # Should handle gracefully
         assert isinstance(result, str)
 
     async def test_mixed_list_types(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of mixed list type errors."""
-        result = await render(malformed_rsm_documents["mixed_list_types"], db_session)
+        result = await render(malformed_rsm_documents["mixed_list_types"])
         
         # Should handle gracefully
         assert isinstance(result, str)
 
     async def test_empty_sections(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of empty RSM sections."""
-        result = await render(malformed_rsm_documents["empty_sections"], db_session)
+        result = await render(malformed_rsm_documents["empty_sections"])
         
         # Should handle empty sections gracefully
         assert isinstance(result, str)
@@ -236,14 +236,14 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
 
     async def test_malformed_abstract(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of malformed abstract sections."""
-        result = await render(malformed_rsm_documents["malformed_abstract"], db_session)
+        result = await render(malformed_rsm_documents["malformed_abstract"])
         
         # Should handle gracefully
         assert isinstance(result, str)
 
     async def test_unicode_and_special_chars(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of unicode and special characters."""
-        result = await render(malformed_rsm_documents["unicode_and_special_chars"], db_session)
+        result = await render(malformed_rsm_documents["unicode_and_special_chars"])
         
         # Should handle unicode without issues
         assert isinstance(result, str)
@@ -257,7 +257,7 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
 
     async def test_very_long_lines(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of very long lines."""
-        result = await render(malformed_rsm_documents["very_long_lines"], db_session)
+        result = await render(malformed_rsm_documents["very_long_lines"])
         
         # Should handle long lines without issues
         assert isinstance(result, str)
@@ -267,7 +267,7 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
 
     async def test_deeply_nested_headings(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of deeply nested headings."""
-        result = await render(malformed_rsm_documents["deeply_nested_headings"], db_session)
+        result = await render(malformed_rsm_documents["deeply_nested_headings"])
         
         # Should handle deep nesting gracefully
         assert isinstance(result, str)
@@ -277,7 +277,7 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
 
     async def test_mixed_markup_styles(self, db_session: AsyncSession, malformed_rsm_documents):
         """Test handling of mixed markup styles."""
-        result = await render(malformed_rsm_documents["mixed_markup_styles"], db_session)
+        result = await render(malformed_rsm_documents["mixed_markup_styles"])
         
         # Should handle mixed markup
         assert isinstance(result, str)
@@ -292,7 +292,7 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
         # Test with a clearly malformed document
         malformed_doc = malformed_rsm_documents["missing_rsm_tags"]
         
-        result = await render(malformed_doc, db_session)
+        result = await render(malformed_doc)
         
         # Should return a string (even if empty on error)
         assert isinstance(result, str)
@@ -339,7 +339,7 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
         large_doc = "\n".join(large_malformed)
         
         # Should handle large malformed document without crashing
-        result = await render(large_doc, db_session)
+        result = await render(large_doc)
         assert isinstance(result, str)
         
         # Should complete in reasonable time even with malformed content
@@ -348,15 +348,15 @@ And HTML entities like &lt;, &gt;, &amp;, &quot;?
     async def test_null_and_empty_inputs(self, db_session: AsyncSession):
         """Test handling of null and empty inputs."""
         # Empty string
-        result = await render("", db_session)
+        result = await render("")
         assert isinstance(result, str)
         
         # Whitespace only
-        result = await render("   \n\t\n   ", db_session)
+        result = await render("   \n\t\n   ")
         assert isinstance(result, str)
         
         # Just RSM tags
-        result = await render(":rsm:::", db_session)
+        result = await render(":rsm:::")
         assert isinstance(result, str)
 
     async def test_rsm_with_html_injection_attempt(self, db_session: AsyncSession):
@@ -375,7 +375,7 @@ And other tags: <div>content</div>, <img src="x" onerror="alert('xss')">
 
 ::"""
         
-        result = await render(html_injection_doc, db_session)
+        result = await render(html_injection_doc)
         assert isinstance(result, str)
         
         # Check that result doesn't contain dangerous HTML as-is
@@ -392,7 +392,7 @@ And other tags: <div>content</div>, <img src="x" onerror="alert('xss')">
         # Create content designed to potentially cause memory issues
         memory_test_doc = ":rsm:\n" + "# Header\n" * 1000 + ":itemize:\n" + ":item: Item\n" * 1000 + "\n::"
         
-        result = await render(memory_test_doc, db_session)
+        result = await render(memory_test_doc)
         assert isinstance(result, str)
         
         # Result should not be excessively large
@@ -406,7 +406,7 @@ And other tags: <div>content</div>, <img src="x" onerror="alert('xss')">
         # Create multiple concurrent render tasks with malformed content
         tasks = []
         for doc_content in list(malformed_rsm_documents.values())[:5]:  # Test with 5 documents
-            task = render(doc_content, db_session)
+            task = render(doc_content)
             tasks.append(task)
         
         # Run concurrently
@@ -421,12 +421,12 @@ And other tags: <div>content</div>, <img src="x" onerror="alert('xss')">
         """Test that RSM processor can recover from errors."""
         # First render a malformed document
         malformed = ":rsm:\n:itemize:\n:item: Unclosed\n"  # Missing closings
-        result1 = await render(malformed, db_session)
+        result1 = await render(malformed)
         assert isinstance(result1, str)
         
         # Then render a valid document - should work fine
         valid = ":rsm:\n# Valid Document\nContent\n::"
-        result2 = await render(valid, db_session)
+        result2 = await render(valid)
         assert isinstance(result2, str)
         
         if result2:
@@ -450,6 +450,6 @@ And other tags: <div>content</div>, <img src="x" onerror="alert('xss')">
         ]
         
         for edge_case in edge_cases:
-            result = await render(edge_case, db_session)
+            result = await render(edge_case)
             assert isinstance(result, str)
             # Should not crash on edge cases

@@ -28,7 +28,7 @@ test.describe("Auth Enabled - Production Mode @auth-flows", () => {
 
     // Test 2: Verify protected routes redirect to login
     await page.goto("/");
-    await page.waitForLoadState("networkidle");
+    await page.waitForLoadState("domcontentloaded");
 
     // Should be redirected to login page
     await expect(page).toHaveURL(/\/login/, { timeout: 10000 });

@@ -101,7 +101,7 @@ Unclosed enumerate section.
 
     async def test_simple_rsm_rendering(self, db_session: AsyncSession, simple_rsm_document):
         """Test rendering of simple RSM document."""
-        result = await render(simple_rsm_document, db_session)
+        result = await render(simple_rsm_document)
         
         # Check that HTML is generated
         assert result
@@ -122,7 +122,7 @@ Unclosed enumerate section.
 
     async def test_complex_rsm_rendering(self, db_session: AsyncSession, complex_rsm_document):
         """Test rendering of complex RSM document with all features."""
-        result = await render(complex_rsm_document, db_session)
+        result = await render(complex_rsm_document)
         
         # Check basic structure
         assert result
@@ -229,7 +229,7 @@ Quotes: "smart quotes", 'apostrophes', and "unicode quotes".
 
 ::"""
         
-        result = await render(rsm_with_special_chars, db_session)
+        result = await render(rsm_with_special_chars)
         
         # Check that special characters are preserved
         assert 'Tëst Dócümënt wïth Ünïcödë' in result
@@ -244,7 +244,7 @@ Quotes: "smart quotes", 'apostrophes', and "unicode quotes".
     async def test_empty_rsm_document(self, db_session: AsyncSession):
         """Test rendering of empty RSM document."""
         empty_rsm = ":rsm:::"
-        result = await render(empty_rsm, db_session)
+        result = await render(empty_rsm)
         
         # Should still generate basic HTML structure
         assert result
@@ -253,7 +253,7 @@ Quotes: "smart quotes", 'apostrophes', and "unicode quotes".
     async def test_minimal_rsm_document(self, db_session: AsyncSession):
         """Test rendering of minimal RSM document."""
         minimal_rsm = ":rsm:\nMinimal content\n::"
-        result = await render(minimal_rsm, db_session)
+        result = await render(minimal_rsm)
         
         assert result
         assert 'Minimal content' in result
@@ -269,7 +269,7 @@ Quotes: "smart quotes", 'apostrophes', and "unicode quotes".
 ## Section Two
 ::"""
         
-        result = await render(headings_only, db_session)
+        result = await render(headings_only)
         
         assert result
         assert 'Main Title' in result
@@ -312,7 +312,7 @@ Empty items test:
 
 ::"""
         
-        result = await render(itemize_tests, db_session)
+        result = await render(itemize_tests)
         
         assert result
         assert 'First item' in result
@@ -344,7 +344,7 @@ Mixed content:
 
 ::"""
         
-        result = await render(enumerate_tests, db_session)
+        result = await render(enumerate_tests)
         
         assert result
         assert 'First numbered item' in result
@@ -380,7 +380,7 @@ Mixed content:
         
         import time
         start_time = time.time()
-        result = await render(large_rsm, db_session)
+        result = await render(large_rsm)
         end_time = time.time()
         
         processing_time = end_time - start_time
@@ -414,7 +414,7 @@ This is the main content of the paper.
 
 ::"""
         
-        result = await render(abstract_test, db_session)
+        result = await render(abstract_test)
         
         assert result
         assert 'Paper with Abstract' in result

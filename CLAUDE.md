@@ -269,6 +269,15 @@ The `/ci-report` command provides comprehensive CI failure analysis:
 - **Clean up after tests**: Reset databases, clear localStorage, restore mocks
 - **Use fresh test data**: Generate unique IDs, avoid hardcoded test user emails
 - **Parallel-safe**: Tests must pass when run concurrently with others
+
+**Element Selection Standards**:
+- **ALWAYS use `data-testid` attributes for test element selection**:
+  - Use `[data-testid="menu-toggle"]` instead of `.menu-toggle`
+  - Use `[data-testid="mobile-menu-overlay"]` instead of `.mobile-menu-overlay`
+  - CSS classes can change for styling reasons, but `data-testid` attributes are stable
+- **Text-based selectors**: Use `.filter({ hasText: "..." })` for text-based element selection
+- **Avoid CSS class selectors**: Only use CSS classes when no `data-testid` attribute exists
+- **Component developers**: Add `data-testid` attributes to all interactive elements
 ```
 
 ## Language Guidelines

@@ -1,15 +1,16 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, devices } from "@playwright/test";
 
-// @auth @auth-flows @core @demo-content @demo-ui @mobile-only
+// @auth @auth-flows
 import { MobileHelpers } from "./utils/mobile-helpers.js";
+import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile-only", () => {
+test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
   let mobileHelpers;
 
-  const mobileViewports = [
-    { name: "iPhone SE", width: 375, height: 667 },
-    { name: "iPhone 12", width: 390, height: 844 },
-    { name: "Samsung Galaxy S21", width: 360, height: 800 },
+  const mobileDevices = [
+    { name: "iPhone SE", device: devices["iPhone SE"] },
+    { name: "iPhone 12", device: devices["iPhone 12"] },
+    { name: "Samsung Galaxy S24", device: devices["Galaxy S24"] },
   ];
 
   test.beforeEach(async ({ page }) => {
@@ -17,22 +18,34 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
   });
 
   test.describe("Mobile Drawer Functionality", () => {
-    mobileViewports.forEach((viewport) => {
-      test(`should show hamburger menu and drawer on ${viewport.name}`, async ({ page }) => {
-        await page.setViewportSize(viewport);
-        // For demo tests, use demo route; for auth tests, use home route
-        const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-        await page.goto(route);
-        await page.waitForLoadState("networkidle");
+    mobileDevices.forEach((mobileDevice) => {
+      test(`should show hamburger menu and drawer on ${mobileDevice.name}`, async ({ browser }) => {
+        // Set device properties but exclude isMobile for Firefox compatibility
+        const contextOptions = {
+          ...mobileDevice.device,
+          isMobile: undefined // Remove isMobile to work with Firefox
+        };
+        
+        const context = await browser.newContext(contextOptions);
+        const page = await context.newPage();
+        mobileHelpers = new MobileHelpers(page);
+        const auth = new AuthHelpers(page);
+
+        // Authenticate first
+        await auth.fastAuth();
+
+        await page.goto("/");
+        await page.waitForLoadState("domcontentloaded");
         await mobileHelpers.waitForMobileRendering();
+
 
         // Hamburger menu should be visible
         const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
         await mobileHelpers.expectToBeVisible(hamburgerButton);
 
-        // Desktop sidebar should be hidden
-        await expect(page.locator(".sb-wrapper .sb-menu")).not.toBeVisible();
-        await expect(page.locator(".sb-wrapper #logo")).not.toBeVisible();
+        // Desktop sidebar should be hidden in mobile mode
+        await expect(page.locator(".sb-wrapper:not(.drawer-open) .sb-menu")).not.toBeVisible();
+        await expect(page.locator(".sb-wrapper:not(.drawer-open) #logo")).not.toBeVisible();
 
         // Mobile drawer should be closed initially
         await expect(page.locator(".sb-wrapper.drawer-open")).not.toBeVisible();
@@ -46,16 +59,35 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
         await expect(page.locator(".mobile-backdrop")).toBeVisible();
 
         // Sidebar menu should be visible in drawer
-        await mobileHelpers.expectToBeVisible(page.locator(".sb-wrapper.drawer-open .sb-menu"));
-        await mobileHelpers.expectToBeVisible(page.locator(".sb-wrapper.drawer-open #logo"));
+        await mobileHelpers.expectToBeVisible(
+          page.locator(".sb-wrapper.drawer-open .sidebar-content .sb-menu")
+        );
+        await mobileHelpers.expectToBeVisible(
+          page.locator(".sb-wrapper.drawer-open .sidebar-content #logo")
+        );
+
+        await context.close();
       });
 
-      test(`should close drawer when backdrop is tapped on ${viewport.name}`, async ({ page }) => {
-        await page.setViewportSize(viewport);
-        // For demo tests, use demo route; for auth tests, use home route
-        const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-        await page.goto(route);
-        await page.waitForLoadState("networkidle");
+      test(`should close drawer when backdrop is tapped on ${mobileDevice.name}`, async ({
+        browser,
+      }) => {
+        // Set device properties but exclude isMobile for Firefox compatibility
+        const contextOptions = {
+          ...mobileDevice.device,
+          isMobile: undefined // Remove isMobile to work with Firefox
+        };
+        
+        const context = await browser.newContext(contextOptions);
+        const page = await context.newPage();
+        mobileHelpers = new MobileHelpers(page);
+        const auth = new AuthHelpers(page);
+
+        // Authenticate first
+        await auth.fastAuth();
+
+        await page.goto("/");
+        await page.waitForLoadState("domcontentloaded");
 
         // Open drawer
         const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -73,16 +105,29 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
         // Drawer should be closed
         await expect(page.locator(".sb-wrapper.drawer-open")).not.toBeVisible();
         await expect(page.locator(".mobile-backdrop")).not.toBeVisible();
+
+        await context.close();
       });
 
-      test(`should close drawer when navigation item is tapped on ${viewport.name}`, async ({
-        page,
+      test(`should close drawer when navigation item is tapped on ${mobileDevice.name}`, async ({
+        browser,
       }) => {
-        await page.setViewportSize(viewport);
-        // For demo tests, use demo route; for auth tests, use home route
-        const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-        await page.goto(route);
-        await page.waitForLoadState("networkidle");
+        // Set device properties but exclude isMobile for Firefox compatibility
+        const contextOptions = {
+          ...mobileDevice.device,
+          isMobile: undefined // Remove isMobile to work with Firefox
+        };
+        
+        const context = await browser.newContext(contextOptions);
+        const page = await context.newPage();
+        mobileHelpers = new MobileHelpers(page);
+        const auth = new AuthHelpers(page);
+
+        // Authenticate first
+        await auth.fastAuth();
+
+        await page.goto("/");
+        await page.waitForLoadState("domcontentloaded");
 
         // Open drawer
         const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -90,7 +135,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
         await mobileHelpers.waitForMobileRendering();
 
         // Click on Settings navigation item
-        const settingsItem = page.locator('.sb-wrapper.drawer-open [data-testid*="settings"]');
+        const settingsItem = page.locator(
+          '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Settings"]'
+        );
         await mobileHelpers.clickElement(settingsItem);
 
         // Wait for navigation
@@ -103,15 +150,25 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
 
         // Should be on settings page
         await expect(page).toHaveURL(/\/settings/);
+
+        await context.close();
       });
     });
 
-    test("should prevent body scroll when drawer is open", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
-      // For demo tests, use demo route; for auth tests, use home route
-      const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-      await page.goto(route);
-      await page.waitForLoadState("networkidle");
+    test("should prevent body scroll when drawer is open", async ({ browser }) => {
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
+
+      await page.goto("/");
+      await page.waitForLoadState("domcontentloaded");
 
       // Check initial body overflow
       const initialOverflow = await page.evaluate(() => document.body.style.overflow);
@@ -133,16 +190,26 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
       // Body overflow should be restored
       const closedOverflow = await page.evaluate(() => document.body.style.overflow);
       expect(closedOverflow).toBe(initialOverflow);
+
+      await context.close();
     });
   });
 
   test.describe("Mobile Navigation UX - Home View", () => {
-    test("should provide mobile navigation on home page", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
-      // For demo tests, use demo route; for auth tests, use home route
-      const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-      await page.goto(route);
-      await page.waitForLoadState("networkidle");
+    test("should provide mobile navigation on home page", async ({ browser }) => {
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
+
+      await page.goto("/");
+      await page.waitForLoadState("domcontentloaded");
 
       // Open mobile drawer
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -150,17 +217,27 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
       await mobileHelpers.waitForMobileRendering();
 
       // Should show main navigation items (Account moved to UserMenu)
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-item="Home"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-item="Settings"]'));
+      await mobileHelpers.expectToBeVisible(
+        page.locator('.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Home"]')
+      );
+      await mobileHelpers.expectToBeVisible(
+        page.locator('.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Settings"]')
+      );
 
       // Should show recent files section if available
-      const recentFiles = page.locator(".sb-menu .recent-files");
+      const recentFiles = page.locator(
+        ".sb-wrapper.drawer-open .sidebar-content .sb-menu .recent-files"
+      );
       if ((await recentFiles.count()) > 0) {
         await mobileHelpers.expectToBeVisible(recentFiles);
       }
 
       // Should show new file button/menu
-      await mobileHelpers.expectToBeVisible(page.locator('[data-testid="create-file-button"]'));
+      await mobileHelpers.expectToBeVisible(
+        page.locator('.sb-wrapper.drawer-open .sidebar-content [data-testid="create-file-button"]')
+      );
+
+      await context.close();
     });
 
     // TEMPORARILY DISABLED: Failing due to navigation load event timeout
@@ -168,9 +245,7 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
     // TODO: Re-enable once mobile navigation load state issues are resolved
     test.skip("should navigate from home to account via user menu drawer", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      // For demo tests, use demo route; for auth tests, use home route
-      const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-      await page.goto(route);
+      await page.goto("/");
       await page.waitForLoadState("load");
       await mobileHelpers.waitForVueComponentMount();
 
@@ -192,11 +267,19 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
       await expect(page).toHaveURL("/account/profile");
     });
 
-    test("should navigate from home to settings via mobile drawer", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
-      // For demo tests, use demo route; for auth tests, use home route
-      const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-      await page.goto(route);
+    test("should navigate from home to settings via mobile drawer", async ({ browser }) => {
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
+
+      await page.goto("/");
       await page.waitForLoadState("load");
       await mobileHelpers.waitForVueComponentMount();
 
@@ -204,7 +287,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const settingsItem = page.locator('[data-sidebar-item="Settings"]');
+      const settingsItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Settings"]'
+      );
       await mobileHelpers.clickElement(settingsItem);
 
       console.log("[Test] About to wait for navigation to settings");
@@ -212,14 +297,26 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
 
       await mobileHelpers.waitForURLPattern(/\/settings/);
       await expect(page).toHaveURL(/\/settings/);
+
+      await context.close();
     });
   });
 
   test.describe("Mobile Navigation UX - Account View", () => {
-    test("should provide mobile navigation on account page", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
+    test("should provide mobile navigation on account page", async ({ browser }) => {
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
+
       await page.goto("/account");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
 
       // Open mobile drawer
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -227,8 +324,12 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
       await mobileHelpers.waitForMobileRendering();
 
       // Should show main navigation items (Account moved to UserMenu)
-      const homeItem = page.locator('[data-sidebar-item="Home"]');
-      const settingsItem = page.locator('[data-sidebar-item="Settings"]');
+      const homeItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Home"]'
+      );
+      const settingsItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Settings"]'
+      );
 
       await mobileHelpers.expectToBeVisible(homeItem);
       await mobileHelpers.expectToBeVisible(settingsItem);
@@ -236,6 +337,8 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
       // Neither should be marked as active when on account page
       await expect(homeItem).not.toHaveClass(/active/);
       await expect(settingsItem).not.toHaveClass(/active/);
+
+      await context.close();
     });
 
     // TEMPORARILY DISABLED: Failing due to navigation load event timeout
@@ -251,7 +354,9 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const homeItem = page.locator('[data-sidebar-item="Home"]');
+      const homeItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Home"]'
+      );
       await mobileHelpers.clickElement(homeItem);
 
       console.log("[Test] About to wait for navigation to home");
@@ -263,10 +368,20 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
   });
 
   test.describe("Mobile Navigation UX - Settings View", () => {
-    test("should provide mobile navigation on settings page", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
+    test("should provide mobile navigation on settings page", async ({ browser }) => {
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
+
       await page.goto("/settings");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
 
       // Open mobile drawer
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -274,8 +389,12 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
       await mobileHelpers.waitForMobileRendering();
 
       // Should show main navigation with Settings active
-      const homeItem = page.locator('[data-sidebar-item="Home"]');
-      const settingsItem = page.locator('[data-sidebar-item="Settings"]');
+      const homeItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Home"]'
+      );
+      const settingsItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Settings"]'
+      );
 
       await mobileHelpers.expectToBeVisible(homeItem);
       await mobileHelpers.expectToBeVisible(settingsItem);
@@ -285,21 +404,45 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
       await expect(homeItem).not.toHaveClass(/active/);
 
       // Should show settings sub-navigation items
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="File Display"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Behavior"]'));
-      await mobileHelpers.expectToBeVisible(page.locator('[data-sidebar-subitem="Notifications"]'));
+      await mobileHelpers.expectToBeVisible(
+        page.locator(
+          '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-subitem="File Display"]'
+        )
+      );
+      await mobileHelpers.expectToBeVisible(
+        page.locator('.sb-wrapper.drawer-open .sidebar-content [data-sidebar-subitem="Behavior"]')
+      );
+      await mobileHelpers.expectToBeVisible(
+        page.locator(
+          '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-subitem="Notifications"]'
+        )
+      );
+
+      await context.close();
     });
 
-    test("should navigate between settings sub-sections via mobile drawer", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
+    test("should navigate between settings sub-sections via mobile drawer", async ({ browser }) => {
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
+
       await page.goto("/settings");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
 
       // Open drawer and navigate to Behavior settings
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const behaviorItem = page.locator('[data-sidebar-subitem="Behavior"]');
+      const behaviorItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-subitem="Behavior"]'
+      );
       await mobileHelpers.clickElement(behaviorItem);
 
       await mobileHelpers.waitForURLPattern(/\/settings\/behavior/);
@@ -308,11 +451,15 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
       // Open drawer and navigate to Notifications settings
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const notificationsItem = page.locator('[data-sidebar-subitem="Notifications"]');
+      const notificationsItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-subitem="Notifications"]'
+      );
       await mobileHelpers.clickElement(notificationsItem);
 
       await mobileHelpers.waitForURLPattern(/\/settings\/notifications/);
       await expect(page).toHaveURL("/settings/notifications");
+
+      await context.close();
     });
 
     // TEMPORARILY DISABLED: Failing due to navigation load event timeout
@@ -323,13 +470,15 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
     }) => {
       await page.setViewportSize({ width: 375, height: 667 });
       await page.goto("/settings");
-      await page.waitForLoadState("networkidle");
+      await page.waitForLoadState("domcontentloaded");
 
       // Navigate to Home from Settings
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
       await mobileHelpers.clickElement(hamburgerButton);
 
-      const homeItem = page.locator('[data-sidebar-item="Home"]');
+      const homeItem = page.locator(
+        '.sb-wrapper.drawer-open .sidebar-content [data-sidebar-item="Home"]'
+      );
       await mobileHelpers.clickElement(homeItem);
 
       await mobileHelpers.waitForURLPattern(/^\/$/);
@@ -338,12 +487,20 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
   });
 
   test.describe("Mobile Animation and UX Polish", () => {
-    test("should animate drawer open/close transitions", async ({ page }) => {
-      await page.setViewportSize({ width: 375, height: 667 });
-      // For demo tests, use demo route; for auth tests, use home route
-      const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-      await page.goto(route);
-      await page.waitForLoadState("networkidle");
+    test("should animate drawer open/close transitions", async ({ browser }) => {
+      const context = await browser.newContext({
+        ...devices["iPhone SE"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
+
+      await page.goto("/");
+      await page.waitForLoadState("domcontentloaded");
 
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
       const drawerWrapper = page.locator(".sb-wrapper");
@@ -360,6 +517,8 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
         getComputedStyle(el).getPropertyValue("transition-duration")
       );
       expect(transitionDuration).not.toBe("0s");
+
+      await context.close();
     });
 
     // TEMPORARILY DISABLED: Failing due to missing mobile-menu-button element
@@ -367,10 +526,8 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
     // TODO: Re-enable once mobile hamburger menu button is properly implemented
     test.skip("should show visual feedback on hamburger button state", async ({ page }) => {
       await page.setViewportSize({ width: 375, height: 667 });
-      // For demo tests, use demo route; for auth tests, use home route
-      const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-      await page.goto(route);
-      await page.waitForLoadState("networkidle");
+      await page.goto("/");
+      await page.waitForLoadState("domcontentloaded");
 
       const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
 
@@ -397,22 +554,33 @@ test.describe("Mobile Sidebar Navigation UX @core @demo-content @demo-ui @mobile
   });
 
   test.describe("Desktop Mode Verification", () => {
-    test("should not show mobile elements on desktop", async ({ page }) => {
-      await page.setViewportSize({ width: 1024, height: 768 });
-      // For demo tests, use demo route; for auth tests, use home route
-      const route = process.env.CI_TEST_TYPE === "demo" ? "/demo" : "/";
-      await page.goto(route);
-      await page.waitForLoadState("networkidle");
+    test("should not show mobile elements on desktop", async ({ browser }) => {
+      const context = await browser.newContext({
+        ...devices["Desktop Chrome"],
+        isMobile: undefined // Remove isMobile to work with Firefox
+      });
+      const page = await context.newPage();
+      mobileHelpers = new MobileHelpers(page);
+      const auth = new AuthHelpers(page);
+
+      // Authenticate first
+      await auth.fastAuth();
+
+      await page.goto("/");
+      await page.waitForLoadState("domcontentloaded");
 
       // Mobile hamburger button should not be visible
       await expect(page.locator('[data-testid="mobile-menu-button"]')).not.toBeVisible();
 
-      // Desktop sidebar should be visible
-      await expect(page.locator(".sb-wrapper .sb-menu")).toBeVisible();
-      await expect(page.locator(".sb-wrapper #logo")).toBeVisible();
+      // Desktop sidebar should be visible (not in mobile mode)
+      await expect(page.locator(".sb-wrapper:not(.mobile) .sb-menu")).toBeVisible();
+      await expect(page.locator(".sb-wrapper:not(.mobile) #logo")).toBeVisible();
 
       // Should not have mobile classes
       await expect(page.locator(".sb-wrapper.mobile")).not.toBeVisible();
+      await expect(page.locator(".sb-wrapper.drawer-open")).not.toBeVisible();
+
+      await context.close();
     });
   });
 });

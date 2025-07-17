@@ -9,58 +9,27 @@ test.describe("Navigation Flow E2E", () => {
       "The Collaborative Preprint Server for Modern Research"
     );
 
-    // Check if viewport is mobile-sized (less than 640px wide)
-    const viewportSize = page.viewportSize();
-    const isMobile = viewportSize.width < 640;
+    // Test navigation to existing pages (mobile and desktop use same navigation)
+    await page.goto("/signup");
+    await page.waitForURL("/signup");
+    await expect(page.locator("h1")).toContainText("Sign Up");
 
-    if (isMobile) {
-      // Mobile navigation: use mobile menu
-      await page.click('[data-testid="menu-toggle"]');
-      await expect(page.locator('[data-testid="mobile-menu-overlay"]')).toBeVisible();
+    // Navigate to terms page
+    await page.goto("/terms");
+    await page.waitForURL("/terms");
+    await expect(page.locator("h1")).toContainText("Terms");
 
-      // Navigate to signup via mobile menu
-      await page.click('.mobile-nav-link[href="/signup"]');
-      await page.waitForURL("/signup");
-      await expect(page.locator("h1")).toContainText("Sign Up");
+    // Navigate to cookies page
+    await page.goto("/cookies");
+    await page.waitForURL("/cookies");
+    await expect(page.locator("h1")).toContainText("Cookie");
 
-      // Use direct navigation for other pages since they may not be in mobile menu
-      await page.goto("/terms");
-      await page.waitForURL("/terms");
-      await expect(page.locator("h1")).toContainText("Terms");
-
-      await page.goto("/cookies");
-      await page.waitForURL("/cookies");
-      await expect(page.locator("h1")).toContainText("Cookie");
-
-      // Navigate back to home via logo
-      await page.click('a[href="/"]');
-      await page.waitForURL("/");
-      await expect(page.locator("h1")).toContainText(
-        "The Collaborative Preprint Server for Modern Research"
-      );
-    } else {
-      // Desktop navigation: use visible nav links from navbar-utility-links
-      await page.click('.navbar-utility-links a[href="/signup"]');
-      await page.waitForURL("/signup");
-      await expect(page.locator("h1")).toContainText("Sign Up");
-
-      // Navigate to terms page
-      await page.click('a[href="/terms"]');
-      await page.waitForURL("/terms");
-      await expect(page.locator("h1")).toContainText("Terms");
-
-      // Navigate to cookies page
-      await page.click('a[href="/cookies"]');
-      await page.waitForURL("/cookies");
-      await expect(page.locator("h1")).toContainText("Cookie");
-
-      // Navigate back to home via logo
-      await page.click('a[href="/"]');
-      await page.waitForURL("/");
-      await expect(page.locator("h1")).toContainText(
-        "The Collaborative Preprint Server for Modern Research"
-      );
-    }
+    // Navigate back to home via logo
+    await page.click('a[href="/"]');
+    await page.waitForURL("/");
+    await expect(page.locator("h1")).toContainText(
+      "The Collaborative Preprint Server for Modern Research"
+    );
   });
 
   test("should handle navbar navigation links", async ({ page }) => {

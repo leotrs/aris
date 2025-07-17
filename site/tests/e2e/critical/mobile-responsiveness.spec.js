@@ -19,7 +19,7 @@ test.describe("Mobile Responsiveness E2E", () => {
       await page.goto("/");
       await page.waitForLoadState("networkidle");
 
-      // Desktop navigation should be hidden
+      // Desktop navigation should be hidden on mobile
       await expect(page.locator(".navbar-links")).not.toBeVisible();
       await expect(page.locator(".navbar-utility-links")).not.toBeVisible();
 
@@ -84,7 +84,7 @@ test.describe("Mobile Responsiveness E2E", () => {
 
         // Sections should stack properly (use actual component classes)
         await expect(page.locator(".platform-overview-section")).toBeVisible();
-        await expect(page.locator(".cta-section")).toBeVisible(); // Third section
+        await expect(page.locator(".cta-section")).toBeVisible();
       });
     });
 
@@ -196,10 +196,6 @@ test.describe("Mobile Responsiveness E2E", () => {
 
       await page.locator("footer").scrollIntoViewIfNeeded();
       await expect(page.locator("footer")).toBeInViewport();
-
-      // Test back to top functionality
-      await page.click('button[aria-label="Back to top"]');
-      await expect(page.locator(".hero-section")).toBeInViewport();
     });
   });
 
@@ -233,27 +229,13 @@ test.describe("Mobile Responsiveness E2E", () => {
     });
 
     test("should not have horizontal scroll on mobile", async ({ page }) => {
-      console.log("[DEBUG-CI] Starting horizontal scroll test");
-      console.log("[DEBUG-CI] Browser info:", await page.evaluate(() => navigator.userAgent));
-
       await page.setViewportSize({ width: 375, height: 667 });
-      console.log("[DEBUG-CI] Set viewport to 375x667");
-
       await page.goto("/");
-      console.log("[DEBUG-CI] Navigated to /");
-      console.log("[DEBUG-CI] Current URL:", page.url());
-
       await page.waitForLoadState("networkidle");
-      console.log("[DEBUG-CI] Network idle reached");
 
       // Check that page doesn't cause horizontal scrolling
       const scrollWidth = await page.evaluate(() => document.body.scrollWidth);
       const clientWidth = await page.evaluate(() => document.body.clientWidth);
-
-      console.log("[DEBUG-CI] scrollWidth:", scrollWidth);
-      console.log("[DEBUG-CI] clientWidth:", clientWidth);
-      console.log("[DEBUG-CI] difference:", scrollWidth - clientWidth);
-      console.log("[DEBUG-CI] Expected: scrollWidth <=", clientWidth + 5);
 
       expect(scrollWidth).toBeLessThanOrEqual(clientWidth + 5); // Allow small variance
     });

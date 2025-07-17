@@ -33,7 +33,7 @@ test:
 
 # Run all linters
 lint:
-    cd backend && uv run ruff check
+    cd backend && uv run ruff check --fix
     cd frontend && npm run lint
     cd site && npm run lint
 

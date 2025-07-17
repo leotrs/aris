@@ -1,10 +1,9 @@
 """Routes for rendering RSM into HTML."""
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 from pydantic import BaseModel
-from sqlalchemy.ext.asyncio import AsyncSession
 
-from .. import crud, get_db
+from .. import crud
 
 
 router = APIRouter(prefix="/render", tags=["files"])
@@ -15,5 +14,5 @@ class RenderObject(BaseModel):
 
 
 @router.post("")
-async def render(data: RenderObject, db: AsyncSession = Depends(get_db)):
-    return await crud.render(data.source, db)
+async def render(data: RenderObject):
+    return await crud.render(data.source)

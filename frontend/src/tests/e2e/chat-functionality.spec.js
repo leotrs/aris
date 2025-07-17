@@ -12,7 +12,7 @@ test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
     authHelpers = new AuthHelpers(page);
     fileHelpers = new FileHelpers(page);
 
-    // Ensure logged in
+    // Use optimized auth with fallbacks
     await authHelpers.ensureLoggedIn();
   });
 
@@ -28,12 +28,12 @@ test.describe("AI Copilot Chat Functionality @auth @desktop-only", () => {
     const aiCopilotButton = page.locator(
       '[data-testid="workspace-sidebar"] button[aria-label="Ari"]'
     );
-    await expect(aiCopilotButton).toBeVisible({ timeout: 5000 });
+    await expect(aiCopilotButton).toBeVisible();
     await aiCopilotButton.click();
 
     // Wait for chat panel to appear
     const chatPanel = page.locator(".chat-panel");
-    await expect(chatPanel).toBeVisible({ timeout: 5000 });
+    await expect(chatPanel).toBeVisible();
 
     return { fileId, chatPanel };
   };

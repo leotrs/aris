@@ -42,8 +42,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
   });
 
   test("arrow key navigation works like j/k", async ({ page }) => {
-    await page.goto("/");
-
+    // Wait for files to load (auth already done in beforeEach)
     await page.waitForSelector('[data-testid="files-container"]');
     const files = await page.locator('[data-testid^="file-item-"]').all();
 
@@ -61,8 +60,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
   });
 
   test("escape key clears focus", async ({ page }) => {
-    await page.goto("/");
-
+    // Wait for files to load (auth already done in beforeEach)
     await page.waitForSelector('[data-testid="files-container"]');
     const files = await page.locator('[data-testid^="file-item-"]').all();
 
@@ -76,8 +74,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
   });
 
   test("enter key opens focused file", async ({ page }) => {
-    await page.goto("/");
-
+    // Wait for files to load (auth already done in beforeEach)
     await page.waitForSelector('[data-testid="files-container"]');
 
     // Focus first file
@@ -90,8 +87,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
   });
 
   test("space key opens focused file", async ({ page }) => {
-    await page.goto("/");
-
+    // Wait for files to load (auth already done in beforeEach)
     await page.waitForSelector('[data-testid="files-container"]');
 
     // Focus first file
@@ -104,8 +100,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
   });
 
   test("dot key opens context menu for focused file", async ({ page }) => {
-    await page.goto("/");
-
+    // Wait for files to load (auth already done in beforeEach)
     await page.waitForSelector('[data-testid="files-container"]');
 
     // Focus first file
@@ -117,8 +112,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
   });
 
   test("view mode shortcut v,l switches to list view", async ({ page }) => {
-    await page.goto("/");
-
+    // Wait for files to load (auth already done in beforeEach)
     await page.waitForSelector('[data-testid="files-container"]');
 
     // Switch to list view
@@ -130,8 +124,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
   });
 
   test("view mode shortcut v,c switches to cards view", async ({ page }) => {
-    await page.goto("/");
-
+    // Wait for files to load (auth already done in beforeEach)
     await page.waitForSelector('[data-testid="files-container"]');
 
     // Switch to cards view
@@ -143,8 +136,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
   });
 
   test("search shortcut / focuses search input", async ({ page }) => {
-    await page.goto("/");
-
+    // Wait for files to load (auth already done in beforeEach)
     await page.waitForSelector('[data-testid="files-container"]');
 
     // Press / to focus search
@@ -159,8 +151,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
     "keyboard navigation maintains focus after file operations",
     { tag: "@flaky" },
     async ({ page }) => {
-      await page.goto("/");
-
+      // Wait for files to load (auth already done in beforeEach)
       await page.waitForSelector('[data-testid="files-container"]');
       const files = await page.locator('[data-testid^="file-item-"]').all();
 
@@ -184,8 +175,7 @@ test.describe("Home View Navigation & Keyboard @auth @desktop-only", () => {
   );
 
   test("navigation works in both list and cards view modes", async ({ page }) => {
-    await page.goto("/");
-
+    // Wait for files to load (auth already done in beforeEach)
     await page.waitForSelector('[data-testid="files-container"]');
 
     // Test in list mode

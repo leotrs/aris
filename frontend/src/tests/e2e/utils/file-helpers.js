@@ -1,5 +1,6 @@
 import { expect } from "@playwright/test";
 import { MobileHelpers } from "./mobile-helpers.js";
+import { getTimeouts } from "./timeout-constants.js";
 
 export class FileHelpers {
   constructor(page) {
@@ -31,7 +32,7 @@ export class FileHelpers {
       // Wait for files container to be visible (handles Suspense loading states)
       await this.mobileHelpers.expectToBeVisible(
         this.page.locator('[data-testid="files-container"]'),
-        timeouts.medium
+        timeouts.contentLoad
       );
     } catch (error) {
       // Comprehensive crash debugging
@@ -57,7 +58,7 @@ export class FileHelpers {
 
           await this.mobileHelpers.expectToBeVisible(
             this.page.locator('[data-testid="files-container"]'),
-            timeouts.long
+            timeouts.heavyOperation
           );
         }
       } catch (secondaryError) {
@@ -77,7 +78,7 @@ export class FileHelpers {
         const container = document.querySelector('[data-testid="files-container"]');
         return container && container.children.length > 0;
       },
-      { timeout: timeouts.medium }
+      { timeout: timeouts.contentLoad }
     );
   }
 
@@ -92,10 +93,30 @@ export class FileHelpers {
 
     // Wait for home page to fully load with sidebar
     await this.page.waitForLoadState("domcontentloaded");
-    await this.page.waitForTimeout(500);
+    await this.page.waitForTimeout(200);
 
-    // Get the create file button using the correct selector
-    const createButton = this.page.locator('[data-testid="create-file-button"]');
+    // Get the correct create file button based on mobile context
+    let createButton;
+
+    if (this.mobileHelpers.isMobileViewport()) {
+      // In mobile mode, check if drawer is open or closed
+      const drawerOpen = await this.page.locator(".sb-wrapper.drawer-open").isVisible();
+
+      if (drawerOpen) {
+        // Drawer is open - use button inside drawer
+        createButton = this.page.locator(
+          '.sb-wrapper.drawer-open .sidebar-content [data-testid="create-file-button"]'
+        );
+      } else {
+        // Drawer is closed - use FAB (floating action button)
+        createButton = this.page.locator('.cta.fab [data-testid="create-file-button"]');
+      }
+    } else {
+      // Desktop mode - use standard sidebar button
+      createButton = this.page.locator(
+        '.sb-wrapper:not(.mobile) [data-testid="create-file-button"]'
+      );
+    }
 
     // Wait for the button to be attached to the DOM
     await createButton.waitFor({ state: "attached", timeout: 10000 });
@@ -107,7 +128,7 @@ export class FileHelpers {
 
     // Wait for context menu to appear with mobile-optimized timeout
     const contextMenu = this.page.locator('[data-testid="context-menu"]').first();
-    await this.mobileHelpers.expectToBeVisible(contextMenu, timeouts.medium);
+    await this.mobileHelpers.expectToBeVisible(contextMenu, timeouts.quickAction);
 
     // Click "Empty file" option with robust selector for mobile browsers
     const emptyFileOption = contextMenu.locator('button[role="menuitem"]:has-text("Empty file")');
@@ -289,17 +310,13 @@ export class FileHelpers {
 
     // Wait for the duplicate operation to complete by checking for file count increase
     const initialFileCount = await this.getFileCount();
-    await this.page.waitForFunction(
-      (expectedCount) => {
-        const container = document.querySelector('[data-testid="files-container"]');
-        const currentCount = container
-          ? container.querySelectorAll('[data-testid^="file-item-"]').length
-          : 0;
-        return currentCount > expectedCount;
-      },
-      initialFileCount,
-      { timeout: 5000 }
-    );
+    await this.page.waitForFunction((expectedCount) => {
+      const container = document.querySelector('[data-testid="files-container"]');
+      const currentCount = container
+        ? container.querySelectorAll('[data-testid^="file-item-"]').length
+        : 0;
+      return currentCount > expectedCount;
+    }, initialFileCount);
 
     // Wait for the async file creation to complete and file list to update
     await this.waitForFilesLoaded();
@@ -357,14 +374,15 @@ export class FileHelpers {
    * Wait for file list to update after an operation
    */
   async waitForFileListUpdate(expectedCount = null) {
-    await this.page.waitForTimeout(500); // Allow for API calls to complete
+    const timeouts = getTimeouts(this.mobileHelpers.isMobileViewport());
+    await this.page.waitForTimeout(timeouts.animation); // Allow for API calls to complete
     await this.waitForFilesLoaded();
 
     if (expectedCount !== null) {
       await expect(async () => {
         const count = await this.getFileCount();
         expect(count).toBe(expectedCount);
-      }).toPass({ timeout: 5000 });
+      }).toPass();
     }
   }
 
