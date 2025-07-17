@@ -8,6 +8,7 @@ const RegisterView = isUnitTest ? {} : () => import("@/views/register/View.vue")
 const HomeView = isUnitTest ? {} : () => import("@/views/home/View.vue");
 const WorkspaceView = isUnitTest ? {} : () => import("@/views/workspace/View.vue");
 const DemoView = () => import("@/views/demo/View.vue");
+const IcationView = () => import("@/views/ication/View.vue");
 const AccountView = isUnitTest ? {} : () => import("@/views/account/View.vue");
 const AccountProfileView = isUnitTest ? {} : () => import("@/views/account/ProfileView.vue");
 const AccountSecurityView = isUnitTest ? {} : () => import("@/views/account/SecurityView.vue");
@@ -28,6 +29,7 @@ const routes = [
   { path: "/", component: HomeView },
   { path: "/file/:file_id", component: WorkspaceView },
   { path: "/demo", component: DemoView },
+  { path: "/ication/:identifier", component: IcationView },
   {
     path: "/verify-email/:token",
     name: "EmailVerification",
@@ -110,7 +112,8 @@ const router = createRouter({
 router.beforeEach((to, from, next) => {
   const publicPages = ["/login", "/register", "/demo"];
   const isVerificationRoute = to.path.startsWith("/verify-email/");
-  const authRequired = !publicPages.includes(to.path) && !isVerificationRoute;
+  const isIcationRoute = to.path.startsWith("/ication/");
+  const authRequired = !publicPages.includes(to.path) && !isVerificationRoute && !isIcationRoute;
   if (!authRequired) return next();
 
   const token = localStorage.getItem("accessToken")?.trim();

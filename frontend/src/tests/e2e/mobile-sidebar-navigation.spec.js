@@ -23,9 +23,9 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         // Set device properties but exclude isMobile for Firefox compatibility
         const contextOptions = {
           ...mobileDevice.device,
-          isMobile: undefined // Remove isMobile to work with Firefox
+          isMobile: undefined, // Remove isMobile to work with Firefox
         };
-        
+
         const context = await browser.newContext(contextOptions);
         const page = await context.newPage();
         mobileHelpers = new MobileHelpers(page);
@@ -37,7 +37,6 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         await page.goto("/");
         await page.waitForLoadState("domcontentloaded");
         await mobileHelpers.waitForMobileRendering();
-
 
         // Hamburger menu should be visible
         const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
@@ -75,9 +74,9 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         // Set device properties but exclude isMobile for Firefox compatibility
         const contextOptions = {
           ...mobileDevice.device,
-          isMobile: undefined // Remove isMobile to work with Firefox
+          isMobile: undefined, // Remove isMobile to work with Firefox
         };
-        
+
         const context = await browser.newContext(contextOptions);
         const page = await context.newPage();
         mobileHelpers = new MobileHelpers(page);
@@ -115,9 +114,9 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         // Set device properties but exclude isMobile for Firefox compatibility
         const contextOptions = {
           ...mobileDevice.device,
-          isMobile: undefined // Remove isMobile to work with Firefox
+          isMobile: undefined, // Remove isMobile to work with Firefox
         };
-        
+
         const context = await browser.newContext(contextOptions);
         const page = await context.newPage();
         mobileHelpers = new MobileHelpers(page);
@@ -158,7 +157,7 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     test("should prevent body scroll when drawer is open", async ({ browser }) => {
       const context = await browser.newContext({
         ...devices["iPhone SE"],
-        isMobile: undefined // Remove isMobile to work with Firefox
+        isMobile: undefined, // Remove isMobile to work with Firefox
       });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
@@ -199,7 +198,7 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     test("should provide mobile navigation on home page", async ({ browser }) => {
       const context = await browser.newContext({
         ...devices["iPhone SE"],
-        isMobile: undefined // Remove isMobile to work with Firefox
+        isMobile: undefined, // Remove isMobile to work with Firefox
       });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
@@ -270,7 +269,7 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     test("should navigate from home to settings via mobile drawer", async ({ browser }) => {
       const context = await browser.newContext({
         ...devices["iPhone SE"],
-        isMobile: undefined // Remove isMobile to work with Firefox
+        isMobile: undefined, // Remove isMobile to work with Firefox
       });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
@@ -306,7 +305,7 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     test("should provide mobile navigation on account page", async ({ browser }) => {
       const context = await browser.newContext({
         ...devices["iPhone SE"],
-        isMobile: undefined // Remove isMobile to work with Firefox
+        isMobile: undefined, // Remove isMobile to work with Firefox
       });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
@@ -371,7 +370,7 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     test("should provide mobile navigation on settings page", async ({ browser }) => {
       const context = await browser.newContext({
         ...devices["iPhone SE"],
-        isMobile: undefined // Remove isMobile to work with Firefox
+        isMobile: undefined, // Remove isMobile to work with Firefox
       });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
@@ -424,7 +423,7 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     test("should navigate between settings sub-sections via mobile drawer", async ({ browser }) => {
       const context = await browser.newContext({
         ...devices["iPhone SE"],
-        isMobile: undefined // Remove isMobile to work with Firefox
+        isMobile: undefined, // Remove isMobile to work with Firefox
       });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
@@ -490,7 +489,7 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     test("should animate drawer open/close transitions", async ({ browser }) => {
       const context = await browser.newContext({
         ...devices["iPhone SE"],
-        isMobile: undefined // Remove isMobile to work with Firefox
+        isMobile: undefined, // Remove isMobile to work with Firefox
       });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
@@ -557,7 +556,7 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
     test("should not show mobile elements on desktop", async ({ browser }) => {
       const context = await browser.newContext({
         ...devices["Desktop Chrome"],
-        isMobile: undefined // Remove isMobile to work with Firefox
+        isMobile: undefined, // Remove isMobile to work with Firefox
       });
       const page = await context.newPage();
       mobileHelpers = new MobileHelpers(page);
