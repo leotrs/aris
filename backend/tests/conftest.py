@@ -104,7 +104,6 @@ async def create_database_if_not_exists(database_url: str):
         return
     
     import asyncio
-    import os
     
     # Extract database name from URL
     db_name = database_url.split("/")[-1]
