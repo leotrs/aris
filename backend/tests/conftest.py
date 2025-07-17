@@ -101,9 +101,42 @@ async def create_database_if_not_exists(database_url: str):
     if not database_url.startswith("postgresql"):
         return
     
-    # For CI, skip database creation - just use the existing aris_test database
-    # This avoids admin permission issues in containerized environments
+    # For CI, create worker-specific databases to avoid conflicts  
     if os.environ.get("ENV") == "CI":
+        import asyncio
+        
+        # Extract database name from URL
+        db_name = database_url.split("/")[-1]
+        
+        # Use admin connection to create worker database
+        admin_url = database_url.replace(f"/{db_name}", "/aris_test")
+        
+        # Create worker database
+        max_retries = 3
+        for attempt in range(max_retries):
+            admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
+            
+            try:
+                async with admin_engine.connect() as conn:
+                    # Check if database exists
+                    result = await conn.execute(
+                        text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
+                        {"db_name": db_name}
+                    )
+                    if not result.fetchone():
+                        # Create database
+                        await conn.execute(text(f'CREATE DATABASE "{db_name}"'))
+                    
+                    # Success! Exit retry loop
+                    break
+            except Exception as e:
+                if attempt == max_retries - 1:  # Last retry
+                    raise e
+                # Wait before retry with exponential backoff
+                await asyncio.sleep(2 ** attempt)
+            finally:
+                await admin_engine.dispose()
+        
         return
     
     import asyncio
@@ -153,10 +186,10 @@ async def db_session(test_engine):
     database_url = str(test_engine.url)
     await create_database_if_not_exists(database_url)
     
-    # In CI, skip metadata.create_all since migration already created schema
-    if not os.environ.get("ENV") == "CI":
-        async with test_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+    # In CI, each worker gets its own database so we need to create the schema
+    # For worker isolation, we always create tables in worker-specific databases
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
     async with TestingSessionLocal() as session:
@@ -168,47 +201,9 @@ async def db_session(test_engine):
         async with test_engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
     else:
-        # Clean up test data but keep schema for parallel workers
-        async with TestingSessionLocal() as cleanup_session:
-            try:
-                # For CI environment, use TRUNCATE CASCADE to efficiently clear all data
-                # This will handle all foreign key constraints automatically
-                await cleanup_session.execute(text("TRUNCATE TABLE users CASCADE"))
-                await cleanup_session.commit()
-            except Exception:
-                # If cascade truncate fails, try manual cleanup
-                try:
-                    await cleanup_session.rollback()
-                    # Delete all data from all tables in correct dependency order
-                    cleanup_order = [
-                        "file_tags",  # Many-to-many association table
-                        "file_assets",  # References both users and files
-                        "annotation_message",  # References users and annotations
-                        "annotation",  # References files
-                        "file_settings",  # References users and files
-                        "profile_pictures",  # References users (but users reference back)
-                        "files",  # References users
-                        "tags",  # References users
-                        "user_settings",  # References users
-                        "signups",  # References users (or standalone)
-                        "users",  # Top-level table
-                    ]
-                    
-                    for table_name in cleanup_order:
-                        # Find table by name in metadata
-                        table = None
-                        for t in Base.metadata.sorted_tables:
-                            if t.name == table_name:
-                                table = t
-                                break
-                        
-                        if table is not None:
-                            await cleanup_session.execute(table.delete())
-                    
-                    await cleanup_session.commit()
-                except Exception:
-                    # If cleanup fails, rollback and continue
-                    await cleanup_session.rollback()
+        # In CI, use separate worker databases to avoid conflicts
+        # This is the most reliable approach for parallel test execution
+        pass
 
 
 @pytest_asyncio.fixture
