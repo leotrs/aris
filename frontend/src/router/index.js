@@ -114,6 +114,7 @@ router.beforeEach((to, from, next) => {
   const isVerificationRoute = to.path.startsWith("/verify-email/");
   const isIcationRoute = to.path.startsWith("/ication/");
   const authRequired = !publicPages.includes(to.path) && !isVerificationRoute && !isIcationRoute;
+
   if (!authRequired) return next();
 
   const token = localStorage.getItem("accessToken")?.trim();

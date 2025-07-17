@@ -32,6 +32,9 @@ export class File {
       filtered: rawData.filtered || false,
       isMountedAt: rawData.isMountedAt || null,
 
+      // Rendered content
+      html: rawData.html || null,
+
       // Date methods -- remember JS needs the timestamp to end with a 'Z' to interpret
       // it as UTC
       getFormattedDate() {

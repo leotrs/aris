@@ -2,13 +2,13 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { mount } from "@vue/test-utils";
 import { createRouter, createWebHistory } from "vue-router";
 import IcationView from "@/views/ication/View.vue";
-import { fetchIcationData } from "@/views/ication/icationData.js";
+import { fetchPublicationData } from "@/views/ication/publicationData.js";
 import { File } from "@/models/File.js";
 
 // Mock the data service
-vi.mock("@/views/ication/icationData.js", () => ({
-  fetchIcationData: vi.fn(),
-  createIcationApi: vi.fn(() => ({
+vi.mock("@/views/ication/publicationData.js", () => ({
+  fetchPublicationData: vi.fn(),
+  createPublicationApi: vi.fn(() => ({
     post: vi.fn(() => Promise.resolve({ data: "<div>Rendered HTML</div>" })),
     getUri: vi.fn(() => "http://localhost:8000"),
     defaults: {
@@ -16,7 +16,7 @@ vi.mock("@/views/ication/icationData.js", () => ({
       headers: { common: {} },
     },
   })),
-  createIcationFileStore: vi.fn((file) => ({
+  createPublicationFileStore: vi.fn((file) => ({
     files: [file],
     tags: file.tags || [],
     isLoading: false,
@@ -25,14 +25,14 @@ vi.mock("@/views/ication/icationData.js", () => ({
     loadFiles: () => Promise.resolve(),
     loadTags: () => Promise.resolve(),
   })),
-  createIcationUser: vi.fn(() => ({
+  createPublicationUser: vi.fn(() => ({
     id: null,
     username: "anonymous",
     email: null,
     firstName: "Anonymous",
     lastName: "User",
   })),
-  createIcationAnnotations: vi.fn(() => []),
+  createPublicationAnnotations: vi.fn(() => []),
 }));
 
 // Mock components that are heavy or not needed for this test
@@ -60,7 +60,7 @@ vi.mock("@/composables/useKeyboardShortcuts.js", () => ({
 describe("IcationView", () => {
   let router;
   let wrapper;
-  let mockFetchIcationData;
+  let mockFetchPublicationData;
 
   beforeEach(() => {
     // Reset mocks
@@ -73,7 +73,7 @@ describe("IcationView", () => {
     });
 
     // Mock fetch function
-    mockFetchIcationData = vi.mocked(fetchIcationData);
+    mockFetchPublicationData = vi.mocked(fetchPublicationData);
   });
 
   afterEach(() => {
@@ -113,7 +113,7 @@ describe("IcationView", () => {
         published_at: "2023-01-01T00:00:00Z",
       };
 
-      mockFetchIcationData.mockResolvedValueOnce({
+      mockFetchPublicationData.mockResolvedValueOnce({
         file: mockFile,
         metadata: mockMetadata,
       });
@@ -131,7 +131,7 @@ describe("IcationView", () => {
         source: ":rsm: test content ::",
       });
 
-      mockFetchIcationData.mockResolvedValueOnce({
+      mockFetchPublicationData.mockResolvedValueOnce({
         file: mockFile,
         metadata: { id: 123, title: "Test Preprint" },
       });
@@ -147,7 +147,7 @@ describe("IcationView", () => {
   describe("Loading States", () => {
     it("shows loading spinner while fetching data", async () => {
       // Mock a delayed response
-      mockFetchIcationData.mockImplementation(
+      mockFetchPublicationData.mockImplementation(
         () =>
           new Promise((resolve) => {
             setTimeout(
@@ -175,7 +175,7 @@ describe("IcationView", () => {
         source: ":rsm: test content ::",
       });
 
-      mockFetchIcationData.mockResolvedValueOnce({
+      mockFetchPublicationData.mockResolvedValueOnce({
         file: mockFile,
         metadata: { id: 123, title: "Test Preprint" },
       });
@@ -194,7 +194,7 @@ describe("IcationView", () => {
   describe("Error Handling", () => {
     it("shows error message when preprint not found", async () => {
       const notFoundError = new Error("HTTP 404: Not Found");
-      mockFetchIcationData.mockRejectedValueOnce(notFoundError);
+      mockFetchPublicationData.mockRejectedValueOnce(notFoundError);
 
       wrapper = await createWrapper();
 
@@ -208,7 +208,7 @@ describe("IcationView", () => {
 
     it("shows generic error message for other errors", async () => {
       const networkError = new Error("Network error");
-      mockFetchIcationData.mockRejectedValueOnce(networkError);
+      mockFetchPublicationData.mockRejectedValueOnce(networkError);
 
       wrapper = await createWrapper();
 
@@ -222,7 +222,7 @@ describe("IcationView", () => {
 
     it("converts 404 errors to user-friendly message", async () => {
       const notFoundError = new Error("HTTP 404: Not Found");
-      mockFetchIcationData.mockRejectedValueOnce(notFoundError);
+      mockFetchPublicationData.mockRejectedValueOnce(notFoundError);
 
       wrapper = await createWrapper();
 
@@ -249,7 +249,7 @@ describe("IcationView", () => {
         published_at: "2023-01-01T00:00:00Z",
       };
 
-      mockFetchIcationData.mockResolvedValueOnce({
+      mockFetchPublicationData.mockResolvedValueOnce({
         file: mockFile,
         metadata: mockMetadata,
       });
@@ -273,7 +273,7 @@ describe("IcationView", () => {
         source: ":rsm: test content ::",
       });
 
-      mockFetchIcationData.mockResolvedValueOnce({
+      mockFetchPublicationData.mockResolvedValueOnce({
         file: mockFile,
         metadata: { id: 123, title: "Test Preprint", authors: "Test Author" },
       });
@@ -298,7 +298,7 @@ describe("IcationView", () => {
         source: ":rsm: test content ::",
       });
 
-      mockFetchIcationData.mockResolvedValueOnce({
+      mockFetchPublicationData.mockResolvedValueOnce({
         file: mockFile,
         metadata: { id: 123, title: "Test Preprint", authors: "Test Author" },
       });
@@ -324,7 +324,7 @@ describe("IcationView", () => {
         source: ":rsm: test content ::",
       });
 
-      mockFetchIcationData.mockResolvedValueOnce({
+      mockFetchPublicationData.mockResolvedValueOnce({
         file: mockFile,
         metadata: { id: 123, title: "Test Preprint" },
       });
@@ -332,7 +332,7 @@ describe("IcationView", () => {
       wrapper = await createWrapper("abc123");
 
       expect(wrapper.vm.identifier).toBe("abc123");
-      expect(mockFetchIcationData).toHaveBeenCalledWith("abc123");
+      expect(mockFetchPublicationData).toHaveBeenCalledWith("abc123");
     });
 
     it("handles UUID identifiers", async () => {
@@ -342,7 +342,7 @@ describe("IcationView", () => {
         source: ":rsm: test content ::",
       });
 
-      mockFetchIcationData.mockResolvedValueOnce({
+      mockFetchPublicationData.mockResolvedValueOnce({
         file: mockFile,
         metadata: { id: 123, title: "Test Preprint" },
       });
@@ -350,7 +350,7 @@ describe("IcationView", () => {
       wrapper = await createWrapper("AbC123");
 
       expect(wrapper.vm.identifier).toBe("AbC123");
-      expect(mockFetchIcationData).toHaveBeenCalledWith("AbC123");
+      expect(mockFetchPublicationData).toHaveBeenCalledWith("AbC123");
     });
 
     it("handles permalink slug identifiers", async () => {
@@ -360,7 +360,7 @@ describe("IcationView", () => {
         source: ":rsm: test content ::",
       });
 
-      mockFetchIcationData.mockResolvedValueOnce({
+      mockFetchPublicationData.mockResolvedValueOnce({
         file: mockFile,
         metadata: { id: 123, title: "Test Preprint" },
       });
@@ -368,7 +368,7 @@ describe("IcationView", () => {
       wrapper = await createWrapper("my-research-paper");
 
       expect(wrapper.vm.identifier).toBe("my-research-paper");
-      expect(mockFetchIcationData).toHaveBeenCalledWith("my-research-paper");
+      expect(mockFetchPublicationData).toHaveBeenCalledWith("my-research-paper");
     });
   });
 
@@ -380,7 +380,7 @@ describe("IcationView", () => {
         source: ":rsm: test content ::",
       });
 
-      mockFetchIcationData.mockResolvedValueOnce({
+      mockFetchPublicationData.mockResolvedValueOnce({
         file: mockFile,
         metadata: { id: 123, title: "Test Preprint" },
       });

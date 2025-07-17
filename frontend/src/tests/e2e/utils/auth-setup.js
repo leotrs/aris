@@ -71,7 +71,7 @@ export async function createAuthenticatedContext(browser, baseURL) {
       console.log("[AuthSetup] Cached auth state invalid, creating new one");
       await context.close();
     }
-  } catch (error) {
+  } catch (_error) {
     console.log("[AuthSetup] No cached auth state found, creating new one");
   }
 

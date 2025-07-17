@@ -1,11 +1,11 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
-  fetchIcationData,
-  createIcationApi,
-  createIcationFileStore,
-  createIcationUser,
-  createIcationAnnotations,
-} from "@/views/ication/icationData.js";
+  fetchPublicationData,
+  createPublicationApi,
+  createPublicationFileStore,
+  createPublicationUser,
+  createPublicationAnnotations,
+} from "@/views/ication/publicationData.js";
 import { File } from "@/models/File.js";
 
 // Mock fetch globally
@@ -21,9 +21,9 @@ describe("Ication Data Service", () => {
     vi.clearAllMocks();
   });
 
-  describe("createIcationApi", () => {
+  describe("createPublicationApi", () => {
     it("returns correct API interface", () => {
-      const api = createIcationApi();
+      const api = createPublicationApi();
 
       expect(api).toHaveProperty("get");
       expect(api).toHaveProperty("post");
@@ -36,12 +36,12 @@ describe("Ication Data Service", () => {
     });
 
     it("getUri returns correct backend URL", () => {
-      const api = createIcationApi();
+      const api = createPublicationApi();
       expect(api.getUri()).toBe(import.meta.env.VITE_API_BASE_URL);
     });
 
     it("defaults has correct structure", () => {
-      const api = createIcationApi();
+      const api = createPublicationApi();
       expect(api.defaults).toHaveProperty("baseURL");
       expect(api.defaults).toHaveProperty("headers");
       expect(api.defaults.baseURL).toBe(import.meta.env.VITE_API_BASE_URL);
@@ -52,7 +52,7 @@ describe("Ication Data Service", () => {
     let api;
 
     beforeEach(() => {
-      api = createIcationApi();
+      api = createPublicationApi();
     });
 
     describe("GET method", () => {
@@ -127,7 +127,7 @@ describe("Ication Data Service", () => {
     });
   });
 
-  describe("fetchIcationData", () => {
+  describe("fetchPublicationData", () => {
     beforeEach(() => {
       // Reset any state before each test
     });
@@ -162,7 +162,7 @@ describe("Ication Data Service", () => {
         json: vi.fn().mockResolvedValue(mockPreprintData),
       });
 
-      const result = await fetchIcationData("abc123");
+      const result = await fetchPublicationData("abc123");
 
       expect(mockFetch).toHaveBeenCalledWith(
         `${import.meta.env.VITE_API_BASE_URL}/ication/abc123`,
@@ -195,7 +195,7 @@ describe("Ication Data Service", () => {
         statusText: "Not Found",
       });
 
-      await expect(fetchIcationData("nonexistent")).rejects.toThrow("HTTP 404: Not Found");
+      await expect(fetchPublicationData("nonexistent")).rejects.toThrow("HTTP 404: Not Found");
     });
 
     it("uses default settings when none provided", async () => {
@@ -222,7 +222,7 @@ describe("Ication Data Service", () => {
         json: vi.fn().mockResolvedValue(mockPreprintData),
       });
 
-      const result = await fetchIcationData("abc123");
+      const result = await fetchPublicationData("abc123");
 
       expect(result.file.tags).toEqual([]);
       expect(result.file._settings).toEqual({
@@ -235,7 +235,7 @@ describe("Ication Data Service", () => {
     });
   });
 
-  describe("createIcationFileStore", () => {
+  describe("createPublicationFileStore", () => {
     it("creates file store with correct structure", () => {
       const mockFile = new File({
         id: 123,
@@ -244,7 +244,7 @@ describe("Ication Data Service", () => {
         tags: [{ id: 1, name: "test", color: "#ff0000" }],
       });
 
-      const fileStore = createIcationFileStore(mockFile);
+      const fileStore = createPublicationFileStore(mockFile);
 
       expect(fileStore).toHaveProperty("files");
       expect(fileStore).toHaveProperty("tags");
@@ -271,7 +271,7 @@ describe("Ication Data Service", () => {
         tags: null,
       });
 
-      const fileStore = createIcationFileStore(mockFile);
+      const fileStore = createPublicationFileStore(mockFile);
 
       expect(fileStore.tags).toEqual([]);
     });
@@ -283,7 +283,7 @@ describe("Ication Data Service", () => {
         source: ":rsm: test ::",
       });
 
-      const fileStore = createIcationFileStore(mockFile);
+      const fileStore = createPublicationFileStore(mockFile);
 
       await expect(fileStore.queueSync()).resolves.toBeUndefined();
       await expect(fileStore.loadFiles()).resolves.toBeUndefined();
@@ -291,9 +291,9 @@ describe("Ication Data Service", () => {
     });
   });
 
-  describe("createIcationUser", () => {
+  describe("createPublicationUser", () => {
     it("creates anonymous user with correct structure", () => {
-      const user = createIcationUser();
+      const user = createPublicationUser();
 
       expect(user).toHaveProperty("id");
       expect(user).toHaveProperty("username");
@@ -309,9 +309,9 @@ describe("Ication Data Service", () => {
     });
   });
 
-  describe("createIcationAnnotations", () => {
+  describe("createPublicationAnnotations", () => {
     it("creates empty annotations array", () => {
-      const annotations = createIcationAnnotations();
+      const annotations = createPublicationAnnotations();
 
       expect(Array.isArray(annotations)).toBe(true);
       expect(annotations.length).toBe(0);
