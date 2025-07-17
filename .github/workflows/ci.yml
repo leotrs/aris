@@ -84,6 +84,9 @@ jobs:
         echo "=== Python test database URL ==="
         docker compose -f docker/docker-compose.dev.yml exec -T backend uv run python -c "from aris.config import settings; print('Test DB URL:', settings.get_test_database_url())"
 
+    - name: Run database migrations
+      run: docker compose -f docker/docker-compose.dev.yml exec -T backend uv run alembic upgrade head
+
     - name: Run tests
       env:
         TEST_USER_EMAIL: testuser@aris.pub
