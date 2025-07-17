@@ -89,10 +89,8 @@ class Settings(BaseSettings):
             worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
             unique_id = str(uuid.uuid4())[:8]
             
-            # Use different credentials for GitHub Actions vs local CI simulation
+            # GitHub Actions CI environment - tests run inside Docker container
             if os.environ.get("GITHUB_ACTIONS"):
-                # GitHub Actions CI environment - tests run inside Docker container
-                # Use the same credentials as configured in docker-compose.dev.yml
                 return f"postgresql+asyncpg://aris:aris@postgres:5432/test_aris_{worker_id}_{unique_id}"
             else:
                 # Local CI simulation (using local PostgreSQL user with worker isolation)
