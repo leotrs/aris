@@ -24,7 +24,7 @@ class PublicPreprintResponse(BaseModel):
     """Response model for public preprint access."""
     
     id: int
-    title: str
+    title: str | None
     abstract: str | None
     keywords: str | None
     source: str
