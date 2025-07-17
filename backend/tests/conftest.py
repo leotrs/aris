@@ -171,9 +171,32 @@ async def db_session(test_engine):
         # Clean up test data but keep schema for parallel workers
         async with TestingSessionLocal() as cleanup_session:
             try:
-                # Delete all data from all tables in reverse dependency order
-                for table in reversed(Base.metadata.sorted_tables):
-                    await cleanup_session.execute(table.delete())
+                # Delete all data from all tables in correct dependency order
+                # Start with tables that have no dependencies, then work up to parent tables
+                cleanup_order = [
+                    "file_tags",  # Many-to-many association table
+                    "file_assets",  # References both users and files
+                    "annotation_messages",  # References users and annotations
+                    "annotations",  # References files
+                    "file_settings",  # References users and files
+                    "profile_pictures",  # References users (but users reference back)
+                    "files",  # References users
+                    "tags",  # References users
+                    "user_settings",  # References users
+                    "users",  # Top-level table
+                ]
+                
+                for table_name in cleanup_order:
+                    # Find table by name in metadata
+                    table = None
+                    for t in Base.metadata.sorted_tables:
+                        if t.name == table_name:
+                            table = t
+                            break
+                    
+                    if table is not None:
+                        await cleanup_session.execute(table.delete())
+                
                 await cleanup_session.commit()
             except Exception:
                 # If cleanup fails, rollback and continue
