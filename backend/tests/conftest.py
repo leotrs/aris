@@ -101,42 +101,8 @@ async def create_database_if_not_exists(database_url: str):
     if not database_url.startswith("postgresql"):
         return
     
-    # For CI, create worker-specific databases to avoid conflicts  
+    # For CI, skip database creation - use existing aris_test database
     if os.environ.get("ENV") == "CI":
-        import asyncio
-        
-        # Extract database name from URL
-        db_name = database_url.split("/")[-1]
-        
-        # Use admin connection to create worker database
-        admin_url = database_url.replace(f"/{db_name}", "/aris_test")
-        
-        # Create worker database
-        max_retries = 3
-        for attempt in range(max_retries):
-            admin_engine = create_async_engine(admin_url, isolation_level="AUTOCOMMIT")
-            
-            try:
-                async with admin_engine.connect() as conn:
-                    # Check if database exists
-                    result = await conn.execute(
-                        text("SELECT 1 FROM pg_database WHERE datname = :db_name"),
-                        {"db_name": db_name}
-                    )
-                    if not result.fetchone():
-                        # Create database
-                        await conn.execute(text(f'CREATE DATABASE "{db_name}"'))
-                    
-                    # Success! Exit retry loop
-                    break
-            except Exception as e:
-                if attempt == max_retries - 1:  # Last retry
-                    raise e
-                # Wait before retry with exponential backoff
-                await asyncio.sleep(2 ** attempt)
-            finally:
-                await admin_engine.dispose()
-        
         return
     
     import asyncio
@@ -186,10 +152,10 @@ async def db_session(test_engine):
     database_url = str(test_engine.url)
     await create_database_if_not_exists(database_url)
     
-    # In CI, each worker gets its own database so we need to create the schema
-    # For worker isolation, we always create tables in worker-specific databases
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+    # In CI, skip metadata.create_all since migration already created schema
+    if not os.environ.get("ENV") == "CI":
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
     async with TestingSessionLocal() as session:

@@ -86,12 +86,8 @@ class Settings(BaseSettings):
             
         # Use PostgreSQL in CI environment (includes both real CI and local simulation)
         if self.ENV == "CI" or os.environ.get("CI"):
-            worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
-            unique_id = str(uuid.uuid4())[:8]
-            
-            # GitHub Actions CI environment - tests run inside Docker container
-            # Use separate databases for each worker to avoid conflicts
-            return f"postgresql+asyncpg://aris:aris@postgres:5432/aris_test_{worker_id}_{unique_id}"
+            # Use the main aris_test database in CI - worker isolation via cleanup
+            return "postgresql+asyncpg://aris:aris@postgres:5432/aris_test"
             
         # Use SQLite for local development
         worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
