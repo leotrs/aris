@@ -23,7 +23,6 @@ services:
       - DB_URL_PROD=postgresql+asyncpg://aris:aris@postgres:5432/${TEST_DB_NAME}
       - ALEMBIC_DB_URL_PROD=postgresql://aris:aris@postgres:5432/${TEST_DB_NAME}
       - ENV=${ENV:-LOCAL}
-      - CONTAINER_ENV=true
       - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
       - COPILOT_PROVIDER=${COPILOT_PROVIDER}
       - JWT_SECRET_KEY=${JWT_SECRET_KEY}

@@ -113,8 +113,8 @@ for job_data in $FAILED_JOBS; do
   echo "=== FAILED JOB LOGS: $job_name (ID: $job_id) ==="
 
   if [ "$job_id" != "unknown" ] && [ "$job_id" != "null" ]; then
-    # Get raw logs
-    RAW_LOGS=$(gh run view "$RUN_ID" --job="$job_id" --log 2>/dev/null || echo "Could not retrieve logs for job $job_id")
+    # Get raw logs (limited to last 500 lines for performance)
+    RAW_LOGS=$(gh run view "$RUN_ID" --job="$job_id" --log 2>/dev/null | tail -500 || echo "Could not retrieve logs for job $job_id")
 
     # Output structured log analysis as JSON
     echo "=== LOG_ANALYSIS_JSON ==="
