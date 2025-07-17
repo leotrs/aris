@@ -104,10 +104,10 @@ async def create_database_if_not_exists(database_url: str):
     # Extract database name from URL
     db_name = database_url.split("/")[-1]
     
-    # In GitHub Actions, we can create databases by connecting to the default 'postgres' database
-    # which always exists in the PostgreSQL service container
+    # In GitHub Actions, we can create databases by connecting to an existing database
+    # For Docker compose setup, the 'aris' user has access to 'aris' database
     if os.environ.get("GITHUB_ACTIONS"):
-        admin_dbs = ["postgres"]  # Use the default postgres database as admin
+        admin_dbs = ["aris", "aris_test"]  # Try databases that aris user can access
     else:
         admin_dbs = ["postgres", "test_aris"]  # Try both for local development
     
