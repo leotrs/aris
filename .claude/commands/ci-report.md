@@ -11,7 +11,7 @@ Gather CI data for GitHub PR and analyze failure patterns.
 - `/ci-report` - Analyze CI for current branch's PR
 - `/ci-report 123` - Analyze CI for PR #123
 
-!./scripts/get-ci-data.sh "$ARGUMENTS"
+!cd "$(git rev-parse --show-toplevel)" && ./scripts/get-ci-data.sh "$ARGUMENTS"
 
 Please analyze this CI run data and provide a comprehensive report. The data includes:
 
