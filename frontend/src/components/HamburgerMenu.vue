@@ -1,14 +1,9 @@
 <script setup>
-  import { ref, inject, onMounted } from "vue";
+  import { ref, inject } from "vue";
 
   const mobileDrawerOpen = inject("mobileDrawerOpen", ref(false));
 
-  onMounted(() => {
-    console.log("[HamburgerMenu] Component mounted, mobileDrawerOpen:", mobileDrawerOpen.value);
-  });
-
   const toggle = () => {
-    console.log("[HamburgerMenu] Toggle called, current state:", mobileDrawerOpen.value);
     mobileDrawerOpen.value = !mobileDrawerOpen.value;
   };
 

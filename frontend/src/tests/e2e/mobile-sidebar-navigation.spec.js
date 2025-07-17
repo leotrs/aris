@@ -38,58 +38,6 @@ test.describe("Mobile Sidebar Navigation UX @auth @mobile-only", () => {
         await page.waitForLoadState("domcontentloaded");
         await mobileHelpers.waitForMobileRendering();
 
-        // EXTENSIVE DEBUG LOGGING TO PROVE WHAT'S WRONG
-        const debugInfo = await page.evaluate(() => {
-          return {
-            viewportWidth: window.innerWidth,
-            viewportHeight: window.innerHeight,
-            mobileMode: window.mobileMode?.value,
-            breakpoints: window.debugMobileDetection?.(),
-            bodyOverflow: document.body.style.overflow,
-            // DOM INSPECTION
-            hamburgerMenuExists: !!document.querySelector('[data-testid="mobile-menu-button"]'),
-            hamburgerMenuCount: document.querySelectorAll('[data-testid="mobile-menu-button"]').length,
-            hamburgerMenuVisible: document.querySelector('[data-testid="mobile-menu-button"]')?.offsetParent !== null,
-            hamburgerMenuParent: document.querySelector('[data-testid="mobile-menu-button"]')?.parentElement?.className,
-            hamburgerMenuHTML: document.querySelector('[data-testid="mobile-menu-button"]')?.outerHTML,
-            // COMPONENT INSPECTION
-            baseLayoutExists: !!document.querySelector('.view'),
-            baseLayoutClasses: document.querySelector('.view')?.className,
-            menusExists: !!document.querySelector('.menus'),
-            menusClasses: document.querySelector('.menus')?.className,
-            menusHTML: document.querySelector('.menus')?.innerHTML,
-            // FULL DOM DUMP FOR MOBILE MENU AREA
-            fullMenusHTML: document.querySelector('.menus')?.outerHTML,
-            // Vue APP STATE
-            appElement: !!document.querySelector('#app'),
-            appHTML: document.querySelector('#app')?.innerHTML?.substring(0, 1000),
-            // BUTTON ELEMENTS
-            allButtons: Array.from(document.querySelectorAll('button')).map(btn => ({
-              className: btn.className,
-              testId: btn.getAttribute('data-testid'),
-              innerHTML: btn.innerHTML,
-              visible: btn.offsetParent !== null
-            })),
-            // ALL DATA-TESTID ELEMENTS
-            allTestIds: Array.from(document.querySelectorAll('[data-testid]')).map(el => ({
-              testId: el.getAttribute('data-testid'),
-              tagName: el.tagName,
-              className: el.className,
-              visible: el.offsetParent !== null
-            }))
-          };
-        });
-        // Safe logging to avoid circular reference issues with Vue reactive objects
-        console.log(`[EXTENSIVE DEBUG ${mobileDevice.name}] Complete state:`);
-        console.log(`  Viewport: ${debugInfo.viewportWidth}x${debugInfo.viewportHeight}`);
-        console.log(`  mobileMode: ${debugInfo.mobileMode}`);
-        console.log(`  hamburgerMenuExists: ${debugInfo.hamburgerMenuExists}`);
-        console.log(`  hamburgerMenuCount: ${debugInfo.hamburgerMenuCount}`);
-        console.log(`  hamburgerMenuVisible: ${debugInfo.hamburgerMenuVisible}`);
-        console.log(`  hamburgerMenuHTML: ${debugInfo.hamburgerMenuHTML}`);
-        console.log(`  baseLayoutClasses: ${debugInfo.baseLayoutClasses}`);
-        console.log(`  menusClasses: ${debugInfo.menusClasses}`);
-        console.log(`  menusHTML: ${debugInfo.menusHTML}`);
 
         // Hamburger menu should be visible
         const hamburgerButton = page.locator('[data-testid="mobile-menu-button"]');
