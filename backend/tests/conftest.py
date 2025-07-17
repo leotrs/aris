@@ -195,15 +195,11 @@ async def db_session(test_engine):
     async with TestingSessionLocal() as session:
         yield session
 
-    # In CI, don't drop tables since they're shared across workers
-    # Just clean up data, not schema
+    # For local development, drop all tables
     if not os.environ.get("ENV") == "CI":
         async with test_engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
-    else:
-        # In CI, use separate worker databases to avoid conflicts
-        # This is the most reliable approach for parallel test execution
-        pass
+    # For CI, each worker has its own database so no cleanup needed
 
 
 @pytest_asyncio.fixture
