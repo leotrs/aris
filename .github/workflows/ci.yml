@@ -87,6 +87,9 @@ jobs:
     - name: Run database migrations
       run: docker compose -f docker/docker-compose.dev.yml exec -T backend uv run alembic upgrade head
 
+    - name: Create test user
+      run: docker compose -f docker/docker-compose.dev.yml exec -T backend uv run python scripts/reset_test_user.py
+
     - name: Run tests
       env:
         TEST_USER_EMAIL: testuser@aris.pub
