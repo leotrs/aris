@@ -16,6 +16,7 @@ Usage:
 
 import os
 import sys
+import uuid
 
 import httpx
 import pytest_asyncio
@@ -174,24 +175,32 @@ async def db_session(test_engine):
         # This prevents cleanup from interfering with parallel test execution
         try:
             async with TestingSessionLocal() as cleanup_session:
-                # Use targeted DELETE to avoid issues with auto-increment sequences
-                # Delete in dependency order to avoid foreign key violations
-                await cleanup_session.execute(text("DELETE FROM file_tags"))
-                await cleanup_session.execute(text("DELETE FROM file_assets"))
-                await cleanup_session.execute(text("DELETE FROM annotation_message"))
-                await cleanup_session.execute(text("DELETE FROM annotation"))
-                await cleanup_session.execute(text("DELETE FROM file_settings"))
-                await cleanup_session.execute(text("DELETE FROM files"))
-                await cleanup_session.execute(text("DELETE FROM tags"))
-                await cleanup_session.execute(text("DELETE FROM user_settings"))
-                await cleanup_session.execute(text("DELETE FROM signups"))
-                await cleanup_session.execute(text("DELETE FROM profile_pictures"))
-                await cleanup_session.execute(text("DELETE FROM users"))
+                # Use TRUNCATE with CASCADE to reset auto-increment sequences and ensure complete cleanup
+                # This is safer in CI environment to prevent data pollution between parallel tests
+                await cleanup_session.execute(text("TRUNCATE file_tags, file_assets, annotation_message, annotation, file_settings, files, tags, user_settings, signups, profile_pictures, users RESTART IDENTITY CASCADE"))
                 await cleanup_session.commit()
         except Exception:
-            # If cleanup fails, don't break the test - just continue
-            # This prevents cleanup errors from causing test failures
-            pass
+            # If TRUNCATE fails (e.g., due to foreign key constraints), fall back to DELETE
+            try:
+                async with TestingSessionLocal() as cleanup_session:
+                    # Use targeted DELETE to avoid issues with auto-increment sequences
+                    # Delete in dependency order to avoid foreign key violations
+                    await cleanup_session.execute(text("DELETE FROM file_tags"))
+                    await cleanup_session.execute(text("DELETE FROM file_assets"))
+                    await cleanup_session.execute(text("DELETE FROM annotation_message"))
+                    await cleanup_session.execute(text("DELETE FROM annotation"))
+                    await cleanup_session.execute(text("DELETE FROM file_settings"))
+                    await cleanup_session.execute(text("DELETE FROM files"))
+                    await cleanup_session.execute(text("DELETE FROM tags"))
+                    await cleanup_session.execute(text("DELETE FROM user_settings"))
+                    await cleanup_session.execute(text("DELETE FROM signups"))
+                    await cleanup_session.execute(text("DELETE FROM profile_pictures"))
+                    await cleanup_session.execute(text("DELETE FROM users"))
+                    await cleanup_session.commit()
+            except Exception:
+                # If cleanup fails, don't break the test - just continue
+                # This prevents cleanup errors from causing test failures
+                pass
 
 
 @pytest_asyncio.fixture
@@ -242,13 +251,18 @@ async def test_file(db_session, test_user):
 class TestConstants:
     """Centralized test constants to avoid magic numbers and strings."""
 
-    DEFAULT_USER_EMAIL = "testuser@example.com"
+    @staticmethod
+    def get_unique_email(prefix="testuser"):
+        """Generate a unique email address for test isolation."""
+        return f"{prefix}+{uuid.uuid4().hex[:8]}@example.com"
+
+    DEFAULT_USER_EMAIL = "testuser@example.com"  # Fallback for legacy tests
     DEFAULT_USER_NAME = "Test User"
     DEFAULT_USER_INITIALS = "TU"
     DEFAULT_PASSWORD = "testpass123"
     TEST_PASSWORD = DEFAULT_PASSWORD  # Alias for clarity in tests
 
-    SECOND_USER_EMAIL = "testuser2@example.com"
+    SECOND_USER_EMAIL = "testuser2@example.com"  # Fallback for legacy tests
     SECOND_USER_NAME = "Test User 2"
     SECOND_USER_INITIALS = "TU2"
 
@@ -275,10 +289,11 @@ async def authenticated_user(client: AsyncClient):
     This fixture consolidates the authentication pattern used across
     multiple test files to reduce duplication and ensure consistency.
     """
+    unique_email = TestConstants.get_unique_email()
     response = await client.post(
         "/register",
         json={
-            "email": TestConstants.DEFAULT_USER_EMAIL,
+            "email": unique_email,
             "name": TestConstants.DEFAULT_USER_NAME,
             "initials": TestConstants.DEFAULT_USER_INITIALS,
             "password": TestConstants.DEFAULT_PASSWORD,
@@ -294,7 +309,7 @@ async def authenticated_user(client: AsyncClient):
         "token": token,
         "user_id": user_id,
         "user": user_data,
-        "email": TestConstants.DEFAULT_USER_EMAIL,
+        "email": unique_email,
         "password": TestConstants.DEFAULT_PASSWORD,
     }
 
@@ -330,10 +345,11 @@ def second_auth_headers(second_authenticated_user):
 @pytest_asyncio.fixture
 async def second_authenticated_user(client: AsyncClient):
     """Create a second user for multi-user testing scenarios."""
+    unique_email = TestConstants.get_unique_email("testuser2")
     response = await client.post(
         "/register",
         json={
-            "email": TestConstants.SECOND_USER_EMAIL,
+            "email": unique_email,
             "name": TestConstants.SECOND_USER_NAME,
             "initials": TestConstants.SECOND_USER_INITIALS,
             "password": TestConstants.DEFAULT_PASSWORD,
@@ -349,7 +365,7 @@ async def second_authenticated_user(client: AsyncClient):
         "token": token,
         "user_id": user_id,
         "user": user_data,
-        "email": TestConstants.SECOND_USER_EMAIL,
+        "email": unique_email,
         "password": TestConstants.DEFAULT_PASSWORD,
     }
 
@@ -361,7 +377,7 @@ class TestDataFactory:
     def user_registration_data(email=None, name=None, initials=None, password=None):
         """Generate user registration data with optional overrides."""
         return {
-            "email": email or TestConstants.DEFAULT_USER_EMAIL,
+            "email": email or TestConstants.get_unique_email(),
             "name": name or TestConstants.DEFAULT_USER_NAME,
             "initials": initials or TestConstants.DEFAULT_USER_INITIALS,
             "password": password or TestConstants.DEFAULT_PASSWORD,
