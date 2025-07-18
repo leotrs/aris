@@ -57,6 +57,10 @@ vi.mock("@/composables/useKeyboardShortcuts.js", () => ({
   useKeyboardShortcuts: vi.fn(),
 }));
 
+// Mock global fetch for /render endpoint
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
+
 describe("IcationView", () => {
   let router;
   let wrapper;
@@ -65,6 +69,12 @@ describe("IcationView", () => {
   beforeEach(() => {
     // Reset mocks
     vi.clearAllMocks();
+
+    // Mock the /render endpoint
+    mockFetch.mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve("<div>Rendered HTML</div>"),
+    });
 
     // Setup router
     router = createRouter({
