@@ -1,5 +1,6 @@
 """Tests for user CRUD operations."""
 
+import uuid
 from datetime import datetime
 from unittest.mock import patch
 
@@ -209,7 +210,8 @@ async def test_update_user_clear_affiliation(db_session, test_user):
 
 async def test_create_user_sets_email_verification_defaults(db_session):
     """Test that new users have correct email verification defaults."""
-    user = await create_user("Test User", "TU", "test@example.com", "hashed", db_session)
+    unique_email = f"test_email_verification_{uuid.uuid4().hex[:8]}@example.com"
+    user = await create_user("Test User", "TU", unique_email, "hashed", db_session)
     assert user.email_verified is False
     assert user.email_verification_token is None
     assert user.email_verification_sent_at is None
