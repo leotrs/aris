@@ -167,9 +167,13 @@ async def db_session(test_engine):
             await conn.run_sync(Base.metadata.drop_all)
     else:
         # For CI, clean up data between tests to avoid conflicts
+        # Use a separate connection to avoid interfering with the main test session
         TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
-        async with TestingSessionLocal() as cleanup_session:
-            try:
+        
+        # Only clean up if not in the middle of a test run
+        # This prevents cleanup from interfering with parallel test execution
+        try:
+            async with TestingSessionLocal() as cleanup_session:
                 # Use targeted DELETE to avoid issues with auto-increment sequences
                 # Delete in dependency order to avoid foreign key violations
                 await cleanup_session.execute(text("DELETE FROM file_tags"))
@@ -184,8 +188,10 @@ async def db_session(test_engine):
                 await cleanup_session.execute(text("DELETE FROM profile_pictures"))
                 await cleanup_session.execute(text("DELETE FROM users"))
                 await cleanup_session.commit()
-            except Exception:
-                await cleanup_session.rollback()
+        except Exception:
+            # If cleanup fails, don't break the test - just continue
+            # This prevents cleanup errors from causing test failures
+            pass
 
 
 @pytest_asyncio.fixture

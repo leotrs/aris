@@ -59,6 +59,10 @@ class FileSettingsDB:
             for field, value in settings_data.model_dump().items():
                 setattr(settings, field, value)
             settings.updated_at = datetime.now(UTC)
+            
+            # Ensure settings is properly tracked in current session
+            await db.refresh(settings)
+            db.add(settings)
         else:
             # Create new
             settings = FileSettings(
@@ -68,8 +72,16 @@ class FileSettingsDB:
             )
             db.add(settings)
 
-        await db.commit()
-        await db.refresh(settings)
+        try:
+            await db.commit()
+            await db.refresh(settings)
+        except Exception as e:
+            await db.rollback()
+            # Handle case where settings were deleted/modified between read and update
+            if "StaleDataError" in str(type(e)) or "expected to update 1 row" in str(e):
+                from fastapi import HTTPException
+                raise HTTPException(status_code=404, detail="Settings no longer exist or were modified by another operation")
+            raise
         return settings
 
     @staticmethod
