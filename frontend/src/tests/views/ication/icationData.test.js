@@ -165,13 +165,7 @@ describe("Ication Data Service", () => {
       const result = await fetchPublicationData("abc123");
 
       expect(mockFetch).toHaveBeenCalledWith(
-        `${import.meta.env.VITE_API_BASE_URL}/ication/abc123`,
-        expect.objectContaining({
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        })
+        `${import.meta.env.VITE_API_BASE_URL}/ication/abc123`
       );
 
       expect(result).toHaveProperty("file");
