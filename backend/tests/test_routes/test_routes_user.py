@@ -667,8 +667,9 @@ class TestErrorHandling:
         """Test uploading profile picture for a user that was deleted."""
         # Delete the user first
         user = await db_session.get(User, authenticated_user["user_id"])
-        await db_session.delete(user)
-        await db_session.commit()
+        if user:  # Only delete if user exists
+            await db_session.delete(user)
+            await db_session.commit()
 
         response = await upload_profile_picture(client, auth_headers, authenticated_user["user_id"])
         assert response.status_code == 401
