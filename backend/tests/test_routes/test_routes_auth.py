@@ -1,6 +1,7 @@
 """Test auth_router routes."""
 
 import uuid
+
 from httpx import AsyncClient
 
 
