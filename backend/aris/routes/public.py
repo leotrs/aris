@@ -5,18 +5,18 @@ without authentication. Supports both UUID and permalink slug access patterns.
 """
 
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, Request
 from fastapi.responses import HTMLResponse, PlainTextResponse
 from pydantic import BaseModel, ConfigDict
-from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import get_db
-from ..exceptions import not_found_exception
-from ..models import File, FileStatus
+from ..models import File
+from ..services.citation import CitationService
 from ..services.metadata import generate_academic_metadata
+from ..services.preprint import PreprintCRUD
 from ..services.static_html import generate_static_html
 
 
@@ -59,6 +59,8 @@ class PublicPreprintMetadata(BaseModel):
 async def get_published_preprint_by_uuid(uuid: str, db: AsyncSession) -> File:
     """Retrieve a published preprint by UUID.
     
+    This function is kept for backwards compatibility but delegates to the CRUD service.
+    
     Parameters
     ----------
     uuid : str
@@ -76,23 +78,14 @@ async def get_published_preprint_by_uuid(uuid: str, db: AsyncSession) -> File:
     HTTPException
         404 error if preprint is not found or not published.
     """
-    result = await db.execute(
-        select(File).where(
-            File.public_uuid == uuid,
-            File.status == FileStatus.PUBLISHED,
-            File.deleted_at.is_(None)
-        )
-    )
-    file = result.scalars().first()
-    
-    if not file:
-        raise not_found_exception("Published preprint", None)
-    
-    return file
+    crud = PreprintCRUD(db)
+    return await crud.get_published_preprint_by_uuid(uuid)
 
 
 async def get_published_preprint_by_slug(slug: str, db: AsyncSession) -> File:
     """Retrieve a published preprint by permalink slug.
+    
+    This function is kept for backwards compatibility but delegates to the CRUD service.
     
     Parameters
     ----------
@@ -111,23 +104,40 @@ async def get_published_preprint_by_slug(slug: str, db: AsyncSession) -> File:
     HTTPException
         404 error if preprint is not found or not published.
     """
-    result = await db.execute(
-        select(File).where(
-            File.permalink_slug == slug,
-            File.status == FileStatus.PUBLISHED,
-            File.deleted_at.is_(None)
-        )
-    )
-    file = result.scalars().first()
+    crud = PreprintCRUD(db)
+    return await crud.get_published_preprint_by_slug(slug)
+
+
+async def get_preprint_with_crud(identifier: str, crud: PreprintCRUD) -> File:
+    """Retrieve a published preprint using CRUD service.
     
-    if not file:
-        raise not_found_exception("Published preprint", None)
+    This function provides a clean interface for getting preprints with
+    dependency injection of the CRUD service.
     
-    return file
+    Parameters
+    ----------
+    identifier : str
+        The 6-character public UUID or permalink slug of the preprint.
+    crud : PreprintCRUD
+        The CRUD service instance.
+        
+    Returns
+    -------
+    File
+        The published preprint file.
+        
+    Raises
+    ------
+    HTTPException
+        404 error if preprint is not found, not published, or deleted.
+    """
+    return await crud.get_published_preprint_by_identifier(identifier)
 
 
 def generate_citation_info(file: File) -> Dict[str, Any]:
     """Generate citation information for a published preprint.
+    
+    This function is kept for backwards compatibility but delegates to the citation service.
     
     Parameters
     ----------
@@ -139,47 +149,28 @@ def generate_citation_info(file: File) -> Dict[str, Any]:
     Dict[str, Any]
         Citation information including various formats.
     """
-    # Extract publication year from published_at
-    pub_year = file.published_at.year if file.published_at else datetime.now().year
-    pub_date = file.published_at.strftime("%Y-%m-%d") if file.published_at else datetime.now().strftime("%Y-%m-%d")
+    return generate_citation_info_with_service(file)
+
+
+def generate_citation_info_with_service(file: File, service: Optional[CitationService] = None) -> Dict[str, Any]:
+    """Generate citation information using citation service.
     
-    # Extract authors (TODO: implement proper author extraction from File model)
-    authors = "Unknown Author"  # Placeholder until author model is implemented
+    Parameters
+    ----------
+    file : File
+        The published preprint file.
+    service : CitationService, optional
+        Citation service instance. If None, creates a new one.
+        
+    Returns
+    -------
+    Dict[str, Any]
+        Citation information including various formats.
+    """
+    if service is None:
+        service = CitationService(base_url="https://aris.com")  # TODO: Make configurable
     
-    # Generate URL
-    base_url = "https://aris.com"  # TODO: Make configurable
-    url = f"{base_url}/ication/{file.public_uuid}"
-    
-    # Generate different citation formats
-    citation_info = {
-        "title": file.title or "Untitled",
-        "abstract": file.abstract,
-        "keywords": file.keywords,
-        "authors": authors,
-        "published_year": pub_year,
-        "published_date": pub_date,
-        "public_uuid": file.public_uuid,
-        "permalink_slug": file.permalink_slug,
-        "version": file.version,
-        "url": url,
-        "formats": {
-            "apa": f"{authors} ({pub_year}). {file.title or 'Untitled'}. Aris Preprint. {url}",
-            "bibtex": f"""@article{{{file.public_uuid},
-  title={{{file.title or 'Untitled'}}},
-  author={{{authors}}},
-  year={{{pub_year}}},
-  journal={{Aris Preprint}},
-  url={{{url}}},
-  abstract={{{file.abstract or ''}}},
-  keywords={{{file.keywords or ''}}},
-  note={{Preprint {file.public_uuid}}}
-}}""",
-            "chicago": f"{authors}. \"{file.title or 'Untitled'}.\" Aris Preprint {file.public_uuid} ({pub_year}). {url}.",
-            "mla": f"{authors}. \"{file.title or 'Untitled'}.\" Aris Preprint, {pub_date}, {url}."
-        }
-    }
-    
-    return citation_info
+    return service.generate_citation_info(file)
 
 
 @router.get(
@@ -221,14 +212,9 @@ async def get_public_preprint_by_identifier(
     GET /ication/abc123 (UUID)
     GET /ication/my-awesome-research-paper (permalink slug)
     """
-    # Try UUID first
-    try:
-        file = await get_published_preprint_by_uuid(identifier, db)
-        return PublicPreprintResponse.model_validate(file)
-    except Exception:
-        # If UUID lookup fails, try permalink slug
-        file = await get_published_preprint_by_slug(identifier, db)
-        return PublicPreprintResponse.model_validate(file)
+    crud = PreprintCRUD(db)
+    file = await get_preprint_with_crud(identifier, crud)
+    return PublicPreprintResponse.model_validate(file)
 
 
 @router.get(
@@ -271,12 +257,8 @@ async def get_public_preprint_metadata_by_identifier(
     GET /ication/abc123/metadata (UUID)
     GET /ication/my-awesome-research-paper/metadata (permalink slug)
     """
-    # Try UUID first
-    try:
-        file = await get_published_preprint_by_uuid(identifier, db)
-    except Exception:
-        # If UUID lookup fails, try permalink slug
-        file = await get_published_preprint_by_slug(identifier, db)
+    crud = PreprintCRUD(db)
+    file = await get_preprint_with_crud(identifier, crud)
     
     citation_info = generate_citation_info(file)
     academic_metadata = generate_academic_metadata(file)
@@ -333,12 +315,8 @@ async def export_bibtex_citation(
     GET /ication/abc123/export/bibtex (UUID)
     GET /ication/my-awesome-research-paper/export/bibtex (permalink slug)
     """
-    # Try UUID first
-    try:
-        file = await get_published_preprint_by_uuid(identifier, db)
-    except Exception:
-        # If UUID lookup fails, try permalink slug
-        file = await get_published_preprint_by_slug(identifier, db)
+    crud = PreprintCRUD(db)
+    file = await get_preprint_with_crud(identifier, crud)
     
     citation_info = generate_citation_info(file)
     bibtex_content = citation_info["formats"]["bibtex"]
@@ -401,12 +379,8 @@ async def get_static_html_page(
     GET /ication/abc123/static-html (UUID)
     GET /ication/my-awesome-research-paper/static-html (permalink slug)
     """
-    # Try UUID first
-    try:
-        file = await get_published_preprint_by_uuid(identifier, db)
-    except Exception:
-        # If UUID lookup fails, try permalink slug
-        file = await get_published_preprint_by_slug(identifier, db)
+    crud = PreprintCRUD(db)
+    file = await get_preprint_with_crud(identifier, crud)
     
     # Generate static HTML content
     html_content = generate_static_html(file)
