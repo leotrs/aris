@@ -69,10 +69,6 @@ async def test_engine(request):
             # Fall back to the configured URL if pytest-postgresql isn't being used
             pass
     
-    # Worker-specific database URLs are now handled by config.py
-    # No need to modify the URL here since settings.get_test_database_url() 
-    # already returns the correct worker-specific database URL
-
     # Configure engine based on database type
     if database_url.startswith("sqlite"):
         engine = create_async_engine(
@@ -82,10 +78,13 @@ async def test_engine(request):
             future=True,
         )
     else:
-        # PostgreSQL configuration
+        # PostgreSQL configuration - use connection pooling to handle parallel tests
         engine = create_async_engine(
             database_url,
             future=True,
+            pool_size=20,  # Increase pool size for parallel testing
+            max_overflow=30,  # Allow more connections during peak usage
+            pool_pre_ping=True,  # Verify connections before use
         )
 
     yield engine
@@ -150,22 +149,44 @@ async def create_database_if_not_exists(database_url: str):
 @pytest_asyncio.fixture
 async def db_session(test_engine):
     """Create a fresh database session for each test with proper isolation."""
-    # Create worker-specific database if needed
+    # Create database if needed
     database_url = str(test_engine.url)
     await create_database_if_not_exists(database_url)
     
-    # Always create schema for worker-specific databases
-    async with test_engine.begin() as conn:
-        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+    # Create schema only for local development
+    if not os.environ.get("ENV") == "CI":
+        async with test_engine.begin() as conn:
+            await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
     
-    # Use regular session - isolation is handled by separate databases per worker
+    # Use regular session
     async with TestingSessionLocal() as session:
         yield session
     
-    # For local development, drop all tables
-    if not os.environ.get("ENV") == "CI":
+    # Clean up data after each test in CI to prevent interference
+    if os.environ.get("ENV") == "CI":
+        # Use a fresh session for cleanup to avoid session conflicts
+        async with TestingSessionLocal() as cleanup_session:
+            try:
+                # Clean up in dependency order
+                await cleanup_session.execute(text("DELETE FROM file_tags"))
+                await cleanup_session.execute(text("DELETE FROM file_assets"))
+                await cleanup_session.execute(text("DELETE FROM annotation_message"))
+                await cleanup_session.execute(text("DELETE FROM annotation"))
+                await cleanup_session.execute(text("DELETE FROM file_settings"))
+                await cleanup_session.execute(text("DELETE FROM files"))
+                await cleanup_session.execute(text("DELETE FROM tags"))
+                await cleanup_session.execute(text("DELETE FROM user_settings"))
+                await cleanup_session.execute(text("DELETE FROM signups"))
+                await cleanup_session.execute(text("DELETE FROM profile_pictures"))
+                await cleanup_session.execute(text("DELETE FROM users"))
+                await cleanup_session.commit()
+            except Exception:
+                # If cleanup fails, rollback but don't fail the test
+                await cleanup_session.rollback()
+    else:
+        # For local development, drop all tables
         async with test_engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
 
