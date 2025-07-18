@@ -52,7 +52,12 @@ class TestDefaultSettings:
     async def test_create_default_settings(
         self, client: AsyncClient, auth_headers, sample_settings, authenticated_user
     ):
-        """Test creating new default settings."""
+        """Test upserting default settings (create or update)."""
+        # Get initial state
+        initial_response = await client.get("/settings/defaults", headers=auth_headers)
+        initial_data = initial_response.json()
+        
+        # Upsert new settings
         response = await client.post(
             "/settings/defaults", headers=auth_headers, json=sample_settings
         )
@@ -70,6 +75,12 @@ class TestDefaultSettings:
         assert data["columns"] == sample_settings["columns"]
         assert "created_at" in data
         assert "updated_at" in data
+        
+        # Verify settings were actually updated (not just echoed back)
+        get_response = await client.get("/settings/defaults", headers=auth_headers)
+        get_data = get_response.json()
+        assert get_data["background"] == sample_settings["background"]
+        assert get_data["font_size"] == sample_settings["font_size"]
 
     async def test_update_default_settings(
         self, client: AsyncClient, auth_headers, sample_settings, authenticated_user

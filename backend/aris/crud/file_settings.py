@@ -61,7 +61,6 @@ class FileSettingsDB:
             settings.updated_at = datetime.now(UTC)
             
             # Ensure settings is properly tracked in current session
-            await db.refresh(settings)
             db.add(settings)
         else:
             # Create new
