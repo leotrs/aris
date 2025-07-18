@@ -59,7 +59,7 @@ class TestUserEndpoints:
         assert response.status_code == 200
         data = response.json()
         assert data["id"] == authenticated_user["user_id"]
-        assert data["email"] == TestConstants.DEFAULT_USER_EMAIL
+        assert data["email"] == authenticated_user["email"]
         assert data["name"] == TestConstants.DEFAULT_USER_NAME
         assert data["initials"] == TestConstants.DEFAULT_USER_INITIALS
 

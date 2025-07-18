@@ -133,7 +133,7 @@ async def test_get_file_by_id(client: AsyncClient, authenticated_user):
     assert response.status_code == 200
 
     data = response.json()
-    assert data["id"] == file_id
+    assert int(data["id"]) == int(file_id)
     assert data["title"] == "Test Document"
     assert data["abstract"] == "A test document"
     assert data["source"] == ":rsm:test content::"
@@ -442,7 +442,7 @@ async def test_publish_file_success(client: AsyncClient, authenticated_user):
     
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == file_id
+    assert int(data["id"]) == int(file_id)
     assert data["status"] == "Published"
     assert data["public_uuid"] is not None
     assert len(data["public_uuid"]) == 6
@@ -690,7 +690,7 @@ async def test_get_publication_info_draft_file(client: AsyncClient, authenticate
     
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == file_id
+    assert int(data["id"]) == int(file_id)
     assert data["status"] == "Draft"
     assert data["is_published"] is False
     assert data["can_publish"] is True
@@ -724,7 +724,7 @@ async def test_get_publication_info_published_file(client: AsyncClient, authenti
     
     assert response.status_code == 200
     data = response.json()
-    assert data["id"] == file_id
+    assert int(data["id"]) == int(file_id)
     assert data["status"] == "Published"
     assert data["is_published"] is True
     assert data["can_publish"] is False

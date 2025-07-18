@@ -149,27 +149,32 @@ async def test_login_invalid_password(client: AsyncClient):
 
 async def test_e2e_test_user_login(client: AsyncClient, db_session):
     """Test that the E2E test user can login successfully."""
-    # First create the test user in the database
+    # First check if the test user already exists
     from aris.models import User
+    from sqlalchemy import select
     
-    test_user = User(
-        name="Test User",
-        email="testuser@aris.pub",
-        password_hash="$2b$12$TVuqGqn6SWbVFres301hUu6BtCWQHa.xpGPK4EwAKZo8mw50WXKBW",
-    )
-    db_session.add(test_user)
-    await db_session.commit()
+    test_email = "testuser@aris.pub"
+    result = await db_session.execute(select(User).where(User.email == test_email))
+    existing_user = result.scalar_one_or_none()
+    
+    if not existing_user:
+        # Create the test user in the database if it doesn't exist
+        test_user = User(
+            name="Test User",
+            email=test_email,
+            password_hash="$2b$12$TVuqGqn6SWbVFres301hUu6BtCWQHa.xpGPK4EwAKZo8mw50WXKBW",
+        )
+        db_session.add(test_user)
+        await db_session.commit()
     
     # Now attempt to login
     login_response = await client.post(
         "/login",
         json={
-            "email": "testuser@aris.pub",
+            "email": test_email,
             "password": "eIrdA38eW1guWTVpJNlS3VwP6eszUIGOiWqj1re3inM",
         },
     )
-
-    print(login_response.json())
 
     assert login_response.status_code == 200
     data = login_response.json()
@@ -185,7 +190,7 @@ async def test_e2e_test_user_login(client: AsyncClient, db_session):
     )
     assert user_response.status_code == 200
     user_data = user_response.json()
-    assert user_data["email"] == "testuser@aris.pub"
+    assert user_data["email"] == test_email
     assert user_data["name"] == "Test User"
 
 
