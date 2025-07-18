@@ -26,13 +26,16 @@ class TestDatabaseConstraints:
 
     async def test_user_email_uniqueness_constraint(self, db_session: AsyncSession):
         """Test that user email uniqueness is enforced."""
+        # Use a unique email for this test to avoid conflicts
+        unique_email = f"test_unique_{uuid.uuid4().hex[:8]}@example.com"
+        
         # Create first user
-        user1 = await create_user("User One", "UO", "test@example.com", "hash1", db_session)
-        assert user1.email == "test@example.com"
+        user1 = await create_user("User One", "UO", unique_email, "hash1", db_session)
+        assert user1.email == unique_email
         
         # Attempt to create second user with same email should fail
         with pytest.raises(IntegrityError):
-            await create_user("User Two", "UT", "test@example.com", "hash2", db_session)
+            await create_user("User Two", "UT", unique_email, "hash2", db_session)
             await db_session.commit()
 
     async def test_file_owner_foreign_key_constraint(self, db_session: AsyncSession, is_postgresql):

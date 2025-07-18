@@ -1,14 +1,16 @@
 """Test auth_router routes."""
 
+import uuid
 from httpx import AsyncClient
 
 
 async def test_register_new_user(client: AsyncClient):
     """Test successful user registration."""
+    unique_email = f"test_register_{uuid.uuid4().hex[:8]}@example.com"
     response = await client.post(
         "/register",
         json={
-            "email": "test@example.com",
+            "email": unique_email,
             "name": "Test User",
             "initials": "TU",
             "password": "testpass123",
@@ -27,7 +29,7 @@ async def test_register_new_user(client: AsyncClient):
 
     # Check user data
     user = data["user"]
-    assert user["email"] == "test@example.com"
+    assert user["email"] == unique_email
     assert user["name"] == "Test User"
     assert user["initials"] == "TU"
     assert "id" in user
@@ -36,11 +38,14 @@ async def test_register_new_user(client: AsyncClient):
 
 async def test_register_duplicate_email(client: AsyncClient):
     """Test registration with already existing email."""
+    # Use unique email for this test to avoid conflicts with other tests
+    unique_email = f"test_duplicate_{uuid.uuid4().hex[:8]}@example.com"
+    
     # First registration
     await client.post(
         "/register",
         json={
-            "email": "test@example.com",
+            "email": unique_email,
             "name": "Test User",
             "initials": "TU",
             "password": "testpass123",
@@ -51,7 +56,7 @@ async def test_register_duplicate_email(client: AsyncClient):
     response = await client.post(
         "/register",
         json={
-            "email": "test@example.com",
+            "email": unique_email,
             "name": "Another User",
             "initials": "AU",
             "password": "anotherpass123",
@@ -79,11 +84,14 @@ async def test_register_invalid_email(client: AsyncClient):
 
 async def test_login_valid_credentials(client: AsyncClient):
     """Test login with valid credentials."""
+    # Use unique email for this test
+    unique_email = f"test_login_{uuid.uuid4().hex[:8]}@example.com"
+    
     # First register a user
     await client.post(
         "/register",
         json={
-            "email": "test@example.com",
+            "email": unique_email,
             "name": "Test User",
             "initials": "TU",
             "password": "testpass123",
@@ -92,7 +100,7 @@ async def test_login_valid_credentials(client: AsyncClient):
 
     # Then login
     response = await client.post(
-        "/login", json={"email": "test@example.com", "password": "testpass123"}
+        "/login", json={"email": unique_email, "password": "testpass123"}
     )
 
     assert response.status_code == 200
@@ -115,11 +123,14 @@ async def test_login_invalid_email(client: AsyncClient):
 
 async def test_login_invalid_password(client: AsyncClient):
     """Test login with wrong password."""
+    # Use unique email for this test
+    unique_email = f"test_invalid_pass_{uuid.uuid4().hex[:8]}@example.com"
+    
     # First register a user
     await client.post(
         "/register",
         json={
-            "email": "test@example.com",
+            "email": unique_email,
             "name": "Test User",
             "initials": "TU",
             "password": "testpass123",
@@ -128,7 +139,7 @@ async def test_login_invalid_password(client: AsyncClient):
 
     # Then login with wrong password
     response = await client.post(
-        "/login", json={"email": "test@example.com", "password": "wrongpassword"}
+        "/login", json={"email": unique_email, "password": "wrongpassword"}
     )
 
     assert response.status_code == 400
@@ -179,11 +190,14 @@ async def test_e2e_test_user_login(client: AsyncClient, db_session):
 
 async def test_me_endpoint_with_valid_token(client: AsyncClient):
     """Test /me endpoint with valid authentication."""
+    # Use unique email for this test
+    unique_email = f"test_me_{uuid.uuid4().hex[:8]}@example.com"
+    
     # Register and get token
     register_response = await client.post(
         "/register",
         json={
-            "email": "test@example.com",
+            "email": unique_email,
             "name": "Test User",
             "initials": "TU",
             "password": "testpass123",
@@ -198,7 +212,7 @@ async def test_me_endpoint_with_valid_token(client: AsyncClient):
     assert response.status_code == 200
     data = response.json()
 
-    assert data["email"] == "test@example.com"
+    assert data["email"] == unique_email
     assert data["name"] == "Test User"
     assert data["initials"] == "TU"
     assert "id" in data
@@ -222,9 +236,11 @@ async def test_me_endpoint_with_invalid_token(client: AsyncClient):
 
 async def test_register_without_initials(client: AsyncClient):
     """Test registration without initials (should auto-generate from name)."""
+    unique_email = f"test_initials_{uuid.uuid4().hex[:8]}@example.com"
+    
     response = await client.post(
         "/register",
-        json={"email": "test@example.com", "name": "Test User", "password": "testpass123"},
+        json={"email": unique_email, "name": "Test User", "password": "testpass123"},
     )
 
     assert response.status_code == 200

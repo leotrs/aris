@@ -86,11 +86,17 @@ class Settings(BaseSettings):
             
         # Use PostgreSQL in CI environment (includes both real CI and local simulation)
         if self.ENV == "CI" or os.environ.get("CI"):
-            # Use the main aris_test database in CI - worker isolation via cleanup
-            return "postgresql+asyncpg://aris:aris@postgres:5432/aris_test"
+            # Support worker-specific databases in CI for true test isolation
+            worker_id = os.environ.get("PYTEST_XDIST_WORKER", "master")
+            if worker_id != "master":
+                # Create worker-specific database name
+                return f"postgresql+asyncpg://aris:aris@postgres:5432/aris_test_{worker_id}"
+            else:
+                # Use the main test database for non-parallel execution
+                return "postgresql+asyncpg://aris:aris@postgres:5432/aris_test"
             
         # Use SQLite for local development
-        worker_id = os.environ.get("PYTEST_XDIST_WORKER", "main")
+        worker_id = os.environ.get("PYTEST_XDIST_WORKER", "master")
         unique_id = str(uuid.uuid4())[:8]
         return f"sqlite+aiosqlite:///./test_{worker_id}_{unique_id}.db"
 

@@ -69,15 +69,9 @@ async def test_engine(request):
             # Fall back to the configured URL if pytest-postgresql isn't being used
             pass
     
-    # In CI, create worker-specific database for true isolation
-    if os.environ.get("ENV") == "CI" and database_url.startswith("postgresql"):
-        # Get worker ID from pytest-xdist
-        worker_id = getattr(request.config, 'worker_id', 'master')
-        if worker_id != 'master':
-            # Create worker-specific database name
-            base_db_name = database_url.split("/")[-1]
-            worker_db_name = f"{base_db_name}_{worker_id}"
-            database_url = database_url.replace(f"/{base_db_name}", f"/{worker_db_name}")
+    # Worker-specific database URLs are now handled by config.py
+    # No need to modify the URL here since settings.get_test_database_url() 
+    # already returns the correct worker-specific database URL
 
     # Configure engine based on database type
     if database_url.startswith("sqlite"):
@@ -197,9 +191,11 @@ async def test_user(db_session):
     This is different from authenticated_user which creates a user
     through the API and includes auth tokens.
     """
+    # Use a unique email to avoid conflicts between parallel tests
+    unique_email = f"test_user_{uuid.uuid4().hex[:8]}@example.com"
     user = User(
         name="foo bar",
-        email="test@example.com",
+        email=unique_email,
         password_hash="example_hash_pwd_for_testing",
     )
     db_session.add(user)

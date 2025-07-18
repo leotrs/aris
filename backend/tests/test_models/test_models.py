@@ -1,6 +1,7 @@
 """Unit tests for model-level logic in aris.models.models."""
 
 import random
+import uuid
 
 from aris.models.models import (
     Annotation,
@@ -63,7 +64,8 @@ def test_file_settings_column_defaults():
 async def test_annotation_creation(db_session):
     """Test basic creation of an Annotation."""
     # Create a user first
-    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    unique_email = f"test_annotation_{uuid.uuid4().hex[:8]}@example.com"
+    user = User(name="Test User", email=unique_email, password_hash="test_hash")
     db_session.add(user)
     await db_session.commit()
     await db_session.refresh(user)
@@ -86,7 +88,8 @@ async def test_annotation_creation(db_session):
 
 async def test_annotation_message_creation(db_session):
     """Test creating an AnnotationMessage and linking it to Annotation and User."""
-    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    unique_email = f"test_annot_msg_{uuid.uuid4().hex[:8]}@example.com"
+    user = User(name="Test User", email=unique_email, password_hash="test_hash")
     db_session.add(user)
     await db_session.commit()
     await db_session.refresh(user)
@@ -318,7 +321,8 @@ def test_file_prev_version_id_field_validation():
 async def test_file_prev_version_id_foreign_key_relationship(db_session):
     """Test that prev_version_id creates proper foreign key relationship."""
     # Create a user first
-    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    unique_email = f"test_prev_ver_{uuid.uuid4().hex[:8]}@example.com"
+    user = User(name="Test User", email=unique_email, password_hash="test_hash")
     db_session.add(user)
     await db_session.commit()
     await db_session.refresh(user)
@@ -349,7 +353,8 @@ async def test_file_prev_version_id_foreign_key_relationship(db_session):
 async def test_file_prev_version_id_relationship_navigation(db_session):
     """Test that we can navigate the prev_version relationship."""
     # Create a user first
-    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
+    unique_email = f"test_nav_{uuid.uuid4().hex[:8]}@example.com"
+    user = User(name="Test User", email=unique_email, password_hash="test_hash")
     db_session.add(user)
     await db_session.commit()
     await db_session.refresh(user)
