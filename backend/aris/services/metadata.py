@@ -45,7 +45,7 @@ class DublinCoreMetadata:
     
     def _get_title(self) -> str:
         """Get Dublin Core title element."""
-        return self.file.title or "Untitled"
+        return str(self.file.title) if self.file.title else "Untitled"
     
     def _get_creator(self) -> str:
         """Get Dublin Core creator element (authors)."""
@@ -54,11 +54,11 @@ class DublinCoreMetadata:
     
     def _get_subject(self) -> str:
         """Get Dublin Core subject element (keywords)."""
-        return self.file.keywords or ""
+        return str(self.file.keywords) if self.file.keywords else ""
     
     def _get_description(self) -> str:
         """Get Dublin Core description element (abstract)."""
-        return self.file.abstract or ""
+        return str(self.file.abstract) if self.file.abstract else ""
     
     def _get_publisher(self) -> str:
         """Get Dublin Core publisher element."""
@@ -67,8 +67,8 @@ class DublinCoreMetadata:
     def _get_date(self) -> str:
         """Get Dublin Core date element (publication date)."""
         if self.file.published_at:
-            return self.file.published_at.strftime("%Y-%m-%d")
-        return datetime.now().strftime("%Y-%m-%d")
+            return str(self.file.published_at.strftime("%Y-%m-%d"))
+        return str(datetime.now().strftime("%Y-%m-%d"))
     
     def _get_type(self) -> str:
         """Get Dublin Core type element."""
@@ -80,11 +80,11 @@ class DublinCoreMetadata:
     
     def _get_identifier(self) -> str:
         """Get Dublin Core identifier element."""
-        return self.file.public_uuid
+        return str(self.file.public_uuid) if self.file.public_uuid else ""
     
     def _get_source(self) -> str:
         """Get Dublin Core source element."""
-        return f"{self.base_url}/ication/{self.file.public_uuid}"
+        return f"{self.base_url}/ication/{self.file.public_uuid or ''}"
     
     def _get_language(self) -> str:
         """Get Dublin Core language element."""
@@ -127,8 +127,8 @@ class SchemaOrgMetadata:
         json_ld = {
             "@context": "https://schema.org",
             "@type": "ScholarlyArticle",
-            "headline": self.file.title or "Untitled",
-            "abstract": self.file.abstract or "",
+            "headline": str(self.file.title) if self.file.title else "Untitled",
+            "abstract": str(self.file.abstract) if self.file.abstract else "",
             "author": self._get_authors(),
             "datePublished": self._get_publication_date(),
             "publisher": {
@@ -144,7 +144,7 @@ class SchemaOrgMetadata:
         
         # Add keywords if available
         if self.file.keywords:
-            json_ld["keywords"] = self.file.keywords
+            json_ld["keywords"] = str(self.file.keywords)
         
         # Add DOI if available (future implementation)
         # if self.file.doi:
@@ -171,8 +171,8 @@ class SchemaOrgMetadata:
     def _get_publication_date(self) -> str:
         """Get ISO format publication date."""
         if self.file.published_at:
-            return self.file.published_at.isoformat()
-        return datetime.now().isoformat()
+            return str(self.file.published_at.isoformat())
+        return str(datetime.now().isoformat())
 
 
 class AcademicMetaTags:
@@ -193,7 +193,7 @@ class AcademicMetaTags:
         canonical_url = f"{self.base_url}/ication/{self.file.public_uuid}"
         
         meta_tags = {
-            "citation_title": self.file.title or "Untitled",
+            "citation_title": str(self.file.title) if self.file.title else "Untitled",
             "citation_publication_date": self._get_publication_date(),
             "citation_journal_title": "Aris Preprint",
             "citation_abstract_html_url": canonical_url,
@@ -215,8 +215,8 @@ class AcademicMetaTags:
     def _get_publication_date(self) -> str:
         """Get publication date in YYYY/MM/DD format."""
         if self.file.published_at:
-            return self.file.published_at.strftime("%Y/%m/%d")
-        return datetime.now().strftime("%Y/%m/%d")
+            return str(self.file.published_at.strftime("%Y/%m/%d"))
+        return str(datetime.now().strftime("%Y/%m/%d"))
 
 
 class OpenGraphMetadata:
@@ -237,7 +237,7 @@ class OpenGraphMetadata:
         canonical_url = f"{self.base_url}/ication/{self.file.public_uuid}"
         
         og_tags = {
-            "og:title": self.file.title or "Untitled",
+            "og:title": str(self.file.title) if self.file.title else "Untitled",
             "og:type": "article",
             "og:url": canonical_url,
             "og:site_name": "Aris Preprint",
@@ -246,7 +246,8 @@ class OpenGraphMetadata:
         
         # Add description (truncated abstract)
         if self.file.abstract:
-            description = self.file.abstract[:160] + "..." if len(self.file.abstract) > 160 else self.file.abstract
+            abstract_str = str(self.file.abstract)
+            description = abstract_str[:160] + "..." if len(abstract_str) > 160 else abstract_str
             og_tags["og:description"] = description
         
         # Add authors (TODO: implement proper author extraction)
@@ -257,8 +258,8 @@ class OpenGraphMetadata:
     def _get_publication_date(self) -> str:
         """Get publication date in ISO format."""
         if self.file.published_at:
-            return self.file.published_at.isoformat()
-        return datetime.now().isoformat()
+            return str(self.file.published_at.isoformat())
+        return str(datetime.now().isoformat())
 
 
 def generate_academic_metadata(file: File) -> Dict[str, Any]:
