@@ -69,8 +69,15 @@ async def test_engine(request):
             # Fall back to the configured URL if pytest-postgresql isn't being used
             pass
     
-    # In CI, we use shared migrated schema with data cleanup between tests
-    # Worker isolation is handled through test data cleanup rather than separate DBs
+    # In CI, create worker-specific database for true isolation
+    if os.environ.get("ENV") == "CI" and database_url.startswith("postgresql"):
+        # Get worker ID from pytest-xdist
+        worker_id = getattr(request.config, 'worker_id', 'master')
+        if worker_id != 'master':
+            # Create worker-specific database name
+            base_db_name = database_url.split("/")[-1]
+            worker_db_name = f"{base_db_name}_{worker_id}"
+            database_url = database_url.replace(f"/{base_db_name}", f"/{worker_db_name}")
 
     # Configure engine based on database type
     if database_url.startswith("sqlite"):
@@ -148,59 +155,25 @@ async def create_database_if_not_exists(database_url: str):
 
 @pytest_asyncio.fixture
 async def db_session(test_engine):
-    """Create a fresh database for each test."""
+    """Create a fresh database session for each test with proper isolation."""
     # Create worker-specific database if needed
     database_url = str(test_engine.url)
     await create_database_if_not_exists(database_url)
     
-    # In CI, skip metadata.create_all since migration already created schema
-    if not os.environ.get("ENV") == "CI":
-        async with test_engine.begin() as conn:
-            await conn.run_sync(Base.metadata.create_all, checkfirst=True)
+    # Always create schema for worker-specific databases
+    async with test_engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all, checkfirst=True)
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
+    
+    # Use regular session - isolation is handled by separate databases per worker
     async with TestingSessionLocal() as session:
         yield session
-
+    
     # For local development, drop all tables
     if not os.environ.get("ENV") == "CI":
         async with test_engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
-    else:
-        # For CI, clean up data between tests to avoid conflicts
-        # Use a separate connection to avoid interfering with the main test session
-        TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
-        
-        # Only clean up if not in the middle of a test run
-        # This prevents cleanup from interfering with parallel test execution
-        try:
-            async with TestingSessionLocal() as cleanup_session:
-                # Use TRUNCATE with CASCADE to reset auto-increment sequences and ensure complete cleanup
-                # This is safer in CI environment to prevent data pollution between parallel tests
-                await cleanup_session.execute(text("TRUNCATE file_tags, file_assets, annotation_message, annotation, file_settings, files, tags, user_settings, signups, profile_pictures, users RESTART IDENTITY CASCADE"))
-                await cleanup_session.commit()
-        except Exception:
-            # If TRUNCATE fails (e.g., due to foreign key constraints), fall back to DELETE
-            try:
-                async with TestingSessionLocal() as cleanup_session:
-                    # Use targeted DELETE to avoid issues with auto-increment sequences
-                    # Delete in dependency order to avoid foreign key violations
-                    await cleanup_session.execute(text("DELETE FROM file_tags"))
-                    await cleanup_session.execute(text("DELETE FROM file_assets"))
-                    await cleanup_session.execute(text("DELETE FROM annotation_message"))
-                    await cleanup_session.execute(text("DELETE FROM annotation"))
-                    await cleanup_session.execute(text("DELETE FROM file_settings"))
-                    await cleanup_session.execute(text("DELETE FROM files"))
-                    await cleanup_session.execute(text("DELETE FROM tags"))
-                    await cleanup_session.execute(text("DELETE FROM user_settings"))
-                    await cleanup_session.execute(text("DELETE FROM signups"))
-                    await cleanup_session.execute(text("DELETE FROM profile_pictures"))
-                    await cleanup_session.execute(text("DELETE FROM users"))
-                    await cleanup_session.commit()
-            except Exception:
-                # If cleanup fails, don't break the test - just continue
-                # This prevents cleanup errors from causing test failures
-                pass
 
 
 @pytest_asyncio.fixture
