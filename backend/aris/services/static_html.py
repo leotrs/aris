@@ -5,12 +5,32 @@ for search engine indexing, while redirecting human users to the SPA.
 """
 
 import json
+from typing import Optional
 
 from ..models import File
+from .citation import CitationService
 from .metadata import generate_academic_metadata
 
 
 def generate_static_html(file: File) -> str:
+    """Generate static HTML page with academic metadata and user redirect.
+    
+    This function is kept for backwards compatibility but delegates to the service version.
+    
+    Parameters
+    ----------
+    file : File
+        The published preprint file.
+        
+    Returns
+    -------
+    str
+        Complete HTML page with academic metadata and redirect logic.
+    """
+    return generate_static_html_with_services(file)
+
+
+def generate_static_html_with_services(file: File, citation_service: Optional[CitationService] = None) -> str:
     """Generate static HTML page with academic metadata and user redirect.
     
     This creates a static HTML page that:
@@ -22,6 +42,8 @@ def generate_static_html(file: File) -> str:
     ----------
     file : File
         The published preprint file.
+    citation_service : CitationService, optional
+        Citation service instance. If None, creates a new one.
         
     Returns
     -------
@@ -42,9 +64,11 @@ def generate_static_html(file: File) -> str:
     # Format publication date
     pub_date = file.published_at.strftime("%B %d, %Y") if file.published_at else "Unknown"
     
-    # Generate APA citation for display
-    from ..routes.public import generate_citation_info
-    citation_info = generate_citation_info(file)
+    # Generate APA citation for display using citation service
+    if citation_service is None:
+        citation_service = CitationService(base_url=base_url)
+    
+    citation_info = citation_service.generate_citation_info(file)
     apa_citation = citation_info["formats"]["apa"]
     
     # Create HTML template
