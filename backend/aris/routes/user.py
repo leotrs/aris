@@ -506,7 +506,15 @@ async def upload_profile_picture(
         user.profile_picture_id = new_picture.id
         
         # Ensure user is properly tracked in current session
-        await db.refresh(user)
+        try:
+            await db.refresh(user)
+        except Exception as refresh_e:
+            # Handle case where user object cannot be refreshed (e.g., was deleted)
+            if "InvalidRequestError" in str(type(refresh_e)) or "Could not refresh instance" in str(refresh_e):
+                await db.rollback()
+                raise HTTPException(status_code=404, detail="User no longer exists or was modified by another operation")
+            raise
+        
         db.add(user)
         
         try:
@@ -643,7 +651,15 @@ async def delete_profile_picture(
         user.profile_picture_id = None  # type: ignore
         
         # Ensure user is properly tracked in current session
-        await db.refresh(user)
+        try:
+            await db.refresh(user)
+        except Exception as refresh_e:
+            # Handle case where user object cannot be refreshed (e.g., was deleted)
+            if "InvalidRequestError" in str(type(refresh_e)) or "Could not refresh instance" in str(refresh_e):
+                await db.rollback()
+                raise HTTPException(status_code=404, detail="User no longer exists or was modified by another operation")
+            raise
+        
         db.add(user)
         
         try:
