@@ -162,31 +162,31 @@ async def db_session(test_engine):
     
     # Use regular session
     async with TestingSessionLocal() as session:
-        yield session
+        try:
+            yield session
+        finally:
+            # Clean up data BEFORE closing the session in CI
+            if os.environ.get("ENV") == "CI":
+                try:
+                    # Clean up in dependency order within the same session
+                    await session.execute(text("DELETE FROM file_tags"))
+                    await session.execute(text("DELETE FROM file_assets"))
+                    await session.execute(text("DELETE FROM annotation_message"))
+                    await session.execute(text("DELETE FROM annotation"))
+                    await session.execute(text("DELETE FROM file_settings"))
+                    await session.execute(text("DELETE FROM files"))
+                    await session.execute(text("DELETE FROM tags"))
+                    await session.execute(text("DELETE FROM user_settings"))
+                    await session.execute(text("DELETE FROM signups"))
+                    await session.execute(text("DELETE FROM profile_pictures"))
+                    await session.execute(text("DELETE FROM users"))
+                    await session.commit()
+                except Exception:
+                    # If cleanup fails, rollback but don't fail the test
+                    await session.rollback()
     
-    # Clean up data after each test in CI to prevent interference
-    if os.environ.get("ENV") == "CI":
-        # Use a fresh session for cleanup to avoid session conflicts
-        async with TestingSessionLocal() as cleanup_session:
-            try:
-                # Clean up in dependency order
-                await cleanup_session.execute(text("DELETE FROM file_tags"))
-                await cleanup_session.execute(text("DELETE FROM file_assets"))
-                await cleanup_session.execute(text("DELETE FROM annotation_message"))
-                await cleanup_session.execute(text("DELETE FROM annotation"))
-                await cleanup_session.execute(text("DELETE FROM file_settings"))
-                await cleanup_session.execute(text("DELETE FROM files"))
-                await cleanup_session.execute(text("DELETE FROM tags"))
-                await cleanup_session.execute(text("DELETE FROM user_settings"))
-                await cleanup_session.execute(text("DELETE FROM signups"))
-                await cleanup_session.execute(text("DELETE FROM profile_pictures"))
-                await cleanup_session.execute(text("DELETE FROM users"))
-                await cleanup_session.commit()
-            except Exception:
-                # If cleanup fails, rollback but don't fail the test
-                await cleanup_session.rollback()
-    else:
-        # For local development, drop all tables
+    # For local development, drop all tables
+    if not os.environ.get("ENV") == "CI":
         async with test_engine.begin() as conn:
             await conn.run_sync(Base.metadata.drop_all)
 
