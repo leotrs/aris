@@ -7,7 +7,8 @@ without authentication. Supports both UUID and permalink slug access patterns.
 from datetime import datetime
 from typing import Any, Dict
 
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Request
+from fastapi.responses import HTMLResponse, PlainTextResponse
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -15,6 +16,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from .. import get_db
 from ..exceptions import not_found_exception
 from ..models import File, FileStatus
+from ..services.metadata import generate_academic_metadata
+from ..services.static_html import generate_static_html
 
 
 router = APIRouter(prefix="/ication", tags=["public"])
@@ -48,6 +51,7 @@ class PublicPreprintMetadata(BaseModel):
     permalink_slug: str | None
     version: int
     citation_info: Dict[str, Any]
+    academic_metadata: Dict[str, Any]
     
     model_config = ConfigDict(from_attributes=True)
 
@@ -137,27 +141,41 @@ def generate_citation_info(file: File) -> Dict[str, Any]:
     """
     # Extract publication year from published_at
     pub_year = file.published_at.year if file.published_at else datetime.now().year
+    pub_date = file.published_at.strftime("%Y-%m-%d") if file.published_at else datetime.now().strftime("%Y-%m-%d")
+    
+    # Extract authors (TODO: implement proper author extraction from File model)
+    authors = "Unknown Author"  # Placeholder until author model is implemented
+    
+    # Generate URL
+    base_url = "https://aris.com"  # TODO: Make configurable
+    url = f"{base_url}/ication/{file.public_uuid}"
     
     # Generate different citation formats
     citation_info = {
         "title": file.title or "Untitled",
         "abstract": file.abstract,
         "keywords": file.keywords,
+        "authors": authors,
         "published_year": pub_year,
+        "published_date": pub_date,
         "public_uuid": file.public_uuid,
         "permalink_slug": file.permalink_slug,
         "version": file.version,
+        "url": url,
         "formats": {
-            "apa": f"({pub_year}). {file.title or 'Untitled'}. Aris Preprint. {file.public_uuid}",
+            "apa": f"{authors} ({pub_year}). {file.title or 'Untitled'}. Aris Preprint. {url}",
             "bibtex": f"""@article{{{file.public_uuid},
   title={{{file.title or 'Untitled'}}},
+  author={{{authors}}},
   year={{{pub_year}}},
-  note={{Aris Preprint {file.public_uuid}}},
+  journal={{Aris Preprint}},
+  url={{{url}}},
   abstract={{{file.abstract or ''}}},
-  keywords={{{file.keywords or ''}}}
+  keywords={{{file.keywords or ''}}},
+  note={{Preprint {file.public_uuid}}}
 }}""",
-            "chicago": f"\"{file.title or 'Untitled'}.\" Aris Preprint {file.public_uuid} ({pub_year}).",
-            "mla": f"\"{file.title or 'Untitled'}.\" Aris Preprint, {pub_year}, {file.public_uuid}."
+            "chicago": f"{authors}. \"{file.title or 'Untitled'}.\" Aris Preprint {file.public_uuid} ({pub_year}). {url}.",
+            "mla": f"{authors}. \"{file.title or 'Untitled'}.\" Aris Preprint, {pub_date}, {url}."
         }
     }
     
@@ -261,6 +279,7 @@ async def get_public_preprint_metadata_by_identifier(
         file = await get_published_preprint_by_slug(identifier, db)
     
     citation_info = generate_citation_info(file)
+    academic_metadata = generate_academic_metadata(file)
     
     return PublicPreprintMetadata(
         id=file.id,
@@ -271,5 +290,139 @@ async def get_public_preprint_metadata_by_identifier(
         public_uuid=file.public_uuid,
         permalink_slug=file.permalink_slug,
         version=file.version,
-        citation_info=citation_info
+        citation_info=citation_info,
+        academic_metadata=academic_metadata
+    )
+
+
+@router.get(
+    "/{identifier}/export/bibtex",
+    response_class=PlainTextResponse,
+    summary="Export BibTeX Citation",
+    description="Download BibTeX citation format for a published preprint.",
+    response_description="BibTeX citation in plain text format",
+)
+async def export_bibtex_citation(
+    identifier: str,
+    db: AsyncSession = Depends(get_db)
+) -> PlainTextResponse:
+    """Export BibTeX citation for a published preprint by UUID or permalink slug.
+    
+    This endpoint generates a BibTeX citation format suitable for
+    LaTeX documents and reference managers like Zotero and Mendeley.
+    
+    Parameters
+    ----------
+    identifier : str
+        The 6-character public UUID or permalink slug of the preprint.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+        
+    Returns
+    -------
+    PlainTextResponse
+        BibTeX citation in plain text format with proper content-type header.
+        
+    Raises
+    ------
+    HTTPException
+        404 error if preprint is not found, not published, or deleted.
+        
+    Examples
+    --------
+    GET /ication/abc123/export/bibtex (UUID)
+    GET /ication/my-awesome-research-paper/export/bibtex (permalink slug)
+    """
+    # Try UUID first
+    try:
+        file = await get_published_preprint_by_uuid(identifier, db)
+    except Exception:
+        # If UUID lookup fails, try permalink slug
+        file = await get_published_preprint_by_slug(identifier, db)
+    
+    citation_info = generate_citation_info(file)
+    bibtex_content = citation_info["formats"]["bibtex"]
+    
+    return PlainTextResponse(
+        content=bibtex_content,
+        media_type="application/x-bibtex",
+        headers={
+            "Content-Disposition": f"attachment; filename=\"{file.public_uuid}.bib\""
+        }
+    )
+
+
+@router.get(
+    "/{identifier}/static-html",
+    response_class=HTMLResponse,
+    summary="Get Static HTML with Academic Metadata",
+    description="Generate static HTML page with complete academic metadata for search engines.",
+    response_description="Static HTML page with academic meta tags and redirect logic",
+)
+async def get_static_html_page(
+    identifier: str,
+    request: Request,
+    db: AsyncSession = Depends(get_db)
+) -> HTMLResponse:
+    """Generate static HTML page with academic metadata and user redirect.
+    
+    This endpoint generates a static HTML page that serves two purposes:
+    1. Provides complete academic metadata for search engines and crawlers
+    2. Redirects human users to the interactive SPA version
+    
+    The page includes:
+    - Dublin Core metadata (all 15 elements)
+    - Schema.org ScholarlyArticle JSON-LD
+    - Academic citation meta tags (Highwire Press format)
+    - Open Graph tags for social sharing
+    - User-agent detection and redirect logic
+    
+    Parameters
+    ----------
+    identifier : str
+        The 6-character public UUID or permalink slug of the preprint.
+    request : Request
+        FastAPI request object for user-agent detection.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+        
+    Returns
+    -------
+    HTMLResponse
+        Complete HTML page with academic metadata and redirect logic.
+        
+    Raises
+    ------
+    HTTPException
+        404 error if preprint is not found, not published, or deleted.
+        
+    Examples
+    --------
+    GET /ication/abc123/static-html (UUID)
+    GET /ication/my-awesome-research-paper/static-html (permalink slug)
+    """
+    # Try UUID first
+    try:
+        file = await get_published_preprint_by_uuid(identifier, db)
+    except Exception:
+        # If UUID lookup fails, try permalink slug
+        file = await get_published_preprint_by_slug(identifier, db)
+    
+    # Generate static HTML content
+    html_content = generate_static_html(file)
+    
+    # Set appropriate cache headers for static content
+    headers = {
+        "Cache-Control": "public, max-age=3600",  # Cache for 1 hour
+        "Vary": "User-Agent",  # Vary on user agent for proper caching
+    }
+    
+    # TODO: Log access for analytics
+    # user_agent = request.headers.get("user-agent", "")
+    # agent_type = detect_user_agent_type(user_agent)
+    # logger.info(f"Static HTML access: {identifier}, agent_type: {agent_type}")
+    
+    return HTMLResponse(
+        content=html_content,
+        headers=headers
     )

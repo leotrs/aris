@@ -3,22 +3,21 @@
   import { useRoute } from "vue-router";
   import { useKeyboardShortcuts } from "@/composables/useKeyboardShortcuts.js";
   import {
-    fetchIcationData,
-    createIcationApi,
-    createIcationFileStore,
-    createIcationUser,
-    createIcationAnnotations,
-  } from "./icationData.js";
+    fetchPublicationData,
+    createPublicationFileStore,
+    createPublicationUser,
+    createPublicationAnnotations,
+  } from "./publicationData.js";
   import Sidebar from "@/views/workspace/Sidebar.vue";
   import Canvas from "@/views/workspace/Canvas.vue";
   import Icon from "@/components/base/Icon.vue";
+  import CitationModal from "@/components/citations/CitationModal.vue";
 
   // Get route parameters
   const route = useRoute();
   const identifier = computed(() => route.params.identifier);
 
-  // Create ication API instance
-  const api = createIcationApi();
+  const api = inject("api");
   provide("api", api);
 
   // Use ONLY injected values from App.vue (single source of truth)
@@ -31,11 +30,11 @@
   provide("xsMode", xsMode);
 
   // Preprint data
-  const icationFile = ref(null);
-  const icationMetadata = ref(null);
-  const user = ref(createIcationUser());
+  const publicationFile = ref(null);
+  const publicationMetadata = ref(null);
+  const user = ref(createPublicationUser());
   const fileStore = ref(null);
-  const annotations = reactive(createIcationAnnotations());
+  const annotations = reactive(createPublicationAnnotations());
 
   // Provide reactive data to child components
   provide("user", user);
@@ -46,7 +45,7 @@
   const loadingError = ref(null);
 
   // Computed file for reactivity
-  const file = computed(() => icationFile.value);
+  const file = computed(() => publicationFile.value);
   provide("file", file);
 
   // File settings
@@ -73,23 +72,41 @@
   const focusMode = ref(false);
   provide("focusMode", focusMode);
 
+  // Citation modal
+  const showCitationModal = ref(false);
+  const openCitationModal = () => {
+    showCitationModal.value = true;
+  };
+  const closeCitationModal = () => {
+    showCitationModal.value = false;
+  };
+
   // Initialize preprint content
   onMounted(async () => {
     try {
       // Fetch preprint data
-      const { file: fetchedFile, metadata } = await fetchIcationData(identifier.value);
+      const { file: fetchedFile, metadata } = await fetchPublicationData(identifier.value);
 
-      icationFile.value = fetchedFile;
-      icationMetadata.value = metadata;
+      // Render RSM content first
+      const renderResponse = await fetch(`${import.meta.env.VITE_API_BASE_URL}/render`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ source: fetchedFile.source }),
+      });
+      if (!renderResponse.ok) {
+        throw new Error(`Render failed: ${renderResponse.status}`);
+      }
+      fetchedFile.html = await renderResponse.json();
+
+      publicationFile.value = fetchedFile;
+      publicationMetadata.value = metadata;
       fileSettings.value = fetchedFile._settings;
 
       // Create file store
-      fileStore.value = createIcationFileStore(fetchedFile);
+      fileStore.value = createPublicationFileStore(fetchedFile);
       provide("fileStore", fileStore);
-
-      // Render RSM content
-      const response = await api.post("/render", { source: fetchedFile.source });
-      fetchedFile.html = response.data;
 
       isContentLoaded.value = true;
     } catch (error) {
@@ -106,6 +123,7 @@
   // Keyboard shortcuts
   useKeyboardShortcuts({
     c: () => (focusMode.value = !focusMode.value),
+    q: () => openCitationModal(),
   });
 
   // Main sidebar collapsed state
@@ -120,17 +138,27 @@
 <template>
   <div class="ication-root">
     <!-- Preprint banner -->
-    <div v-if="!focusMode && icationMetadata" class="preprint-banner" data-testid="preprint-banner">
+    <div
+      v-if="!focusMode && publicationMetadata"
+      class="preprint-banner"
+      data-testid="preprint-banner"
+    >
       <div class="preprint-banner-content">
         <Icon name="FileText" icon-class="preprint-icon" />
         <span>Public Preprint</span>
         <div class="preprint-meta">
-          <span v-if="icationMetadata.authors">{{ icationMetadata.authors }}</span>
-          <span v-if="icationMetadata.published_at">
-            • Published {{ new Date(icationMetadata.published_at).toLocaleDateString() }}
+          <span v-if="publicationMetadata.authors">{{ publicationMetadata.authors }}</span>
+          <span v-if="publicationMetadata.published_at">
+            • Published {{ new Date(publicationMetadata.published_at).toLocaleDateString() }}
           </span>
         </div>
-        <a href="/" class="preprint-link" data-testid="preprint-home-link">← Back to Aris</a>
+        <div class="preprint-actions">
+          <button class="cite-button" data-testid="cite-button" @click="openCitationModal">
+            <Icon name="Quote" />
+            Cite
+          </button>
+          <a href="/" class="preprint-link" data-testid="preprint-home-link">← Back to Aris</a>
+        </div>
       </div>
     </div>
 
@@ -166,13 +194,21 @@
       <!-- Preprint canvas -->
       <Canvas
         v-else
-        v-model="icationFile"
+        v-model="publicationFile"
         data-testid="ication-canvas"
         data-loaded="true"
         :show-editor="showEditor"
         :show-search="showSearch"
       />
     </div>
+
+    <!-- Citation modal -->
+    <CitationModal
+      v-if="identifier && showCitationModal"
+      :identifier="identifier"
+      :is-open="showCitationModal"
+      @close="closeCitationModal"
+    />
   </div>
 </template>
 
@@ -263,10 +299,41 @@
     margin-left: 8px;
   }
 
+  .preprint-actions {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  .cite-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--blue-600);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .cite-button:hover {
+    background: var(--blue-700);
+    transform: translateY(-1px);
+  }
+
+  .cite-button:active {
+    transform: translateY(0);
+  }
+
   .preprint-link {
     color: var(--blue-600);
     text-decoration: none;
-    margin-left: auto;
     flex-shrink: 0;
   }
 

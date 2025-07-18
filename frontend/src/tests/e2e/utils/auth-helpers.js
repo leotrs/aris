@@ -147,7 +147,7 @@ export class AuthHelpers {
 
       console.log("[AuthHelpers] Valid tokens found, user is authenticated");
       return true;
-    } catch (error) {
+    } catch (_error) {
       // localStorage access may fail if no page is loaded
       console.log("[AuthHelpers] Cannot access localStorage, need to navigate to page first");
       return false;

@@ -439,7 +439,7 @@ describe("BaseLayout", () => {
     });
 
     it("toggles mobile drawer when hamburger button is clicked", async () => {
-      const initialState = mockMobileDrawerState.value;
+      const _initialState = mockMobileDrawerState.value;
 
       const hamburgerButton = mobileWrapper.findComponent({ name: "HamburgerMenu" });
       await hamburgerButton.vm.$emit("toggleMobileDrawer");
