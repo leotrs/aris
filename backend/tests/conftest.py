@@ -160,30 +160,9 @@ async def db_session(test_engine):
 
     TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
     
-    # Use regular session
+    # Use regular session - no cleanup in CI, let tests share data
     async with TestingSessionLocal() as session:
-        try:
-            yield session
-        finally:
-            # Clean up data BEFORE closing the session in CI
-            if os.environ.get("ENV") == "CI":
-                try:
-                    # Clean up in dependency order within the same session
-                    await session.execute(text("DELETE FROM file_tags"))
-                    await session.execute(text("DELETE FROM file_assets"))
-                    await session.execute(text("DELETE FROM annotation_message"))
-                    await session.execute(text("DELETE FROM annotation"))
-                    await session.execute(text("DELETE FROM file_settings"))
-                    await session.execute(text("DELETE FROM files"))
-                    await session.execute(text("DELETE FROM tags"))
-                    await session.execute(text("DELETE FROM user_settings"))
-                    await session.execute(text("DELETE FROM signups"))
-                    await session.execute(text("DELETE FROM profile_pictures"))
-                    await session.execute(text("DELETE FROM users"))
-                    await session.commit()
-                except Exception:
-                    # If cleanup fails, rollback but don't fail the test
-                    await session.rollback()
+        yield session
     
     # For local development, drop all tables
     if not os.environ.get("ENV") == "CI":
