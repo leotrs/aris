@@ -693,8 +693,9 @@ class TestErrorHandling:
         """Test retrieving profile picture for a user that was deleted."""
         # Delete the user
         user = await db_session.get(User, authenticated_user["user_id"])
-        await db_session.delete(user)
-        await db_session.commit()
+        if user:  # Only delete if user exists
+            await db_session.delete(user)
+            await db_session.commit()
 
         response = await client.get(
             f"/users/{authenticated_user['user_id']}/avatar", headers=auth_headers
@@ -707,8 +708,9 @@ class TestErrorHandling:
         """Test deleting profile picture when the user was deleted."""
         # Delete the user
         user = await db_session.get(User, authenticated_user["user_id"])
-        await db_session.delete(user)
-        await db_session.commit()
+        if user:  # Only delete if user exists
+            await db_session.delete(user)
+            await db_session.commit()
 
         response = await client.delete(
             f"/users/{authenticated_user['user_id']}/avatar", headers=auth_headers
