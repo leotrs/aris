@@ -373,10 +373,13 @@ async def test_get_user_tags_empty(client: AsyncClient, authenticated_user):
     Test getting tags for a user who has no tags.
     Expect an empty list in response.
     """
+    import uuid
+    
+    unique_email = f"emptytags+{uuid.uuid4().hex[:8]}@example.com"
     response = await client.post(
         "/register",
         json={
-            "email": "emptytags@example.com",
+            "email": unique_email,
             "name": "Empty Tags",
             "initials": "ET",
             "password": "password123",

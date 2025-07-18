@@ -211,11 +211,14 @@ async def test_get_asset_success(
 
 async def test_get_asset_different_user(client: AsyncClient, test_file, valid_base64_image):
     """Test that users can't access other users' assets."""
+    import uuid
+    
     # Create first user and asset
+    user1_email = f"user1+{uuid.uuid4().hex[:8]}@example.com"
     user1_response = await client.post(
         "/register",
         json={
-            "email": "user1@example.com",
+            "email": user1_email,
             "name": "User One",
             "initials": "U1",
             "password": "testpass123",
@@ -236,10 +239,11 @@ async def test_get_asset_different_user(client: AsyncClient, test_file, valid_ba
     asset_id = create_response.json()["id"]
 
     # Create second user
+    user2_email = f"user2+{uuid.uuid4().hex[:8]}@example.com"
     user2_response = await client.post(
         "/register",
         json={
-            "email": "user2@example.com",
+            "email": user2_email,
             "name": "User Two",
             "initials": "U2",
             "password": "testpass123",
@@ -429,11 +433,14 @@ async def test_delete_asset_success(
 
 async def test_delete_asset_different_user(client: AsyncClient, test_file, valid_base64_image):
     """Test that users can't delete other users' assets."""
+    import uuid
+    
     # Create first user and asset
+    user1_email = f"user1+{uuid.uuid4().hex[:8]}@example.com"
     user1_response = await client.post(
         "/register",
         json={
-            "email": "user1@example.com",
+            "email": user1_email,
             "name": "User One",
             "initials": "U1",
             "password": "testpass123",
@@ -454,10 +461,11 @@ async def test_delete_asset_different_user(client: AsyncClient, test_file, valid
     asset_id = create_response.json()["id"]
 
     # Create second user
+    user2_email = f"user2+{uuid.uuid4().hex[:8]}@example.com"
     user2_response = await client.post(
         "/register",
         json={
-            "email": "user2@example.com",
+            "email": user2_email,
             "name": "User Two",
             "initials": "U2",
             "password": "testpass123",

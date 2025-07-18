@@ -205,11 +205,14 @@ class TestFileSettings:
 
     async def test_upsert_file_settings_access_denied(self, client: AsyncClient, sample_settings):
         """Test upserting settings for file owned by another user."""
+        import uuid
+        
         # Create another user
+        other_user_email = f"otheruser+{uuid.uuid4().hex[:8]}@example.com"
         response = await client.post(
             "/register",
             json={
-                "email": "otheruser@example.com",
+                "email": other_user_email,
                 "name": "Other User",
                 "initials": "OU",
                 "password": "testpass123",
@@ -233,10 +236,11 @@ class TestFileSettings:
         file_id = file_response.json()["id"]
 
         # Try to create settings with first user
+        first_user_email = f"firstuser+{uuid.uuid4().hex[:8]}@example.com"
         first_user_response = await client.post(
             "/register",
             json={
-                "email": "firstuser@example.com",
+                "email": first_user_email,
                 "name": "First User",
                 "initials": "FU",
                 "password": "testpass123",
@@ -258,11 +262,14 @@ class TestSettingsIntegration:
 
     async def test_settings_isolation_between_users(self, client: AsyncClient, sample_settings):
         """Test that settings are isolated between different users."""
+        import uuid
+        
         # Create first user and settings
+        user1_email = f"user1+{uuid.uuid4().hex[:8]}@example.com"
         user1_response = await client.post(
             "/register",
             json={
-                "email": "user1@example.com",
+                "email": user1_email,
                 "name": "User One",
                 "initials": "U1",
                 "password": "testpass123",
@@ -273,10 +280,11 @@ class TestSettingsIntegration:
         await client.post("/settings/defaults", headers=user1_headers, json=sample_settings)
 
         # Create second user and different settings
+        user2_email = f"user2+{uuid.uuid4().hex[:8]}@example.com"
         user2_response = await client.post(
             "/register",
             json={
-                "email": "user2@example.com",
+                "email": user2_email,
                 "name": "User Two",
                 "initials": "U2",
                 "password": "testpass123",
