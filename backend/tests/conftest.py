@@ -170,21 +170,44 @@ async def db_session(test_engine):
         TestingSessionLocal = async_sessionmaker(test_engine, expire_on_commit=False)
         async with TestingSessionLocal() as cleanup_session:
             try:
-                # Clear all data from all tables
-                await cleanup_session.execute(text("DELETE FROM file_tags"))
-                await cleanup_session.execute(text("DELETE FROM file_assets"))
-                await cleanup_session.execute(text("DELETE FROM annotation_message"))
-                await cleanup_session.execute(text("DELETE FROM annotation"))
-                await cleanup_session.execute(text("DELETE FROM file_settings"))
-                await cleanup_session.execute(text("DELETE FROM files"))
-                await cleanup_session.execute(text("DELETE FROM tags"))
-                await cleanup_session.execute(text("DELETE FROM user_settings"))
-                await cleanup_session.execute(text("DELETE FROM signups"))
-                await cleanup_session.execute(text("DELETE FROM profile_pictures"))
-                await cleanup_session.execute(text("DELETE FROM users"))
+                # Use TRUNCATE for cleaner data reset that doesn't interfere with ongoing transactions
+                # Disable foreign key checks temporarily to avoid constraint violations
+                await cleanup_session.execute(text("SET session_replication_role = replica"))
+                
+                # Truncate all tables in reverse dependency order
+                await cleanup_session.execute(text("TRUNCATE TABLE file_tags CASCADE"))
+                await cleanup_session.execute(text("TRUNCATE TABLE file_assets CASCADE"))
+                await cleanup_session.execute(text("TRUNCATE TABLE annotation_message CASCADE"))
+                await cleanup_session.execute(text("TRUNCATE TABLE annotation CASCADE"))
+                await cleanup_session.execute(text("TRUNCATE TABLE file_settings CASCADE"))
+                await cleanup_session.execute(text("TRUNCATE TABLE files CASCADE"))
+                await cleanup_session.execute(text("TRUNCATE TABLE tags CASCADE"))
+                await cleanup_session.execute(text("TRUNCATE TABLE user_settings CASCADE"))
+                await cleanup_session.execute(text("TRUNCATE TABLE signups CASCADE"))
+                await cleanup_session.execute(text("TRUNCATE TABLE profile_pictures CASCADE"))
+                await cleanup_session.execute(text("TRUNCATE TABLE users CASCADE"))
+                
+                # Re-enable foreign key checks
+                await cleanup_session.execute(text("SET session_replication_role = DEFAULT"))
                 await cleanup_session.commit()
             except Exception:
                 await cleanup_session.rollback()
+                # Fallback to DELETE if TRUNCATE fails
+                try:
+                    await cleanup_session.execute(text("DELETE FROM file_tags"))
+                    await cleanup_session.execute(text("DELETE FROM file_assets"))
+                    await cleanup_session.execute(text("DELETE FROM annotation_message"))
+                    await cleanup_session.execute(text("DELETE FROM annotation"))
+                    await cleanup_session.execute(text("DELETE FROM file_settings"))
+                    await cleanup_session.execute(text("DELETE FROM files"))
+                    await cleanup_session.execute(text("DELETE FROM tags"))
+                    await cleanup_session.execute(text("DELETE FROM user_settings"))
+                    await cleanup_session.execute(text("DELETE FROM signups"))
+                    await cleanup_session.execute(text("DELETE FROM profile_pictures"))
+                    await cleanup_session.execute(text("DELETE FROM users"))
+                    await cleanup_session.commit()
+                except Exception:
+                    await cleanup_session.rollback()
 
 
 @pytest_asyncio.fixture

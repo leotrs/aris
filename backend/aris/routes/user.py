@@ -154,8 +154,20 @@ async def change_password(
     
     # Hash new password and update
     user.password_hash = hash_password(password_data.new_password)
-    await db.commit()
+    
+    # Ensure user is properly tracked in current session
     await db.refresh(user)
+    db.add(user)
+    
+    try:
+        await db.commit()
+        await db.refresh(user)
+    except Exception as e:
+        await db.rollback()
+        # Handle case where user was deleted/modified between read and update
+        if "StaleDataError" in str(type(e)) or "expected to update 1 row" in str(e):
+            raise HTTPException(status_code=404, detail="User no longer exists or was modified by another operation")
+        raise
     
     return {"message": "Password changed successfully"}
 
@@ -200,6 +212,7 @@ async def send_verification_email(
     # Generate verification token
     user.generate_verification_token()
     user.email_verification_sent_at = datetime.now(UTC)
+    db.add(user)  # Re-add to session to ensure it's tracked
     await db.commit()
     
     # TODO: In production, send actual email with verification link
@@ -260,6 +273,7 @@ async def verify_email(
     user.email_verified = True  # type: ignore
     user.email_verification_token = None  # type: ignore
     user.email_verification_sent_at = None  # type: ignore
+    db.add(user)  # Re-add to session to ensure it's tracked
     await db.commit()
     
     return {"message": "Email verified successfully"}
