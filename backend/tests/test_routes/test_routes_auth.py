@@ -150,8 +150,9 @@ async def test_login_invalid_password(client: AsyncClient):
 async def test_e2e_test_user_login(client: AsyncClient, db_session):
     """Test that the E2E test user can login successfully."""
     # First check if the test user already exists
-    from aris.models import User
     from sqlalchemy import select
+    
+    from aris.models import User
     
     test_email = "testuser@aris.pub"
     result = await db_session.execute(select(User).where(User.email == test_email))
