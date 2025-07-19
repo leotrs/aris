@@ -22,8 +22,9 @@
   const error = ref(null);
 
   // Active citation format
-  const activeFormat = ref("APA");
-  const formatOptions = ["APA", "BibTeX", "Chicago", "MLA"];
+  const activeFormatIndex = ref(0);
+  const formatOptions = ["APA", "Chicago", "MLA", "BibTeX"];
+  const activeFormat = computed(() => formatOptions[activeFormatIndex.value]);
 
   // Copy functionality
   const copySuccess = ref(false);
@@ -71,7 +72,8 @@
   };
 
   // Copy citation to clipboard
-  const copyCitation = async () => {
+  const copyCitation = async (event) => {
+    event.stopPropagation();
     if (!formattedCitation.value) return;
 
     try {
@@ -100,16 +102,19 @@
   };
 
   // Download BibTeX file
-  const downloadBibTeX = () => {
+  const downloadBibTeX = (event) => {
+    event.stopPropagation();
     const link = document.createElement("a");
     link.href = bibtexDownloadUrl.value;
     link.download = `${props.identifier}.bib`;
     link.click();
   };
 
-  // Handle format change
-  const handleFormatChange = (index) => {
-    activeFormat.value = formatOptions[index];
+  // Handle format change from SegmentedControl
+  const handleFormatChange = (event) => {
+    // Prevent modal from closing when changing formats
+    event?.stopPropagation();
+    // The activeFormatIndex is handled by v-model automatically
   };
 
   // Watch for modal open/close
@@ -131,13 +136,19 @@
 </script>
 
 <template>
-  <Modal
-    :is-open="isOpen"
-    :title="citationData?.title || 'Citation'"
-    :width="700"
-    @close="handleClose"
-    @open="handleModalOpen"
-  >
+  <Modal :is-open="isOpen" :width="700" @close="handleClose" @open="handleModalOpen">
+    <template #header>
+      <div class="modal-header">
+        <span class="header-title">Cite</span>
+        <Button
+          icon="X"
+          size="sm"
+          kind="tertiary"
+          data-testid="close-modal-button"
+          @click="handleClose"
+        />
+      </div>
+    </template>
     <div class="citation-modal">
       <!-- Loading state -->
       <div v-if="isLoading" class="loading-state">
@@ -153,14 +164,37 @@
       </div>
 
       <!-- Citation content -->
-      <div v-else-if="citationData" class="citation-content">
-        <!-- Format selector -->
-        <div class="format-selector">
-          <SegmentedControl
-            :labels="formatOptions"
-            :default-active="0"
-            @change="handleFormatChange"
-          />
+      <div v-else-if="citationData" class="citation-content" @click.stop>
+        <!-- Format selector with inline action buttons -->
+        <div class="format-controls" @click.stop>
+          <div class="format-selector">
+            <SegmentedControl
+              v-model="activeFormatIndex"
+              :labels="formatOptions"
+              :default-active="0"
+              @change="handleFormatChange"
+            />
+          </div>
+
+          <div class="citation-actions">
+            <Button
+              :icon="copySuccess ? 'Check' : 'Copy'"
+              size="sm"
+              kind="secondary"
+              :class="{ 'copy-success': copySuccess }"
+              data-testid="copy-citation-button"
+              @click="copyCitation"
+            />
+
+            <Button
+              v-if="activeFormat === 'BibTeX'"
+              icon="Download"
+              size="sm"
+              kind="secondary"
+              data-testid="download-bibtex-button"
+              @click="downloadBibTeX"
+            />
+          </div>
         </div>
 
         <!-- Citation display -->
@@ -172,48 +206,6 @@
           >
             {{ formattedCitation }}
           </div>
-
-          <!-- Action buttons -->
-          <div class="citation-actions">
-            <Button
-              :icon="copySuccess ? 'Check' : 'Copy'"
-              size="sm"
-              kind="secondary"
-              :class="{ 'copy-success': copySuccess }"
-              @click="copyCitation"
-            >
-              {{ copyButtonText }}
-            </Button>
-
-            <Button
-              v-if="activeFormat === 'BibTeX'"
-              icon="Download"
-              size="sm"
-              kind="secondary"
-              @click="downloadBibTeX"
-            >
-              Download .bib
-            </Button>
-          </div>
-        </div>
-
-        <!-- Reference manager section -->
-        <div class="reference-manager-section">
-          <h4>Export to Reference Manager</h4>
-          <div class="export-options">
-            <Button
-              icon="FileText"
-              size="sm"
-              kind="tertiary"
-              class="export-button"
-              @click="downloadBibTeX"
-            >
-              <div class="export-button-content">
-                <span>BibTeX (.bib)</span>
-                <span class="export-note">For Zotero, Mendeley, LaTeX</span>
-              </div>
-            </Button>
-          </div>
         </div>
 
         <!-- Author and metadata section -->
@@ -222,19 +214,44 @@
           <AuthorMetadataDisplay
             :preprint="citationData"
             :citation-data="citationData.citation_info"
+            :show-abstract="false"
+            :show-license="false"
           />
         </div>
 
-        <!-- SEO notice -->
-        <div class="seo-notice">
-          <Icon name="Info" class="info-icon" />
-          <p>
-            This preprint is also available as a
-            <a :href="staticHtmlUrl" target="_blank" class="static-link">
-              search engine optimized page
-            </a>
-            for academic indexing.
-          </p>
+        <!-- Links section -->
+        <div class="links-section">
+          <h4>Links</h4>
+          <div class="links-list">
+            <div class="link-item">
+              <a :href="`/ication/${props.identifier}`" class="link">
+                <Icon name="Link" class="link-icon" />
+                Permalink
+              </a>
+            </div>
+            <div class="link-item">
+              <a :href="staticHtmlUrl" target="_blank" class="link">
+                <Icon name="Search" class="link-icon" />
+                SEO-optimized version
+              </a>
+            </div>
+            <div class="link-item">
+              <a href="#" class="link disabled">
+                <Icon name="Crown" class="link-icon" />
+                Premium link
+                <span class="upgrade-note">Upgrade to Pro</span>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- License section -->
+        <div class="license-section">
+          <h4>License</h4>
+          <div class="license-content">
+            <span class="license-text">All rights reserved</span>
+            <span class="license-note">© {{ new Date().getFullYear() }} Unknown Author</span>
+          </div>
         </div>
       </div>
     </div>
@@ -242,8 +259,22 @@
 </template>
 
 <style scoped>
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .header-title {
+    font-weight: 600;
+    color: var(--gray-900);
+    flex: 1;
+  }
+
   .citation-modal {
-    padding: 20px;
+    padding: 0;
+    padding-inline: 8px;
   }
 
   .loading-state {
@@ -288,9 +319,23 @@
     gap: 24px;
   }
 
-  .format-selector {
+  .format-controls {
     display: flex;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .format-selector {
+    flex: 1;
+    display: flex;
+    justify-content: flex-start;
+  }
+
+  .citation-actions {
+    display: flex;
+    gap: 8px;
+    flex-shrink: 0;
   }
 
   .citation-display {
@@ -318,49 +363,23 @@
     line-height: 1.4;
   }
 
-  .citation-actions {
-    display: flex;
-    gap: 12px;
-    justify-content: flex-end;
+  @media (max-width: 500px) {
+    .format-controls {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .format-selector {
+      justify-content: flex-start;
+    }
+
+    .citation-actions {
+      justify-content: flex-start;
+    }
   }
 
   .copy-success {
     color: var(--green-600) !important;
-  }
-
-  .reference-manager-section {
-    border-top: 1px solid var(--border-primary);
-    padding-top: 20px;
-  }
-
-  .reference-manager-section h4 {
-    margin: 0 0 12px 0;
-    font-size: 16px;
-    font-weight: 600;
-    color: var(--gray-900);
-  }
-
-  .export-options {
-    display: flex;
-    gap: 12px;
-  }
-
-  .export-button {
-    flex: 1;
-    min-width: 0;
-  }
-
-  .export-button-content {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-  }
-
-  .export-note {
-    font-size: 12px;
-    color: var(--gray-500);
-    font-weight: normal;
   }
 
   .metadata-section {
@@ -375,29 +394,92 @@
     color: var(--gray-900);
   }
 
-  .seo-notice {
+  .links-section {
+    border-top: 1px solid var(--border-primary);
+    padding-top: 20px;
+  }
+
+  .links-section h4 {
+    margin: 0 0 16px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-900);
+  }
+
+  .links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .link-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .link {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: var(--blue-50);
-    border: 1px solid var(--blue-200);
-    border-radius: 8px;
-    padding: 12px;
-    font-size: 13px;
-    color: var(--blue-800);
-  }
-
-  .info-icon {
     color: var(--blue-600);
-    flex-shrink: 0;
+    text-decoration: none;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
   }
 
-  .static-link {
-    color: var(--blue-600);
-    text-decoration: underline;
-  }
-
-  .static-link:hover {
+  .link:hover:not(.disabled) {
+    background-color: var(--blue-50);
     color: var(--blue-700);
+  }
+
+  .link.disabled {
+    color: var(--gray-400);
+    cursor: not-allowed;
+  }
+
+  .link-icon {
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+
+  .upgrade-note {
+    margin-left: auto;
+    font-size: 12px;
+    color: var(--orange-600);
+    background: var(--orange-50);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: 500;
+  }
+
+  .license-section {
+    border-top: 1px solid var(--border-primary);
+    padding-top: 20px;
+  }
+
+  .license-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--gray-900);
+  }
+
+  .license-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .license-text {
+    font-size: 14px;
+    color: var(--gray-900);
+    font-weight: 500;
+  }
+
+  .license-note {
+    font-size: 12px;
+    color: var(--gray-600);
   }
 </style>

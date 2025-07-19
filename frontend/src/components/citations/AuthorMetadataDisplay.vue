@@ -10,6 +10,14 @@
       type: Object,
       required: true,
     },
+    showAbstract: {
+      type: Boolean,
+      default: true,
+    },
+    showLicense: {
+      type: Boolean,
+      default: true,
+    },
   });
 
   // Format publication date
@@ -105,7 +113,7 @@
     <div class="metadata-section">
       <h4 class="section-title">
         <Icon name="FileText" class="section-icon" />
-        Publication Details
+        Details
       </h4>
       <div class="publication-grid">
         <div class="detail-item">
@@ -134,13 +142,6 @@
             {{ preprint.doi }}
           </a>
         </div>
-
-        <div class="detail-item">
-          <span class="detail-label">Permalink:</span>
-          <a :href="permalinkUrl" class="detail-value detail-link">
-            {{ permalinkUrl }}
-          </a>
-        </div>
       </div>
     </div>
 
@@ -158,7 +159,7 @@
     </div>
 
     <!-- Abstract Section -->
-    <div v-if="preprint.abstract" class="metadata-section">
+    <div v-if="showAbstract && preprint.abstract" class="metadata-section">
       <h4 class="section-title">
         <Icon name="AlignLeft" class="section-icon" />
         Abstract
@@ -169,7 +170,7 @@
     </div>
 
     <!-- License Section -->
-    <div class="metadata-section">
+    <div v-if="showLicense" class="metadata-section">
       <h4 class="section-title">
         <Icon name="Scale" class="section-icon" />
         License
@@ -297,8 +298,14 @@
 
   .publication-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 24px;
+  }
+
+  @media (max-width: 600px) {
+    .publication-grid {
+      grid-template-columns: 1fr;
+    }
   }
 
   .detail-item {
