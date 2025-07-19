@@ -191,10 +191,11 @@ async def test_create_user_duplicate_email_raises(db_session, test_user):
 
 async def test_update_user_with_affiliation(db_session, test_user):
     """Test updating user with affiliation field."""
-    updated = await update_user(test_user.id, "New Name", "NN", "new@example.com", db_session, affiliation="MIT")
+    unique_email = f"new_{uuid.uuid4().hex[:8]}@example.com"
+    updated = await update_user(test_user.id, "New Name", "NN", unique_email, db_session, affiliation="MIT")
     assert updated.name == "New Name"
     assert updated.initials == "NN"
-    assert updated.email == "new@example.com"
+    assert updated.email == unique_email
     assert updated.affiliation == "MIT"
 
 

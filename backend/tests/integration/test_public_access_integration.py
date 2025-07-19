@@ -4,6 +4,7 @@ Tests the complete public access workflow including database interactions,
 endpoint behavior, and cross-system integration without authentication.
 """
 
+import uuid
 from datetime import datetime, timezone
 
 import pytest
@@ -87,7 +88,7 @@ class TestPublicAccessIntegration:
         # Create user
         user = User(
             name="Permalink User",
-            email="permalink@example.com",
+            email=f"permalink_{uuid.uuid4().hex[:8]}@example.com",
             password_hash="test_hash"
         )
         db_session.add(user)

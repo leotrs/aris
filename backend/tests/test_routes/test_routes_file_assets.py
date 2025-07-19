@@ -144,14 +144,16 @@ async def test_list_assets_with_data(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image
 ):
     """Test listing assets when user has assets."""
+    import uuid
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    unique_filename = f"test_{uuid.uuid4().hex[:8]}.png"
 
     # Create an asset
     await client.post(
         "/assets",
         headers=headers,
         json={
-            "filename": "test.png",
+            "filename": unique_filename,
             "mime_type": "image/png",
             "content": valid_base64_image,
             "file_id": test_file["id"],
@@ -163,7 +165,7 @@ async def test_list_assets_with_data(
     assert response.status_code == 200
     assets = response.json()
     assert len(assets) == 1
-    assert assets[0]["filename"] == "test.png"
+    assert assets[0]["filename"] == unique_filename
     assert assets[0]["deleted_at"] is None
 
 
@@ -185,14 +187,16 @@ async def test_get_asset_success(
     client: AsyncClient, authenticated_user, test_file, valid_base64_image
 ):
     """Test successfully getting an asset."""
+    import uuid
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    unique_filename = f"test_{uuid.uuid4().hex[:8]}.png"
 
     # Create an asset
     create_response = await client.post(
         "/assets",
         headers=headers,
         json={
-            "filename": "test.png",
+            "filename": unique_filename,
             "mime_type": "image/png",
             "content": valid_base64_image,
             "file_id": test_file["id"],
@@ -205,7 +209,7 @@ async def test_get_asset_success(
     assert response.status_code == 200
     data = response.json()
     assert data["id"] == asset_id
-    assert data["filename"] == "test.png"
+    assert data["filename"] == unique_filename
     assert data["content"] == valid_base64_image
 
 
@@ -226,11 +230,12 @@ async def test_get_asset_different_user(client: AsyncClient, test_file, valid_ba
     )
     user1_headers = {"Authorization": f"Bearer {user1_response.json()['access_token']}"}
 
+    unique_filename = f"test_{uuid.uuid4().hex[:8]}.png"
     create_response = await client.post(
         "/assets",
         headers=user1_headers,
         json={
-            "filename": "test.png",
+            "filename": unique_filename,
             "mime_type": "image/png",
             "content": valid_base64_image,
             "file_id": test_file["id"],

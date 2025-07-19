@@ -5,6 +5,7 @@ across the database schema, including publication fields, versioning,
 and constraint validation.
 """
 
+import uuid
 from datetime import datetime, timezone
 
 import pytest
@@ -249,13 +250,13 @@ class TestPublicationStatusIntegration:
             ("Under Review", FileStatus.UNDER_REVIEW, None, None, None),
         ]
         
-        for title, status, uuid, slug, pub_at in test_data:
+        for title, status, pub_uuid, slug, pub_at in test_data:
             file = File(
                 owner_id=test_user.id,
                 source=f":rsm:{title} content::",
                 title=title,
                 status=status,
-                public_uuid=uuid,
+                public_uuid=pub_uuid,
                 permalink_slug=slug,
                 published_at=pub_at
             )
@@ -495,7 +496,7 @@ class TestPublicationStatusE2E:
         # Create user
         user = User(
             name="Permalink User",
-            email="permalink@example.com",
+            email=f"permalink_{uuid.uuid4().hex[:8]}@example.com",
             password_hash="test_hash"
         )
         db_session.add(user)

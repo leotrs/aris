@@ -40,8 +40,10 @@ async def create_test_file(client: AsyncClient, headers: dict, user_id: int):
 
 async def upload_profile_picture(client: AsyncClient, headers: dict, user_id: int, format="PNG"):
     """Helper to upload a profile picture and return the response."""
+    import uuid
     test_image = create_test_image(format)
-    files = {"avatar": (f"test.{format.lower()}", test_image, f"image/{format.lower()}")}
+    unique_filename = f"test_{uuid.uuid4().hex[:8]}.{format.lower()}"
+    files = {"avatar": (unique_filename, test_image, f"image/{format.lower()}")}
     return await client.post(f"/users/{user_id}/avatar", headers=headers, files=files)
 
 
@@ -71,10 +73,12 @@ class TestUserEndpoints:
 
     async def test_update_user_success(self, client: AsyncClient, authenticated_user, auth_headers):
         """Test updating user details."""
+        import uuid
+        unique_email = f"updated_{uuid.uuid4().hex[:8]}@example.com"
         update_data = {
             "name": TestConstants.UPDATED_NAME,
             "initials": TestConstants.UPDATED_INITIALS,
-            "email": TestConstants.UPDATED_EMAIL,
+            "email": unique_email,
         }
         response = await client.put(
             f"/users/{authenticated_user['user_id']}", headers=auth_headers, json=update_data
@@ -83,14 +87,16 @@ class TestUserEndpoints:
         data = response.json()
         assert data["name"] == TestConstants.UPDATED_NAME
         assert data["initials"] == TestConstants.UPDATED_INITIALS
-        assert data["email"] == TestConstants.UPDATED_EMAIL
+        assert data["email"] == unique_email
 
     async def test_update_user_with_affiliation(self, client: AsyncClient, authenticated_user, auth_headers):
         """Test updating user with affiliation."""
+        import uuid
+        unique_email = f"updated_{uuid.uuid4().hex[:8]}@example.com"
         update_data = {
             "name": TestConstants.UPDATED_NAME,
             "initials": TestConstants.UPDATED_INITIALS,
-            "email": TestConstants.UPDATED_EMAIL,
+            "email": unique_email,
             "affiliation": "MIT"
         }
         response = await client.put(
@@ -100,16 +106,18 @@ class TestUserEndpoints:
         data = response.json()
         assert data["name"] == TestConstants.UPDATED_NAME
         assert data["initials"] == TestConstants.UPDATED_INITIALS
-        assert data["email"] == TestConstants.UPDATED_EMAIL
+        assert data["email"] == unique_email
         assert data["affiliation"] == "MIT"
 
     async def test_update_user_clear_affiliation(self, client: AsyncClient, authenticated_user, auth_headers):
         """Test clearing user affiliation."""
+        import uuid
+        unique_email = f"updated_{uuid.uuid4().hex[:8]}@example.com"
         # First set affiliation
         update_data = {
             "name": TestConstants.UPDATED_NAME,
             "initials": TestConstants.UPDATED_INITIALS,
-            "email": TestConstants.UPDATED_EMAIL,
+            "email": unique_email,
             "affiliation": "Stanford"
         }
         await client.put(
@@ -321,10 +329,12 @@ class TestUserEndpoints2:
 
     async def test_update_user_not_found(self, client: AsyncClient, auth_headers):
         """Test updating non-existent user."""
+        import uuid
+        unique_email = f"updated_{uuid.uuid4().hex[:8]}@example.com"
         update_data = {
             "name": TestConstants.UPDATED_NAME,
             "initials": TestConstants.UPDATED_INITIALS,
-            "email": TestConstants.UPDATED_EMAIL,
+            "email": unique_email,
         }
         response = await client.put(
             f"/users/{TestConstants.NONEXISTENT_ID}", headers=auth_headers, json=update_data
