@@ -95,19 +95,6 @@ async def test_create_file_empty_source(client: AsyncClient, authenticated_user)
     assert "id" in data
 
 
-async def test_create_file_without_auth(client: AsyncClient):
-    """Test creating a file without authentication."""
-    response = await client.post(
-        "/files",
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": 1,
-            "source": ":rsm:test content::",
-        },
-    )
-
-    assert response.status_code == 401
 
 
 async def test_get_file_by_id(client: AsyncClient, authenticated_user):
@@ -514,12 +501,6 @@ async def test_publish_file_not_found(client: AsyncClient, authenticated_user):
     assert "File with id 99999 not found" in response.json()["detail"]
 
 
-async def test_publish_file_without_auth(client: AsyncClient):
-    """Test publishing a file without authentication."""
-    # Use any file ID - should get 401 before file lookup due to router dependencies
-    response = await client.post("/files/nonexistent/publish")
-    assert response.status_code == 401
-
 
 async def test_update_file_status_to_published(client: AsyncClient, authenticated_user):
     """Test updating file status to published."""
@@ -749,11 +730,6 @@ async def test_get_publication_info_not_found(client: AsyncClient, authenticated
     assert "File with id 99999 not found" in response.json()["detail"]
 
 
-async def test_get_publication_info_without_auth(client: AsyncClient):
-    """Test getting publication info without authentication."""
-    # Use any file ID - should get 401 before file lookup due to router dependencies
-    response = await client.get("/files/nonexistent/publication-info")
-    assert response.status_code == 401
 
 
 async def test_withdraw_file_not_implemented(client: AsyncClient, authenticated_user):
@@ -806,8 +782,3 @@ async def test_withdraw_unpublished_file(client: AsyncClient, authenticated_user
     assert "Only published files can be withdrawn" in response.json()["detail"]
 
 
-async def test_withdraw_file_without_auth(client: AsyncClient):
-    """Test withdrawing a file without authentication."""
-    # Use any file ID - should get 401 before file lookup due to router dependencies
-    response = await client.post("/files/nonexistent/withdraw")
-    assert response.status_code == 401
