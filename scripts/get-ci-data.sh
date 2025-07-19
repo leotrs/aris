@@ -98,10 +98,11 @@ for job_name in $FAILED_JOBS; do
   echo "=== PROCESSING FAILED JOB: $job_name ==="
   
   # Try to download artifacts for this job
-  ARTIFACT_PATTERN="${job_name}-failure"
-  ARTIFACT_LIST=$(gh run download "$RUN_ID" --dir "$TEMP_DIR" --pattern "*failure*" 2>/dev/null || echo "")
+  echo "Attempting to download artifacts for $job_name..."
+  gh run download "$RUN_ID" --dir "$TEMP_DIR" --pattern "*failure*" 2>/dev/null
   
-  if [ -n "$ARTIFACT_LIST" ]; then
+  # Check if any artifacts were actually downloaded
+  if [ -d "$TEMP_DIR" ] && [ "$(find "$TEMP_DIR" -name "failure-summary.json" | wc -l)" -gt 0 ]; then
     ARTIFACTS_FOUND=true
     echo "✅ Downloaded artifacts for $job_name"
     
@@ -131,17 +132,15 @@ for job_name in $FAILED_JOBS; do
       done
     fi
   else
-    echo "❌ No artifacts found for $job_name - falling back to basic job info"
-    # Fallback: basic job information
-    JOB_INFO=$(echo "$FULL_RUN_INFO" | jq --arg job_name "$job_name" '.jobs[] | select(.name == $job_name)')
-    echo "=== BASIC_JOB_INFO ==="
-    echo "$JOB_INFO" | jq '{
-      name: .name,
-      conclusion: .conclusion,
-      started_at: .startedAt,
-      completed_at: .completedAt,
-      steps: [.steps[]? | select(.conclusion == "failure") | {name: .name, conclusion: .conclusion}]
-    }'
+    echo "❌ CRITICAL ERROR: No failure artifacts found for $job_name"
+    echo "This indicates either:"
+    echo "1. The CI run is too old (before artifact collection was implemented)"
+    echo "2. The artifact generation failed"
+    echo "3. The artifacts have expired"
+    echo ""
+    echo "Cannot perform meaningful analysis without failure artifacts."
+    echo "Re-run the CI or use a more recent failure with artifacts."
+    exit 1
   fi
 done
 
@@ -151,11 +150,7 @@ echo ""
 echo "=== SUCCESSFUL_JOBS ==="
 echo "$SUCCESS_JOBS"
 
-if [ "$ARTIFACTS_FOUND" = false ]; then
-  echo ""
-  echo "⚠️  No failure artifacts found. This may be an older CI run before artifact collection was implemented."
-  echo "Consider re-running the CI to get detailed failure artifacts."
-fi
+# Note: If we reach here, all artifacts were found successfully
 
 # Get additional context data
 echo ""
