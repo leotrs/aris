@@ -422,19 +422,22 @@ async def test_create_file_missing_required_fields(client: AsyncClient, authenti
 
 async def test_publish_file_success(client: AsyncClient, authenticated_user):
     """Test successfully publishing a file."""
+    import uuid
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    unique_title = f"Test Document {uuid.uuid4().hex[:8]}"
 
     # Create a file first
     create_response = await client.post(
         "/files",
         headers=headers,
         json={
-            "title": "Test Document",
+            "title": unique_title,
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
             "source": ":rsm:test content::",
         },
     )
+    assert create_response.status_code == 200
     file_id = create_response.json()["id"]
 
     # Publish the file
