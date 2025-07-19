@@ -18,8 +18,12 @@ test.describe("Citation Modal Behavior", () => {
     await expect(page.locator('[role="dialog"]')).toBeVisible();
 
     // Modal should have citation content
-    await expect(page.locator('[role="dialog"]')).toContainText("Unknown Author");
-    await expect(page.locator('[role="dialog"]')).toContainText("Test Citation Paper");
+    await expect(page.locator('[role="dialog"]')).toContainText(
+      "Dr. Sarah Chen, Prof. Michael Rodriguez"
+    );
+    await expect(page.locator('[role="dialog"]')).toContainText(
+      "Sample Research Paper: The Future of Web-Native Publishing"
+    );
   });
 
   test("citation modal should NOT close when clicking format tabs @demo-content", async ({

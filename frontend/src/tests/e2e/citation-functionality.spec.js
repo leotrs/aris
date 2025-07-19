@@ -35,7 +35,7 @@ test.describe("Citation Modal Functionality", () => {
     await page.click('.sc-wrapper button:has-text("BibTeX")');
     await expect(page.locator('.sc-wrapper button:has-text("BibTeX")')).toHaveClass(/active/);
     await page.waitForTimeout(500); // Allow format switch to complete
-    await expect(page.locator(".citation-text")).toContainText("@article{test01,");
+    await expect(page.locator(".citation-text")).toContainText("@article{chen2025future,");
 
     // BibTeX should show download button
     await expect(page.locator('[data-testid="download-bibtex-button"]')).toBeVisible();
@@ -45,7 +45,7 @@ test.describe("Citation Modal Functionality", () => {
     await expect(page.locator('.sc-wrapper button:has-text("Chicago")')).toHaveClass(/active/);
     await page.waitForTimeout(500); // Allow format switch to complete
     await expect(page.locator(".citation-text")).toContainText(
-      'Sample Research Paper: The Future of Web-Native Publishing'
+      "Sample Research Paper: The Future of Web-Native Publishing"
     );
 
     // Test MLA format
@@ -53,7 +53,7 @@ test.describe("Citation Modal Functionality", () => {
     await expect(page.locator('.sc-wrapper button:has-text("MLA")')).toHaveClass(/active/);
     await page.waitForTimeout(500); // Allow format switch to complete
     await expect(page.locator(".citation-text")).toContainText(
-      'Sample Research Paper: The Future of Web-Native Publishing'
+      "Sample Research Paper: The Future of Web-Native Publishing"
     );
 
     // Test copy functionality
@@ -72,7 +72,9 @@ test.describe("Citation Modal Functionality", () => {
     await expect(page.locator('h4:has-text("Links")')).toBeVisible();
     await expect(page.locator('h4:has-text("Publication Information")')).toBeVisible();
     await expect(page.locator("text=Authors")).toBeVisible();
-    await expect(page.locator('.author-name:has-text("Dr. Sarah Chen, Prof. Michael Rodriguez")')).toBeVisible();
+    await expect(
+      page.locator('.author-name:has-text("Dr. Sarah Chen, Prof. Michael Rodriguez")')
+    ).toBeVisible();
   });
 
   test("citation modal keyboard shortcut @demo-content", async ({ page }) => {
@@ -125,7 +127,9 @@ test.describe("Citation Modal Functionality", () => {
     await expect(page.locator(".citation-text")).toBeVisible();
     const bibtexText = await page.locator(".citation-text").textContent();
     expect(bibtexText).toContain("@article{chen2025future,");
-    expect(bibtexText).toContain("title={Sample Research Paper: The Future of Web-Native Publishing}");
+    expect(bibtexText).toContain(
+      "title={Sample Research Paper: The Future of Web-Native Publishing}"
+    );
     expect(bibtexText).toContain("author={Chen, Sarah and Rodriguez, Michael}");
     expect(bibtexText).toContain("year={2025}");
     expect(bibtexText).toContain("publisher={Aris Preprint}");

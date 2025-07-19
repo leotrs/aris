@@ -175,7 +175,7 @@
               @change="handleFormatChange"
             />
           </div>
-          
+
           <div class="citation-actions">
             <Button
               :icon="copySuccess ? 'Check' : 'Copy'"
@@ -368,11 +368,11 @@
       flex-direction: column;
       gap: 12px;
     }
-    
+
     .format-selector {
       justify-content: flex-start;
     }
-    
+
     .citation-actions {
       justify-content: flex-start;
     }
