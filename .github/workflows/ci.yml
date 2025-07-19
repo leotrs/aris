@@ -251,9 +251,12 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and seed mock data
       working-directory: backend
-      run: uv run alembic upgrade head
+      run: |
+        uv run alembic upgrade head
+        echo "🌱 Seeding mock data for E2E tests..."
+        uv run python scripts/add_mock_data.py
 
     - name: Cache Playwright browsers
       uses: actions/cache@v4
@@ -443,6 +446,11 @@ jobs:
         uv run alembic upgrade head
         MIGRATION_EXIT_CODE=$?
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Seed mock data for E2E tests
+        echo "🌱 Seeding mock data for E2E tests..."
+        uv run python scripts/add_mock_data.py
+        echo "📊 Mock data seeding completed"
 
         # Setup test user for enabled auth mode
         if [ "${{ matrix.test-type }}" = "auth" ]; then
@@ -596,10 +604,12 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and seed mock data
       working-directory: backend
       run: |
         uv run alembic upgrade head
+        echo "🌱 Seeding mock data for E2E tests..."
+        uv run python scripts/add_mock_data.py
         ${{ matrix.test-type == 'auth' && 'uv run python scripts/reset_test_user.py' || '' }}
 
     - name: Setup Node.js
@@ -751,6 +761,11 @@ jobs:
         uv run alembic upgrade head
         MIGRATION_EXIT_CODE=$?
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Seed mock data for E2E tests
+        echo "🌱 Seeding mock data for E2E tests..."
+        uv run python scripts/add_mock_data.py
+        echo "📊 Mock data seeding completed"
 
         # Setup test user for enabled auth mode
         if [ "${{ matrix.test-type }}" = "auth" ]; then
@@ -923,6 +938,11 @@ jobs:
         uv run alembic upgrade head
         MIGRATION_EXIT_CODE=$?
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Seed mock data for E2E tests
+        echo "🌱 Seeding mock data for E2E tests..."
+        uv run python scripts/add_mock_data.py
+        echo "📊 Mock data seeding completed"
 
         # Setup test user for enabled auth mode
         if [ "${{ matrix.test-type }}" = "auth" ]; then
@@ -1090,10 +1110,12 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations
+    - name: Run database migrations and seed mock data
       working-directory: backend
       run: |
         uv run alembic upgrade head
+        echo "🌱 Seeding mock data for E2E tests..."
+        uv run python scripts/add_mock_data.py
         ${{ matrix.test-type == 'auth' && 'uv run python scripts/reset_test_user.py' || '' }}
 
     - name: Setup Node.js
@@ -1245,6 +1267,11 @@ jobs:
         uv run alembic upgrade head
         MIGRATION_EXIT_CODE=$?
         echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
+        
+        # Seed mock data for E2E tests
+        echo "🌱 Seeding mock data for E2E tests..."
+        uv run python scripts/add_mock_data.py
+        echo "📊 Mock data seeding completed"
 
         # Setup test user for enabled auth mode
         if [ "${{ matrix.test-type }}" = "auth" ]; then

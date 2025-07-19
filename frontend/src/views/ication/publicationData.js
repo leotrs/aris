@@ -1,64 +1,15 @@
 // Publication data service for fetching published preprint content
 import { File } from "@/models/File.js";
-import { demoFile } from "@/views/demo/demoData.js";
-
-// Demo preprint data for testing citation modal
-const demoPreprintData = {
-  id: 999,
-  title: "Sample Research Paper: The Future of Web-Native Publishing",
-  source: demoFile.source,
-  abstract: "This paper explores the revolutionary potential of web-native scientific publishing platforms in transforming how research is disseminated, consumed, and validated. We examine the limitations of traditional PDF-based publishing and propose a new paradigm that leverages modern web technologies to create interactive, accessible, and dynamic research documents.",
-  keywords: "web-native, publishing, research, interactive, accessibility",
-  authors: "Dr. Sarah Chen, Prof. Michael Rodriguez",
-  version: 1,
-  public_uuid: "demo",
-  permalink_slug: "future-web-native-publishing",
-  published_at: "2025-01-15T10:00:00Z",
-  last_edited_at: "2025-01-15T09:45:00Z",
-  tags: ["research", "publishing", "web-technology"],
-  citation_info: {
-    title: "Sample Research Paper: The Future of Web-Native Publishing",
-    authors: "Dr. Sarah Chen, Prof. Michael Rodriguez",
-    published_year: 2025,
-    abstract: "This paper explores the revolutionary potential of web-native scientific publishing platforms in transforming how research is disseminated, consumed, and validated.",
-    keywords: "web-native, publishing, research, interactive, accessibility",
-    formats: {
-      apa: "Chen, S., & Rodriguez, M. (2025). Sample Research Paper: The Future of Web-Native Publishing. Aris Preprint.",
-      bibtex: `@article{chen2025future,
-  title={Sample Research Paper: The Future of Web-Native Publishing},
-  author={Chen, Sarah and Rodriguez, Michael},
-  year={2025},
-  publisher={Aris Preprint}
-}`,
-      chicago: "Chen, Sarah, and Michael Rodriguez. \"Sample Research Paper: The Future of Web-Native Publishing.\" Aris Preprint, 2025.",
-      mla: "Chen, Sarah, and Michael Rodriguez. \"Sample Research Paper: The Future of Web-Native Publishing.\" Aris Preprint, 2025."
-    }
-  },
-  settings: {
-    background: "#ffffff",
-    fontSize: "18px",
-    fontFamily: "'Source Sans 3', sans-serif",
-    lineHeight: "1.6",
-    marginWidth: "64px",
-  }
-};
 
 // Fetch preprint data and convert to File-compatible format
 export const fetchPublicationData = async (identifier) => {
   try {
-    let preprintData;
-    
-    // Handle demo identifier specially
-    if (identifier === "demo") {
-      preprintData = demoPreprintData;
-    } else {
-      // Fetch preprint data from backend using fetch (no auth required)
-      const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/ication/${identifier}`);
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-      preprintData = await response.json();
+    // Fetch preprint data from backend using fetch (no auth required)
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/ication/${identifier}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     }
+    const preprintData = await response.json();
 
     // Convert to File-compatible format
     const publicationFile = new File({
@@ -97,11 +48,6 @@ export const fetchPublicationData = async (identifier) => {
 // Fetch citation metadata for a preprint
 export const fetchCitationMetadata = async (identifier) => {
   try {
-    // Handle demo identifier specially
-    if (identifier === "demo") {
-      return demoPreprintData;
-    }
-    
     const response = await fetch(
       `${import.meta.env.VITE_API_BASE_URL}/ication/${identifier}/metadata`
     );
