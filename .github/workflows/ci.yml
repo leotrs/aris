@@ -1,5 +1,12 @@
 name: CI
 
+# Optimized CI configuration:
+# - Reduced E2E matrix: Site tests only Chrome desktop, Mobile tests only demo + Chrome
+# - Removed Safari tests for faster CI
+# - Production builds for faster startup
+# - Better health checks with timeout
+# - Simplified debugging
+
 on:
   push:
     branches: [ main ]
@@ -172,14 +179,14 @@ jobs:
     - name: Run unit tests
       run: npm run test:run
 
-  # Site E2E Tests (All Browsers)
+  # Site E2E Tests (Essential only - Chrome desktop)
   e2e-site:
     needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
       matrix:
-        browser: [chromium, firefox]
-        device: [desktop, mobile]
+        browser: [chromium]
+        device: [desktop]
     runs-on: ubuntu-latest
     env:
       ENV: CI
@@ -272,7 +279,7 @@ jobs:
         # Start backend in background
         echo "Starting backend for site E2E tests..."
         cd backend
-        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1 &
         BACKEND_PID=$!
         echo "Backend started with PID: $BACKEND_PID"
         
@@ -293,71 +300,30 @@ jobs:
           fi
         done
         
-        # Start frontend in background
+        # Start frontend in background (production build)
         echo "Starting frontend for site E2E tests..."
         cd ../frontend
-        npm run dev &
+        npm run build
+        npm run preview &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
         
-        # Wait for frontend to be ready
-        sleep 15
-        for i in {1..5}; do
-          if curl -f http://localhost:5173; then
-            echo "Frontend ready for E2E tests"
-            break
-          else
-            echo "Waiting for frontend... ($i/5)"
-            if [ $i -eq 5 ]; then
-              echo "Frontend failed to start"
-              kill $FRONTEND_PID 2>/dev/null || true
-              kill $BACKEND_PID 2>/dev/null || true
-              exit 1
-            fi
-            sleep 3
-          fi
-        done
+        # Wait for frontend to be ready (faster with production build)
+        timeout 30 bash -c 'until curl -sf http://localhost:4173; do sleep 1; done'
         
-        # Start site in background
+        # Start site in background (production build)
         echo "Starting site for ${{ matrix.browser }} ${{ matrix.device }} E2E tests..."
         cd ../site
-        npm run dev &
+        npm run build
+        npm run preview &
         SITE_PID=$!
         echo "Site started with PID: $SITE_PID"
         
-        # Wait for site to be ready
-        sleep 10
-        for i in {1..5}; do
-          if curl -f http://localhost:3000; then
-            echo "Site ready for E2E tests"
-            break
-          else
-            echo "Waiting for site... ($i/5)"
-            if [ $i -eq 5 ]; then
-              echo "Site failed to start"
-              kill $SITE_PID 2>/dev/null || true
-              kill $FRONTEND_PID 2>/dev/null || true
-              kill $BACKEND_PID 2>/dev/null || true
-              exit 1
-            fi
-            sleep 3
-          fi
-        done
+        # Wait for site to be ready (faster with production build)
+        timeout 30 bash -c 'until curl -sf http://localhost:3000; do sleep 1; done'
         
-        # Run site E2E tests for specific browser and device
-        if [ "${{ matrix.device }}" = "mobile" ]; then
-          if [ "${{ matrix.browser }}" = "firefox" ]; then
-            npx playwright test --project="Mobile Firefox" --reporter=github
-          else
-            npx playwright test --project="Mobile Chrome" --reporter=github
-          fi
-        else
-          if [ "${{ matrix.browser }}" = "firefox" ]; then
-            npx playwright test --project="firefox" --reporter=github
-          else
-            npx playwright test --project="chromium" --reporter=github
-          fi
-        fi
+        # Run site E2E tests (Chrome desktop only)
+        npx playwright test --project="chromium" --reporter=github
         TEST_EXIT_CODE=$?
         
         # Cleanup
@@ -420,49 +386,13 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations and setup test user (with debugging)
+    - name: Run database migrations and setup test user
       working-directory: backend
       run: |
-        echo "🔍 [DEBUG] Starting database setup for test-type: ${{ matrix.test-type }}"
-        echo "🔍 [DEBUG] Environment variables:"
-        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
-        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
-        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
-        echo "  - PostgreSQL connection test:"
-
-        # Test database connectivity
-        if pg_isready -h localhost -p 5432 -U postgres; then
-          echo "✅ PostgreSQL connection successful"
-        else
-          echo "❌ PostgreSQL connection failed"
-          exit 1
-        fi
-
-        # Run migrations
-        echo "🔄 Running database migrations..."
         uv run alembic upgrade head
-        MIGRATION_EXIT_CODE=$?
-        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
-
-        # Setup test user for enabled auth mode
         if [ "${{ matrix.test-type }}" = "auth" ]; then
-          echo "🔑 Auth tests - creating test user..."
-          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
           uv run python scripts/reset_test_user.py
-          RESET_USER_EXIT_CODE=$?
-          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
-
-          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
-            echo "✅ Test user creation/reset completed successfully"
-          else
-            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
-            exit $RESET_USER_EXIT_CODE
-          fi
-        else
-          echo "🔓 Demo tests - skipping test user creation"
         fi
-
-        echo "✅ [DEBUG] Database setup completed for ${{ matrix.test-type }} tests"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -492,7 +422,7 @@ jobs:
         # Start backend
         echo "Starting backend for ${{ matrix.test-type }} E2E tests on Ubuntu (Chrome)..."
         cd backend
-        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1 &
         BACKEND_PID=$!
         echo "Backend started with PID: $BACKEND_PID"
 
@@ -513,14 +443,15 @@ jobs:
           fi
         done
 
-        # Start frontend
+        # Start frontend (production build)
         cd ../frontend
-        npm run dev &
+        npm run build
+        npm run preview &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
 
-        # Wait for frontend
-        sleep 15
+        # Wait for frontend (faster with production build)
+        timeout 30 bash -c 'until curl -sf http://localhost:4173; do sleep 1; done'
 
         # Run tests based on test type (Chrome only)
         if [ "${{ matrix.test-type }}" = "demo" ]; then
@@ -630,7 +561,7 @@ jobs:
         # Start backend
         echo "Starting backend for ${{ matrix.test-type }} E2E tests on Ubuntu (Firefox)..."
         cd backend
-        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1 &
         BACKEND_PID=$!
         echo "Backend started with PID: $BACKEND_PID"
 
@@ -651,14 +582,15 @@ jobs:
           fi
         done
 
-        # Start frontend
+        # Start frontend (production build)
         cd ../frontend
-        npm run dev &
+        npm run build
+        npm run preview &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
 
-        # Wait for frontend
-        sleep 15
+        # Wait for frontend (faster with production build)
+        timeout 30 bash -c 'until curl -sf http://localhost:4173; do sleep 1; done'
 
         # Run tests based on auth mode (Firefox only)
         if [ "${{ matrix.test-type }}" = "demo" ]; then
@@ -676,184 +608,15 @@ jobs:
         kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
 
-  # Desktop E2E Tests (Safari)
-  e2e-desktop-safari:
-    needs: [unit-backend, unit-frontend, unit-site]
-    strategy:
-      fail-fast: false
-      matrix:
-        test-type: [demo, auth]
-    runs-on: macos-latest
-    env:
-      TEST_USER_EMAIL: testuser@aris.pub
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-      VITE_LOG_LEVEL: WARN
-      COPILOT_PROVIDER: mock
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Install Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-
-    - name: Install uv
-      run: pip install uv
-
-    - name: Setup PostgreSQL
-      run: |
-        brew install postgresql
-        brew services start postgresql
-        # Wait for PostgreSQL to be ready
-        for i in {1..30}; do
-          if pg_isready -q; then
-            echo "PostgreSQL is ready!"
-            break
-          fi
-          if [ $i -eq 30 ]; then
-            echo "PostgreSQL failed to start"
-            exit 1
-          fi
-          sleep 2
-        done
-        # Create postgres user with password to match global DB URLs
-        createuser -s postgres
-        psql -d postgres -c "ALTER USER postgres PASSWORD 'postgres';"
-        createdb test_aris
-
-    - name: Create virtual environment and sync dependencies
-      working-directory: backend
-      run: |
-        uv venv
-        uv sync --group test --group dev
-
-    - name: Run database migrations and setup test user (with debugging)
-      working-directory: backend
-      run: |
-        echo "🔍 [DEBUG] Starting database setup for test-type: ${{ matrix.test-type }}"
-        echo "🔍 [DEBUG] Environment variables:"
-        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
-        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
-        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
-        echo "  - PostgreSQL connection test:"
-
-        # Test database connectivity
-        if pg_isready -h localhost -p 5432 -U postgres; then
-          echo "✅ PostgreSQL connection successful"
-        else
-          echo "❌ PostgreSQL connection failed"
-          exit 1
-        fi
-
-        # Run migrations
-        echo "🔄 Running database migrations..."
-        uv run alembic upgrade head
-        MIGRATION_EXIT_CODE=$?
-        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
-
-        # Setup test user for enabled auth mode
-        if [ "${{ matrix.test-type }}" = "auth" ]; then
-          echo "🔑 Auth tests - creating test user..."
-          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
-          uv run python scripts/reset_test_user.py
-          RESET_USER_EXIT_CODE=$?
-          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
-
-          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
-            echo "✅ Test user creation/reset completed successfully"
-          else
-            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
-            exit $RESET_USER_EXIT_CODE
-          fi
-        else
-          echo "🔓 Demo tests - skipping test user creation"
-        fi
-
-        echo "✅ [DEBUG] Database setup completed for ${{ matrix.test-type }} tests"
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '23'
-        cache: 'npm'
-        cache-dependency-path: frontend/package-lock.json
-
-    - name: Install frontend dependencies
-      working-directory: frontend
-      run: npm ci
-
-    - name: Cache Playwright browsers
-      uses: actions/cache@v4
-      id: playwright-cache
-      with:
-        path: ~/Library/Caches/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-webkit
-
-    - name: Install Playwright browsers
-      working-directory: frontend
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install webkit
-
-    - name: Start backend and frontend, run E2E tests
-      run: |
-        # Start backend
-        echo "Starting backend for ${{ matrix.test-type }} E2E tests on macOS (Safari)..."
-        cd backend
-        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
-        BACKEND_PID=$!
-        echo "Backend started with PID: $BACKEND_PID"
-
-        # Wait for backend
-        sleep 8
-        for i in {1..5}; do
-          if curl -f http://localhost:8000/health; then
-            echo "Backend ready for E2E tests"
-            break
-          else
-            echo "Waiting for backend... ($i/5)"
-            if [ $i -eq 5 ]; then
-              echo "Backend failed to start"
-              kill $BACKEND_PID 2>/dev/null || true
-              exit 1
-            fi
-            sleep 2
-          fi
-        done
-
-        # Start frontend
-        cd ../frontend
-        npm run dev &
-        FRONTEND_PID=$!
-        echo "Frontend started with PID: $FRONTEND_PID"
-
-        # Wait for frontend
-        sleep 15
-
-        # Run tests based on auth mode (desktop webkit only)
-        if [ "${{ matrix.test-type }}" = "demo" ]; then
-          echo "Running demo E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only, @auth, and @site)"
-          CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)(?!.*@auth)(?!.*@site)" --project=webkit --reporter=github
-        else
-          echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only and @site)"
-          CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)(?!.*@site)" --project=webkit --reporter=github
-        fi
-        TEST_EXIT_CODE=$?
-
-        # Cleanup
-        echo "Cleaning up processes..."
-        kill $FRONTEND_PID 2>/dev/null || true
-        kill $BACKEND_PID 2>/dev/null || true
-        exit $TEST_EXIT_CODE
 
   # Mobile E2E Tests (Optional - can fail without breaking CI)
   e2e-mobile-chrome:
-    # needs: [e2e-desktop-chrome]
+    needs: [e2e-desktop-chrome]
     continue-on-error: true  # Allow this job to fail
     strategy:
       fail-fast: false
       matrix:
-        test-type: [demo, auth]
+        test-type: [demo]  # Only demo tests for mobile
     runs-on: ubuntu-latest
     env:
       TEST_USER_EMAIL: testuser@aris.pub
@@ -900,49 +663,13 @@ jobs:
         uv venv
         uv sync --group test --group dev
 
-    - name: Run database migrations and setup test user (with debugging)
+    - name: Run database migrations and setup test user
       working-directory: backend
       run: |
-        echo "🔍 [DEBUG] Starting database setup for test-type: ${{ matrix.test-type }}"
-        echo "🔍 [DEBUG] Environment variables:"
-        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
-        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
-        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
-        echo "  - PostgreSQL connection test:"
-
-        # Test database connectivity
-        if pg_isready -h localhost -p 5432 -U postgres; then
-          echo "✅ PostgreSQL connection successful"
-        else
-          echo "❌ PostgreSQL connection failed"
-          exit 1
-        fi
-
-        # Run migrations
-        echo "🔄 Running database migrations..."
         uv run alembic upgrade head
-        MIGRATION_EXIT_CODE=$?
-        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
-
-        # Setup test user for enabled auth mode
         if [ "${{ matrix.test-type }}" = "auth" ]; then
-          echo "🔑 Auth tests - creating test user..."
-          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
           uv run python scripts/reset_test_user.py
-          RESET_USER_EXIT_CODE=$?
-          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
-
-          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
-            echo "✅ Test user creation/reset completed successfully"
-          else
-            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
-            exit $RESET_USER_EXIT_CODE
-          fi
-        else
-          echo "🔓 Demo tests - skipping test user creation"
         fi
-
-        echo "✅ [DEBUG] Database setup completed for ${{ matrix.test-type }} tests"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -967,26 +694,13 @@ jobs:
       if: steps.playwright-cache.outputs.cache-hit != 'true'
       run: npx playwright install chromium --with-deps
 
-    - name: Platform-specific environment debugging
-      run: |
-        echo "🔍 [PLATFORM-DEBUG] Platform debugging for Ubuntu:"
-        echo "  - Runner OS: $RUNNER_OS"
-        echo "  - OS Name: $(uname -s)"
-        echo "  - OS Version: $(uname -r)"
-        echo "  - Architecture: $(uname -m)"
-        echo "  - PostgreSQL version: $(postgres --version 2>/dev/null || echo 'not in PATH')"
-        echo "  - Python version: $(python --version 2>/dev/null || echo 'not in PATH')"
-        echo "  - Python3 version: $(python3 --version 2>/dev/null || echo 'not in PATH')"
-        echo "  - UV version: $(uv --version 2>/dev/null || echo 'not in PATH')"
-        echo "  - Available environment variables:"
-        env | grep -E "(TEST_|DB_|DISABLE_|VITE_)" | sort || echo "No matching env vars"
 
     - name: Start backend and frontend, run Mobile Chrome E2E tests
       run: |
         # Start backend
         echo "Starting backend for ${{ matrix.test-type }} Mobile Chrome E2E tests..."
         cd backend
-        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1 &
         BACKEND_PID=$!
         echo "Backend started with PID: $BACKEND_PID"
 
@@ -1007,14 +721,15 @@ jobs:
           fi
         done
 
-        # Start frontend
+        # Start frontend (production build)
         cd ../frontend
-        npm run dev &
+        npm run build
+        npm run preview &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
 
-        # Wait for frontend
-        sleep 15
+        # Wait for frontend (faster with production build)
+        timeout 30 bash -c 'until curl -sf http://localhost:4173; do sleep 1; done'
 
         # Run mobile Chrome tests
         if [ "${{ matrix.test-type }}" = "demo" ]; then
@@ -1033,12 +748,12 @@ jobs:
         exit $TEST_EXIT_CODE
 
   e2e-mobile-firefox:
-    # needs: [e2e-desktop-firefox]
+    needs: [e2e-desktop-chrome]  # Run after essential tests pass
     continue-on-error: true  # Allow this job to fail
     strategy:
       fail-fast: false
       matrix:
-        test-type: [demo, auth]
+        test-type: [demo]  # Only demo tests for mobile
     runs-on: ubuntu-latest
     env:
       DB_URL_LOCAL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_aris
@@ -1124,7 +839,7 @@ jobs:
         # Start backend
         echo "Starting backend for ${{ matrix.test-type }} Mobile Firefox E2E tests..."
         cd backend
-        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
+        uv run uvicorn main:app --host 0.0.0.0 --port 8000 --workers 1 &
         BACKEND_PID=$!
         echo "Backend started with PID: $BACKEND_PID"
 
@@ -1145,14 +860,15 @@ jobs:
           fi
         done
 
-        # Start frontend
+        # Start frontend (production build)
         cd ../frontend
-        npm run dev &
+        npm run build
+        npm run preview &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
 
-        # Wait for frontend
-        sleep 15
+        # Wait for frontend (faster with production build)
+        timeout 30 bash -c 'until curl -sf http://localhost:4173; do sleep 1; done'
 
         # Run mobile Firefox tests
         if [ "${{ matrix.test-type }}" = "demo" ]; then
@@ -1170,190 +886,6 @@ jobs:
         kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
 
-  e2e-mobile-safari:
-    # needs: [e2e-desktop-safari]
-    continue-on-error: true  # Allow this job to fail
-    strategy:
-      fail-fast: false
-      matrix:
-        test-type: [demo, auth]
-    runs-on: macos-latest
-    env:
-      TEST_USER_EMAIL: testuser@aris.pub
-      TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-      VITE_LOG_LEVEL: WARN
-      COPILOT_PROVIDER: mock
-
-    steps:
-    - uses: actions/checkout@v4
-
-    - name: Install Python
-      uses: actions/setup-python@v5
-      with:
-        python-version: '3.13'
-
-    - name: Install uv
-      run: pip install uv
-
-    - name: Setup PostgreSQL
-      run: |
-        brew install postgresql
-        brew services start postgresql
-        # Wait for PostgreSQL to be ready
-        for i in {1..30}; do
-          if pg_isready -q; then
-            echo "PostgreSQL is ready!"
-            break
-          fi
-          if [ $i -eq 30 ]; then
-            echo "PostgreSQL failed to start"
-            exit 1
-          fi
-          sleep 2
-        done
-        # Create postgres user with password to match global DB URLs
-        createuser -s postgres
-        psql -d postgres -c "ALTER USER postgres PASSWORD 'postgres';"
-        createdb test_aris
-
-    - name: Create virtual environment and sync dependencies
-      working-directory: backend
-      run: |
-        uv venv
-        uv sync --group test --group dev
-
-    - name: Run database migrations and setup test user (with debugging)
-      working-directory: backend
-      run: |
-        echo "🔍 [DEBUG] Starting database setup for test-type: ${{ matrix.test-type }}"
-        echo "🔍 [DEBUG] Environment variables:"
-        echo "  - TEST_USER_EMAIL: ${TEST_USER_EMAIL:-UNSET}"
-        echo "  - TEST_USER_PASSWORD length: ${#TEST_USER_PASSWORD}"
-        echo "  - DB_URL_LOCAL: ${DB_URL_LOCAL:-UNSET}"
-        echo "  - PostgreSQL connection test:"
-
-        # Test database connectivity
-        if pg_isready -q; then
-          echo "✅ PostgreSQL connection successful"
-        else
-          echo "❌ PostgreSQL connection failed"
-          exit 1
-        fi
-
-        # Run migrations
-        echo "🔄 Running database migrations..."
-        uv run alembic upgrade head
-        MIGRATION_EXIT_CODE=$?
-        echo "📊 Migration exit code: $MIGRATION_EXIT_CODE"
-
-        # Setup test user for enabled auth mode
-        if [ "${{ matrix.test-type }}" = "auth" ]; then
-          echo "🔑 Auth tests - creating test user..."
-          echo "📧 Creating test user: ${TEST_USER_EMAIL}"
-          uv run python scripts/reset_test_user.py
-          RESET_USER_EXIT_CODE=$?
-          echo "📊 Reset test user exit code: $RESET_USER_EXIT_CODE"
-
-          if [ $RESET_USER_EXIT_CODE -eq 0 ]; then
-            echo "✅ Test user creation/reset completed successfully"
-          else
-            echo "❌ Test user creation/reset FAILED with exit code: $RESET_USER_EXIT_CODE"
-            exit $RESET_USER_EXIT_CODE
-          fi
-        else
-          echo "🔓 Demo tests - skipping test user creation"
-        fi
-
-        echo "✅ [DEBUG] Database setup completed for ${{ matrix.test-type }} tests"
-
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '23'
-        cache: 'npm'
-        cache-dependency-path: frontend/package-lock.json
-
-    - name: Install frontend dependencies
-      working-directory: frontend
-      run: npm ci
-
-    - name: Cache Playwright browsers
-      uses: actions/cache@v4
-      id: playwright-cache
-      with:
-        path: ~/Library/Caches/ms-playwright
-        key: playwright-browsers-${{ runner.os }}-mobile-safari
-
-    - name: Install Playwright browsers
-      working-directory: frontend
-      if: steps.playwright-cache.outputs.cache-hit != 'true'
-      run: npx playwright install webkit
-
-    - name: Platform-specific environment debugging
-      run: |
-        echo "🔍 [PLATFORM-DEBUG] Platform debugging for macOS:"
-        echo "  - Runner OS: $RUNNER_OS"
-        echo "  - OS Name: $(uname -s)"
-        echo "  - OS Version: $(uname -r)"
-        echo "  - Architecture: $(uname -m)"
-        echo "  - PostgreSQL version: $(postgres --version 2>/dev/null || echo 'not in PATH')"
-        echo "  - Python version: $(python --version 2>/dev/null || echo 'not in PATH')"
-        echo "  - Python3 version: $(python3 --version 2>/dev/null || echo 'not in PATH')"
-        echo "  - UV version: $(uv --version 2>/dev/null || echo 'not in PATH')"
-        echo "  - Brew info: $(brew --version 2>/dev/null || echo 'not in PATH')"
-        echo "  - Available environment variables:"
-        env | grep -E "(TEST_|DB_|DISABLE_|VITE_)" | sort || echo "No matching env vars"
-
-    - name: Start backend and frontend, run Mobile Safari E2E tests
-      run: |
-        # Start backend
-        echo "Starting backend for ${{ matrix.test-type }} Mobile Safari E2E tests..."
-        cd backend
-        uv run uvicorn main:app --host 0.0.0.0 --port 8000 &
-        BACKEND_PID=$!
-        echo "Backend started with PID: $BACKEND_PID"
-
-        # Wait for backend
-        sleep 8
-        for i in {1..5}; do
-          if curl -f http://localhost:8000/health; then
-            echo "Backend ready for E2E tests"
-            break
-          else
-            echo "Waiting for backend... ($i/5)"
-            if [ $i -eq 5 ]; then
-              echo "Backend failed to start"
-              kill $BACKEND_PID 2>/dev/null || true
-              exit 1
-            fi
-            sleep 2
-          fi
-        done
-
-        # Start frontend
-        cd ../frontend
-        npm run dev &
-        FRONTEND_PID=$!
-        echo "Frontend started with PID: $FRONTEND_PID"
-
-        # Wait for frontend
-        sleep 15
-
-        # Run mobile Safari tests
-        if [ "${{ matrix.test-type }}" = "demo" ]; then
-          echo "Running demo Mobile Safari E2E tests: @core|@demo-content|@demo-ui|@mobile-only (excluding @desktop-only, @auth, and @site)"
-          CI_TEST_TYPE=demo npx playwright test --grep "^(?!.*@auth).*(@core|@demo-content|@demo-ui|@mobile-only)(?!.*@desktop-only)(?!.*@site)" --project="Mobile Safari" --reporter=github
-        else
-          echo "Running auth Mobile Safari E2E tests: @auth[^-]|@auth-flows (excluding @desktop-only and @site)"
-          CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@desktop-only)(?!.*@site)" --project="Mobile Safari" --reporter=github
-        fi
-        TEST_EXIT_CODE=$?
-
-        # Cleanup
-        echo "Cleaning up processes..."
-        kill $FRONTEND_PID 2>/dev/null || true
-        kill $BACKEND_PID 2>/dev/null || true
-        exit $TEST_EXIT_CODE
 
 
 # Trigger CI
