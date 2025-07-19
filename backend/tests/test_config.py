@@ -45,3 +45,8 @@ def test_missing_required_env_vars(monkeypatch):
         monkeypatch.delenv(key, raising=False)
     with pytest.raises(ValidationError):
         Settings(_env_file=None)
+
+
+def test_force_ci_failure():
+    """Force CI failure to test artifact generation."""
+    assert False, "FORCED FAILURE: Testing CI artifact generation system"
