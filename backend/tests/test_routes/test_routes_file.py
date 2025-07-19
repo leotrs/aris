@@ -112,14 +112,16 @@ async def test_create_file_without_auth(client: AsyncClient):
 
 async def test_get_file_by_id(client: AsyncClient, authenticated_user):
     """Test getting a specific file by ID."""
+    import uuid
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    unique_title = f"Test Document {uuid.uuid4().hex[:8]}"
 
     # First create a file
     create_response = await client.post(
         "/files",
         headers=headers,
         json={
-            "title": "Test Document",
+            "title": unique_title,
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
             "source": ":rsm:test content::",
@@ -134,7 +136,7 @@ async def test_get_file_by_id(client: AsyncClient, authenticated_user):
 
     data = response.json()
     assert int(data["id"]) == int(file_id)
-    assert data["title"] == "Test Document"
+    assert data["title"] == unique_title
     assert data["abstract"] == "A test document"
     assert data["source"] == ":rsm:test content::"
     assert data["owner_id"] == authenticated_user["user_id"]
@@ -519,14 +521,16 @@ async def test_publish_file_without_auth(client: AsyncClient):
 
 async def test_update_file_status_to_published(client: AsyncClient, authenticated_user):
     """Test updating file status to published."""
+    import uuid
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    unique_title = f"Test Document {uuid.uuid4().hex[:8]}"
 
     # Create a file
     create_response = await client.post(
         "/files",
         headers=headers,
         json={
-            "title": "Test Document",
+            "title": unique_title,
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
             "source": ":rsm:test content::",
@@ -581,14 +585,16 @@ async def test_update_file_status_to_draft(client: AsyncClient, authenticated_us
 
 async def test_update_file_status_to_under_review(client: AsyncClient, authenticated_user):
     """Test updating file status to under review."""
+    import uuid
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    unique_title = f"Test Document {uuid.uuid4().hex[:8]}"
 
     # Create a file
     create_response = await client.post(
         "/files",
         headers=headers,
         json={
-            "title": "Test Document",
+            "title": unique_title,
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
             "source": ":rsm:test content::",
@@ -639,14 +645,16 @@ async def test_update_file_status_invalid_status(client: AsyncClient, authentica
 
 async def test_update_published_file_status_forbidden(client: AsyncClient, authenticated_user):
     """Test that published files cannot be unpublished."""
+    import uuid
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    unique_title = f"Test Document {uuid.uuid4().hex[:8]}"
 
     # Create and publish a file
     create_response = await client.post(
         "/files",
         headers=headers,
         json={
-            "title": "Test Document",
+            "title": unique_title,
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
             "source": ":rsm:test content::",
@@ -753,14 +761,16 @@ async def test_get_publication_info_without_auth(client: AsyncClient):
 
 async def test_withdraw_file_not_implemented(client: AsyncClient, authenticated_user):
     """Test withdrawing a file (not fully implemented yet)."""
+    import uuid
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    unique_title = f"Test Document {uuid.uuid4().hex[:8]}"
 
     # Create and publish a file
     create_response = await client.post(
         "/files",
         headers=headers,
         json={
-            "title": "Test Document",
+            "title": unique_title,
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
             "source": ":rsm:test content::",
@@ -779,14 +789,16 @@ async def test_withdraw_file_not_implemented(client: AsyncClient, authenticated_
 
 async def test_withdraw_unpublished_file(client: AsyncClient, authenticated_user):
     """Test withdrawing an unpublished file."""
+    import uuid
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    unique_title = f"Test Document {uuid.uuid4().hex[:8]}"
 
     # Create a file (but don't publish it)
     create_response = await client.post(
         "/files",
         headers=headers,
         json={
-            "title": "Test Document",
+            "title": unique_title,
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
             "source": ":rsm:test content::",
