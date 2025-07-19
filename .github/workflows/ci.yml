@@ -748,7 +748,7 @@ jobs:
         exit $TEST_EXIT_CODE
 
   e2e-mobile-firefox:
-    needs: [e2e-desktop-chrome]  # Run after essential tests pass
+    needs: [e2e-desktop-firefox]  # Run after desktop Firefox tests pass
     continue-on-error: true  # Allow this job to fail
     strategy:
       fail-fast: false
