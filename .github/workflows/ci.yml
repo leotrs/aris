@@ -34,12 +34,18 @@ env:
   DB_URL_CONTAINER: postgresql+asyncpg://postgres:postgres@postgres:5432/test_aris
   ALEMBIC_DB_URL_CONTAINER: postgresql+psycopg2://postgres:postgres@postgres:5432/test_aris
   JWT_SECRET_KEY: test_secret_key_for_ci_environment_32_chars_minimum
+  # Test user credentials for all jobs
+  TEST_USER_EMAIL: testuser@aris.pub
+  TEST_USER_PASSWORD: testpassword123
+  # Ensure GitHub Actions detection works correctly
+  GITHUB_ACTIONS: true
 
 jobs:
   # Unit Tests and Linting (Parallel)
   unit-backend:
     runs-on: ubuntu-latest
     env:
+      TEST_USER_EMAIL: testuser@aris.pub
       TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD || 'testpassword123' }}
 
     services:
