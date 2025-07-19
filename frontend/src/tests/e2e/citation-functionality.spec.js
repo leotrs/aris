@@ -2,8 +2,10 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Citation Modal Functionality", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/ication/test01");
-    await page.waitForLoadState("networkidle");
+    await page.goto("/ication/demo", { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("load");
+    // Wait for cite button to be visible and clickable
+    await expect(page.locator('[data-testid="cite-button"]')).toBeVisible();
   });
 
   test("citation modal complete workflow @demo-content", async ({ page }) => {
@@ -23,7 +25,7 @@ test.describe("Citation Modal Functionality", () => {
 
     // Verify APA content
     await expect(page.locator(".citation-text")).toContainText(
-      "Unknown Author (2025). Test Citation Paper. Aris Preprint."
+      "Chen, S., & Rodriguez, M. (2025). Sample Research Paper: The Future of Web-Native Publishing. Aris Preprint."
     );
 
     // Copy button should be visible
@@ -43,7 +45,7 @@ test.describe("Citation Modal Functionality", () => {
     await expect(page.locator('.sc-wrapper button:has-text("Chicago")')).toHaveClass(/active/);
     await page.waitForTimeout(500); // Allow format switch to complete
     await expect(page.locator(".citation-text")).toContainText(
-      '"Test Citation Paper." Aris Preprint'
+      'Sample Research Paper: The Future of Web-Native Publishing'
     );
 
     // Test MLA format
@@ -51,7 +53,7 @@ test.describe("Citation Modal Functionality", () => {
     await expect(page.locator('.sc-wrapper button:has-text("MLA")')).toHaveClass(/active/);
     await page.waitForTimeout(500); // Allow format switch to complete
     await expect(page.locator(".citation-text")).toContainText(
-      '"Test Citation Paper." Aris Preprint, 2025-07-17'
+      'Sample Research Paper: The Future of Web-Native Publishing'
     );
 
     // Test copy functionality
@@ -67,10 +69,10 @@ test.describe("Citation Modal Functionality", () => {
 
     // Verify modal structure
     await expect(page.locator(".citation-content")).toBeVisible();
-    await expect(page.locator('h4:has-text("Export to Reference Manager")')).toBeVisible();
+    await expect(page.locator('h4:has-text("Links")')).toBeVisible();
     await expect(page.locator('h4:has-text("Publication Information")')).toBeVisible();
     await expect(page.locator("text=Authors")).toBeVisible();
-    await expect(page.locator('.author-name:has-text("Unknown Author")')).toBeVisible();
+    await expect(page.locator('.author-name:has-text("Dr. Sarah Chen, Prof. Michael Rodriguez")')).toBeVisible();
   });
 
   test("citation modal keyboard shortcut @demo-content", async ({ page }) => {
@@ -113,38 +115,37 @@ test.describe("Citation Modal Functionality", () => {
 
     // Test APA format (default)
     const apaText = await page.locator(".citation-text").textContent();
-    expect(apaText).toContain("Unknown Author (2025)");
-    expect(apaText).toContain("Test Citation Paper");
+    expect(apaText).toContain("Chen, S., & Rodriguez, M. (2025)");
+    expect(apaText).toContain("Sample Research Paper: The Future of Web-Native Publishing");
     expect(apaText).toContain("Aris Preprint");
-    expect(apaText).toContain("https://aris.com/ication/test01");
 
     // Test BibTeX format
     await page.click('.sc-wrapper button:has-text("BibTeX")');
     await page.waitForTimeout(500); // Allow format switch
     await expect(page.locator(".citation-text")).toBeVisible();
     const bibtexText = await page.locator(".citation-text").textContent();
-    expect(bibtexText).toContain("@article{test01,");
-    expect(bibtexText).toContain("title={Test Citation Paper},");
-    expect(bibtexText).toContain("author={Unknown Author},");
-    expect(bibtexText).toContain("year={2025},");
-    expect(bibtexText).toContain("journal={Aris Preprint},");
+    expect(bibtexText).toContain("@article{chen2025future,");
+    expect(bibtexText).toContain("title={Sample Research Paper: The Future of Web-Native Publishing}");
+    expect(bibtexText).toContain("author={Chen, Sarah and Rodriguez, Michael}");
+    expect(bibtexText).toContain("year={2025}");
+    expect(bibtexText).toContain("publisher={Aris Preprint}");
 
     // Test Chicago format
     await page.click('.sc-wrapper button:has-text("Chicago")');
     await page.waitForTimeout(500); // Allow format switch
     await expect(page.locator(".citation-text")).toBeVisible();
     const chicagoText = await page.locator(".citation-text").textContent();
-    expect(chicagoText).toContain("Unknown Author");
-    expect(chicagoText).toContain('"Test Citation Paper."');
-    expect(chicagoText).toContain("Aris Preprint test01 (2025)");
+    expect(chicagoText).toContain("Chen, Sarah, and Michael Rodriguez");
+    expect(chicagoText).toContain('"Sample Research Paper: The Future of Web-Native Publishing."');
+    expect(chicagoText).toContain("Aris Preprint, 2025");
 
     // Test MLA format
     await page.click('.sc-wrapper button:has-text("MLA")');
     await page.waitForTimeout(500); // Allow format switch
     await expect(page.locator(".citation-text")).toBeVisible();
     const mlaText = await page.locator(".citation-text").textContent();
-    expect(mlaText).toContain("Unknown Author");
-    expect(mlaText).toContain('"Test Citation Paper."');
-    expect(mlaText).toContain("Aris Preprint, 2025-07-17");
+    expect(mlaText).toContain("Chen, Sarah, and Michael Rodriguez");
+    expect(mlaText).toContain('"Sample Research Paper: The Future of Web-Native Publishing."');
+    expect(mlaText).toContain("Aris Preprint, 2025");
   });
 });

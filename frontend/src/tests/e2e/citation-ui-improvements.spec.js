@@ -2,8 +2,10 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Citation Modal UI Improvements", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/ication/test01");
-    await page.waitForLoadState("networkidle");
+    await page.goto("/ication/demo", { waitUntil: "domcontentloaded" });
+    await page.waitForLoadState("load");
+    // Wait for cite button to be visible and clickable
+    await expect(page.locator('[data-testid="cite-button"]')).toBeVisible();
   });
 
   test("citation modal should have proper header with title and close button @demo-content", async ({
