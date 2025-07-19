@@ -513,7 +513,8 @@ async def test_publish_file_not_found(client: AsyncClient, authenticated_user):
 
 async def test_publish_file_without_auth(client: AsyncClient):
     """Test publishing a file without authentication."""
-    response = await client.post("/files/1/publish")
+    # Use any file ID - should get 401 before file lookup due to router dependencies
+    response = await client.post("/files/nonexistent/publish")
     assert response.status_code == 401
 
 
@@ -747,7 +748,8 @@ async def test_get_publication_info_not_found(client: AsyncClient, authenticated
 
 async def test_get_publication_info_without_auth(client: AsyncClient):
     """Test getting publication info without authentication."""
-    response = await client.get("/files/1/publication-info")
+    # Use any file ID - should get 401 before file lookup due to router dependencies
+    response = await client.get("/files/nonexistent/publication-info")
     assert response.status_code == 401
 
 
@@ -803,5 +805,6 @@ async def test_withdraw_unpublished_file(client: AsyncClient, authenticated_user
 
 async def test_withdraw_file_without_auth(client: AsyncClient):
     """Test withdrawing a file without authentication."""
-    response = await client.post("/files/1/withdraw")
+    # Use any file ID - should get 401 before file lookup due to router dependencies
+    response = await client.post("/files/nonexistent/withdraw")
     assert response.status_code == 401
