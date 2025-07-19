@@ -1,8 +1,9 @@
 import asyncio
 
-from sqlalchemy import select, delete, text
+from sqlalchemy import delete, text
+
 from aris import ArisSession
-from aris.models import MOCK_FILES, MOCK_TAGS, MOCK_USERS, User, File, Tag
+from aris.models import MOCK_FILES, MOCK_TAGS, MOCK_USERS, File, Tag, User
 
 
 async def main():
