@@ -9,18 +9,23 @@ thinking-mode: ultra-hard
 Generate a comprehensive Product Requirements Document for a new feature and save it to a markdown file.
 
 **Usage:**
-- `/prd <feature-name>` - Generate PRD for the specified feature
+- `/prd <feature-description>` - Generate PRD based on the feature description
 
-Please analyze the current codebase structure and create a PRD for the feature: **$ARGUMENTS**
+Please analyze the current codebase structure and create a PRD based on this description: **$ARGUMENTS**
 
-The PRD will be saved to `.claude/prds/prd-$ARGUMENTS.md` (with spaces replaced by hyphens).
+Based on the description, you should:
+1. **Analyze the description** to understand what feature/functionality is being requested
+2. **Choose an appropriate feature name** that clearly describes what will be built
+3. **Generate a comprehensive PRD** following the template below
+
+The PRD will be saved to `.claude/prds/prd-[chosen-feature-name].md` (with spaces replaced by hyphens).
 
 Use this format:
 
-# Product Requirements Document: $ARGUMENTS
+# Product Requirements Document: [Chosen Feature Name]
 
 ## 1. Executive Summary
-**Feature Name:** $ARGUMENTS
+**Feature Name:** [Chosen Feature Name]
 **Priority:** [High/Medium/Low]
 **Effort Estimate:** [X days/weeks]
 **Developer:** [Individual]
@@ -192,8 +197,17 @@ Brief 2-3 sentence description of what this feature does and why it's important.
 
 **Instructions:**
 1. Use ultra hard thinking mode throughout the entire execution
-2. Analyze the codebase thoroughly using available tools
-3. Generate the complete PRD following the template above
-4. Create the `.claude/prds/` directory if it doesn't exist
-5. Write the final PRD to `.claude/prds/prd-[feature-name-with-hyphens].md`
-6. Confirm the file was written successfully
+2. Analyze the description in $ARGUMENTS to understand what feature is being requested
+3. Choose an appropriate, descriptive feature name based on the description
+4. Analyze the codebase thoroughly using available tools to understand current state
+5. Generate the complete PRD following the template above
+6. Create the `.claude/prds/` directory if it doesn't exist
+7. Write the final PRD to `.claude/prds/prd-[chosen-feature-name-with-hyphens].md`
+8. Confirm the file was written successfully
+
+**Example Usage:**
+- `/prd implement user authentication with OAuth and JWT tokens`
+- `/prd add real-time collaboration features for document editing`
+- `/prd create an admin dashboard for user management`
+
+The command will analyze the description, choose an appropriate feature name (like "oauth-jwt-authentication", "real-time-collaboration", "admin-dashboard"), and generate a comprehensive PRD saved to the appropriate filename.
