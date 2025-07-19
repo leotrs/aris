@@ -273,11 +273,13 @@ async def test_file_settings_base_defaults():
 
 async def test_default_settings_user_isolation(db_session, test_user):
     """Test that default settings are isolated per user"""
-    # Create another user
+    import uuid
+    
+    # Create another user with unique email
+    unique_email = f"user2+{uuid.uuid4().hex[:8]}@example.com"
     user2 = User(
-        id=20,
         name="user two",
-        email="user2@example.com",
+        email=unique_email,
         password_hash="hash2",
     )
     db_session.add(user2)
