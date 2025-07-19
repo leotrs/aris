@@ -1,86 +1,63 @@
 ---
-description: "Analyze CI status for PR (current branch or specified PR number)"
-allowed-tools: Bash(*:*)
+description: "Comprehensive CI failure analysis with automatic root cause investigation"
+allowed-tools: Bash, Grep, Read, Task
 ---
 
-# CI Report Analysis
+# AI-Powered CI Analysis
 
-Gather CI data for GitHub PR and analyze failure patterns.
+Perform comprehensive CI failure analysis including automatic code investigation.
 
 **Usage:**
-- `/ci-report` - Analyze CI for current branch's PR
+- `/ci-report` - Analyze CI for current branch's PR  
 - `/ci-report 123` - Analyze CI for PR #123
 
-!cd "$(git rev-parse --show-toplevel)" && ./scripts/get-ci-data.sh "$ARGUMENTS"
+You are a CI failure analysis expert. Your approach:
 
-Please analyze this CI run data and provide a comprehensive report. The data includes:
+1. **Get Essential Failure Data** - Extract only key error info, not massive logs
+2. **Smart Investigation** - Read only the specific failing test files and error locations
+3. **Root Cause Analysis** - Determine actual underlying issues
+4. **Actionable Fixes** - Provide exact solutions
 
-1. **STRUCTURED JOB DATA** - Overview of all jobs with success/failure status
-2. **LOG_ANALYSIS_JSON** - Detailed analysis of failed job logs with categorized patterns
+**CRITICAL: Do automatic investigation - never output "Code Investigation Required"**
 
-Parse the JSON structure and provide this analysis:
+## Process:
 
-## CI Run Analysis for PR #XX: <PR title>
+### Step 1: Get Targeted CI Data
+Get essential failure information (last 100 lines + key errors per failed job only).
 
-### Overall Status
-- Run ID: <run_id>
-- Branch: <branch>
-- Total Jobs: X
-- Failed Jobs: Y
-- Successful Jobs: Z
+### Step 2: Smart Code Investigation  
+For each failure:
+- Read ONLY the failing test files mentioned in errors
+- Check specific line numbers where failures occurred
+- Look at CI config only if infrastructure issues detected
+- Focus investigation on actual error patterns found
 
-### Detailed Failure Analysis
+### Step 3: Provide Concise Analysis
 
-For EACH failed job, provide:
+## CI Analysis Report for PR #XX: <title>
 
-#### Job: <job_name>
-**Error Summary**: <1-2 sentence summary of what failed>
+### Executive Summary
+- **Critical Issues**: X major problems blocking CI
+- **Root Causes**: <Primary underlying causes>
+- **Impact**: <Which test categories/browsers affected>
+- **Estimated Fix Time**: <How long to resolve>
 
-**Root Cause**: <Deep analysis of the actual underlying issue>
+### Detailed Analysis
 
-**Error Details**:
-- Key error messages found in logs
-- Stack traces (if any)
-- Specific test failures
-- File/line numbers where relevant
-- Any environment or dependency issues
-
-**Error Patterns**: <Note if this error is related to others>
+#### Failed Job: <job_name>
+**Issue**: <Precise problem description>
+**Root Cause**: <Actual underlying cause after code investigation>  
+**Evidence**: <Specific error messages and code examination findings>
+**Solution**: <Exact fix needed with file paths and changes>
 
 ### Cross-Job Pattern Analysis
-- **Test Categories Affected**: (unit tests, E2E tests, site tests, linting, etc.)
-- **Browser/Platform Issues**: (Chrome vs Firefox, desktop vs mobile, etc.)
-- **Common Error Types**: (timeout, assertion failure, network, dependency, etc.)
-- **Failure Correlation**: (Are failures related? Same root cause?)
-- **Infrastructure Issues**: (Docker, network, CI environment problems)
+<Analysis of patterns across multiple failed jobs>
 
-### Comprehensive Diagnosis
-**Primary Issues** (rank by severity and impact):
-1. <Most critical issue with detailed explanation>
-2. <Second most critical issue>
-3. <Additional issues>
+### Immediate Action Plan
+1. **Fix: <specific issue>** - Edit `<file>:<line>` to change `<code>` 
+2. **Fix: <specific issue>** - Add `<config>` to `<file>`
+3. **Verify: <test command>** - Run to confirm fixes
 
-**Secondary Issues** (less critical but should be addressed):
-- <List secondary problems>
-
-### Actionable Remediation Plan
-**Immediate Actions** (fix these first):
-1. <Specific action with exact steps or files to modify>
-2. <Next specific action>
-
-**Follow-up Actions** (after immediate fixes):
-1. <Additional improvements or preventive measures>
-2. <Long-term stability improvements>
-
-**Prevention Strategies**:
-- <How to prevent these issues in the future>
-- <Suggested improvements to CI/testing setup>
-
-### Code Investigation Required
-- **Files to examine**: <List specific files mentioned in errors>
-- **Functions/methods to review**: <Specific code locations>
-- **Dependencies to check**: <Package versions, installations>
-
-Analyze the logs with extreme thoroughness - every error message, every stack trace, every failure detail matters for accurate diagnosis.
+**No additional investigation needed - all analysis complete.**
 
 $ARGUMENTS

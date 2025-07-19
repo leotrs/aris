@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-# CI Data Gathering Script for Claude Analysis
+# Enhanced CI Data Gathering Script with Artifact Analysis
 # Usage: ./get-ci-data.sh [PR_NUMBER]
 
 # Step 1: Determine PR Number
@@ -17,52 +17,37 @@ else
   fi
 fi
 
+# Create temp directory for artifacts
+TEMP_DIR=$(mktemp -d)
+trap "rm -rf $TEMP_DIR" EXIT
+
 # Step 2: Get PR Information
 PR_INFO=$(gh pr view "$PR_NUMBER" --json title,headRefName,statusCheckRollup)
 PR_TITLE=$(echo "$PR_INFO" | jq -r ".title")
 BRANCH_NAME=$(echo "$PR_INFO" | jq -r ".headRefName")
 
-# Step 3: Get Latest Workflow Run
-LATEST_RUN=$(gh run list --branch "$BRANCH_NAME" --limit 1 --json databaseId,status,conclusion,workflowName,createdAt --jq ".[0]")
+# Step 3: Get Most Recent COMPLETED Workflow Run (skip in-progress ones)
+ALL_RUNS=$(gh run list --branch "$BRANCH_NAME" --limit 5 --json databaseId,status,conclusion,workflowName,createdAt)
+LATEST_RUN=$(echo "$ALL_RUNS" | jq '.[] | select(.status == "completed") | select(.workflowName == "CI")' | jq -s '.[0] // empty')
+
+if [ "$(echo "$LATEST_RUN" | jq -r '. // "null"')" = "null" ]; then
+  echo "❌ No completed CI runs found for branch: $BRANCH_NAME"
+  echo "Recent runs:"
+  echo "$ALL_RUNS" | jq '.[] | {status, conclusion, workflowName, createdAt}'
+  exit 1
+fi
+
 RUN_ID=$(echo "$LATEST_RUN" | jq -r ".databaseId")
 RUN_STATUS=$(echo "$LATEST_RUN" | jq -r ".status")
 RUN_CONCLUSION=$(echo "$LATEST_RUN" | jq -r ".conclusion")
 WORKFLOW_NAME=$(echo "$LATEST_RUN" | jq -r ".workflowName")
 
-# Step 4: Cancel if Still Running and Wait for Logs
-if [ "$RUN_STATUS" = "in_progress" ] || [ "$RUN_STATUS" = "queued" ]; then
-  echo "🛑 Cancelling in-progress run $RUN_ID..."
-  gh run cancel "$RUN_ID"
-  echo "Waiting for cancellation and logs to be available..."
+# Step 4: Validate Run is Complete and Has Logs
+echo "📊 Analyzing completed CI run: $RUN_ID"
+echo "📅 Run created: $(echo "$LATEST_RUN" | jq -r ".createdAt")"
+echo "🎯 Conclusion: $RUN_CONCLUSION"
 
-  # Wait for cancellation to complete with retries
-  MAX_WAIT=120  # 2 minutes max
-  WAIT_TIME=0
-  SLEEP_INTERVAL=5
-
-  while [ $WAIT_TIME -lt $MAX_WAIT ]; do
-    sleep $SLEEP_INTERVAL
-    WAIT_TIME=$((WAIT_TIME + SLEEP_INTERVAL))
-
-    # Check if run is completed
-    LATEST_RUN=$(gh run list --branch "$BRANCH_NAME" --limit 1 --json databaseId,status,conclusion,workflowName,createdAt --jq ".[0]")
-    RUN_STATUS=$(echo "$LATEST_RUN" | jq -r ".status")
-    RUN_CONCLUSION=$(echo "$LATEST_RUN" | jq -r ".conclusion")
-
-    if [ "$RUN_STATUS" = "completed" ]; then
-      echo "✅ Run cancelled successfully after ${WAIT_TIME}s"
-      break
-    fi
-
-    echo "⏳ Still waiting for cancellation... (${WAIT_TIME}s elapsed)"
-  done
-
-  if [ "$RUN_STATUS" != "completed" ]; then
-    echo "⚠️ Run may still be cancelling, but proceeding with analysis..."
-  fi
-fi
-
-# Step 5: Get Detailed Job and Log Information as JSON
+# Step 5: Get Comprehensive Job and Log Data
 FULL_RUN_INFO=$(gh run view "$RUN_ID" --json jobs,conclusion,status,name,createdAt,url)
 
 # Extract structured job data
@@ -101,59 +86,89 @@ echo "$FULL_RUN_INFO" | jq '{
   ]
 }'
 
-# Get detailed logs for failed jobs with structured output
-FAILED_JOBS=$(echo "$FULL_RUN_INFO" | jq -r '.jobs[] | select(.conclusion == "failure") | @base64')
-LOGS_RETRIEVAL_FAILED=false
-for job_data in $FAILED_JOBS; do
-  job_info=$(echo "$job_data" | base64 --decode)
-  job_name=$(echo "$job_info" | jq -r '.name')
-  job_id=$(echo "$job_info" | jq -r '.databaseId // .id // "unknown"')
+# Download and analyze failure artifacts
+echo ""
+echo "=== DOWNLOADING FAILURE ARTIFACTS ==="
 
+FAILED_JOBS=$(echo "$FULL_RUN_INFO" | jq -r '.jobs[] | select(.conclusion == "failure") | .name')
+ARTIFACTS_FOUND=false
+
+for job_name in $FAILED_JOBS; do
   echo ""
-  echo "=== FAILED JOB LOGS: $job_name (ID: $job_id) ==="
-
-  if [ "$job_id" != "unknown" ] && [ "$job_id" != "null" ]; then
-    # Get raw logs
-    RAW_LOGS=$(gh run view "$RUN_ID" --job="$job_id" --log 2>/dev/null || echo "Could not retrieve logs for job $job_id")
-
-    # Output structured log analysis as JSON
-    echo "=== LOG_ANALYSIS_JSON ==="
-    echo "$RAW_LOGS" | jq -Rs '{
-      job_name: "'"$job_name"'",
-      job_id: "'"$job_id"'",
-      raw_logs: .,
-      analysis: {
-        test_failures: [
-          (. | split("\n")[] | select(test("FAILED|Error:|FAIL|✗|×|AssertionError|TimeoutError"; "i")))
-        ],
-        file_paths: [
-          (. | match("(?:at |in |/)([a-zA-Z0-9_/-]+\\.(spec|test|js|ts|py))(?::|:([0-9]+)(?::([0-9]+))?)?"; "g") | .string)
-        ] | unique,
-        specific_tests: [
-          (. | split("\n")[] | select(test("describe\\(|it\\(|test\\(|✓|✗|×|PASS|FAIL"; "i")))
-        ],
-        e2e_patterns: [
-          (. | split("\n")[] | select(test("playwright|expect.*toBeVisible|expect.*toHaveText|locator|waitForSelector|TimeoutError"; "i")))
-        ],
-        backend_patterns: [
-          (. | split("\n")[] | select(test("pytest|AssertionError|def test_|FAILED.*\\.py::|ERROR.*\\.py::"; "i")))
-        ],
-        lint_errors: [
-          (. | split("\n")[] | select(test("eslint|ruff|error.*:[0-9]+:[0-9]+|warning.*:[0-9]+:[0-9]+"; "i")))
-        ],
-        build_errors: [
-          (. | split("\n")[] | select(test("ERROR in|Module not found|Cannot resolve|Build failed|npm ERR!"; "i")))
-        ],
-        flaky_indicators: [
-          (. | split("\n")[] | select(test("intermittent|flaky|race condition|timeout.*exceeded|network.*error|connection.*refused"; "i")))
-        ]
-      }
-    }'
+  echo "=== PROCESSING FAILED JOB: $job_name ==="
+  
+  # Try to download artifacts for this job
+  ARTIFACT_PATTERN="${job_name}-failure"
+  ARTIFACT_LIST=$(gh run download "$RUN_ID" --dir "$TEMP_DIR" --pattern "*failure*" 2>/dev/null || echo "")
+  
+  if [ -n "$ARTIFACT_LIST" ]; then
+    ARTIFACTS_FOUND=true
+    echo "✅ Downloaded artifacts for $job_name"
+    
+    # Look for failure summary in downloaded artifacts
+    FAILURE_SUMMARIES=$(find "$TEMP_DIR" -name "failure-summary.json" -exec cat {} \; 2>/dev/null || echo "")
+    
+    if [ -n "$FAILURE_SUMMARIES" ]; then
+      echo "=== ARTIFACT_DATA ==="
+      echo "$FAILURE_SUMMARIES"
+    fi
+    
+    # Look for Playwright reports
+    PLAYWRIGHT_REPORTS=$(find "$TEMP_DIR" -name "*.html" | head -3)
+    if [ -n "$PLAYWRIGHT_REPORTS" ]; then
+      echo "=== PLAYWRIGHT_REPORTS_AVAILABLE ==="
+      echo "$PLAYWRIGHT_REPORTS"
+    fi
+    
+    # Look for test result files
+    TEST_RESULT_FILES=$(find "$TEMP_DIR" -name "*.json" -path "*/test-results/*" | head -5)
+    if [ -n "$TEST_RESULT_FILES" ]; then
+      echo "=== TEST_RESULT_FILES ==="
+      for file in $TEST_RESULT_FILES; do
+        echo "File: $file"
+        cat "$file" 2>/dev/null | head -20 || echo "Could not read file"
+        echo "---"
+      done
+    fi
   else
-    echo "No valid job ID found for $job_name"
-    LOGS_RETRIEVAL_FAILED=true
+    echo "❌ No artifacts found for $job_name - falling back to basic job info"
+    # Fallback: basic job information
+    JOB_INFO=$(echo "$FULL_RUN_INFO" | jq --arg job_name "$job_name" '.jobs[] | select(.name == $job_name)')
+    echo "=== BASIC_JOB_INFO ==="
+    echo "$JOB_INFO" | jq '{
+      name: .name,
+      conclusion: .conclusion,
+      started_at: .startedAt,
+      completed_at: .completedAt,
+      steps: [.steps[]? | select(.conclusion == "failure") | {name: .name, conclusion: .conclusion}]
+    }'
   fi
 done
+
+# Get successful jobs summary
+SUCCESS_JOBS=$(echo "$FULL_RUN_INFO" | jq -r '.jobs[] | select(.conclusion == "success") | .name')
+echo ""
+echo "=== SUCCESSFUL_JOBS ==="
+echo "$SUCCESS_JOBS"
+
+if [ "$ARTIFACTS_FOUND" = false ]; then
+  echo ""
+  echo "⚠️  No failure artifacts found. This may be an older CI run before artifact collection was implemented."
+  echo "Consider re-running the CI to get detailed failure artifacts."
+fi
+
+# Get additional context data
+echo ""
+echo "=== ADDITIONAL_CONTEXT ==="
+echo "CI_CONFIG_INFO:"
+if [ -f ".github/workflows/ci.yml" ]; then
+  echo "CI configuration file exists"
+else
+  echo "❌ CI configuration file missing"
+fi
+
+echo "RECENT_COMMITS:"
+git log --oneline -5 2>/dev/null || echo "Could not get recent commits"
 
 # Exit with error if any logs could not be retrieved
 if [ "$LOGS_RETRIEVAL_FAILED" = true ]; then
