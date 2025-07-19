@@ -97,6 +97,42 @@ async def test_create_file_empty_source(client: AsyncClient, authenticated_user)
 
 
 
+async def test_create_file_without_auth(client: AsyncClient):
+    """Test creating a file without authentication."""
+    response = await client.post(
+        "/files",
+        json={
+            "title": "Test Document",
+            "abstract": "A test document",
+            "owner_id": 1,
+            "source": ":rsm:test content::",
+        },
+    )
+    # Should be rejected - either 401 (no auth) or 403 (forbidden) is fine
+    assert response.status_code in [401, 403]
+
+
+async def test_publish_file_without_auth(client: AsyncClient):
+    """Test publishing a file without authentication."""
+    response = await client.post("/files/1/publish")
+    # Should be rejected - either 401 (no auth) or 403 (forbidden) is fine
+    assert response.status_code in [401, 403]
+
+
+async def test_get_publication_info_without_auth(client: AsyncClient):
+    """Test getting publication info without authentication."""
+    response = await client.get("/files/1/publication-info")
+    # Should be rejected - either 401 (no auth) or 403 (forbidden) is fine
+    assert response.status_code in [401, 403]
+
+
+async def test_withdraw_file_without_auth(client: AsyncClient):
+    """Test withdrawing a file without authentication."""
+    response = await client.post("/files/1/withdraw")
+    # Should be rejected - either 401 (no auth) or 403 (forbidden) is fine
+    assert response.status_code in [401, 403]
+
+
 async def test_get_file_by_id(client: AsyncClient, authenticated_user):
     """Test getting a specific file by ID."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
