@@ -114,7 +114,6 @@ MOCK_FILES = [
         title="Sample Research Paper: The Future of Web-Native Publishing",
         abstract="This paper explores the revolutionary potential of web-native scientific publishing platforms in transforming how research is disseminated, consumed, and validated. We examine the limitations of traditional PDF-based publishing and propose a new paradigm that leverages modern web technologies to create interactive, accessible, and dynamic research documents.",
         keywords="web-native, publishing, research, interactive, accessibility",
-        authors="Dr. Sarah Chen, Prof. Michael Rodriguez",
         status=FileStatus.PUBLISHED,
         published_at=datetime(2025, 1, 15, 10, 0, 0, tzinfo=timezone.utc),
         public_uuid="demo",
