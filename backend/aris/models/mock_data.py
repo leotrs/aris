@@ -116,7 +116,7 @@ MOCK_FILES = [
         keywords="web-native, publishing, research, interactive, accessibility",
         status=FileStatus.PUBLISHED,
         published_at=datetime(2025, 1, 15, 10, 0, 0, tzinfo=timezone.utc),
-        public_uuid="demo",
+        public_uuid="abc123",
         permalink_slug="future-web-native-publishing",
         version=1,
         owner_id=1,

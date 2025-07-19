@@ -2,7 +2,7 @@ import { test, expect } from "@playwright/test";
 
 test.describe("Citation Modal Behavior", () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto("/ication/demo", { waitUntil: "domcontentloaded" });
+    await page.goto("/ication/abc123", { waitUntil: "domcontentloaded" });
     await page.waitForLoadState("load");
     // Wait for cite button to be visible and clickable
     await expect(page.locator('[data-testid="cite-button"]')).toBeVisible();
