@@ -113,7 +113,13 @@ jobs:
       env:
         TEST_USER_EMAIL: testuser@aris.pub
         TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
-      run: uv run pytest -n4 --dist=loadscope --tb=short > test_output.log 2>&1 || echo "Tests failed with exit code $?"
+      run: |
+        uv run pytest -n4 --dist=loadscope --tb=short > test_output.log 2>&1
+        TEST_EXIT_CODE=$?
+        if [ $TEST_EXIT_CODE -ne 0 ]; then
+          echo "Tests failed with exit code $TEST_EXIT_CODE"
+          exit $TEST_EXIT_CODE
+        fi
 
     - name: Generate backend failure artifact
       if: failure()
@@ -200,7 +206,13 @@ jobs:
       run: npm run lint
 
     - name: Run tests
-      run: npm run test:run > test_output.log 2>&1 || echo "Tests failed with exit code $?"
+      run: |
+        npm run test:run > test_output.log 2>&1
+        TEST_EXIT_CODE=$?
+        if [ $TEST_EXIT_CODE -ne 0 ]; then
+          echo "Tests failed with exit code $TEST_EXIT_CODE"
+          exit $TEST_EXIT_CODE
+        fi
 
     - name: Generate frontend failure artifact
       if: failure()
@@ -587,11 +599,12 @@ jobs:
         if [ "${{ matrix.test-type }}" = "demo" ]; then
           echo "Running demo E2E tests: @core|@demo-content|@demo-ui (excluding @mobile-only and @site)"
           CI_TEST_TYPE=demo npx playwright test --grep "(@core|@demo-content|@demo-ui)(?!.*@mobile-only)(?!.*@site)" --project=chromium --reporter=github > e2e_output.log 2>&1
+          TEST_EXIT_CODE=$?
         else
           echo "Running auth E2E tests: @auth[^-]|@auth-flows (excluding @mobile-only and @site)"
           CI_TEST_TYPE=auth npx playwright test --grep "(@auth[^-]|@auth-flows)(?!.*@mobile-only)(?!.*@site)" --project=chromium --reporter=github > e2e_output.log 2>&1
+          TEST_EXIT_CODE=$?
         fi
-        TEST_EXIT_CODE=$?
 
         # Generate failure artifact if tests failed
         if [ $TEST_EXIT_CODE -ne 0 ]; then
@@ -639,7 +652,12 @@ jobs:
         echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
         kill $BACKEND_PID 2>/dev/null || true
-        exit $TEST_EXIT_CODE
+        
+        # Exit with test result code to trigger failure() condition
+        if [ $TEST_EXIT_CODE -ne 0 ]; then
+          echo "E2E tests failed with exit code $TEST_EXIT_CODE"
+          exit $TEST_EXIT_CODE
+        fi
 
     - name: Upload E2E failure artifacts
       if: failure()
