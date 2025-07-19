@@ -53,10 +53,6 @@ class TestDefaultSettings:
         self, client: AsyncClient, auth_headers, sample_settings, authenticated_user
     ):
         """Test upserting default settings (create or update)."""
-        # Get initial state
-        initial_response = await client.get("/settings/defaults", headers=auth_headers)
-        initial_data = initial_response.json()
-        
         # Upsert new settings
         response = await client.post(
             "/settings/defaults", headers=auth_headers, json=sample_settings
