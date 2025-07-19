@@ -179,14 +179,14 @@ jobs:
     - name: Run unit tests
       run: npm run test:run
 
-  # Site E2E Tests (Essential only - Chrome desktop)
+  # Site E2E Tests (Essential only - Chrome desktop + mobile)
   e2e-site:
     needs: [unit-backend, unit-frontend, unit-site]
     strategy:
       fail-fast: false
       matrix:
         browser: [chromium]
-        device: [desktop]
+        device: [desktop, mobile]
     runs-on: ubuntu-latest
     env:
       ENV: CI
@@ -322,8 +322,14 @@ jobs:
         # Wait for site to be ready (faster with production build)
         timeout 30 bash -c 'until curl -sf http://localhost:3000; do sleep 1; done'
         
-        # Run site E2E tests (Chrome desktop only)
-        npx playwright test --project="chromium" --reporter=github
+        # Run site E2E tests (Chrome desktop and mobile)
+        if [ "${{ matrix.device }}" = "mobile" ]; then
+          echo "Running site E2E tests on Mobile Chrome..."
+          npx playwright test --project="Mobile Chrome" --reporter=github
+        else
+          echo "Running site E2E tests on Chrome desktop..."
+          npx playwright test --project="chromium" --reporter=github
+        fi
         TEST_EXIT_CODE=$?
         
         # Cleanup
