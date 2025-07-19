@@ -115,6 +115,29 @@ jobs:
         TEST_USER_PASSWORD: ${{ secrets.TEST_USER_PASSWORD }}
       run: uv run pytest -n4 --dist=loadscope --tb=short
 
+    - name: Generate backend failure artifact
+      if: failure()
+      run: |
+        mkdir -p test-results
+        cat > test-results/failure-summary.json << EOF
+        {
+          "job_name": "unit-backend",
+          "failure_type": "unit_test",
+          "test_framework": "pytest",
+          "language": "python",
+          "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        }
+        EOF
+      working-directory: backend
+
+    - name: Upload backend failure artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: unit-backend-failure
+        path: backend/test-results/
+        retention-days: 7
+
   unit-frontend:
     runs-on: ubuntu-latest
 
@@ -149,6 +172,28 @@ jobs:
 
     - name: Run tests
       run: npm run test:run
+
+    - name: Generate frontend failure artifact
+      if: failure()
+      run: |
+        mkdir -p test-results
+        cat > test-results/failure-summary.json << EOF
+        {
+          "job_name": "unit-frontend",
+          "failure_type": "unit_test",
+          "test_framework": "vitest",
+          "language": "javascript",
+          "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+        }
+        EOF
+
+    - name: Upload frontend failure artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: unit-frontend-failure
+        path: frontend/test-results/
+        retention-days: 7
 
   unit-site:
     runs-on: ubuntu-latest
@@ -338,12 +383,54 @@ jobs:
         fi
         TEST_EXIT_CODE=$?
         
+        # Generate failure artifact if tests failed
+        if [ $TEST_EXIT_CODE -ne 0 ]; then
+          echo "Generating detailed failure artifact..."
+          mkdir -p test-results
+          
+          # Capture failed test details from Playwright output
+          FAILED_TESTS=$(find test-results -name "*.json" -exec cat {} \; 2>/dev/null | jq -r '.tests[]? | select(.status == "failed") | .title' 2>/dev/null || echo "")
+          FAILING_FILES=$(find test-results -name "*.json" -exec cat {} \; 2>/dev/null | jq -r '.tests[]? | select(.status == "failed") | .projectName + ":" + .location.file' 2>/dev/null | head -5 || echo "")
+          
+          cat > test-results/failure-summary.json << EOF
+{
+  "job_name": "e2e-site-${{ matrix.browser }}-${{ matrix.device }}",
+  "failure_type": "e2e_test",
+  "test_command": "npx playwright test --project=${{ matrix.device == 'mobile' && 'Mobile Chrome' || 'chromium' }}",
+  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "exit_code": $TEST_EXIT_CODE,
+  "browser": "${{ matrix.browser }}",
+  "device": "${{ matrix.device }}",
+  "failed_tests": [
+    $(echo "$FAILED_TESTS" | sed 's/.*/"&"/' | tr '\n' ',' | sed 's/,$//')
+  ],
+  "failing_files": [
+    $(echo "$FAILING_FILES" | sed 's/.*/"&"/' | tr '\n' ',' | sed 's/,$//')
+  ],
+  "artifacts_available": {
+    "playwright_report": $([ -f "playwright-report/index.html" ] && echo "true" || echo "false"),
+    "test_results": $([ -d "test-results" ] && echo "true" || echo "false")
+  }
+}
+EOF
+        fi
+        
         # Cleanup
         echo "Cleaning up processes..."
         kill $SITE_PID 2>/dev/null || true
         kill $FRONTEND_PID 2>/dev/null || true
         kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
+
+    - name: Upload failure artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-site-failure-${{ matrix.browser }}-${{ matrix.device }}
+        path: |
+          site/test-results/
+          site/playwright-report/
+        retention-days: 7
 
   # Desktop E2E Tests (Chrome)
   e2e-desktop-chrome:
@@ -475,11 +562,38 @@ jobs:
         fi
         TEST_EXIT_CODE=$?
 
+        # Generate failure artifact if tests failed
+        if [ $TEST_EXIT_CODE -ne 0 ]; then
+          echo "Generating E2E failure artifact..."
+          mkdir -p test-results
+          cat > test-results/failure-summary.json << EOF
+{
+  "job_name": "e2e-desktop-chrome-${{ matrix.test-type }}",
+  "failure_type": "e2e_test",
+  "test_type": "${{ matrix.test-type }}",
+  "browser": "chrome",
+  "platform": "desktop",
+  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+  "exit_code": $TEST_EXIT_CODE
+}
+EOF
+        fi
+
         # Cleanup
         echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
         kill $BACKEND_PID 2>/dev/null || true
         exit $TEST_EXIT_CODE
+
+    - name: Upload E2E failure artifacts
+      if: failure()
+      uses: actions/upload-artifact@v4
+      with:
+        name: e2e-desktop-chrome-failure-${{ matrix.test-type }}
+        path: |
+          frontend/test-results/
+          frontend/playwright-report/
+        retention-days: 7
 
   # Desktop E2E Tests (Firefox)
   e2e-desktop-firefox:
