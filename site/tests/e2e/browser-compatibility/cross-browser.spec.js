@@ -35,8 +35,8 @@ test.describe("Cross-Browser Compatibility", () => {
       await page.fill('input[name="name"]', "Dr. Jane Doe");
 
       // Log all network requests to see what URL is actually being called
-      page.on('request', request => {
-        if (request.url().includes('signup')) {
+      page.on("request", (request) => {
+        if (request.url().includes("signup")) {
           console.log(`Network request to: ${request.url()}`);
         }
       });
@@ -56,7 +56,7 @@ test.describe("Cross-Browser Compatibility", () => {
 
       // Wait for the async form submission to complete and success message to appear
       await page.waitForTimeout(2000); // Give time for async handleSignup() to complete
-      
+
       await expect(
         page.locator(
           "text=Successfully signed up for early access! We'll notify you when Aris is ready."
@@ -324,7 +324,7 @@ test.describe("Cross-Browser Compatibility", () => {
           }),
         });
       });
-      
+
       // Also intercept any relative signup URLs as fallback
       await page.route("**/signup/", (route) => {
         route.fulfill({
