@@ -270,13 +270,15 @@ export class AuthHelpers {
 
   async clearAuthState() {
     try {
+      // Navigate to a page first to ensure proper context
+      await this.page.goto("/login", { waitUntil: "domcontentloaded" });
+      await this.page.waitForLoadState("load");
+      
+      // Clear storage after page is fully loaded
       await this.page.evaluate(() => {
         localStorage.clear();
         sessionStorage.clear();
       });
-      await this.page.goto("/login", { waitUntil: "domcontentloaded" });
-      // Wait for page to be fully ready for subsequent localStorage access
-      await this.page.waitForLoadState("load");
     } catch {
       // Ignore localStorage access errors in tests
     }
@@ -285,7 +287,15 @@ export class AuthHelpers {
   async getStoredTokens() {
     console.log("[DEBUG-CI] Getting stored tokens from localStorage");
     try {
+      // Ensure page is ready for localStorage access
+      await this.page.waitForLoadState("load");
+      
       const tokens = await this.page.evaluate(() => {
+        // Check if localStorage is available before accessing
+        if (typeof Storage === "undefined" || typeof localStorage === "undefined") {
+          return { accessToken: null, refreshToken: null, user: null };
+        }
+        
         const accessToken = localStorage.getItem("accessToken");
         const refreshToken = localStorage.getItem("refreshToken");
         const userStr = localStorage.getItem("user");
