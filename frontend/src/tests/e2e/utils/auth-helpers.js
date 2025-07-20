@@ -5,7 +5,7 @@ import { getTimeouts } from "./timeout-constants.js";
 export class AuthHelpers {
   constructor(page) {
     this.page = page;
-    this.baseURL = process.env.CI ? "http://localhost:8000" : "http://localhost:8000";
+    this.baseURL = process.env.VITE_API_BASE_URL || "http://localhost:8001";
   }
 
   async login(email, password) {
