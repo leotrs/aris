@@ -275,6 +275,8 @@ export class AuthHelpers {
         sessionStorage.clear();
       });
       await this.page.goto("/login", { waitUntil: "domcontentloaded" });
+      // Wait for page to be fully ready for subsequent localStorage access
+      await this.page.waitForLoadState("load");
     } catch {
       // Ignore localStorage access errors in tests
     }
