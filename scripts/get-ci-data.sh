@@ -28,7 +28,7 @@ BRANCH_NAME=$(echo "$PR_INFO" | jq -r ".headRefName")
 
 # Step 3: Get Most Recent COMPLETED Workflow Run (skip in-progress ones)
 ALL_RUNS=$(gh run list --branch "$BRANCH_NAME" --limit 5 --json databaseId,status,conclusion,workflowName,createdAt)
-LATEST_RUN=$(echo "$ALL_RUNS" | jq '.[] | select(.status == "completed") | select(.workflowName == "CI")' | jq -s '.[0] // empty')
+LATEST_RUN=$(echo "$ALL_RUNS" | jq '.[] | select(.status == "completed") | select(.workflowName == "CI")' | jq -s 'sort_by(.createdAt) | reverse | .[0] // empty')
 
 if [ "$(echo "$LATEST_RUN" | jq -r '. // "null"')" = "null" ]; then
   echo "❌ No completed CI runs found for branch: $BRANCH_NAME"
@@ -86,63 +86,103 @@ echo "$FULL_RUN_INFO" | jq '{
   ]
 }'
 
-# Download and analyze failure artifacts
+# Download all failure artifacts once
 echo ""
 echo "=== DOWNLOADING FAILURE ARTIFACTS ==="
 
-FAILED_JOBS=$(echo "$FULL_RUN_INFO" | jq -r '.jobs[] | select(.conclusion == "failure") | .name')
-ARTIFACTS_FOUND=false
+FAILED_JOBS=$(echo "$FULL_RUN_INFO" | jq -r '.jobs[] | select(.conclusion == "failure") | .name' | sort -u)
 
-for job_name in $FAILED_JOBS; do
-  echo ""
-  echo "=== PROCESSING FAILED JOB: $job_name ==="
+echo "Attempting to download all failure artifacts..."
+# Download all artifacts since pattern matching is unreliable
+gh run download "$RUN_ID" --dir "$TEMP_DIR" 2>/dev/null || echo "Failed to download some artifacts"
+
+# Check if any artifacts were downloaded
+if [ -d "$TEMP_DIR" ] && [ "$(find "$TEMP_DIR" -type f | wc -l)" -gt 0 ]; then
+  echo "✅ Downloaded artifacts successfully"
   
-  # Try to download artifacts for this job
-  echo "Attempting to download artifacts for $job_name..."
-  gh run download "$RUN_ID" --dir "$TEMP_DIR" --pattern "*failure*" 2>/dev/null
-  
-  # Check if any artifacts were actually downloaded
-  if [ -d "$TEMP_DIR" ] && [ "$(find "$TEMP_DIR" -name "failure-summary.json" | wc -l)" -gt 0 ]; then
-    ARTIFACTS_FOUND=true
-    echo "✅ Downloaded artifacts for $job_name"
-    
-    # Look for failure summary in downloaded artifacts
-    FAILURE_SUMMARIES=$(find "$TEMP_DIR" -name "failure-summary.json" -exec cat {} \; 2>/dev/null || echo "")
-    
-    if [ -n "$FAILURE_SUMMARIES" ]; then
-      echo "=== ARTIFACT_DATA ==="
-      echo "$FAILURE_SUMMARIES"
-    fi
-    
-    # Look for Playwright reports
-    PLAYWRIGHT_REPORTS=$(find "$TEMP_DIR" -name "*.html" | head -3)
-    if [ -n "$PLAYWRIGHT_REPORTS" ]; then
-      echo "=== PLAYWRIGHT_REPORTS_AVAILABLE ==="
-      echo "$PLAYWRIGHT_REPORTS"
-    fi
-    
-    # Look for test result files
-    TEST_RESULT_FILES=$(find "$TEMP_DIR" -name "*.json" -path "*/test-results/*" | head -5)
-    if [ -n "$TEST_RESULT_FILES" ]; then
-      echo "=== TEST_RESULT_FILES ==="
-      for file in $TEST_RESULT_FILES; do
-        echo "File: $file"
-        cat "$file" 2>/dev/null | head -20 || echo "Could not read file"
-        echo "---"
-      done
-    fi
-  else
-    echo "❌ CRITICAL ERROR: No failure artifacts found for $job_name"
-    echo "This indicates either:"
-    echo "1. The CI run is too old (before artifact collection was implemented)"
-    echo "2. The artifact generation failed"
-    echo "3. The artifacts have expired"
+  # Process each failed job and match with its artifacts
+  for job_name in $FAILED_JOBS; do
     echo ""
-    echo "Cannot perform meaningful analysis without failure artifacts."
-    echo "Re-run the CI or use a more recent failure with artifacts."
-    exit 1
-  fi
-done
+    echo "=== PROCESSING FAILED JOB: $job_name ==="
+    
+    # Look for artifact directories that match this job name
+    MATCHING_ARTIFACTS=""
+    for artifact_dir in "$TEMP_DIR"/*; do
+      if [ -d "$artifact_dir" ]; then
+        # Extract job identifier from artifact directory name
+        ARTIFACT_NAME=$(basename "$artifact_dir")
+        
+        # Match E2E job names with artifact names
+        # E2E jobs have format like "e2e-desktop-chrome (auth)" -> "e2e-desktop-chrome-failure-auth"
+        # or "e2e-site (chromium, desktop)" -> "e2e-site-failure-chromium-desktop"
+        JOB_NORMALIZED=$(echo "$job_name" | sed 's/[^a-zA-Z0-9-]//g' | tr '[:upper:]' '[:lower:]')
+        ARTIFACT_NORMALIZED=$(echo "$ARTIFACT_NAME" | sed 's/failure//' | sed 's/[^a-zA-Z0-9-]//g' | tr '[:upper:]' '[:lower:]')
+        
+        if [[ "$ARTIFACT_NORMALIZED" == *"$JOB_NORMALIZED"* ]] || [[ "$JOB_NORMALIZED" == *"$ARTIFACT_NORMALIZED"* ]]; then
+          MATCHING_ARTIFACTS="$artifact_dir"
+          break
+        fi
+      fi
+    done
+    
+    if [ -n "$MATCHING_ARTIFACTS" ]; then
+      echo "=== ARTIFACT_DIRECTORY: $MATCHING_ARTIFACTS ==="
+      
+      # Look for structured failure summary first
+      if [ -f "$MATCHING_ARTIFACTS/failure-summary.json" ]; then
+        echo "=== STRUCTURED_FAILURE_DATA ==="
+        cat "$MATCHING_ARTIFACTS/failure-summary.json"
+      fi
+      
+      # Look for E2E output logs
+      if [ -f "$MATCHING_ARTIFACTS/e2e_output.log" ]; then
+        echo "=== E2E_OUTPUT_SUMMARY ==="
+        echo "Analyzing E2E test failures..."
+        
+        # Extract key failure information from Playwright logs
+        FAILED_TESTS=$(grep -E "✗|×|FAILED.*spec" "$MATCHING_ARTIFACTS/e2e_output.log" | head -5 || echo "No specific failed tests found")
+        ERROR_SUMMARY=$(grep -A3 -B1 -E "Error:|TimeoutError|AssertionError|expect.*to" "$MATCHING_ARTIFACTS/e2e_output.log" | head -10 || echo "No error details found")
+        
+        echo "Failed Tests:"
+        echo "$FAILED_TESTS"
+        echo ""
+        echo "Error Details:"
+        echo "$ERROR_SUMMARY"
+      fi
+      
+      # Look for test output logs  
+      if [ -f "$MATCHING_ARTIFACTS/test-output-tail.log" ]; then
+        echo "=== TEST_OUTPUT_TAIL ==="
+        head -15 "$MATCHING_ARTIFACTS/test-output-tail.log"
+      fi
+      
+      # Show test results directory structure
+      if [ -d "$MATCHING_ARTIFACTS/test-results" ]; then
+        echo "=== TEST_RESULTS_STRUCTURE ==="
+        find "$MATCHING_ARTIFACTS/test-results" -name "*.png" | head -5 | while read screenshot; do
+          echo "Screenshot: $(basename "$screenshot")"
+        done
+        
+        TRACE_COUNT=$(find "$MATCHING_ARTIFACTS/test-results" -name "trace.zip" | wc -l)
+        echo "Trace files available: $TRACE_COUNT"
+      fi
+    else
+      echo "⚠️ No matching artifacts found for $job_name"
+      echo "Available artifact directories:"
+      ls -1 "$TEMP_DIR"/ | sed 's/^/- /'
+    fi
+  done
+else
+  echo "❌ CRITICAL ERROR: No artifacts found"
+  echo "This indicates either:"
+  echo "1. The CI run is too old (artifacts may have expired)"
+  echo "2. No artifacts were generated for this run"
+  echo "3. The download failed"
+  echo ""
+  echo "Available artifacts from API:"
+  gh api repos/leotrs/aris/actions/runs/"$RUN_ID"/artifacts --jq '.artifacts[].name'
+  exit 1
+fi
 
 # Get successful jobs summary
 SUCCESS_JOBS=$(echo "$FULL_RUN_INFO" | jq -r '.jobs[] | select(.conclusion == "success") | .name')
