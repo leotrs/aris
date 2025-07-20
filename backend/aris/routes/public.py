@@ -8,14 +8,14 @@ from datetime import datetime
 from typing import Any, Dict, Optional
 
 from fastapi import APIRouter, Depends, Request
-from fastapi.responses import HTMLResponse, PlainTextResponse
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse
 from pydantic import BaseModel, ConfigDict
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import get_db
 from ..models import File
 from ..services.citation import CitationService
-from ..services.metadata import generate_academic_metadata
+from ..services.metadata import DublinCoreMetadata, SchemaOrgMetadata, generate_academic_metadata
 from ..services.preprint import PreprintCRUD
 from ..services.static_html import generate_static_html
 
@@ -399,4 +399,112 @@ async def get_static_html_page(
     return HTMLResponse(
         content=html_content,
         headers=headers
+    )
+
+
+@router.get(
+    "/{identifier}/dublin-core",
+    response_class=JSONResponse,
+    summary="Get Dublin Core Metadata",
+    description="Retrieve Dublin Core metadata for a published preprint.",
+    response_description="Dublin Core metadata with all 15 standard elements",
+)
+async def get_dublin_core_metadata(
+    identifier: str,
+    db: AsyncSession = Depends(get_db)
+) -> JSONResponse:
+    """Get Dublin Core metadata for a published preprint by UUID or permalink slug.
+    
+    This endpoint returns Dublin Core metadata following the Dublin Core Metadata Element Set v1.1
+    standard with all 15 core elements for academic content description and discovery.
+    
+    Parameters
+    ----------
+    identifier : str
+        The 6-character public UUID or permalink slug of the preprint.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+        
+    Returns
+    -------
+    JSONResponse
+        Dublin Core metadata with all 15 standard elements.
+        
+    Raises
+    ------
+    HTTPException
+        404 error if preprint is not found, not published, or deleted.
+        
+    Examples
+    --------
+    GET /ication/abc123/dublin-core (UUID)
+    GET /ication/my-awesome-research-paper/dublin-core (permalink slug)
+    """
+    crud = PreprintCRUD(db)
+    file = await get_preprint_with_crud(identifier, crud)
+    
+    # Generate Dublin Core metadata
+    dublin_core_generator = DublinCoreMetadata(file)
+    dublin_core_metadata = dublin_core_generator.generate_all_elements()
+    
+    return JSONResponse(
+        content=dublin_core_metadata,
+        headers={
+            "Cache-Control": "public, max-age=3600",
+            "Content-Type": "application/json; charset=utf-8"
+        }
+    )
+
+
+@router.get(
+    "/{identifier}/schema-org",
+    response_class=JSONResponse,
+    summary="Get Schema.org Metadata",
+    description="Retrieve Schema.org ScholarlyArticle JSON-LD metadata for a published preprint.",
+    response_description="Schema.org ScholarlyArticle JSON-LD structured data",
+)
+async def get_schema_org_metadata(
+    identifier: str,
+    db: AsyncSession = Depends(get_db)
+) -> JSONResponse:
+    """Get Schema.org metadata for a published preprint by UUID or permalink slug.
+    
+    This endpoint returns Schema.org ScholarlyArticle JSON-LD structured data
+    for search engine optimization and academic content discovery.
+    
+    Parameters
+    ----------
+    identifier : str
+        The 6-character public UUID or permalink slug of the preprint.
+    db : AsyncSession
+        SQLAlchemy async database session dependency.
+        
+    Returns
+    -------
+    JSONResponse
+        Schema.org ScholarlyArticle JSON-LD structured data.
+        
+    Raises
+    ------
+    HTTPException
+        404 error if preprint is not found, not published, or deleted.
+        
+    Examples
+    --------
+    GET /ication/abc123/schema-org (UUID)
+    GET /ication/my-awesome-research-paper/schema-org (permalink slug)
+    """
+    crud = PreprintCRUD(db)
+    file = await get_preprint_with_crud(identifier, crud)
+    
+    # Generate Schema.org metadata
+    schema_org_generator = SchemaOrgMetadata(file)
+    schema_org_metadata = schema_org_generator.generate_json_ld()
+    
+    return JSONResponse(
+        content=schema_org_metadata,
+        headers={
+            "Cache-Control": "public, max-age=3600",
+            "Content-Type": "application/ld+json; charset=utf-8"
+        }
     )
