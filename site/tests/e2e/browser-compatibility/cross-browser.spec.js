@@ -34,8 +34,16 @@ test.describe("Cross-Browser Compatibility", () => {
       await page.fill('input[type="email"]', "test@example.com");
       await page.fill('input[name="name"]', "Dr. Jane Doe");
 
-      // Mock API response - intercept both localhost:8000 and relative URLs
+      // Log all network requests to see what URL is actually being called
+      page.on('request', request => {
+        if (request.url().includes('signup')) {
+          console.log(`Network request to: ${request.url()}`);
+        }
+      });
+
+      // Mock API response - intercept all possible patterns
       await page.route("**/signup/", async (route) => {
+        console.log(`Route intercepted: ${route.request().url()}`);
         await route.fulfill({
           status: 200,
           contentType: "application/json",
@@ -46,7 +54,9 @@ test.describe("Cross-Browser Compatibility", () => {
       // Submit and verify
       await page.click('button[type="submit"]');
 
-      // Wait for the success message to appear
+      // Wait for the async form submission to complete and success message to appear
+      await page.waitForTimeout(2000); // Give time for async handleSignup() to complete
+      
       await expect(
         page.locator(
           "text=Successfully signed up for early access! We'll notify you when Aris is ready."
@@ -301,7 +311,21 @@ test.describe("Cross-Browser Compatibility", () => {
       await page.fill('input[type="email"]', "duplicate@example.com");
       await page.fill('input[name="name"]', "Dr. Jane Doe");
 
-      // Mock API error
+      // Mock API error - intercept the specific backend URL
+      await page.route("**/localhost:8001/signup/", (route) => {
+        route.fulfill({
+          status: 409,
+          contentType: "application/json",
+          body: JSON.stringify({
+            detail: {
+              error: "duplicate_email",
+              message: "This email address is already registered for early access.",
+            },
+          }),
+        });
+      });
+      
+      // Also intercept any relative signup URLs as fallback
       await page.route("**/signup/", (route) => {
         route.fulfill({
           status: 409,
