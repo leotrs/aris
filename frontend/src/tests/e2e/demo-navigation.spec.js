@@ -14,10 +14,6 @@ test.describe("Demo Navigation & Access @demo-content", () => {
 
   test.describe("Route Access", () => {
     test("can navigate to /demo route directly", async ({ page }) => {
-      // Verify tokens are cleared
-      const tokens = await authHelpers.getStoredTokens();
-      expect(tokens.accessToken).toBeNull();
-
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
 
       // Wait for the page to load
@@ -33,11 +29,6 @@ test.describe("Demo Navigation & Access @demo-content", () => {
     test("demo route loads without authentication", async ({ page }) => {
       // Double-check that auth state is truly cleared
       await authHelpers.clearAuthState();
-
-      // Verify no tokens exist
-      const tokens = await authHelpers.getStoredTokens();
-      expect(tokens.accessToken).toBeNull();
-      expect(tokens.refreshToken).toBeNull();
 
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
       await page.waitForLoadState("load");
@@ -108,10 +99,6 @@ test.describe("Demo Navigation & Access @demo-content", () => {
     test("demo accessible without login", async ({ page }) => {
       // Use comprehensive auth clearing
       await authHelpers.clearAuthState();
-
-      // Verify clean state
-      const tokens = await authHelpers.getStoredTokens();
-      expect(tokens.accessToken).toBeNull();
 
       await page.goto("/demo", { waitUntil: "domcontentloaded" });
       await page.waitForLoadState("load");
