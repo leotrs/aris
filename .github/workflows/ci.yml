@@ -423,18 +423,18 @@ jobs:
         echo "Starting frontend for site E2E tests..."
         cd ../frontend
         npm run build
-        npm run preview &
+        npm run preview -- --port ${FRONTEND_PORT} &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
         
         # Wait for frontend to be ready (faster with production build)
-        timeout 30 bash -c 'until curl -sf http://localhost:4173; do sleep 1; done'
+        timeout 30 bash -c 'until curl -sf http://localhost:${FRONTEND_PORT}; do sleep 1; done'
         
         # Start site in background (production build)
         echo "Starting site for ${{ matrix.browser }} ${{ matrix.device }} E2E tests..."
         cd ../site
         npm run build
-        npm run preview &
+        npm run preview -- --port ${FRONTEND_PORT} &
         SITE_PID=$!
         echo "Site started with PID: $SITE_PID"
         
@@ -588,12 +588,12 @@ jobs:
         # Start frontend (production build)
         cd ../frontend
         npm run build
-        npm run preview &
+        npm run preview -- --port ${FRONTEND_PORT} &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
 
         # Wait for frontend (faster with production build)
-        timeout 30 bash -c 'until curl -sf http://localhost:4173; do sleep 1; done'
+        timeout 30 bash -c 'until curl -sf http://localhost:${FRONTEND_PORT}; do sleep 1; done'
 
         # Run tests based on test type (Chrome only)
         if [ "${{ matrix.test-type }}" = "demo" ]; then
@@ -786,12 +786,12 @@ jobs:
         # Start frontend (production build)
         cd ../frontend
         npm run build
-        npm run preview &
+        npm run preview -- --port ${FRONTEND_PORT} &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
 
         # Wait for frontend (faster with production build)
-        timeout 30 bash -c 'until curl -sf http://localhost:4173; do sleep 1; done'
+        timeout 30 bash -c 'until curl -sf http://localhost:${FRONTEND_PORT}; do sleep 1; done'
 
         # Run tests based on auth mode (Firefox only)
         if [ "${{ matrix.test-type }}" = "demo" ]; then
@@ -925,12 +925,12 @@ jobs:
         # Start frontend (production build)
         cd ../frontend
         npm run build
-        npm run preview &
+        npm run preview -- --port ${FRONTEND_PORT} &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
 
         # Wait for frontend (faster with production build)
-        timeout 30 bash -c 'until curl -sf http://localhost:4173; do sleep 1; done'
+        timeout 30 bash -c 'until curl -sf http://localhost:${FRONTEND_PORT}; do sleep 1; done'
 
         # Run mobile Chrome tests
         if [ "${{ matrix.test-type }}" = "demo" ]; then
@@ -1064,12 +1064,12 @@ jobs:
         # Start frontend (production build)
         cd ../frontend
         npm run build
-        npm run preview &
+        npm run preview -- --port ${FRONTEND_PORT} &
         FRONTEND_PID=$!
         echo "Frontend started with PID: $FRONTEND_PID"
 
         # Wait for frontend (faster with production build)
-        timeout 30 bash -c 'until curl -sf http://localhost:4173; do sleep 1; done'
+        timeout 30 bash -c 'until curl -sf http://localhost:${FRONTEND_PORT}; do sleep 1; done'
 
         # Run mobile Firefox tests
         if [ "${{ matrix.test-type }}" = "demo" ]; then
