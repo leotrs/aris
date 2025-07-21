@@ -606,58 +606,11 @@ jobs:
           TEST_EXIT_CODE=$?
         fi
 
-        # Generate failure artifact if tests failed
-        if [ $TEST_EXIT_CODE -ne 0 ]; then
-          echo "Generating E2E failure artifact..."
-          mkdir -p test-results
-          
-          # Extract Playwright-specific failure information
-          FAILED_TESTS=$(grep -E "×|✗|FAILED.*spec" e2e_output.log | head -10 || echo "No failed tests found")
-          ERROR_MESSAGES=$(grep -A5 -B2 -E "Error:|TimeoutError|AssertionError|expect.*to" e2e_output.log | head -20 || echo "No error messages found")
-          
-          # Create detailed E2E failure artifact
-          cat > test-results/failure-summary.json << EOF
-          {
-            "job_name": "e2e-desktop-chrome-${{ matrix.test-type }}",
-            "failure_type": "e2e_test",
-            "test_type": "${{ matrix.test-type }}",
-            "browser": "chrome",
-            "platform": "desktop",
-            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
-            "exit_code": $TEST_EXIT_CODE,
-            "failed_tests": [
-          EOF
-          
-          # Add failed tests
-          echo "$FAILED_TESTS" | sed 's/.*/"&"/' | sed '$!s/$/,/' >> test-results/failure-summary.json
-          
-          cat >> test-results/failure-summary.json << EOF
-            ],
-            "error_messages": [
-          EOF
-          
-          # Add error messages
-          echo "$ERROR_MESSAGES" | sed 's/.*/"&"/' | sed '$!s/$/,/' >> test-results/failure-summary.json
-          
-          cat >> test-results/failure-summary.json << EOF
-            ]
-          }
-          EOF
-          
-          # Save last part of E2E output
-          tail -100 e2e_output.log > test-results/e2e-output-tail.log
-        fi
-
         # Cleanup
         echo "Cleaning up processes..."
         kill $FRONTEND_PID 2>/dev/null || true
         kill $BACKEND_PID 2>/dev/null || true
-        
-        # Exit with test result code to trigger failure() condition
-        if [ $TEST_EXIT_CODE -ne 0 ]; then
-          echo "E2E tests failed with exit code $TEST_EXIT_CODE"
-          exit $TEST_EXIT_CODE
-        fi
+        exit $TEST_EXIT_CODE
 
     - name: Upload E2E failure artifacts
       if: failure()
