@@ -452,6 +452,12 @@
     justify-content: space-between;
     align-items: center;
     width: 100%; /* Ensure it spans full width of its parent */
+    pointer-events: none; /* Allow clicks to pass through to children */
+    box-sizing: border-box; /* Include padding in width calculations */
+  }
+
+  .navbar-content-wrapper > * {
+    pointer-events: auto; /* Re-enable pointer events for direct children */
     position: relative; /* Establish stacking context */
     pointer-events: none; /* Allow clicks to pass through to children */
     box-sizing: border-box; /* Include padding in width calculations */
