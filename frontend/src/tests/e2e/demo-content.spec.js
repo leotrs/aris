@@ -431,7 +431,7 @@ test.describe("Demo Content Rendering @demo-content", () => {
       expect(rsmCssLoaded).toBe(true);
     });
 
-    test("network requests complete successfully", async ({ page }) => {
+    test("network requests complete successfully @flaky", async ({ page }) => {
       const failedRequests = [];
       const allRequests = [];
       const responses = [];
