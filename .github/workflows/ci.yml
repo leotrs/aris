@@ -434,12 +434,12 @@ jobs:
         echo "Starting site for ${{ matrix.browser }} ${{ matrix.device }} E2E tests..."
         cd ../site
         npm run build
-        npm run preview -- --port ${FRONTEND_PORT} &
+        npm run preview -- --port ${SITE_PORT} &
         SITE_PID=$!
         echo "Site started with PID: $SITE_PID"
         
         # Wait for site to be ready (faster with production build)
-        timeout 30 bash -c 'until curl -sf http://localhost:3000; do sleep 1; done'
+        timeout 30 bash -c 'until curl -sf http://localhost:${SITE_PORT}; do sleep 1; done'
         
         # Run site E2E tests (Chrome desktop and mobile)
         if [ "${{ matrix.device }}" = "mobile" ]; then
