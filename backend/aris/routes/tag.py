@@ -92,7 +92,9 @@ async def get_user_file_tags(user_id: int, file_id: int, db: AsyncSession = Depe
 
 
 @router.post("/{user_id}/files/{file_id}/tags/{tag_id}")
-async def add_tag_to_file(user_id: int, file_id: int, tag_id: int, db: AsyncSession = Depends(get_db)):
+async def add_tag_to_file(
+    user_id: int, file_id: int, tag_id: int, db: AsyncSession = Depends(get_db)
+):
     """Assign a tag to a file."""
     try:
         await crud.add_tag_to_file(user_id, file_id, tag_id, db)
