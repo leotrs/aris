@@ -425,6 +425,13 @@
     transition:
       background-color 0.3s ease,
       box-shadow 0.3s ease; /* Smooth transition */
+    box-sizing: border-box; /* Ensure proper box model */
+  }
+
+  .navbar *,
+  .navbar *::before,
+  .navbar *::after {
+    box-sizing: border-box; /* Apply to all navbar descendants */
   }
 
   /* Navbar when scrolled */
@@ -445,6 +452,13 @@
     justify-content: space-between;
     align-items: center;
     width: 100%; /* Ensure it spans full width of its parent */
+    position: relative; /* Establish stacking context */
+    pointer-events: none; /* Allow clicks to pass through to children */
+    box-sizing: border-box; /* Include padding in width calculations */
+  }
+
+  .navbar-content-wrapper > * {
+    pointer-events: auto; /* Re-enable pointer events for direct children */
   }
 
   /* Logo */
@@ -605,6 +619,9 @@
     min-height: 44px;
     align-items: center;
     justify-content: center;
+    position: relative; /* Ensure proper stacking context */
+    pointer-events: auto; /* Explicitly enable pointer events */
+    flex-shrink: 0; /* Prevent button from shrinking */
     transition:
       background-color 0.2s ease,
       color 0.2s ease;
@@ -824,6 +841,13 @@
   @media (max-width: 480px) {
     .navbar-content-wrapper {
       padding: 0 12px;
+    }
+  }
+
+  /* Extra small mobile devices (iPhone SE and similar) */
+  @media (max-width: 375px) {
+    .navbar-content-wrapper {
+      padding: 0 8px;
     }
 
     .mobile-menu-overlay {
