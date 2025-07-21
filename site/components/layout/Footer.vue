@@ -218,6 +218,7 @@
     cursor: pointer;
     transition: all 0.3s ease;
     backdrop-filter: blur(10px);
+    z-index: 10; /* Ensure button is clickable above footer content */
   }
 
   .back-to-top:hover {

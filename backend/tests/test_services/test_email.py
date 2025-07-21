@@ -1,7 +1,7 @@
 """Tests for email service functionality."""
 
 import logging
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 import pytest
 

@@ -45,3 +45,5 @@ def test_missing_required_env_vars(monkeypatch):
         monkeypatch.delenv(key, raising=False)
     with pytest.raises(ValidationError):
         Settings(_env_file=None)
+
+
