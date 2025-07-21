@@ -447,16 +447,24 @@ test.describe("Demo Content Rendering @demo-content", () => {
           url: request.url(),
           method: request.method(),
           headers: request.headers(),
-          postData: request.postData() || null
+          postData: request.postData() || null,
         };
         allRequests.push(logEntry);
-        
+
         if (request.url().includes("/render")) {
-          renderRequests.push({...logEntry, phase: "request_started"});
-          console.log(`[DEBUG-NETWORK] RENDER REQUEST STARTED: ${timestamp} - ${request.method()} ${request.url()}`);
-          console.log(`[DEBUG-NETWORK] RENDER REQUEST HEADERS:`, JSON.stringify(request.headers(), null, 2));
+          renderRequests.push({ ...logEntry, phase: "request_started" });
+          console.log(
+            `[DEBUG-NETWORK] RENDER REQUEST STARTED: ${timestamp} - ${request.method()} ${request.url()}`
+          );
+          console.log(
+            `[DEBUG-NETWORK] RENDER REQUEST HEADERS:`,
+            JSON.stringify(request.headers(), null, 2)
+          );
           if (request.postData()) {
-            console.log(`[DEBUG-NETWORK] RENDER REQUEST BODY:`, request.postData().substring(0, 200) + "...");
+            console.log(
+              `[DEBUG-NETWORK] RENDER REQUEST BODY:`,
+              request.postData().substring(0, 200) + "..."
+            );
           }
         }
       });
@@ -469,14 +477,19 @@ test.describe("Demo Content Rendering @demo-content", () => {
           status: response.status(),
           statusText: response.statusText(),
           headers: response.headers(),
-          ok: response.ok()
+          ok: response.ok(),
         };
         responses.push(responseInfo);
-        
+
         if (response.url().includes("/render")) {
-          renderRequests.push({...responseInfo, phase: "response_received"});
-          console.log(`[DEBUG-NETWORK] RENDER RESPONSE RECEIVED: ${timestamp} - Status: ${response.status()} ${response.statusText()}`);
-          console.log(`[DEBUG-NETWORK] RENDER RESPONSE HEADERS:`, JSON.stringify(response.headers(), null, 2));
+          renderRequests.push({ ...responseInfo, phase: "response_received" });
+          console.log(
+            `[DEBUG-NETWORK] RENDER RESPONSE RECEIVED: ${timestamp} - Status: ${response.status()} ${response.statusText()}`
+          );
+          console.log(
+            `[DEBUG-NETWORK] RENDER RESPONSE HEADERS:`,
+            JSON.stringify(response.headers(), null, 2)
+          );
           console.log(`[DEBUG-NETWORK] RENDER RESPONSE OK:`, response.ok());
         }
       });
@@ -489,43 +502,59 @@ test.describe("Demo Content Rendering @demo-content", () => {
           url: request.url(),
           method: request.method(),
           failure: failure ? failure.errorText : "Unknown error",
-          headers: request.headers()
+          headers: request.headers(),
         };
-        
+
         failedRequests.push(request.url());
-        
+
         if (request.url().includes("/render")) {
-          renderRequests.push({...failureInfo, phase: "request_failed"});
-          console.log(`[DEBUG-NETWORK] RENDER REQUEST FAILED: ${timestamp} - ${request.method()} ${request.url()}`);
-          console.log(`[DEBUG-NETWORK] RENDER FAILURE REASON:`, failure ? failure.errorText : "Unknown error");
-          console.log(`[DEBUG-NETWORK] RENDER REQUEST HEADERS:`, JSON.stringify(request.headers(), null, 2));
+          renderRequests.push({ ...failureInfo, phase: "request_failed" });
+          console.log(
+            `[DEBUG-NETWORK] RENDER REQUEST FAILED: ${timestamp} - ${request.method()} ${request.url()}`
+          );
+          console.log(
+            `[DEBUG-NETWORK] RENDER FAILURE REASON:`,
+            failure ? failure.errorText : "Unknown error"
+          );
+          console.log(
+            `[DEBUG-NETWORK] RENDER REQUEST HEADERS:`,
+            JSON.stringify(request.headers(), null, 2)
+          );
         } else {
-          console.log(`[DEBUG-NETWORK] OTHER REQUEST FAILED: ${timestamp} - ${request.url()} - ${failure ? failure.errorText : "Unknown error"}`);
+          console.log(
+            `[DEBUG-NETWORK] OTHER REQUEST FAILED: ${timestamp} - ${request.url()} - ${failure ? failure.errorText : "Unknown error"}`
+          );
         }
       });
 
       console.log("[DEBUG-NETWORK] Event listeners attached, starting page reload");
-      
+
       const reloadStartTime = Date.now();
       await page.reload();
       console.log(`[DEBUG-NETWORK] Page reload completed in ${Date.now() - reloadStartTime}ms`);
 
       const loadStateStartTime = Date.now();
       await page.waitForLoadState("load");
-      console.log(`[DEBUG-NETWORK] Load state 'load' reached in ${Date.now() - loadStateStartTime}ms`);
+      console.log(
+        `[DEBUG-NETWORK] Load state 'load' reached in ${Date.now() - loadStateStartTime}ms`
+      );
 
       console.log("[DEBUG-NETWORK] Waiting for manuscript viewer to be visible...");
       const manuscriptStartTime = Date.now();
-      
+
       // Wait for content to load completely
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
       });
-      
-      console.log(`[DEBUG-NETWORK] Manuscript viewer became visible in ${Date.now() - manuscriptStartTime}ms`);
+
+      console.log(
+        `[DEBUG-NETWORK] Manuscript viewer became visible in ${Date.now() - manuscriptStartTime}ms`
+      );
 
       // Wait a bit more to catch any late-arriving network events
-      console.log("[DEBUG-NETWORK] Waiting additional 2 seconds for any remaining network activity...");
+      console.log(
+        "[DEBUG-NETWORK] Waiting additional 2 seconds for any remaining network activity..."
+      );
       await page.waitForTimeout(2000);
 
       console.log("[DEBUG-NETWORK] Final network analysis:");
@@ -536,7 +565,9 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
       console.log("[DEBUG-NETWORK] All render-related events in chronological order:");
       renderRequests.forEach((event, index) => {
-        console.log(`[DEBUG-NETWORK] ${index + 1}. ${event.timestamp} - ${event.phase}: ${event.url || 'N/A'} - Status: ${event.status || 'N/A'} - Error: ${event.failure || 'N/A'}`);
+        console.log(
+          `[DEBUG-NETWORK] ${index + 1}. ${event.timestamp} - ${event.phase}: ${event.url || "N/A"} - Status: ${event.status || "N/A"} - Error: ${event.failure || "N/A"}`
+        );
       });
 
       console.log("[DEBUG-NETWORK] All failed request URLs:");
@@ -554,7 +585,9 @@ test.describe("Demo Content Rendering @demo-content", () => {
         console.log(`[DEBUG-NETWORK] Demo failure ${index + 1}: ${url}`);
       });
 
-      console.log("[DEBUG-NETWORK] Test assertion about to execute - expecting 0 demo-related failures");
+      console.log(
+        "[DEBUG-NETWORK] Test assertion about to execute - expecting 0 demo-related failures"
+      );
       expect(demoRelatedFailures).toHaveLength(0);
     });
 

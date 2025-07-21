@@ -193,13 +193,13 @@ export const createDemoApi = () => ({
       const startTime = Date.now();
       const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/render`;
       const sourceData = payload?.source || demoFile.source;
-      
+
       console.log(`[DEBUG-DEMO] RENDER REQUEST STARTING: ${new Date().toISOString()}`);
       console.log(`[DEBUG-DEMO] API URL: ${apiUrl}`);
       console.log(`[DEBUG-DEMO] Source length: ${sourceData.length} chars`);
       console.log(`[DEBUG-DEMO] Source preview: ${sourceData.substring(0, 100)}...`);
       console.log(`[DEBUG-DEMO] User agent: ${navigator.userAgent}`);
-      
+
       try {
         console.log(`[DEBUG-DEMO] Making fetch request...`);
         const response = await fetch(apiUrl, {
@@ -227,11 +227,15 @@ export const createDemoApi = () => ({
         console.log(`[DEBUG-DEMO] Parsing response as JSON...`);
         const html = await response.json();
         const totalTime = Date.now() - startTime;
-        
+
         console.log(`[DEBUG-DEMO] RENDER REQUEST SUCCESSFUL in ${totalTime}ms`);
-        console.log(`[DEBUG-DEMO] Response length: ${typeof html === 'string' ? html.length : JSON.stringify(html).length} chars`);
-        console.log(`[DEBUG-DEMO] Response preview: ${typeof html === 'string' ? html.substring(0, 100) : JSON.stringify(html).substring(0, 100)}...`);
-        
+        console.log(
+          `[DEBUG-DEMO] Response length: ${typeof html === "string" ? html.length : JSON.stringify(html).length} chars`
+        );
+        console.log(
+          `[DEBUG-DEMO] Response preview: ${typeof html === "string" ? html.substring(0, 100) : JSON.stringify(html).substring(0, 100)}...`
+        );
+
         return { data: html };
       } catch (error) {
         const totalTime = Date.now() - startTime;
@@ -239,7 +243,7 @@ export const createDemoApi = () => ({
         console.error(`[DEBUG-DEMO] Error name: ${error.name}`);
         console.error(`[DEBUG-DEMO] Error message: ${error.message}`);
         console.error(`[DEBUG-DEMO] Error stack:`, error.stack);
-        
+
         // Return empty HTML - the /render endpoint MUST work in production
         return { data: "" };
       }
