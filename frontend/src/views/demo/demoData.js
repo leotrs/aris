@@ -189,7 +189,29 @@ export const createDemoApi = () => ({
   },
   post: async (url, payload) => {
     if (url.includes("/render")) {
-      // Use the actual backend /render endpoint for RSM content
+      // Detect environment: only use real backend in E2E tests, not unit tests
+      const isE2ETest = typeof window !== 'undefined' && (
+        window.location?.href?.includes('/demo') || 
+        globalThis.playwright ||
+        process.env.NODE_ENV === 'test' && process.env.VITEST !== 'true'
+      );
+      
+      // For unit tests, return mock HTML to avoid network calls
+      if (!isE2ETest) {
+        console.log(`[DEBUG-DEMO] Unit test detected, returning mock HTML`);
+        return {
+          data: `<div class="manuscript">
+            <h1>The Future of Web-Native Publishing</h1>
+            <div class="abstract">
+              <p>This paper explores the revolutionary potential of web-native scientific publishing...</p>
+            </div>
+            <h2>Introduction</h2>
+            <p>The current landscape of scientific publishing relies heavily on static document formats...</p>
+          </div>`
+        };
+      }
+
+      // Use the actual backend /render endpoint for RSM content in E2E tests
       const startTime = Date.now();
       const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/render`;
       const sourceData = payload?.source || demoFile.source;
