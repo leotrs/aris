@@ -190,25 +190,56 @@ export const createDemoApi = () => ({
   post: async (url, payload) => {
     if (url.includes("/render")) {
       // Use the actual backend /render endpoint for RSM content
+      const startTime = Date.now();
+      const apiUrl = `${import.meta.env.VITE_API_BASE_URL}/render`;
+      const sourceData = payload?.source || demoFile.source;
+      
+      console.log(`[DEBUG-DEMO] RENDER REQUEST STARTING: ${new Date().toISOString()}`);
+      console.log(`[DEBUG-DEMO] API URL: ${apiUrl}`);
+      console.log(`[DEBUG-DEMO] Source length: ${sourceData.length} chars`);
+      console.log(`[DEBUG-DEMO] Source preview: ${sourceData.substring(0, 100)}...`);
+      console.log(`[DEBUG-DEMO] User agent: ${navigator.userAgent}`);
+      
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/render`, {
+        console.log(`[DEBUG-DEMO] Making fetch request...`);
+        const response = await fetch(apiUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({
-            source: payload?.source || demoFile.source,
+            source: sourceData,
           }),
         });
 
+        const fetchTime = Date.now() - startTime;
+        console.log(`[DEBUG-DEMO] Fetch completed in ${fetchTime}ms`);
+        console.log(`[DEBUG-DEMO] Response status: ${response.status} ${response.statusText}`);
+        console.log(`[DEBUG-DEMO] Response ok: ${response.ok}`);
+        console.log(`[DEBUG-DEMO] Response headers:`, Object.fromEntries(response.headers));
+
         if (!response.ok) {
-          throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          const errorText = await response.text();
+          console.error(`[DEBUG-DEMO] Response not ok - body: ${errorText}`);
+          throw new Error(`HTTP ${response.status}: ${response.statusText} - ${errorText}`);
         }
 
+        console.log(`[DEBUG-DEMO] Parsing response as JSON...`);
         const html = await response.json();
+        const totalTime = Date.now() - startTime;
+        
+        console.log(`[DEBUG-DEMO] RENDER REQUEST SUCCESSFUL in ${totalTime}ms`);
+        console.log(`[DEBUG-DEMO] Response length: ${typeof html === 'string' ? html.length : JSON.stringify(html).length} chars`);
+        console.log(`[DEBUG-DEMO] Response preview: ${typeof html === 'string' ? html.substring(0, 100) : JSON.stringify(html).substring(0, 100)}...`);
+        
         return { data: html };
       } catch (error) {
-        console.error("Failed to render RSM content:", error);
+        const totalTime = Date.now() - startTime;
+        console.error(`[DEBUG-DEMO] RENDER REQUEST FAILED after ${totalTime}ms:`, error);
+        console.error(`[DEBUG-DEMO] Error name: ${error.name}`);
+        console.error(`[DEBUG-DEMO] Error message: ${error.message}`);
+        console.error(`[DEBUG-DEMO] Error stack:`, error.stack);
+        
         // Return empty HTML - the /render endpoint MUST work in production
         return { data: "" };
       }
