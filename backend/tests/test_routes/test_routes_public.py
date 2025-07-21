@@ -302,3 +302,188 @@ class TestPublicPreprintEndpoints:
         # Slugs should be case-sensitive
         response = await client.get(f"/ication/{published_file.permalink_slug.upper()}")
         assert response.status_code == 404
+
+    async def test_get_dublin_core_metadata_success(self, client: AsyncClient, published_file: File):
+        """Test successful retrieval of Dublin Core metadata."""
+        response = await client.get(f"/ication/{published_file.public_uuid}/dublin-core")
+        
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "application/json; charset=utf-8"
+        assert "cache-control" in response.headers
+        
+        data = response.json()
+        
+        # Verify all 15 Dublin Core elements are present
+        expected_elements = [
+            "title", "creator", "subject", "description", "publisher",
+            "date", "type", "format", "identifier", "source",
+            "language", "rights", "coverage", "relation", "contributor"
+        ]
+        
+        for element in expected_elements:
+            assert element in data, f"Dublin Core element '{element}' missing from response"
+        
+        # Verify content matches the file
+        assert data["title"] == published_file.title
+        assert data["subject"] == published_file.keywords
+        assert data["description"] == published_file.abstract
+        assert data["identifier"] == published_file.public_uuid
+        assert data["type"] == "Preprint"
+        assert data["publisher"] == "Aris Preprint"
+        assert data["format"] == "text/html"
+        assert data["language"] == "en"
+
+    async def test_get_dublin_core_metadata_by_slug_success(self, client: AsyncClient, published_file: File):
+        """Test successful retrieval of Dublin Core metadata by permalink slug."""
+        response = await client.get(f"/ication/{published_file.permalink_slug}/dublin-core")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify key elements match
+        assert data["title"] == published_file.title
+        assert data["identifier"] == published_file.public_uuid
+
+    async def test_get_dublin_core_metadata_not_found(self, client: AsyncClient):
+        """Test 404 error for Dublin Core metadata of non-existent preprint."""
+        response = await client.get("/ication/nonexist/dublin-core")
+        
+        assert response.status_code == 404
+        assert "Published preprint not found" in response.json()["detail"]
+
+    async def test_get_dublin_core_metadata_with_missing_fields(self, client: AsyncClient, test_user: User, db_session: AsyncSession):
+        """Test Dublin Core metadata generation with missing optional fields."""
+        # Create file with minimal information
+        file = File(
+            owner_id=test_user.id,
+            source=":rsm:# Minimal Publication::",
+            title=None,
+            abstract=None,
+            keywords=None,
+            status=FileStatus.PUBLISHED,
+            published_at=datetime(2023, 5, 15, tzinfo=timezone.utc),
+            public_uuid="min002",
+            version=1
+        )
+        db_session.add(file)
+        await db_session.commit()
+        
+        response = await client.get(f"/ication/{file.public_uuid}/dublin-core")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify defaults for missing fields
+        assert data["title"] == "Untitled"
+        assert data["description"] == ""
+        assert data["subject"] == ""
+        assert data["creator"] == "Unknown Author"
+
+    async def test_get_schema_org_metadata_success(self, client: AsyncClient, published_file: File):
+        """Test successful retrieval of Schema.org metadata."""
+        response = await client.get(f"/ication/{published_file.public_uuid}/schema-org")
+        
+        assert response.status_code == 200
+        assert response.headers["content-type"] == "application/ld+json; charset=utf-8"
+        assert "cache-control" in response.headers
+        
+        data = response.json()
+        
+        # Verify Schema.org JSON-LD structure
+        assert data["@context"] == "https://schema.org"
+        assert data["@type"] == "ScholarlyArticle"
+        assert data["headline"] == published_file.title
+        assert "author" in data
+        assert "datePublished" in data
+        assert "publisher" in data
+        assert "url" in data
+        assert "identifier" in data
+        
+        # Verify author structure
+        authors = data["author"]
+        assert isinstance(authors, list)
+        assert len(authors) > 0
+        assert authors[0]["@type"] == "Person"
+        assert "name" in authors[0]
+        
+        # Verify publisher structure
+        publisher = data["publisher"]
+        assert publisher["@type"] == "Organization"
+        assert publisher["name"] == "Aris Preprint"
+        
+        # Verify URL and identifier
+        assert published_file.public_uuid in data["url"]
+        assert data["identifier"] == published_file.public_uuid
+
+    async def test_get_schema_org_metadata_by_slug_success(self, client: AsyncClient, published_file: File):
+        """Test successful retrieval of Schema.org metadata by permalink slug."""
+        response = await client.get(f"/ication/{published_file.permalink_slug}/schema-org")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify key Schema.org fields
+        assert data["@type"] == "ScholarlyArticle"
+        assert data["headline"] == published_file.title
+        assert data["identifier"] == published_file.public_uuid
+
+    async def test_get_schema_org_metadata_not_found(self, client: AsyncClient):
+        """Test 404 error for Schema.org metadata of non-existent preprint."""
+        response = await client.get("/ication/nonexist/schema-org")
+        
+        assert response.status_code == 404
+        assert "Published preprint not found" in response.json()["detail"]
+
+    async def test_get_schema_org_metadata_with_missing_fields(self, client: AsyncClient, test_user: User, db_session: AsyncSession):
+        """Test Schema.org metadata generation with missing optional fields."""
+        # Create file with minimal information
+        file = File(
+            owner_id=test_user.id,
+            source=":rsm:# Minimal Publication::",
+            title=None,
+            abstract=None,
+            keywords=None,
+            status=FileStatus.PUBLISHED,
+            published_at=datetime(2023, 5, 15, tzinfo=timezone.utc),
+            public_uuid="min003",
+            version=1
+        )
+        db_session.add(file)
+        await db_session.commit()
+        
+        response = await client.get(f"/ication/{file.public_uuid}/schema-org")
+        
+        assert response.status_code == 200
+        data = response.json()
+        
+        # Verify defaults for missing fields
+        assert data["headline"] == "Untitled"
+        assert data["author"][0]["name"] == "Unknown Author"
+        assert data["@type"] == "ScholarlyArticle"
+        assert data["@context"] == "https://schema.org"
+
+    async def test_metadata_endpoints_cache_headers(self, client: AsyncClient, published_file: File):
+        """Test that metadata endpoints return proper cache headers."""
+        # Test Dublin Core cache headers
+        response = await client.get(f"/ication/{published_file.public_uuid}/dublin-core")
+        assert response.status_code == 200
+        assert response.headers["cache-control"] == "public, max-age=3600"
+        
+        # Test Schema.org cache headers
+        response = await client.get(f"/ication/{published_file.public_uuid}/schema-org")
+        assert response.status_code == 200
+        assert response.headers["cache-control"] == "public, max-age=3600"
+
+    async def test_metadata_endpoints_with_deleted_preprint(self, client: AsyncClient, published_file: File, db_session: AsyncSession):
+        """Test that metadata endpoints return 404 for deleted preprints."""
+        # Mark file as deleted
+        published_file.deleted_at = datetime.now(timezone.utc)
+        await db_session.commit()
+        
+        # Dublin Core should not be accessible
+        response = await client.get(f"/ication/{published_file.public_uuid}/dublin-core")
+        assert response.status_code == 404
+        
+        # Schema.org should not be accessible
+        response = await client.get(f"/ication/{published_file.public_uuid}/schema-org")
+        assert response.status_code == 404
