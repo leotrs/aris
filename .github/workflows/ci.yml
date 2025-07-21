@@ -626,7 +626,7 @@ jobs:
             "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
             "exit_code": $TEST_EXIT_CODE,
             "failed_tests": [
-EOF
+          EOF
           
           # Add failed tests
           echo "$FAILED_TESTS" | sed 's/.*/"&"/' | sed '$!s/$/,/' >> test-results/failure-summary.json
