@@ -433,17 +433,115 @@ test.describe("Demo Content Rendering @demo-content", () => {
 
     test("network requests complete successfully", async ({ page }) => {
       const failedRequests = [];
+      const allRequests = [];
+      const responses = [];
+      const renderRequests = [];
 
-      page.on("requestfailed", (request) => {
-        failedRequests.push(request.url());
+      console.log("[DEBUG-NETWORK] Starting network request monitoring test");
+      console.log("[DEBUG-NETWORK] Browser:", await page.evaluate(() => navigator.userAgent));
+
+      page.on("request", (request) => {
+        const timestamp = new Date().toISOString();
+        const logEntry = {
+          timestamp,
+          url: request.url(),
+          method: request.method(),
+          headers: request.headers(),
+          postData: request.postData() || null
+        };
+        allRequests.push(logEntry);
+        
+        if (request.url().includes("/render")) {
+          renderRequests.push({...logEntry, phase: "request_started"});
+          console.log(`[DEBUG-NETWORK] RENDER REQUEST STARTED: ${timestamp} - ${request.method()} ${request.url()}`);
+          console.log(`[DEBUG-NETWORK] RENDER REQUEST HEADERS:`, JSON.stringify(request.headers(), null, 2));
+          if (request.postData()) {
+            console.log(`[DEBUG-NETWORK] RENDER REQUEST BODY:`, request.postData().substring(0, 200) + "...");
+          }
+        }
       });
 
-      await page.reload();
-      await page.waitForLoadState("load");
+      page.on("response", (response) => {
+        const timestamp = new Date().toISOString();
+        const responseInfo = {
+          timestamp,
+          url: response.url(),
+          status: response.status(),
+          statusText: response.statusText(),
+          headers: response.headers(),
+          ok: response.ok()
+        };
+        responses.push(responseInfo);
+        
+        if (response.url().includes("/render")) {
+          renderRequests.push({...responseInfo, phase: "response_received"});
+          console.log(`[DEBUG-NETWORK] RENDER RESPONSE RECEIVED: ${timestamp} - Status: ${response.status()} ${response.statusText()}`);
+          console.log(`[DEBUG-NETWORK] RENDER RESPONSE HEADERS:`, JSON.stringify(response.headers(), null, 2));
+          console.log(`[DEBUG-NETWORK] RENDER RESPONSE OK:`, response.ok());
+        }
+      });
 
+      page.on("requestfailed", (request) => {
+        const timestamp = new Date().toISOString();
+        const failure = request.failure();
+        const failureInfo = {
+          timestamp,
+          url: request.url(),
+          method: request.method(),
+          failure: failure ? failure.errorText : "Unknown error",
+          headers: request.headers()
+        };
+        
+        failedRequests.push(request.url());
+        
+        if (request.url().includes("/render")) {
+          renderRequests.push({...failureInfo, phase: "request_failed"});
+          console.log(`[DEBUG-NETWORK] RENDER REQUEST FAILED: ${timestamp} - ${request.method()} ${request.url()}`);
+          console.log(`[DEBUG-NETWORK] RENDER FAILURE REASON:`, failure ? failure.errorText : "Unknown error");
+          console.log(`[DEBUG-NETWORK] RENDER REQUEST HEADERS:`, JSON.stringify(request.headers(), null, 2));
+        } else {
+          console.log(`[DEBUG-NETWORK] OTHER REQUEST FAILED: ${timestamp} - ${request.url()} - ${failure ? failure.errorText : "Unknown error"}`);
+        }
+      });
+
+      console.log("[DEBUG-NETWORK] Event listeners attached, starting page reload");
+      
+      const reloadStartTime = Date.now();
+      await page.reload();
+      console.log(`[DEBUG-NETWORK] Page reload completed in ${Date.now() - reloadStartTime}ms`);
+
+      const loadStateStartTime = Date.now();
+      await page.waitForLoadState("load");
+      console.log(`[DEBUG-NETWORK] Load state 'load' reached in ${Date.now() - loadStateStartTime}ms`);
+
+      console.log("[DEBUG-NETWORK] Waiting for manuscript viewer to be visible...");
+      const manuscriptStartTime = Date.now();
+      
       // Wait for content to load completely
       await expect(page.locator('[data-testid="manuscript-viewer"]')).toBeVisible({
         timeout: 10000,
+      });
+      
+      console.log(`[DEBUG-NETWORK] Manuscript viewer became visible in ${Date.now() - manuscriptStartTime}ms`);
+
+      // Wait a bit more to catch any late-arriving network events
+      console.log("[DEBUG-NETWORK] Waiting additional 2 seconds for any remaining network activity...");
+      await page.waitForTimeout(2000);
+
+      console.log("[DEBUG-NETWORK] Final network analysis:");
+      console.log(`[DEBUG-NETWORK] Total requests made: ${allRequests.length}`);
+      console.log(`[DEBUG-NETWORK] Total responses received: ${responses.length}`);
+      console.log(`[DEBUG-NETWORK] Total failed requests: ${failedRequests.length}`);
+      console.log(`[DEBUG-NETWORK] Render-related events: ${renderRequests.length}`);
+
+      console.log("[DEBUG-NETWORK] All render-related events in chronological order:");
+      renderRequests.forEach((event, index) => {
+        console.log(`[DEBUG-NETWORK] ${index + 1}. ${event.timestamp} - ${event.phase}: ${event.url || 'N/A'} - Status: ${event.status || 'N/A'} - Error: ${event.failure || 'N/A'}`);
+      });
+
+      console.log("[DEBUG-NETWORK] All failed request URLs:");
+      failedRequests.forEach((url, index) => {
+        console.log(`[DEBUG-NETWORK] Failed ${index + 1}: ${url}`);
       });
 
       // Check for any failed requests related to demo content
@@ -451,6 +549,12 @@ test.describe("Demo Content Rendering @demo-content", () => {
         (url) => url.includes("/render") || url.includes("/static/rsm.css")
       );
 
+      console.log(`[DEBUG-NETWORK] Demo-related failures count: ${demoRelatedFailures.length}`);
+      demoRelatedFailures.forEach((url, index) => {
+        console.log(`[DEBUG-NETWORK] Demo failure ${index + 1}: ${url}`);
+      });
+
+      console.log("[DEBUG-NETWORK] Test assertion about to execute - expecting 0 demo-related failures");
       expect(demoRelatedFailures).toHaveLength(0);
     });
 
