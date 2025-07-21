@@ -1,11 +1,13 @@
 """Routes for rendering RSM into HTML."""
 
 import time
+
 from fastapi import APIRouter, Request
 from pydantic import BaseModel
 
 from .. import crud
 from ..logging_config import get_logger
+
 
 logger = get_logger(__name__)
 

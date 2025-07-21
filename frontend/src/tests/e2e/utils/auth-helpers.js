@@ -273,7 +273,7 @@ export class AuthHelpers {
       // Navigate to a page first to ensure proper context
       await this.page.goto("/login", { waitUntil: "domcontentloaded" });
       await this.page.waitForLoadState("load");
-      
+
       // Clear storage after page is fully loaded
       await this.page.evaluate(() => {
         localStorage.clear();
@@ -289,13 +289,13 @@ export class AuthHelpers {
     try {
       // Ensure page is ready for localStorage access
       await this.page.waitForLoadState("load");
-      
+
       const tokens = await this.page.evaluate(() => {
         // Check if localStorage is available before accessing
         if (typeof Storage === "undefined" || typeof localStorage === "undefined") {
           return { accessToken: null, refreshToken: null, user: null };
         }
-        
+
         const accessToken = localStorage.getItem("accessToken");
         const refreshToken = localStorage.getItem("refreshToken");
         const userStr = localStorage.getItem("user");
