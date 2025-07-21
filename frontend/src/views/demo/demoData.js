@@ -190,12 +190,12 @@ export const createDemoApi = () => ({
   post: async (url, payload) => {
     if (url.includes("/render")) {
       // Detect environment: only use real backend in E2E tests, not unit tests
-      const isE2ETest = typeof window !== 'undefined' && (
-        window.location?.href?.includes('/demo') || 
-        globalThis.playwright ||
-        process.env.NODE_ENV === 'test' && process.env.VITEST !== 'true'
-      );
-      
+      const isE2ETest =
+        typeof window !== "undefined" &&
+        (window.location?.href?.includes("/demo") ||
+          globalThis.playwright ||
+          (process.env.NODE_ENV === "test" && process.env.VITEST !== "true"));
+
       // For unit tests, return mock HTML to avoid network calls
       if (!isE2ETest) {
         console.log(`[DEBUG-DEMO] Unit test detected, returning mock HTML`);
@@ -207,7 +207,7 @@ export const createDemoApi = () => ({
             </div>
             <h2>Introduction</h2>
             <p>The current landscape of scientific publishing relies heavily on static document formats...</p>
-          </div>`
+          </div>`,
         };
       }
 
