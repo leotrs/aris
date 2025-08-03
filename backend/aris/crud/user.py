@@ -82,7 +82,7 @@ async def create_user(name: str, initials: str, email: str, password_hash: str, 
     return user
 
 
-async def update_user(user_id: int, name: str, initials: str, email: str, db: AsyncSession, affiliation: str = None):
+async def update_user(user_id: int, name: str, initials: str, email: str, db: AsyncSession):
     """Update user information.
 
     Parameters
@@ -97,8 +97,6 @@ async def update_user(user_id: int, name: str, initials: str, email: str, db: As
         New email address for the user.
     db : AsyncSession
         SQLAlchemy async database session.
-    affiliation : str, optional
-        New institutional affiliation for the user.
 
     Returns
     -------
@@ -119,8 +117,6 @@ async def update_user(user_id: int, name: str, initials: str, email: str, db: As
         user.initials = initials
     if email != user.email:
         user.email = email
-    if affiliation != user.affiliation:
-        user.affiliation = affiliation
     await db.commit()
     await db.refresh(user)
     return user

@@ -39,8 +39,6 @@ def test_avatar_color_random(monkeypatch):
 def test_file_status_values():
     """Ensure FileStatus enum members have the correct labels."""
     assert FileStatus.DRAFT.value == "Draft"
-    assert FileStatus.UNDER_REVIEW.value == "Under Review"
-    assert FileStatus.PUBLISHED.value == "Published"
 
 
 def test_file_settings_column_defaults():
@@ -116,16 +114,6 @@ async def test_annotation_message_creation(db_session):
     assert msg.owner_id == user.id
 
 
-def test_user_model_has_affiliation_field():
-    """Test that User model has affiliation field."""
-    user = User(name="Test User", email="test@example.com", password_hash="test_hash", affiliation="MIT")
-    assert user.affiliation == "MIT"
-
-
-def test_user_affiliation_can_be_null():
-    """Test that affiliation field can be null."""
-    user = User(name="Test User", email="test@example.com", password_hash="test_hash")
-    assert user.affiliation is None
 
 
 def test_user_has_email_verification_fields():
@@ -168,103 +156,6 @@ def test_new_user_email_unverified():
     assert user.email_verification_token is None
 
 
-def test_file_publication_fields_defaults():
-    """Test that File model has publication fields with correct defaults."""
-    file = File(owner_id=1, source=":rsm: Test content ::")
-    assert file.published_at is None
-    assert file.public_uuid is None
-    assert file.permalink_slug is None
-
-
-def test_file_is_published_property():
-    """Test that File model has is_published computed property."""
-    file = File(owner_id=1, source=":rsm: Test content ::")
-    
-    # Draft file should not be published
-    file.status = FileStatus.DRAFT
-    assert file.is_published is False
-    
-    # Published file should be published
-    file.status = FileStatus.PUBLISHED
-    assert file.is_published is True
-    
-    # Under review file should not be published
-    file.status = FileStatus.UNDER_REVIEW
-    assert file.is_published is False
-
-
-def test_file_generate_public_uuid():
-    """Test that File model can generate 6-character public UUID."""
-    file = File(owner_id=1, source=":rsm: Test content ::")
-    uuid = file.generate_public_uuid()
-    
-    assert len(uuid) == 6
-    assert isinstance(uuid, str)
-    assert uuid.isalnum()  # Should be alphanumeric
-
-
-def test_file_can_publish_method():
-    """Test that File model has can_publish method with correct logic."""
-    file = File(owner_id=1, source=":rsm: Test content ::")
-    
-    # Draft file with source can be published
-    file.status = FileStatus.DRAFT
-    assert file.can_publish() is True
-    
-    # Published file cannot be published again
-    file.status = FileStatus.PUBLISHED
-    assert file.can_publish() is False
-    
-    # Under review file cannot be published
-    file.status = FileStatus.UNDER_REVIEW
-    assert file.can_publish() is False
-    
-    # Draft file without source cannot be published
-    file.status = FileStatus.DRAFT
-    file.source = None
-    assert file.can_publish() is False
-
-
-def test_file_publish_method():
-    """Test that File model has publish method that updates status and fields."""
-    file = File(owner_id=1, source=":rsm: Test content ::")
-    file.status = FileStatus.DRAFT
-    
-    # Initially not published
-    assert file.published_at is None
-    assert file.public_uuid is None
-    assert file.status == FileStatus.DRAFT
-    
-    # Publish the file
-    file.publish()
-    
-    # Should be published now
-    assert file.status == FileStatus.PUBLISHED
-    assert file.published_at is not None
-    assert file.public_uuid is not None
-    assert len(file.public_uuid) == 6
-
-
-def test_file_publish_method_validation():
-    """Test that publish method raises error for invalid states."""
-    file = File(owner_id=1, source=":rsm: Test content ::")
-    
-    # Cannot publish file that's already published
-    file.status = FileStatus.PUBLISHED
-    try:
-        file.publish()
-        assert False, "Should have raised ValueError"
-    except ValueError as e:
-        assert "cannot be published" in str(e)
-    
-    # Cannot publish file without source
-    file.status = FileStatus.DRAFT
-    file.source = None
-    try:
-        file.publish()
-        assert False, "Should have raised ValueError"
-    except ValueError as e:
-        assert "cannot be published" in str(e)
 
 
 def test_file_version_field_defaults():

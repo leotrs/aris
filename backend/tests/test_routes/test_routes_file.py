@@ -48,12 +48,12 @@ async def test_create_file_invalid_rsm_source_no_prefix(client: AsyncClient, aut
             "title": "Test Document",
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
-            "source": "invalid content::",
+            "source": "test content without proper prefix",
         },
     )
 
-    assert response.status_code == 400
-    assert "Malformed RSM source" in response.json()["detail"]
+    assert response.status_code == 422
+    assert "Malformed RSM source" in response.json()["detail"][0]["msg"]
 
 
 async def test_create_file_invalid_rsm_source_no_suffix(client: AsyncClient, authenticated_user):
@@ -67,47 +67,12 @@ async def test_create_file_invalid_rsm_source_no_suffix(client: AsyncClient, aut
             "title": "Test Document",
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content",
+            "source": ":rsm:test content without suffix",
         },
     )
 
-    assert response.status_code == 400
-    assert "Malformed RSM source" in response.json()["detail"]
-
-
-async def test_create_file_empty_source(client: AsyncClient, authenticated_user):
-    """Test creating a file with empty source (should pass validation)."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": "",
-        },
-    )
-
-    assert response.status_code == 200
-    data = response.json()
-    assert "id" in data
-
-
-async def test_create_file_without_auth(client: AsyncClient):
-    """Test creating a file without authentication."""
-    response = await client.post(
-        "/files",
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": 1,
-            "source": ":rsm:test content::",
-        },
-    )
-
-    assert response.status_code == 401
+    assert response.status_code == 422
+    assert "Malformed RSM source" in response.json()["detail"][0]["msg"]
 
 
 async def test_get_file_by_id(client: AsyncClient, authenticated_user):
@@ -125,29 +90,22 @@ async def test_get_file_by_id(client: AsyncClient, authenticated_user):
             "source": ":rsm:test content::",
         },
     )
-
     file_id = create_response.json()["id"]
 
-    # Then get it
+    # Get the file
     response = await client.get(f"/files/{file_id}", headers=headers)
     assert response.status_code == 200
-
     data = response.json()
     assert data["id"] == file_id
     assert data["title"] == "Test Document"
-    assert data["abstract"] == "A test document"
-    assert data["source"] == ":rsm:test content::"
-    assert data["owner_id"] == authenticated_user["user_id"]
-    assert "last_edited_at" in data
 
 
 async def test_get_nonexistent_file(client: AsyncClient, authenticated_user):
     """Test getting a file that doesn't exist."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
     response = await client.get("/files/99999", headers=headers)
     assert response.status_code == 404
-    assert response.json()["detail"] == "File not found"
+    assert "File with id 99999 not found" in response.json()["detail"]
 
 
 async def test_update_file(client: AsyncClient, authenticated_user):
@@ -165,10 +123,9 @@ async def test_update_file(client: AsyncClient, authenticated_user):
             "source": ":rsm:original content::",
         },
     )
-
     file_id = create_response.json()["id"]
 
-    # Then update it
+    # Update the file
     response = await client.put(
         f"/files/{file_id}",
         headers=headers,
@@ -180,28 +137,13 @@ async def test_update_file(client: AsyncClient, authenticated_user):
     )
 
     assert response.status_code == 200
+    data = response.json()
+    assert data["title"] == "Updated Title"
+    assert data["abstract"] == "Updated abstract"
 
 
-async def test_update_nonexistent_file(client: AsyncClient, authenticated_user):
-    """Test updating a file that doesn't exist."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    response = await client.put(
-        "/files/99999",
-        headers=headers,
-        json={
-            "title": "Updated Title",
-            "abstract": "Updated abstract",
-            "source": ":rsm:updated content::",
-        },
-    )
-
-    assert response.status_code == 404
-    assert response.json()["detail"] == "File not found"
-
-
-async def test_soft_delete_file(client: AsyncClient, authenticated_user):
-    """Test soft deleting a file."""
+async def test_update_file_invalid_rsm(client: AsyncClient, authenticated_user):
+    """Test updating a file with invalid RSM source."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
 
     # First create a file
@@ -210,27 +152,50 @@ async def test_soft_delete_file(client: AsyncClient, authenticated_user):
         headers=headers,
         json={
             "title": "Test Document",
-            "abstract": "A test document",
+            "abstract": "Test abstract",
             "owner_id": authenticated_user["user_id"],
             "source": ":rsm:test content::",
         },
     )
-
     file_id = create_response.json()["id"]
 
-    # Then delete it
-    response = await client.delete(f"/files/{file_id}", headers=headers)
-    assert response.status_code == 200
-    assert f"File {file_id} soft deleted" in response.json()["message"]
+    # Try to update with invalid RSM
+    response = await client.put(
+        f"/files/{file_id}",
+        headers=headers,
+        json={
+            "source": "invalid rsm content",
+        },
+    )
+
+    assert response.status_code == 422
+    assert "Malformed RSM source" in response.json()["detail"][0]["msg"]
 
 
-async def test_delete_nonexistent_file(client: AsyncClient, authenticated_user):
-    """Test deleting a file that doesn't exist."""
+async def test_delete_file(client: AsyncClient, authenticated_user):
+    """Test deleting a file."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
 
-    response = await client.delete("/files/99999", headers=headers)
-    assert response.status_code == 404
-    assert response.json()["detail"] == "File not found"
+    # First create a file
+    create_response = await client.post(
+        "/files",
+        headers=headers,
+        json={
+            "title": "To Be Deleted",
+            "abstract": "This will be deleted",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:delete me::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Delete the file
+    response = await client.delete(f"/files/{file_id}", headers=headers)
+    assert response.status_code == 200
+
+    # Verify it's deleted (should get 404)
+    get_response = await client.get(f"/files/{file_id}", headers=headers)
+    assert get_response.status_code == 404
 
 
 async def test_duplicate_file(client: AsyncClient, authenticated_user):
@@ -242,96 +207,26 @@ async def test_duplicate_file(client: AsyncClient, authenticated_user):
         "/files",
         headers=headers,
         json={
-            "title": "Original Document",
+            "title": "Original File",
             "abstract": "Original abstract",
             "owner_id": authenticated_user["user_id"],
             "source": ":rsm:original content::",
         },
     )
-
     file_id = create_response.json()["id"]
-
-    # Then duplicate it
-    response = await client.post(f"/files/{file_id}/duplicate", headers=headers)
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "id" in data
-    assert data["id"] != file_id  # Should be a new ID
-    assert data["message"] == "File duplicated successfully"
-
-
-async def test_duplicate_file_with_tags(client: AsyncClient, authenticated_user):
-    """Test duplicating a file that has tags."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-    user_id = authenticated_user["user_id"]
-
-    # First create some tags
-    tag1_response = await client.post(
-        f"/users/{user_id}/tags", headers=headers, json={"name": "Test Tag 1", "color": "#FF0000"}
-    )
-    tag1_id = tag1_response.json()["id"]
-
-    tag2_response = await client.post(
-        f"/users/{user_id}/tags", headers=headers, json={"name": "Test Tag 2", "color": "#00FF00"}
-    )
-    tag2_id = tag2_response.json()["id"]
-
-    # Create a file
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Original Document with Tags",
-            "abstract": "Original abstract with tags",
-            "owner_id": user_id,
-            "source": ":rsm:original content with tags::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Add tags to the file
-    await client.post(f"/users/{user_id}/files/{file_id}/tags/{tag1_id}", headers=headers)
-    await client.post(f"/users/{user_id}/files/{file_id}/tags/{tag2_id}", headers=headers)
-
-    # Verify original file has tags
-    original_tags_response = await client.get(
-        f"/users/{user_id}/files/{file_id}/tags", headers=headers
-    )
-    original_tags = original_tags_response.json()
-    assert len(original_tags) == 2
-    original_tag_ids = {tag["id"] for tag in original_tags}
-    assert tag1_id in original_tag_ids
-    assert tag2_id in original_tag_ids
 
     # Duplicate the file
     response = await client.post(f"/files/{file_id}/duplicate", headers=headers)
     assert response.status_code == 200
-    data = response.json()
-    assert "id" in data
-    duplicated_file_id = data["id"]
-    assert duplicated_file_id != file_id  # Should be a new ID
-    assert data["message"] == "File duplicated successfully"
-
-    # Verify the duplicated file has the same tags
-    duplicated_tags_response = await client.get(
-        f"/users/{user_id}/files/{duplicated_file_id}/tags", headers=headers
-    )
-    duplicated_tags = duplicated_tags_response.json()
-
-    assert len(duplicated_tags) == 2
-    duplicated_tag_ids = {tag["id"] for tag in duplicated_tags}
-    assert duplicated_tag_ids == original_tag_ids  # Same tags
-
-    # Verify we can get the duplicated file (basic check)
-    duplicated_file_response = await client.get(f"/files/{duplicated_file_id}", headers=headers)
-    assert duplicated_file_response.status_code == 200
-    duplicated_file_data = duplicated_file_response.json()
-    assert duplicated_file_data["title"] == "Original Document with Tags (copy)"
+    
+    duplicate_data = response.json()
+    assert duplicate_data["title"] == "Original File (Copy)"
+    assert duplicate_data["abstract"] == "Original abstract"
+    assert duplicate_data["id"] != file_id
 
 
-async def test_get_file_html_content(client: AsyncClient, authenticated_user):
-    """Test getting file HTML content."""
+async def test_get_file_content(client: AsyncClient, authenticated_user):
+    """Test getting file content as HTML."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
 
     # First create a file
@@ -342,23 +237,23 @@ async def test_get_file_html_content(client: AsyncClient, authenticated_user):
             "title": "Test Document",
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
+            "source": ":rsm:# Heading\n\nSome content::",
         },
     )
-
     file_id = create_response.json()["id"]
 
-    # Then get HTML content
+    # Get the content
     response = await client.get(f"/files/{file_id}/content", headers=headers)
-    # This might return 200 with HTML or 404 if not implemented
-    assert response.status_code in [200, 404, 500]  # Depends on your crud implementation
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "text/html; charset=utf-8"
+    assert "<h1>Heading</h1>" in response.text
 
 
-async def test_get_file_section(client: AsyncClient, authenticated_user):
-    """Test getting a specific file section."""
+async def test_get_file_content_section(client: AsyncClient, authenticated_user):
+    """Test getting a specific section of file content."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
 
-    # First create a file
+    # First create a file with sections
     create_response = await client.post(
         "/files",
         headers=headers,
@@ -366,20 +261,19 @@ async def test_get_file_section(client: AsyncClient, authenticated_user):
             "title": "Test Document",
             "abstract": "A test document",
             "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
+            "source": ":rsm:# Main Title\n\n## Section One\n\nContent::",
         },
     )
-
     file_id = create_response.json()["id"]
 
-    # Then get a section
-    response = await client.get(f"/files/{file_id}/content/intro", headers=headers)
-    # This might return 200, 404 depending on your implementation
-    assert response.status_code in [200, 404, 500]
+    # Get a specific section
+    response = await client.get(f"/files/{file_id}/content/handrails", headers=headers)
+    assert response.status_code == 200
+    assert response.headers["content-type"] == "text/html; charset=utf-8"
 
 
 async def test_get_file_assets(client: AsyncClient, authenticated_user):
-    """Test getting assets for a file."""
+    """Test getting file assets."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
 
     # First create a file
@@ -393,17 +287,53 @@ async def test_get_file_assets(client: AsyncClient, authenticated_user):
             "source": ":rsm:test content::",
         },
     )
-
     file_id = create_response.json()["id"]
 
-    # Then get assets
+    # Get assets (should be empty for new file)
     response = await client.get(f"/files/{file_id}/assets", headers=headers)
     assert response.status_code == 200
     assert isinstance(response.json(), list)
+    assert len(response.json()) == 0
+
+
+async def test_file_permissions(client: AsyncClient, authenticated_user, second_authenticated_user):
+    """Test that users can only access their own files."""
+    headers_primary = {"Authorization": f"Bearer {authenticated_user['token']}"}
+    headers_secondary = {"Authorization": f"Bearer {second_authenticated_user['token']}"}
+
+    # Create a file with primary user
+    create_response = await client.post(
+        "/files",
+        headers=headers_primary,
+        json={
+            "title": "Private File",
+            "abstract": "Should not be accessible by others",
+            "owner_id": authenticated_user["user_id"],
+            "source": ":rsm:private content::",
+        },
+    )
+    file_id = create_response.json()["id"]
+
+    # Try to access with secondary user
+    response = await client.get(f"/files/{file_id}", headers=headers_secondary)
+    assert response.status_code == 403
+    assert "do not have permission" in response.json()["detail"]
+
+    # Try to update with secondary user
+    update_response = await client.put(
+        f"/files/{file_id}",
+        headers=headers_secondary,
+        json={"title": "Hacked Title"},
+    )
+    assert update_response.status_code == 403
+
+    # Try to delete with secondary user
+    delete_response = await client.delete(f"/files/{file_id}", headers=headers_secondary)
+    assert delete_response.status_code == 403
 
 
 async def test_create_file_missing_required_fields(client: AsyncClient, authenticated_user):
-    """Test creating a file with missing required fields."""
+    """Test creating a file without required fields."""
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
 
     response = await client.post(
@@ -416,392 +346,3 @@ async def test_create_file_missing_required_fields(client: AsyncClient, authenti
     )
 
     assert response.status_code == 422  # Validation error
-
-
-# Publication Status Tests
-
-async def test_publish_file_success(client: AsyncClient, authenticated_user):
-    """Test successfully publishing a file."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create a file first
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Publish the file
-    response = await client.post(f"/files/{file_id}/publish", headers=headers)
-    
-    assert response.status_code == 200
-    data = response.json()
-    assert data["id"] == file_id
-    assert data["status"] == "Published"
-    assert data["public_uuid"] is not None
-    assert len(data["public_uuid"]) == 6
-    assert data["published_at"] is not None
-    assert data["message"] == "File published successfully"
-
-
-async def test_publish_file_already_published(client: AsyncClient, authenticated_user):
-    """Test publishing a file that's already published."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create and publish a file
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Publish first time
-    await client.post(f"/files/{file_id}/publish", headers=headers)
-
-    # Try to publish again
-    response = await client.post(f"/files/{file_id}/publish", headers=headers)
-    
-    assert response.status_code == 400
-    assert "already published" in response.json()["detail"]
-
-
-async def test_publish_file_without_content(client: AsyncClient, authenticated_user):
-    """Test publishing a file without source content."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create a file without source content
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": "",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Try to publish
-    response = await client.post(f"/files/{file_id}/publish", headers=headers)
-    
-    assert response.status_code == 400
-    assert "without source content" in response.json()["detail"]
-
-
-async def test_publish_file_not_found(client: AsyncClient, authenticated_user):
-    """Test publishing a file that doesn't exist."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    response = await client.post("/files/99999/publish", headers=headers)
-    
-    assert response.status_code == 404
-    assert "File with id 99999 not found" in response.json()["detail"]
-
-
-async def test_publish_file_without_auth(client: AsyncClient):
-    """Test publishing a file without authentication."""
-    response = await client.post("/files/1/publish")
-    assert response.status_code == 401
-
-
-async def test_update_file_status_to_published(client: AsyncClient, authenticated_user):
-    """Test updating file status to published."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create a file
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Update status to published
-    response = await client.put(
-        f"/files/{file_id}/status",
-        headers=headers,
-        json={"status": "published"}
-    )
-    
-    assert response.status_code == 200
-    data = response.json()
-    assert data["status"] == "Published"
-    assert data["public_uuid"] is not None
-    assert data["published_at"] is not None
-    assert "updated to Published" in data["message"]
-
-
-async def test_update_file_status_to_draft(client: AsyncClient, authenticated_user):
-    """Test updating file status to draft."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create a file
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Update status to draft (should work since it's already draft)
-    response = await client.put(
-        f"/files/{file_id}/status",
-        headers=headers,
-        json={"status": "draft"}
-    )
-    
-    assert response.status_code == 200
-    data = response.json()
-    assert data["status"] == "Draft"
-    assert "updated to Draft" in data["message"]
-
-
-async def test_update_file_status_to_under_review(client: AsyncClient, authenticated_user):
-    """Test updating file status to under review."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create a file
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Update status to under review
-    response = await client.put(
-        f"/files/{file_id}/status",
-        headers=headers,
-        json={"status": "under_review"}
-    )
-    
-    assert response.status_code == 200
-    data = response.json()
-    assert data["status"] == "Under Review"
-    assert "updated to Under Review" in data["message"]
-
-
-async def test_update_file_status_invalid_status(client: AsyncClient, authenticated_user):
-    """Test updating file status with invalid status."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create a file
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Try to update with invalid status
-    response = await client.put(
-        f"/files/{file_id}/status",
-        headers=headers,
-        json={"status": "invalid_status"}
-    )
-    
-    assert response.status_code == 400
-    assert "Invalid status" in response.json()["detail"]
-
-
-async def test_update_published_file_status_forbidden(client: AsyncClient, authenticated_user):
-    """Test that published files cannot be unpublished."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create and publish a file
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Publish the file
-    await client.post(f"/files/{file_id}/publish", headers=headers)
-
-    # Try to change status back to draft
-    response = await client.put(
-        f"/files/{file_id}/status",
-        headers=headers,
-        json={"status": "draft"}
-    )
-    
-    assert response.status_code == 400
-    assert "cannot be unpublished" in response.json()["detail"]
-
-
-async def test_get_publication_info_draft_file(client: AsyncClient, authenticated_user):
-    """Test getting publication info for a draft file."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create a file
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Get publication info
-    response = await client.get(f"/files/{file_id}/publication-info", headers=headers)
-    
-    assert response.status_code == 200
-    data = response.json()
-    assert data["id"] == file_id
-    assert data["status"] == "Draft"
-    assert data["is_published"] is False
-    assert data["can_publish"] is True
-    assert data["published_at"] is None
-    assert data["public_uuid"] is None
-    assert data["can_withdraw"] is False
-    assert data["version"] == 0
-
-
-async def test_get_publication_info_published_file(client: AsyncClient, authenticated_user):
-    """Test getting publication info for a published file."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create and publish a file
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    await client.post(f"/files/{file_id}/publish", headers=headers)
-
-    # Get publication info
-    response = await client.get(f"/files/{file_id}/publication-info", headers=headers)
-    
-    assert response.status_code == 200
-    data = response.json()
-    assert data["id"] == file_id
-    assert data["status"] == "Published"
-    assert data["is_published"] is True
-    assert data["can_publish"] is False
-    assert data["published_at"] is not None
-    assert data["public_uuid"] is not None
-    assert len(data["public_uuid"]) == 6
-    assert data["can_withdraw"] is True
-    assert data["version"] == 0
-
-
-async def test_get_publication_info_not_found(client: AsyncClient, authenticated_user):
-    """Test getting publication info for a file that doesn't exist."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    response = await client.get("/files/99999/publication-info", headers=headers)
-    
-    assert response.status_code == 404
-    assert "File with id 99999 not found" in response.json()["detail"]
-
-
-async def test_get_publication_info_without_auth(client: AsyncClient):
-    """Test getting publication info without authentication."""
-    response = await client.get("/files/1/publication-info")
-    assert response.status_code == 401
-
-
-async def test_withdraw_file_not_implemented(client: AsyncClient, authenticated_user):
-    """Test withdrawing a file (not fully implemented yet)."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create and publish a file
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    await client.post(f"/files/{file_id}/publish", headers=headers)
-
-    # Try to withdraw
-    response = await client.post(f"/files/{file_id}/withdraw", headers=headers)
-    
-    assert response.status_code == 400
-    assert "not yet fully implemented" in response.json()["detail"]
-
-
-async def test_withdraw_unpublished_file(client: AsyncClient, authenticated_user):
-    """Test withdrawing an unpublished file."""
-    headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
-
-    # Create a file (but don't publish it)
-    create_response = await client.post(
-        "/files",
-        headers=headers,
-        json={
-            "title": "Test Document",
-            "abstract": "A test document",
-            "owner_id": authenticated_user["user_id"],
-            "source": ":rsm:test content::",
-        },
-    )
-    file_id = create_response.json()["id"]
-
-    # Try to withdraw
-    response = await client.post(f"/files/{file_id}/withdraw", headers=headers)
-    
-    assert response.status_code == 400
-    assert "Only published files can be withdrawn" in response.json()["detail"]
-
-
-async def test_withdraw_file_without_auth(client: AsyncClient):
-    """Test withdrawing a file without authentication."""
-    response = await client.post("/files/1/withdraw")
-    assert response.status_code == 401

@@ -21,5 +21,5 @@ def test_mock_data_types():
 def test_mock_files_have_valid_statuses():
     """All mock File objects should have a valid FileStatus."""
     statuses = {f.status for f in MOCK_FILES}
-    expected = {FileStatus.DRAFT, FileStatus.UNDER_REVIEW, FileStatus.PUBLISHED}
+    expected = {FileStatus.DRAFT}
     assert statuses <= expected, "Mock files contain unexpected status values"

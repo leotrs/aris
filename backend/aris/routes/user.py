@@ -58,7 +58,6 @@ class UserUpdate(BaseModel):
     name: str
     initials: str
     email: str
-    affiliation: str | None = None
 
 
 class PasswordChange(BaseModel):
@@ -86,7 +85,7 @@ async def update_user(
     user_id : int
         The unique identifier of the user to update.
     update : UserUpdate
-        Updated user data including name, initials, email, and affiliation.
+        Updated user data including name, initials, and email.
     db : AsyncSession
         SQLAlchemy async database session dependency.
 
@@ -104,7 +103,7 @@ async def update_user(
     -----
     Requires authentication. Updates only the provided fields.
     """
-    user = await crud.update_user(user_id, update.name, update.initials, update.email, db, update.affiliation)
+    user = await crud.update_user(user_id, update.name, update.initials, update.email, db)
     if not user:
         raise not_found_exception("User", user_id)
     return user

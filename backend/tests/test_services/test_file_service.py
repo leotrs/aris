@@ -148,14 +148,14 @@ class TestFileCreateData:
             abstract="File abstract",
             source=":rsm:\nNew content\n::",
             owner_id=456,
-            status=FileStatus.PUBLISHED
+            status=FileStatus.DRAFT
         )
         
         assert create_data.title == "New File"
         assert create_data.abstract == "File abstract"
         assert create_data.source == ":rsm:\nNew content\n::"
         assert create_data.owner_id == 456
-        assert create_data.status == FileStatus.PUBLISHED
+        assert create_data.status == FileStatus.DRAFT
 
 
 class TestFileUpdateData:
@@ -178,13 +178,13 @@ class TestFileUpdateData:
             title="Updated Title",
             abstract="Updated abstract",
             source=":rsm:\nUpdated content\n::",
-            status=FileStatus.UNDER_REVIEW
+            status=FileStatus.DRAFT
         )
         
         assert update_data.title == "Updated Title"
         assert update_data.abstract == "Updated abstract"
         assert update_data.source == ":rsm:\nUpdated content\n::"
-        assert update_data.status == FileStatus.UNDER_REVIEW
+        assert update_data.status == FileStatus.DRAFT
     
     def test_file_update_data_has_updates(self):
         """Test checking if update data has any updates."""

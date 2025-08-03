@@ -92,8 +92,6 @@ class User(Base):
         Selected avatar color.
     profile_picture_id : int
         Foreign key to ProfilePicture (optional).
-    affiliation : str
-        Optional institutional affiliation.
     email_verified : bool
         Whether email address has been verified.
     email_verification_token : str
@@ -129,7 +127,6 @@ class User(Base):
     )
 
     # Account fields
-    affiliation = Column(String, nullable=True)
 
     # Email verification fields
     email_verified = Column(Boolean, nullable=False, default=False)
@@ -247,11 +244,9 @@ file_tags = Table(
 
 
 class FileStatus(enum.Enum):
-    """Enum representing the publication status of a research file."""
+    """Enum representing the status of a research file."""
 
     DRAFT = "Draft"
-    UNDER_REVIEW = "Under Review"
-    PUBLISHED = "Published"
 
 
 class File(Base):
@@ -311,15 +306,9 @@ class File(Base):
         DateTime(timezone=True), server_default=func.now(), onupdate=func.now()
     )
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    doi = Column(String, unique=True, nullable=True)
     source = Column(Text, nullable=True)
     deleted_at = Column(DateTime(timezone=True), nullable=True)
     owner_id = Column(Integer, ForeignKey("users.id"), nullable=False)
-
-    # Publication fields
-    published_at = Column(DateTime(timezone=True), nullable=True)
-    public_uuid: Mapped[str | None] = mapped_column(String(6), unique=True, nullable=True)
-    permalink_slug = Column(String, unique=True, nullable=True)
     
     # Versioning fields
     version = Column(Integer, nullable=False, default=0)
@@ -344,32 +333,6 @@ class File(Base):
             kwargs["version"] = 0
         super().__init__(**kwargs)
 
-    @property
-    def is_published(self) -> bool:
-        """Check if file is published."""
-        return bool(self.status == FileStatus.PUBLISHED)
-
-    def generate_public_uuid(self) -> str:
-        """Generate a 6-character public UUID for this file."""
-        import shortuuid
-
-        return shortuuid.uuid()[:6]
-
-    def can_publish(self) -> bool:
-        """Check if file can be published."""
-        return bool(self.status == FileStatus.DRAFT and self.source is not None and self.source.strip())
-
-    def publish(self) -> None:
-        """Publish this file."""
-        if not self.can_publish():
-            raise ValueError("File cannot be published")
-
-        from datetime import datetime, timezone
-
-        self.status = FileStatus.PUBLISHED
-        self.published_at = datetime.now(timezone.utc)
-        if not self.public_uuid:
-            self.public_uuid = self.generate_public_uuid()
 
 
 class Tag(Base):

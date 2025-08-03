@@ -41,7 +41,7 @@ MOCK_FILES = [
         title="Title and a paragraph",
         abstract="This is the abstract of sample file 2.",
         keywords="example, science, test",
-        status=FileStatus.UNDER_REVIEW,
+        status=FileStatus.DRAFT,
         owner_id=2,
         source="""\
         :rsm:
@@ -56,7 +56,7 @@ MOCK_FILES = [
         title="Title, Section, and ParagraphSample File 3",
         abstract="This is the abstract of sample file 3.",
         keywords="research, test, study",
-        status=FileStatus.PUBLISHED,
+        status=FileStatus.DRAFT,
         owner_id=3,
         source="""\
         :rsm:
