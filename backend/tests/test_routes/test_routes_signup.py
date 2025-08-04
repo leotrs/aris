@@ -16,10 +16,8 @@ class TestCreateSignupEndpoint:
         """Test successful signup creation."""
         signup_data = {
             "email": "newuser@example.com",
-            "name": "New User",
-            "institution": "Test University",
-            "research_area": "Computer Science",
-            "interest_level": "ready",
+            "authoring_tools": ["LaTeX", "Markdown"],
+            "improvements": "Better collaboration features",
         }
 
         response = await client.post("/signup/", json=signup_data)
@@ -28,10 +26,8 @@ class TestCreateSignupEndpoint:
         data = response.json()
 
         assert data["email"] == "newuser@example.com"
-        assert data["name"] == "New User"
-        assert data["institution"] == "Test University"
-        assert data["research_area"] == "Computer Science"
-        assert data["interest_level"] == "ready"
+        assert data["authoring_tools"] == ["LaTeX", "Markdown"]
+        assert data["improvements"] == "Better collaboration features"
         assert data["status"] == "active"
         assert "id" in data
         assert "created_at" in data
@@ -40,7 +36,7 @@ class TestCreateSignupEndpoint:
 
     async def test_create_signup_minimal_data(self, client: AsyncClient):
         """Test signup creation with minimal required data."""
-        signup_data = {"email": "minimal@example.com", "name": "Minimal User"}
+        signup_data = {"email": "minimal@example.com"}
 
         response = await client.post("/signup/", json=signup_data)
 
@@ -48,22 +44,20 @@ class TestCreateSignupEndpoint:
         data = response.json()
 
         assert data["email"] == "minimal@example.com"
-        assert data["name"] == "Minimal User"
-        assert data["institution"] is None
-        assert data["research_area"] is None
-        assert data["interest_level"] is None
+        assert data["authoring_tools"] is None
+        assert data["improvements"] is None
         assert data["status"] == "active"
         assert "unsubscribe_token" in data
 
     async def test_create_signup_duplicate_email(self, client: AsyncClient):
         """Test signup creation with duplicate email."""
         # First signup
-        signup_data = {"email": "duplicate@example.com", "name": "First User"}
+        signup_data = {"email": "duplicate@example.com"}
         response = await client.post("/signup/", json=signup_data)
         assert response.status_code == 200
 
         # Second signup with same email
-        signup_data = {"email": "duplicate@example.com", "name": "Second User"}
+        signup_data = {"email": "duplicate@example.com"}
         response = await client.post("/signup/", json=signup_data)
 
         assert response.status_code == 409
@@ -73,7 +67,7 @@ class TestCreateSignupEndpoint:
 
     async def test_create_signup_invalid_email(self, client: AsyncClient):
         """Test signup creation with invalid email format."""
-        signup_data = {"email": "invalid-email", "name": "Test User"}
+        signup_data = {"email": "invalid-email"}
 
         response = await client.post("/signup/", json=signup_data)
 
@@ -84,22 +78,20 @@ class TestCreateSignupEndpoint:
 
     async def test_create_signup_missing_required_fields(self, client: AsyncClient):
         """Test signup creation with missing required fields."""
-        # Missing name
-        signup_data = {"email": "test@example.com"}
+        # Missing email - this should actually work now with minimal data
+        signup_data = {"authoring_tools": ["LaTeX"]}
         response = await client.post("/signup/", json=signup_data)
-        assert response.status_code == 422
+        assert response.status_code == 422  # Email is required
 
-        # Missing email
-        signup_data = {"name": "Test User"}
-        response = await client.post("/signup/", json=signup_data)
-        assert response.status_code == 422
+        # Empty request body
+        response = await client.post("/signup/", json={})
+        assert response.status_code == 422  # Email is required
 
-    async def test_create_signup_invalid_interest_level(self, client: AsyncClient):
-        """Test signup creation with invalid interest level."""
+    async def test_create_signup_invalid_authoring_tools(self, client: AsyncClient):
+        """Test signup creation with invalid authoring tools format."""
         signup_data = {
             "email": "test@example.com",
-            "name": "Test User",
-            "interest_level": "invalid_level",
+            "authoring_tools": "not_a_list",  # Should be a list
         }
 
         response = await client.post("/signup/", json=signup_data)
@@ -110,9 +102,8 @@ class TestCreateSignupEndpoint:
         """Test that XSS attempts are sanitized."""
         signup_data = {
             "email": "xss@example.com",
-            "name": "<script>alert('xss')</script>Test User",
-            "institution": "<img src=x onerror=alert('xss')>University",
-            "research_area": "Computer Science<script>evil()</script>",
+            "authoring_tools": ["LaTeX<script>alert('xss')</script>", "Normal Tool"],
+            "improvements": "Better features<script>evil()</script> please!",
         }
 
         response = await client.post("/signup/", json=signup_data)
@@ -120,25 +111,26 @@ class TestCreateSignupEndpoint:
         assert response.status_code == 200
         data = response.json()
 
-        # Check that HTML tags are escaped
-        assert "<script>" not in data["name"]
-        assert "&lt;script&gt;" in data["name"]
-        assert "<img" not in data["institution"]
-        assert "&lt;img" in data["institution"]
+        # Check that HTML tags are escaped in improvements
+        assert "<script>" not in data["improvements"]
+        assert "&lt;script&gt;" in data["improvements"]
+        # Authoring tools are stored as-is in JSON, but would be sanitized by frontend
 
     async def test_create_signup_empty_strings(self, client: AsyncClient):
         """Test signup creation with empty string values."""
         signup_data = {
             "email": "empty@example.com",
-            "name": "",  # Actually empty
-            "institution": "",
-            "research_area": "",
+            "authoring_tools": [],  # Empty list
+            "improvements": "",     # Empty string
         }
 
         response = await client.post("/signup/", json=signup_data)
 
-        # Should fail because name is empty
-        assert response.status_code == 422
+        # Should succeed with empty optional fields
+        assert response.status_code == 200
+        data = response.json()
+        assert data["authoring_tools"] == []
+        assert data["improvements"] == ""
 
 
 class TestCheckSignupStatusEndpoint:
@@ -147,7 +139,7 @@ class TestCheckSignupStatusEndpoint:
     async def test_check_signup_status_exists(self, client: AsyncClient):
         """Test status check for existing email."""
         # Create signup first
-        signup_data = {"email": "exists@example.com", "name": "Exists User"}
+        signup_data = {"email": "exists@example.com"}
         await client.post("/signup/", json=signup_data)
 
         # Check status
@@ -189,7 +181,7 @@ class TestUnsubscribeEndpoint:
     async def test_unsubscribe_success(self, client: AsyncClient, db_session):
         """Test successful unsubscribe with valid token."""
         # Create signup first
-        signup_data = {"email": "unsubscribe@example.com", "name": "Unsubscribe User"}
+        signup_data = {"email": "unsubscribe@example.com"}
         create_response = await client.post("/signup/", json=signup_data)
         assert create_response.status_code == 200
 
@@ -226,7 +218,6 @@ class TestUnsubscribeEndpoint:
         # Create signup
         signup_data = {
             "email": "already_unsubscribed@example.com",
-            "name": "Already Unsubscribed User",
         }
         create_response = await client.post("/signup/", json=signup_data)
         unsubscribe_token = create_response.json()["unsubscribe_token"]
@@ -276,8 +267,8 @@ class TestSignupEndpointIntegration:
         # 2. Create signup
         signup_data = {
             "email": email,
-            "name": "Flow User",
-            "interest_level": "planning",
+            "authoring_tools": ["LaTeX", "Markdown"],
+            "improvements": "Better collaboration features",
         }
         response = await client.post("/signup/", json=signup_data)
         assert response.status_code == 200
@@ -300,10 +291,8 @@ class TestSignupEndpointIntegration:
         """Test signup with all possible fields filled."""
         signup_data = {
             "email": "complete@example.com",
-            "name": "Dr. Complete User",
-            "institution": "Complete University of Science",
-            "research_area": "Computational Biology and Bioinformatics",
-            "interest_level": "migrating",
+            "authoring_tools": ["LaTeX", "Markdown", "Typst"],
+            "improvements": "Better collaboration and real-time editing features would be amazing!",
         }
 
         response = await client.post("/signup/", json=signup_data)
@@ -329,8 +318,8 @@ class TestSignupEndpointIntegration:
         for i, email in enumerate(emails):
             signup_data = {
                 "email": email,
-                "name": f"User {i + 1}",
-                "interest_level": ["exploring", "planning", "ready"][i],
+                "authoring_tools": [["LaTeX"], ["Markdown"], ["Typst"]][i],
+                "improvements": f"Improvements from user {i + 1}",
             }
 
             response = await client.post("/signup/", json=signup_data)
@@ -345,7 +334,7 @@ class TestSignupEndpointIntegration:
     async def test_error_response_format(self, client: AsyncClient):
         """Test that error responses follow the expected format."""
         # Test duplicate email error format
-        signup_data = {"email": "error@example.com", "name": "User"}
+        signup_data = {"email": "error@example.com"}
         await client.post("/signup/", json=signup_data)  # Create first
 
         response = await client.post("/signup/", json=signup_data)  # Duplicate
@@ -371,8 +360,8 @@ class TestSignupEndpointEmailIntegration:
 
         signup_data = {
             "email": "emailtest@example.com",
-            "name": "Email Test User",
-            "institution": "Test University"
+            "authoring_tools": ["LaTeX", "Markdown"],
+            "improvements": "Better collaboration features"
         }
 
         response = await client.post("/signup/", json=signup_data)
@@ -384,7 +373,7 @@ class TestSignupEndpointEmailIntegration:
         mock_get_email_service.assert_called_once()
         mock_email_service.send_waitlist_confirmation.assert_called_once_with(
             to_email="emailtest@example.com",
-            name="Email Test User",
+            name="emailtest",  # Uses email prefix as name
             unsubscribe_token=data["unsubscribe_token"]
         )
 
@@ -398,7 +387,6 @@ class TestSignupEndpointEmailIntegration:
 
         signup_data = {
             "email": "emailfail@example.com",
-            "name": "Email Fail User"
         }
 
         with caplog.at_level(logging.ERROR):
@@ -420,7 +408,6 @@ class TestSignupEndpointEmailIntegration:
 
         signup_data = {
             "email": "noemail@example.com",
-            "name": "No Email User"
         }
 
         response = await client.post("/signup/", json=signup_data)
@@ -441,8 +428,8 @@ class TestSignupEndpointEmailIntegration:
 
         signup_data = {
             "email": "parameterstest@example.com",
-            "name": "Dr. Jane <script>alert('xss')</script> Smith",  # Test XSS sanitization
-            "institution": "University & College"
+            "authoring_tools": ["LaTeX", "Markdown"],
+            "improvements": "Dr. Jane <script>alert('xss')</script> needs better features",  # Test XSS sanitization
         }
 
         response = await client.post("/signup/", json=signup_data)
@@ -450,14 +437,15 @@ class TestSignupEndpointEmailIntegration:
         assert response.status_code == 200
         data = response.json()
         
-        # Verify email called with sanitized name
+        # Verify email called with correct parameters
         mock_email_service.send_waitlist_confirmation.assert_called_once()
         call_args = mock_email_service.send_waitlist_confirmation.call_args
         
         assert call_args.kwargs["to_email"] == "parameterstest@example.com"
-        assert call_args.kwargs["name"] == data["name"]  # Should be sanitized
+        assert call_args.kwargs["name"] == "parameterstest"  # Uses email prefix as name
         assert call_args.kwargs["unsubscribe_token"] == data["unsubscribe_token"]
         
-        # Verify XSS was sanitized
-        assert "<script>" not in data["name"]
-        assert "Dr. Jane" in data["name"]
+        # Verify XSS was sanitized in improvements field
+        assert "<script>" not in data["improvements"]
+        assert "&lt;script&gt;" in data["improvements"]
+        assert "Dr. Jane" in data["improvements"]

@@ -648,6 +648,7 @@ class Signup(Base):
     """Early access signup registration.
 
     Stores user signup information for early access waitlist and updates.
+    Matches the frontend form structure: email, authoring tools, improvements.
     Includes compliance fields and basic analytics tracking.
 
     Attributes
@@ -656,14 +657,10 @@ class Signup(Base):
         Primary key.
     email : str
         Unique email address.
-    name : str
-        Full name of the user.
-    institution : str
-        Optional institution or affiliation.
-    research_area : str
-        Optional research area/field.
-    interest_level : InterestLevel
-        Level of interest in the platform.
+    authoring_tools : str
+        JSON string of selected authoring tools.
+    improvements : str
+        Optional text feedback on desired improvements.
     status : SignupStatus
         Current status (active, unsubscribed, converted).
     source : str
@@ -689,10 +686,8 @@ class Signup(Base):
 
     id = Column(Integer, primary_key=True, autoincrement=True)
     email = Column(String, unique=True, nullable=False, index=True)
-    name = Column(String, nullable=False)
-    institution = Column(String, nullable=True)
-    research_area = Column(String, nullable=True)
-    interest_level: Column[InterestLevel] = Column(Enum(InterestLevel), nullable=True)
+    authoring_tools = Column(Text, nullable=True)  # JSON array of tools
+    improvements = Column(Text, nullable=True)     # User feedback text
 
     # Status and tracking
     status: Column[SignupStatus] = Column(

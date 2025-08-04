@@ -1,5 +1,7 @@
 """Tests for signup CRUD operations."""
 
+import json
+
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,7 +15,7 @@ from aris.crud.signup import (
     unsubscribe_signup,
     update_signup_status,
 )
-from aris.models.models import InterestLevel, SignupStatus
+from aris.models.models import SignupStatus
 
 
 class TestCreateSignup:
@@ -21,13 +23,12 @@ class TestCreateSignup:
 
     async def test_create_signup_success(self, db_session: AsyncSession):
         """Test successful signup creation."""
+        authoring_tools = ["LaTeX", "Markdown"]
         signup = await create_signup(
             email="test@example.com",
-            name="Test User",
             db=db_session,
-            institution="Test University",
-            research_area="Computer Science",
-            interest_level=InterestLevel.READY,
+            authoring_tools=authoring_tools,
+            improvements="Better collaboration features",
             ip_address="192.168.1.1",
             user_agent="Mozilla/5.0",
             source="website",
@@ -35,10 +36,10 @@ class TestCreateSignup:
         
         assert signup.id is not None
         assert signup.email == "test@example.com"
-        assert signup.name == "Test User"
-        assert signup.institution == "Test University"
-        assert signup.research_area == "Computer Science"
-        assert signup.interest_level == InterestLevel.READY
+        # Parse JSON to verify authoring_tools
+        parsed_tools = json.loads(signup.authoring_tools)
+        assert parsed_tools == authoring_tools
+        assert signup.improvements == "Better collaboration features"
         assert signup.status == SignupStatus.ACTIVE
         assert signup.ip_address == "192.168.1.1"
         assert signup.user_agent == "Mozilla/5.0"
@@ -51,16 +52,13 @@ class TestCreateSignup:
         """Test signup creation with minimal required data."""
         signup = await create_signup(
             email="minimal@example.com",
-            name="Minimal User",
             db=db_session
         )
         
         assert signup.id is not None
         assert signup.email == "minimal@example.com"
-        assert signup.name == "Minimal User"
-        assert signup.institution is None
-        assert signup.research_area is None
-        assert signup.interest_level is None
+        assert signup.authoring_tools is None
+        assert signup.improvements is None
         assert signup.status == SignupStatus.ACTIVE
         assert signup.source == "website"  # Default value
         assert signup.consent_given is True
@@ -70,7 +68,6 @@ class TestCreateSignup:
         # Create first signup
         await create_signup(
             email="duplicate@example.com",
-            name="First User",
             db=db_session
         )
         
@@ -78,7 +75,6 @@ class TestCreateSignup:
         with pytest.raises(DuplicateEmailError) as exc_info:
             await create_signup(
                 email="duplicate@example.com",
-                name="Second User",
                 db=db_session
             )
         
@@ -93,7 +89,6 @@ class TestGetSignup:
         # Create signup
         created_signup = await create_signup(
             email="find@example.com",
-            name="Find User",
             db=db_session
         )
         
@@ -103,7 +98,7 @@ class TestGetSignup:
         assert found_signup is not None
         assert found_signup.id == created_signup.id
         assert found_signup.email == "find@example.com"
-        assert found_signup.name == "Find User"
+        assert found_signup.authoring_tools is None
 
     async def test_get_signup_by_email_not_exists(self, db_session: AsyncSession):
         """Test retrieving non-existent signup by email."""
@@ -115,7 +110,6 @@ class TestGetSignup:
         # Create signup
         created_signup = await create_signup(
             email="findbyid@example.com",
-            name="Find By ID User",
             db=db_session
         )
         
@@ -140,7 +134,6 @@ class TestUpdateSignupStatus:
         # Create signup
         await create_signup(
             email="update@example.com",
-            name="Update User",
             db=db_session
         )
         
@@ -169,7 +162,6 @@ class TestUpdateSignupStatus:
         # Create signup
         await create_signup(
             email="unsubscribe@example.com",
-            name="Unsubscribe User",
             db=db_session
         )
         
@@ -193,7 +185,6 @@ class TestEmailExists:
         # Create signup
         await create_signup(
             email="exists@example.com",
-            name="Exists User",
             db=db_session
         )
         
@@ -218,11 +209,11 @@ class TestGetActiveSignupsCount:
     async def test_get_active_signups_count_with_signups(self, db_session: AsyncSession):
         """Test count with various signup statuses."""
         # Create active signups
-        await create_signup(email="active1@example.com", name="Active 1", db=db_session)
-        await create_signup(email="active2@example.com", name="Active 2", db=db_session)
+        await create_signup(email="active1@example.com", db=db_session)
+        await create_signup(email="active2@example.com", db=db_session)
         
         # Create and then unsubscribe one
-        await create_signup(email="unsub@example.com", name="Unsubscribed", db=db_session)
+        await create_signup(email="unsub@example.com", db=db_session)
         await unsubscribe_signup("unsub@example.com", db_session)
         
         # Count should only include active ones
@@ -235,50 +226,50 @@ class TestSignupValidation:
 
     async def test_create_signup_with_special_characters(self, db_session: AsyncSession):
         """Test signup creation with special characters in fields."""
+        tools_with_special = ["LaTeX (Overleaf)", "R&D Tools"]
         signup = await create_signup(
             email="special@example.com",
-            name="Dr. María José O'Connor-Smith",
             db=db_session,
-            institution="University of São Paulo & MIT",
-            research_area="AI/ML & Data Science",
+            authoring_tools=tools_with_special,
+            improvements="Better collaboration & real-time editing!",
         )
         
-        assert signup.name == "Dr. María José O'Connor-Smith"
-        assert signup.institution == "University of São Paulo & MIT"
-        assert signup.research_area == "AI/ML & Data Science"
+        parsed_tools = json.loads(signup.authoring_tools)
+        assert parsed_tools == tools_with_special
+        assert signup.improvements == "Better collaboration & real-time editing!"
 
     async def test_create_signup_with_long_fields(self, db_session: AsyncSession):
         """Test signup creation with long field values."""
-        long_name = "A" * 100  # 100 characters
-        long_institution = "B" * 200  # 200 characters
-        long_research_area = "C" * 200  # 200 characters
+        long_tools = [f"Tool{i}" for i in range(20)]  # Many tools
+        long_improvements = "I" * 1000  # 1000 characters
         
         signup = await create_signup(
             email="long@example.com",
-            name=long_name,
             db=db_session,
-            institution=long_institution,
-            research_area=long_research_area,
+            authoring_tools=long_tools,
+            improvements=long_improvements,
         )
         
-        assert signup.name == long_name
-        assert signup.institution == long_institution
-        assert signup.research_area == long_research_area
+        parsed_tools = json.loads(signup.authoring_tools)
+        assert parsed_tools == long_tools
+        assert len(parsed_tools) == 20
+        assert signup.improvements == long_improvements
+        assert len(signup.improvements) == 1000
 
-    async def test_create_signup_all_interest_levels(self, db_session: AsyncSession):
-        """Test signup creation with all possible interest levels."""
-        interest_levels = [
-            InterestLevel.EXPLORING,
-            InterestLevel.PLANNING,
-            InterestLevel.READY,
-            InterestLevel.MIGRATING,
+    async def test_create_signup_with_different_tool_combinations(self, db_session: AsyncSession):
+        """Test signup creation with different authoring tool combinations."""
+        tool_combinations = [
+            ["LaTeX"],
+            ["Markdown", "Typst"],
+            ["MS Word", "Google Docs", "Quarto"],
+            ["LaTeX", "Custom Tool", "Another Tool"],
         ]
         
-        for i, level in enumerate(interest_levels):
+        for i, tools in enumerate(tool_combinations):
             signup = await create_signup(
-                email=f"interest{i}@example.com",
-                name=f"Interest User {i}",
+                email=f"tools{i}@example.com",
                 db=db_session,
-                interest_level=level,
+                authoring_tools=tools,
             )
-            assert signup.interest_level == level
+            parsed_tools = json.loads(signup.authoring_tools)
+            assert parsed_tools == tools

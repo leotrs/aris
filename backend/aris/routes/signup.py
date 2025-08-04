@@ -5,6 +5,7 @@ including creation, status checking, and unsubscription.
 """
 
 import html
+import json
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
@@ -21,7 +22,7 @@ from ..crud.signup import (
 )
 from ..deps import get_db
 from ..logging_config import get_logger
-from ..models.models import InterestLevel, SignupStatus
+from ..models.models import SignupStatus
 from ..services.email import get_email_service
 
 
@@ -34,18 +35,14 @@ class SignupCreate(BaseModel):
     email: EmailStr = Field(
         ..., description="Email address for early access notifications"
     )
-    name: str = Field(..., min_length=1, max_length=100, description="Full name")
-    institution: Optional[str] = Field(
-        None, max_length=200, description="Institution or affiliation"
+    authoring_tools: Optional[list[str]] = Field(
+        None, description="List of authoring tools user currently uses"
     )
-    research_area: Optional[str] = Field(
-        None, max_length=200, description="Research area or field of study"
-    )
-    interest_level: Optional[InterestLevel] = Field(
-        None, description="Level of interest in the platform"
+    improvements: Optional[str] = Field(
+        None, max_length=500, description="What improvements user would like to see"
     )
 
-    @field_validator("name", "institution", "research_area")
+    @field_validator("improvements")
     @classmethod
     def sanitize_text_fields(cls, v: Optional[str]) -> Optional[str]:
         """Sanitize text input to prevent XSS."""
@@ -57,10 +54,8 @@ class SignupCreate(BaseModel):
         "json_schema_extra": {
             "example": {
                 "email": "researcher@university.edu",
-                "name": "Dr. Jane Smith",
-                "institution": "University of Science",
-                "research_area": "Computational Biology",
-                "interest_level": "ready",
+                "authoring_tools": ["LaTeX", "Markdown"],
+                "improvements": "Better collaboration features would be great",
             }
         }
     }
@@ -71,10 +66,8 @@ class SignupResponse(BaseModel):
 
     id: int
     email: str
-    name: str
-    institution: Optional[str]
-    research_area: Optional[str]
-    interest_level: Optional[InterestLevel]
+    authoring_tools: Optional[list[str]]
+    improvements: Optional[str]
     status: SignupStatus
     unsubscribe_token: str
     created_at: str  # ISO format datetime string
@@ -85,10 +78,8 @@ class SignupResponse(BaseModel):
             "example": {
                 "id": 1,
                 "email": "researcher@university.edu",
-                "name": "Dr. Jane Smith",
-                "institution": "University of Science",
-                "research_area": "Computational Biology",
-                "interest_level": "ready",
+                "authoring_tools": ["LaTeX", "Markdown"],
+                "improvements": "Better collaboration features would be great",
                 "status": "active",
                 "unsubscribe_token": "abcdef123456",
                 "created_at": "2025-01-15T10:30:00Z",
@@ -166,11 +157,9 @@ async def create_signup_endpoint(
 
         signup = await create_signup(
             email=signup_data.email,
-            name=signup_data.name,
+            authoring_tools=signup_data.authoring_tools,
+            improvements=signup_data.improvements,
             db=db,
-            institution=signup_data.institution,
-            research_area=signup_data.research_area,
-            interest_level=signup_data.interest_level,
             ip_address=ip_address,
             user_agent=user_agent,
             source="website",
@@ -182,7 +171,7 @@ async def create_signup_endpoint(
             try:
                 await email_service.send_waitlist_confirmation(
                     to_email=signup.email,
-                    name=signup.name,
+                    name=signup.email.split('@')[0],  # Use email prefix as name
                     unsubscribe_token=signup.unsubscribe_token
                 )
             except Exception as e:
@@ -190,13 +179,19 @@ async def create_signup_endpoint(
                 logger.error(f"Failed to send confirmation email to {signup.email}: {str(e)}")
 
         # Convert datetime to ISO format string for response
+        # Parse authoring_tools JSON string back to list for response
+        authoring_tools_list = None
+        if signup.authoring_tools is not None:
+            try:
+                authoring_tools_list = json.loads(signup.authoring_tools)
+            except json.JSONDecodeError:
+                authoring_tools_list = None
+        
         response_data = SignupResponse(
             id=signup.id,
             email=signup.email,
-            name=signup.name,
-            institution=signup.institution,
-            research_area=signup.research_area,
-            interest_level=signup.interest_level,
+            authoring_tools=authoring_tools_list,
+            improvements=signup.improvements,
             status=signup.status,
             unsubscribe_token=signup.unsubscribe_token,
             created_at=signup.created_at.isoformat(),

@@ -4,6 +4,7 @@ This module provides database operations for managing early access signups,
 including creation, retrieval, updates, and soft deletes.
 """
 
+import json
 import secrets
 from datetime import datetime, timezone
 from typing import Optional
@@ -13,7 +14,7 @@ from sqlalchemy.engine.result import Result
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..models.models import InterestLevel, Signup, SignupStatus
+from ..models.models import Signup, SignupStatus
 
 
 class SignupError(Exception):
@@ -39,11 +40,9 @@ def generate_unsubscribe_token() -> str:
 
 async def create_signup(
     email: str,
-    name: str,
     db: AsyncSession,
-    institution: Optional[str] = None,
-    research_area: Optional[str] = None,
-    interest_level: Optional[InterestLevel] = None,
+    authoring_tools: Optional[list[str]] = None,
+    improvements: Optional[str] = None,
     ip_address: Optional[str] = None,
     user_agent: Optional[str] = None,
     source: Optional[str] = None,
@@ -54,14 +53,10 @@ async def create_signup(
     ----------
     email : str
         Email address (must be unique).
-    name : str
-        Full name of the person signing up.
-    institution : str, optional
-        Institution or affiliation.
-    research_area : str, optional
-        Research area or field of study.
-    interest_level : InterestLevel, optional
-        Level of interest in the platform.
+    authoring_tools : list[str], optional
+        List of authoring tools user currently uses.
+    improvements : str, optional
+        What improvements user would like to see.
     ip_address : str, optional
         IP address for compliance tracking.
     user_agent : str, optional
@@ -81,12 +76,13 @@ async def create_signup(
     DuplicateEmailError
         If email already exists in the database.
     """
+    # Convert authoring_tools list to JSON string for storage
+    authoring_tools_json = json.dumps(authoring_tools) if authoring_tools is not None else None
+    
     signup = Signup(
         email=email,
-        name=name,
-        institution=institution,
-        research_area=research_area,
-        interest_level=interest_level,
+        authoring_tools=authoring_tools_json,
+        improvements=improvements,
         ip_address=ip_address,
         user_agent=user_agent,
         source=source or "website",

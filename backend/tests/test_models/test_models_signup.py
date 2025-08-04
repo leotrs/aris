@@ -1,6 +1,8 @@
 """Tests for signup model functionality."""
 
-from aris.models.models import InterestLevel, Signup, SignupStatus
+import json
+
+from aris.models.models import Signup, SignupStatus
 
 
 class TestSignupModel:
@@ -8,12 +10,12 @@ class TestSignupModel:
 
     def test_signup_model_creation(self):
         """Test basic signup model creation."""
+        authoring_tools_json = json.dumps(["LaTeX", "Markdown"])
+        
         signup = Signup(
             email="test@example.com",
-            name="Test User",
-            institution="Test University",
-            research_area="Computer Science",
-            interest_level=InterestLevel.READY,
+            authoring_tools=authoring_tools_json,
+            improvements="Better collaboration features",
             status=SignupStatus.ACTIVE,
             source="website",
             ip_address="192.168.1.1",
@@ -22,10 +24,8 @@ class TestSignupModel:
         )
 
         assert signup.email == "test@example.com"
-        assert signup.name == "Test User"
-        assert signup.institution == "Test University"
-        assert signup.research_area == "Computer Science"
-        assert signup.interest_level == InterestLevel.READY
+        assert signup.authoring_tools == authoring_tools_json
+        assert signup.improvements == "Better collaboration features"
         assert signup.status == SignupStatus.ACTIVE
         assert signup.source == "website"
         assert signup.ip_address == "192.168.1.1"
@@ -35,8 +35,7 @@ class TestSignupModel:
     def test_signup_model_defaults(self):
         """Test signup model default values."""
         signup = Signup(
-            email="defaults@example.com", 
-            name="Defaults User",
+            email="defaults@example.com",
             unsubscribe_token="test-token-123"
         )
 
@@ -44,9 +43,8 @@ class TestSignupModel:
         # Note: SQLAlchemy defaults are only applied when persisted to DB
         assert signup.status is None  # Default only applied on DB insert
         assert signup.consent_given is None  # Default only applied on DB insert
-        assert signup.institution is None
-        assert signup.research_area is None
-        assert signup.interest_level is None
+        assert signup.authoring_tools is None
+        assert signup.improvements is None
         assert signup.source is None
         assert signup.ip_address is None
         assert signup.user_agent is None
@@ -55,47 +53,65 @@ class TestSignupModel:
         """Test signup model with optional fields set to None."""
         signup = Signup(
             email="optional@example.com",
-            name="Optional User",
-            institution=None,
-            research_area=None,
-            interest_level=None,
+            authoring_tools=None,
+            improvements=None,
             source=None,
             ip_address=None,
             user_agent=None,
         )
 
         assert signup.email == "optional@example.com"
-        assert signup.name == "Optional User"
-        assert signup.institution is None
-        assert signup.research_area is None
-        assert signup.interest_level is None
+        assert signup.authoring_tools is None
+        assert signup.improvements is None
         assert signup.source is None
         assert signup.ip_address is None
         assert signup.user_agent is None
 
 
-class TestInterestLevelEnum:
-    """Test InterestLevel enum."""
+class TestAuthoringToolsField:
+    """Test authoring_tools JSON field functionality."""
 
-    def test_interest_level_values(self):
-        """Test that all interest level values are correct."""
-        assert InterestLevel.EXPLORING.value == "exploring"
-        assert InterestLevel.PLANNING.value == "planning"
-        assert InterestLevel.READY.value == "ready"
-        assert InterestLevel.MIGRATING.value == "migrating"
+    def test_authoring_tools_json_storage(self):
+        """Test that authoring tools are stored as JSON."""
+        tools = ["LaTeX", "Markdown", "Typst"]
+        tools_json = json.dumps(tools)
+        
+        signup = Signup(
+            email="tools@example.com",
+            authoring_tools=tools_json
+        )
+        
+        assert signup.authoring_tools == tools_json
+        # Verify we can parse it back
+        parsed_tools = json.loads(signup.authoring_tools)
+        assert parsed_tools == tools
 
-    def test_interest_level_enum_members(self):
-        """Test that all expected enum members exist."""
-        expected_members = ["EXPLORING", "PLANNING", "READY", "MIGRATING"]
-        actual_members = [member.name for member in InterestLevel]
+    def test_authoring_tools_with_other_tool(self):
+        """Test authoring tools including 'other' option."""
+        tools = ["LaTeX", "Custom Tool"]
+        tools_json = json.dumps(tools)
+        
+        signup = Signup(
+            email="custom@example.com",
+            authoring_tools=tools_json
+        )
+        
+        parsed_tools = json.loads(signup.authoring_tools)
+        assert "Custom Tool" in parsed_tools
+        assert len(parsed_tools) == 2
 
-        assert set(actual_members) == set(expected_members)
-        assert len(actual_members) == len(expected_members)
-
-    def test_interest_level_string_conversion(self):
-        """Test string representation of interest levels."""
-        assert str(InterestLevel.EXPLORING) == "InterestLevel.EXPLORING"
-        assert InterestLevel.EXPLORING.value == "exploring"
+    def test_empty_authoring_tools(self):
+        """Test empty authoring tools list."""
+        tools_json = json.dumps([])
+        
+        signup = Signup(
+            email="empty@example.com",
+            authoring_tools=tools_json
+        )
+        
+        parsed_tools = json.loads(signup.authoring_tools)
+        assert parsed_tools == []
+        assert len(parsed_tools) == 0
 
 
 class TestSignupStatusEnum:
@@ -124,22 +140,29 @@ class TestSignupStatusEnum:
 class TestSignupModelValidation:
     """Test signup model field validation and constraints."""
 
-    def test_signup_with_all_interest_levels(self):
-        """Test signup creation with each interest level."""
-        for interest_level in InterestLevel:
+    def test_signup_with_different_tool_combinations(self):
+        """Test signup creation with different authoring tool combinations."""
+        tool_combinations = [
+            ["LaTeX"],
+            ["Markdown", "Typst"],
+            ["MS Word", "Google Docs", "Quarto"],
+            ["LaTeX", "Markdown", "Typst", "Custom Tool"],
+        ]
+        
+        for i, tools in enumerate(tool_combinations):
+            tools_json = json.dumps(tools)
             signup = Signup(
-                email=f"{interest_level.value}@example.com",
-                name=f"{interest_level.value.title()} User",
-                interest_level=interest_level,
+                email=f"combo{i}@example.com",
+                authoring_tools=tools_json,
             )
-            assert signup.interest_level == interest_level
+            parsed_tools = json.loads(signup.authoring_tools)
+            assert parsed_tools == tools
 
     def test_signup_with_all_statuses(self):
         """Test signup creation with each status."""
         for status in SignupStatus:
             signup = Signup(
                 email=f"{status.value}@example.com",
-                name=f"{status.value.title()} User",
                 status=status,
             )
             assert signup.status == status
@@ -148,70 +171,69 @@ class TestSignupModelValidation:
         """Test boolean field behavior."""
         # Test True
         signup_true = Signup(
-            email="true@example.com", name="True User", consent_given=True
+            email="true@example.com", consent_given=True
         )
         assert signup_true.consent_given is True
 
         # Test False
         signup_false = Signup(
-            email="false@example.com", name="False User", consent_given=False
+            email="false@example.com", consent_given=False
         )
         assert signup_false.consent_given is False
 
     def test_signup_string_fields_with_special_chars(self):
         """Test string fields with special characters."""
+        tools_with_special = ["LaTeX (Overleaf)", "R&D Tools", "Custom/Special"]
+        tools_json = json.dumps(tools_with_special)
+        
         signup = Signup(
             email="special@münchen.de",
-            name="José María O'Connor-Smith",
-            institution="École Polytechnique & MIT",
-            research_area="AI/ML, NLP & Computer Vision",
+            authoring_tools=tools_json,
+            improvements="Better collaboration & real-time editing features!",
             source="website/referral",
             user_agent="Mozilla/5.0 (compatible; special-chars)",
         )
 
         assert "ü" in signup.email
-        assert "José María" in signup.name
-        assert "École" in signup.institution
-        assert "&" in signup.research_area
+        parsed_tools = json.loads(signup.authoring_tools)
+        assert "LaTeX (Overleaf)" in parsed_tools
+        assert "&" in signup.improvements
         assert "/" in signup.source
         assert ";" in signup.user_agent
 
     def test_signup_long_string_fields(self):
         """Test signup with very long string values."""
-        long_name = "A" * 255
-        long_institution = "B" * 500
-        long_research_area = "C" * 500
+        long_tools = ["Tool" + str(i) for i in range(50)]  # Many tools
+        long_tools_json = json.dumps(long_tools)
+        long_improvements = "I" * 1000  # Very long improvements text
         long_user_agent = "D" * 1000
 
         signup = Signup(
             email="long@example.com",
-            name=long_name,
-            institution=long_institution,
-            research_area=long_research_area,
+            authoring_tools=long_tools_json,
+            improvements=long_improvements,
             user_agent=long_user_agent,
         )
 
-        assert len(signup.name) == 255
-        assert len(signup.institution) == 500
-        assert len(signup.research_area) == 500
+        parsed_tools = json.loads(signup.authoring_tools)
+        assert len(parsed_tools) == 50
+        assert len(signup.improvements) == 1000
         assert len(signup.user_agent) == 1000
 
     def test_signup_empty_string_fields(self):
         """Test signup with empty string values."""
         signup = Signup(
             email="empty@example.com",
-            name="",  # Empty name - might be invalid based on validation
-            institution="",
-            research_area="",
+            authoring_tools="",  # Empty authoring tools JSON
+            improvements="",     # Empty improvements
             source="",
             ip_address="",
             user_agent="",
         )
 
         # Empty strings should be preserved as-is
-        assert signup.name == ""
-        assert signup.institution == ""
-        assert signup.research_area == ""
+        assert signup.authoring_tools == ""
+        assert signup.improvements == ""
         assert signup.source == ""
         assert signup.ip_address == ""
         assert signup.user_agent == ""

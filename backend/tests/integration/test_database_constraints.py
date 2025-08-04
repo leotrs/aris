@@ -150,7 +150,8 @@ class TestDatabaseConstraints:
         # Create first signup
         signup1 = Signup(
             email="signup@example.com",
-            name="Test User 1",
+            authoring_tools='["LaTeX", "Markdown"]',
+            improvements="Better features",
             status=SignupStatus.ACTIVE,
             consent_given=True,
             unsubscribe_token="token1"
@@ -161,7 +162,8 @@ class TestDatabaseConstraints:
         # Try to create second signup with same email
         signup2 = Signup(
             email="signup@example.com",  # Same email
-            name="Test User 2",
+            authoring_tools='["Typst"]',
+            improvements="Different improvements",
             status=SignupStatus.UNSUBSCRIBED,
             consent_given=True,
             unsubscribe_token="token2"
