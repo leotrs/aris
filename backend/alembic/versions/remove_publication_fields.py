@@ -29,11 +29,15 @@ def upgrade() -> None:
     # Drop column from users table
     op.drop_column('users', 'affiliation')
     
+    # Remove UNDER_REVIEW and PUBLISHED files (they're no longer supported)
+    op.execute("DELETE FROM files WHERE status IN ('UNDER_REVIEW', 'PUBLISHED')")
+    
     # Remove UNDER_REVIEW and PUBLISHED values from FileStatus enum
     # This requires recreating the enum type
     op.execute("ALTER TYPE filestatus RENAME TO filestatus_old")
     op.execute("CREATE TYPE filestatus AS ENUM ('Draft')")
-    op.execute("ALTER TABLE files ALTER COLUMN status TYPE filestatus USING status::text::filestatus")
+    # Convert DRAFT to Draft during the type conversion
+    op.execute("ALTER TABLE files ALTER COLUMN status TYPE filestatus USING CASE WHEN status::text = 'DRAFT' THEN 'Draft'::filestatus END")
     op.execute("DROP TYPE filestatus_old")
 
 

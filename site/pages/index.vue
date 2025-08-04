@@ -185,10 +185,28 @@
           <h2 id="signup" class="section-header">Be notified at launch</h2>
           <p class="signup-subtitle">Coming late 2025</p>
 
-          <form v-if="!signupComplete" class="signup-form" @submit.prevent="handleSignup">
+          <!-- Success Message -->
+          <div v-if="signupComplete" class="thank-you-message">
+            <h3>Thank you for your interest!</h3>
+            <p>We'll be in touch with early access details as we approach the Q4 2025 launch.</p>
+          </div>
+
+          <!-- Signup Form -->
+          <form
+            class="signup-form"
+            :class="{ 'form-submitted': signupComplete }"
+            @submit.prevent="handleSignup"
+          >
             <div class="form-group">
               <label for="email">Email <span class="required-asterisk">*</span></label>
-              <input id="email" v-model="formData.email" type="email" required class="form-input" />
+              <input
+                id="email"
+                v-model="formData.email"
+                type="email"
+                required
+                class="form-input"
+                :disabled="submitting || signupComplete"
+              />
             </div>
 
             <div class="form-group">
@@ -200,6 +218,7 @@
                     :value="tool"
                     type="checkbox"
                     class="checkbox-input"
+                    :disabled="submitting || signupComplete"
                   />
                   {{ tool }}
                 </label>
@@ -209,6 +228,7 @@
                       v-model="formData.otherToolSelected"
                       type="checkbox"
                       class="checkbox-input"
+                      :disabled="submitting || signupComplete"
                     />
                     Other:
                   </label>
@@ -217,7 +237,7 @@
                     type="text"
                     placeholder="Please specify"
                     class="form-input other-input"
-                    :disabled="!formData.otherToolSelected"
+                    :disabled="!formData.otherToolSelected || submitting || signupComplete"
                   />
                 </div>
               </div>
@@ -232,6 +252,7 @@
                 v-model="formData.improvements"
                 rows="4"
                 class="form-textarea"
+                :disabled="submitting || signupComplete"
               ></textarea>
             </div>
 
@@ -239,15 +260,10 @@
               {{ signupError }}
             </div>
 
-            <button type="submit" class="cta-button" :disabled="submitting">
+            <button v-if="!signupComplete" type="submit" class="cta-button" :disabled="submitting">
               {{ submitting ? "Submitting..." : "Be notified at launch" }}
             </button>
           </form>
-
-          <div v-else class="thank-you-message">
-            <h3>Thank you for your interest!</h3>
-            <p>We'll be in touch with early access details as we approach the Q4 2025 launch.</p>
-          </div>
         </div>
       </div>
     </section>
@@ -1193,6 +1209,7 @@ We collected samples from multiple sources[^1].
     background: var(--surface-success);
     border-radius: 16px;
     border: var(--border-extrathin) solid var(--border-success);
+    margin-bottom: 2rem;
   }
 
   .thank-you-message h3 {
@@ -1208,6 +1225,20 @@ We collected samples from multiple sources[^1].
     color: var(--text-body);
     margin: 0;
     line-height: var(--body-line-height);
+  }
+
+  /* Submitted form styling */
+  .form-submitted {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+
+  .form-submitted .form-input,
+  .form-submitted .form-textarea,
+  .form-submitted .checkbox-input {
+    background-color: var(--surface-disabled);
+    border-color: var(--border-disabled);
+    color: var(--text-disabled);
   }
 
   .faq-section::before,
