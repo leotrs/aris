@@ -66,7 +66,7 @@ class TestEmailService:
         
         # Verify email parameters
         call_args = mock_resend.Emails.send.call_args[0][0]
-        assert call_args["from"] == "test@example.com"
+        assert call_args["from"] == "RSM Studio <test@example.com>"
         assert call_args["to"] == ["user@example.com"]
         assert "You're on the RSM Studio early access list!" in call_args["subject"]
         assert "Test User" in call_args["html"]
@@ -120,9 +120,9 @@ class TestEmailService:
         text_content = call_args["text"]
         
         # Check HTML content
-        assert "Hi Dr. Jane Smith!" in html_content
-        assert "You're in!" in html_content
-        assert "Welcome to the RSM Studio early access list!" in html_content
+        assert "Hi Dr. Jane Smith 👋" in html_content
+        assert "You're in 🎉" in html_content
+        assert "Welcome to the RSM Studio early access list." in html_content
         assert "Readable Science Markup (RSM)" in html_content
         assert "Late 2025" in html_content
         assert "No spam, no endless updates" in html_content
@@ -130,9 +130,9 @@ class TestEmailService:
         assert "unsubscribe" not in html_content.lower()
         
         # Check text content
-        assert "Hi Dr. Jane Smith!" in text_content
-        assert "You're in!" in text_content
-        assert "Welcome to the RSM Studio early access list!" in text_content
+        assert "Hi Dr. Jane Smith 👋" in text_content
+        assert "You're in 🎉" in text_content
+        assert "Welcome to the RSM Studio early access list." in text_content
         assert "Readable Science Markup (RSM)" in text_content
         assert "Late 2025" in text_content
         assert "No spam, no endless updates" in text_content
