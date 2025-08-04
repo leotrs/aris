@@ -96,7 +96,7 @@ class EmailService:
             """
             
             params = {
-                "from": self.config.from_email,
+                "from": f"RSM Studio <{self.config.from_email}>",
                 "to": [to_email],
                 "reply_to": "hello@aris.pub",
                 "subject": "You're on the RSM Studio early access list! 🎉",
