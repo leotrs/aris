@@ -266,8 +266,8 @@ async def test_get_file_content_section(client: AsyncClient, authenticated_user)
     )
     file_id = create_response.json()["id"]
 
-    # Get a specific section
-    response = await client.get(f"/files/{file_id}/content/section-one", headers=headers)
+    # Get a specific section (level-2 refers to ## Section One)
+    response = await client.get(f"/files/{file_id}/content/level-2", headers=headers)
     assert response.status_code == 200
     assert response.headers["content-type"] == "text/html; charset=utf-8"
 
@@ -317,7 +317,7 @@ async def test_file_permissions(client: AsyncClient, authenticated_user, second_
     # Try to access with secondary user
     response = await client.get(f"/files/{file_id}", headers=headers_secondary)
     assert response.status_code == 403
-    assert "do not have permission" in response.json()["detail"]
+    assert response.json()["detail"] == "Access denied"
 
     # Try to update with secondary user
     update_response = await client.put(

@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .. import current_user, get_db, get_file_service
+from ..deps import UserRead
 from ..models import FileAsset
 from ..services.file_service import FileCreateData, FileUpdateData, InMemoryFileService
 from .file_assets import FileAssetOut
@@ -189,7 +190,8 @@ async def create_file(
 async def get_file(
     file_id: int, 
     file_service: InMemoryFileService = Depends(get_file_service),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    user: UserRead = Depends(current_user)
 ):
     """Retrieve a specific file by ID.
 
@@ -216,6 +218,17 @@ async def get_file(
     -----
     Requires authentication. Uses file service for in-memory access.
     """
+    # Check file ownership first
+    from ..models.models import File
+    result = await db.execute(select(File).where(File.id == file_id, File.deleted_at.is_(None)))
+    file_record = result.scalar_one_or_none()
+    
+    if not file_record:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    if file_record.owner_id != user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
     # Sync from database to ensure we have latest data
     await file_service.sync_from_database(db)
     
@@ -245,6 +258,7 @@ async def update_file(
     file_data: FileUpdate,
     file_service: InMemoryFileService = Depends(get_file_service),
     db: AsyncSession = Depends(get_db),
+    user: UserRead = Depends(current_user)
 ):
     """Update an existing file's content and metadata.
 
@@ -273,7 +287,17 @@ async def update_file(
     -----
     Requires authentication. Uses file service for in-memory updates.
     """
-    # Validate source if provided
+    # Check file ownership first
+    from ..models.models import File
+    result = await db.execute(select(File).where(File.id == file_id, File.deleted_at.is_(None)))
+    file_record = result.scalar_one_or_none()
+    
+    if not file_record:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    if file_record.owner_id != user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
     # Validation happens automatically via Pydantic field_validator
     
     # Sync from database to ensure we have latest data
@@ -313,7 +337,8 @@ async def update_file(
 async def soft_delete_file(
     file_id: int, 
     file_service: InMemoryFileService = Depends(get_file_service),
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    user: UserRead = Depends(current_user)
 ):
     """Soft delete a file by setting deleted_at timestamp.
 
@@ -340,6 +365,17 @@ async def soft_delete_file(
     -----
     Requires authentication. Uses file service for in-memory soft delete.
     """
+    # Check file ownership first
+    from ..models.models import File
+    result = await db.execute(select(File).where(File.id == file_id, File.deleted_at.is_(None)))
+    file_record = result.scalar_one_or_none()
+    
+    if not file_record:
+        raise HTTPException(status_code=404, detail="File not found")
+    
+    if file_record.owner_id != user.id:
+        raise HTTPException(status_code=403, detail="Access denied")
+    
     # Sync from database to ensure we have latest data
     await file_service.sync_from_database(db)
     
