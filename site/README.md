@@ -22,7 +22,7 @@ bun install
 
 ## Development Server
 
-Start the development server on `http://localhost:3000`:
+Start the development server (port configured via `SITE_PORT` environment variable, defaults to 3000):
 
 ```bash
 # npm

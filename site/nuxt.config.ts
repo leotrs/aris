@@ -73,6 +73,12 @@ export default defineNuxtConfig({
 
   modules: ['@nuxt/image'],
 
+  // Development server configuration
+  devServer: {
+    port: parseInt(process.env.SITE_PORT || '3000'),
+    host: '0.0.0.0'
+  },
+
   // Compression configuration
   nitro: {
     compressPublicAssets: false, // Disable compression for now
