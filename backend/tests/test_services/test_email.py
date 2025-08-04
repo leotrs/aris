@@ -68,9 +68,9 @@ class TestEmailService:
         call_args = mock_resend.Emails.send.call_args[0][0]
         assert call_args["from"] == "test@example.com"
         assert call_args["to"] == ["user@example.com"]
-        assert "Welcome to the Aris Waitlist!" in call_args["subject"]
+        assert "You're on the RSM Studio early access list!" in call_args["subject"]
         assert "Test User" in call_args["html"]
-        assert "test_token" in call_args["html"]
+        # Note: unsubscribe token is passed but not used in thank you email
 
     @pytest.mark.asyncio
     @patch('aris.services.email.resend')
@@ -120,19 +120,24 @@ class TestEmailService:
         text_content = call_args["text"]
         
         # Check HTML content
-        assert "Hi Dr. Jane Smith," in html_content
-        assert "Welcome to Aris" in html_content
-        assert "Web-native publishing" in html_content
+        assert "Hi Dr. Jane Smith!" in html_content
+        assert "You're in!" in html_content
+        assert "Welcome to the RSM Studio early access list!" in html_content
         assert "Readable Science Markup (RSM)" in html_content
-        assert "Seamless collaboration" in html_content
-        assert "https://aris.pub/unsubscribe/abc123" in html_content
+        assert "Late 2025" in html_content
+        assert "No spam, no endless updates" in html_content
+        # Verify NO unsubscribe link in thank you email
+        assert "unsubscribe" not in html_content.lower()
         
         # Check text content
-        assert "Hi Dr. Jane Smith," in text_content
-        assert "Welcome to Aris!" in text_content
-        assert "Web-native publishing" in text_content
+        assert "Hi Dr. Jane Smith!" in text_content
+        assert "You're in!" in text_content
+        assert "Welcome to the RSM Studio early access list!" in text_content
         assert "Readable Science Markup (RSM)" in text_content
-        assert "https://aris.pub/unsubscribe/abc123" in text_content
+        assert "Late 2025" in text_content
+        assert "No spam, no endless updates" in text_content
+        # Verify NO unsubscribe link in thank you email
+        assert "unsubscribe" not in text_content.lower()
 
 
 class TestGetEmailService:

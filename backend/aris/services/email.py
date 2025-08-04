@@ -26,49 +26,46 @@ class EmailService:
         name: str,
         unsubscribe_token: str
     ) -> bool:
-        """Send waitlist confirmation email."""
-        logger.info(f"Attempting to send confirmation email to {to_email}")
+        """Send RSM Studio early access confirmation email."""
+        logger.info(f"Attempting to send RSM Studio confirmation email to {to_email}")
         try:
-            unsubscribe_url = f"https://aris.pub/unsubscribe/{unsubscribe_token}"
-            
             html_content = f"""
             <!DOCTYPE html>
             <html>
             <head>
                 <meta charset="utf-8">
                 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                <title>Welcome to Aris Waitlist</title>
+                <title>You're on the RSM Studio early access list!</title>
             </head>
             <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
                 <div style="text-align: center; margin-bottom: 30px;">
-                    <img src="https://aris.pub/logo.png" alt="Aris" style="height: 48px; margin-bottom: 16px;" />
-                    <h1 style="color: #2563eb; margin: 0;">Welcome to Aris</h1>
-                    <p style="color: #6b7280; margin: 5px 0 0 0;">The future of scientific publishing</p>
+                    <h1 style="color: #027AC7; margin: 0;">You're in 🎉</h1>
+                    <p style="color: #6b7280; margin: 5px 0 0 0;">RSM Studio Early Access</p>
                 </div>
                 
-                <div style="background: #f8fafc; border-radius: 8px; padding: 30px; margin-bottom: 30px;">
-                    <h2 style="margin-top: 0; color: #1f2937;">Hi {name},</h2>
-                    <p>Thank you for joining the Aris waitlist! We're excited to have you as part of our community of researchers, academics, and science enthusiasts.</p>
+                <div style="background: #f8fafc; border-radius: 12px; padding: 30px; margin-bottom: 30px; border-left: 4px solid #027AC7;">
+                    <h2 style="margin-top: 0; color: #1f2937;">Hi {name} 👋</h2>
+                    <p style="font-size: 18px; color: #027AC7; margin: 0 0 20px 0;"><strong>Welcome to the RSM Studio early access list.</strong></p>
                     
-                    <p>Aris is revolutionizing scientific publishing with:</p>
-                    <ul style="margin: 20px 0;">
-                        <li><strong>Web-native publishing</strong> - Interactive, multimedia-rich manuscripts</li>
-                        <li><strong>Readable Science Markup (RSM)</strong> - A modern format for scientific content</li>
-                        <li><strong>Seamless collaboration</strong> - Built for modern research workflows</li>
-                    </ul>
+                    <p>We're thrilled you're interested in the future of scholarly writing. RSM Studio is designed specifically for <strong>Readable Science Markup (RSM)</strong> - a markup language built for pixels, not paper.</p>
                     
-                    <p>We'll keep you updated on our progress and let you know as soon as we're ready for early access.</p>
-                    
-                    <div style="text-align: center; margin: 30px 0;">
-                        <a href="https://aris.pub" style="background: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; display: inline-block;">Visit Aris.pub</a>
+                    <div style="background: #ffffff; border-radius: 8px; padding: 20px; margin: 25px 0; border: 1px solid #e5e7eb;">
+                        <h3 style="margin-top: 0; color: #1f2937; font-size: 16px;">What to expect:</h3>
+                        <ul style="margin: 15px 0; padding-left: 20px;">
+                            <li style="margin-bottom: 8px;"><strong>Launch timeline:</strong> Late 2025</li>
+                            <li style="margin-bottom: 8px;"><strong>Early access:</strong> You'll be among the first to try RSM Studio</li>
+                            <li style="margin-bottom: 8px;"><strong>Updates:</strong> We'll email you when we're ready (not before)</li>
+                            <li style="margin-bottom: 8px;"><strong>Your input:</strong> Help shape the tool with your feedback</li>
+                        </ul>
                     </div>
+                    
+                    <p>No spam, no endless updates - just one email when RSM Studio is ready for you to explore.</p>
                 </div>
                 
-                <div style="text-align: center; color: #6b7280; font-size: 14px;">
-                    <p>Questions? Reply to this email or visit our website.</p>
-                    <p>
-                        <a href="{unsubscribe_url}" style="color: #6b7280;">Unsubscribe</a> | 
-                        <a href="https://aris.pub" style="color: #6b7280;">Aris.pub</a>
+                <div style="text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
+                    <p>Questions about RSM Studio? Just reply to this email!</p>
+                    <p style="margin-top: 15px; font-size: 12px;">
+                        RSM Studio is part of <a href="https://aris.pub" style="color: #027AC7; text-decoration: none;">The Aris Program</a> - Academic publishing for the post‑PDF era.
                     </p>
                 </div>
             </body>
@@ -76,29 +73,33 @@ class EmailService:
             """
             
             text_content = f"""
-            Welcome to Aris!
+            You're in 🎉
+            RSM Studio Early Access
             
-            Hi {name},
+            Hi {name} 👋
             
-            Thank you for joining the Aris waitlist! We're excited to have you as part of our community of researchers, academics, and science enthusiasts.
+            Welcome to the RSM Studio early access list.
             
-            Aris is revolutionizing scientific publishing with:
-            • Web-native publishing - Interactive, multimedia-rich manuscripts
-            • Readable Science Markup (RSM) - A modern format for scientific content  
-            • Seamless collaboration - Built for modern research workflows
+            We're thrilled you're interested in the future of scholarly writing. RSM Studio is designed specifically for Readable Science Markup (RSM) - a markup language built for pixels, not paper.
             
-            We'll keep you updated on our progress and let you know as soon as we're ready for early access.
+            What to expect:
+            • Launch timeline: Late 2025
+            • Early access: You'll be among the first to try RSM Studio  
+            • Updates: We'll email you when we're ready (not before)
+            • Your input: Help shape the tool with your feedback
             
-            Visit us at: https://aris.pub
+            No spam, no endless updates - just one email when RSM Studio is ready for you to explore.
             
-            Questions? Reply to this email or visit our website.
-            Unsubscribe: {unsubscribe_url}
+            Questions about RSM Studio? Just reply to this email!
+            
+            RSM Studio is part of The Aris Program (https://aris.pub) - Academic publishing for the post‑PDF era.
             """
             
             params = {
                 "from": self.config.from_email,
                 "to": [to_email],
-                "subject": "Welcome to the Aris Waitlist! 🚀",
+                "reply_to": "hello@aris.pub",
+                "subject": "You're on the RSM Studio early access list! 🎉",
                 "html": html_content,
                 "text": text_content,
             }
