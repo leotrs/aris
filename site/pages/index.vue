@@ -480,6 +480,7 @@ We collected samples from multiple sources[^1].
   .landing-page {
     min-height: 100vh;
     background: var(--surface-page);
+    overflow-x: hidden;
   }
 
   /* Navigation */
@@ -599,7 +600,8 @@ We collected samples from multiple sources[^1].
 
   /* Hero Section */
   .hero-section {
-    padding: 12rem 0 8rem 0;
+    padding: 8rem 0;
+    padding-top: calc(8rem + 4rem);
     text-align: center;
     background: linear-gradient(135deg, var(--primary-200) 0%, var(--purple-50) 100%);
     min-height: 60vh;
@@ -971,11 +973,13 @@ We collected samples from multiple sources[^1].
     box-shadow: var(--shadow-soft);
     transition:
       transform 0.2s ease,
-      box-shadow 0.2s ease;
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .benefit-card:hover {
     transform: translateY(-2px);
+    border-color: var(--primary-400);
     box-shadow:
       var(--shadow-soft),
       0 4px 12px rgba(0, 0, 0, 0.15);
@@ -1316,30 +1320,42 @@ We collected samples from multiple sources[^1].
 
   /* Mobile Responsiveness */
   @media (max-width: 768px) {
+    .navbar {
+      padding: 0 1rem;
+    }
+
     .nav-links,
     .nav-cta-button {
       display: none;
     }
 
     .nav-mobile {
-      display: flex;
+      display: none;
       position: fixed;
       top: 4rem;
       left: 0;
       width: 100%;
-      height: calc(100vh - 4rem);
       background: var(--surface-page);
       flex-direction: column;
-      justify-content: flex-start;
+      align-items: center;
       padding: 2rem;
       gap: 2rem;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
-      border-right: var(--border-thin) solid var(--border-primary);
+      border-bottom: var(--border-thin) solid var(--border-primary);
     }
 
     .nav-mobile.nav-mobile-open {
-      transform: translateX(0);
+      display: flex;
+    }
+
+    .nav-mobile .nav-link {
+      font-size: 1.5rem;
+      font-weight: var(--weight-semi);
+      text-align: center;
+    }
+
+    .nav-mobile .nav-cta-button {
+      font-size: 1.25rem;
+      padding: 1rem 2rem;
     }
 
     .nav-hamburger {
@@ -1359,6 +1375,11 @@ We collected samples from multiple sources[^1].
     }
     .container {
       padding: 0 1rem;
+    }
+
+    .hero-section {
+      padding-top: calc(4rem + 4rem) !important;
+      padding-bottom: 4rem !important;
     }
 
     .hero-title {
@@ -1408,6 +1429,7 @@ We collected samples from multiple sources[^1].
     .footer-links {
       flex-direction: column;
       gap: 1rem;
+      align-items: center;
     }
   }
 
