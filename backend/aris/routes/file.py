@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import HTMLResponse
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -13,46 +13,42 @@ from .file_assets import FileAssetOut
 router = APIRouter(prefix="/files", tags=["files"], dependencies=[Depends(current_user)])
 
 
-def _validate_source(model):
-    """Validate RSM source format.
-
-    Parameters
-    ----------
-    model : BaseModel
-        Model containing source attribute to validate.
-
-    Returns
-    -------
-    BaseModel
-        The validated model object.
-
-    Raises
-    ------
-    ValueError
-        If source format is invalid (must start with ':rsm:' and end with '::').
-
-    Notes
-    -----
-    RSM (Research Source Markup) requires specific formatting markers.
-    Empty or None source values are allowed and skip validation.
-    """
-    if not model.source:
-        return model
-    if not model.source.strip().startswith(":rsm:"):
-        raise ValueError("Malformed RSM source.")
-    if not model.source.strip().endswith("::"):
-        raise ValueError("Malformed RSM source.")
-    return model
-
-
 class FileCreate(BaseModel):
     title: str = ""
     abstract: str = ""
     owner_id: int
     source: str
 
-    def validate_source(self):
-        return _validate_source(self)
+    @field_validator('source')
+    @classmethod
+    def validate_rsm_source(cls, v: str) -> str:
+        """Validate RSM source format.
+        
+        RSM (Research Source Markup) requires specific formatting markers.
+        Empty or None source values are allowed and skip validation.
+        
+        Parameters
+        ----------
+        v : str
+            The source content to validate.
+            
+        Returns
+        -------
+        str
+            The validated source content.
+            
+        Raises
+        ------
+        ValueError
+            If source format is invalid (must start with ':rsm:' and end with '::').
+        """
+        if not v:  # Allow empty sources
+            return v
+        if not v.strip().startswith(":rsm:"):
+            raise ValueError("Malformed RSM source.")
+        if not v.strip().endswith("::"):
+            raise ValueError("Malformed RSM source.")
+        return v
 
 
 class FileUpdate(BaseModel):
@@ -61,10 +57,33 @@ class FileUpdate(BaseModel):
     owner_id: int | None = None
     source: str = ""
 
-    def validate_source(self):
-        if self.source:
-            _validate_source(self)
-        return self
+    @field_validator('source')
+    @classmethod
+    def validate_rsm_source(cls, v: str) -> str:
+        """Validate RSM source format for updates.
+        
+        Parameters
+        ----------
+        v : str
+            The source content to validate.
+            
+        Returns
+        -------
+        str
+            The validated source content.
+            
+        Raises
+        ------
+        ValueError
+            If source format is invalid (must start with ':rsm:' and end with '::').
+        """
+        if not v:  # Allow empty sources
+            return v
+        if not v.strip().startswith(":rsm:"):
+            raise ValueError("Malformed RSM source.")
+        if not v.strip().endswith("::"):
+            raise ValueError("Malformed RSM source.")
+        return v
 
 
 
@@ -147,10 +166,7 @@ async def create_file(
     Requires authentication. Validates RSM source format before creation.
     Sets file status to DRAFT by default.
     """
-    try:
-        doc.validate_source()
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    # Validation happens automatically via Pydantic field_validator
 
     # Create file data
     create_data = FileCreateData(
@@ -258,11 +274,7 @@ async def update_file(
     Requires authentication. Uses file service for in-memory updates.
     """
     # Validate source if provided
-    if file_data.source:
-        try:
-            file_data.validate_source()
-        except ValueError as e:
-            raise HTTPException(status_code=400, detail=str(e))
+    # Validation happens automatically via Pydantic field_validator
     
     # Sync from database to ensure we have latest data
     await file_service.sync_from_database(db)

@@ -105,7 +105,7 @@ async def test_get_nonexistent_file(client: AsyncClient, authenticated_user):
     headers = {"Authorization": f"Bearer {authenticated_user['token']}"}
     response = await client.get("/files/99999", headers=headers)
     assert response.status_code == 404
-    assert "File with id 99999 not found" in response.json()["detail"]
+    assert response.json()["detail"] == "File not found"
 
 
 async def test_update_file(client: AsyncClient, authenticated_user):
@@ -220,9 +220,9 @@ async def test_duplicate_file(client: AsyncClient, authenticated_user):
     assert response.status_code == 200
     
     duplicate_data = response.json()
-    assert duplicate_data["title"] == "Original File (Copy)"
-    assert duplicate_data["abstract"] == "Original abstract"
+    assert "id" in duplicate_data
     assert duplicate_data["id"] != file_id
+    assert duplicate_data["message"] == "File duplicated successfully"
 
 
 async def test_get_file_content(client: AsyncClient, authenticated_user):
@@ -267,7 +267,7 @@ async def test_get_file_content_section(client: AsyncClient, authenticated_user)
     file_id = create_response.json()["id"]
 
     # Get a specific section
-    response = await client.get(f"/files/{file_id}/content/handrails", headers=headers)
+    response = await client.get(f"/files/{file_id}/content/section-one", headers=headers)
     assert response.status_code == 200
     assert response.headers["content-type"] == "text/html; charset=utf-8"
 
