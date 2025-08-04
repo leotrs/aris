@@ -3,8 +3,11 @@
     <!-- Navigation -->
     <nav class="navbar">
       <div class="nav-brand">
-        <span class="nav-rsm">RSM</span>
-        <span class="nav-studio">Studio</span>
+        <img src="/studio-logo-64.svg" alt="RSM Studio Logo" class="nav-logo" />
+        <div class="nav-text">
+          <span class="nav-rsm">RSM</span>
+          <span class="nav-studio">Studio</span>
+        </div>
       </div>
       
       <div class="nav-links">
@@ -32,9 +35,13 @@
     <!-- Hero Section -->
     <section class="hero-section">
       <div class="container">
-        <p class="hero-brand">
-          <span class="brand-rsm">RSM</span> <span class="brand-studio">Studio</span>
-        </p>
+        <div class="hero-brand">
+          <img src="/studio-logo-64.svg" alt="RSM Studio Logo" class="hero-logo" />
+          <div class="hero-text">
+            <span class="brand-rsm">RSM</span>
+            <span class="brand-studio">Studio</span>
+          </div>
+        </div>
         <h1 class="hero-title">Craft scholarly work designed for pixels, not&nbsp;paper</h1>
         <p class="hero-subtitle">
           Describe your ideas and structure. Generate stunning web documents without the formatting
@@ -492,11 +499,24 @@ We collected samples from multiple sources[^1].
   }
 
   .nav-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.1rem;
     font-size: 1.25rem;
     font-weight: var(--weight-semi);
     color: var(--primary-900);
     text-decoration: none;
     letter-spacing: 0.02em;
+  }
+
+  .nav-logo {
+    width: 32px;
+    height: 32px;
+  }
+
+  .nav-text {
+    display: flex;
+    gap: 0.15rem;
   }
 
   .nav-rsm {
@@ -509,6 +529,7 @@ We collected samples from multiple sources[^1].
   .nav-studio {
     font-family: Georgia, serif;
     font-weight: var(--weight-regular);
+    letter-spacing: -0.02em;
   }
 
   .nav-links {
@@ -620,6 +641,19 @@ We collected samples from multiple sources[^1].
     margin: 0 0 2rem 0;
     letter-spacing: 0.05em;
     line-height: var(--header-line-height);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.1rem;
+  }
+
+  .hero-logo {
+    width: 56px;
+    height: 56px;
+  }
+
+  .hero-text {
+    display: flex;
+    gap: 0.15rem;
   }
 
   .brand-rsm {
@@ -631,6 +665,8 @@ We collected samples from multiple sources[^1].
 
   .brand-studio {
     font-family: Georgia, serif;
+    font-weight: var(--weight-regular);
+    letter-spacing: -0.02em;
   }
 
   .hero-title {
