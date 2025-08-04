@@ -1,114 +1,158 @@
 <template>
   <PageLayout>
-    <h2 class="section-header">Privacy Policy</h2>
+    <h1 class="section-header">Privacy Policy</h1>
+    <p class="legal-info">Last updated: 1.8.2025</p>
     
-        <p><em>Last updated: January 2025</em></p>
-        
-        <p>
-          This Privacy Policy describes how The Aris Program ("we," "us," or "our") collects, uses, 
-          and protects your information when you visit RSM Studio (aris.pub) or use our services.
-        </p>
-        
-        <h3 class="section-subheader">1. Information We Collect</h3>
-        
-        <h4>Information You Provide</h4>
-        <p>We collect information you voluntarily provide to us, including:</p>
-        <ul>
-          <li>Email address when you sign up for launch notifications</li>
-          <li>Survey responses about your current authoring tools and preferences</li>
-          <li>Feedback and suggestions you share with us</li>
-        </ul>
-        
-        <h4>Automatically Collected Information</h4>
-        <p>When you visit our website, we may automatically collect:</p>
-        <ul>
-          <li>Browser type and version</li>
-          <li>Operating system</li>
-          <li>IP address and general location information</li>
-          <li>Pages visited and time spent on our site</li>
-          <li>Referring website information</li>
-        </ul>
-        
-        <h3 class="section-subheader">2. How We Use Your Information</h3>
-        <p>We use the information we collect to:</p>
-        <ul>
-          <li>Send you updates about RSM Studio development and launch notifications</li>
-          <li>Understand user needs and improve our product development</li>
-          <li>Respond to your questions and provide customer support</li>
-          <li>Analyze website usage to improve our services</li>
-          <li>Comply with legal obligations</li>
-        </ul>
-        
-        <h3 class="section-subheader">3. Information Sharing and Disclosure</h3>
-        <p>We do not sell, trade, or otherwise transfer your personal information to third parties, except:</p>
-        <ul>
-          <li>With your explicit consent</li>
-          <li>To comply with legal obligations or respond to lawful requests</li>
-          <li>To protect our rights, property, or safety, or that of others</li>
-          <li>In connection with a business transfer or merger</li>
-        </ul>
-        
-        <h3 class="section-subheader">4. Data Security</h3>
-        <p>
-          We implement appropriate technical and organizational security measures to protect your 
-          personal information against unauthorized access, alteration, disclosure, or destruction. 
-          However, no method of transmission over the internet is 100% secure.
-        </p>
-        
-        <h3 class="section-subheader">5. Data Retention</h3>
-        <p>
-          We retain your personal information for as long as necessary to fulfill the purposes outlined 
-          in this Privacy Policy, unless a longer retention period is required by law. You may request 
-          deletion of your information at any time.
-        </p>
-        
-        <h3 class="section-subheader">6. Your Rights</h3>
-        <p>Depending on your location, you may have the right to:</p>
-        <ul>
-          <li>Access the personal information we hold about you</li>
-          <li>Correct inaccurate or incomplete information</li>
-          <li>Delete your personal information</li>
-          <li>Object to or restrict processing of your information</li>
-          <li>Data portability</li>
-          <li>Withdraw consent at any time</li>
-        </ul>
-        
-        <h3 class="section-subheader">7. Cookies and Tracking</h3>
-        <p>
-          Our website may use cookies and similar tracking technologies to enhance your browsing 
-          experience and analyze site usage. You can control cookie settings through your browser preferences.
-        </p>
-        
-        <h3 class="section-subheader">8. Third-Party Services</h3>
-        <p>
-          Our website may contain links to third-party websites or services. This Privacy Policy 
-          does not apply to those external sites. We encourage you to review their privacy policies.
-        </p>
-        
-        <h3 class="section-subheader">9. Children&apos;s Privacy</h3>
-        <p>
-          Our services are not intended for children under 13 years of age. We do not knowingly 
-          collect personal information from children under 13.
-        </p>
-        
-        <h3 class="section-subheader">10. International Data Transfers</h3>
-        <p>
-          Your information may be transferred to and processed in countries other than your own. 
-          We ensure appropriate safeguards are in place to protect your information during such transfers.
-        </p>
-        
-        <h3 class="section-subheader">11. Changes to This Privacy Policy</h3>
-        <p>
-          We may update this Privacy Policy from time to time. We will notify you of any material 
-          changes by updating the "Last updated" date at the top of this page and, where appropriate, 
-          by sending you an email notification.
-        </p>
-        
-        <h3 class="section-subheader">12. Contact Us</h3>
-        <p>
-          If you have any questions about this Privacy Policy or wish to exercise your rights, 
-          please contact us at <a href="mailto:hello@aris.pub">hello@aris.pub</a>.
-        </p>
+    <h3 class="section-subheader">1. Introduction</h3>
+    <p>
+      Welcome to RSM Studio. We take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your personal data when you use our collaborative authoring platform.
+    </p>
+    <p>
+      This policy complies with the General Data Protection Regulation (GDPR) and applies to all users of RSM Studio.
+    </p>
+    
+    <h3 class="section-subheader">2. Data Controller</h3>
+    <p>The data controller for RSM Studio is:</p>
+    <p>
+      <strong>Leo Torres</strong><br>
+      Emilienstrasse 19<br>
+      Leipzig, 04107 Germany<br>
+      Email: <a href="mailto:leo@leotrs.com">leo@leotrs.com</a>
+    </p>
+    
+    <h3 class="section-subheader">3. What Data We Collect</h3>
+    
+    <h4 class="subsection-header">3.1 Account Information</h4>
+    <ul>
+      <li>Email address</li>
+      <li>Name</li>
+    </ul>
+    
+    <h4 class="subsection-header">3.2 Document Data</h4>
+    <ul>
+      <li>Created documents and their content</li>
+      <li>Document metadata (title, creation date, modification history)</li>
+      <li>Version history and edit logs</li>
+      <li>Comments, suggestions, and collaborative annotations</li>
+      <li>Document sharing and collaboration settings</li>
+    </ul>
+    
+    <h4 class="subsection-header">3.3 Collaboration Data</h4>
+    <ul>
+      <li>Real-time editing sessions</li>
+      <li>Cursor positions and user presence indicators</li>
+      <li>Collaborative activity timestamps</li>
+      <li>Document access permissions and invitations</li>
+    </ul>
+    
+    <h4 class="subsection-header">3.4 Technical Data</h4>
+    <ul>
+      <li>IP address (temporarily for rate limiting and security purposes)</li>
+      <li>Browser type and version</li>
+      <li>Date and time of access</li>
+      <li>Features used and session data</li>
+    </ul>
+    
+    <h3 class="section-subheader">4. Legal Basis for Processing</h3>
+    <p>We process your personal data based on:</p>
+    <ul>
+      <li><strong>Legitimate interests</strong> (Article 6(1)(f) GDPR): To provide and maintain our collaborative authoring service</li>
+      <li><strong>Contract performance</strong> (Article 6(1)(b) GDPR): To fulfill our service agreement with you</li>
+      <li><strong>Legal obligations</strong> (Article 6(1)(c) GDPR): To comply with applicable laws</li>
+    </ul>
+    
+    <h3 class="section-subheader">5. How We Use Your Data</h3>
+    <p>We use your data to:</p>
+    <ul>
+      <li>Provide collaborative document authoring services</li>
+      <li>Create and manage your account</li>
+      <li>Enable real-time collaboration features</li>
+      <li>Process and synchronize document edits</li>
+      <li>Manage document sharing and permissions</li>
+      <li>Enable commenting and collaborative feedback</li>
+      <li>Prevent fraud and ensure platform security</li>
+      <li>Communicate important service updates</li>
+    </ul>
+    
+    <h3 class="section-subheader">6. Data Sharing</h3>
+    <p>We do NOT sell or rent your personal data. We may share data with:</p>
+    <ul>
+      <li><strong>Invited collaborators</strong>: Documents and associated data are shared with users you explicitly invite</li>
+      <li><strong>Service providers</strong>: Hosting and infrastructure services that help run our platform (under strict data processing agreements)</li>
+      <li><strong>Legal authorities</strong>: Only when required by law</li>
+    </ul>
+    <p>Your documents are private by default and only accessible to you and collaborators you invite.</p>
+    
+    <h3 class="section-subheader">7. Data Retention</h3>
+    <ul>
+      <li><strong>Account data</strong>: Retained while your account is active</li>
+      <li><strong>Documents</strong>: Retained while your account is active or until you delete them</li>
+      <li><strong>Collaboration history</strong>: Retained with documents for version control and attribution</li>
+      <li><strong>Technical logs</strong>: Deleted after 30 days</li>
+    </ul>
+    
+    <h3 class="section-subheader">8. Your Rights</h3>
+    <p>Under GDPR, you have the right to:</p>
+    <ul>
+      <li><strong>Access</strong> your personal data</li>
+      <li><strong>Rectify</strong> inaccurate data</li>
+      <li><strong>Erase</strong> your personal data (including documents you've created)</li>
+      <li><strong>Restrict</strong> processing</li>
+      <li><strong>Data portability</strong> (export your documents)</li>
+      <li><strong>Object</strong> to processing</li>
+      <li><strong>Withdraw consent</strong> at any time</li>
+    </ul>
+    <p>To exercise these rights, contact us at <a href="mailto:leo@leotrs.com">leo@leotrs.com</a>.</p>
+    
+    <h3 class="section-subheader">9. Data Security</h3>
+    <p>We implement appropriate technical and organizational measures to protect your data, including:</p>
+    <ul>
+      <li>Encrypted connections (HTTPS)</li>
+      <li>Encrypted data storage</li>
+      <li>Regular security updates</li>
+      <li>Access controls and authentication</li>
+      <li>Secure real-time collaboration protocols</li>
+    </ul>
+    
+    <h3 class="section-subheader">10. Cookies</h3>
+    <p>We use only essential cookies for:</p>
+    <ul>
+      <li>Session management</li>
+      <li>Authentication</li>
+      <li>Real-time collaboration features</li>
+    </ul>
+    <p>These cookies are necessary for the platform to function and cannot be disabled. We do not use tracking, advertising, or analytics cookies.</p>
+    
+    <h3 class="section-subheader">11. International Transfers</h3>
+    <p>
+      Currently, all data is processed and stored within the European Union. If this changes, we will update this policy and ensure appropriate safeguards.
+    </p>
+    
+    <h3 class="section-subheader">12. Children's Privacy</h3>
+    <p>
+      RSM Studio is not intended for users under 16 years of age. We do not knowingly collect data from children.
+    </p>
+    
+    <h3 class="section-subheader">13. Changes to This Policy</h3>
+    <p>
+      We may update this Privacy Policy from time to time. We will notify you of significant changes via email or platform announcement.
+    </p>
+    
+    <h3 class="section-subheader">14. Complaints</h3>
+    <p>
+      If you have concerns about how we handle your data, you have the right to lodge a complaint with your local data protection authority.
+    </p>
+    
+    <h3 class="section-subheader">15. Contact Information</h3>
+    <p>For any questions about this Privacy Policy or your personal data, please contact:</p>
+    <p>
+      <strong>Leo Torres</strong><br>
+      Email: <a href="mailto:leo@leotrs.com">leo@leotrs.com</a>
+    </p>
+    
+    <p>
+      For questions about these terms or our policies, please <a href="/contact">contact us</a>.
+    </p>
   </PageLayout>
 </template>
 

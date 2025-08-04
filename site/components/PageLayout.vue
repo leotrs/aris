@@ -138,6 +138,16 @@
   margin: 0;
 }
 
+/* Subsection headers (h4) */
+.subsection-header {
+  font-family: "Source Sans 3", sans-serif;
+  font-size: 1.05rem;
+  font-weight: var(--weight-semi);
+  color: var(--text-body);
+  margin: 1.5rem 0 0.75rem 0;
+  line-height: var(--header-line-height);
+}
+
 /* Paragraphs before headers need more space */
 p + .section-subheader {
   margin-top: 2.5rem;
