@@ -2,27 +2,25 @@
 export default defineNuxtConfig({
   app: {
     head: {
-      title: 'Aris – Web-native scientific publishing',
+      title: 'RSM Studio – Author scholarly work designed for pixels, not paper',
       meta: [
-        { name: 'description', content: 'Aris replaces PDFs with interactive, human-first scientific documents.' },
+        { name: 'description', content: 'RSM Studio: Describe your ideas and structure. Get stunning web documents without the formatting fight. Coming 2025 Q4.' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { charset: 'utf-8' },
         // Open Graph tags for social sharing
-        { property: 'og:title', content: 'Aris – Web-native scientific publishing' },
-        { property: 'og:description', content: 'Aris replaces PDFs with interactive, human-first scientific documents.' },
+        { property: 'og:title', content: 'RSM Studio – Author scholarly work designed for pixels, not paper' },
+        { property: 'og:description', content: 'RSM Studio: Describe your ideas and structure. Get stunning web documents without the formatting fight. Coming 2025 Q4.' },
         { property: 'og:type', content: 'website' },
-        { property: 'og:url', content: 'https://aris.dev' },
-        { property: 'og:image', content: 'https://aris.dev/og-image.png' },
-        { property: 'og:site_name', content: 'Aris' },
+        { property: 'og:url', content: 'https://studio.aris.pub' },
+        { property: 'og:site_name', content: 'RSM Studio' },
         // Twitter Card tags
-        { name: 'twitter:card', content: 'summary_large_image' },
-        { name: 'twitter:title', content: 'Aris – Web-native scientific publishing' },
-        { name: 'twitter:description', content: 'Aris replaces PDFs with interactive, human-first scientific documents.' },
-        { name: 'twitter:image', content: 'https://aris.dev/og-image.png' },
+        { name: 'twitter:card', content: 'summary' },
+        { name: 'twitter:title', content: 'RSM Studio – Author scholarly work designed for pixels, not paper' },
+        { name: 'twitter:description', content: 'RSM Studio: Describe your ideas and structure. Get stunning web documents without the formatting fight. Coming 2025 Q4.' },
         // Additional SEO meta tags
         { name: 'robots', content: 'index, follow' },
-        { name: 'author', content: 'Aris Team' },
-        { name: 'keywords', content: 'scientific publishing, research documents, academic writing, web-native publishing, interactive documents' },
+        { name: 'author', content: 'The Aris Program' },
+        { name: 'keywords', content: 'RSM Studio, scholarly authoring, academic writing, web-native publishing, interactive documents, research markup, scientific writing' },
       ],
       link: [
         // Preconnect to Google Fonts for performance
@@ -38,7 +36,15 @@ export default defineNuxtConfig({
     },
   },
 
-  css: ['./assets/main.css', './assets/components.css'],
+  css: [
+    './assets/css/rsm-design-system.css',
+    './assets/css/variables.css',
+    './assets/css/typography.css', 
+    './assets/css/components.css',
+    './assets/css/layout.css',
+    './assets/main.css',
+    './assets/components.css'
+  ],
   router: {
     options: {
       scrollBehaviorType: 'smooth'
@@ -69,7 +75,7 @@ export default defineNuxtConfig({
 
   // Compression configuration
   nitro: {
-    compressPublicAssets: true, // Enable compression
+    compressPublicAssets: false, // Disable compression for now
   },
 
   // Runtime config for frontend URL
