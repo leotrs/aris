@@ -2,23 +2,23 @@
   <div class="landing-page">
     <!-- Navigation -->
     <nav class="navbar">
-      <div class="nav-brand">
+      <a href="/" class="nav-brand">
         <img src="/studio-logo-64.svg" alt="RSM Studio Logo" class="nav-logo" />
         <div class="nav-text">
           <span class="nav-rsm">RSM</span>
           <span class="nav-studio">Studio</span>
         </div>
-      </div>
-      
+      </a>
+
       <div class="nav-links">
         <a href="#demo" class="nav-link">Demo</a>
         <a href="#benefits" class="nav-link">Benefits</a>
         <a href="#faq" class="nav-link">FAQ</a>
       </div>
-      
+
       <a href="#signup" class="nav-cta-button">Get early access</a>
 
-      <button class="nav-hamburger" @click="toggleMobileMenu" :aria-expanded="mobileMenuOpen">
+      <button class="nav-hamburger" :aria-expanded="mobileMenuOpen" @click="toggleMobileMenu">
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
@@ -61,7 +61,7 @@
           <p>
             RSM is built for screens from day one. Unlike traditional publishing tools designed
             around printed pages, RSM creates responsive, interactive documents that work
-            beautifully on any device—from phone to desktop to presentation screen.
+            beautifully on any device.
           </p>
         </div>
         <div class="demo-controls">
@@ -235,6 +235,10 @@
               ></textarea>
             </div>
 
+            <div v-if="signupError" class="error-message">
+              {{ signupError }}
+            </div>
+
             <button type="submit" class="cta-button" :disabled="submitting">
               {{ submitting ? "Submitting..." : "Be notified at launch" }}
             </button>
@@ -318,6 +322,7 @@
   const viewMode = ref("both");
   const signupComplete = ref(false);
   const submitting = ref(false);
+  const signupError = ref("");
   const openFaqs = ref(new Set());
   const mobileMenuOpen = ref(false);
 
@@ -338,7 +343,6 @@
     "Quarto",
     "MS Word",
     "Google Docs",
-    "Authorea",
   ];
 
   const faqs = [
@@ -447,12 +451,43 @@ We collected samples from multiple sources[^1].
   // Methods
   const handleSignup = async () => {
     submitting.value = true;
+    signupError.value = "";
 
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    try {
+      // Prepare authoring tools data
+      const tools = [...formData.value.authoringTools];
+      if (formData.value.otherToolSelected && formData.value.otherTool.trim()) {
+        tools.push(formData.value.otherTool.trim());
+      }
 
-    submitting.value = false;
-    signupComplete.value = true;
+      // Get runtime config for backend URL
+      const config = useRuntimeConfig();
+      const backendUrl = config.public.backendUrl || "http://localhost:8000";
+
+      const response = await fetch(`${backendUrl}/signup/`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.value.email,
+          authoring_tools: tools.length > 0 ? tools : null,
+          improvements: formData.value.improvements || null,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail?.message || "Signup failed");
+      }
+
+      signupComplete.value = true;
+    } catch (error) {
+      console.error("Signup error:", error);
+      signupError.value = error.message || "Something went wrong. Please try again.";
+    } finally {
+      submitting.value = false;
+    }
   };
 
   const toggleFaq = (index) => {
@@ -742,7 +777,6 @@ We collected samples from multiple sources[^1].
     position: relative;
   }
 
-
   .intro-content {
     max-width: 800px;
     margin: 0 auto;
@@ -1001,7 +1035,6 @@ We collected samples from multiple sources[^1].
     margin: 0;
   }
 
-
   .signup-content {
     max-width: 600px;
     margin: 0 auto 3rem auto;
@@ -1069,6 +1102,7 @@ We collected samples from multiple sources[^1].
     font-weight: var(--weight-regular) !important;
     cursor: pointer;
     font-family: "Source Sans 3", sans-serif;
+    height: 28px;
   }
 
   .checkbox-input {
@@ -1081,6 +1115,7 @@ We collected samples from multiple sources[^1].
     display: flex;
     align-items: center;
     gap: 0.5rem;
+    height: 28px;
   }
 
   .other-tool .checkbox-label {
@@ -1091,6 +1126,12 @@ We collected samples from multiple sources[^1].
   .other-input {
     flex: 1;
     margin-left: 0;
+    padding: 0;
+    font-size: 0.9rem;
+    height: 28px;
+    line-height: 1;
+    box-sizing: border-box;
+    padding: 0 0.5rem;
   }
 
   .other-input:disabled {
@@ -1135,6 +1176,16 @@ We collected samples from multiple sources[^1].
     color: var(--text-disabled);
     cursor: not-allowed;
     box-shadow: none;
+  }
+
+  .error-message {
+    padding: 1rem;
+    background: var(--red-50);
+    border: var(--border-thin) solid var(--red-300);
+    border-radius: 12px;
+    color: var(--red-700);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
   }
 
   .thank-you-message {
@@ -1279,7 +1330,6 @@ We collected samples from multiple sources[^1].
     background: var(--very-light);
     position: relative;
   }
-
 
   .footer-links {
     display: flex;

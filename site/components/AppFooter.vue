@@ -16,78 +16,78 @@
 </template>
 
 <style scoped>
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
-}
-
-.footer {
-  padding: 2rem 0;
-  background: var(--very-light);
-  position: relative;
-}
-
-.footer::before {
-  content: "";
-  position: absolute;
-  top: -1.5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 240px;
-  height: 3px;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    var(--secondary-300) 25%,
-    var(--primary-300) 75%,
-    transparent 100%
-  );
-  z-index: 10;
-}
-
-.footer-links {
-  display: flex;
-  justify-content: center;
-  gap: 2rem;
-  margin-bottom: 1rem;
-}
-
-.footer-links a {
-  font-family: "Source Sans 3", sans-serif;
-  color: var(--dark);
-  text-decoration: none;
-  transition: color 0.2s;
-  font-weight: var(--weight-medium);
-}
-
-.footer-links a:hover {
-  color: var(--text-action);
-}
-
-.footer-copyright {
-  text-align: center;
-  font-family: "Source Sans 3", sans-serif;
-  color: var(--medium);
-  font-size: 0.875rem;
-}
-
-.footer-copyright a {
-  color: var(--primary-600);
-  text-decoration: none;
-  transition: color 0.2s ease;
-}
-
-.footer-copyright a:hover {
-  color: var(--primary-600);
-  text-decoration: underline;
-}
-
-@media (max-width: 768px) {
-  .footer-links {
-    flex-direction: column;
-    gap: 1rem;
-    align-items: center;
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 2rem;
   }
-}
+
+  .footer {
+    padding: 2rem 0;
+    background: var(--very-light);
+    position: relative;
+  }
+
+  .footer::before {
+    content: "";
+    position: absolute;
+    top: -1.5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 240px;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--secondary-300) 25%,
+      var(--primary-300) 75%,
+      transparent 100%
+    );
+    z-index: 10;
+  }
+
+  .footer-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-bottom: 1rem;
+  }
+
+  .footer-links a {
+    font-family: "Source Sans 3", sans-serif;
+    color: var(--dark);
+    text-decoration: none;
+    transition: color 0.2s;
+    font-weight: var(--weight-medium);
+  }
+
+  .footer-links a:hover {
+    color: var(--text-action);
+  }
+
+  .footer-copyright {
+    text-align: center;
+    font-family: "Source Sans 3", sans-serif;
+    color: var(--medium);
+    font-size: 0.875rem;
+  }
+
+  .footer-copyright a {
+    color: var(--primary-600);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .footer-copyright a:hover {
+    color: var(--primary-600);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 768px) {
+    .footer-links {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+  }
 </style>
