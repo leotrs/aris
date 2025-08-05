@@ -68,15 +68,17 @@
           <div class="demo-tabs">
             <button
               :class="['tab-button', { active: activeTab === 'simple' }]"
+              data-testid="tab-simple"
               @click="activeTab = 'simple'"
             >
-              Simple
+              Basic
             </button>
             <button
               :class="['tab-button', { active: activeTab === 'complex' }]"
+              data-testid="tab-complex"
               @click="activeTab = 'complex'"
             >
-              Complex
+              Advanced
             </button>
           </div>
 
@@ -85,6 +87,7 @@
               v-for="mode in viewModes"
               :key="mode.value"
               :class="['view-button', { active: viewMode === mode.value }]"
+              :data-testid="`view-${mode.value}`"
               @click="viewMode = mode.value"
             >
               {{ mode.label }}
@@ -100,6 +103,17 @@
 
           <div v-if="viewMode === 'output' || viewMode === 'both'" class="demo-panel output-panel">
             <h3>Output</h3>
+            <div v-if="demoLoading" class="demo-loading" data-testid="demo-loading">
+              <div class="loading-spinner"></div>
+              <p>Rendering RSM content...</p>
+            </div>
+            <div v-else-if="demoError" class="demo-error" data-testid="demo-error">
+              <p><strong>Demo unavailable - showing static preview</strong></p>
+              <p>
+                The live rendering service is temporarily unavailable. The content below shows what
+                the rendered output would look like.
+              </p>
+            </div>
             <div class="output-content" v-html="currentExample.output"></div>
           </div>
         </div>
@@ -331,7 +345,8 @@
 </template>
 
 <script setup>
-  import { ref, computed } from "vue";
+  /* global $fetch */
+  import { ref, computed, onMounted, watch, nextTick } from "vue";
 
   // Reactive data
   const activeTab = ref("simple");
@@ -341,6 +356,11 @@
   const signupError = ref("");
   const openFaqs = ref(new Set());
   const mobileMenuOpen = ref(false);
+
+  // Demo rendering state
+  const demoLoading = ref(false);
+  const demoError = ref(false);
+  const demoInitialized = ref(false);
 
   // Form data
   const formData = ref({
@@ -396,8 +416,10 @@
     },
   ];
 
+  const isMobile = ref(false);
+  
   const viewModes = computed(() => {
-    if (process.client && window.innerWidth < 768) {
+    if (isMobile.value) {
       return [
         { label: "Show Markup", value: "markup" },
         { label: "Show Output", value: "output" },
@@ -410,59 +432,174 @@
     ];
   });
 
+  // Cache for rendered content to avoid duplicate API calls
+  const renderCache = new Map();
+
   const examples = {
     simple: {
-      markup: `# The Future of Academic Publishing
+      markup: `:rsm:
+# The Future of Academic Publishing
 
-Recent advances in *semantic markup* have enabled new approaches to scholarly communication. This **web-native** approach separates content from presentation.`,
-      output: `<h1>The Future of Academic Publishing</h1>
-<p>Recent advances in <em>semantic markup</em> have enabled new approaches to scholarly communication. This <strong>web-native</strong> approach separates content from presentation.</p>`,
+Recent advances in *semantic markup* have enabled new approaches to scholarly communication. This **web-native** approach separates content from presentation.
+
+::`,
+      output: ref(`<h1>The Future of Academic Publishing</h1>
+<p>Recent advances in <em>semantic markup</em> have enabled new approaches to scholarly communication. This <strong>web-native</strong> approach separates content from presentation.</p>`),
       context: "Looks familiar? RSM builds on markdown's simplicity",
     },
     complex: {
-      markup: `# Advanced Research Methods
-## Abstract
-This paper presents novel approaches to [@smith2023] data analysis.
+      markup: `:rsm:
+# The Future of Academic Publishing
 
-## Introduction
-Cross-references work seamlessly: see [](#methods) for details.
+Recent advances in *semantic markup* have enabled new approaches to scholarly communication. This **web-native** approach separates content from presentation.
 
-## Methods {#methods}
-Our methodology builds on established frameworks.
-
-### Data Collection
-We collected samples from multiple sources[^1].
-
-## References
-[@smith2023]: Smith, J. (2023). *Modern Analytics*. Academic Press.
-
-[^1]: Sample collection followed ethical guidelines.`,
-      output: `<h1>Advanced Research Methods</h1>
-<h2>Abstract</h2>
-<p>This paper presents novel approaches to <a href="#ref-smith2023" class="citation">Smith (2023)</a> data analysis.</p>
-
-<h2>Introduction</h2>
-<p>Cross-references work seamlessly: see <a href="#methods">Methods</a> for details.</p>
-
-<h2 id="methods">Methods</h2>
-<p>Our methodology builds on established frameworks.</p>
-
-<h3>Data Collection</h3>
-<p>We collected samples from multiple sources<a href="#fn1" class="footnote">¹</a>.</p>
-
-<h2>References</h2>
-<div class="references">
-<p id="ref-smith2023">Smith, J. (2023). <em>Modern Analytics</em>. Academic Press.</p>
-</div>
-
-<div class="footnotes">
-<p id="fn1">¹ Sample collection followed ethical guidelines.</p>
-</div>`,
+::`,
+      output: ref(`<h1>The Future of Academic Publishing</h1>
+<p>Recent advances in <em>semantic markup</em> have enabled new approaches to scholarly communication. This <strong>web-native</strong> approach separates content from presentation.</p>`),
       context: "Here's where RSM goes beyond markdown",
     },
   };
 
-  const currentExample = computed(() => examples[activeTab.value]);
+  const currentExample = computed(() => {
+    const example = examples[activeTab.value];
+    return {
+      markup: example.markup,
+      output: example.output.value,
+      context: example.context,
+    };
+  });
+
+  // RSM Rendering Functions
+  const renderRsm = async (source) => {
+    // Check cache first
+    if (renderCache.has(source)) {
+      return renderCache.get(source);
+    }
+
+    try {
+      // Get runtime config for backend URL
+      const config = useRuntimeConfig();
+      const backendUrl = config.public.backendUrl || "http://localhost:8000";
+
+      const result = await $fetch(`${backendUrl}/render`, {
+        method: "POST",
+        body: { source },
+        timeout: 8000, // 8 second timeout
+      });
+
+      // Strip body tags from RSM response to get clean HTML
+      // Extract content between body tags
+      const bodyMatch = result.match(/<body[^>]*>([\s\S]*?)<\/body>/i);
+      const cleanedResult = bodyMatch ? bodyMatch[1].trim() : result.trim();
+
+      // Cache the cleaned result
+      renderCache.set(source, cleanedResult);
+      return cleanedResult;
+    } catch (error) {
+      console.error("Failed to render RSM:", error);
+      throw error;
+    }
+  };
+
+  // RSM Initialization Function
+  const initializeRsmContent = async (element) => {
+    if (!element) return;
+
+    try {
+      // Get backend URL for static assets
+      const config = useRuntimeConfig();
+      const backendUrl = config.public.backendUrl || "http://localhost:8000";
+
+      // Load RSM onload function from backend static assets
+      const onloadModule = await import(`${backendUrl}/static/onload.js`);
+
+      // Initialize RSM features for this element
+      await onloadModule.onload(element, {
+        path: `${backendUrl}/static/`,
+        keys: false, // Disable keyboard shortcuts in demo
+      });
+    } catch (error) {
+      console.error("Failed to initialize RSM content:", error);
+      // Gracefully continue without RSM features
+    }
+  };
+
+  const initializeDemo = async () => {
+    if (demoInitialized.value) return;
+
+    demoLoading.value = true;
+    demoError.value = false;
+
+    try {
+      // Render both examples in parallel
+      const [simpleResult, complexResult] = await Promise.all([
+        renderRsm(examples.simple.markup),
+        renderRsm(examples.complex.markup),
+      ]);
+
+      examples.simple.output.value = simpleResult;
+      examples.complex.output.value = complexResult;
+      demoInitialized.value = true;
+
+      // Initialize RSM features after content is rendered
+      await nextTick(); // Wait for DOM update
+      const outputElement = document.querySelector(".output-content");
+      if (outputElement) {
+        await initializeRsmContent(outputElement);
+      }
+    } catch (error) {
+      console.error("Failed to initialize demo content:", error);
+      demoError.value = true;
+      // Keep static fallback content that's already in the refs
+    } finally {
+      demoLoading.value = false;
+    }
+  };
+
+  // Initialize demo on mount
+  onMounted(() => {
+    // Set initial mobile state
+    isMobile.value = window.innerWidth < 768;
+    
+    // Add resize listener
+    const handleResize = () => {
+      isMobile.value = window.innerWidth < 768;
+    };
+    window.addEventListener('resize', handleResize);
+    
+    // Cleanup on unmount
+    const cleanup = () => {
+      window.removeEventListener('resize', handleResize);
+    };
+    
+    initializeDemo();
+    
+    return cleanup;
+  });
+
+  // Watch for tab changes and render if needed
+  watch(activeTab, async (newTab) => {
+    const example = examples[newTab];
+    if (!renderCache.has(example.markup) && !demoError.value) {
+      demoLoading.value = true;
+      try {
+        const result = await renderRsm(example.markup);
+        example.output.value = result;
+      } catch (error) {
+        console.error("Failed to render tab content:", error);
+        demoError.value = true;
+      } finally {
+        demoLoading.value = false;
+      }
+    }
+
+    // Always re-initialize RSM features when switching tabs
+    await nextTick(); // Wait for DOM update
+    const outputElement = document.querySelector(".output-content");
+    if (outputElement && !demoError.value) {
+      await initializeRsmContent(outputElement);
+    }
+  });
 
   // Methods
   const handleSignup = async () => {
@@ -983,6 +1120,24 @@ We collected samples from multiple sources[^1].
     border-top: 1px solid #eee;
     padding-top: 1rem;
     font-size: 0.9rem;
+  }
+
+  /* Override RSM manuscriptwrapper padding when inside demo output panel */
+  :deep(.output-content .manuscriptwrapper) {
+    --side-padding: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: none !important;
+    border-radius: 0 !important;
+  }
+  
+  :deep(.output-content .manuscriptwrapper .manuscript) {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  :deep(.output-content section.level-1) {
+    margin-block: 0.5rem !important;
   }
 
   .demo-callouts {
@@ -1526,5 +1681,65 @@ We collected samples from multiple sources[^1].
     .hero-title {
       font-size: 1.75rem;
     }
+  }
+
+  /* Demo Loading and Error States */
+  .demo-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-body);
+  }
+
+  .demo-loading p {
+    margin: 1rem 0 0 0;
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 0.9rem;
+    color: var(--medium);
+  }
+
+  .loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 3px solid var(--border-primary);
+    border-top: 3px solid var(--primary-500);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+
+  .demo-error {
+    padding: 1rem;
+    background: var(--warning-50);
+    border: var(--border-thin) solid var(--warning-200);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+
+  .demo-error p {
+    margin: 0.5rem 0;
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 0.85rem;
+    color: var(--warning-700);
+    line-height: 1.4;
+  }
+
+  .demo-error p:first-child {
+    margin-top: 0;
+  }
+
+  .demo-error p:last-child {
+    margin-bottom: 0;
   }
 </style>

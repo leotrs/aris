@@ -37,6 +37,7 @@ export default defineNuxtConfig({
 
   css: [
     './assets/css/rsm-design-system.css',
+    './assets/css/rsm.css',
     './assets/css/variables.css',
     './assets/css/typography.css', 
     './assets/css/components.css',
