@@ -1154,7 +1154,12 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
 
   /* Dark mode hero background */
   .dark-theme .hero-section {
-    background: linear-gradient(135deg, #1f2937 40%, var(--primary-900) 85%, var(--purple-900) 100%);
+    background: linear-gradient(
+      135deg,
+      #1f2937 40%,
+      var(--primary-900) 85%,
+      var(--purple-900) 100%
+    );
   }
 
   /* Dark mode hero text colors */
@@ -1169,7 +1174,6 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   .dark-theme .hero-subtitle {
     color: var(--text-muted);
   }
-
 
   /* Section Dividers */
   .hero-section::after,
@@ -1513,7 +1517,6 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     line-height: var(--body-line-height);
     flex: 1;
   }
-
 
   .output-content .citation {
     color: #007acc;

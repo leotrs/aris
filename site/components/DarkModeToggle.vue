@@ -1,6 +1,7 @@
 <template>
   <button
     class="dark-mode-toggle"
+    data-testid="dark-mode-toggle"
     :aria-label="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
     :title="isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'"
     :disabled="!isHydrated"
