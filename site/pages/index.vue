@@ -17,7 +17,10 @@
         <a href="#faq" class="nav-link">FAQ</a>
       </div>
 
-      <a href="#signup" class="nav-cta-button">Get early access</a>
+      <div class="nav-actions">
+        <DarkModeToggle />
+        <a href="#signup" class="nav-cta-button">Get early access</a>
+      </div>
 
       <button class="nav-hamburger" :aria-expanded="mobileMenuOpen" @click="toggleMobileMenu">
         <span class="hamburger-line"></span>
@@ -30,6 +33,9 @@
         <a href="#studio-features" class="nav-link" @click="closeMobileMenu">Studio</a>
         <a href="#benefits" class="nav-link" @click="closeMobileMenu">Benefits</a>
         <a href="#faq" class="nav-link" @click="closeMobileMenu">FAQ</a>
+        <div class="nav-mobile-toggle">
+          <DarkModeToggle />
+        </div>
         <a href="#signup" class="nav-cta-button" @click="closeMobileMenu">Get early access</a>
       </div>
     </nav>
@@ -98,14 +104,17 @@
         </div>
 
         <div class="demo-content">
-          <div v-show="viewMode === 'markup' || viewMode === 'both'" class="demo-panel markup-panel">
+          <div
+            v-show="viewMode === 'markup' || viewMode === 'both'"
+            class="demo-panel markup-panel"
+          >
             <div class="markup-header">
               <h3>Markup</h3>
-              <button 
+              <button
                 class="reset-button"
-                @click="resetToExample"
                 title="Reset to original example"
                 data-testid="reset-button"
+                @click="resetToExample"
               >
                 Reset
               </button>
@@ -113,20 +122,23 @@
             <textarea
               v-model="editableMarkup"
               class="markup-content editable"
-              @input="handleMarkupInput"
               placeholder="Type RSM markup here..."
               data-testid="markup-editor"
+              @input="handleMarkupInput"
             ></textarea>
           </div>
 
-          <div v-show="viewMode === 'output' || viewMode === 'both'" class="demo-panel output-panel">
+          <div
+            v-show="viewMode === 'output' || viewMode === 'both'"
+            class="demo-panel output-panel"
+          >
             <h3>Output</h3>
             <div class="output-container">
               <div v-if="demoError" class="demo-error" data-testid="demo-error">
                 <p><strong>Demo unavailable - showing static preview</strong></p>
                 <p>
-                  The live rendering service is temporarily unavailable. The content below shows what
-                  the rendered output would look like.
+                  The live rendering service is temporarily unavailable. The content below shows
+                  what the rendered output would look like.
                 </p>
               </div>
               <div v-if="demoLoading" class="inline-loading" data-testid="demo-loading">
@@ -148,13 +160,14 @@
             v-show="viewMode === 'output' || viewMode === 'both'"
             class="demo-context demo-context-right"
           >
-            Try resizing your browser or toggling dark mode to see RSM adapt
+            Try resizing your browser or toggling dark mode (↗) to see RSM adapt
           </p>
         </div>
 
         <div class="transition-text">
           <p>
-            RSM Studio builds on this foundation with real-time collaboration - comment threads, shared editing, and review workflows that preserve context.
+            RSM Studio builds on this foundation with real-time collaboration - comment threads,
+            shared editing, and review workflows that preserve context.
           </p>
         </div>
       </div>
@@ -503,9 +516,9 @@
   const demoLoading = ref(false);
   const demoError = ref(false);
   const demoInitialized = ref(false);
-  
+
   // Editable markup state
-  const editableMarkup = ref('');
+  const editableMarkup = ref("");
   const renderTimer = ref(null);
 
   // Form data
@@ -563,7 +576,7 @@
   ];
 
   const isMobile = ref(false);
-  
+
   const viewModes = computed(() => {
     if (isMobile.value) {
       return [
@@ -750,26 +763,26 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   const handleMarkupInput = (event) => {
     // Auto-resize textarea
     if (event && event.target) {
-      event.target.style.height = 'auto';
-      event.target.style.height = event.target.scrollHeight + 'px';
+      event.target.style.height = "auto";
+      event.target.style.height = event.target.scrollHeight + "px";
     }
-    
+
     // Clear existing timer
     if (renderTimer.value) {
       clearTimeout(renderTimer.value);
     }
-    
+
     // Set new timer for blazing fast debounced rendering
     renderTimer.value = setTimeout(async () => {
       if (editableMarkup.value.trim()) {
         try {
           demoLoading.value = true;
           demoError.value = false;
-          
+
           const result = await renderRsm(editableMarkup.value);
           const example = examples[activeTab.value];
           example.output.value = result;
-          
+
           // Re-initialize RSM features after new content is rendered
           await nextTick();
           const outputElement = document.querySelector(".output-content");
@@ -790,7 +803,7 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   const resetToExample = () => {
     const example = examples[activeTab.value];
     editableMarkup.value = example.markup;
-    
+
     // Trigger re-render with original content
     handleMarkupInput();
   };
@@ -854,50 +867,50 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   onMounted(() => {
     // Set initial mobile state
     isMobile.value = window.innerWidth < 768;
-    
+
     // Initialize editable markup with current example
     editableMarkup.value = examples[activeTab.value].markup;
-    
+
     // Set initial textarea height after next tick
     nextTick(() => {
       const textarea = document.querySelector('[data-testid="markup-editor"]');
       if (textarea) {
-        textarea.style.height = 'auto';
-        textarea.style.height = textarea.scrollHeight + 'px';
+        textarea.style.height = "auto";
+        textarea.style.height = textarea.scrollHeight + "px";
       }
     });
-    
+
     // Add resize listener
     const handleResize = () => {
       isMobile.value = window.innerWidth < 768;
     };
-    window.addEventListener('resize', handleResize);
-    
+    window.addEventListener("resize", handleResize);
+
     // Cleanup on unmount
     const cleanup = () => {
-      window.removeEventListener('resize', handleResize);
+      window.removeEventListener("resize", handleResize);
     };
-    
+
     initializeDemo();
-    
+
     return cleanup;
   });
 
   // Watch for tab changes and update editable content
   watch(activeTab, async (newTab) => {
     const example = examples[newTab];
-    
+
     // Update editable markup to show the new tab's example
     editableMarkup.value = example.markup;
-    
+
     // Resize textarea to fit new content
     await nextTick();
     const textarea = document.querySelector('[data-testid="markup-editor"]');
     if (textarea) {
-      textarea.style.height = 'auto';
-      textarea.style.height = textarea.scrollHeight + 'px';
+      textarea.style.height = "auto";
+      textarea.style.height = textarea.scrollHeight + "px";
     }
-    
+
     // Ensure the output is rendered if not cached
     if (!renderCache.has(example.markup) && !demoError.value) {
       demoLoading.value = true;
@@ -1006,6 +1019,17 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     height: 4rem;
   }
 
+  /* Dark mode navbar background */
+  .dark-theme .navbar {
+    background: rgba(31, 41, 55, 0.8);
+    backdrop-filter: blur(15px);
+  }
+
+  /* Dark mode navbar logo */
+  .dark-theme .nav-brand {
+    color: var(--primary-100);
+  }
+
   .nav-brand {
     display: flex;
     align-items: center;
@@ -1044,6 +1068,12 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     display: flex;
     align-items: center;
     gap: 3rem;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
   }
 
   .nav-mobile {
@@ -1116,6 +1146,30 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     align-items: center;
     position: relative;
   }
+
+  /* Dark mode general background */
+  .dark-theme {
+    background-color: #1f2937 !important;
+  }
+
+  /* Dark mode hero background */
+  .dark-theme .hero-section {
+    background: linear-gradient(135deg, #1f2937 40%, var(--primary-900) 85%, var(--purple-900) 100%);
+  }
+
+  /* Dark mode hero text colors */
+  .dark-theme .hero-brand {
+    color: var(--primary-100);
+  }
+
+  .dark-theme .hero-title {
+    color: var(--text-body);
+  }
+
+  .dark-theme .hero-subtitle {
+    color: var(--text-muted);
+  }
+
 
   /* Section Dividers */
   .hero-section::after,
@@ -1370,11 +1424,13 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   }
 
   .markup-panel h3 {
-    background: var(--primary-300);
+    background: var(--primary-600);
+    color: var(--primary-50);
   }
 
   .output-panel h3 {
-    background: var(--secondary-300);
+    background: var(--secondary-600);
+    color: var(--secondary-50);
   }
 
   .markup-header {
@@ -1383,7 +1439,8 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     align-items: center;
     padding: 0.75rem 1rem;
     border-bottom: var(--border-extrathin) solid var(--border-primary);
-    background: var(--primary-300);
+    background: var(--primary-600);
+    color: var(--primary-50);
   }
 
   .markup-header h3 {
@@ -1400,7 +1457,7 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     font-family: "Source Sans 3", sans-serif;
     font-size: 0.75rem;
     font-weight: var(--weight-medium);
-    color: var(--primary-700);
+    color: var(--primary-100);
     cursor: pointer;
     border-radius: 4px;
     transition: all 0.2s ease;
@@ -1410,8 +1467,8 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   }
 
   .reset-button:hover {
-    background: rgba(255, 255, 255, 0.2);
-    color: var(--primary-800);
+    background: rgba(255, 255, 255, 0.15);
+    color: var(--primary-50);
     text-decoration-thickness: 2px;
   }
 
@@ -1454,28 +1511,9 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     padding: 1rem;
     font-family: "Source Sans 3", sans-serif;
     line-height: var(--body-line-height);
-    color: var(--text-body);
     flex: 1;
-    background: var(--surface-page);
   }
 
-  .output-content h1 {
-    font-family: "Montserrat", sans-serif;
-    font-size: 1.8rem;
-    margin: 0 0 1rem 0;
-  }
-
-  .output-content h2 {
-    font-family: "Montserrat", sans-serif;
-    font-size: 1.4rem;
-    margin: 1.5rem 0 1rem 0;
-  }
-
-  .output-content h3 {
-    font-family: "Montserrat", sans-serif;
-    font-size: 1.2rem;
-    margin: 1.25rem 0 0.75rem 0;
-  }
 
   .output-content .citation {
     color: #007acc;
@@ -1510,12 +1548,12 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     max-width: none !important;
     border-radius: 0 !important;
   }
-  
+
   :deep(.output-content .manuscriptwrapper .manuscript) {
     padding: 0 !important;
     margin: 0 !important;
   }
-  
+
   :deep(.output-content section.level-1) {
     margin-block: 0.5rem !important;
   }
@@ -1893,7 +1931,8 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   /* Footer */
   .footer {
     padding: 2rem 0;
-    background: var(--very-light);
+    background: var(--surface-secondary);
+    border-top: var(--border-thin) solid var(--border-primary);
     position: relative;
   }
 
@@ -1906,20 +1945,20 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
 
   .footer-links a {
     font-family: "Source Sans 3", sans-serif;
-    color: var(--dark);
+    color: var(--text-body);
     text-decoration: none;
     transition: color 0.2s;
     font-weight: var(--weight-medium);
   }
 
   .footer-links a:hover {
-    color: var(--text-action);
+    color: var(--primary-600);
   }
 
   .footer-copyright {
     text-align: center;
     font-family: "Source Sans 3", sans-serif;
-    color: var(--medium);
+    color: var(--text-muted);
     font-size: 0.875rem;
   }
 
@@ -1930,7 +1969,7 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   }
 
   .footer-copyright a:hover {
-    color: var(--primary-600);
+    color: var(--primary-700);
     text-decoration: underline;
   }
 
@@ -1941,7 +1980,7 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     }
 
     .nav-links,
-    .nav-cta-button {
+    .nav-actions {
       display: none;
     }
 
@@ -1972,6 +2011,13 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     .nav-mobile .nav-cta-button {
       font-size: 1.25rem;
       padding: 1rem 2rem;
+    }
+
+    .nav-mobile-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 0;
     }
 
     .nav-hamburger {
@@ -2168,13 +2214,18 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     border: var(--border-extrathin) solid var(--border-primary);
     overflow: hidden;
     box-shadow: var(--shadow-soft);
-    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease,
+      border-color 0.2s ease;
   }
 
   .feature-card:hover {
     transform: translateY(-4px);
     border-color: var(--primary-400);
-    box-shadow: var(--shadow-soft), 0 8px 24px rgba(0, 0, 0, 0.15);
+    box-shadow:
+      var(--shadow-soft),
+      0 8px 24px rgba(0, 0, 0, 0.15);
   }
 
   .feature-screenshot {
@@ -2209,7 +2260,10 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   }
 
   /* Feature mockup styles */
-  .editor-mockup, .comment-mockup, .preview-mockup, .history-mockup {
+  .editor-mockup,
+  .comment-mockup,
+  .preview-mockup,
+  .history-mockup {
     width: 100%;
     padding: 0.5rem;
   }
@@ -2303,7 +2357,8 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     gap: 0.5rem;
   }
 
-  .editor-side, .preview-side {
+  .editor-side,
+  .preview-side {
     flex: 1;
     padding: 0.5rem;
     border-radius: 4px;

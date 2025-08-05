@@ -15,7 +15,10 @@
       <a href="/#faq" class="nav-link">FAQ</a>
     </div>
 
-    <a href="/#signup" class="nav-cta-button">Get early access</a>
+    <div class="nav-actions">
+      <DarkModeToggle />
+      <a href="/#signup" class="nav-cta-button">Get early access</a>
+    </div>
 
     <button class="nav-hamburger" :aria-expanded="mobileMenuOpen" @click="toggleMobileMenu">
       <span class="hamburger-line"></span>
@@ -28,6 +31,9 @@
       <a href="/#studio-features" class="nav-link" @click="closeMobileMenu">Studio</a>
       <a href="/#benefits" class="nav-link" @click="closeMobileMenu">Benefits</a>
       <a href="/#faq" class="nav-link" @click="closeMobileMenu">FAQ</a>
+      <div class="nav-mobile-toggle">
+        <DarkModeToggle />
+      </div>
       <a href="/#signup" class="nav-cta-button" @click="closeMobileMenu">Get early access</a>
     </div>
   </nav>
@@ -104,6 +110,12 @@
     gap: 3rem;
   }
 
+  .nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
   .nav-mobile {
     display: none;
   }
@@ -164,7 +176,7 @@
     }
 
     .nav-links,
-    .nav-cta-button {
+    .nav-actions {
       display: none;
     }
 
@@ -195,6 +207,13 @@
     .nav-mobile .nav-cta-button {
       font-size: 1.25rem;
       padding: 1rem 2rem;
+    }
+
+    .nav-mobile-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.5rem 0;
     }
 
     .nav-hamburger {

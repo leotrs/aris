@@ -327,6 +327,17 @@
   --orange-900: #F2B285;
   --orange-950: #FAD7B9;
 
+  /* Semantic color aliases for dark theme */
+  --black: var(--gray-0);
+  --almost-black: var(--gray-50);
+  --extra-dark: var(--gray-900);
+  --dark: var(--gray-700);
+  --medium: var(--gray-500);
+  --light: var(--gray-300);
+  --extra-light: var(--gray-100);
+  --almost-white: var(--gray-50);
+  --white: var(--gray-1000);
+
   --surface-page: var(--gray-0);
   --surface-primary: var(--gray-50);
   --surface-hover: var(--gray-100);

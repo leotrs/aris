@@ -1,5 +1,14 @@
 <script setup>
-  // Coming soon site - no navigation or footer needed
+  import { onMounted } from "vue";
+  import { useDarkMode } from "~/composables/useDarkMode";
+
+  // Initialize dark mode for the entire app
+  const { initializeDarkMode } = useDarkMode();
+
+  // Apply theme on client-side mount
+  onMounted(() => {
+    initializeDarkMode();
+  });
 </script>
 
 <template>
@@ -36,5 +45,20 @@
 
   main {
     min-height: 100vh;
+  }
+
+  /* Global transitions for smooth theme switching */
+  * {
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      color 0.2s ease;
+  }
+
+  /* Reduce motion for users who prefer it */
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      transition: none !important;
+    }
   }
 </style>
