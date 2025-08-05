@@ -22,7 +22,7 @@ test.describe("Signup Form", () => {
     await expect(
       page.locator("text=Which tools will you use for your next publication?")
     ).toBeVisible();
-    await expect(page.locator("textarea")).toBeVisible();
+    await expect(page.locator("#improvements")).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeVisible();
   });
 
@@ -141,7 +141,7 @@ test.describe("Signup Form", () => {
     await page.fill('input[placeholder="Please specify"]', "Custom Tool");
 
     // Fill improvements
-    await page.fill("textarea", "Better collaboration features would be great!");
+    await page.fill("#improvements", "Better collaboration features would be great!");
 
     // Submit form
     await page.click('button[type="submit"]');

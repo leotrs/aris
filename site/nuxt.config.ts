@@ -82,6 +82,15 @@ export default defineNuxtConfig({
   // Compression configuration
   nitro: {
     compressPublicAssets: false, // Disable compression for now
+    routeRules: {
+      '/**': {
+        headers: {
+          'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+          'X-Frame-Options': 'DENY',
+          'X-Content-Type-Options': 'nosniff'
+        }
+      }
+    }
   },
 
   // Runtime config for frontend URL
