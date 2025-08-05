@@ -1,15 +1,16 @@
 <template>
   <nav class="navbar">
-    <div class="nav-brand">
+    <a href="/" class="nav-brand">
       <img src="/studio-logo-64.svg" alt="RSM Studio Logo" class="nav-logo" />
       <div class="nav-text">
         <span class="nav-rsm">RSM</span>
         <span class="nav-studio">Studio</span>
       </div>
-    </div>
+    </a>
 
     <div class="nav-links">
-      <a href="/#demo" class="nav-link">Demo</a>
+      <a href="/#demo" class="nav-link">RSM</a>
+      <a href="/#studio-features" class="nav-link">Studio</a>
       <a href="/#benefits" class="nav-link">Benefits</a>
       <a href="/#faq" class="nav-link">FAQ</a>
     </div>
@@ -23,7 +24,8 @@
     </button>
 
     <div class="nav-mobile" :class="{ 'nav-mobile-open': mobileMenuOpen }">
-      <a href="/#demo" class="nav-link" @click="closeMobileMenu">Demo</a>
+      <a href="/#demo" class="nav-link" @click="closeMobileMenu">RSM</a>
+      <a href="/#studio-features" class="nav-link" @click="closeMobileMenu">Studio</a>
       <a href="/#benefits" class="nav-link" @click="closeMobileMenu">Benefits</a>
       <a href="/#faq" class="nav-link" @click="closeMobileMenu">FAQ</a>
       <a href="/#signup" class="nav-cta-button" @click="closeMobileMenu">Get early access</a>

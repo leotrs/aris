@@ -11,7 +11,8 @@
       </a>
 
       <div class="nav-links">
-        <a href="#demo" class="nav-link">Demo</a>
+        <a href="#demo" class="nav-link">RSM</a>
+        <a href="#studio-features" class="nav-link">Studio</a>
         <a href="#benefits" class="nav-link">Benefits</a>
         <a href="#faq" class="nav-link">FAQ</a>
       </div>
@@ -25,7 +26,8 @@
       </button>
 
       <div class="nav-mobile" :class="{ 'nav-mobile-open': mobileMenuOpen }">
-        <a href="#demo" class="nav-link" @click="closeMobileMenu">Demo</a>
+        <a href="#demo" class="nav-link" @click="closeMobileMenu">RSM</a>
+        <a href="#studio-features" class="nav-link" @click="closeMobileMenu">Studio</a>
         <a href="#benefits" class="nav-link" @click="closeMobileMenu">Benefits</a>
         <a href="#faq" class="nav-link" @click="closeMobileMenu">FAQ</a>
         <a href="#signup" class="nav-cta-button" @click="closeMobileMenu">Get early access</a>
@@ -67,18 +69,18 @@
         <div class="demo-controls">
           <div class="demo-tabs">
             <button
-              :class="['tab-button', { active: activeTab === 'simple' }]"
-              data-testid="tab-simple"
-              @click="activeTab = 'simple'"
+              :class="['tab-button', { active: activeTab === 'academic' }]"
+              data-testid="tab-academic"
+              @click="activeTab = 'academic'"
             >
-              Basic
+              Academic-Grade Output
             </button>
             <button
-              :class="['tab-button', { active: activeTab === 'complex' }]"
-              data-testid="tab-complex"
-              @click="activeTab = 'complex'"
+              :class="['tab-button', { active: activeTab === 'interactive' }]"
+              data-testid="tab-interactive"
+              @click="activeTab = 'interactive'"
             >
-              Advanced
+              Web-Native Interactions
             </button>
           </div>
 
@@ -146,8 +148,131 @@
             v-show="viewMode === 'output' || viewMode === 'both'"
             class="demo-context demo-context-right"
           >
-            Try resizing your browser to see responsiveness in action
+            Try resizing your browser or toggling dark mode to see RSM adapt
           </p>
+        </div>
+
+        <div class="transition-text">
+          <p>
+            RSM Studio builds on this foundation with real-time collaboration - comment threads, shared editing, and review workflows that preserve context.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- RSM Studio Features Section -->
+    <section id="studio-features" class="studio-features-section">
+      <div class="container">
+        <h2 class="section-header">RSM Studio Features</h2>
+        <p class="section-subheader">The collaborative editor for RSM documents</p>
+
+        <div class="studio-intro">
+          <p class="studio-tagline">
+            Write RSM together. See changes instantly. Discuss inline. Preserve context forever.
+          </p>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-screenshot">
+              <!-- Screenshot placeholder for real-time collaborative editing -->
+              <div class="screenshot-placeholder">
+                <div class="placeholder-content">
+                  <div class="editor-mockup">
+                    <div class="editor-header">collaborative-document.rsm</div>
+                    <div class="editor-content">
+                      <div class="cursor cursor-1">Sarah</div>
+                      <div class="cursor cursor-2">David</div>
+                      <div class="text-line">## Climate Impact Analysis</div>
+                      <div class="text-line">Recent studies show...</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3>Real-time collaborative editing</h3>
+            <p>Multiple cursors, instant sync</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-screenshot">
+              <!-- Screenshot placeholder for contextual comment threads -->
+              <div class="screenshot-placeholder">
+                <div class="placeholder-content">
+                  <div class="comment-mockup">
+                    <div class="document-text">Surface temperatures increased by 0.8°C</div>
+                    <div class="comment-thread">
+                      <div class="comment">
+                        <div class="comment-author">Maria</div>
+                        <div class="comment-text">Should we include confidence intervals?</div>
+                      </div>
+                      <div class="comment">
+                        <div class="comment-author">Sarah</div>
+                        <div class="comment-text">Good point - I'll add ±0.2°C</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3>Contextual comment threads</h3>
+            <p>Discussions tied to specific content</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-screenshot">
+              <!-- Screenshot placeholder for live preview -->
+              <div class="screenshot-placeholder">
+                <div class="placeholder-content">
+                  <div class="preview-mockup">
+                    <div class="split-view">
+                      <div class="editor-side">
+                        <div class="code-line"># Results</div>
+                        <div class="code-line">Temperature: $0.8°C$</div>
+                      </div>
+                      <div class="preview-side">
+                        <div class="rendered-content">
+                          <h1>Results</h1>
+                          <p>Temperature: <em>0.8°C</em></p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3>Live preview</h3>
+            <p>See RSM rendering as you write</p>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-screenshot">
+              <!-- Screenshot placeholder for version history -->
+              <div class="screenshot-placeholder">
+                <div class="placeholder-content">
+                  <div class="history-mockup">
+                    <div class="history-header">Version History</div>
+                    <div class="history-entry">
+                      <div class="history-time">2 hours ago</div>
+                      <div class="history-author">Sarah Chen</div>
+                      <div class="history-change">Added methodology section</div>
+                    </div>
+                    <div class="history-entry">
+                      <div class="history-time">1 day ago</div>
+                      <div class="history-author">David Williams</div>
+                      <div class="history-change">Updated temperature data</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h3>Version history</h3>
+            <p>Track changes and evolution</p>
+          </div>
+        </div>
+
+        <div class="studio-cta">
+          <a href="#signup" class="studio-cta-button">Join the Studio Beta</a>
         </div>
       </div>
     </section>
@@ -366,7 +491,7 @@
   import { ref, computed, onMounted, watch, nextTick } from "vue";
 
   // Reactive data
-  const activeTab = ref("simple");
+  const activeTab = ref("academic");
   const viewMode = ref("both");
   const signupComplete = ref(false);
   const submitting = ref(false);
@@ -457,27 +582,126 @@
   const renderCache = new Map();
 
   const examples = {
-    simple: {
+    academic: {
       markup: `:rsm:
-# The Future of Academic Publishing
 
-Recent advances in /semantic markup/ have enabled new approaches to scholarly communication. This *web-native* approach separates content from presentation.
+# Climate Change Impacts on Marine Ecosystems
 
-::`,
-      output: ref(`<h1>The Future of Academic Publishing</h1>
-<p>Recent advances in <em>semantic markup</em> have enabled new approaches to scholarly communication. This <strong>web-native</strong> approach separates content from presentation.</p>`),
-      context: "Looks familiar? RSM builds on markdown's simplicity",
+:author:
+  :name: Sarah Chen
+  :affiliation: Marine Biology Institute, University of California
+::
+
+:author:
+  :name: Maria Rodriguez
+  :affiliation: Marine Biology Institute, University of California
+::
+
+:abstract:
+Recent climate change has significantly altered marine ecosystems worldwide. We analyzed temperature data from 50+ monitoring stations over 20 years and found accelerating warming trends in surface waters. These changes correlate strongly with species migration patterns and biodiversity shifts.
+::
+
+## Introduction
+
+Ocean warming represents one of the most pressing environmental challenges of our time :cite:ipcc2021::. Our research quantifies regional impacts through comprehensive temperature monitoring.
+
+### Methods
+
+Temperature measurements were collected using automated sensors deployed across major oceanic regions. Statistical analysis employed regression models to identify trends.
+
+## Results
+
+Surface temperatures increased by 0.8°C ± 0.2°C over the study period. Migration patterns show clear northward shifts in 15 key species.
+
+:bibliography: ::
+
+::
+
+:bibtex:
+
+@book{ipcc2021,
+  title={Climate Change 2021: The Physical Science Basis},
+  author={IPCC},
+  year={2023},
+  publisher={Cambridge University Press},
+  doi={10.1017/9781009157896}
+}
+
+::
+`,
+      output: ref(`<div class="manuscript-header">
+<h1 class="manuscript-title">Climate Change Impacts on Marine Ecosystems</h1>
+<div class="manuscript-authors">Sarah Chen, David Williams, Maria Rodriguez</div>
+<div class="manuscript-affiliation">Marine Biology Institute, University of California</div>
+</div>
+<div class="abstract">
+<h2>Abstract</h2>
+<p>Recent climate change has significantly altered marine ecosystems worldwide. We analyzed temperature data from 50+ monitoring stations over 20 years and found accelerating warming trends in surface waters. These changes correlate strongly with species migration patterns and biodiversity shifts.</p>
+</div>
+<h1>Introduction</h1>
+<p>Ocean warming represents one of the most pressing environmental challenges of our time <a href="#ipcc2021" class="citation">[1]</a>. Our research builds on previous studies <a href="#chen2020" class="citation">[2]</a> to quantify regional impacts.</p>
+<h2>Methods</h2>
+<p>Temperature measurements were collected using automated sensors deployed across major oceanic regions. Statistical analysis employed regression models to identify trends.</p>
+<h1>Results</h1>
+<p>Surface temperatures increased by 0.8°C ± 0.2°C over the study period. Migration patterns show clear northward shifts in 15 key species.</p>
+<div class="bibliography">
+<h2>References</h2>
+<div class="reference" id="ipcc2021">[1] IPCC. Climate Change 2021: The Physical Science Basis. Cambridge University Press, 2021.</div>
+<div class="reference" id="chen2020">[2] Chen, S. and Lopez, M. Marine Temperature Trends in Pacific Waters. Ocean Science, 16:234-267, 2020.</div>
+</div>`),
+      context: "Studio helps you write real papers",
     },
-    complex: {
+    interactive: {
       markup: `:rsm:
-# The Future of Academic Publishing
 
-Recent advances in /semantic markup/ have enabled new approaches to scholarly communication. This *web-native* approach separates content from presentation.
+# Interactive Marine Data
 
-::`,
-      output: ref(`<h1>The Future of Academic Publishing</h1>
-<p>Recent advances in <em>semantic markup</em> have enabled new approaches to scholarly communication. This <strong>web-native</strong> approach separates content from presentation.</p>`),
-      context: "Here's where RSM goes beyond markdown",
+## Temperature Trends
+:label: temp-trends
+
+Global sea surface temperatures have risen dramatically. Click the chart below to explore regional variations.
+
+:figure:
+  :path: temperature-data.json
+  :caption: foobar
+::
+
+## Species Migration
+:label: migration
+
+As waters warm, species migrate toward cooler regions. The :ref:temp-trends, temperature data:: shows clear correlations with migration patterns.
+
+### Key Finding
+
+Our analysis of 15 species shows northward migration averaging 2.3 km/year. This rate has :span:{:label:acceleration}accelerated since 2015:: to 3.8 km/year.
+
+## Discussion
+
+The :ref:acceleration, accelerated migration rate:: suggests climate impacts are intensifying. Interactive exploration of our dataset reveals regional hotspots where adaptation strategies are most urgent.
+
+::
+`,
+      output: ref(`<h1>Interactive Marine Data</h1>
+<h2>Temperature Trends</h2>
+<p>Global sea surface temperatures have risen dramatically. Click the chart below to explore regional variations.</p>
+<div class="interactive-chart" data-src="temperature-data.json">
+<svg viewBox="0 0 400 200" class="chart-placeholder">
+<rect x="20" y="20" width="360" height="160" fill="none" stroke="#ccc"/>
+<line x1="40" y1="160" x2="380" y2="40" stroke="#e74c3c" stroke-width="2"/>
+<text x="200" y="195" text-anchor="middle" font-size="12">Years (2000-2020)</text>
+<text x="10" y="100" text-anchor="middle" font-size="12" transform="rotate(-90, 10, 100)">Temperature (°C)</text>
+</svg>
+</div>
+<h2>Species Migration</h2>
+<p>As waters warm, species migrate toward cooler regions. The <a href="#temp-trends">temperature data</a> shows clear correlations with migration patterns.</p>
+<h3>Key Finding</h3>
+<details class="collapsible">
+<summary>Click for details</summary>
+<p>Our analysis of 15 species shows northward migration averaging 2.3 km/year. This rate has <span class="tooltip-trigger">accelerated since 2015</span> to 3.8 km/year.</p>
+</details>
+<h2>Discussion</h2>
+<p>The <a href="#acceleration">accelerated migration rate</a> suggests climate impacts are intensifying. Interactive exploration of our dataset reveals regional hotspots where adaptation strategies are most urgent.</p>`),
+      context: "Studio creates rich, interactive documents",
     },
   };
 
@@ -602,13 +826,13 @@ Recent advances in /semantic markup/ have enabled new approaches to scholarly co
 
     try {
       // Render both examples in parallel
-      const [simpleResult, complexResult] = await Promise.all([
-        renderRsm(examples.simple.markup),
-        renderRsm(examples.complex.markup),
+      const [academicResult, interactiveResult] = await Promise.all([
+        renderRsm(examples.academic.markup),
+        renderRsm(examples.interactive.markup),
       ]);
 
-      examples.simple.output.value = simpleResult;
-      examples.complex.output.value = complexResult;
+      examples.academic.output.value = academicResult;
+      examples.interactive.output.value = interactiveResult;
       demoInitialized.value = true;
 
       // Initialize RSM features after content is rendered
@@ -896,6 +1120,7 @@ Recent advances in /semantic markup/ have enabled new approaches to scholarly co
   /* Section Dividers */
   .hero-section::after,
   .demo-section::after,
+  .studio-features-section::after,
   .benefits-section::after,
   .signup-section::after {
     content: "";
@@ -1017,6 +1242,7 @@ Recent advances in /semantic markup/ have enabled new approaches to scholarly co
 
   /* Common Section Styles */
   .demo-section,
+  .studio-features-section,
   .benefits-section,
   .signup-section,
   .faq-section {
@@ -1891,5 +2117,297 @@ Recent advances in /semantic markup/ have enabled new approaches to scholarly co
 
   .demo-error p:last-child {
     margin-bottom: 0;
+  }
+
+  /* Transition Text */
+  .transition-text {
+    max-width: 800px;
+    margin: 3rem auto 0;
+    text-align: center;
+    padding: 2rem;
+    background: var(--surface-information);
+    border-radius: 16px;
+    border: var(--border-extrathin) solid var(--border-information);
+  }
+
+  .transition-text p {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 1.1rem;
+    color: var(--text-body);
+    line-height: var(--body-line-height);
+    margin: 0;
+    font-style: italic;
+  }
+
+  /* RSM Studio Features Section */
+  .studio-intro {
+    max-width: 700px;
+    margin: 0 auto 3rem;
+    text-align: center;
+  }
+
+  .studio-tagline {
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.3rem;
+    font-weight: var(--weight-semi);
+    color: var(--primary-700);
+    line-height: var(--header-line-height);
+    margin: 0;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .feature-card {
+    background: var(--surface-page);
+    border-radius: 16px;
+    border: var(--border-extrathin) solid var(--border-primary);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  }
+
+  .feature-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--primary-400);
+    box-shadow: var(--shadow-soft), 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  .feature-screenshot {
+    height: 200px;
+    background: var(--very-light);
+    border-bottom: var(--border-extrathin) solid var(--border-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+
+  .screenshot-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--primary-100) 0%, var(--secondary-100) 100%);
+  }
+
+  .placeholder-content {
+    width: 80%;
+    height: 80%;
+    background: var(--surface-page);
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem;
+  }
+
+  /* Feature mockup styles */
+  .editor-mockup, .comment-mockup, .preview-mockup, .history-mockup {
+    width: 100%;
+    padding: 0.5rem;
+  }
+
+  .editor-header {
+    background: var(--surface-action);
+    color: var(--primary-50);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px 4px 0 0;
+    font-size: 0.7rem;
+    font-weight: var(--weight-medium);
+  }
+
+  .editor-content {
+    background: var(--surface-page);
+    padding: 0.5rem;
+    border: var(--border-thin) solid var(--border-primary);
+    border-radius: 0 0 4px 4px;
+    position: relative;
+  }
+
+  .cursor {
+    position: absolute;
+    width: 2px;
+    height: 12px;
+    background: var(--primary-500);
+    font-size: 0.6rem;
+    color: var(--primary-700);
+    font-weight: var(--weight-semi);
+  }
+
+  .cursor-1 {
+    top: 0.5rem;
+    left: 3rem;
+  }
+
+  .cursor-2 {
+    top: 1.5rem;
+    left: 5rem;
+  }
+
+  .text-line {
+    font-family: "Source Code Pro", monospace;
+    font-size: 0.7rem;
+    margin: 0.25rem 0;
+    color: var(--text-body);
+  }
+
+  .comment-mockup {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .document-text {
+    background: var(--surface-page);
+    padding: 0.5rem;
+    border-radius: 4px;
+    font-size: 0.7rem;
+    border-left: 3px solid var(--primary-400);
+  }
+
+  .comment-thread {
+    background: var(--surface-information);
+    border-radius: 4px;
+    padding: 0.5rem;
+  }
+
+  .comment {
+    margin-bottom: 0.5rem;
+  }
+
+  .comment:last-child {
+    margin-bottom: 0;
+  }
+
+  .comment-author {
+    font-size: 0.6rem;
+    font-weight: var(--weight-semi);
+    color: var(--primary-600);
+    margin-bottom: 0.25rem;
+  }
+
+  .comment-text {
+    font-size: 0.7rem;
+    color: var(--text-body);
+  }
+
+  .split-view {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .editor-side, .preview-side {
+    flex: 1;
+    padding: 0.5rem;
+    border-radius: 4px;
+  }
+
+  .editor-side {
+    background: var(--surface-page);
+    border: var(--border-thin) solid var(--border-primary);
+  }
+
+  .preview-side {
+    background: var(--very-light);
+  }
+
+  .code-line {
+    font-family: "Source Code Pro", monospace;
+    font-size: 0.7rem;
+    margin: 0.25rem 0;
+    color: var(--text-body);
+  }
+
+  .rendered-content h1 {
+    font-size: 0.8rem;
+    margin: 0 0 0.25rem 0;
+    font-weight: var(--weight-semi);
+  }
+
+  .rendered-content p {
+    font-size: 0.7rem;
+    margin: 0;
+  }
+
+  .history-header {
+    font-size: 0.7rem;
+    font-weight: var(--weight-semi);
+    color: var(--text-body);
+    margin-bottom: 0.5rem;
+    padding-bottom: 0.25rem;
+    border-bottom: var(--border-thin) solid var(--border-primary);
+  }
+
+  .history-entry {
+    margin-bottom: 0.5rem;
+    padding: 0.25rem;
+    border-radius: 4px;
+    background: var(--surface-hover);
+  }
+
+  .history-time {
+    font-size: 0.6rem;
+    color: var(--medium);
+  }
+
+  .history-author {
+    font-size: 0.7rem;
+    font-weight: var(--weight-medium);
+    color: var(--text-body);
+  }
+
+  .history-change {
+    font-size: 0.7rem;
+    color: var(--dark);
+  }
+
+  .feature-card h3 {
+    font-family: "Montserrat", sans-serif;
+    font-size: var(--h5-size);
+    font-weight: var(--weight-semi);
+    color: var(--text-body);
+    margin: 1.5rem 1.5rem 0.5rem;
+    line-height: var(--header-line-height);
+  }
+
+  .feature-card p {
+    font-family: "Source Sans 3", sans-serif;
+    color: var(--dark);
+    line-height: var(--body-line-height);
+    margin: 0 1.5rem 1.5rem;
+    font-size: 0.95rem;
+  }
+
+  .studio-cta {
+    text-align: center;
+    margin-top: 2rem;
+  }
+
+  .studio-cta-button {
+    display: inline-block;
+    padding: 0.75rem 2rem;
+    background: var(--surface-action);
+    color: var(--primary-50);
+    border: var(--border-thin) solid var(--surface-action);
+    border-radius: 16px;
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 1.1rem;
+    font-weight: var(--weight-semi);
+    text-decoration: none;
+    cursor: pointer;
+    transition: var(--transition-bg-color), var(--transition-bd-color);
+    box-shadow: var(--shadow-soft), var(--shadow-strong);
+  }
+
+  .studio-cta-button:hover {
+    background: var(--surface-action-hover);
+    border-color: var(--surface-action-hover);
   }
 </style>
