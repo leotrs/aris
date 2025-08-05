@@ -96,12 +96,12 @@
         </div>
 
         <div class="demo-content">
-          <div v-if="viewMode === 'markup' || viewMode === 'both'" class="demo-panel markup-panel">
+          <div v-show="viewMode === 'markup' || viewMode === 'both'" class="demo-panel markup-panel">
             <h3>Markup</h3>
             <pre class="markup-content">{{ currentExample.markup }}</pre>
           </div>
 
-          <div v-if="viewMode === 'output' || viewMode === 'both'" class="demo-panel output-panel">
+          <div v-show="viewMode === 'output' || viewMode === 'both'" class="demo-panel output-panel">
             <h3>Output</h3>
             <div v-if="demoLoading" class="demo-loading" data-testid="demo-loading">
               <div class="loading-spinner"></div>
@@ -120,13 +120,13 @@
 
         <div class="demo-callouts">
           <p
-            v-if="viewMode === 'markup' || viewMode === 'both'"
+            v-show="viewMode === 'markup' || viewMode === 'both'"
             class="demo-context demo-context-left"
           >
             {{ currentExample.context }}
           </p>
           <p
-            v-if="viewMode === 'output' || viewMode === 'both'"
+            v-show="viewMode === 'output' || viewMode === 'both'"
             class="demo-context demo-context-right"
           >
             Try resizing your browser to see responsiveness in action
