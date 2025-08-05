@@ -97,24 +97,41 @@
 
         <div class="demo-content">
           <div v-show="viewMode === 'markup' || viewMode === 'both'" class="demo-panel markup-panel">
-            <h3>Markup</h3>
-            <pre class="markup-content">{{ currentExample.markup }}</pre>
+            <div class="markup-header">
+              <h3>Markup</h3>
+              <button 
+                class="reset-button"
+                @click="resetToExample"
+                title="Reset to original example"
+                data-testid="reset-button"
+              >
+                Reset
+              </button>
+            </div>
+            <textarea
+              v-model="editableMarkup"
+              class="markup-content editable"
+              @input="handleMarkupInput"
+              placeholder="Type RSM markup here..."
+              data-testid="markup-editor"
+            ></textarea>
           </div>
 
           <div v-show="viewMode === 'output' || viewMode === 'both'" class="demo-panel output-panel">
             <h3>Output</h3>
-            <div v-if="demoLoading" class="demo-loading" data-testid="demo-loading">
-              <div class="loading-spinner"></div>
-              <p>Rendering RSM content...</p>
+            <div class="output-container">
+              <div v-if="demoError" class="demo-error" data-testid="demo-error">
+                <p><strong>Demo unavailable - showing static preview</strong></p>
+                <p>
+                  The live rendering service is temporarily unavailable. The content below shows what
+                  the rendered output would look like.
+                </p>
+              </div>
+              <div v-if="demoLoading" class="inline-loading" data-testid="demo-loading">
+                <div class="inline-spinner"></div>
+              </div>
+              <div class="output-content" v-html="currentExample.output"></div>
             </div>
-            <div v-else-if="demoError" class="demo-error" data-testid="demo-error">
-              <p><strong>Demo unavailable - showing static preview</strong></p>
-              <p>
-                The live rendering service is temporarily unavailable. The content below shows what
-                the rendered output would look like.
-              </p>
-            </div>
-            <div class="output-content" v-html="currentExample.output"></div>
           </div>
         </div>
 
@@ -361,6 +378,10 @@
   const demoLoading = ref(false);
   const demoError = ref(false);
   const demoInitialized = ref(false);
+  
+  // Editable markup state
+  const editableMarkup = ref('');
+  const renderTimer = ref(null);
 
   // Form data
   const formData = ref({
@@ -440,7 +461,7 @@
       markup: `:rsm:
 # The Future of Academic Publishing
 
-Recent advances in *semantic markup* have enabled new approaches to scholarly communication. This **web-native** approach separates content from presentation.
+Recent advances in /semantic markup/ have enabled new approaches to scholarly communication. This *web-native* approach separates content from presentation.
 
 ::`,
       output: ref(`<h1>The Future of Academic Publishing</h1>
@@ -451,7 +472,7 @@ Recent advances in *semantic markup* have enabled new approaches to scholarly co
       markup: `:rsm:
 # The Future of Academic Publishing
 
-Recent advances in *semantic markup* have enabled new approaches to scholarly communication. This **web-native** approach separates content from presentation.
+Recent advances in /semantic markup/ have enabled new approaches to scholarly communication. This *web-native* approach separates content from presentation.
 
 ::`,
       output: ref(`<h1>The Future of Academic Publishing</h1>
@@ -463,7 +484,7 @@ Recent advances in *semantic markup* have enabled new approaches to scholarly co
   const currentExample = computed(() => {
     const example = examples[activeTab.value];
     return {
-      markup: example.markup,
+      markup: editableMarkup.value || example.markup,
       output: example.output.value,
       context: example.context,
     };
@@ -499,6 +520,55 @@ Recent advances in *semantic markup* have enabled new approaches to scholarly co
       console.error("Failed to render RSM:", error);
       throw error;
     }
+  };
+
+  // Real-time markup input handler
+  const handleMarkupInput = (event) => {
+    // Auto-resize textarea
+    if (event && event.target) {
+      event.target.style.height = 'auto';
+      event.target.style.height = event.target.scrollHeight + 'px';
+    }
+    
+    // Clear existing timer
+    if (renderTimer.value) {
+      clearTimeout(renderTimer.value);
+    }
+    
+    // Set new timer for blazing fast debounced rendering
+    renderTimer.value = setTimeout(async () => {
+      if (editableMarkup.value.trim()) {
+        try {
+          demoLoading.value = true;
+          demoError.value = false;
+          
+          const result = await renderRsm(editableMarkup.value);
+          const example = examples[activeTab.value];
+          example.output.value = result;
+          
+          // Re-initialize RSM features after new content is rendered
+          await nextTick();
+          const outputElement = document.querySelector(".output-content");
+          if (outputElement) {
+            await initializeRsmContent(outputElement);
+          }
+        } catch (error) {
+          console.error("Failed to render user markup:", error);
+          demoError.value = true;
+        } finally {
+          demoLoading.value = false;
+        }
+      }
+    }, 150); // Ultra-fast debounce for real-time feel
+  };
+
+  // Reset to original example
+  const resetToExample = () => {
+    const example = examples[activeTab.value];
+    editableMarkup.value = example.markup;
+    
+    // Trigger re-render with original content
+    handleMarkupInput();
   };
 
   // RSM Initialization Function
@@ -561,6 +631,18 @@ Recent advances in *semantic markup* have enabled new approaches to scholarly co
     // Set initial mobile state
     isMobile.value = window.innerWidth < 768;
     
+    // Initialize editable markup with current example
+    editableMarkup.value = examples[activeTab.value].markup;
+    
+    // Set initial textarea height after next tick
+    nextTick(() => {
+      const textarea = document.querySelector('[data-testid="markup-editor"]');
+      if (textarea) {
+        textarea.style.height = 'auto';
+        textarea.style.height = textarea.scrollHeight + 'px';
+      }
+    });
+    
     // Add resize listener
     const handleResize = () => {
       isMobile.value = window.innerWidth < 768;
@@ -577,9 +659,22 @@ Recent advances in *semantic markup* have enabled new approaches to scholarly co
     return cleanup;
   });
 
-  // Watch for tab changes and render if needed
+  // Watch for tab changes and update editable content
   watch(activeTab, async (newTab) => {
     const example = examples[newTab];
+    
+    // Update editable markup to show the new tab's example
+    editableMarkup.value = example.markup;
+    
+    // Resize textarea to fit new content
+    await nextTick();
+    const textarea = document.querySelector('[data-testid="markup-editor"]');
+    if (textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + 'px';
+    }
+    
+    // Ensure the output is rendered if not cached
     if (!renderCache.has(example.markup) && !demoError.value) {
       demoLoading.value = true;
       try {
@@ -1056,6 +1151,48 @@ Recent advances in *semantic markup* have enabled new approaches to scholarly co
     background: var(--secondary-300);
   }
 
+  .markup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    border-bottom: var(--border-extrathin) solid var(--border-primary);
+    background: var(--primary-300);
+  }
+
+  .markup-header h3 {
+    margin: 0;
+    padding: 0;
+    background: none;
+    border: none;
+  }
+
+  .reset-button {
+    background: transparent;
+    border: none;
+    padding: 0.25rem 0.5rem;
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 0.75rem;
+    font-weight: var(--weight-medium);
+    color: var(--primary-700);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    text-decoration-thickness: 1px;
+  }
+
+  .reset-button:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--primary-800);
+    text-decoration-thickness: 2px;
+  }
+
+  .reset-button:active {
+    transform: translateY(1px);
+  }
+
   .markup-content {
     padding: 1rem;
     font-family: "Source Code Pro", monospace;
@@ -1068,6 +1205,23 @@ Recent advances in *semantic markup* have enabled new approaches to scholarly co
     white-space: pre-wrap;
     word-wrap: break-word;
     flex: 1;
+  }
+
+  .markup-content.editable {
+    border: none;
+    outline: none;
+    resize: vertical;
+    min-height: 200px;
+    transition: box-shadow 0.2s ease;
+  }
+
+  .markup-content.editable:focus {
+    box-shadow: inset 0 0 0 2px var(--primary-300);
+  }
+
+  .markup-content.editable::placeholder {
+    color: var(--medium);
+    font-style: italic;
   }
 
   .output-content {
@@ -1684,30 +1838,26 @@ Recent advances in *semantic markup* have enabled new approaches to scholarly co
   }
 
   /* Demo Loading and Error States */
-  .demo-loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 2rem;
-    text-align: center;
-    color: var(--text-body);
+  .output-container {
+    position: relative;
   }
 
-  .demo-loading p {
-    margin: 1rem 0 0 0;
-    font-family: "Source Sans 3", sans-serif;
-    font-size: 0.9rem;
-    color: var(--medium);
+  .inline-loading {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    pointer-events: none;
+    z-index: 10;
   }
 
-  .loading-spinner {
-    width: 24px;
-    height: 24px;
-    border: 3px solid var(--border-primary);
-    border-top: 3px solid var(--primary-500);
+  .inline-spinner {
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--border-primary);
+    border-top: 2px solid var(--primary-500);
     border-radius: 50%;
     animation: spin 1s linear infinite;
+    opacity: 0.8;
   }
 
   @keyframes spin {
