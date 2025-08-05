@@ -292,3 +292,7 @@ The `/ci-report` command provides comprehensive CI failure analysis:
 ## Language Guidelines
 - Stop using the word 'absolutely'
 - **Playwright MUST always be used in headless mode**
+
+## AI Collaboration Guidelines
+- **AI Interaction Principles**:
+  - Never start the dev server yourself, always ask me to do it
