@@ -24,7 +24,8 @@
 
   .footer {
     padding: 2rem 0;
-    background: var(--very-light);
+    background: var(--surface-secondary);
+    border-top: var(--border-thin) solid var(--border-primary);
     position: relative;
   }
 
@@ -55,20 +56,20 @@
 
   .footer-links a {
     font-family: "Source Sans 3", sans-serif;
-    color: var(--dark);
+    color: var(--text-body);
     text-decoration: none;
     transition: color 0.2s;
     font-weight: var(--weight-medium);
   }
 
   .footer-links a:hover {
-    color: var(--text-action);
+    color: var(--primary-600);
   }
 
   .footer-copyright {
     text-align: center;
     font-family: "Source Sans 3", sans-serif;
-    color: var(--medium);
+    color: var(--text-muted);
     font-size: 0.875rem;
   }
 

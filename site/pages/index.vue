@@ -1,44 +1,6 @@
 <template>
   <div class="landing-page">
-    <!-- Navigation -->
-    <nav class="navbar">
-      <a href="/" class="nav-brand">
-        <img src="/studio-logo-64.svg" alt="RSM Studio Logo" class="nav-logo" />
-        <div class="nav-text">
-          <span class="nav-rsm">RSM</span>
-          <span class="nav-studio">Studio</span>
-        </div>
-      </a>
-
-      <div class="nav-links">
-        <a href="#demo" class="nav-link">RSM</a>
-        <a href="#studio-features" class="nav-link">Studio</a>
-        <a href="#benefits" class="nav-link">Benefits</a>
-        <a href="#faq" class="nav-link">FAQ</a>
-      </div>
-
-      <div class="nav-actions">
-        <DarkModeToggle />
-        <a href="#signup" class="nav-cta-button">Get early access</a>
-      </div>
-
-      <button class="nav-hamburger" :aria-expanded="mobileMenuOpen" @click="toggleMobileMenu">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-      </button>
-
-      <div class="nav-mobile" :class="{ 'nav-mobile-open': mobileMenuOpen }">
-        <a href="#demo" class="nav-link" @click="closeMobileMenu">RSM</a>
-        <a href="#studio-features" class="nav-link" @click="closeMobileMenu">Studio</a>
-        <a href="#benefits" class="nav-link" @click="closeMobileMenu">Benefits</a>
-        <a href="#faq" class="nav-link" @click="closeMobileMenu">FAQ</a>
-        <div class="nav-mobile-toggle">
-          <DarkModeToggle />
-        </div>
-        <a href="#signup" class="nav-cta-button" @click="closeMobileMenu">Get early access</a>
-      </div>
-    </nav>
+    <AppNavbar />
 
     <!-- Hero Section -->
     <section class="hero-section">
@@ -50,10 +12,9 @@
             <span class="brand-studio">Studio</span>
           </div>
         </div>
-        <h1 class="hero-title">Craft scholarly work designed for pixels, not&nbsp;paper</h1>
+        <h1 class="hero-title">Write research manuscripts designed for pixels, not&nbsp;paper</h1>
         <p class="hero-subtitle">
-          Describe your ideas and structure. Generate stunning web documents without the formatting
-          fight.
+          Pure semantic markup, web-native from the first keystroke. Simple to start, powerful when you need it.
         </p>
         <a href="#signup" class="hero-cta-button">Get early access</a>
       </div>
@@ -63,13 +24,21 @@
     <section id="demo" class="demo-section">
       <div class="container">
         <h2 class="section-header">Introducing Readable Science Markup (RSM)</h2>
-        <p class="section-subheader">A modern markup language for scientific writing</p>
+        <p class="section-subheader">Semantic markup that separates meaning from presentation</p>
 
         <div class="intro-content">
           <p>
-            RSM is built for screens from day one. Unlike traditional publishing tools designed
-            around printed pages, RSM creates responsive, interactive documents that work
-            beautifully on any device.
+            RSM is built for the post-PDF era. While other tools convert print formats to web, RSM is web-native from the ground up. Your manuscripts live on the web, adapt to any screen, and only export to PDF when journals demand it, not the other way around.
+          </p>
+        </div>
+
+        <div class="philosophy-callout">
+          <h3 class="philosophy-tagline">Minimal by default, powerful by choice</h3>
+          <p>
+            RSM completely separates your content from its presentation. Write semantic markup like <code>:claim:</code>, <code>:evidence:</code>, and <code>:method:</code> instead of formatting commands. Your content carries meaning. Themes handle presentation.
+          </p>
+          <p>
+            When you're ready to work on styling, simply pick a theme and you're done. Or customize every detail. It's your choice, on your timeline.
           </p>
         </div>
         <div class="demo-controls">
@@ -164,188 +133,56 @@
           </p>
         </div>
 
-        <div class="transition-text">
-          <p>
-            RSM Studio builds on this foundation with real-time collaboration - comment threads,
-            shared editing, and review workflows that preserve context.
-          </p>
-        </div>
       </div>
     </section>
 
     <!-- RSM Studio Features Section -->
     <section id="studio-features" class="studio-features-section">
       <div class="container">
-        <h2 class="section-header">RSM Studio Features</h2>
-        <p class="section-subheader">The collaborative editor for RSM documents</p>
+        <h2 class="section-header">RSM Studio</h2>
+        <p class="section-subheader">Everything you expect from a collaborative editor, built for RSM</p>
 
         <div class="studio-intro">
-          <p class="studio-tagline">
-            Write RSM together. See changes instantly. Discuss inline. Preserve context forever.
+          <p>
+            Studio provides the familiar collaborative features researchers rely on: real-time editing, comment threads, version history, without the learning curve. Write RSM with your team just like you'd use any modern document editor.
           </p>
         </div>
 
         <div class="features-grid">
           <div class="feature-card">
-            <div class="feature-screenshot">
-              <!-- Screenshot placeholder for real-time collaborative editing -->
-              <div class="screenshot-placeholder">
-                <div class="placeholder-content">
-                  <div class="editor-mockup">
-                    <div class="editor-header">collaborative-document.rsm</div>
-                    <div class="editor-content">
-                      <div class="cursor cursor-1">Sarah</div>
-                      <div class="cursor cursor-2">David</div>
-                      <div class="text-line">## Climate Impact Analysis</div>
-                      <div class="text-line">Recent studies show...</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <h3>Real-time collaborative editing</h3>
-            <p>Multiple cursors, instant sync</p>
+            <h3>Write together in real-time</h3>
+            <p>Multiple cursors, instant sync, no merge conflicts</p>
           </div>
 
           <div class="feature-card">
-            <div class="feature-screenshot">
-              <!-- Screenshot placeholder for contextual comment threads -->
-              <div class="screenshot-placeholder">
-                <div class="placeholder-content">
-                  <div class="comment-mockup">
-                    <div class="document-text">Surface temperatures increased by 0.8°C</div>
-                    <div class="comment-thread">
-                      <div class="comment">
-                        <div class="comment-author">Maria</div>
-                        <div class="comment-text">Should we include confidence intervals?</div>
-                      </div>
-                      <div class="comment">
-                        <div class="comment-author">Sarah</div>
-                        <div class="comment-text">Good point - I'll add ±0.2°C</div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <h3>Contextual comment threads</h3>
-            <p>Discussions tied to specific content</p>
+            <h3>Discuss in context</h3>
+            <p>Comments stay with the text they reference</p>
           </div>
 
           <div class="feature-card">
-            <div class="feature-screenshot">
-              <!-- Screenshot placeholder for live preview -->
-              <div class="screenshot-placeholder">
-                <div class="placeholder-content">
-                  <div class="preview-mockup">
-                    <div class="split-view">
-                      <div class="editor-side">
-                        <div class="code-line"># Results</div>
-                        <div class="code-line">Temperature: $0.8°C$</div>
-                      </div>
-                      <div class="preview-side">
-                        <div class="rendered-content">
-                          <h1>Results</h1>
-                          <p>Temperature: <em>0.8°C</em></p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <h3>Live preview</h3>
-            <p>See RSM rendering as you write</p>
+            <h3>Track every change</h3>
+            <p>Full version history with who changed what and when</p>
           </div>
 
           <div class="feature-card">
-            <div class="feature-screenshot">
-              <!-- Screenshot placeholder for version history -->
-              <div class="screenshot-placeholder">
-                <div class="placeholder-content">
-                  <div class="history-mockup">
-                    <div class="history-header">Version History</div>
-                    <div class="history-entry">
-                      <div class="history-time">2 hours ago</div>
-                      <div class="history-author">Sarah Chen</div>
-                      <div class="history-change">Added methodology section</div>
-                    </div>
-                    <div class="history-entry">
-                      <div class="history-time">1 day ago</div>
-                      <div class="history-author">David Williams</div>
-                      <div class="history-change">Updated temperature data</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <h3>Version history</h3>
-            <p>Track changes and evolution</p>
+            <h3>Access from anywhere</h3>
+            <p>Works on any device with a browser</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>Export when needed</h3>
+            <p>One click to PDF, LaTeX, or Word for journal submission</p>
+          </div>
+
+          <div class="feature-card">
+            <h3>Organize your manuscripts</h3>
+            <p>Folders, tags, and search to manage your work</p>
           </div>
         </div>
 
-        <div class="studio-cta">
-          <a href="#signup" class="studio-cta-button">Join the Studio Beta</a>
-        </div>
       </div>
     </section>
 
-    <!-- Key Benefits Section -->
-    <section id="benefits" class="benefits-section">
-      <div class="container">
-        <h2 class="section-header">Why RSM Studio?</h2>
-        <p class="section-subheader">The features that make academic writing effortless</p>
-        <div class="benefits-grid">
-          <div class="benefit-card">
-            <h3>Personalized reading experience</h3>
-            <p>
-              Built-in dark mode, customizable fonts, and adjustable spacing let readers tailor work
-              to their preferences without losing formatting
-            </p>
-          </div>
-
-          <div class="benefit-card">
-            <h3>Interactive by design</h3>
-            <p>
-              Share living documents with embedded citations, expandable sections, and dynamic
-              content that static PDFs can't deliver
-            </p>
-          </div>
-
-          <div class="benefit-card">
-            <h3>Web-native formatting</h3>
-            <p>
-              Semantic markup ensures proper heading hierarchy, citation linking, and search engine
-              indexing that print-first formats lose
-            </p>
-          </div>
-
-          <div class="benefit-card">
-            <h3>Real-time collaboration</h3>
-            <p>
-              Co-authors work together in the same document with live updates, inline comments, and
-              threaded discussions
-            </p>
-          </div>
-
-          <div class="benefit-card">
-            <h3>Accessible to all readers</h3>
-            <p>
-              Built-in screen reader support, keyboard navigation, and customizable reading
-              preferences ensure your work reaches everyone
-            </p>
-          </div>
-
-          <div class="benefit-card">
-            <h3>Web-native publishing</h3>
-            <p>
-              Skip the PDF conversion—publish directly to the web with SEO optimization and instant
-              sharing capabilities
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
 
     <!-- Signup Section -->
     <section class="signup-section">
@@ -412,19 +249,6 @@
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="improvements"
-                >What do you wish your current tool did better for web publishing?</label
-              >
-              <textarea
-                id="improvements"
-                v-model="formData.improvements"
-                rows="4"
-                class="form-textarea"
-                :disabled="submitting || signupComplete"
-              ></textarea>
-            </div>
-
             <div v-if="signupError" class="error-message">
               {{ signupError }}
             </div>
@@ -481,21 +305,17 @@
       </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="footer">
+    <!-- CLI Callout Section -->
+    <section class="cli-callout-section">
       <div class="container">
-        <div class="footer-links">
-          <a href="/contact">Contact</a>
-          <a href="/terms">Terms</a>
-          <a href="/privacy">Privacy</a>
-          <a href="/legal">Legal (Impressum)</a>
-        </div>
-        <div class="footer-copyright">
-          © 2025 RSM Studio. Part of
-          <a href="https://aris.pub" target="_blank" rel="noopener noreferrer">The Aris Program</a>
-        </div>
+        <h2 class="section-header">Want to try RSM today?</h2>
+        <p class="cli-callout-text">
+          The <a href="https://github.com/aris-pub/rsm" target="_blank" rel="noopener noreferrer">command-line tools are open source</a>. Install with <code>pip install rsm</code> and start writing.
+        </p>
       </div>
-    </footer>
+    </section>
+
+    <AppFooter />
   </div>
 </template>
 
@@ -510,7 +330,6 @@
   const submitting = ref(false);
   const signupError = ref("");
   const openFaqs = ref(new Set());
-  const mobileMenuOpen = ref(false);
 
   // Demo rendering state
   const demoLoading = ref(false);
@@ -527,7 +346,6 @@
     authoringTools: [],
     otherToolSelected: false,
     otherTool: "",
-    improvements: "",
   });
 
   // Static data
@@ -541,6 +359,16 @@
   ];
 
   const faqs = [
+    {
+      question: "Why should my manuscripts be web-native if journals only accept PDFs?",
+      answer:
+        "Web-native manuscripts are for your readers, not just journals. Most research is read online, shared via links, and accessed on phones and tablets. RSM lets you share living, accessible documents with colleagues while still exporting to PDF when journals require it. The same manuscript serves both audiences.",
+    },
+    {
+      question: "How is RSM different from other modern alternatives?",
+      answer:
+        "RSM is the only markup language built exclusively for web-native scientific publishing. Unlike Typst (designed for beautiful PDFs), Quarto (focused on computational notebooks), or MyST (built for technical documentation), RSM starts and ends with semantic web research documents. Complete separation of content and presentation means your manuscripts adapt to any reading context automatically.",
+    },
     {
       question: "How is RSM different from LaTeX?",
       answer:
@@ -662,7 +490,7 @@ Surface temperatures increased by 0.8°C ± 0.2°C over the study period. Migrat
 <div class="reference" id="ipcc2021">[1] IPCC. Climate Change 2021: The Physical Science Basis. Cambridge University Press, 2021.</div>
 <div class="reference" id="chen2020">[2] Chen, S. and Lopez, M. Marine Temperature Trends in Pacific Waters. Ocean Science, 16:234-267, 2020.</div>
 </div>`),
-      context: "Studio helps you write real papers",
+      context: "Write once, read anywhere",
     },
     interactive: {
       markup: `:rsm:
@@ -714,7 +542,7 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
 </details>
 <h2>Discussion</h2>
 <p>The <a href="#acceleration">accelerated migration rate</a> suggests climate impacts are intensifying. Interactive exploration of our dataset reveals regional hotspots where adaptation strategies are most urgent.</p>`),
-      context: "Studio creates rich, interactive documents",
+      context: "Write once, read anywhere",
     },
   };
 
@@ -957,7 +785,6 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
         body: JSON.stringify({
           email: formData.value.email,
           authoring_tools: tools.length > 0 ? tools : null,
-          improvements: formData.value.improvements || null,
         }),
       });
 
@@ -986,14 +813,6 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   const isFaqOpen = (index) => {
     return openFaqs.value.has(index);
   };
-
-  const toggleMobileMenu = () => {
-    mobileMenuOpen.value = !mobileMenuOpen.value;
-  };
-
-  const closeMobileMenu = () => {
-    mobileMenuOpen.value = false;
-  };
 </script>
 
 <style scoped>
@@ -1001,132 +820,6 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     min-height: 100vh;
     background: var(--surface-page);
     overflow-x: hidden;
-  }
-
-  /* Navigation */
-  .navbar {
-    position: fixed;
-    top: 0;
-    width: 100%;
-    background: var(--surface-page);
-    border-bottom: var(--border-thin) solid var(--border-primary);
-    z-index: 1000;
-    backdrop-filter: blur(10px);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 3rem;
-    height: 4rem;
-  }
-
-  /* Dark mode navbar background */
-  .dark-theme .navbar {
-    background: rgba(31, 41, 55, 0.8);
-    backdrop-filter: blur(15px);
-  }
-
-  /* Dark mode navbar logo */
-  .dark-theme .nav-brand {
-    color: var(--primary-100);
-  }
-
-  .nav-brand {
-    display: flex;
-    align-items: center;
-    gap: 0.1rem;
-    font-size: 1.25rem;
-    font-weight: var(--weight-semi);
-    color: var(--primary-900);
-    text-decoration: none;
-    letter-spacing: 0.02em;
-  }
-
-  .nav-logo {
-    width: 32px;
-    height: 32px;
-  }
-
-  .nav-text {
-    display: flex;
-    gap: 0.15rem;
-  }
-
-  .nav-rsm {
-    font-family: "Montserrat", sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-    font-weight: var(--weight-bold);
-  }
-
-  .nav-studio {
-    font-family: Georgia, serif;
-    font-weight: var(--weight-regular);
-    letter-spacing: -0.02em;
-  }
-
-  .nav-links {
-    display: flex;
-    align-items: center;
-    gap: 3rem;
-  }
-
-  .nav-actions {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-  }
-
-  .nav-mobile {
-    display: none;
-  }
-
-  .nav-link {
-    font-family: "Source Sans 3", sans-serif;
-    font-weight: var(--weight-medium);
-    font-size: 0.95rem;
-    color: var(--text-body);
-    text-decoration: none;
-    transition: color 0.2s ease;
-  }
-
-  .nav-link:hover {
-    color: var(--primary-600);
-  }
-
-  .nav-cta-button {
-    padding: 0.4rem 1.2rem;
-    background: var(--surface-action);
-    color: var(--primary-50);
-    border: var(--border-thin) solid var(--surface-action);
-    border-radius: 12px;
-    font-family: "Source Sans 3", sans-serif;
-    font-weight: var(--weight-semi);
-    font-size: 0.9rem;
-    text-decoration: none;
-    transition: var(--transition-bg-color), var(--transition-bd-color);
-  }
-
-  .nav-cta-button:hover {
-    background: var(--surface-action-hover);
-    border-color: var(--surface-action-hover);
-  }
-
-  .nav-hamburger {
-    display: none;
-    flex-direction: column;
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 0.5rem;
-  }
-
-  .hamburger-line {
-    width: 25px;
-    height: 3px;
-    background: var(--text-body);
-    margin: 3px 0;
-    transition: 0.3s;
-    border-radius: 2px;
   }
 
   .container {
@@ -1303,7 +996,8 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   .studio-features-section,
   .benefits-section,
   .signup-section,
-  .faq-section {
+  .faq-section,
+  .cli-callout-section {
     padding: 7rem 0;
     background: var(--surface-page);
     position: relative;
@@ -1321,6 +1015,48 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     color: var(--text-body);
     line-height: var(--body-line-height);
     margin: 0 0 1.5rem 0;
+  }
+
+  .philosophy-callout {
+    max-width: 800px;
+    margin: 2rem auto 3rem;
+    padding: 2rem;
+    background: var(--surface-information);
+    border-radius: 16px;
+    border: var(--border-extrathin) solid var(--border-information);
+    text-align: center;
+  }
+
+  .philosophy-tagline {
+    font-family: "Montserrat", sans-serif;
+    font-size: 1.25rem;
+    font-weight: var(--weight-semi);
+    color: var(--primary-700);
+    margin: 0 0 1rem 0;
+    line-height: var(--header-line-height);
+  }
+
+  .philosophy-callout p {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 1rem;
+    color: var(--text-body);
+    line-height: var(--body-line-height);
+    margin: 0 0 1rem 0;
+    text-align: left;
+  }
+
+  .philosophy-callout p:last-child {
+    margin-bottom: 0;
+  }
+
+  .philosophy-callout code {
+    background: var(--surface-page);
+    padding: 0.2rem 0.4rem;
+    border-radius: 4px;
+    font-family: "Source Code Pro", monospace;
+    font-size: 0.9rem;
+    color: var(--primary-600);
+    border: var(--border-thin) solid var(--border-primary);
   }
 
   .demo-controls {
@@ -1817,8 +1553,7 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     color: var(--text-disabled);
   }
 
-  .faq-section::before,
-  .footer::before {
+  .faq-section::before {
     content: "";
     position: absolute;
     top: -1.5px;
@@ -1836,13 +1571,12 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     z-index: 10;
   }
 
-  .footer::before {
-    width: 240px;
-  }
-
   .faq-grid {
     display: block;
     margin-top: 2rem;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   .faq-item {
@@ -1931,113 +1665,65 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     text-decoration: underline;
   }
 
-  /* Footer */
-  .footer {
-    padding: 2rem 0;
-    background: var(--surface-secondary);
-    border-top: var(--border-thin) solid var(--border-primary);
-    position: relative;
-  }
-
-  .footer-links {
-    display: flex;
-    justify-content: center;
-    gap: 2rem;
-    margin-bottom: 1rem;
-  }
-
-  .footer-links a {
-    font-family: "Source Sans 3", sans-serif;
-    color: var(--text-body);
-    text-decoration: none;
-    transition: color 0.2s;
-    font-weight: var(--weight-medium);
-  }
-
-  .footer-links a:hover {
-    color: var(--primary-600);
-  }
-
-  .footer-copyright {
+  /* CLI Callout Section */
+  .cli-callout-section {
     text-align: center;
-    font-family: "Source Sans 3", sans-serif;
-    color: var(--text-muted);
-    font-size: 0.875rem;
   }
 
-  .footer-copyright a {
+  .cli-callout-section::before {
+    content: "";
+    position: absolute;
+    top: -1.5px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 3px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--secondary-300) 25%,
+      var(--primary-300) 75%,
+      transparent 100%
+    );
+    z-index: 10;
+  }
+
+  .cli-callout-text {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 1.1rem;
+    color: var(--text-body);
+    line-height: var(--body-line-height);
+    margin: 0;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .cli-callout-text a {
     color: var(--primary-600);
     text-decoration: none;
     transition: color 0.2s ease;
   }
 
-  .footer-copyright a:hover {
+  .cli-callout-text a:hover {
     color: var(--primary-700);
     text-decoration: underline;
   }
 
+  .cli-callout-text code {
+    background: var(--surface-page);
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-family: "Source Code Pro", monospace;
+    font-size: 1rem;
+    color: var(--primary-600);
+    border: var(--border-thin) solid var(--border-primary);
+    font-weight: var(--weight-medium);
+  }
+
+
   /* Mobile Responsiveness */
   @media (max-width: 768px) {
-    .navbar {
-      padding: 0 1rem;
-    }
-
-    .nav-links,
-    .nav-actions {
-      display: none;
-    }
-
-    .nav-mobile {
-      display: none;
-      position: fixed;
-      top: 4rem;
-      left: 0;
-      width: 100%;
-      background: var(--surface-page);
-      flex-direction: column;
-      align-items: center;
-      padding: 2rem;
-      gap: 2rem;
-      border-bottom: var(--border-thin) solid var(--border-primary);
-    }
-
-    .nav-mobile.nav-mobile-open {
-      display: flex;
-    }
-
-    .nav-mobile .nav-link {
-      font-size: 1.5rem;
-      font-weight: var(--weight-semi);
-      text-align: center;
-    }
-
-    .nav-mobile .nav-cta-button {
-      font-size: 1.25rem;
-      padding: 1rem 2rem;
-    }
-
-    .nav-mobile-toggle {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 0.5rem 0;
-    }
-
-    .nav-hamburger {
-      display: flex;
-    }
-
-    .nav-hamburger[aria-expanded="true"] .hamburger-line:nth-child(1) {
-      transform: rotate(-45deg) translate(-5px, 6px);
-    }
-
-    .nav-hamburger[aria-expanded="true"] .hamburger-line:nth-child(2) {
-      opacity: 0;
-    }
-
-    .nav-hamburger[aria-expanded="true"] .hamburger-line:nth-child(3) {
-      transform: rotate(45deg) translate(-5px, -6px);
-    }
     .container {
       padding: 0 1rem;
     }
@@ -2074,7 +1760,8 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
       text-align: center;
     }
 
-    .benefits-grid {
+    .benefits-grid,
+    .features-grid {
       grid-template-columns: 1fr;
     }
 
@@ -2089,12 +1776,6 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
 
     .other-input {
       margin-top: 0;
-    }
-
-    .footer-links {
-      flex-direction: column;
-      gap: 1rem;
-      align-items: center;
     }
   }
 
@@ -2190,32 +1871,31 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
 
   /* RSM Studio Features Section */
   .studio-intro {
-    max-width: 700px;
+    max-width: 800px;
     margin: 0 auto 3rem;
     text-align: center;
   }
 
-  .studio-tagline {
-    font-family: "Montserrat", sans-serif;
-    font-size: 1.3rem;
-    font-weight: var(--weight-semi);
-    color: var(--primary-700);
-    line-height: var(--header-line-height);
+  .studio-intro p {
+    font-family: "Source Sans 3", sans-serif;
+    font-size: 1.1rem;
+    color: var(--text-body);
+    line-height: var(--body-line-height);
     margin: 0;
   }
 
   .features-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    grid-template-columns: repeat(2, 1fr);
     gap: 2rem;
     margin-bottom: 3rem;
   }
 
   .feature-card {
     background: var(--surface-page);
+    padding: 2rem;
     border-radius: 16px;
     border: var(--border-extrathin) solid var(--border-primary);
-    overflow: hidden;
     box-shadow: var(--shadow-soft);
     transition:
       transform 0.2s ease,
@@ -2224,11 +1904,11 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
   }
 
   .feature-card:hover {
-    transform: translateY(-4px);
+    transform: translateY(-2px);
     border-color: var(--primary-400);
     box-shadow:
       var(--shadow-soft),
-      0 8px 24px rgba(0, 0, 0, 0.15);
+      0 4px 12px rgba(0, 0, 0, 0.15);
   }
 
   .feature-screenshot {
@@ -2431,7 +2111,7 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     font-size: var(--h5-size);
     font-weight: var(--weight-semi);
     color: var(--text-body);
-    margin: 1.5rem 1.5rem 0.5rem;
+    margin: 0 0 1rem 0;
     line-height: var(--header-line-height);
   }
 
@@ -2439,8 +2119,8 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     font-family: "Source Sans 3", sans-serif;
     color: var(--dark);
     line-height: var(--body-line-height);
-    margin: 0 1.5rem 1.5rem;
-    font-size: 0.95rem;
+    margin: 0;
+    font-size: 1rem;
   }
 
   .studio-cta {
