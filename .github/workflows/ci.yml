@@ -732,6 +732,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Clone RSM repository
+      run: |
+        cd ..
+        git clone https://github.com/aris-pub/rsm.git
+        echo "Cloned RSM repository to ../rsm"
+
     - name: Install Python
       uses: actions/setup-python@v5
       with:
@@ -1240,6 +1246,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Clone RSM repository
+      run: |
+        cd ..
+        git clone https://github.com/aris-pub/rsm.git
+        echo "Cloned RSM repository to ../rsm"
 
     - name: Install Python
       uses: actions/setup-python@v5
