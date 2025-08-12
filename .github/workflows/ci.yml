@@ -89,7 +89,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
-        uv pip install -e ../../rsm
+        uv pip install -e ../rsm
 
     - name: Run linting (ruff)
       run: uv run ruff check
@@ -274,7 +274,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
-        uv pip install -e ../../rsm
+        uv pip install -e ../rsm
 
     - name: Run database migrations
       working-directory: backend
@@ -450,7 +450,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
-        uv pip install -e ../../rsm
+        uv pip install -e ../rsm
 
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
@@ -633,7 +633,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
-        uv pip install -e ../../rsm
+        uv pip install -e ../rsm
 
     - name: Run database migrations
       working-directory: backend
@@ -766,7 +766,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
-        uv pip install -e ../../rsm
+        uv pip install -e ../rsm
 
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
@@ -945,7 +945,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
-        uv pip install -e ../../rsm
+        uv pip install -e ../rsm
 
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
@@ -1142,7 +1142,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
-        uv pip install -e ../../rsm
+        uv pip install -e ../rsm
 
     - name: Run database migrations
       working-directory: backend
@@ -1275,7 +1275,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
-        uv pip install -e ../../rsm
+        uv pip install -e ../rsm
 
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
