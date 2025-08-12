@@ -246,7 +246,7 @@ file_tags = Table(
 class FileStatus(enum.Enum):
     """Enum representing the status of a research file."""
 
-    DRAFT = "DRAFT"
+    DRAFT = "Draft"
 
 
 class File(Base):

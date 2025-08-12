@@ -38,7 +38,7 @@ def test_avatar_color_random(monkeypatch):
 
 def test_file_status_values():
     """Ensure FileStatus enum members have the correct labels."""
-    assert FileStatus.DRAFT.value == "DRAFT"
+    assert FileStatus.DRAFT.value == "Draft"
 
 
 def test_file_settings_column_defaults():
