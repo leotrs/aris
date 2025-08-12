@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 // @demo
 import { AuthHelpers } from "./utils/auth-helpers.js";
 
-test.describe.skip("Focus Mode and Drawer Interaction @demo-ui @desktop-only - DISABLED", () => {
+test.describe.skip("Focus Mode and Drawer Interaction @demo-disabled @desktop-only - DISABLED", () => {
   let authHelpers;
 
   test.beforeEach(async ({ page }) => {

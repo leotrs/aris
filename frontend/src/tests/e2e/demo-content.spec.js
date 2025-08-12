@@ -5,7 +5,7 @@ import { AuthHelpers } from "./utils/auth-helpers.js";
 import { MobileHelpers } from "./utils/mobile-helpers.js";
 import { TIMEOUTS } from "./utils/timeout-constants.js";
 
-test.describe.skip("Demo Content Rendering @demo-content", () => {
+test.describe.skip("Demo Content Rendering @demo-disabled", () => {
   let authHelpers;
   let mobileHelpers;
 
