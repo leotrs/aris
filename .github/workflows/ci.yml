@@ -58,6 +58,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Clone RSM repository
+      run: |
+        cd ..
+        git clone https://github.com/aris-pub/rsm.git
+        echo "Cloned RSM repository to ../rsm"
+
     - name: Install uv
       uses: astral-sh/setup-uv@v6
       with:
@@ -83,6 +89,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
+        uv pip install -e ../../rsm
 
     - name: Run linting (ruff)
       run: uv run ruff check
@@ -111,6 +118,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Clone RSM repository
+      run: |
+        cd ..
+        git clone https://github.com/aris-pub/rsm.git
+        echo "Cloned RSM repository to ../rsm"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -146,6 +159,12 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
+
+    - name: Clone RSM repository
+      run: |
+        cd ..
+        git clone https://github.com/aris-pub/rsm.git
+        echo "Cloned RSM repository to ../rsm"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -215,6 +234,11 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Clone RSM repository
+      run: |
+        cd ..
+        git clone https://github.com/aris-pub/rsm.git
+        echo "Cloned RSM repository to ../rsm"
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
@@ -250,6 +274,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
+        uv pip install -e ../../rsm
 
     - name: Run database migrations
       working-directory: backend
@@ -400,6 +425,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Clone RSM repository
+      run: |
+        cd ..
+        git clone https://github.com/aris-pub/rsm.git
+        echo "Cloned RSM repository to ../rsm"
+
     - name: Install uv
       uses: astral-sh/setup-uv@v6
       with:
@@ -419,6 +450,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
+        uv pip install -e ../../rsm
 
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
@@ -576,6 +608,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Clone RSM repository
+      run: |
+        cd ..
+        git clone https://github.com/aris-pub/rsm.git
+        echo "Cloned RSM repository to ../rsm"
+
     - name: Install uv
       uses: astral-sh/setup-uv@v6
       with:
@@ -595,6 +633,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
+        uv pip install -e ../../rsm
 
     - name: Run database migrations
       working-directory: backend
@@ -727,6 +766,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
+        uv pip install -e ../../rsm
 
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
@@ -880,6 +920,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Clone RSM repository
+      run: |
+        cd ..
+        git clone https://github.com/aris-pub/rsm.git
+        echo "Cloned RSM repository to ../rsm"
+
     - name: Install uv
       uses: astral-sh/setup-uv@v6
       with:
@@ -899,6 +945,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
+        uv pip install -e ../../rsm
 
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend
@@ -1070,6 +1117,12 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - name: Clone RSM repository
+      run: |
+        cd ..
+        git clone https://github.com/aris-pub/rsm.git
+        echo "Cloned RSM repository to ../rsm"
+
     - name: Install uv
       uses: astral-sh/setup-uv@v6
       with:
@@ -1089,6 +1142,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
+        uv pip install -e ../../rsm
 
     - name: Run database migrations
       working-directory: backend
@@ -1221,6 +1275,7 @@ jobs:
       run: |
         uv venv
         uv sync --group test --group dev
+        uv pip install -e ../../rsm
 
     - name: Run database migrations and setup test user (with debugging)
       working-directory: backend

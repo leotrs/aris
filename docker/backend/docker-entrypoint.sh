@@ -10,6 +10,13 @@ done
 
 echo "Database is ready!"
 
+# Install local RSM package if workspace exists (dev environment)
+if [ -d "/workspace/rsm" ] && [ -f "/workspace/rsm/pyproject.toml" ]; then
+    echo "Installing local RSM package in editable mode..."
+    uv pip install -e /workspace/rsm
+    uv pip install tree-sitter-rsm || echo "tree-sitter-rsm already installed or failed"
+fi
+
 # Run migrations
 echo "Running database migrations..."
 alembic upgrade head

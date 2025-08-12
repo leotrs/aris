@@ -1,6 +1,7 @@
 """Aris backend: FastApi app."""
 
 import os
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -263,12 +264,25 @@ async def add_no_cache_headers(request, call_next):
     return response
 
 
-# Mount RSM static files
+# Mount RSM static files - dynamically find RSM static directory
+def find_rsm_static_dir():
+    """Find RSM static directory, works with both PyPI and editable installs."""
+    import rsm
+    rsm_module_path = Path(rsm.__file__).parent
+    static_dir = rsm_module_path / "static"
+    if static_dir.exists():
+        return str(static_dir)
+    
+    # Fallback to site-packages if static dir not found
+    fallback_dir = Path(".venv/lib/python3.13/site-packages/rsm/static")
+    if fallback_dir.exists():
+        return str(fallback_dir)
+    
+    raise RuntimeError(f"RSM static directory not found. Tried: {static_dir}, {fallback_dir}")
+
 app.mount(
     "/static",
-    StaticFiles(
-        directory=".venv/lib/python3.13/site-packages/rsm/static",
-    ),
+    StaticFiles(directory=find_rsm_static_dir()),
     name="static",
 )
 
