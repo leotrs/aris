@@ -18,7 +18,7 @@ from aris.routes import (
     file_assets_router,
     file_router,
     file_settings_router,
-    render_router,
+    # render_router,  # DISABLED FOR NOW
     signup_router,
     tag_router,
     user_public_router,
@@ -101,7 +101,7 @@ app = FastAPI(
             "name": "user-settings",
             "description": "User behavioral preferences and privacy settings",
         },
-        {"name": "render", "description": "Convert RSM markup to rendered HTML output"},
+        # {"name": "render", "description": "Convert RSM markup to rendered HTML output"},  # DISABLED FOR NOW
         {"name": "signup", "description": "Early access signup and waitlist management"},
         {"name": "copilot", "description": "AI-powered writing assistant for scientific manuscripts"},
         {"name": "public", "description": "Public preprint access without authentication"},
@@ -118,7 +118,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     - API service availability
     - Database connectivity and responsiveness
     - Email service configuration
-    - RSM rendering engine functionality
+    # - RSM rendering engine functionality  # DISABLED FOR NOW
     - Environment configuration validation
 
     Returns detailed status information for monitoring and debugging.
@@ -250,7 +250,7 @@ app.include_router(tag_router, tags=["tags"])
 app.include_router(file_assets_router, tags=["file-assets"])
 app.include_router(file_settings_router, tags=["file-settings"])
 app.include_router(user_settings_router, tags=["user-settings"])
-app.include_router(render_router, tags=["render"])
+# app.include_router(render_router, tags=["render"])  # DISABLED FOR NOW
 app.include_router(signup_router, tags=["signup"])
 app.include_router(copilot_router, tags=["copilot"])
 logger.info("All routers registered successfully")

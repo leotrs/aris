@@ -4,7 +4,7 @@ import { getTimeouts } from "./utils/timeout-constants.js";
 
 // @demo
 
-test.describe("Demo Annotations Viewport @demo-ui @mobile-only", () => {
+test.describe.skip("Demo Annotations Viewport @demo-ui @mobile-only", () => {
   let mobileHelpers;
 
   test.beforeEach(async ({ page }) => {

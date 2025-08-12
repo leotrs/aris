@@ -7,7 +7,7 @@ const LoginView = isUnitTest ? {} : () => import("@/views/login/View.vue");
 const RegisterView = isUnitTest ? {} : () => import("@/views/register/View.vue");
 const HomeView = isUnitTest ? {} : () => import("@/views/home/View.vue");
 const WorkspaceView = isUnitTest ? {} : () => import("@/views/workspace/View.vue");
-const DemoView = () => import("@/views/demo/View.vue");
+// const DemoView = () => import("@/views/demo/View.vue");  // DISABLED FOR NOW
 const IcationView = () => import("@/views/ication/View.vue");
 const AccountView = isUnitTest ? {} : () => import("@/views/account/View.vue");
 const AccountProfileView = isUnitTest ? {} : () => import("@/views/account/ProfileView.vue");
@@ -28,7 +28,7 @@ const routes = [
   { path: "/register", component: RegisterView },
   { path: "/", component: HomeView },
   { path: "/file/:file_id", component: WorkspaceView },
-  { path: "/demo", component: DemoView },
+  // { path: "/demo", component: DemoView },  // DISABLED FOR NOW
   { path: "/ication/:identifier", component: IcationView },
   {
     path: "/verify-email/:token",
@@ -110,7 +110,7 @@ const router = createRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  const publicPages = ["/login", "/register", "/demo"];
+  const publicPages = ["/login", "/register"];  // removed "/demo" - DISABLED FOR NOW
   const isVerificationRoute = to.path.startsWith("/verify-email/");
   const isIcationRoute = to.path.startsWith("/ication/");
   const authRequired = !publicPages.includes(to.path) && !isVerificationRoute && !isIcationRoute;
