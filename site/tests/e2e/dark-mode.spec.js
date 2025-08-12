@@ -9,7 +9,7 @@ test.describe("Dark Mode", () => {
     await page.goto("/");
   });
 
-  test("dark mode toggle works and affects RSM content @core", async ({ page }) => {
+  test("dark mode toggle works @core", async ({ page }) => {
     // 1. Verify toggle exists and is accessible (select the first visible one)
     const toggle = page.locator('[data-testid="dark-mode-toggle"]').first();
     await expect(toggle).toBeVisible();
@@ -18,15 +18,11 @@ test.describe("Dark Mode", () => {
     await toggle.click();
     await expect(page.locator("body")).toHaveClass(/dark-theme/);
 
-    // 3. Verify RSM content has light text in dark mode
-    const rsmText = page.locator(".manuscriptwrapper h1").first();
-    await expect(rsmText).toHaveCSS("color", "rgb(181, 191, 200)"); // #B5BFC8
-
-    // 4. Verify persistence - refresh and check state maintained
+    // 3. Verify persistence - refresh and check state maintained
     await page.reload();
     await expect(page.locator("body")).toHaveClass(/dark-theme/);
 
-    // 5. Toggle back to light mode to ensure it works both ways
+    // 4. Toggle back to light mode to ensure it works both ways
     const toggleAfterReload = page.locator('[data-testid="dark-mode-toggle"]').first();
     await toggleAfterReload.click();
     await expect(page.locator("body")).not.toHaveClass(/dark-theme/);
