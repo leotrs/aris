@@ -18,7 +18,7 @@ from aris.routes import (
     file_assets_router,
     file_router,
     file_settings_router,
-    # render_router,  # DISABLED FOR NOW
+    render_router,
     signup_router,
     tag_router,
     user_public_router,
@@ -250,7 +250,7 @@ app.include_router(tag_router, tags=["tags"])
 app.include_router(file_assets_router, tags=["file-assets"])
 app.include_router(file_settings_router, tags=["file-settings"])
 app.include_router(user_settings_router, tags=["user-settings"])
-# app.include_router(render_router, tags=["render"])  # DISABLED FOR NOW
+app.include_router(render_router, tags=["render"])
 app.include_router(signup_router, tags=["signup"])
 app.include_router(copilot_router, tags=["copilot"])
 logger.info("All routers registered successfully")
