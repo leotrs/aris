@@ -119,6 +119,8 @@ async def reset_test_user():
 
         # Create stable test files
         print(f"🔍 [RESET-USER-DEBUG] Creating test files for user {user_id}...")
+        print(f"🔍 [RESET-USER-DEBUG] FileStatus.DRAFT value: '{FileStatus.DRAFT.value}'")
+        print(f"🔍 [RESET-USER-DEBUG] FileStatus.DRAFT enum: {FileStatus.DRAFT}")
         test_files = [
             File(
                 title="Test Visual Regression File",

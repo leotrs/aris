@@ -1,6 +1,7 @@
 """Aris backend: FastApi app."""
 
 import os
+from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -100,7 +101,7 @@ app = FastAPI(
             "name": "user-settings",
             "description": "User behavioral preferences and privacy settings",
         },
-        {"name": "render", "description": "Convert RSM markup to rendered HTML output"},
+        # {"name": "render", "description": "Convert RSM markup to rendered HTML output"},  # DISABLED FOR NOW
         {"name": "signup", "description": "Early access signup and waitlist management"},
         {"name": "copilot", "description": "AI-powered writing assistant for scientific manuscripts"},
         {"name": "public", "description": "Public preprint access without authentication"},
@@ -117,7 +118,7 @@ async def health_check(db: AsyncSession = Depends(get_db)):
     - API service availability
     - Database connectivity and responsiveness
     - Email service configuration
-    - RSM rendering engine functionality
+    # - RSM rendering engine functionality  # DISABLED FOR NOW
     - Environment configuration validation
 
     Returns detailed status information for monitoring and debugging.
@@ -263,12 +264,25 @@ async def add_no_cache_headers(request, call_next):
     return response
 
 
-# Mount RSM static files
+# Mount RSM static files - dynamically find RSM static directory
+def find_rsm_static_dir():
+    """Find RSM static directory, works with both PyPI and editable installs."""
+    import rsm
+    rsm_module_path = Path(rsm.__file__).parent
+    static_dir = rsm_module_path / "static"
+    if static_dir.exists():
+        return str(static_dir)
+    
+    # Fallback to site-packages if static dir not found
+    fallback_dir = Path(".venv/lib/python3.13/site-packages/rsm/static")
+    if fallback_dir.exists():
+        return str(fallback_dir)
+    
+    raise RuntimeError(f"RSM static directory not found. Tried: {static_dir}, {fallback_dir}")
+
 app.mount(
     "/static",
-    StaticFiles(
-        directory=".venv/lib/python3.13/site-packages/rsm/static",
-    ),
+    StaticFiles(directory=find_rsm_static_dir()),
     name="static",
 )
 

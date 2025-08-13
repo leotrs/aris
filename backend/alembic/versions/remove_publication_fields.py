@@ -35,16 +35,16 @@ def upgrade() -> None:
     # Remove UNDER_REVIEW and PUBLISHED values from FileStatus enum
     # This requires recreating the enum type
     op.execute("ALTER TYPE filestatus RENAME TO filestatus_old")
-    op.execute("CREATE TYPE filestatus AS ENUM ('Draft')")
-    # Convert DRAFT to Draft during the type conversion
-    op.execute("ALTER TABLE files ALTER COLUMN status TYPE filestatus USING CASE WHEN status::text = 'DRAFT' THEN 'Draft'::filestatus END")
+    op.execute("CREATE TYPE filestatus AS ENUM ('DRAFT')")
+    # Keep DRAFT values as DRAFT during the type conversion
+    op.execute("ALTER TABLE files ALTER COLUMN status TYPE filestatus USING CASE WHEN status::text = 'DRAFT' THEN 'DRAFT'::filestatus END")
     op.execute("DROP TYPE filestatus_old")
 
 
 def downgrade() -> None:
     # Recreate the old FileStatus enum
     op.execute("ALTER TYPE filestatus RENAME TO filestatus_old")
-    op.execute("CREATE TYPE filestatus AS ENUM ('Draft', 'Under Review', 'Published')")
+    op.execute("CREATE TYPE filestatus AS ENUM ('DRAFT', 'UNDER_REVIEW', 'PUBLISHED')")
     op.execute("ALTER TABLE files ALTER COLUMN status TYPE filestatus USING status::text::filestatus")
     op.execute("DROP TYPE filestatus_old")
     

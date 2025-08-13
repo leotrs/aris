@@ -9,7 +9,6 @@
     </a>
 
     <div class="nav-links">
-      <a href="/#demo" class="nav-link">RSM</a>
       <a href="/#studio-features" class="nav-link">Studio</a>
       <a href="/#faq" class="nav-link">FAQ</a>
     </div>
@@ -26,7 +25,6 @@
     </button>
 
     <div class="nav-mobile" :class="{ 'nav-mobile-open': mobileMenuOpen }">
-      <a href="/#demo" class="nav-link" @click="closeMobileMenu">RSM</a>
       <a href="/#studio-features" class="nav-link" @click="closeMobileMenu">Studio</a>
       <a href="/#faq" class="nav-link" @click="closeMobileMenu">FAQ</a>
       <div class="nav-mobile-toggle">

@@ -14,6 +14,7 @@ services:
     volumes:
       - ../backend:/app
       - ../design-assets:/app/design-assets
+      - ../../rsm:/workspace/rsm
       - backend_venv:/app/.venv
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/${DB_NAME}

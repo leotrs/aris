@@ -22,7 +22,6 @@ test.describe("Signup Form", () => {
     await expect(
       page.locator("text=Which tools will you use for your next publication?")
     ).toBeVisible();
-    await expect(page.locator("#improvements")).toBeVisible();
     await expect(page.locator('button[type="submit"]')).toBeVisible();
   });
 
@@ -41,11 +40,11 @@ test.describe("Signup Form", () => {
     ];
 
     for (const tool of expectedTools) {
-      await expect(page.locator(`text=${tool}`)).toBeVisible();
+      await expect(page.locator(".checkbox-group").locator(`text=${tool}`)).toBeVisible();
     }
 
     // Check "Other" option is present
-    await expect(page.locator("text=Other:")).toBeVisible();
+    await expect(page.locator(".checkbox-group").locator("text=Other:")).toBeVisible();
     await expect(page.locator('input[placeholder="Please specify"]')).toBeVisible();
   });
 
@@ -58,7 +57,11 @@ test.describe("Signup Form", () => {
     await expect(otherInput).toBeDisabled();
 
     // Click "Other" checkbox
-    await page.locator("text=Other:").locator('input[type="checkbox"]').click();
+    await page
+      .locator(".checkbox-group")
+      .locator("text=Other:")
+      .locator('input[type="checkbox"]')
+      .click();
 
     // Input should now be enabled
     await expect(otherInput).toBeEnabled();
@@ -78,7 +81,6 @@ test.describe("Signup Form", () => {
           id: 1,
           email: "test@example.com",
           authoring_tools: null,
-          improvements: null,
           status: "active",
           unsubscribe_token: "test-token",
           created_at: "2025-08-04T12:00:00Z",
@@ -108,7 +110,6 @@ test.describe("Signup Form", () => {
       // Verify request structure
       expect(requestBody).toHaveProperty("email", "fulldata@example.com");
       expect(requestBody).toHaveProperty("authoring_tools");
-      expect(requestBody).toHaveProperty("improvements");
       expect(requestBody.authoring_tools).toContain("LaTeX (including Overleaf)");
       expect(requestBody.authoring_tools).toContain("Custom Tool");
 
@@ -119,7 +120,6 @@ test.describe("Signup Form", () => {
           id: 2,
           email: "fulldata@example.com",
           authoring_tools: requestBody.authoring_tools,
-          improvements: requestBody.improvements,
           status: "active",
           unsubscribe_token: "test-token-2",
           created_at: "2025-08-04T12:00:00Z",
@@ -133,15 +133,24 @@ test.describe("Signup Form", () => {
     await page.fill('input[type="email"]', "fulldata@example.com");
 
     // Select some authoring tools
-    await page.locator("text=LaTeX (including Overleaf)").locator('input[type="checkbox"]').click();
-    await page.locator("text=Markdown (any variant)").locator('input[type="checkbox"]').click();
+    await page
+      .locator(".checkbox-group")
+      .locator("text=LaTeX (including Overleaf)")
+      .locator('input[type="checkbox"]')
+      .click();
+    await page
+      .locator(".checkbox-group")
+      .locator("text=Markdown (any variant)")
+      .locator('input[type="checkbox"]')
+      .click();
 
     // Select "Other" and specify custom tool
-    await page.locator("text=Other:").locator('input[type="checkbox"]').click();
+    await page
+      .locator(".checkbox-group")
+      .locator("text=Other:")
+      .locator('input[type="checkbox"]')
+      .click();
     await page.fill('input[placeholder="Please specify"]', "Custom Tool");
-
-    // Fill improvements
-    await page.fill("#improvements", "Better collaboration features would be great!");
 
     // Submit form
     await page.click('button[type="submit"]');
@@ -234,7 +243,6 @@ test.describe("Signup Form", () => {
           id: 3,
           email: "slow@example.com",
           authoring_tools: null,
-          improvements: null,
           status: "active",
           unsubscribe_token: "test-token",
           created_at: "2025-08-04T12:00:00Z",
@@ -283,8 +291,23 @@ test.describe("Signup Form", () => {
   });
 
   test("should navigate to signup section from navbar CTA", async ({ page }) => {
-    // Click navbar CTA button
-    await page.click(".nav-cta-button");
+    // Check if we're on mobile and need to open hamburger menu first
+    const isMobile = page.viewportSize()?.width < 768;
+
+    if (isMobile) {
+      // On mobile, open hamburger menu first
+      const hamburger = page.locator(".nav-hamburger");
+      await expect(hamburger).toBeVisible();
+      await hamburger.click();
+
+      // Wait for mobile menu animation and CTA button to be visible
+      const ctaButton = page.locator(".nav-cta-button");
+      await expect(ctaButton).toBeVisible();
+      await ctaButton.click();
+    } else {
+      // Click navbar CTA button directly on desktop
+      await page.click(".nav-cta-button");
+    }
 
     // Should scroll to signup section
     await expect(page.locator(".signup-form")).toBeInViewport();

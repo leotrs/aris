@@ -20,8 +20,8 @@
       </div>
     </section>
 
-    <!-- Live Demo Section -->
-    <section id="demo" class="demo-section">
+    <!-- Live Demo Section - DISABLED FOR NOW -->
+    <!-- <section id="demo" class="demo-section">
       <div class="container">
         <h2 class="section-header">Introducing Readable Science Markup (RSM)</h2>
         <p class="section-subheader">Semantic markup that separates meaning from presentation</p>
@@ -134,7 +134,7 @@
         </div>
 
       </div>
-    </section>
+    </section> -->
 
     <!-- RSM Studio Features Section -->
     <section id="studio-features" class="studio-features-section">
