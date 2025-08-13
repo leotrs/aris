@@ -276,7 +276,17 @@ test.describe("Signup Form", () => {
   });
 
   test("should navigate to signup section from navbar CTA", async ({ page }) => {
-    // Click navbar CTA button
+    // Check if we're on mobile and need to open hamburger menu first
+    const isMobile = page.viewportSize()?.width < 768;
+    
+    if (isMobile) {
+      // On mobile, open hamburger menu first
+      const hamburger = page.locator('.nav-hamburger');
+      await expect(hamburger).toBeVisible();
+      await hamburger.click();
+    }
+    
+    // Click navbar CTA button (should be visible after opening mobile menu if needed)
     await page.click(".nav-cta-button");
 
     // Should scroll to signup section

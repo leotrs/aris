@@ -10,8 +10,23 @@ test.describe("Dark Mode", () => {
   });
 
   test("dark mode toggle works @core", async ({ page }) => {
-    // 1. Verify toggle exists and is accessible (select the first visible one)
-    const toggle = page.locator('[data-testid="dark-mode-toggle"]').first();
+    // Check if we're on mobile and need to open hamburger menu first
+    const isMobile = page.viewportSize()?.width < 768;
+    
+    let toggle;
+    if (isMobile) {
+      // On mobile, open hamburger menu first
+      const hamburger = page.locator('.nav-hamburger');
+      await expect(hamburger).toBeVisible();
+      await hamburger.click();
+      
+      // Now find the toggle in the mobile menu
+      toggle = page.locator('[data-testid="dark-mode-toggle"]').filter({ hasText: '' }).first();
+    } else {
+      // On desktop, toggle should be directly visible
+      toggle = page.locator('[data-testid="dark-mode-toggle"]').first();
+    }
+
     await expect(toggle).toBeVisible();
 
     // 2. Click toggle and verify body class changes
@@ -23,7 +38,16 @@ test.describe("Dark Mode", () => {
     await expect(page.locator("body")).toHaveClass(/dark-theme/);
 
     // 4. Toggle back to light mode to ensure it works both ways
-    const toggleAfterReload = page.locator('[data-testid="dark-mode-toggle"]').first();
+    let toggleAfterReload;
+    if (isMobile) {
+      // On mobile, open hamburger menu again after reload
+      const hamburgerAfterReload = page.locator('.nav-hamburger');
+      await hamburgerAfterReload.click();
+      toggleAfterReload = page.locator('[data-testid="dark-mode-toggle"]').filter({ hasText: '' }).first();
+    } else {
+      toggleAfterReload = page.locator('[data-testid="dark-mode-toggle"]').first();
+    }
+    
     await toggleAfterReload.click();
     await expect(page.locator("body")).not.toHaveClass(/dark-theme/);
   });
