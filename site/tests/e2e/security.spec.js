@@ -66,24 +66,25 @@ test.describe("Security", () => {
   test("404 page supports dark mode @core", async ({ page }) => {
     // Enable dark mode first
     await page.goto("/");
-    
+
     // Check if we're on mobile and need to open hamburger menu first
     const isMobile = page.viewportSize()?.width < 768;
-    
+
     let toggle;
     if (isMobile) {
       // On mobile, open hamburger menu first
-      const hamburger = page.locator('.nav-hamburger');
+      const hamburger = page.locator(".nav-hamburger");
       await expect(hamburger).toBeVisible();
       await hamburger.click();
-      
-      // Now find the toggle in the mobile menu
-      toggle = page.locator('[data-testid="dark-mode-toggle"]').filter({ hasText: '' }).first();
+
+      // Wait for mobile menu animation and toggle to be visible
+      toggle = page.locator('[data-testid="dark-mode-toggle"]');
+      await expect(toggle).toBeVisible();
     } else {
       // On desktop, toggle should be directly visible
       toggle = page.locator('[data-testid="dark-mode-toggle"]').first();
     }
-    
+
     await toggle.click();
     await expect(page.locator("body")).toHaveClass(/dark-theme/);
 

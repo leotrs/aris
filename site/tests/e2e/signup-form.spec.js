@@ -40,11 +40,11 @@ test.describe("Signup Form", () => {
     ];
 
     for (const tool of expectedTools) {
-      await expect(page.locator('.checkbox-group').locator(`text=${tool}`)).toBeVisible();
+      await expect(page.locator(".checkbox-group").locator(`text=${tool}`)).toBeVisible();
     }
 
     // Check "Other" option is present
-    await expect(page.locator('.checkbox-group').locator("text=Other:")).toBeVisible();
+    await expect(page.locator(".checkbox-group").locator("text=Other:")).toBeVisible();
     await expect(page.locator('input[placeholder="Please specify"]')).toBeVisible();
   });
 
@@ -57,7 +57,11 @@ test.describe("Signup Form", () => {
     await expect(otherInput).toBeDisabled();
 
     // Click "Other" checkbox
-    await page.locator('.checkbox-group').locator("text=Other:").locator('input[type="checkbox"]').click();
+    await page
+      .locator(".checkbox-group")
+      .locator("text=Other:")
+      .locator('input[type="checkbox"]')
+      .click();
 
     // Input should now be enabled
     await expect(otherInput).toBeEnabled();
@@ -129,13 +133,24 @@ test.describe("Signup Form", () => {
     await page.fill('input[type="email"]', "fulldata@example.com");
 
     // Select some authoring tools
-    await page.locator('.checkbox-group').locator("text=LaTeX (including Overleaf)").locator('input[type="checkbox"]').click();
-    await page.locator('.checkbox-group').locator("text=Markdown (any variant)").locator('input[type="checkbox"]').click();
+    await page
+      .locator(".checkbox-group")
+      .locator("text=LaTeX (including Overleaf)")
+      .locator('input[type="checkbox"]')
+      .click();
+    await page
+      .locator(".checkbox-group")
+      .locator("text=Markdown (any variant)")
+      .locator('input[type="checkbox"]')
+      .click();
 
     // Select "Other" and specify custom tool
-    await page.locator('.checkbox-group').locator("text=Other:").locator('input[type="checkbox"]').click();
+    await page
+      .locator(".checkbox-group")
+      .locator("text=Other:")
+      .locator('input[type="checkbox"]')
+      .click();
     await page.fill('input[placeholder="Please specify"]', "Custom Tool");
-
 
     // Submit form
     await page.click('button[type="submit"]');
@@ -278,16 +293,21 @@ test.describe("Signup Form", () => {
   test("should navigate to signup section from navbar CTA", async ({ page }) => {
     // Check if we're on mobile and need to open hamburger menu first
     const isMobile = page.viewportSize()?.width < 768;
-    
+
     if (isMobile) {
       // On mobile, open hamburger menu first
-      const hamburger = page.locator('.nav-hamburger');
+      const hamburger = page.locator(".nav-hamburger");
       await expect(hamburger).toBeVisible();
       await hamburger.click();
+
+      // Wait for mobile menu animation and CTA button to be visible
+      const ctaButton = page.locator(".nav-cta-button");
+      await expect(ctaButton).toBeVisible();
+      await ctaButton.click();
+    } else {
+      // Click navbar CTA button directly on desktop
+      await page.click(".nav-cta-button");
     }
-    
-    // Click navbar CTA button (should be visible after opening mobile menu if needed)
-    await page.click(".nav-cta-button");
 
     // Should scroll to signup section
     await expect(page.locator(".signup-form")).toBeInViewport();
