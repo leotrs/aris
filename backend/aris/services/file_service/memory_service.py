@@ -157,27 +157,56 @@ class InMemoryFileService(FileServiceInterface):
         # Call create_file without holding the lock to avoid deadlock
         return await self.create_file(duplicate_data)
     
-    async def get_file_html(self, file_id: int) -> Optional[str]:
-        """Get rendered HTML for a file's RSM content."""
+    async def get_file_html(self, file_id: int, db: Optional[AsyncSession] = None) -> Optional[str]:
+        """Get rendered HTML for a file's RSM content.
+        
+        Parameters
+        ----------
+        file_id : int
+            The ID of the file to render
+        db : AsyncSession, optional
+            Database session for asset resolution. If provided, will use FileAssetResolver
+            to load assets from database for RSM rendering.
+            
+        Returns
+        -------
+        Optional[str]
+            Rendered HTML string, or None if file not found
+        """
         async with self._lock:
             file_data = self._files.get(file_id)
             if not file_data or file_data.is_deleted():
                 return None
             
-            # Check cache first
-            if file_data._rendered_html is not None:
-                return file_data._rendered_html
+            # Generate cache key based on whether we have database assets
+            cache_key = "html_with_assets" if db is not None else "html_no_assets"
             
-            # Render RSM content using actual RSM rendering
+            # Check cache first - use different cache for asset vs non-asset rendering
+            cached_html = getattr(file_data, f'_rendered_{cache_key}', None)
+            if cached_html is not None:
+                return str(cached_html)
+            
+            # Render RSM content with or without asset resolution
             try:
-                rendered_html: str = await asyncio.to_thread(rsm.render, file_data.source, handrails=True)
-                file_data._rendered_html = rendered_html
+                if db is not None:
+                    # Render with database asset resolver
+                    from ..asset_resolver import FileAssetResolver
+                    asset_resolver = await FileAssetResolver.create_for_file(file_id, db)
+                    rendered_html = await asyncio.to_thread(rsm.render, file_data.source, handrails=True, asset_resolver=asset_resolver)
+                else:
+                    # Render without asset resolver (original behavior)
+                    rendered_html = await asyncio.to_thread(rsm.render, file_data.source, handrails=True)
+                
+                rendered_html = str(rendered_html)
+                
+                # Cache the result
+                setattr(file_data, f'_rendered_{cache_key}', rendered_html)
                 return rendered_html
             except Exception as e:
                 logger.error(f"Failed to render RSM content for file {file_id}: {e}")
                 # Fallback to placeholder if rendering fails
                 fallback_html: str = f"<p>Rendered: {file_data.source}</p>"
-                file_data._rendered_html = fallback_html
+                setattr(file_data, f'_rendered_{cache_key}', fallback_html)
                 return fallback_html
     
     async def get_file_section(self, file_id: int, section_name: str, handrails: bool = True) -> Optional[str]:

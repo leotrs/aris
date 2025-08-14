@@ -101,11 +101,12 @@ class FileServiceInterface(ABC):
         pass
     
     @abstractmethod
-    async def get_file_html(self, file_id: int) -> Optional[str]:
+    async def get_file_html(self, file_id: int, db=None) -> Optional[str]:
         """Get rendered HTML for a file's RSM content.
         
         Args:
             file_id: Unique identifier of the file
+            db: Optional database session for asset resolution
             
         Returns:
             Rendered HTML string if file exists, None otherwise

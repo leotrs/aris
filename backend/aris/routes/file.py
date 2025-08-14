@@ -482,8 +482,8 @@ async def get_file_html(
     # Sync from database to ensure we have latest data
     await file_service.sync_from_database(db)
     
-    # Get HTML from file service (with caching)
-    html = await file_service.get_file_html(file_id)
+    # Get HTML from file service with database session for asset resolution
+    html = await file_service.get_file_html(file_id, db=db)
     if not html:
         raise HTTPException(status_code=404, detail="File not found")
     

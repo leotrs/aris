@@ -639,3 +639,102 @@ class TestInMemoryFileServiceDatabaseSync:
         # Should return False for nonexistent file
         result = await file_service.save_file_to_database(999, None)
         assert result is False
+
+
+class TestInMemoryFileServiceAssetIntegration:
+    """Test asset resolver integration for InMemoryFileService."""
+    
+    @pytest.fixture
+    def file_service(self):
+        """Create a fresh file service for each test."""
+        return InMemoryFileService()
+    
+    @pytest.mark.asyncio
+    async def test_get_file_html_uses_asset_resolver_when_db_provided(self, file_service):
+        """Test that get_file_html integrates with asset resolver when database session is provided."""
+        await file_service.initialize()
+        
+        # Create a file with RSM content that references an HTML asset (like the working tests)
+        rsm_content = ":rsm:\n\n:figure:\n  :path: test_figure.html\n\n::\n\n::"
+        create_data = FileCreateData(
+            title="Asset Test File",
+            abstract="Test abstract",
+            source=rsm_content,
+            owner_id=123,
+            status=FileStatus.DRAFT
+        )
+        
+        created_file = await file_service.create_file(create_data)
+        
+        # Mock database session and asset resolver behavior
+        from unittest.mock import AsyncMock, MagicMock
+        from aris.services.asset_resolver import FileAssetResolver
+        
+        # Create mock database session
+        mock_db = AsyncMock()
+        
+        # Create a real database session and asset to test the integration properly
+        import pytest
+        from sqlalchemy import text
+        from aris.models.models import FileAsset
+        
+        # Create a real test database asset that the real resolver will find (HTML file)
+        # Asset content should be base64 encoded as it's stored in the database
+        import base64
+        html_content = "<div class='test-asset'>Test Asset Content</div>"
+        base64_content = base64.b64encode(html_content.encode('utf-8')).decode('ascii')
+        
+        test_asset = FileAsset(
+            filename="test_figure.html",
+            mime_type="text/html",
+            content=base64_content,  # Store as base64 like the real system
+            file_id=created_file.id,
+            owner_id=123
+        )
+        
+        # Mock the database execute call to return our test asset
+        from unittest.mock import AsyncMock, MagicMock
+        
+        # Create proper mock for the database query result
+        mock_scalars = MagicMock()
+        mock_scalars.all.return_value = [test_asset]
+        
+        mock_result = MagicMock()
+        mock_result.scalars.return_value = mock_scalars
+        
+        # Mock db.execute to return our mock result
+        mock_db.execute = AsyncMock(return_value=mock_result)
+        
+        # Get HTML rendering with database session - should use asset resolver
+        html = await file_service.get_file_html(created_file.id, db=mock_db)
+        
+        # Should contain the resolved asset content embedded in the HTML
+        assert html is not None
+        assert "Test Asset Content" in html  # Asset content should be embedded
+        
+        # Verify that the database was actually queried for assets
+        mock_db.execute.assert_called_once()
+    
+    @pytest.mark.asyncio
+    async def test_get_file_html_falls_back_without_db_session(self, file_service):
+        """Test that get_file_html falls back to no asset resolver when no database session provided."""
+        await file_service.initialize()
+        
+        # Create a file with RSM content that references an asset
+        rsm_content = ":rsm:\n\n:figure:\n  :path: missing-image.png\n\n::\n\n::"
+        create_data = FileCreateData(
+            title="No Asset Test File", 
+            abstract="Test abstract",
+            source=rsm_content,
+            owner_id=123,
+            status=FileStatus.DRAFT
+        )
+        
+        created_file = await file_service.create_file(create_data)
+        
+        # Get HTML rendering without database session - should fall back gracefully
+        html = await file_service.get_file_html(created_file.id)
+        
+        # Should still render but without asset resolution
+        assert html is not None
+        assert "missing-image.png" in html  # Original path should remain (no resolution)

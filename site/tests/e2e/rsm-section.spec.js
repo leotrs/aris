@@ -18,7 +18,9 @@ test.describe.skip("RSM Section", () => {
     // Check current tab buttons exist
     await expect(page.locator('[data-testid="tab-academic"]')).toBeVisible();
     await expect(page.locator('[data-testid="tab-interactive"]')).toBeVisible();
-    await expect(page.locator('[data-testid="tab-academic"]')).toContainText("Academic-Grade Output");
+    await expect(page.locator('[data-testid="tab-academic"]')).toContainText(
+      "Academic-Grade Output"
+    );
 
     // Check view controls exist
     await expect(page.locator('[data-testid="view-markup"]')).toBeVisible();
@@ -48,10 +50,10 @@ test.describe.skip("RSM Section", () => {
 
     await page.reload();
     await page.click('a[href="#demo"]');
-    
+
     // Wait for API calls and content rendering
     await page.waitForTimeout(1000);
-    
+
     // Should show rendered content
     await expect(page.locator(".output-content")).toContainText("Live Rendered Content");
   });
@@ -62,7 +64,7 @@ test.describe.skip("RSM Section", () => {
     await expect(page.locator(".markup-panel")).toBeVisible();
     await expect(page.locator(".output-panel")).not.toBeVisible();
 
-    // Test output-only view  
+    // Test output-only view
     await page.click('[data-testid="view-output"]');
     await expect(page.locator(".markup-panel")).not.toBeVisible();
     await expect(page.locator(".output-panel")).toBeVisible();

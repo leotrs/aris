@@ -14,7 +14,8 @@
         </div>
         <h1 class="hero-title">Write research manuscripts designed for pixels, not&nbsp;paper</h1>
         <p class="hero-subtitle">
-          Pure semantic markup, web-native from the first keystroke. Simple to start, powerful when you need it.
+          Pure semantic markup, web-native from the first keystroke. Simple to start, powerful when
+          you need it.
         </p>
         <a href="#signup" class="hero-cta-button">Get early access</a>
       </div>
@@ -140,11 +141,15 @@
     <section id="studio-features" class="studio-features-section">
       <div class="container">
         <h2 class="section-header">RSM Studio</h2>
-        <p class="section-subheader">Everything you expect from a collaborative editor, built for RSM</p>
+        <p class="section-subheader">
+          Everything you expect from a collaborative editor, built for RSM
+        </p>
 
         <div class="studio-intro">
           <p>
-            Studio provides the familiar collaborative features researchers rely on: real-time editing, comment threads, version history, without the learning curve. Write RSM with your team just like you'd use any modern document editor.
+            Studio provides the familiar collaborative features researchers rely on: real-time
+            editing, comment threads, version history, without the learning curve. Write RSM with
+            your team just like you'd use any modern document editor.
           </p>
         </div>
 
@@ -179,10 +184,8 @@
             <p>Folders, tags, and search to manage your work</p>
           </div>
         </div>
-
       </div>
     </section>
-
 
     <!-- Signup Section -->
     <section class="signup-section">
@@ -310,7 +313,10 @@
       <div class="container">
         <h2 class="section-header">Want to try RSM today?</h2>
         <p class="cli-callout-text">
-          The <a href="https://github.com/aris-pub/rsm" target="_blank" rel="noopener noreferrer">command-line tools are open source</a>. Install with <code>pip install rsm</code> and start writing.
+          The
+          <a href="https://github.com/aris-pub/rsm" target="_blank" rel="noopener noreferrer"
+            >command-line tools are open source</a
+          >. Install with <code>pip install rsm</code> and start writing.
         </p>
       </div>
     </section>
@@ -1720,7 +1726,6 @@ The :ref:acceleration, accelerated migration rate:: suggests climate impacts are
     border: var(--border-thin) solid var(--border-primary);
     font-weight: var(--weight-medium);
   }
-
 
   /* Mobile Responsiveness */
   @media (max-width: 768px) {

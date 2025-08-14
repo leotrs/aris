@@ -1,6 +1,8 @@
 """Aris backend: FastApi app."""
 
+import importlib
 import os
+import sys
 from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException
@@ -210,6 +212,47 @@ async def debug_user_state(db: AsyncSession = Depends(get_db)):
             "user": None,
             "files": [],
             "tags": []
+        }
+
+
+@app.get("/debug/reload", tags=["health"], summary="Reload RSM Module")
+async def reload_rsm():
+    """Force reload of RSM module to pick up changes from local editable installation.
+    
+    This endpoint is useful during development when you've made changes to the local
+    RSM package and want to reload it without restarting the entire backend service.
+    
+    Returns status of the reload operation. Only available in development environment.
+    """
+    # Only allow in development environment
+    if os.getenv("ENV") in ("PROD", "STAGING"):
+        raise HTTPException(status_code=404, detail="Not found")
+    
+    try:
+        # Get all RSM-related modules that are currently imported
+        rsm_modules = [name for name in sys.modules.keys() if name.startswith('rsm')]
+        
+        # Reload each RSM module
+        reloaded_modules = []
+        for module_name in rsm_modules:
+            if module_name in sys.modules:
+                importlib.reload(sys.modules[module_name])
+                reloaded_modules.append(module_name)
+        
+        logger.info(f"Reloaded RSM modules: {reloaded_modules}")
+        
+        return {
+            "status": "success",
+            "message": "RSM modules reloaded successfully",
+            "reloaded_modules": reloaded_modules,
+            "module_count": len(reloaded_modules)
+        }
+        
+    except Exception as e:
+        logger.error(f"RSM module reload failed: {e}")
+        return {
+            "status": "error",
+            "message": f"Failed to reload RSM modules: {str(e)}"
         }
 
 
