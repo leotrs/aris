@@ -27,7 +27,7 @@
     "@openai/codex": "^0.1.2504301751",
     "@tabler/icons-vue": "^3.34.0",
     "@vueuse/core": "^13.4.0",
-    "@yaireo/relative-time": "^1.0.5",
+    "@yaireo/relative-time": "^1.1.0",
     "axios": "^1.10.0",
     "vue": "^3.5.17",
     "vue-router": "^4.5.0"
